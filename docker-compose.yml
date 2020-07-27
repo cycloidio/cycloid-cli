@@ -1,0 +1,14 @@
+version: '3'
+services:
+  ############
+  #
+  # Tools
+  #
+  ############
+  yd-go:
+    container_name: yd-go
+    image: cycloid/golang:1.14.4-r2
+    volumes:
+      - .:/go/src/github.com/cycloidio/youdeploy-cli
+      - $GOPATH/pkg/mod:/go/pkg/mod
+    working_dir: /go/src/github.com/cycloidio/youdeploy-cli
