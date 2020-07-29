@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var rootCmd = &cobra.Command{}
+var rootCmd *cobra.Command
 var version = 1
 
 func Execute() {
@@ -36,7 +36,7 @@ func main() {
 
 	fmt.Printf("Version %d\n", version)
 
-	p, err := plugin.Open(fmt.Sprintf("plugins/v%d.so", version))
+	p, err := plugin.Open(fmt.Sprintf("plugins/gen/v%d.so", version))
 	if err != nil {
 		panic(err)
 	}
@@ -46,7 +46,8 @@ func main() {
 		panic(err)
 	}
 	// *v.(*int) = 7
-	f.(func(*cobra.Command))(rootCmd) // prints "Hello, number 7"
+	// f.(func(*cobra.Command))(rootCmd) // prints "Hello, number 7"
+	rootCmd = f.(func() *cobra.Command)()
 
 	Execute()
 
