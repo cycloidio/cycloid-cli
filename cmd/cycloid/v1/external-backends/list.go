@@ -11,6 +11,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func NewListCommand() *cobra.Command {
@@ -31,14 +32,16 @@ func NewListCommand() *cobra.Command {
 			tr.Producers["application/vnd.cycloid.io.v1+json"] = runtime.JSONProducer()
 			api.SetTransport(tr)
 
-			var project = "website"
+			var project string
 			var org = "cycloid"
 			var env = "prod"
 
+			project = viper.GetString("pproject")
+
 			ebP := organization_external_backends.NewGetExternalBackendsParams()
-			ebP.SetEnvironment(&project)
+			ebP.SetEnvironment(&env)
 			ebP.SetOrganizationCanonical(org)
-			ebP.SetProject(&env)
+			ebP.SetPproject(&project)
 			resp, err := api.OrganizationExternalBackends.GetExternalBackends(ebP, nil)
 			// api.OrganizationExternalBackends.GetExternalBackends(params *GetExternalBackendsParams, authInfo runtime.ClientAuthInfoWriter)
 			fmt.Println("...")
@@ -46,6 +49,9 @@ func NewListCommand() *cobra.Command {
 			fmt.Printf("%+v\n", err)
 		},
 	}
+
+	cmd.Flags().String("pproject", "website", "Project name")
+	viper.BindPFlag("pproject", cmd.Flags().Lookup("pproject"))
 
 	return cmd
 }

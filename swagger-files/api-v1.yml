@@ -95,7 +95,7 @@ parameters:
     maxLength: 30
     pattern: '^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$'
   project_canonical_query:
-    name: project
+    name: pproject
     description: A canonical of a project used for filtering.
     in: query
     type: string
@@ -141,7 +141,7 @@ parameters:
     type: string
   service_catalog_own_query:
     name: service_catalog_own
-    description: > 
+    description: >
       Filters the Service Catalogs to only show the ones owned
       by the User Organization
     in: query
@@ -4687,24 +4687,24 @@ paths:
                   "data" "aws_ami" "debian_jessie_latest" {
                     "most_recent" = true
                   }
-  
+
                   "locals" = {
                     "codecommit_repository_name" = "something"
                   }
-  
+
                   "output" "sensitive" {
                     "sensitive" = true
-  
+
                     "value" = "VALUE"
                   }
-  
+
                   "provider" "aws" {
                     "access_key" = "${var.access_key}"
                   }
-  
+
                   "resource" "aws_elb" "front" {
                     "name" = "${var.project}-front-${var.env}"
-  
+
                     "tags" = {
                       "name" = "some name"
                     }
@@ -6155,7 +6155,7 @@ paths:
                     ssh_key: key
                 - id: 2
                   name: name-key
-                  type: ssh 
+                  type: ssh
                   path: my/path
                   raw:
                     ssh_key: key
@@ -6175,21 +6175,21 @@ paths:
       description: >-
         Create a new Credential, based on the type you will have to pass different
         parameters within the body:
-  
+
         * ssh: ssh_key
-  
+
         * aws: access_key, secret_key
-  
+
         * gcp: json_key
-  
+
         * azure: client_id, client_secret, subscription_id, tenant_id
-  
+
         * azure_storage: account_name, access_key
-  
+
         * basic_auth: username, password
-  
+
         * elasticsearch: username, password, ca_cert
-  
+
         * swift: auth_url, username, password, domain_id, tenant_id
       operationId: createCredential
       parameters:
@@ -6221,7 +6221,7 @@ paths:
               data:
                 id: 2
                 name: name-key
-                type: ssh 
+                type: ssh
                 path: my/path
                 raw:
                   ssh_key: key
@@ -6292,21 +6292,21 @@ paths:
       description: >-
         Update an existing Credential, based on the type you will have to pass different
         parameters within the body:
-  
+
         * ssh: ssh_key
-  
+
         * aws: access_key, secret_key
-  
+
         * gcp: json_key
-  
+
         * azure: client_id, client_secret, subscription_id, tenant_id
-  
+
         * azure_storage: account_name, access_key
-  
+
         * basic_auth: username, password
-  
+
         * elasticsearch: username, password, ca_cert
-  
+
         * swift: auth_url, username, password, domain_id, tenant_id
       operationId: updateCredential
       parameters:
@@ -6399,7 +6399,7 @@ paths:
           $ref: '#/responses/unprocessable_entity'
         default:
           $ref: '#/responses/unexpected_error'
-  '/organizations/{organization_canonical}/external_backends':
+  '/organizations/{organization_canonical}/external_backend':
     parameters:
       - $ref: '#/parameters/organization_canonical'
       - $ref: '#/parameters/project_canonical_query'
@@ -6569,7 +6569,7 @@ paths:
             $ref: '#/definitions/NewExternalBackend'
       responses:
         '200':
-          description: Success update 
+          description: Success update
           headers:
             Content-Length:
               description: The length of the response body in octets (8-bit bytes).
@@ -6696,7 +6696,7 @@ paths:
           $ref: '#/responses/unprocessable_entity'
         default:
           $ref: '#/responses/unexpected_error'
-  
+
   '/organizations/{organization_canonical}/forms/validate':
     parameters:
       - $ref: '#/parameters/organization_canonical'
@@ -6731,7 +6731,7 @@ paths:
             application/json:
               data:
                 errors:
-                  - "resource 'aws_elb.front'" 
+                  - "resource 'aws_elb.front'"
                   - "resource 'aws_elb.front'"
                   - "resource 'aws_elb.front'"
                   - "resource 'aws_elb.front'"
@@ -8780,7 +8780,7 @@ paths:
                 - name: bar
                   label: group
                   status: removed
-                  diff: 
+                  diff:
                   - delta_type: "-"
                     line: "- test-develop"
                 resources:
@@ -10852,7 +10852,7 @@ paths:
                         key_name: cycloid
                         monitoring: false
                         network_interface: []
-                        network_interface_id: 
+                        network_interface_id:
                         password_data: ''
                         placement_group: ''
                         primary_network_interface_id: eni-01eac7f767b723514
@@ -10882,9 +10882,9 @@ paths:
                           project: sample-magento
                           role: front
                         tenancy: default
-                        timeouts: 
-                        user_data: 
-                        user_data_base64: 
+                        timeouts:
+                        user_data:
+                        user_data_base64:
                         volume_tags:
                           Name: sample-magento-front0-eu-we1-prod
                           bar: bla
@@ -10913,7 +10913,7 @@ paths:
                         source_security_group_id: null
                         to_port: 443
                         type: "ingress"
-  
+
         '403':
           $ref: '#/responses/not_enough_permissions'
         '404':
@@ -11398,7 +11398,7 @@ paths:
               data:
                 id: 42
                 name: updatedRole
-  
+
                 description: Organization updated role
                 policies:
                   - id: 10
@@ -12732,7 +12732,7 @@ paths:
         The events to request can be filtered using by the unix timestamps (
         begin and end timestamps range), the event type and severity; when more
         than one are applied then they are applied with a logical AND.
-  
+
         - The unix timestamps must be always be specified, the rest of the
           filters aren't required.
         - Some constraints are established by the third party system, which
@@ -13102,7 +13102,7 @@ paths:
                   trusted: true
                   keywords:
                     - stack
-                    - php 
+                    - php
                   ref: "orgCanonical:stackCanonical"
                   status: private
                   service_catalog_source_id: 1

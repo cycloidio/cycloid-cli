@@ -78,11 +78,11 @@ type CreateExternalBackendParams struct {
 
 	*/
 	OrganizationCanonical string
-	/*Project
+	/*Pproject
 	  A canonical of a project used for filtering.
 
 	*/
-	Project *string
+	Pproject *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -155,15 +155,15 @@ func (o *CreateExternalBackendParams) SetOrganizationCanonical(organizationCanon
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithProject adds the project to the create external backend params
-func (o *CreateExternalBackendParams) WithProject(project *string) *CreateExternalBackendParams {
-	o.SetProject(project)
+// WithPproject adds the pproject to the create external backend params
+func (o *CreateExternalBackendParams) WithPproject(pproject *string) *CreateExternalBackendParams {
+	o.SetPproject(pproject)
 	return o
 }
 
-// SetProject adds the project to the create external backend params
-func (o *CreateExternalBackendParams) SetProject(project *string) {
-	o.Project = project
+// SetPproject adds the pproject to the create external backend params
+func (o *CreateExternalBackendParams) SetPproject(pproject *string) {
+	o.Pproject = pproject
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -201,16 +201,16 @@ func (o *CreateExternalBackendParams) WriteToRequest(r runtime.ClientRequest, re
 		return err
 	}
 
-	if o.Project != nil {
+	if o.Pproject != nil {
 
-		// query param project
-		var qrProject string
-		if o.Project != nil {
-			qrProject = *o.Project
+		// query param pproject
+		var qrPproject string
+		if o.Pproject != nil {
+			qrPproject = *o.Pproject
 		}
-		qProject := qrProject
-		if qProject != "" {
-			if err := r.SetQueryParam("project", qProject); err != nil {
+		qPproject := qrPproject
+		if qPproject != "" {
+			if err := r.SetQueryParam("pproject", qPproject); err != nil {
 				return err
 			}
 		}

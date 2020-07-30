@@ -38,7 +38,7 @@ func (a *Client) CreateExternalBackend(params *CreateExternalBackendParams, auth
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createExternalBackend",
 		Method:             "POST",
-		PathPattern:        "/organizations/{organization_canonical}/external_backends",
+		PathPattern:        "/organizations/{organization_canonical}/external_backend",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -141,7 +141,7 @@ func (a *Client) GetExternalBackends(params *GetExternalBackendsParams, authInfo
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getExternalBackends",
 		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/external_backends",
+		PathPattern:        "/organizations/{organization_canonical}/external_backend",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},

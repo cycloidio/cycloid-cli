@@ -76,7 +76,7 @@ type GetExternalBackendsOK struct {
 }
 
 func (o *GetExternalBackendsOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/external_backends][%d] getExternalBackendsOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/external_backend][%d] getExternalBackendsOK  %+v", 200, o.Payload)
 }
 
 func (o *GetExternalBackendsOK) GetPayload() *GetExternalBackendsOKBody {
@@ -120,7 +120,7 @@ type GetExternalBackendsForbidden struct {
 }
 
 func (o *GetExternalBackendsForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/external_backends][%d] getExternalBackendsForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/external_backend][%d] getExternalBackendsForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetExternalBackendsForbidden) GetPayload() *models.ErrorPayload {
@@ -164,7 +164,7 @@ type GetExternalBackendsUnprocessableEntity struct {
 }
 
 func (o *GetExternalBackendsUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/external_backends][%d] getExternalBackendsUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/external_backend][%d] getExternalBackendsUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetExternalBackendsUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -217,7 +217,7 @@ func (o *GetExternalBackendsDefault) Code() int {
 }
 
 func (o *GetExternalBackendsDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/external_backends][%d] getExternalBackends default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/external_backend][%d] getExternalBackends default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetExternalBackendsDefault) GetPayload() *models.ErrorPayload {

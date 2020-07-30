@@ -45,7 +45,6 @@ func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *API
 
 	// create transport and client
 	transport := httptransport.New(cfg.Host, cfg.BasePath, cfg.Schemes)
-	// transport.Producers["application/vnd.cycloid.io.v1+json"] = runtime.JSONProducer()
 	return New(transport, formats)
 }
 
