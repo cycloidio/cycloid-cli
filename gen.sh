@@ -21,7 +21,7 @@ for cli in $(ls -1 CLIs/ | sort); do
     fi
 done
 
-#
+
 # echo "- Generate swagger client"
 # rm -rf ./client
 # mkdir ./client

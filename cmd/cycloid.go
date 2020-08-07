@@ -13,7 +13,14 @@ import (
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/stacks"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
+
+func init() {
+	viper.SetEnvPrefix("CY")
+	// Disabled, we decided to choose which arg will be available as env var
+	// viper.AutomaticEnv()
+}
 
 func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(

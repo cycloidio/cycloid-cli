@@ -95,7 +95,7 @@ parameters:
     maxLength: 30
     pattern: '^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$'
   project_canonical_query:
-    name: pproject
+    name: project
     description: A canonical of a project used for filtering.
     in: query
     type: string
@@ -4003,7 +4003,7 @@ definitions:
       - purpose
       - configuration
     properties:
-      purpose:
+      ppurpose:
         type: string
         enum: ['events', 'logs', 'remote_tfstate']
       credential_id:
@@ -6399,7 +6399,7 @@ paths:
           $ref: '#/responses/unprocessable_entity'
         default:
           $ref: '#/responses/unexpected_error'
-  '/organizations/{organization_canonical}/external_backends':
+  '/organizations/{organization_canonical}/external_backend':
     parameters:
       - $ref: '#/parameters/organization_canonical'
       - $ref: '#/parameters/project_canonical_query'

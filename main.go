@@ -80,7 +80,7 @@ func main() {
 		version = ver
 	}
 
-	fmt.Printf("Version %d\n", version)
+	fmt.Printf("Using API plugin version %d\n", version)
 
 	p, err := plugin.Open(fmt.Sprintf("plugins/v%d.so", version))
 	if err != nil {

@@ -95,7 +95,7 @@ parameters:
     maxLength: 30
     pattern: '^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$'
   project_canonical_query:
-    name: pproject
+    name: project
     description: A canonical of a project used for filtering.
     in: query
     type: string

@@ -57,7 +57,7 @@ type CreateExternalBackendOK struct {
 }
 
 func (o *CreateExternalBackendOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/external_backends][%d] createExternalBackendOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/external_backend][%d] createExternalBackendOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateExternalBackendOK) GetPayload() *CreateExternalBackendOKBody {
