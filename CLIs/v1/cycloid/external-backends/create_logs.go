@@ -7,6 +7,8 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
 	models "github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/go-openapi/runtime"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
@@ -124,10 +126,18 @@ func createLogs(cmd *cobra.Command, args []string) error {
 			Urls:    urls,
 			Sources: sources,
 		}
-		body = &models.NewExternalBackend{
-			ProjectCanonical: project,
-			Purpose:          &purpose,
-			CredentialID:     cred,
+
+		if cred != 0 {
+			body = &models.NewExternalBackend{
+				ProjectCanonical: project,
+				Purpose:          &purpose,
+				CredentialID:     cred,
+			}
+		} else {
+			body = &models.NewExternalBackend{
+				ProjectCanonical: project,
+				Purpose:          &purpose,
+			}
 		}
 	} else {
 		return errors.New("Unexpected backend name")
@@ -147,13 +157,17 @@ func createLogs(cmd *cobra.Command, args []string) error {
 
 	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, nil)
 	if err != nil {
+		// *errors.Validation, not *runtime.APIError
+		apiErr, ok := err.(*runtime.APIError)
+		if ok {
+			spew.Dump(apiErr.Error())
+			r := apiErr.Response.(runtime.ClientResponse)
+			spew.Dump(r.Message())
+		}
+		// fmt.Printf("%+v\n", err.Error())
 		return err
 	}
-
-	// api.OrganizationExternalBackends.GetExternalBackends(params *GetExternalBackendsParams, authInfo runtime.ClientAuthInfoWriter)
-	// fmt.Println("...")
 	fmt.Println(resp)
-	// fmt.Printf("%+v\n", err)
 
 	return nil
 }

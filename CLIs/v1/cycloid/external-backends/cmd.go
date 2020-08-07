@@ -11,8 +11,7 @@ func NewCommands() *cobra.Command {
 		Long:  `........ . . .... .. .. ....`,
 	}
 
-	cmd.AddCommand(NewUpdateCommand(),
-		NewGetCommand(),
+	cmd.AddCommand(NewGetCommand(),
 		NewDeleteCommand(),
 		NewListCommand(),
 		NewCreateCommand())

@@ -22,16 +22,18 @@ for cli in $(ls -1 CLIs/ | sort); do
 done
 
 
-# echo "- Generate swagger client"
-# rm -rf ./client
-# mkdir ./client
-# docker-compose run swagger generate client \
-# --spec=swagger-files/api-v10${1}.yml \
-# --default-produces="application/vnd.cycloid.io.v1+json" \
-# --target=./client \
-# --name=api \
-# --tags=Cycloid \
-# --tags="Organization External Backends"
+if [[ $2 == "swagger" ]]; then
+echo "- Generate swagger client"
+rm -rf ./client
+mkdir ./client
+docker-compose run swagger generate client \
+--spec=swagger-files/api-v10${1}.yml \
+--default-produces="application/vnd.cycloid.io.v1+json" \
+--target=./client \
+--name=api \
+--tags=Cycloid \
+--tags="Organization External Backends"
+fi
 
 
 

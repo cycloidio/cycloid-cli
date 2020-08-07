@@ -19,6 +19,8 @@ func NewUpdateCommand() *cobra.Command {
 	return cmd
 }
 
+// Update will not be available on logs, only create/delete as it's too complexe
+
 // /organizations/{organization_canonical}/external_backends/{external_backend_id}
 // put: updateExternalBackend
 // Update an External Backend

@@ -49,15 +49,11 @@ func NewCreateExternalBackendOK() *CreateExternalBackendOK {
 external backend has been registered
 */
 type CreateExternalBackendOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *CreateExternalBackendOKBody
 }
 
 func (o *CreateExternalBackendOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/external_backend][%d] createExternalBackendOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/external_backends][%d] createExternalBackendOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateExternalBackendOK) GetPayload() *CreateExternalBackendOKBody {
@@ -65,13 +61,6 @@ func (o *CreateExternalBackendOK) GetPayload() *CreateExternalBackendOKBody {
 }
 
 func (o *CreateExternalBackendOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(CreateExternalBackendOKBody)
 

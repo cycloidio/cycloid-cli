@@ -29,6 +29,7 @@ func WithFlagOrg(cmd *cobra.Command) string {
 
 func WithFlagCred(cmd *cobra.Command) string {
 	flagName := "cred"
+	// TODO  how make it nil or without any value in case we don't want any creds ?
 	cmd.Flags().Uint32Var(&credFlag, flagName, 0, "cred id")
 	return flagName
 }

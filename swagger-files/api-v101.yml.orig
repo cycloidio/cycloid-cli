@@ -6399,7 +6399,7 @@ paths:
           $ref: '#/responses/unprocessable_entity'
         default:
           $ref: '#/responses/unexpected_error'
-  '/organizations/{organization_canonical}/external_backends':
+  '/organizations/{organization_canonical}/external_backend':
     parameters:
       - $ref: '#/parameters/organization_canonical'
       - $ref: '#/parameters/project_canonical_query'
@@ -6412,6 +6412,11 @@ paths:
       responses:
         '200':
           description: The list of the external backends
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -6489,6 +6494,11 @@ paths:
       responses:
         '200':
           description: external backend has been registered
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -6518,6 +6528,11 @@ paths:
       responses:
         '200':
           description: The external backend
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -6555,6 +6570,11 @@ paths:
       responses:
         '200':
           description: Success update
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -6615,6 +6635,11 @@ paths:
       responses:
         '200':
           description: Set of config to create the project / push onto repositories
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -6690,6 +6715,11 @@ paths:
       responses:
         '200':
           description: The result of validating the provided configuration
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -6735,6 +6765,11 @@ paths:
           description: >-
             The list of AWS S3 buckets which matches the scope specified by the
             filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             description: >-
@@ -6801,6 +6836,11 @@ paths:
           description: >-
             The number of resources classifed per type which maches the scope
             specified by the filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -6863,6 +6903,11 @@ paths:
           description: >-
             The list of AWS RDS DB Instances which matches the scope specified
             by the filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -7005,7 +7050,11 @@ paths:
           description: >-
             The list of AWS elasticache clusters which matches the scope
             specified by the filter.
-
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -7095,6 +7144,11 @@ paths:
           description: >-
             The list of AWS images which matches the scope specified by the
             filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             description: >-
@@ -7223,6 +7277,11 @@ paths:
           description: >-
             The list of AWS instances which matches the scope specified by the
             filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -7381,6 +7440,11 @@ paths:
           description: >-
             The list of AWS load balancers (ELB) which matches the scope
             specified by the filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -7547,6 +7611,11 @@ paths:
           description: >-
             The list of AWS load balancers (ELB v2 or a.k.a ALB) which matches
             the scope specified by the filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -7672,6 +7741,11 @@ paths:
           description: >-
             The list of AWS security groups which matches the scope specified
             by the filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -7757,6 +7831,11 @@ paths:
           description: >-
             The list of AWS snapshots which matches the scope specified by the
             filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -7831,6 +7910,11 @@ paths:
           description: >-
             The list of AWS subnets instances which matches the scope specified
             by the filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             description: >-
@@ -7939,6 +8023,11 @@ paths:
           description: >-
             The list of AWS volumes which matches the scope specified by the
             filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -8041,6 +8130,11 @@ paths:
           description: >-
             The list of AWS VPCs which matches the scope specified by the
             filter.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             description: >-
               Although this response contains a collection of items, it doesn't
@@ -8091,6 +8185,11 @@ paths:
       responses:
         '200':
           description: The email address used for the pending invitation
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -8121,6 +8220,11 @@ paths:
       responses:
         '200':
           description: The list of sources related to the project's environment.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             description: The list of log sources.
@@ -8185,6 +8289,12 @@ paths:
           description: >-
             The list of log's entries which are comprehended by the begin and
             end timestamps and are selected by the optional query.
+          headers:
+            Content-Length:
+              description: >-
+                The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             description: The list of log lines
@@ -8271,6 +8381,11 @@ paths:
       responses:
         '200':
           description: List of the members of the organization.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -8420,6 +8535,11 @@ paths:
       responses:
         '200':
           description: The information of the member of the organization.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -8519,6 +8639,10 @@ paths:
       responses:
         '200':
           description: List of all the pipelines which authenticated user has access to.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
           schema:
             type: object
             required:
@@ -8630,6 +8754,11 @@ paths:
       responses:
         '200':
           description: The diff between the provided pipeline configuration and the existing pipeline has been done.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -8695,6 +8824,10 @@ paths:
       responses:
         '200':
           description: List of the pipelines which authenticated user has access to.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
           schema:
             type: object
             required:
@@ -8939,6 +9072,11 @@ paths:
       responses:
         '200':
           description: The information of the pipeline which has been updated.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -9002,6 +9140,11 @@ paths:
       responses:
         '200':
           description: List of Policies
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -9107,6 +9250,10 @@ paths:
           description: >-
             List the pipeline job's builds which authenticated user has access
             to.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
           schema:
             type: object
             required:
@@ -9177,6 +9324,10 @@ paths:
       responses:
         '200':
           description: Create a new build for the pipeline's job and returns its details
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
           schema:
             type: object
             required:
@@ -9488,6 +9639,10 @@ paths:
       responses:
         '200':
           description: List of the pipeline's jobs which authenticated user has access to.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
           schema:
             type: object
             required:
@@ -9776,6 +9931,11 @@ paths:
       responses:
         '200':
           description: Cache has been cleared.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -10347,6 +10507,11 @@ paths:
       responses:
         '200':
           description: List of the projects which the organization has.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -10481,6 +10646,11 @@ paths:
           description: >-
             Project created. The body contains the information of the new project
             of the organization.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -10567,6 +10737,11 @@ paths:
       responses:
         '200':
           description: Get the Infrastructure View of the Project's environment
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             description: The Infrastrucure from the Project's environment
@@ -10759,6 +10934,11 @@ paths:
           description: >-
             The information of the project of the organization which has the
             specified ID.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -10842,6 +11022,11 @@ paths:
           description: >-
             Project updated. The body contains information of the updated
             project.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -10910,6 +11095,11 @@ paths:
       responses:
         '200':
           description: List of roles which are available in the organization.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -11032,6 +11222,11 @@ paths:
       responses:
         '200':
           description: New role created in the organization.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -11092,6 +11287,11 @@ paths:
       responses:
         '200':
           description: Role available in the organization with such ID.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -11181,6 +11381,11 @@ paths:
       responses:
         '200':
           description: Updated role belonging to the organization.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -11272,6 +11477,11 @@ paths:
       responses:
         '200':
           description: List of the private service catalogs.
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -11345,6 +11555,11 @@ paths:
       responses:
         '200':
           description: Success creation
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
@@ -11391,6 +11606,11 @@ paths:
       responses:
         '200':
           description: Success refresh
+          headers:
+            Content-Length:
+              description: The length of the response body in octets (8-bit bytes).
+              type: integer
+              format: int64
           schema:
             type: object
             required:
