@@ -8,6 +8,8 @@ import (
 
 	// Commented for now while figure out how do plugins
 	// "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/davecgh/go-spew/spew"
+	"github.com/go-openapi/runtime"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -29,6 +31,14 @@ var version = 1
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
+
+		apiErr, ok := err.(*runtime.APIError)
+		if ok {
+			spew.Dump(apiErr.Error())
+			r := apiErr.Response.(runtime.ClientResponse)
+			spew.Dump(r.Message())
+		}
+		fmt.Printf("%+v\n", err.Error())
 		fmt.Println(err)
 		os.Exit(1)
 	}

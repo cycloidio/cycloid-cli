@@ -8,9 +8,10 @@ import (
 
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "update",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use:    "update",
+		Short:  "...",
+		Hidden: true,
+		Long:   `........ . . .... .. .. ....`,
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("...")
 		},

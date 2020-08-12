@@ -64,7 +64,7 @@ func createEvents(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, nil)
+	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, root.ClientCredentials())
 	// TODO create a error handeling function to format our error with a better display
 	if err != nil {
 		// *errors.Validation, not *runtime.APIError

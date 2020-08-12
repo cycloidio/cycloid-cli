@@ -3,6 +3,8 @@ package externalBackends
 import (
 	"fmt"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
@@ -18,44 +20,47 @@ func NewListCommand() *cobra.Command {
 		Short: "...",
 		Long:  `........ . . .... .. .. ....`,
 		// Run: func(cmd *cobra.Command, args []string) {
-		Run: list,
+		RunE: list,
 	}
 
-	common.WithFlagProject(cmd)
-	common.WithFlagEnv(cmd)
-	common.WithFlagOrg(cmd)
-
-	// cmd.Flags().String("pproject", "pp", "Project name")
-	// viper.BindPFlag("pproject", cmd.Flags().Lookup("pproject"))
-
-	// cmd.Flags().String("project", "default-p", "Project name")
-
-	// viper.BindPFlag("project", cmd.Flags().Lookup("project"))
-
-	// viper.BindPFlag("pproject", cmd.Flags().Lookup("pproject"))
-	// viper.RegisterAlias("pproject", "project")
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	return cmd
 }
 
-func list(cmd *cobra.Command, args []string) {
+func list(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
 
-	var project, org, env string
-	project, _ = cmd.Flags().GetString("project")
-	org, _ = cmd.Flags().GetString("organization")
-	env, _ = cmd.Flags().GetString("environment")
-	// project = viper.GetString("project")
+	org, err := cmd.Flags().GetString("org")
+	if err != nil {
+		return err
+	}
 
 	ebP := organization_external_backends.NewGetExternalBackendsParams()
-	ebP.SetEnvironment(&env)
 	ebP.SetOrganizationCanonical(org)
-	ebP.SetProject(&project)
-	resp, err := api.OrganizationExternalBackends.GetExternalBackends(ebP, nil)
+
+	// ebP.SetEnvironment(&env)
+	// ebP.SetProject(&project)
+	resp, err := api.OrganizationExternalBackends.GetExternalBackends(ebP, root.ClientCredentials())
+	if err != nil {
+		return err
+	}
+
 	// api.OrganizationExternalBackends.GetExternalBackends(params *GetExternalBackendsParams, authInfo runtime.ClientAuthInfoWriter)
 	fmt.Println("...")
+	p := resp.GetPayload()
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return err
+	}
+
+	for _, eb := range p.Data {
+		fmt.Printf("id: %d    project: %s - env: %s\nPurpose: %s      Config: %s\n\n", eb.ID, eb.ProjectCanonical, eb.EnvironmentCanonical, *eb.Purpose, eb.Configuration().Engine())
+
+	}
 	fmt.Println(resp)
 	fmt.Printf("%+v\n", err)
+	return nil
 }
 
 // /organizations/{organization_canonical}/external_backends

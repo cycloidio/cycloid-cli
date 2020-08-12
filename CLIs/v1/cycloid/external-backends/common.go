@@ -4,19 +4,59 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var regionAwsFlag string
 var regionFlag string
+var awsBucketName string
+var awsBucketPath string
+var gcpBucketName string
+var gcpBucketPath string
+var awsS3BucketEndpoint string
 var urls []string
 var prefilters map[string]string
+var skipVerifySSL bool
+var awsS3ForcePathStyle bool
 
 func WithFlagAwsRegion(cmd *cobra.Command) string {
 	flagName := "region"
-	cmd.Flags().StringVar(&regionFlag, flagName, "eu-west-1", "region")
+	cmd.Flags().StringVar(&regionAwsFlag, flagName, "eu-west-1", "region")
 	return flagName
 	// cmd.Flags().SetAnnotation("ppurpose", "create", []string{"aws", "log"})
 	// Uncomment in v3
 	// cmd.Flags().MarkDeprecated("pproject", "Deprecated flag pproject")
 	//
 	// cmd.Flags().StringVar(&ebPurpose, "purpose", "default-p", "purpose")
+}
+func WithFlagRegion(cmd *cobra.Command) string {
+	flagName := "region"
+	cmd.Flags().StringVar(&regionFlag, flagName, "", "region")
+	return flagName
+}
+
+func WithFlagBucketName(cmd *cobra.Command) string {
+	flagName := "bucket-name"
+	cmd.Flags().StringVar(&awsBucketName, flagName, "", "bucket name")
+	return flagName
+}
+func WithFlagBucketPath(cmd *cobra.Command) string {
+	flagName := "bucket-path"
+	cmd.Flags().StringVar(&awsBucketPath, flagName, "", "bucket path")
+	return flagName
+}
+
+func WithFlagS3BucketEndpoint(cmd *cobra.Command) string {
+	flagName := "endpoint"
+	cmd.Flags().StringVar(&awsS3BucketEndpoint, flagName, "", "Aws S3 endpoint")
+	return flagName
+}
+func WithFlagS3ForcePathStyle(cmd *cobra.Command) string {
+	flagName := "s3-force-path-style"
+	cmd.Flags().BoolVar(&awsS3ForcePathStyle, flagName, true, "")
+	return flagName
+}
+func WithFlagSkipVerifySSL(cmd *cobra.Command) string {
+	flagName := "skip-verify-ssl"
+	cmd.Flags().BoolVar(&skipVerifySSL, flagName, false, "")
+	return flagName
 }
 
 func WithFlagUrl(cmd *cobra.Command) string {

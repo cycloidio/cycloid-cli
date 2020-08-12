@@ -52,9 +52,6 @@ func createLogs(cmd *cobra.Command, args []string) error {
 
 		// Elasticsearch
 	} else if engine == "ElasticsearchLogs" {
-		foo, _ := cmd.Flags().GetUint32("foo")
-		spew.Dump(foo)
-
 		prefilters, err := cmd.Flags().GetStringToString("prefilter")
 		if err != nil {
 			return err
@@ -129,10 +126,18 @@ func createLogs(cmd *cobra.Command, args []string) error {
 			Urls:    urls,
 			Sources: sources,
 		}
-		body = &models.NewExternalBackend{
-			ProjectCanonical: project,
-			Purpose:          &purpose,
-			CredentialID:     cred,
+
+		if cred != 0 {
+			body = &models.NewExternalBackend{
+				ProjectCanonical: project,
+				Purpose:          &purpose,
+				CredentialID:     cred,
+			}
+		} else {
+			body = &models.NewExternalBackend{
+				ProjectCanonical: project,
+				Purpose:          &purpose,
+			}
 		}
 	} else {
 		return errors.New("Unexpected backend name")
@@ -150,7 +155,7 @@ func createLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, nil)
+	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, root.ClientCredentials())
 	if err != nil {
 		// *errors.Validation, not *runtime.APIError
 		apiErr, ok := err.(*runtime.APIError)

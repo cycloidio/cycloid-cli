@@ -7,7 +7,7 @@ import (
 var projectFlag string
 var envFlag string
 var orgFlag string
-var credFlag uint32
+var credFlag, idFlag uint32
 
 func WithFlagProject(cmd *cobra.Command) string {
 	flagName := "project"
@@ -24,6 +24,13 @@ func WithFlagEnv(cmd *cobra.Command) string {
 func WithFlagOrg(cmd *cobra.Command) string {
 	flagName := "org"
 	cmd.PersistentFlags().StringVar(&orgFlag, flagName, "default-org", "Org cannonical name")
+	return flagName
+}
+
+func WithFlagID(cmd *cobra.Command) string {
+	flagName := "id"
+	// TODO  how make it nil or without any value in case we don't want any creds ?
+	cmd.Flags().Uint32Var(&idFlag, flagName, 0, "id")
 	return flagName
 }
 

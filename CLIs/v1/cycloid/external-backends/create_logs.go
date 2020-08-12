@@ -155,7 +155,7 @@ func createLogs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, nil)
+	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, root.ClientCredentials())
 	if err != nil {
 		// *errors.Validation, not *runtime.APIError
 		apiErr, ok := err.(*runtime.APIError)

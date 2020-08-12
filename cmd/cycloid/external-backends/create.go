@@ -16,22 +16,59 @@ func NewCreateCommand() *cobra.Command {
 		Long:  `........ . . .... .. .. ....`,
 	}
 
-	var infraViewCmd = &cobra.Command{
-		Use: "infraview",
-		// RunE: create,
-	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, infraViewCmd)
-	// purpose = remote_tfstate
-
-	// WithFlagPurpose(cmd)
-	// log.Flags().String("aws-region", "default-p", "Purpose")
-
+	infraViewCmd := newInfraViewCommand()
 	logsCmd := newLogsCommand()
 	eventsCmd := newEventsCommand()
 
 	cmd.AddCommand(logsCmd, eventsCmd, infraViewCmd)
-
 	return cmd
+}
+
+func newInfraViewCommand() *cobra.Command {
+
+	var infraViewCmd = &cobra.Command{
+		Use: "infraview [backend]",
+		// RunE: create,
+	}
+	common.RequiredPersistentFlag(common.WithFlagOrg, infraViewCmd)
+	common.RequiredPersistentFlag(common.WithFlagProject, infraViewCmd)
+	common.RequiredPersistentFlag(common.WithFlagEnv, infraViewCmd)
+
+	// AWSRemoteTFState
+	var aWSRemoteTFState = &cobra.Command{
+		Use:  "AWSRemoteTFState",
+		RunE: createInfraView,
+	}
+	common.RequiredFlag(WithFlagAwsRegion, aWSRemoteTFState)
+	common.RequiredFlag(common.WithFlagCred, aWSRemoteTFState)
+	WithFlagBucketName(aWSRemoteTFState)
+	WithFlagBucketPath(aWSRemoteTFState)
+	WithFlagS3BucketEndpoint(aWSRemoteTFState)
+	WithFlagS3ForcePathStyle(aWSRemoteTFState)
+	WithFlagSkipVerifySSL(aWSRemoteTFState)
+
+	var gCPRemoteTFState = &cobra.Command{
+		Use:  "GCPRemoteTFState",
+		RunE: createInfraView,
+	}
+	common.RequiredFlag(common.WithFlagCred, gCPRemoteTFState)
+	WithFlagBucketName(gCPRemoteTFState)
+	WithFlagBucketPath(gCPRemoteTFState)
+
+	var swiftRemoteTFState = &cobra.Command{
+		Use:  "SwiftRemoteTFState",
+		RunE: createInfraView,
+	}
+	common.RequiredFlag(common.WithFlagCred, swiftRemoteTFState)
+	WithFlagBucketName(swiftRemoteTFState)
+	WithFlagBucketPath(swiftRemoteTFState)
+	common.RequiredFlag(WithFlagRegion, swiftRemoteTFState)
+	WithFlagSkipVerifySSL(swiftRemoteTFState)
+
+	infraViewCmd.AddCommand(aWSRemoteTFState,
+		gCPRemoteTFState,
+		swiftRemoteTFState)
+	return infraViewCmd
 }
 
 func newEventsCommand() *cobra.Command {
@@ -78,14 +115,9 @@ func newLogsCommand() *cobra.Command {
 	common.RequiredFlag(WithFlagPrefilter, logsElasticsearchLogsCmd)
 	common.WithFlagCred(logsElasticsearchLogsCmd)
 	logsElasticsearchLogsCmd.Flags().StringVar(&esIndex, "index", "default", "")
-	// Mapping flags
 	logsElasticsearchLogsCmd.Flags().StringVar(&hostMapping, "host-mapping", "hostname", "")
 	logsElasticsearchLogsCmd.Flags().StringVar(&messageMapping, "message-mapping", "message", "")
 	logsElasticsearchLogsCmd.Flags().StringVar(&timestampMapping, "timestamp-mapping", "timestamp", "")
-	var dd uint32
-	_ = dd
-	logsElasticsearchLogsCmd.Flags().Uint32("foo", 0, "")
-	// logsElasticsearchLogsCmd.Flags().Uint32("foo", dd, "")
 
 	// Note if one exist it should trigger an update (to append the new source to sources if the source does not exist yet)
 	// Will require list sources maybe ?
