@@ -30,7 +30,6 @@ func newInfraViewCommand() *cobra.Command {
 		Use: "infraview [backend]",
 		// RunE: create,
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, infraViewCmd)
 	common.RequiredPersistentFlag(common.WithFlagProject, infraViewCmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, infraViewCmd)
 
@@ -75,7 +74,6 @@ func newEventsCommand() *cobra.Command {
 	var eventCmd = &cobra.Command{
 		Use: "events [backend]",
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, eventCmd)
 
 	// Aws CW logs
 	var eventsAWSCloudWatchLogsCmd = &cobra.Command{
@@ -93,7 +91,6 @@ func newLogsCommand() *cobra.Command {
 	var logsCmd = &cobra.Command{
 		Use: "logs [backend]",
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, logsCmd)
 
 	// Aws CW logs
 	var logsAWSCloudWatchLogsCmd = &cobra.Command{

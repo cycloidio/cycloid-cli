@@ -12,6 +12,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/youdeploy-cli/client/client/cycloid"
+	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
 )
 
@@ -59,6 +60,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 	cli.Transport = transport
 
 	cli.Cycloid = cycloid.New(transport, formats)
+
+	cli.OrganizationCredentials = organization_credentials.New(transport, formats)
 
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 
@@ -108,6 +111,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type APIClient struct {
 	Cycloid *cycloid.Client
 
+	OrganizationCredentials *organization_credentials.Client
+
 	OrganizationExternalBackends *organization_external_backends.Client
 
 	Transport runtime.ClientTransport
@@ -118,6 +123,8 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 
 	c.Cycloid.SetTransport(transport)
+
+	c.OrganizationCredentials.SetTransport(transport)
 
 	c.OrganizationExternalBackends.SetTransport(transport)
 

@@ -6127,11 +6127,6 @@ paths:
       responses:
         '200':
           description: List of the Credentials
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -6204,11 +6199,6 @@ paths:
           description: >-
             Credential created. The body contains the information of the new
             created Credential.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -6243,11 +6233,6 @@ paths:
       responses:
         '200':
           description: The information of the Credential which has the specified ID.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -6319,11 +6304,6 @@ paths:
       responses:
         '200':
           description: Credential updated.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:

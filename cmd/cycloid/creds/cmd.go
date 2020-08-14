@@ -1,6 +1,7 @@
 package creds
 
 import (
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 )
 
@@ -16,6 +17,7 @@ func NewCommands() *cobra.Command {
 		NewDeleteCommand(),
 		NewListCommand(),
 		NewGetCommand())
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	return cmd
 }

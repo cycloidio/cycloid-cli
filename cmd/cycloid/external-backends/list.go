@@ -12,8 +12,6 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var ebProject string
-
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",

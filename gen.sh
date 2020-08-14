@@ -32,7 +32,8 @@ docker-compose run swagger generate client \
 --target=./client \
 --name=api \
 --tags=Cycloid \
---tags="Organization External Backends"
+--tags="Organization External Backends" \
+--tags="Organization Credentials"
 fi
 
 
