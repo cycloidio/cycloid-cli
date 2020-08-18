@@ -1,6 +1,7 @@
 package configRepositories
 
 import (
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 )
 
@@ -10,6 +11,8 @@ func NewCommands() *cobra.Command {
 		Short: "...",
 		Long:  `........ . . .... .. .. ....`,
 	}
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
+
 	cmd.AddCommand(NewCreateCommand(),
 		NewUpdateCommand(),
 		NewDeleteCommand(),

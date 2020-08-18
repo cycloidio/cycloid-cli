@@ -9,6 +9,14 @@ var envFlag string
 var orgFlag string
 var credFlag, idFlag uint32
 
+func WithFlagOrg(cmd *cobra.Command) string {
+	flagName := "org"
+	_ = orgFlag
+	cmd.PersistentFlags().String(flagName, "dd", "Org cannonical name")
+	// cmd.PersistentFlags().StringVar(&orgFlag, flagName, "", "Org cannonical name")
+	return flagName
+}
+
 func WithFlagProject(cmd *cobra.Command) string {
 	flagName := "project"
 	cmd.PersistentFlags().StringVar(&projectFlag, flagName, "default-project", "Project cannonical name")
@@ -18,12 +26,6 @@ func WithFlagProject(cmd *cobra.Command) string {
 func WithFlagEnv(cmd *cobra.Command) string {
 	flagName := "env"
 	cmd.PersistentFlags().StringVar(&envFlag, flagName, "default-env", "Environment")
-	return flagName
-}
-
-func WithFlagOrg(cmd *cobra.Command) string {
-	flagName := "org"
-	cmd.PersistentFlags().StringVar(&orgFlag, flagName, "default-org", "Org cannonical name")
 	return flagName
 }
 

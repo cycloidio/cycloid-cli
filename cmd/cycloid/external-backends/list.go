@@ -29,6 +29,7 @@ func NewListCommand() *cobra.Command {
 func list(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
 
+	// org := viper.GetString("org")
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
 		return err

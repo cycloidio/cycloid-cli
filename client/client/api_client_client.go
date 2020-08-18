@@ -14,6 +14,7 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/cycloid"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
+	"github.com/cycloidio/youdeploy-cli/client/client/organizations"
 )
 
 // Default API client HTTP client.
@@ -65,6 +66,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 
+	cli.Organizations = organizations.New(transport, formats)
+
 	return cli
 }
 
@@ -115,6 +118,8 @@ type APIClient struct {
 
 	OrganizationExternalBackends *organization_external_backends.Client
 
+	Organizations *organizations.Client
+
 	Transport runtime.ClientTransport
 }
 
@@ -127,5 +132,7 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.OrganizationCredentials.SetTransport(transport)
 
 	c.OrganizationExternalBackends.SetTransport(transport)
+
+	c.Organizations.SetTransport(transport)
 
 }

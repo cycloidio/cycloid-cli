@@ -10,6 +10,7 @@ func NewCommands() *cobra.Command {
 		Short: "...",
 		Long:  `........ . . .... .. .. ....`,
 	}
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.AddCommand(NewUpdateCommand(),
 		NewGetCommand(),

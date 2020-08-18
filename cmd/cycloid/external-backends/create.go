@@ -38,7 +38,7 @@ func newInfraViewCommand() *cobra.Command {
 		Use:  "AWSRemoteTFState",
 		RunE: createInfraView,
 	}
-	common.RequiredFlag(WithFlagAwsRegion, aWSRemoteTFState)
+	WithFlagAwsRegion(aWSRemoteTFState)
 	common.RequiredFlag(common.WithFlagCred, aWSRemoteTFState)
 	WithFlagBucketName(aWSRemoteTFState)
 	WithFlagBucketPath(aWSRemoteTFState)
@@ -80,7 +80,7 @@ func newEventsCommand() *cobra.Command {
 		Use:  "AWSCloudWatchLogs",
 		RunE: createEvents,
 	}
-	common.RequiredFlag(WithFlagAwsRegion, eventsAWSCloudWatchLogsCmd)
+	WithFlagAwsRegion(eventsAWSCloudWatchLogsCmd)
 	common.RequiredFlag(common.WithFlagCred, eventsAWSCloudWatchLogsCmd)
 
 	eventCmd.AddCommand(eventsAWSCloudWatchLogsCmd)
@@ -97,7 +97,7 @@ func newLogsCommand() *cobra.Command {
 		Use:  "AWSCloudWatchLogs",
 		RunE: createLogs,
 	}
-	common.RequiredFlag(WithFlagAwsRegion, logsAWSCloudWatchLogsCmd)
+	WithFlagAwsRegion(logsAWSCloudWatchLogsCmd)
 	common.RequiredPersistentFlag(common.WithFlagProject, logsAWSCloudWatchLogsCmd)
 
 	// Elasticsearch

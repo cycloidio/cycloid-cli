@@ -111,7 +111,6 @@ func create(cmd *cobra.Command, args []string) error {
 		sshKey, err := ioutil.ReadFile(sshKeyPath)
 		if err != nil {
 			return errors.New("File reading error")
-
 		}
 
 		rawCred = &models.CredentialRaw{
