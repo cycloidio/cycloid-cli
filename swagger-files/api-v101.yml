@@ -12197,10 +12197,6 @@ paths:
       responses:
         '200':
           description: List of the workers which authenticated user has access to.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
           schema:
             type: object
             required:
@@ -12380,11 +12376,6 @@ paths:
       responses:
         '200':
           description: List of the organizations which authenticated user has access.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -12448,11 +12439,6 @@ paths:
           description: >-
             Organization created. The body contains the information of the new
             created organization.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -12505,12 +12491,6 @@ paths:
         '200':
           description: >-
             The list of events which fulfills the query parameters filter
-          headers:
-            Content-Length:
-              description: >-
-                The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             description: The list of log lines
@@ -12620,11 +12600,6 @@ paths:
       responses:
         '200':
           description: The information of the organization which has the specified ID.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:

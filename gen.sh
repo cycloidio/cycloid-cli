@@ -36,6 +36,7 @@ docker-compose run swagger generate client \
 --tags="Organization Credentials" \
 --tags="Organization projects" \
 --tags="Service catalogs" \
+--tags="Organization workers" \
 --tags="Organization Config Repositories" \
 --tags="Organizations"
 fi

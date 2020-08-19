@@ -62,10 +62,6 @@ func NewGetOrgsOK() *GetOrgsOK {
 List of the organizations which authenticated user has access.
 */
 type GetOrgsOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *GetOrgsOKBody
 }
 
@@ -78,13 +74,6 @@ func (o *GetOrgsOK) GetPayload() *GetOrgsOKBody {
 }
 
 func (o *GetOrgsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(GetOrgsOKBody)
 

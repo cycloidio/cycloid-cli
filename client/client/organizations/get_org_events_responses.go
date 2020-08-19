@@ -74,10 +74,6 @@ func NewGetOrgEventsOK() *GetOrgEventsOK {
 The list of events which fulfills the query parameters filter
 */
 type GetOrgEventsOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *GetOrgEventsOKBody
 }
 
@@ -90,13 +86,6 @@ func (o *GetOrgEventsOK) GetPayload() *GetOrgEventsOKBody {
 }
 
 func (o *GetOrgEventsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(GetOrgEventsOKBody)
 
