@@ -19,13 +19,13 @@ func WithFlagOrg(cmd *cobra.Command) string {
 
 func WithFlagProject(cmd *cobra.Command) string {
 	flagName := "project"
-	cmd.PersistentFlags().StringVar(&projectFlag, flagName, "default-project", "Project cannonical name")
+	cmd.PersistentFlags().StringVar(&projectFlag, flagName, "", "Project cannonical name")
 	return flagName
 }
 
 func WithFlagEnv(cmd *cobra.Command) string {
 	flagName := "env"
-	cmd.PersistentFlags().StringVar(&envFlag, flagName, "default-env", "Environment")
+	cmd.PersistentFlags().StringVar(&envFlag, flagName, "", "Environment")
 	return flagName
 }
 

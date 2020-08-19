@@ -18,7 +18,6 @@ func NewGetCommand() *cobra.Command {
 		RunE:  get,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 	common.RequiredFlag(common.WithFlagID, cmd)
 	return cmd
 }
@@ -46,7 +45,7 @@ func get(cmd *cobra.Command, args []string) error {
 
 	p := resp.GetPayload()
 
-	// TODO this validate have been removed https://cycloid-io.slack.com/archives/C474JC17X/p1597412900345100
+	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
 	// err = p.Validate(strfmt.Default)
 	// if err != nil {
 	// 	return err

@@ -31,6 +31,8 @@ func NewSendCommand() *cobra.Command {
 
 	cmd.Flags().StringToStringVar(&tagsFlag, "tag", nil, "key=value")
 	cmd.MarkFlagRequired("tag")
+	cmd.Flags().StringVar(&titleFlag, "title", "", "...")
+	cmd.MarkFlagRequired("title")
 
 	cmd.Flags().StringVar(&colorFlag, "color", "", "...")
 	cmd.Flags().StringVar(&messageFlag, "message", "", "...")
@@ -38,13 +40,6 @@ func NewSendCommand() *cobra.Command {
 	cmd.Flags().StringVar(&iconFlag, "icon", "", "...")
 	cmd.Flags().StringVar(&severityFlag, "severity", "info", "...")
 	cmd.Flags().StringVar(&typeFlag, "type", "Custom", "...")
-	cmd.Flags().StringVar(&titleFlag, "title", "", "...")
-	cmd.MarkFlagRequired("title")
-
-	// The message associated to the event.
-	// Required: true
-	// Min Length: 1
-	// Message *string `json:"message"`
 
 	return cmd
 }

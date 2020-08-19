@@ -17,7 +17,6 @@ func NewDeleteCommand() *cobra.Command {
 		RunE:  delete,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 	common.RequiredFlag(common.WithFlagID, cmd)
 	return cmd
 }

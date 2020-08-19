@@ -12,9 +12,12 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/youdeploy-cli/client/client/cycloid"
+	"github.com/cycloidio/youdeploy-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
+	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	"github.com/cycloidio/youdeploy-cli/client/client/organizations"
+	"github.com/cycloidio/youdeploy-cli/client/client/service_catalogs"
 )
 
 // Default API client HTTP client.
@@ -62,11 +65,17 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 
 	cli.Cycloid = cycloid.New(transport, formats)
 
+	cli.OrganizationConfigRepositories = organization_config_repositories.New(transport, formats)
+
 	cli.OrganizationCredentials = organization_credentials.New(transport, formats)
 
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 
+	cli.OrganizationProjects = organization_projects.New(transport, formats)
+
 	cli.Organizations = organizations.New(transport, formats)
+
+	cli.ServiceCatalogs = service_catalogs.New(transport, formats)
 
 	return cli
 }
@@ -114,11 +123,17 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type APIClient struct {
 	Cycloid *cycloid.Client
 
+	OrganizationConfigRepositories *organization_config_repositories.Client
+
 	OrganizationCredentials *organization_credentials.Client
 
 	OrganizationExternalBackends *organization_external_backends.Client
 
+	OrganizationProjects *organization_projects.Client
+
 	Organizations *organizations.Client
+
+	ServiceCatalogs *service_catalogs.Client
 
 	Transport runtime.ClientTransport
 }
@@ -129,10 +144,16 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 
 	c.Cycloid.SetTransport(transport)
 
+	c.OrganizationConfigRepositories.SetTransport(transport)
+
 	c.OrganizationCredentials.SetTransport(transport)
 
 	c.OrganizationExternalBackends.SetTransport(transport)
 
+	c.OrganizationProjects.SetTransport(transport)
+
 	c.Organizations.SetTransport(transport)
+
+	c.ServiceCatalogs.SetTransport(transport)
 
 }

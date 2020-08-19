@@ -13,8 +13,7 @@ func NewCommands() *cobra.Command {
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
-	cmd.AddCommand(NewUpdateCommand(),
-		NewDeleteCommand(),
+	cmd.AddCommand(NewDeleteCommand(),
 		NewCreateCommand(),
 		NewListCommand(),
 		NewGetCommand())

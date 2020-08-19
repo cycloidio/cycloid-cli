@@ -5,6 +5,8 @@ import (
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/creds"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/events"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/external-backends"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/projects"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/stacks"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -32,7 +34,7 @@ func AttachCommands(cmd *cobra.Command) {
 		// environments.NewCommands(),
 		events.NewCommands(),
 		// pipelines.NewCommands(),
-		// projects.NewCommands(),
-		// stacks.NewCommands(),
+		projects.NewCommands(),
+		stacks.NewCommands(),
 	)
 }

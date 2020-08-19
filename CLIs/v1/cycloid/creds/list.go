@@ -5,7 +5,6 @@ import (
 
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
@@ -18,7 +17,6 @@ func NewListCommand() *cobra.Command {
 		RunE:  list,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 	WithFlagType(cmd)
 	return cmd
 }
@@ -49,7 +47,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// api.OrganizationExternalBackends.GetExternalBackends(params *GetExternalBackendsParams, authInfo runtime.ClientAuthInfoWriter)
 	fmt.Println("...")
 	p := resp.GetPayload()
 	err = p.Validate(strfmt.Default)

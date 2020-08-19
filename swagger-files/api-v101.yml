@@ -12833,11 +12833,6 @@ paths:
       responses:
         '200':
           description: List of the service catalogs.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -13095,11 +13090,6 @@ paths:
       responses:
         '200':
           description: The information of the service catalog.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
