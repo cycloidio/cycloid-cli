@@ -17,7 +17,7 @@ func NewDeleteCommand() *cobra.Command {
 		RunE:  delete,
 	}
 
-	common.RequiredFlag(WithFlagCanonical, cmd)
+	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	return cmd
 }
 
@@ -28,14 +28,14 @@ func delete(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	canonical, err := cmd.Flags().GetString("canonical")
+	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err
 	}
 
 	params := organization_projects.NewDeleteProjectParams()
 	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(canonical)
+	params.SetProjectCanonical(project)
 
 	resp, err := api.OrganizationProjects.DeleteProject(params, root.ClientCredentials())
 	if err != nil {

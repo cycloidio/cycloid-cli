@@ -50,3 +50,12 @@ func ReplaceCycloidVarsString(ctx CycloidContext, text string) string {
 	}
 	return text
 }
+
+func IsInList(pattern string, list []string) bool {
+	for _, x := range list {
+		if x == pattern {
+			return true
+		}
+	}
+	return false
+}

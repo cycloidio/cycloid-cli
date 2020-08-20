@@ -117,7 +117,8 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("Pipeline variables file reading error : %s", err.Error())
 	}
-	vars := string(rawVars)
+
+	vars := common.ReplaceCycloidVarsString(cyCtx, string(rawVars))
 
 	pipelineName := fmt.Sprintf("%s-%s", canonical, env)
 

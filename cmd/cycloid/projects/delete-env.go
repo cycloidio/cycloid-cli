@@ -6,22 +6,24 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+
 	"github.com/spf13/cobra"
 )
 
-func NewDeleteCommand() *cobra.Command {
+func NewDeleteEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
+		Use:   "delete-env",
 		Short: "...",
 		Long:  `........ . . .... .. .. ....`,
-		RunE:  delete,
+		RunE:  deleteEnv,
 	}
-
+	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
+
 	return cmd
 }
 
-func delete(cmd *cobra.Command, args []string) error {
+func deleteEnv(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
 
 	org, err := cmd.Flags().GetString("org")
@@ -32,12 +34,17 @@ func delete(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	env, err := cmd.Flags().GetString("env")
+	if err != nil {
+		return err
+	}
 
-	params := organization_projects.NewDeleteProjectParams()
+	params := organization_projects.NewDeleteProjectEnvironmentParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
+	params.SetEnvironmentCanonical(env)
 
-	resp, err := api.OrganizationProjects.DeleteProject(params, root.ClientCredentials())
+	resp, err := api.OrganizationProjects.DeleteProjectEnvironment(params, root.ClientCredentials())
 	if err != nil {
 		return err
 	}
@@ -47,6 +54,6 @@ func delete(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-// /organizations/{organization_canonical}/projects/{project_canonical}
-// delete: deleteProject
-// Delete a project of the organization.
+// /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}
+// delete: deleteProjectEnvironment
+// Delete a project environment of the organization, and the project itself if it's the last environment.
