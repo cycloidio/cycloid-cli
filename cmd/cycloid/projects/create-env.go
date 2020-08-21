@@ -9,6 +9,7 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	"github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -251,6 +252,10 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	//
 	// PIPELINE UNPAUSE
 	//
+	err = pipelines.Unpause(api, org, project, env)
+	if err != nil {
+		return err
+	}
 
 	fmt.Println(resp)
 
