@@ -40,8 +40,6 @@ func listConfigRepositories(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println(resp)
-	fmt.Println("...")
 
 	crs := resp.GetPayload()
 

@@ -40,8 +40,6 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	_ = api
-
 	params := organization_config_repositories.NewGetConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
 	params.SetConfigRepositoryID(id)
