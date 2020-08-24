@@ -685,11 +685,6 @@ responses:
       internal server error.
     schema:
       $ref: '#/definitions/ErrorPayload'
-    headers:
-      Content-Length:
-        description: The length of the response body in octets (8-bit bytes).
-        type: integer
-        format: int64
     examples:
       application/json:
         errors:
@@ -700,11 +695,6 @@ responses:
       All the custom errors that are generated from the Cycloid API
     schema:
       $ref: '#/definitions/ErrorPayload'
-    headers:
-      Content-Length:
-        description: The length of the response body in octets (8-bit bytes).
-        type: integer
-        format: int64
     examples:
       application/json:
         errors:
@@ -5900,11 +5890,6 @@ paths:
       responses:
         '200':
           description: List of the config repositories.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -11443,11 +11428,6 @@ paths:
       responses:
         '200':
           description: Organization Service Catalog Sources.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -11497,11 +11477,6 @@ paths:
       responses:
         '200':
           description: Success update
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -12899,11 +12874,6 @@ paths:
       responses:
         '200':
           description: The config of the service catalog.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -13125,11 +13095,6 @@ paths:
         '200':
           description: >-
             Updated the Service Catalog
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:

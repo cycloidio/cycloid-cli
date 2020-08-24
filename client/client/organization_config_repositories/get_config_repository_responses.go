@@ -155,10 +155,6 @@ func NewGetConfigRepositoryUnprocessableEntity() *GetConfigRepositoryUnprocessab
 All the custom errors that are generated from the Cycloid API
 */
 type GetConfigRepositoryUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -171,13 +167,6 @@ func (o *GetConfigRepositoryUnprocessableEntity) GetPayload() *models.ErrorPaylo
 }
 
 func (o *GetConfigRepositoryUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -203,10 +192,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetConfigRepositoryDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -224,13 +209,6 @@ func (o *GetConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetConfigRepositoryDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

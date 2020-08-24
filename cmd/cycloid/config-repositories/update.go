@@ -74,8 +74,6 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	_ = id
-
 	params := organization_config_repositories.NewUpdateConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
 	params.SetConfigRepositoryID(id)

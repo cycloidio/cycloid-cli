@@ -20,6 +20,8 @@ func NewCreateCommand() *cobra.Command {
 		RunE:  createConfigRepository,
 	}
 
+	// create --branch test --cred 105 --url "git@github.com:foo/bla.git"  --name configname  --default
+
 	common.RequiredFlag(common.WithFlagCred, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)

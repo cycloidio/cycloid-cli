@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/catalog-repositories"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/config-repositories"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/creds"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/events"
@@ -30,7 +31,7 @@ func AttachCommands(cmd *cobra.Command) {
 		root.NewDeprecatedExampleCmd(),
 
 		organizations.NewCommands(),
-		// catalogRepositories.NewCommands(),
+		catalogRepositories.NewCommands(),
 		configRepositories.NewCommands(),
 		creds.NewCommands(),
 		externalBackends.NewCommands(),
