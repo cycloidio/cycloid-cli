@@ -16,6 +16,8 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines"
+	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs"
+	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs_build"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_service_catalog_sources"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_workers"
@@ -75,6 +77,10 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 
 	cli.OrganizationPipelines = organization_pipelines.New(transport, formats)
+
+	cli.OrganizationPipelinesJobs = organization_pipelines_jobs.New(transport, formats)
+
+	cli.OrganizationPipelinesJobsBuild = organization_pipelines_jobs_build.New(transport, formats)
 
 	cli.OrganizationProjects = organization_projects.New(transport, formats)
 
@@ -140,6 +146,10 @@ type APIClient struct {
 
 	OrganizationPipelines *organization_pipelines.Client
 
+	OrganizationPipelinesJobs *organization_pipelines_jobs.Client
+
+	OrganizationPipelinesJobsBuild *organization_pipelines_jobs_build.Client
+
 	OrganizationProjects *organization_projects.Client
 
 	OrganizationServiceCatalogSources *organization_service_catalog_sources.Client
@@ -166,6 +176,10 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.OrganizationExternalBackends.SetTransport(transport)
 
 	c.OrganizationPipelines.SetTransport(transport)
+
+	c.OrganizationPipelinesJobs.SetTransport(transport)
+
+	c.OrganizationPipelinesJobsBuild.SetTransport(transport)
 
 	c.OrganizationProjects.SetTransport(transport)
 

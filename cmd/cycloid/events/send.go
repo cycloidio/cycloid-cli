@@ -46,7 +46,6 @@ func NewSendCommand() *cobra.Command {
 
 func send(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
-	fmt.Println(args)
 
 	var err error
 	var body *models.NewEvent
@@ -97,8 +96,8 @@ func send(cmd *cobra.Command, args []string) error {
 		return errors.New("required flag(s) \"message\" or \"message-file\" not set")
 	}
 
-	eventP := organizations.NewSendOrgEventParams()
-	eventP.SetOrganizationCanonical(org)
+	params := organizations.NewSendOrgEventParams()
+	params.SetOrganizationCanonical(org)
 
 	var ts []*models.Tag
 
@@ -124,13 +123,13 @@ func send(cmd *cobra.Command, args []string) error {
 		Message:  &msg,
 	}
 
-	eventP.SetBody(body)
+	params.SetBody(body)
 	err = body.Validate(strfmt.Default)
 	if err != nil {
 		return err
 	}
 
-	resp, err := api.Organizations.SendOrgEvent(eventP, root.ClientCredentials())
+	resp, err := api.Organizations.SendOrgEvent(params, root.ClientCredentials())
 	if err != nil {
 		return err
 	}
