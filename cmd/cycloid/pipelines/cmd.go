@@ -15,18 +15,18 @@ func NewCommands() *cobra.Command {
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.AddCommand(NewUnpauseJobCommand(),
+		NewUpdateCommand(),
+		NewGetJobCommand(),
+		NewGetListBuildsCommand(),
 		NewListJobsCommand(),
 		NewDiffCommand(),
 		NewUnpauseCommand(),
 		NewPauseCommand(),
-		NewGetBuildCommand(),
+		// NewGetBuildCommand(),
 		NewTriggerBuildCommand(),
-		NewUpdateCommand(),
-		NewGetCommand(),
+		// NewGetCommand(),
 		NewClearTaskCacheCommand(),
-		NewListCommand(),
-		NewGetJobCommand(),
-		NewGetListBuildsCommand(),
+		// NewListCommand(),
 		NewPauseJobCommand())
 
 	return cmd

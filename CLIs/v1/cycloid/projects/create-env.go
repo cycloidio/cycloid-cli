@@ -9,8 +9,8 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	"github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/spf13/cobra"
@@ -71,7 +71,8 @@ func NewCreateEnvCommand() *cobra.Command {
 
 func createEnv(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
-	//
+	m := middleware.NewMiddleware(api)
+
 	var err error
 	var body *models.UpdateProject
 	// var pipelines []*models.NewPipeline
@@ -84,22 +85,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	// description, err := cmd.Flags().GetString("description")
-	// if err != nil {
-	// 	return err
-	// }
-	// cloudProvider, err := cmd.Flags().GetString("cloud-provider")
-	// if err != nil {
-	// 	return err
-	// }
-	// stackRef, err := cmd.Flags().GetString("stack-ref")
-	// if err != nil {
-	// 	return err
-	// }
-	// configRepo, err := cmd.Flags().GetUint32("config-repo")
-	// if err != nil {
-	// 	return err
-	// }
 	env, err := cmd.Flags().GetString("env")
 	if err != nil {
 		return err
@@ -125,7 +110,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		Org:     org,
 		Project: project}
 
-	projectData, err := Get(api, org, project)
+	projectData, err := m.GetProject(org, project)
 	if err != nil {
 		return err
 	}
@@ -206,11 +191,12 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	//
 	// PUSH CONFIG If project creation succeeded we push the config files
 	//
-	paramsC := organization_config_repositories.NewCreateConfigRepositoryConfigParams()
-	paramsC.SetOrganizationCanonical(org)
-	paramsC.SetConfigRepositoryID(projectData.ConfigRepositoryID)
 
 	if len(configs) > 0 {
+		paramsC := organization_config_repositories.NewCreateConfigRepositoryConfigParams()
+		paramsC.SetOrganizationCanonical(org)
+		paramsC.SetConfigRepositoryID(projectData.ConfigRepositoryID)
+
 		var cfs []*models.ConfigFile
 
 		for fp, dest := range configs {
@@ -252,7 +238,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	//
 	// PIPELINE UNPAUSE
 	//
-	err = pipelines.Unpause(api, org, project, env)
+	err = m.UnpausePipeline(org, project, env)
 	if err != nil {
 		return err
 	}

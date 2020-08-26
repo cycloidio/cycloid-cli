@@ -38,6 +38,8 @@ docker-compose run swagger generate client \
 --tags="Service catalogs" \
 --tags="Organization workers" \
 --tags="Organization pipelines" \
+--tags="Organization pipelines jobs" \
+--tags="Organization pipelines jobs build" \
 --tags="Organization Config Repositories" \
 --tags="Organization Service Catalog Sources" \
 --tags="Organizations"
