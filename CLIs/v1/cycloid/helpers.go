@@ -1,6 +1,8 @@
 package root
 
 import (
+	"os"
+
 	"github.com/cycloidio/youdeploy-cli/client/client"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -27,7 +29,10 @@ func NewAPI() *client.APIClient {
 }
 
 func ClientCredentials() runtime.ClientAuthInfoWriter {
-	token := "eyJhbGciOiJIUzI1NiIsImtpZCI6IjJmMjEyMmRlLTYzZjItNGVlYy05YzZmLWM2YWJiM2UxZjAwNyIsInR5cCI6IkpXVCJ9.eyJjeWNsb2lkIjp7InVzZXIiOnsiaWQiOjIsInVzZXJuYW1lIjoiY3ljbG9pZF9zZXJhZiIsImdpdmVuX25hbWUiOiJKdWxpZW4iLCJmYW1pbHlfbmFtZSI6IlN5eCIsInBpY3R1cmVfdXJsIjoiaHR0cHM6Ly9hdmF0YXJzMi5naXRodWJ1c2VyY29udGVudC5jb20vdS8zOTMzMjQ_cz00MDBcdTAwMjZ1PTIxNTE5ZmQwYzUyMDI3NTgxMWYyZTNmYmIxZmIxZmE4ZTQxZTM2MDBcdTAwMjZ2PTQiLCJsb2NhbGUiOiJlbiJ9LCJvcmdhbml6YXRpb24iOnsiaWQiOjE1MiwiY2Fub25pY2FsIjoiY3ljbG9pZC1kZW1vIiwibmFtZSI6IkN5Y2xvaWQtZGVtbyIsImJsb2NrZWQiOltdLCJoYXNfY2hpbGRyZW4iOmZhbHNlfSwicGVybWlzc2lvbnMiOnsib3JnYW5pemF0aW9uOmFkbWluIjpbXX19LCJhdWQiOiJjdXN0b21lciIsImV4cCI6MTU5ODQzNjQ5NCwianRpIjoiZWVkMzJhZTItNDhlMi00N2EzLTg4ZTEtYzUyMzY3YTk3ZDIxIiwiaWF0IjoxNTk4MzUwMDk0LCJpc3MiOiJodHRwczovL2N5Y2xvaWQuaW8iLCJuYmYiOjE1OTgzNTAwOTQsInN1YiI6Imh0dHBzOi8vY3ljbG9pZC5pbyJ9.GieyC-QtOubmQO5XAwnfhiKZUcDi9adOM4hlfIruGx8"
+	token := os.Getenv("TOKEN")
+	if token == "" {
+		panic("env var TOKEN not found")
+	}
 
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
 		r.SetHeaderParam("Authorization", "Bearer "+token)

@@ -3,10 +3,9 @@ package pipelines
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 
 	"github.com/spf13/cobra"
 )
@@ -27,6 +26,7 @@ func NewUnpauseCommand() *cobra.Command {
 
 func unpause(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -41,7 +41,7 @@ func unpause(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = Unpause(api, org, project, env)
+	err = m.UnpausePipeline(org, project, env)
 	if err != nil {
 		return err
 	}
@@ -50,24 +50,3 @@ func unpause(cmd *cobra.Command, args []string) error {
 	fmt.Printf("%+v\n", err)
 	return nil
 }
-
-func Unpause(api *client.APIClient, org string, project string, env string) error {
-
-	pipelineName := fmt.Sprintf("%s-%s", project, env)
-
-	params := organization_pipelines.NewUnpausePipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetInpathPipelineName(pipelineName)
-
-	_, err := api.OrganizationPipelines.UnpausePipeline(params, root.ClientCredentials())
-	// if err != nil {
-	// 	return nil, err
-	// }
-
-	return err
-}
-
-// /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause
-// put: unpausePipeline
-// Unpause a pipeline

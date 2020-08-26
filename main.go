@@ -136,7 +136,6 @@ func main() {
 	// }
 
 	ver, err := strconv.Atoi(os.Getenv("V"))
-
 	if err == nil {
 		version = ver
 	}

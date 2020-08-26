@@ -25,6 +25,7 @@ docker run -it -p 80:5000 gaell/simple-docker-app
 # Build and run cli using plugin version 1
 
 ```
+export TOKEN="1324567896321"
 make build &&  V=1 ./cy external-backends list
 ```
 

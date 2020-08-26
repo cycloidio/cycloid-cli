@@ -9,7 +9,7 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/projects"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
@@ -32,6 +32,7 @@ func NewUpdateCommand() *cobra.Command {
 
 func update(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	var err error
 	var body *models.UpdatePipeline
@@ -61,9 +62,16 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	cyCtx := common.CycloidContext{Env: env,
+		Org:     org,
+		Project: project}
+
+	pipelineName := fmt.Sprintf("%s-%s", project, env)
+
 	params := organization_pipelines.NewUpdatePipelineParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
+	params.SetInpathPipelineName(pipelineName)
 
 	rawPipeline, err := ioutil.ReadFile(pipelinePath)
 	if err != nil {
@@ -77,10 +85,7 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 	vars := common.ReplaceCycloidVarsString(cyCtx, string(rawVars))
 
-	pipelineName := fmt.Sprintf("%s-%s", project, env)
-
-	body := &models.NewPipeline{
-		PipelineName: &pipelineName,
+	body = &models.UpdatePipeline{
 		PassedConfig: &pipelineTemplate,
 		YamlVars:     vars,
 	}
@@ -90,7 +95,7 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	params.SetBody(body)
-	resp, err = api.OrganizationPipelines.UpdatePipeline(params, root.ClientCredentials())
+	resp, err := api.OrganizationPipelines.UpdatePipeline(params, root.ClientCredentials())
 	if err != nil {
 		return err
 	}
@@ -100,10 +105,10 @@ func update(cmd *cobra.Command, args []string) error {
 	//
 
 	if len(configs) > 0 {
-			projectData, err := projects.Get(api, org, project)
-			if err != nil {
-				return err
-			}
+		projectData, err := m.GetProject(org, project)
+		if err != nil {
+			return err
+		}
 
 		paramsC := organization_config_repositories.NewCreateConfigRepositoryConfigParams()
 		paramsC.SetOrganizationCanonical(org)
