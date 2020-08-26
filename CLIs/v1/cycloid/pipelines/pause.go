@@ -3,10 +3,9 @@ package pipelines
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 
 	"github.com/spf13/cobra"
 )
@@ -27,6 +26,7 @@ func NewPauseCommand() *cobra.Command {
 
 func pause(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -41,7 +41,7 @@ func pause(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = Pause(api, org, project, env)
+	err = m.PausePipeline(org, project, env)
 	if err != nil {
 		return err
 	}
@@ -50,21 +50,3 @@ func pause(cmd *cobra.Command, args []string) error {
 	fmt.Printf("%+v\n", err)
 	return nil
 }
-
-func Pause(api *client.APIClient, org string, project string, env string) error {
-
-	pipelineName := fmt.Sprintf("%s-%s", project, env)
-
-	params := organization_pipelines.NewPausePipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetInpathPipelineName(pipelineName)
-
-	_, err := api.OrganizationPipelines.PausePipeline(params, root.ClientCredentials())
-
-	return err
-}
-
-// /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/pause
-// put: pausePipeline
-// pause a pipeline

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	"github.com/cycloidio/youdeploy-cli/client/models"
@@ -191,44 +190,20 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	//
 	// PUSH CONFIG If project creation succeeded we push the config files
 	//
-
 	if len(configs) > 0 {
-		paramsC := organization_config_repositories.NewCreateConfigRepositoryConfigParams()
-		paramsC.SetOrganizationCanonical(org)
-		paramsC.SetConfigRepositoryID(projectData.ConfigRepositoryID)
 
-		var cfs []*models.ConfigFile
+		cfs := make(map[string]strfmt.Base64)
 
 		for fp, dest := range configs {
 			var c strfmt.Base64
-			p := common.ReplaceCycloidVarsString(cyCtx, dest)
 			c, err = ioutil.ReadFile(fp)
 			if err != nil {
 				return fmt.Errorf("Config file reading error : %s", err.Error())
 			}
-			c = common.ReplaceCycloidVars(cyCtx, c)
-
-			cf := &models.ConfigFile{
-				Content: &c,
-				Path:    &p,
-			}
-			err = cf.Validate(strfmt.Default)
-			if err != nil {
-				return err
-			}
-
-			cfs = append(cfs, cf)
+			cfs[dest] = c
 		}
 
-		bodyC := &models.SCConfig{Configs: cfs}
-
-		err = bodyC.Validate(strfmt.Default)
-		if err != nil {
-			return err
-		}
-
-		paramsC.SetBody(bodyC)
-		_, err = api.OrganizationConfigRepositories.CreateConfigRepositoryConfig(paramsC, root.ClientCredentials())
+		err = m.PushConfig(org, project, env, cfs)
 		if err != nil {
 			return err
 		}
