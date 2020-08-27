@@ -3,9 +3,9 @@ package configRepositories
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_config_repositories"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -28,6 +28,7 @@ func NewDeleteCommand() *cobra.Command {
 
 func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -39,16 +40,7 @@ func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	params := organization_config_repositories.NewDeleteConfigRepositoryParams()
-	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryID(id)
-
-	resp, err := api.OrganizationConfigRepositories.DeleteConfigRepository(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(resp)
+	err = m.DeleteConfigRepository(org, id)
 	fmt.Printf("%+v\n", err)
-	return nil
+	return err
 }

@@ -32,6 +32,11 @@ type Middleware interface {
 	ListOrganizations() ([]*models.OrganizationBasicInfo, error)
 
 	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
+	ListConfigRepositories(org string) ([]*models.ConfigRepository, error)
+	GetConfigRepository(org string, configRepo uint32) (*models.ConfigRepository, error)
+	DeleteConfigRepository(org string, configRepo uint32) error
+	CreateConfigRepository(org, name, url, branch string, setDefault bool, cred uint32) (*models.ConfigRepository, error)
+	UpdateConfigRepository(org string, configRepo uint32, name, url, branch string, setDefault bool, cred uint32) (*models.ConfigRepository, error)
 
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error
 
