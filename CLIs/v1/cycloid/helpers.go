@@ -12,10 +12,10 @@ import (
 
 func NewAPI() *client.APIClient {
 	cfg := client.DefaultTransportConfig()
-	cfg = cfg.WithHost("http-api-staging.cycloid.io")
-	cfg = cfg.WithSchemes([]string{"https"})
-	// cfg = cfg.WithHost("127.0.0.1")
-	// cfg = cfg.WithSchemes([]string{"http"})
+	// cfg = cfg.WithHost("http-api-staging.cycloid.io")
+	// cfg = cfg.WithSchemes([]string{"https"})
+	cfg = cfg.WithHost("127.0.0.1")
+	cfg = cfg.WithSchemes([]string{"http"})
 
 	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
 

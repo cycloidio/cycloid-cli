@@ -33,7 +33,7 @@ Example of all working calls (tested on staging)
 # External BE
 V=1 ./cy  external-backends create logs ElasticsearchLogs eb2  --project gaeltest --org seraf --env dev --cred 743 --url http://test --prefilter foo=bar
 V=1 ./cy  external-backends create events AWSCloudWatchLogs --org seraf --region eu-west-1 --cred 63
-V=1 ./cy --env prod --org seraf --project gaeltest  external-backends create infraview SwiftRemoteTFState  --cred 767 --region bar
+V=1 ./cy --env prod --org seraf --project gaeltest external-backends create infraview SwiftRemoteTFState  --cred 767 --region bar
 V=1 ./cy --org seraf  external-backends list
 
 # Creds
