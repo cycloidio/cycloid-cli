@@ -3,9 +3,9 @@ package pipelines
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -26,6 +26,7 @@ func NewPauseJobCommand() *cobra.Command {
 
 func pauseJob(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -44,22 +45,10 @@ func pauseJob(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	pipelineName := fmt.Sprintf("%s-%s", project, env)
+	err = m.PausePipelineJob(org, project, env, job)
 
-	params := organization_pipelines_jobs.NewPauseJobParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetInpathPipelineName(pipelineName)
-	params.SetJobName(job)
-
-	resp, err := api.OrganizationPipelinesJobs.PauseJob(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(resp)
 	fmt.Printf("%+v\n", err)
-	return nil
+	return err
 }
 
 // /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause

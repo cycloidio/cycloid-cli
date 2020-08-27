@@ -4,19 +4,19 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
 	models "github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
 func createInfraView(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	var purpose = "remote_tfstate"
 	var err error
 	var org, project, env string
-	var body *models.NewExternalBackend
 	var ebC models.ExternalBackendConfiguration
 	var engine = cmd.CalledAs()
 
@@ -33,8 +33,6 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ebParams := organization_external_backends.NewCreateExternalBackendParams()
-	ebParams.SetOrganizationCanonical(org)
 	//Common
 	cred, err := cmd.Flags().GetUint32("cred")
 	if err != nil {
@@ -116,29 +114,11 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		return errors.New("Unexpected backend name")
 	}
 
-	err = ebC.Validate(strfmt.Default)
+	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, ebC)
 	if err != nil {
 		return err
 	}
 
-	body = &models.NewExternalBackend{
-		Purpose:              &purpose,
-		ProjectCanonical:     project,
-		EnvironmentCanonical: env,
-		CredentialID:         cred,
-	}
-
-	body.SetConfiguration(ebC)
-	ebParams.SetBody(body)
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return err
-	}
-
-	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
 	fmt.Println(resp)
 
 	return nil

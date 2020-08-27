@@ -8,6 +8,7 @@ import (
 
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
 func NewGetCommand() *cobra.Command {
@@ -24,6 +25,7 @@ func NewGetCommand() *cobra.Command {
 
 func get(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -33,28 +35,14 @@ func get(cmd *cobra.Command, args []string) error {
 	params := organizations.NewGetOrgParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := api.Organizations.GetOrg(params, root.ClientCredentials())
+	d, err := m.GetOrganization(org)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("...")
-	p := resp.GetPayload()
-
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
-	d := p.Data
 	fmt.Printf("canonical: %s    name: %s     Blocked: %s    team: %s  \n", *d.Canonical, *d.Name, d.Blocked, *d.CiTeamName)
 
-	fmt.Println(resp)
+	fmt.Println(d)
 	fmt.Printf("%+v\n", err)
 	return nil
 }
-
-// /organizations/{organization_canonical}
-// get: getOrg
-// Get the information of the organization.

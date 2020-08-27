@@ -37,6 +37,9 @@ func get(cmd *cobra.Command, args []string) error {
 	}
 
 	d, err := m.GetProject(org, project)
+	if err != nil {
+		return err
+	}
 
 	fmt.Printf("cannonical: %s    svcat: %s    name: %s  \n", *d.Canonical, *d.ServiceCatalogRef, *d.Name)
 	fmt.Printf("    envs: %s\n", d.Environments)

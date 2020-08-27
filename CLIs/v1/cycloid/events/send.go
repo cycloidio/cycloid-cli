@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organizations"
-	"github.com/cycloidio/youdeploy-cli/client/models"
+	"github.com/cycloidio/youdeploy-cli/CLIs/v1/cycloid/middleware"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
-	strfmt "github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
 
@@ -46,9 +44,9 @@ func NewSendCommand() *cobra.Command {
 
 func send(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	var err error
-	var body *models.NewEvent
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -96,48 +94,7 @@ func send(cmd *cobra.Command, args []string) error {
 		return errors.New("required flag(s) \"message\" or \"message-file\" not set")
 	}
 
-	params := organizations.NewSendOrgEventParams()
-	params.SetOrganizationCanonical(org)
+	err = m.SendEvent(org, eType, title, msg, severity, tags, color)
 
-	var ts []*models.Tag
-
-	for k, v := range tags {
-		tag := &models.Tag{
-			Key:   &k,
-			Value: &v,
-		}
-		err = tag.Validate(strfmt.Default)
-		if err != nil {
-			continue
-		}
-
-		ts = append(ts, tag)
-	}
-
-	body = &models.NewEvent{
-		Tags:     ts,
-		Type:     &eType,
-		Title:    &title,
-		Color:    color,
-		Severity: &severity,
-		Message:  &msg,
-	}
-
-	params.SetBody(body)
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return err
-	}
-
-	resp, err := api.Organizations.SendOrgEvent(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-	fmt.Println(resp)
-
-	return nil
+	return err
 }
-
-// '/organizations/{organization_canonical}/events':
-// post: sendOrgEvent
-// Send a event on the organization to be registered.

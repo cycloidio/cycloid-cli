@@ -7,6 +7,7 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -24,6 +25,7 @@ func NewGetCommand() *cobra.Command {
 
 func get(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -34,24 +36,15 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	credP := organization_credentials.NewGetCredentialParams()
-	credP.SetOrganizationCanonical(org)
-	credP.SetCredentialID(id)
+	params := organization_credentials.NewGetCredentialParams()
+	params.SetOrganizationCanonical(org)
+	params.SetCredentialID(id)
 
-	resp, err := api.OrganizationCredentials.GetCredential(credP, root.ClientCredentials())
+	c, err := m.GetCredential(org, id)
 	if err != nil {
 		return err
 	}
 
-	p := resp.GetPayload()
-
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
-	c := p.Data
 	fmt.Printf("id: %d  Name: %s  type: %s    path: %s  \n", *c.ID, *c.Name, *c.Type, *c.Path)
 
 	fields := reflect.TypeOf(*c.Raw)
@@ -67,11 +60,7 @@ func get(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	fmt.Println(resp)
+	fmt.Println(c)
 	fmt.Printf("%+v\n", err)
 	return nil
 }
-
-// /organizations/{organization_canonical}/credentials/{credential_id}
-// get: getCredential
-// Get the information of the Credential.

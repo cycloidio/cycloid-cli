@@ -3,9 +3,9 @@ package pipelines
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -25,6 +25,7 @@ func NewListJobsCommand() *cobra.Command {
 
 func listJobs(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -39,32 +40,18 @@ func listJobs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	pipelineName := fmt.Sprintf("%s-%s", project, env)
-
-	params := organization_pipelines_jobs.NewGetJobsParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetInpathPipelineName(pipelineName)
-
-	resp, err := api.OrganizationPipelinesJobs.GetJobs(params, root.ClientCredentials())
+	js, err := m.ListPipelineJobs(org, project, env)
 	if err != nil {
 		return err
 	}
 
-	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
-	for _, d := range p.Data {
+	for _, d := range js {
 		fmt.Printf("Name: %s    Paused: %s  \n", *d.Name, d.Paused)
 		fmt.Printf("    FinishedBuild: %s\n", d.FinishedBuild)
 	}
 
 	fmt.Printf("%+v\n", err)
-	fmt.Printf("%+v\n", resp)
+	fmt.Printf("%+v\n", js)
 	return nil
 }
 

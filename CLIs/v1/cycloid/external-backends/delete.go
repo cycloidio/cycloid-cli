@@ -4,10 +4,10 @@ import (
 	"fmt"
 
 	"github.com/cycloidio/youdeploy-cli/CLIs/v1/cycloid/common"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
 	"github.com/spf13/cobra"
 
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -23,11 +23,9 @@ func NewDeleteCommand() *cobra.Command {
 	return cmd
 }
 
-// /organizations/{organization_canonical}/external_backends/{external_backend_id}
-// delete: deleteExternalBackend
-// delete an External Backend
 func delete(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -38,16 +36,8 @@ func delete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ebP := organization_external_backends.NewDeleteExternalBackendParams()
-	ebP.SetOrganizationCanonical(org)
-	ebP.SetExternalBackendID(id)
+	err = m.DeleteExternalBackend(org, id)
 
-	resp, err := api.OrganizationExternalBackends.DeleteExternalBackend(ebP, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(resp)
 	fmt.Printf("%+v\n", err)
-	return nil
+	return err
 }

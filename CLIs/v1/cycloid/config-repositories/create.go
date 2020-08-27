@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_config_repositories"
-	"github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -37,6 +35,7 @@ func NewCreateCommand() *cobra.Command {
 
 func createConfigRepository(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -68,34 +67,15 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	params := organization_config_repositories.NewCreateConfigRepositoryParams()
-	params.SetOrganizationCanonical(org)
-
-	body := &models.CreateConfigRepository{
-		Branch:       &branch,
-		CredentialID: &cred,
-		Default:      &setDefault,
-		Name:         &name,
-		URL:          &url,
-	}
-
-	params.SetBody(body)
-	err = body.Validate(strfmt.Default)
+	cr, err := m.CreateConfigRepository(org, name, url, branch, setDefault, cred)
 	if err != nil {
 		return err
 	}
 
-	resp, err := api.OrganizationConfigRepositories.CreateConfigRepository(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
+	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    default: %t    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, *cr.Default, cr.CredentialID)
+	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.CreatedAt, 0), time.Unix(*cr.UpdatedAt, 0))
 
-	cr := resp.GetPayload()
-
-	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    default: %t    credential_id: %d\n", *cr.Data.ID, *cr.Data.Name, *cr.Data.URL, cr.Data.Branch, *cr.Data.Default, cr.Data.CredentialID)
-	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.Data.CreatedAt, 0), time.Unix(*cr.Data.UpdatedAt, 0))
-
-	fmt.Println(resp)
+	fmt.Println(cr)
 	fmt.Printf("%+v\n", err)
 
 	return nil
