@@ -1,4 +1,5 @@
 [ ] Move and make sure all commands are migrated to middleware
+[ ] Make cycloid url env var or --api-url
 [ ] Implement diff pipeline display (same as fly) using see https://github.com/aryann/difflib
 [ ] Work on login part -> have a look to login per orgs
   [ ] (Get org if not logged in fail. Should we remove --org and get it from the token ? Or use a user token. And let the cli do login each time on org)
