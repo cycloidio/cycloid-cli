@@ -34,6 +34,11 @@ type Middleware interface {
 	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
 
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error
+
+	GetCredential(org string, cred uint32) (*models.Credential, error)
+	DeleteCredential(org string, cred uint32) error
+	ListCredentials(org, cType string) ([]*models.CredentialSimple, error)
+	CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, description string) error
 }
 
 type middleware struct {

@@ -2,18 +2,13 @@ package creds
 
 import (
 	"errors"
-	"fmt"
 	"io/ioutil"
 
-	"regexp"
-
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
 	"github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
-
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func NewCreateCommand() *cobra.Command {
@@ -22,13 +17,6 @@ func NewCreateCommand() *cobra.Command {
 		Short: "...",
 		Long:  `........ . . .... .. .. ....`,
 	}
-
-	// - aws
-	// - azure
-	// - azure_storage
-	// - gcp
-	// - elasticsearch
-	// - swift
 
 	WithPersistentFlagDescription(cmd)
 	common.RequiredPersistentFlag(WithPersistentFlagName, cmd)
@@ -60,9 +48,9 @@ func NewCreateCommand() *cobra.Command {
 
 func create(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	var err error
-	var body *models.CreateCredential
 	var rawCred *models.CredentialRaw
 
 	credT := cmd.CalledAs()
@@ -82,25 +70,6 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
-	credP := organization_credentials.NewCreateCredentialParams()
-	credP.SetOrganizationCanonical(org)
-
-	// rawCred = CredentialRaw{
-	// 	AccessKey string `json:"access_key,omitempty"`
-	// 	AccountName string `json:"account_name,omitempty"`
-	// 	AuthURL string `json:"auth_url,omitempty"`
-	// 	CaCert string `json:"ca_cert,omitempty"`
-	// 	ClientID string `json:"client_id,omitempty"`
-	// 	ClientSecret string `json:"client_secret,omitempty"`
-	// 	DomainID string `json:"domain_id,omitempty"`
-	// 	JSONKey string `json:"json_key,omitempty"`
-	// 	SecretKey string `json:"secret_key,omitempty"`
-	// 	SSHKey string `json:"ssh_key,omitempty"`
-	// 	SubscriptionID string `json:"subscription_id,omitempty"`
-	// 	TenantID string `json:"tenant_id,omitempty"`
-
-	// }
 
 	if credT == "ssh" {
 		sshKeyPath, err := cmd.Flags().GetString("ssh-key")
@@ -142,45 +111,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return errors.New("Unexpected type")
 	}
 
-	if path == "" {
-		re := regexp.MustCompile(`[^a-zA-z0-9_\-./]`)
-		safePath := re.ReplaceAllString(name, "-")
-		path = fmt.Sprintf("%s_%s", credT, safePath)
-	}
-	fmt.Println(path)
+	err = m.CreateCredential(org, name, credT, rawCred, path, description)
 
-	body = &models.CreateCredential{
-		Description: description,
-		Name:        &name,
-		Path:        &path,
-		Raw:         rawCred,
-		Type:        &credT,
-	}
-
-	credP.SetBody(body)
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return err
-	}
-
-	resp, err := api.OrganizationCredentials.CreateCredential(credP, root.ClientCredentials())
-	// TODO create a error handeling function to format our error with a better display
-	if err != nil {
-		return err
-	}
-	fmt.Println(resp)
-
-	return nil
+	return err
 }
-
-// /organizations/{organization_canonical}/credentials
-// post: createCredential
-// Create a new Credential, based on the type you will have to pass different parameters within the body:
-// * ssh: ssh_key
-// * aws: access_key, secret_key
-// * gcp: json_key
-// * azure: client_id, client_secret, subscription_id, tenant_id
-// * azure_storage: account_name, access_key
-// * basic_auth: username, password
-// * elasticsearch: username, password, ca_cert
-// * swift: auth_url, username, password, domain_id, tenant_id
