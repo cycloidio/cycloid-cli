@@ -1,4 +1,5 @@
 [ ] Move and make sure all commands are migrated to middleware
+[ ] Make cycloid url env var or --api-url
 [ ] Implement diff pipeline display (same as fly) using see https://github.com/aryann/difflib
 [ ] Work on login part -> have a look to login per orgs
   [ ] (Get org if not logged in fail. Should we remove --org and get it from the token ? Or use a user token. And let the cli do login each time on org)
@@ -33,7 +34,7 @@ Example of all working calls (tested on staging)
 # External BE
 V=1 ./cy  external-backends create logs ElasticsearchLogs eb2  --project gaeltest --org seraf --env dev --cred 743 --url http://test --prefilter foo=bar
 V=1 ./cy  external-backends create events AWSCloudWatchLogs --org seraf --region eu-west-1 --cred 63
-V=1 ./cy --env prod --org seraf --project gaeltest  external-backends create infraview SwiftRemoteTFState  --cred 767 --region bar
+V=1 ./cy --env prod --org seraf --project gaeltest external-backends create infraview SwiftRemoteTFState  --cred 767 --region bar
 V=1 ./cy --org seraf  external-backends list
 
 # Creds

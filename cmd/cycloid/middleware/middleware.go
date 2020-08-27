@@ -38,6 +38,10 @@ type Middleware interface {
 	CreateConfigRepository(org, name, url, branch string, setDefault bool, cred uint32) (*models.ConfigRepository, error)
 	UpdateConfigRepository(org string, configRepo uint32, name, url, branch string, setDefault bool, cred uint32) (*models.ConfigRepository, error)
 
+	ListExternalBackends(org string) ([]*models.ExternalBackend, error)
+	DeleteExternalBackend(org string, externalBackend uint32) error
+	CreateExternalBackends(org, project, env, purpose string, cred uint32, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
+
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error
 
 	GetCredential(org string, cred uint32) (*models.Credential, error)

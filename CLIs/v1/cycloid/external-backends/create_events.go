@@ -4,21 +4,22 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
 	models "github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
-	"github.com/davecgh/go-spew/spew"
-	"github.com/go-openapi/runtime"
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
 func createEvents(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	var purpose = "events"
+	var cred uint32
+	cred = 0
+
 	var err error
 	var org string
-	var body *models.NewExternalBackend
 	var ebC models.ExternalBackendConfiguration
 	var engine = cmd.CalledAs()
 
@@ -27,16 +28,13 @@ func createEvents(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ebParams := organization_external_backends.NewCreateExternalBackendParams()
-	ebParams.SetOrganizationCanonical(org)
-
 	// AWS CW logs
 	if engine == "AWSCloudWatchLogs" {
 		region, err := cmd.Flags().GetString("region")
 		if err != nil {
 			return err
 		}
-		cred, err := cmd.Flags().GetUint32("cred")
+		cred, err = cmd.Flags().GetUint32("cred")
 		if err != nil {
 			return err
 		}
@@ -44,39 +42,18 @@ func createEvents(cmd *cobra.Command, args []string) error {
 		ebC = &models.AWSCloudWatchLogs{
 			Region: &region,
 		}
-		body = &models.NewExternalBackend{
-			Purpose:      &purpose,
-			CredentialID: cred,
-		}
 	} else {
 		return errors.New("Unexpected backend name")
 	}
 
-	err = ebC.Validate(strfmt.Default)
+	// Set project and env to empty cause events is not linked to a project
+	project := ""
+	env := ""
+	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, ebC)
 	if err != nil {
 		return err
 	}
 
-	body.SetConfiguration(ebC)
-	ebParams.SetBody(body)
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return err
-	}
-
-	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, root.ClientCredentials())
-	// TODO create a error handeling function to format our error with a better display
-	if err != nil {
-		// *errors.Validation, not *runtime.APIError
-		apiErr, ok := err.(*runtime.APIError)
-		if ok {
-			spew.Dump(apiErr.Error())
-			r := apiErr.Response.(runtime.ClientResponse)
-			spew.Dump(r.Message())
-		}
-		// fmt.Printf("%+v\n", err.Error())
-		return err
-	}
 	fmt.Println(resp)
 
 	return nil

@@ -4,34 +4,30 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
 	models "github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
-	"github.com/davecgh/go-spew/spew"
-	"github.com/go-openapi/runtime"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/spf13/cobra"
 )
 
 func createLogs(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	var purpose = "logs"
-	var err error
+	var cred uint32
+	cred = 0
 
-	var project, org string
-
-	project, err = cmd.Flags().GetString("project")
+	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err
 	}
-	org, err = cmd.Flags().GetString("org")
+	org, err := cmd.Flags().GetString("org")
 	if err != nil {
 		return err
 	}
 
-	ebParams := organization_external_backends.NewCreateExternalBackendParams()
-	ebParams.SetOrganizationCanonical(org)
-	var body *models.NewExternalBackend
 	var ebC models.ExternalBackendConfiguration
 	var engine = cmd.CalledAs()
 
@@ -45,10 +41,6 @@ func createLogs(cmd *cobra.Command, args []string) error {
 		ebC = &models.AWSCloudWatchLogs{
 			Region: &region,
 		}
-		body = &models.NewExternalBackend{
-			ProjectCanonical: project,
-			Purpose:          &purpose,
-		}
 
 		// Elasticsearch
 	} else if engine == "ElasticsearchLogs" {
@@ -60,7 +52,7 @@ func createLogs(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		cred, err := cmd.Flags().GetUint32("cred")
+		cred, err = cmd.Flags().GetUint32("cred")
 		if err != nil {
 			return err
 		}
@@ -89,10 +81,6 @@ func createLogs(cmd *cobra.Command, args []string) error {
 		// In this case we know there is exactly one arg
 		var sourceName = args[0]
 
-		// This env param exist but does not seems to be used by api
-		// I feel it's a swagger issue
-		// ebParams.SetEnvironment(&env)
-
 		esM := models.ElasticsearchLogsSourcesAnonMapping{
 			Host:      &hostMapping,
 			Message:   &messageMapping,
@@ -119,7 +107,6 @@ func createLogs(cmd *cobra.Command, args []string) error {
 			},
 		}
 
-		ebParams.SetProject(&project)
 		version := "7"
 		ebC = &models.ElasticsearchLogs{
 			Version: &version,
@@ -127,46 +114,28 @@ func createLogs(cmd *cobra.Command, args []string) error {
 			Sources: sources,
 		}
 
-		if cred != 0 {
-			body = &models.NewExternalBackend{
-				ProjectCanonical: project,
-				Purpose:          &purpose,
-				CredentialID:     cred,
-			}
-		} else {
-			body = &models.NewExternalBackend{
-				ProjectCanonical: project,
-				Purpose:          &purpose,
-			}
-		}
 	} else {
 		return errors.New("Unexpected backend name")
 	}
 
-	err = ebC.Validate(strfmt.Default)
+	// Set env to empty cause is not used to create log eb
+	envP := ""
+	resp, err := m.CreateExternalBackends(org, project, envP, purpose, cred, ebC)
 	if err != nil {
 		return err
 	}
 
-	body.SetConfiguration(ebC)
-	ebParams.SetBody(body)
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return err
-	}
-
-	resp, err := api.OrganizationExternalBackends.CreateExternalBackend(ebParams, root.ClientCredentials())
-	if err != nil {
-		// *errors.Validation, not *runtime.APIError
-		apiErr, ok := err.(*runtime.APIError)
-		if ok {
-			spew.Dump(apiErr.Error())
-			r := apiErr.Response.(runtime.ClientResponse)
-			spew.Dump(r.Message())
-		}
-		// fmt.Printf("%+v\n", err.Error())
-		return err
-	}
+	// if err != nil {
+	// 	// *errors.Validation, not *runtime.APIError
+	// 	apiErr, ok := err.(*runtime.APIError)
+	// 	if ok {
+	// 		spew.Dump(apiErr.Error())
+	// 		r := apiErr.Response.(runtime.ClientResponse)
+	// 		spew.Dump(r.Message())
+	// 	}
+	// 	// fmt.Printf("%+v\n", err.Error())
+	// 	return err
+	// }
 	fmt.Println(resp)
 
 	return nil
