@@ -27,6 +27,10 @@ type Middleware interface {
 	UnpausePipelineJob(org, project, env, job string) error
 	TriggerPipelineBuild(org, project, env, job string) error
 
+	GetOrganization(org string) (*models.Organization, error)
+	ListOrganizationWorkers(org string) ([]*models.Worker, error)
+	ListOrganizations() ([]*models.OrganizationBasicInfo, error)
+
 	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
 }
 

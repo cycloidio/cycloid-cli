@@ -46,7 +46,3 @@ func get(cmd *cobra.Command, args []string) error {
 	fmt.Printf("%+v\n", err)
 	return nil
 }
-
-// /organizations/{organization_canonical}
-// get: getOrg
-// Get the information of the organization.
