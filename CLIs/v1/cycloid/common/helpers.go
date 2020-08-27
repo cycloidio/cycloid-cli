@@ -1,6 +1,7 @@
 package common
 
 import (
+	"fmt"
 	"regexp"
 
 	"github.com/spf13/cobra"
@@ -58,4 +59,8 @@ func IsInList(pattern string, list []string) bool {
 		}
 	}
 	return false
+}
+
+func GetPipelineName(project, env string) string {
+	return fmt.Sprintf("%s-%s", project, env)
 }

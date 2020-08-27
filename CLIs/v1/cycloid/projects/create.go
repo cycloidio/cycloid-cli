@@ -126,7 +126,3 @@ func create(cmd *cobra.Command, args []string) error {
 
 	return nil
 }
-
-// /organizations/{organization_canonical}/projects
-// post: createProject
-// Create a new project with envs and pipelines in the organization.
