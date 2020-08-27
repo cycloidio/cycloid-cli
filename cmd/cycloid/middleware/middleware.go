@@ -32,6 +32,8 @@ type Middleware interface {
 	ListOrganizations() ([]*models.OrganizationBasicInfo, error)
 
 	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
+
+	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error
 }
 
 type middleware struct {
