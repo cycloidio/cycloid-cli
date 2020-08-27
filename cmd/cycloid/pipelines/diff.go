@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines"
-	"github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -30,9 +28,9 @@ func NewDiffCommand() *cobra.Command {
 
 func diff(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	var err error
-	var body *models.UpdatePipeline
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -65,48 +63,17 @@ func diff(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("Pipeline variables file reading error : %s", err.Error())
 	}
+	vars := string(rawVars)
 
-	cyCtx := common.CycloidContext{Env: env,
-		Org:     org,
-		Project: project}
-
-	vars := common.ReplaceCycloidVarsString(cyCtx, string(rawVars))
-
-	pipelineName := fmt.Sprintf("%s-%s", project, env)
-
-	params := organization_pipelines.NewDiffPipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetInpathPipelineName(pipelineName)
-
-	body = &models.UpdatePipeline{
-		PassedConfig: &pipelineTemplate,
-		YamlVars:     vars,
-	}
-
-	params.SetBody(body)
-	err = body.Validate(strfmt.Default)
+	pd, err := m.DiffPipeline(org, project, env, pipelineTemplate, vars)
 	if err != nil {
 		return err
 	}
-
-	resp, err := api.OrganizationPipelines.DiffPipeline(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
-	pd := p.Data
 
 	fmt.Printf("Groups: %s\n", pd.Groups)
 
 	fmt.Printf("%+v\n", err)
-	fmt.Printf("%+v\n", resp)
+	fmt.Printf("%+v\n", pd)
 	return nil
 }
 

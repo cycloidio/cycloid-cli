@@ -3,9 +3,9 @@ package pipelines
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs_build"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -26,6 +26,7 @@ func NewTriggerBuildCommand() *cobra.Command {
 
 func createBuild(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -44,20 +45,8 @@ func createBuild(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	pipelineName := fmt.Sprintf("%s-%s", project, env)
+	err = m.TriggerPipelineBuild(org, project, env, job)
 
-	params := organization_pipelines_jobs_build.NewCreateBuildParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetInpathPipelineName(pipelineName)
-	params.SetJobName(job)
-
-	resp, err := api.OrganizationPipelinesJobsBuild.CreateBuild(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(resp)
 	fmt.Printf("%+v\n", err)
 	return nil
 }

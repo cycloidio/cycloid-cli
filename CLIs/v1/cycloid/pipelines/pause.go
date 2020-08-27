@@ -1,8 +1,6 @@
 package pipelines
 
 import (
-	"fmt"
-
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
@@ -42,11 +40,6 @@ func pause(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.PausePipeline(org, project, env)
-	if err != nil {
-		return err
-	}
 
-	// fmt.Println(resp)
-	fmt.Printf("%+v\n", err)
-	return nil
+	return err
 }

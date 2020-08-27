@@ -3,8 +3,8 @@ package projects
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -19,39 +19,21 @@ func NewListCommand() *cobra.Command {
 
 }
 
-// /organizations/{organization_canonical}/projects
-// get: getProjects
-// Get list of projects of the organization.
-
 func list(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
 		return err
 	}
 
-	params := organization_projects.NewGetProjectsParams()
-	params.SetOrganizationCanonical(org)
+	d, err := m.ListProjects(org)
 
-	resp, err := api.OrganizationProjects.GetProjects(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println("...")
-	p := resp.GetPayload()
-
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
-	for _, pr := range p.Data {
+	for _, pr := range d {
 		fmt.Printf("cannonical: %s    svcat: %s    name: %s  \n", *pr.Canonical, pr.ServiceCatalogName, *pr.Name)
 	}
-	fmt.Println(resp)
+	fmt.Println(d)
 	fmt.Printf("%+v\n", err)
 	return nil
 }

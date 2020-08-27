@@ -1,11 +1,9 @@
 package pipelines
 
 import (
-	"fmt"
-
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -27,6 +25,7 @@ func NewClearTaskCacheCommand() *cobra.Command {
 
 func cleartaskCache(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -49,23 +48,9 @@ func cleartaskCache(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	pipelineName := fmt.Sprintf("%s-%s", project, env)
+	err = m.ClearTaskCachePipeline(org, project, env, job, task)
 
-	params := organization_pipelines_jobs.NewClearTaskCacheParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetInpathPipelineName(pipelineName)
-	params.SetJobName(job)
-	params.SetStepName(task)
-
-	resp, err := api.OrganizationPipelinesJobs.ClearTaskCache(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(resp)
-	fmt.Printf("%+v\n", err)
-	return nil
+	return err
 }
 
 // /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/tasks/{step_name}/cache

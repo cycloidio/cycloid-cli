@@ -1,11 +1,9 @@
 package projects
 
 import (
-	"fmt"
-
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -23,6 +21,7 @@ func NewDeleteCommand() *cobra.Command {
 
 func delete(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -33,20 +32,7 @@ func delete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	params := organization_projects.NewDeleteProjectParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
+	err = m.DeleteProject(org, project)
 
-	resp, err := api.OrganizationProjects.DeleteProject(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(resp)
-	fmt.Printf("%+v\n", err)
-	return nil
+	return err
 }
-
-// /organizations/{organization_canonical}/projects/{project_canonical}
-// delete: deleteProject
-// Delete a project of the organization.

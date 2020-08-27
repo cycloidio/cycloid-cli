@@ -45,6 +45,5 @@ docker-compose run swagger generate client \
 --tags="Organizations"
 fi
 
-
 echo "- Generate plugin"
 go build -buildmode=plugin -o "plugins/v${1}.so" cmd/cycloid.go

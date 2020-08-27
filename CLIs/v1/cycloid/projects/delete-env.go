@@ -1,11 +1,9 @@
 package projects
 
 import (
-	"fmt"
-
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 
 	"github.com/spf13/cobra"
 )
@@ -25,6 +23,7 @@ func NewDeleteEnvCommand() *cobra.Command {
 
 func deleteEnv(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -39,21 +38,7 @@ func deleteEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	params := organization_projects.NewDeleteProjectEnvironmentParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
+	err = m.DeleteProjectEnv(org, project, env)
 
-	resp, err := api.OrganizationProjects.DeleteProjectEnvironment(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(resp)
-	fmt.Printf("%+v\n", err)
-	return nil
+	return err
 }
-
-// /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}
-// delete: deleteProjectEnvironment
-// Delete a project environment of the organization, and the project itself if it's the last environment.
