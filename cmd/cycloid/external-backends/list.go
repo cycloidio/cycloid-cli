@@ -1,21 +1,38 @@
 package externalBackends
 
 import (
-	"fmt"
+	"os"
 
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 
 	"github.com/spf13/cobra"
+
+	"github.com/pkg/errors"
+)
+
+var (
+	example = `
+# List all the external backends within my-org organization in JSON output format
+cy --org my-org external-backends list --output=json
+
+# List all the external backends within my-org organization in YAML output format
+cy --org my-org external-backends list --output=yaml
+`
+	short = "Get the list of organization external backends"
+	long  = short
 )
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "list",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  list,
+		Use:     "list",
+		Example: example,
+		Short:   short,
+		Long:    long,
+		RunE:    list,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
@@ -32,13 +49,25 @@ func list(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return err
+	}
 
 	ebs, err := m.ListExternalBackends(org)
-	for _, eb := range ebs {
-		fmt.Printf("id: %d    project: %s - env: %s\nPurpose: %s      Config: %s\n\n", eb.ID, eb.ProjectCanonical, eb.EnvironmentCanonical, *eb.Purpose, eb.Configuration().Engine())
-
+	if err != nil {
+		return err
 	}
-	fmt.Println(ebs)
-	fmt.Printf("%+v\n", err)
+
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(ebs, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 	return nil
 }
