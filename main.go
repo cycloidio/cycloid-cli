@@ -101,7 +101,7 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 
-	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "", "The formatting style for command output [json|yaml|text|table].")
+	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "json", "The formatting style for command output [json|yaml|table].")
 	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
 	viper.SetDefault("output", "text")
 
