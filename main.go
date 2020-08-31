@@ -101,9 +101,8 @@ func init() {
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 
-	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "json", "The formatting style for command output [json|yaml|table].")
+	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", "The formatting style for command output [json|yaml|table].")
 	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
-	viper.SetDefault("output", "text")
 
 	// rootCmd.PersistentFlags().StringVarP(&verbosity, "verbosity", "v", "", "Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none.")
 	rootCmd.PersistentFlags().StringP("verbosity", "v", "warning", "Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none.")
@@ -139,8 +138,6 @@ func main() {
 	if err == nil {
 		version = ver
 	}
-
-	fmt.Printf("Using API plugin version %d\n", version)
 
 	p, err := plugin.Open(fmt.Sprintf("plugins/v%d.so", version))
 	if err != nil {
