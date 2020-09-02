@@ -31,6 +31,13 @@ type Middleware interface {
 	ListOrganizationWorkers(org string) ([]*models.Worker, error)
 	ListOrganizations() ([]*models.OrganizationBasicInfo, error)
 
+	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
+	GetCatalogRepository(org string, catalogRepo uint32) (*models.ServiceCatalogSource, error)
+	DeleteCatalogRepository(org string, catalogRepo uint32) error
+	CreateCatalogRepository(org, name, url, branch string, cred uint32) (*models.ServiceCatalogSource, error)
+	UpdateCatalogRepository(org string, catalogRepo uint32, name, url, branch string, cred uint32) (*models.ServiceCatalogSource, error)
+	RefreshCatalogRepository(org string, catalogRepo uint32) (*models.ServiceCatalogSource, error)
+
 	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
 	ListConfigRepositories(org string) ([]*models.ConfigRepository, error)
 	GetConfigRepository(org string, configRepo uint32) (*models.ConfigRepository, error)
