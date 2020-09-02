@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_service_catalog_sources"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -25,29 +25,20 @@ func NewListCommand() *cobra.Command {
 // Return all the private service catalogs
 func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
-	var err error
-	var org string
+	m := middleware.NewMiddleware(api)
 
-	org, err = cmd.Flags().GetString("org")
+	org, err := cmd.Flags().GetString("org")
 	if err != nil {
 		return err
 	}
 
-	params := organization_service_catalog_sources.NewGetServiceCatalogSourcesParams()
-	params.SetOrganizationCanonical(org)
+	crs, err := m.ListCatalogRepositories(org)
 
-	resp, err := api.OrganizationServiceCatalogSources.GetServiceCatalogSources(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	crs := resp.GetPayload()
-
-	for _, cr := range crs.Data {
+	for _, cr := range crs {
 		fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialID)
 		fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.CreatedAt, 0), time.Unix(*cr.UpdatedAt, 0))
 	}
-	fmt.Println(resp)
+	fmt.Println(crs)
 	fmt.Printf("%+v\n", err)
 
 	return nil

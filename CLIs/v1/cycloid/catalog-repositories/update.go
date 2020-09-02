@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_service_catalog_sources"
-	"github.com/cycloidio/youdeploy-cli/client/models"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -37,6 +35,7 @@ func NewUpdateCommand() *cobra.Command {
 
 func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -68,34 +67,15 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	params := organization_service_catalog_sources.NewUpdateServiceCatalogSourceParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceID(id)
-
-	body := &models.UpdateServiceCatalogSource{
-		Branch:       branch,
-		CredentialID: cred,
-		Name:         &name,
-		URL:          &url,
-	}
-
-	params.SetBody(body)
-	err = body.Validate(strfmt.Default)
+	cr, err := m.UpdateCatalogRepository(org, id, name, url, branch, cred)
 	if err != nil {
 		return err
 	}
 
-	resp, err := api.OrganizationServiceCatalogSources.UpdateServiceCatalogSource(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
+	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialID)
+	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.CreatedAt, 0), time.Unix(*cr.UpdatedAt, 0))
 
-	cr := resp.GetPayload()
-
-	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.Data.ID, *cr.Data.Name, *cr.Data.URL, cr.Data.Branch, cr.Data.CredentialID)
-	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.Data.CreatedAt, 0), time.Unix(*cr.Data.UpdatedAt, 0))
-
-	fmt.Println(resp)
+	fmt.Println(cr)
 	fmt.Printf("%+v\n", err)
 
 	return nil
