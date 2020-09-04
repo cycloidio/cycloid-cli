@@ -5,6 +5,7 @@ import (
 
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/json"
+	"github.com/cycloidio/youdeploy-cli/printer/table"
 	"github.com/cycloidio/youdeploy-cli/printer/yaml"
 )
 
@@ -13,9 +14,10 @@ var (
 	// to a printer type
 	// TODO: use constant + go enum to normalize the printer types
 	printers = map[string]printer.Printer{
-		"yaml": yaml.YAML{},
-		"yml":  yaml.YAML{},
-		"json": json.JSON{},
+		"yaml":  yaml.YAML{},
+		"yml":   yaml.YAML{},
+		"json":  json.JSON{},
+		"table": table.Table{},
 	}
 )
 
