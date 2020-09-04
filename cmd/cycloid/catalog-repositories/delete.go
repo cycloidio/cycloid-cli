@@ -3,9 +3,9 @@ package catalogRepositories
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_service_catalog_sources"
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -28,6 +28,7 @@ func NewDeleteCommand() *cobra.Command {
 
 func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := root.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -39,16 +40,7 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	params := organization_service_catalog_sources.NewDeleteServiceCatalogSourceParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceID(id)
-
-	resp, err := api.OrganizationServiceCatalogSources.DeleteServiceCatalogSource(params, root.ClientCredentials())
-	if err != nil {
-		return err
-	}
-
-	fmt.Println(resp)
+	err = m.DeleteCatalogRepository(org, id)
 	fmt.Printf("%+v\n", err)
-	return nil
+	return err
 }
