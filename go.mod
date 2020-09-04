@@ -9,6 +9,8 @@ require (
 	github.com/go-openapi/strfmt v0.19.5
 	github.com/go-openapi/swag v0.19.9
 	github.com/go-openapi/validate v0.19.10
+	github.com/mattn/go-runewidth v0.0.9 // indirect
+	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pkg/errors v0.8.1
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.4.0
