@@ -8446,8 +8446,50 @@ paths:
           schema:
             $ref: '#/definitions/MemberAssignation'
       responses:
-        '204':
-          description: The member information has been updated.
+        '200':
+          description: The information of the member of the organization.
+          schema:
+            type: object
+            required:
+              - data
+            properties:
+              data:
+                $ref: '#/definitions/MemberOrg'
+          examples:
+            application/json:
+              data:
+                id: 1
+                username: user2
+                given_name: Jordi
+                family_name: Capdevila
+                email: jordi.capdevila@fakeemail.com
+                picture_url: 'https://avatars2.githubusercontent.com/u/14579210'
+                created_at: 1503281026
+                role:
+                  id: 2
+                  name: project manager
+                  description: A project manager
+                  policies:
+                    - id: 21
+                      code: 'team:read'
+                      entities: []
+                      description: Grant the access to read the teams of an organization
+                    - id: 22
+                      code: 'team:edit'
+                      entities: []
+                      description: Grant the access to edit teams
+                    - id: 60
+                      code: 'project:read'
+                      entities: []
+                      description: Grant the access to projects
+                    - id: 61
+                      code: 'project:create'
+                      entities: []
+                      description: Grant the access to create a project in the organization
+                    - id: 62
+                      code: 'project:edit'
+                      entities: []
+                      description: Grant the access to edit projects
         '403':
           $ref: '#/responses/not_enough_permissions'
         '404':
