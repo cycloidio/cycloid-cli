@@ -5,10 +5,17 @@ import (
 	"io"
 	"reflect"
 	"strconv"
+	"time"
 
 	"github.com/cycloidio/youdeploy-cli/printer"
 
 	"github.com/olekukonko/tablewriter"
+)
+
+var (
+	// reference date format
+	// DD / MM / YYYY, HH:MM:SS
+	timeFormat = "02/01/2006, 15:04:05"
 )
 
 type Table struct{}
@@ -24,12 +31,28 @@ func entryFromStruct(obj reflect.Value, h []string) []string {
 		value := obj.FieldByName(header)
 		switch value.Kind() {
 		case reflect.String:
-			values = append(values, value.Interface().(string))
+			values = append(values, value.String())
 		case reflect.Uint32:
-			values = append(values, strconv.FormatUint(uint64(value.Interface().(uint32)), 10))
+			values = append(values, strconv.FormatInt(int64(value.Uint()), 10))
 		case reflect.Ptr:
 			elt := value.Elem()
-			values = append(values, elt.String())
+			switch elt.Kind() {
+			case reflect.String:
+				values = append(values, elt.String())
+			case reflect.Uint32:
+				values = append(values, strconv.FormatInt(int64(elt.Uint()), 10))
+			case reflect.Int64:
+				t := time.Unix(elt.Int(), 0)
+				values = append(values, t.Format(timeFormat))
+			default:
+				// in the case we don't support the type, we print it
+				// for further integration
+				values = append(values, elt.Kind().String())
+			}
+		default:
+			// in the case we don't support the type, we print it
+			// for further integration
+			values = append(values, value.Kind().String())
 		}
 	}
 	return values
@@ -47,6 +70,15 @@ func headersFromStruct(obj reflect.Value, opts printer.Options) []string {
 		// remove unexported fields
 		if len(f.PkgPath) != 0 {
 			continue
+		}
+		// the following lines help to avoid
+		// adding pointer to a struct into the table
+		v := obj.FieldByName(f.Name)
+		if v.Kind() == reflect.Ptr {
+			elt := v.Elem()
+			if elt.Kind() == reflect.Struct {
+				continue
+			}
 		}
 		headers = append(headers, f.Name)
 	}
