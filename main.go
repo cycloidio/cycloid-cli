@@ -124,10 +124,6 @@ func init() {
 	// rootCmd.PersistentFlags().Bool("no-verify-ssl", false, ".....")
 	// viper.BindPFlag("noVerifySSL", rootCmd.PersistentFlags().Lookup("noVerifySSL"))
 
-	// rootCmd.PersistentFlags().String("api-url", "", ".....")
-	// viper.BindPFlag("FOO", rootCmd.PersistentFlags().Lookup("api-url"))
-	// viper.SetDefault("api-url", "sdfsdf")
-
 	// --log-http
 	//    Log all HTTP server requests and responses to stderr. Overrides the
 	//    default core/log_http property value for this command invocation.
