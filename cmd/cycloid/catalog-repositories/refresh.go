@@ -47,6 +47,8 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialID)
 	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.CreatedAt, 0), time.Unix(*cr.UpdatedAt, 0))
 
+	//TODO: Wait PR merged https://github.com/cycloidio/youdeploy-http-api/pull/2066
+	// output is not available yet
 	for stack := range cr.ServiceCatalogs {
 		_ = stack
 	}
