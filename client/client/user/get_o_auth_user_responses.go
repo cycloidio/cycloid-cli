@@ -61,10 +61,6 @@ func NewGetOAuthUserOK() *GetOAuthUserOK {
 Used to know if a user from the platform exists on that 'social_type'.
 */
 type GetOAuthUserOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *GetOAuthUserOKBody
 }
 
@@ -77,13 +73,6 @@ func (o *GetOAuthUserOK) GetPayload() *GetOAuthUserOKBody {
 }
 
 func (o *GetOAuthUserOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(GetOAuthUserOKBody)
 

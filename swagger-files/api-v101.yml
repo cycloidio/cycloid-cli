@@ -13412,11 +13412,6 @@ paths:
       responses:
         '200':
           description: The token which represents the session of the user.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -13452,11 +13447,6 @@ paths:
       responses:
         '200':
           description: Used to know if a user from the platform exists on that 'social_type'.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
@@ -13533,11 +13523,6 @@ paths:
       responses:
         '200':
           description: The token which represents the session of the user.
-          headers:
-            Content-Length:
-              description: The length of the response body in octets (8-bit bytes).
-              type: integer
-              format: int64
           schema:
             type: object
             required:
