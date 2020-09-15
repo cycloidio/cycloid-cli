@@ -48,6 +48,9 @@
 
 Example of all working calls (tested on staging)
 
+export CY_API_URL=https://http-api-staging.cycloid.io
+export TOKEN=
+
 # External BE
 V=1 ./cy  external-backends create logs ElasticsearchLogs eb2  --project gaeltest --org seraf --env dev --cred 743 --url http://test --prefilter foo=bar
 V=1 ./cy  external-backends create events AWSCloudWatchLogs --org seraf --region eu-west-1 --cred 63
