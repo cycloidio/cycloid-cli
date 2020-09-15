@@ -26,16 +26,6 @@ func NewAPI() *client.APIClient {
 		cfg = cfg.WithBasePath(apiUrl.Path)
 	}
 
-	// cfg = cfg.WithHost("http-api-staging.cycloid.io")
-	// cfg = cfg.WithSchemes([]string{"https"})
-	// cfg = cfg.WithHost("127.0.0.1:80")
-	// cfg = cfg.WithSchemes([]string{"http"})
-	// cfg = cfg.WithBasePath("/api")
-
-	// cfg = cfg.WithHost(apiUrl.Host)
-
-	// hostUrl = fmt.Sprintf("%s/%s/%s-%s.tfstate", project)
-
 	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
 
 	// Hack because https://github.com/go-swagger/go-swagger/issues/1899

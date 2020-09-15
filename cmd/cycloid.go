@@ -23,9 +23,7 @@ func init() {
 }
 
 func AttachCommands(cmd *cobra.Command) {
-
 	cmd.AddCommand(
-
 		// Root
 		root.NewLoginCmd(),
 		root.NewStatusCmd(),
