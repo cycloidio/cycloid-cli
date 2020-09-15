@@ -23,6 +23,7 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_workers"
 	"github.com/cycloidio/youdeploy-cli/client/client/organizations"
 	"github.com/cycloidio/youdeploy-cli/client/client/service_catalogs"
+	"github.com/cycloidio/youdeploy-cli/client/client/user"
 )
 
 // Default API client HTTP client.
@@ -92,6 +93,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 
 	cli.ServiceCatalogs = service_catalogs.New(transport, formats)
 
+	cli.User = user.New(transport, formats)
+
 	return cli
 }
 
@@ -160,6 +163,8 @@ type APIClient struct {
 
 	ServiceCatalogs *service_catalogs.Client
 
+	User *user.Client
+
 	Transport runtime.ClientTransport
 }
 
@@ -190,5 +195,7 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.Organizations.SetTransport(transport)
 
 	c.ServiceCatalogs.SetTransport(transport)
+
+	c.User.SetTransport(transport)
 
 }
