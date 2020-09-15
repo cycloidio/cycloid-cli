@@ -5,7 +5,6 @@ import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs"
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs_build"
 	"github.com/cycloidio/youdeploy-cli/client/models"
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -19,7 +18,7 @@ func (m *middleware) PausePipeline(org, project, env string) error {
 	params.SetProjectCanonical(project)
 	params.SetInpathPipelineName(pipelineName)
 
-	_, err := m.api.OrganizationPipelines.PausePipeline(params, root.ClientCredentials())
+	_, err := m.api.OrganizationPipelines.PausePipeline(params, common.ClientCredentials())
 
 	return err
 }
@@ -35,7 +34,7 @@ func (m *middleware) ClearTaskCachePipeline(org, project, env, job, task string)
 	params.SetJobName(job)
 	params.SetStepName(task)
 
-	_, err := m.api.OrganizationPipelinesJobs.ClearTaskCache(params, root.ClientCredentials())
+	_, err := m.api.OrganizationPipelinesJobs.ClearTaskCache(params, common.ClientCredentials())
 	if err != nil {
 		return err
 	}
@@ -52,7 +51,7 @@ func (m *middleware) UnpausePipeline(org, project, env string) error {
 	params.SetProjectCanonical(project)
 	params.SetInpathPipelineName(pipelineName)
 
-	_, err := m.api.OrganizationPipelines.UnpausePipeline(params, root.ClientCredentials())
+	_, err := m.api.OrganizationPipelines.UnpausePipeline(params, common.ClientCredentials())
 	// if err != nil {
 	// 	return nil, err
 	// }
@@ -88,7 +87,7 @@ func (m *middleware) UpdatePipeline(org, project, env, pipeline, variables strin
 
 	params.SetBody(body)
 
-	resp, err := m.api.OrganizationPipelines.UpdatePipeline(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationPipelines.UpdatePipeline(params, common.ClientCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +126,7 @@ func (m *middleware) DiffPipeline(org, project, env, pipeline, variables string)
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationPipelines.DiffPipeline(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationPipelines.DiffPipeline(params, common.ClientCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +169,7 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, variables, usec
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationPipelines.CreatePipeline(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationPipelines.CreatePipeline(params, common.ClientCredentials())
 
 	if err != nil {
 		return nil, err
@@ -197,7 +196,7 @@ func (m *middleware) GetPipelineJob(org, project, env, job string) (*models.Job,
 	params.SetInpathPipelineName(pipelineName)
 	params.SetJobName(job)
 
-	resp, err := m.api.OrganizationPipelinesJobs.GetJob(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationPipelinesJobs.GetJob(params, common.ClientCredentials())
 
 	if err != nil {
 		return nil, err
@@ -224,7 +223,7 @@ func (m *middleware) ListPipelineJobsBuilds(org, project, env, job string) ([]*m
 	params.SetInpathPipelineName(pipelineName)
 	params.SetJobName(job)
 
-	resp, err := m.api.OrganizationPipelinesJobsBuild.GetBuilds(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationPipelinesJobsBuild.GetBuilds(params, common.ClientCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -249,7 +248,7 @@ func (m *middleware) ListPipelineJobs(org, project, env string) ([]*models.Job, 
 	params.SetProjectCanonical(project)
 	params.SetInpathPipelineName(pipelineName)
 
-	resp, err := m.api.OrganizationPipelinesJobs.GetJobs(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationPipelinesJobs.GetJobs(params, common.ClientCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -275,7 +274,7 @@ func (m *middleware) PausePipelineJob(org, project, env, job string) error {
 	params.SetInpathPipelineName(pipelineName)
 	params.SetJobName(job)
 
-	_, err := m.api.OrganizationPipelinesJobs.PauseJob(params, root.ClientCredentials())
+	_, err := m.api.OrganizationPipelinesJobs.PauseJob(params, common.ClientCredentials())
 
 	return err
 }
@@ -290,7 +289,7 @@ func (m *middleware) UnpausePipelineJob(org, project, env, job string) error {
 	params.SetInpathPipelineName(pipelineName)
 	params.SetJobName(job)
 
-	_, err := m.api.OrganizationPipelinesJobs.UnpauseJob(params, root.ClientCredentials())
+	_, err := m.api.OrganizationPipelinesJobs.UnpauseJob(params, common.ClientCredentials())
 
 	return err
 }
@@ -305,7 +304,7 @@ func (m *middleware) TriggerPipelineBuild(org, project, env, job string) error {
 	params.SetInpathPipelineName(pipelineName)
 	params.SetJobName(job)
 
-	_, err := m.api.OrganizationPipelinesJobsBuild.CreateBuild(params, root.ClientCredentials())
+	_, err := m.api.OrganizationPipelinesJobsBuild.CreateBuild(params, common.ClientCredentials())
 
 	return err
 }

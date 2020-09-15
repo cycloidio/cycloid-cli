@@ -3,7 +3,6 @@ package externalBackends
 import (
 	"os"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
@@ -41,7 +40,7 @@ func NewListCommand() *cobra.Command {
 }
 
 func list(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	// org := viper.GetString("org")

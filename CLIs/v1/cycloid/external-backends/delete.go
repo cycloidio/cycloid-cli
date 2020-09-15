@@ -3,10 +3,9 @@ package externalBackends
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/CLIs/v1/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -24,7 +23,7 @@ func NewDeleteCommand() *cobra.Command {
 }
 
 func delete(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")

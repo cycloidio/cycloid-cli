@@ -3,7 +3,6 @@ package creds
 import (
 	"fmt"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
@@ -22,7 +21,7 @@ func NewDeleteCommand() *cobra.Command {
 }
 
 func delete(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")

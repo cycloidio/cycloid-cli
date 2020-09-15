@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -21,7 +21,7 @@ func NewListCommand() *cobra.Command {
 }
 
 func list(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	orgs, err := m.ListOrganizations()
