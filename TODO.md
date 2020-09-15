@@ -1,4 +1,4 @@
-[ ] Move and make sure all commands are migrated to middleware
+[X] Move and make sure all commands are migrated to middleware
 [ ] Make cycloid url env var or --api-url
 [ ] Implement diff pipeline display (same as fly) using see https://github.com/aryann/difflib
 [ ] Work on login part -> have a look to login per orgs
@@ -27,6 +27,23 @@
 [ ] Migrate /define to git tag
 [ ] Reduce swagger generated files
 [ ] Feature idea: jobs time history. Basic ascii histogram to display job time/status
+[ ] Implement extra flags ?
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
+
+	// rootCmd.PersistentFlags().Bool("version", false, "Display the version of this tool.")
+
+	// rootCmd.PersistentFlags().BoolP("quiet", "q", false, "....") // also -q ?
+	// viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
+
+	// rootCmd.PersistentFlags().Bool("debug", false, "Turn on debug logging.")
+	// viper.BindPFlag("useDebug", rootCmd.PersistentFlags().Lookup("debug"))
+
+	// rootCmd.PersistentFlags().Bool("no-verify-ssl", false, ".....")
+	// viper.BindPFlag("noVerifySSL", rootCmd.PersistentFlags().Lookup("noVerifySSL"))
+
+	// --log-http
+	//    Log all HTTP server requests and responses to stderr. Overrides the
+	//    default core/log_http property value for this command invocation.
 
 
 Example of all working calls (tested on staging)

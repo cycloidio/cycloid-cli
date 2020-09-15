@@ -3,19 +3,28 @@ package root
 import (
 	"os"
 
+	"net/url"
+
 	"github.com/cycloidio/youdeploy-cli/client/client"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/spf13/viper"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
 
 func NewAPI() *client.APIClient {
+
 	cfg := client.DefaultTransportConfig()
-	cfg = cfg.WithHost("http-api-staging.cycloid.io")
-	cfg = cfg.WithSchemes([]string{"https"})
-	// cfg = cfg.WithHost("127.0.0.1")
-	// cfg = cfg.WithSchemes([]string{"http"})
+
+	rawApiUrl := viper.GetString("api-url")
+
+	apiUrl, err := url.Parse(rawApiUrl)
+	if err == nil && apiUrl.Host != "" {
+		cfg = cfg.WithHost(apiUrl.Host)
+		cfg = cfg.WithSchemes([]string{apiUrl.Scheme})
+		cfg = cfg.WithBasePath(apiUrl.Path)
+	}
 
 	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
 
