@@ -2,7 +2,6 @@ package table
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 
 	"github.com/cycloidio/youdeploy-cli/printer"
@@ -10,7 +9,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestYAMLPrinter(t *testing.T) {
+func int64Ptr(i int64) *int64 {
+	return &i
+}
+
+func TestTablePrinter(t *testing.T) {
 
 	t.Run("Success", func(t *testing.T) {
 		var (
@@ -27,13 +30,44 @@ func TestYAMLPrinter(t *testing.T) {
 			}
 		)
 
-		exp := `A      	B      	C 
-value a	value b	
+		exp := `A      	B      	C     
+value a	value b	slice	
 `
 		err := tab.Print(&obj, printer.Options{}, &b)
-		fmt.Println(b.String())
 		require.NoError(t, err)
 		assert.Equal(t, b.String(), exp)
+	})
+	t.Run("SuccessTimestamp", func(t *testing.T) {
+		var (
+			tab Table
+			b   bytes.Buffer
+			obj = struct {
+				A *int64 `json:"a"`
+			}{
+				A: int64Ptr(1578325983),
+			}
+		)
 
+		exp := `A                    
+06/01/2020, 16:53:03	
+`
+		err := tab.Print(&obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Equal(t, b.String(), exp)
+	})
+	t.Run("SuccessAvoidNestedStruct", func(t *testing.T) {
+		var (
+			tab Table
+			b   bytes.Buffer
+			obj = struct {
+				A *struct{}
+			}{
+				A: &struct{}{},
+			}
+		)
+
+		err := tab.Print(&obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Equal(t, len(b.String()), 0)
 	})
 }
