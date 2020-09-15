@@ -58,6 +58,14 @@ type Middleware interface {
 
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
+
+	// Login methods
+
+	// Login is the method used to log the user into the Cycloid console
+	Login(email, password string) (*models.UserSession, error)
+
+	// LoginOrg is the used to log the user into a Cycloid organization
+	LoginOrg(org, email, password string) (*models.UserSession, error)
 }
 
 type middleware struct {
