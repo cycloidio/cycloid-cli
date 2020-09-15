@@ -11,9 +11,7 @@ var credFlag, idFlag uint32
 
 func WithFlagOrg(cmd *cobra.Command) string {
 	flagName := "org"
-	_ = orgFlag
-	cmd.PersistentFlags().String(flagName, "dd", "Org cannonical name")
-	// cmd.PersistentFlags().StringVar(&orgFlag, flagName, "", "Org cannonical name")
+	cmd.PersistentFlags().StringVar(&orgFlag, flagName, "", "Org cannonical name")
 	return flagName
 }
 

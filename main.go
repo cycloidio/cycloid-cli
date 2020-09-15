@@ -5,6 +5,7 @@ import (
 	"os"
 	"plugin"
 	"strconv"
+	"strings"
 
 	// Commented for now while figure out how do plugins
 	// "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
@@ -98,28 +99,34 @@ func Execute() {
 func init() {
 	// cobra.OnInitialize(initConfig)
 	viper.SetEnvPrefix("CY")
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	viper.AutomaticEnv()
 
-	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
+	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
 
 	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", "The formatting style for command output [json|yaml|table].")
 	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
 
-	// rootCmd.PersistentFlags().StringVarP(&verbosity, "verbosity", "v", "", "Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none.")
 	rootCmd.PersistentFlags().StringP("verbosity", "v", "warning", "Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none.")
 	viper.BindPFlag("verbosity", rootCmd.PersistentFlags().Lookup("verbosity"))
 	viper.SetDefault("verbosity", "warning")
 
-	rootCmd.PersistentFlags().Bool("version", false, "Display the version of this tool.")
-	// viper.BindPFlag("version", rootCmd.PersistentFlags().Lookup("version"))
+	rootCmd.PersistentFlags().String("api-url", "", ".....")
+	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
+	// rootCmd.PersistentFlags().Bool("version", false, "Display the version of this tool.")
 
-	rootCmd.PersistentFlags().BoolP("quiet", "q", false, "....") // also -q ?
-	viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
+	// rootCmd.PersistentFlags().BoolP("quiet", "q", false, "....") // also -q ?
+	// viper.BindPFlag("quiet", rootCmd.PersistentFlags().Lookup("quiet"))
 
-	rootCmd.PersistentFlags().Bool("debug", false, "Turn on debug logging.")
-	viper.BindPFlag("useDebug", rootCmd.PersistentFlags().Lookup("debug"))
+	// rootCmd.PersistentFlags().Bool("debug", false, "Turn on debug logging.")
+	// viper.BindPFlag("useDebug", rootCmd.PersistentFlags().Lookup("debug"))
 
-	rootCmd.PersistentFlags().Bool("no-verify-ssl", false, ".....")
-	viper.BindPFlag("noVerifySSL", rootCmd.PersistentFlags().Lookup("noVerifySSL"))
+	// rootCmd.PersistentFlags().Bool("no-verify-ssl", false, ".....")
+	// viper.BindPFlag("noVerifySSL", rootCmd.PersistentFlags().Lookup("noVerifySSL"))
+
+	// rootCmd.PersistentFlags().String("api-url", "", ".....")
+	// viper.BindPFlag("FOO", rootCmd.PersistentFlags().Lookup("api-url"))
+	// viper.SetDefault("api-url", "sdfsdf")
 
 	// --log-http
 	//    Log all HTTP server requests and responses to stderr. Overrides the
