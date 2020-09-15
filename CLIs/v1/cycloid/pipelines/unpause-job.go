@@ -3,7 +3,6 @@ package pipelines
 import (
 	"fmt"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
@@ -25,7 +24,7 @@ func NewUnpauseJobCommand() *cobra.Command {
 }
 
 func unpauseJob(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")

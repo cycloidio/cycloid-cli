@@ -6,7 +6,6 @@ import (
 
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
 	"github.com/cycloidio/youdeploy-cli/client/models"
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -16,7 +15,7 @@ func (m *middleware) ListProjects(org string) ([]*models.ProjectsItem, error) {
 	params := organization_projects.NewGetProjectsParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationProjects.GetProjects(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationProjects.GetProjects(params, common.ClientCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +38,7 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
 
-	resp, err := m.api.OrganizationProjects.GetProject(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationProjects.GetProject(params, common.ClientCredentials())
 	if err != nil {
 		return nil, err
 	}
@@ -107,7 +106,7 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.CreateProject(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationProjects.CreateProject(params, common.ClientCredentials())
 	// TODO create a error handeling function to format our error with a better display
 	if err != nil {
 		return nil, err
@@ -146,7 +145,7 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.UpdateProject(params, root.ClientCredentials())
+	resp, err := m.api.OrganizationProjects.UpdateProject(params, common.ClientCredentials())
 	// TODO create a error handeling function to format our error with a better display
 	if err != nil {
 		return nil, err
@@ -170,7 +169,7 @@ func (m *middleware) DeleteProjectEnv(org, project, env string) error {
 	params.SetProjectCanonical(project)
 	params.SetEnvironmentCanonical(env)
 
-	_, err := m.api.OrganizationProjects.DeleteProjectEnvironment(params, root.ClientCredentials())
+	_, err := m.api.OrganizationProjects.DeleteProjectEnvironment(params, common.ClientCredentials())
 
 	return err
 }
@@ -181,7 +180,7 @@ func (m *middleware) DeleteProject(org, project string) error {
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
 
-	_, err := m.api.OrganizationProjects.DeleteProject(params, root.ClientCredentials())
+	_, err := m.api.OrganizationProjects.DeleteProject(params, common.ClientCredentials())
 
 	return err
 }

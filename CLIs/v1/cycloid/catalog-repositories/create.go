@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"time"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
@@ -33,7 +32,7 @@ func NewCreateCommand() *cobra.Command {
 // Creates a Service catalog source
 
 func createCatalogRepository(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")

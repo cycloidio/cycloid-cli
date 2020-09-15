@@ -3,7 +3,6 @@ package projects
 import (
 	"fmt"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 
@@ -24,7 +23,7 @@ func NewGetCommand() *cobra.Command {
 }
 
 func get(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")

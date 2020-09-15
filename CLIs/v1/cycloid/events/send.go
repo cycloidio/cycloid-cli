@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 
 	"github.com/cycloidio/youdeploy-cli/CLIs/v1/cycloid/middleware"
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 )
 
@@ -43,7 +43,7 @@ func NewSendCommand() *cobra.Command {
 }
 
 func send(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	var err error

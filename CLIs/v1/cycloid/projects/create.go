@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	strfmt "github.com/go-openapi/strfmt"
@@ -35,7 +34,7 @@ func NewCreateCommand() *cobra.Command {
 }
 
 func create(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")

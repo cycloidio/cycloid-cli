@@ -3,7 +3,7 @@ package middleware
 import (
 	"github.com/cycloidio/youdeploy-cli/client/client/organizations"
 	"github.com/cycloidio/youdeploy-cli/client/models"
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 )
 
@@ -43,7 +43,7 @@ func (m *middleware) SendEvent(org, eventType, title, message, severity string, 
 		return err
 	}
 
-	_, err = m.api.Organizations.SendOrgEvent(params, root.ClientCredentials())
+	_, err = m.api.Organizations.SendOrgEvent(params, common.ClientCredentials())
 
 	return err
 }

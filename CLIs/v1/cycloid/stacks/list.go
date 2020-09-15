@@ -3,9 +3,8 @@ package stacks
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/service_catalogs"
-
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 
 	"github.com/spf13/cobra"
 )
@@ -22,35 +21,20 @@ func NewListCommand() *cobra.Command {
 }
 
 func list(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
 		return err
 	}
 
-	params := service_catalogs.NewGetServiceCatalogsParams()
-	params.SetOrganizationCanonical(org)
+	d, err := m.ListStacks(org)
 
-	resp, err := api.ServiceCatalogs.GetServiceCatalogs(params, root.ClientCredentials())
-	if err != nil {
-		return err
+	for _, s := range d {
+		fmt.Printf("ref: %s    name: %s    status: %s  \n", *s.Ref, *s.Name, s.Status)
+		fmt.Printf("  author: %s    describ: %s  \n", *s.Author, *s.Description)
 	}
-
-	fmt.Println("...")
-	p := resp.GetPayload()
-
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
-	for _, d := range p.Data {
-		fmt.Printf("ref: %s    name: %s    status: %s  \n", *d.Ref, *d.Name, d.Status)
-		fmt.Printf("  author: %s    describ: %s  \n", *d.Author, *d.Description)
-	}
-	fmt.Println(resp)
 	fmt.Printf("%+v\n", err)
 	return nil
 }

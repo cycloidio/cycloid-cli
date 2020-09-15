@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
@@ -24,7 +24,7 @@ func NewListCommand() *cobra.Command {
 // get: getConfigRepositories
 // Return all the config repositories
 func listConfigRepositories(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
