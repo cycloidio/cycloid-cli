@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 
 	"github.com/cycloidio/youdeploy-cli/client/models"
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
@@ -47,7 +46,7 @@ func NewCreateCommand() *cobra.Command {
 }
 
 func create(cmd *cobra.Command, args []string) error {
-	api := root.NewAPI()
+	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	var err error
