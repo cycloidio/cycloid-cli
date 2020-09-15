@@ -55,6 +55,9 @@ type Middleware interface {
 	DeleteCredential(org string, cred uint32) error
 	ListCredentials(org, cType string) ([]*models.CredentialSimple, error)
 	CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, description string) error
+
+	ListStacks(org string) ([]*models.ServiceCatalog, error)
+	GetStack(org, ref string) (*models.ServiceCatalog, error)
 }
 
 type middleware struct {
