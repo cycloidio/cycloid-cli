@@ -8,6 +8,7 @@ import (
 	"net/url"
 
 	"github.com/cycloidio/youdeploy-cli/client/client"
+	"github.com/cycloidio/youdeploy-cli/config"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/spf13/cobra"
@@ -99,11 +100,15 @@ func NewAPI() *client.APIClient {
 }
 
 func ClientCredentials() runtime.ClientAuthInfoWriter {
-	token := os.Getenv("TOKEN")
-	if token == "" {
-		panic("env var TOKEN not found")
+	var token string
+	// we first try to get the token from the env variable
+	token = os.Getenv("TOKEN")
+	// if the token is not set with env variable we try to fetch
+	// him from the config (if the user is logged)
+	if len(token) == 0 {
+		config, _ := config.ReadConfig()
+		token = config.Token
 	}
-
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
 		r.SetHeaderParam("Authorization", "Bearer "+token)
 		return nil
