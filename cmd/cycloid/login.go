@@ -1,25 +1,84 @@
 package root
 
 import (
-	"fmt"
-
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/youdeploy-cli/config"
 )
 
-func NewLoginCmd() *cobra.Command {
-	var cmd = &cobra.Command{
-		Use:   "login",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("...")
+var (
+	example = `
+# Login into my-org using email / password as flags
+cy login --org my-org --email my-email --password my-password
+
+# Login without organization (can be used to access endpoint without organization)
+cy login --email my-email --password my-password
+`
+	short    = "Login against the Cycloid console"
+	long     = short
+	org      string
+	email    string
+	password string
+	LoginCmd = &cobra.Command{
+		Use:     "login",
+		Short:   short,
+		Long:    long,
+		Example: example,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			org, err := cmd.Flags().GetString("org")
+			if err != nil {
+				return errors.Wrap(err, "unable to get org flag")
+			}
+			email, err := cmd.Flags().GetString("email")
+			if err != nil {
+				return errors.Wrap(err, "unable to get email flag")
+			}
+			password, err := cmd.Flags().GetString("password")
+			if err != nil {
+				return errors.Wrap(err, "unable to get password flag")
+			}
+
+			api := common.NewAPI()
+			m := middleware.NewMiddleware(api)
+
+			// we first need to authenticate the user against cycloid console
+			session, err := m.Login(email, password)
+			if err != nil {
+				return errors.Wrapf(err, "unable to log user: %s", email)
+			}
+
+			// we save the generated token into the config file
+			c := &config.Config{
+				Token: *session.Token,
+			}
+			if err := config.WriteConfig(c); err != nil {
+				return errors.Wrap(err, "unable to save config")
+			}
+
+			if len(org) != 0 {
+				orgSession, err := m.LoginOrg(org, email, password)
+				if err != nil {
+					return errors.Wrapf(err, "unable to log user: %s", email)
+				}
+
+				// we save the new generated token and remove the previous one
+				c := &config.Config{
+					Token: *orgSession.Token,
+				}
+				if err := config.WriteConfig(c); err != nil {
+					return errors.Wrap(err, "unable to save config")
+				}
+			}
+			return nil
 		},
 	}
-	return cmd
-}
+)
 
-// It should also take the api url
-// Or gettocken
-// /user/login
-// post: login
-// Authenticate a user and return a new JWT token.
+func init() {
+	LoginCmd.PersistentFlags().StringVar(&org, "org", "", "organization")
+	LoginCmd.PersistentFlags().StringVar(&email, "email", "", "email")
+	LoginCmd.PersistentFlags().StringVar(&password, "password", "", "password")
+}
