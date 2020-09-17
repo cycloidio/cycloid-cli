@@ -50,11 +50,14 @@ cy login --email my-email --password my-password
 				return errors.Wrapf(err, "unable to log user: %s", email)
 			}
 
-			// we save the generated token into the config file
-			c := &config.Config{
-				Token: *session.Token,
-			}
-			if err := config.WriteConfig(c); err != nil {
+			// fetch any existing config
+			// we skip the error in case it's the first usage and the config
+			// file does not exist
+			conf, _ := config.ReadConfig()
+
+			// we save the new generated token into the config file
+			conf.Token = *session.Token
+			if err := config.WriteConfig(conf); err != nil {
 				return errors.Wrap(err, "unable to save config")
 			}
 
@@ -65,10 +68,14 @@ cy login --email my-email --password my-password
 				}
 
 				// we save the new generated token and remove the previous one
-				c := &config.Config{
+				conf, err := config.ReadConfig()
+				if err != nil {
+					return errors.Wrap(err, "unable to read config: %s")
+				}
+				conf.Organizations[org] = config.Organization{
 					Token: *orgSession.Token,
 				}
-				if err := config.WriteConfig(c); err != nil {
+				if err := config.WriteConfig(conf); err != nil {
 					return errors.Wrap(err, "unable to save config")
 				}
 			}

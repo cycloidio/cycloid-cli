@@ -12,7 +12,7 @@ func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatal
 	params := organization_service_catalog_sources.NewGetServiceCatalogSourcesParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSources(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSources(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (m *middleware) GetCatalogRepository(org string, catalogRepo uint32) (*mode
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogSourceID(catalogRepo)
 
-	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSource(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSource(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (m *middleware) DeleteCatalogRepository(org string, catalogRepo uint32) err
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogSourceID(catalogRepo)
 
-	_, err := m.api.OrganizationServiceCatalogSources.DeleteServiceCatalogSource(params, common.ClientCredentials())
+	_, err := m.api.OrganizationServiceCatalogSources.DeleteServiceCatalogSource(params, common.ClientCredentials(&org))
 	return err
 }
 
@@ -79,7 +79,7 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch string, cred
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationServiceCatalogSources.CreateServiceCatalogSource(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationServiceCatalogSources.CreateServiceCatalogSource(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -116,7 +116,7 @@ func (m *middleware) UpdateCatalogRepository(org string, catalogRepo uint32, nam
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationServiceCatalogSources.UpdateServiceCatalogSource(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationServiceCatalogSources.UpdateServiceCatalogSource(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -139,7 +139,7 @@ func (m *middleware) RefreshCatalogRepository(org string, catalogRepo uint32) (*
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogSourceID(catalogRepo)
 
-	resp, err := m.api.OrganizationServiceCatalogSources.RefreshServiceCatalogSource(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationServiceCatalogSources.RefreshServiceCatalogSource(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}

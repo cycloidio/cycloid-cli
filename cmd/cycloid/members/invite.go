@@ -1,6 +1,7 @@
 package members
 
 import (
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
@@ -55,8 +56,7 @@ func inviteMember(cmd *cobra.Command, args []string) error {
 
 	err = m.InviteMember(org, email, roleID)
 	if err != nil {
-		return err
+		return errors.Wrapf(err, "unable to invite member: %s", email)
 	}
-
 	return nil
 }
