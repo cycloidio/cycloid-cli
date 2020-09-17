@@ -37,7 +37,7 @@ func (m *middleware) LoginOrg(org, username, password string) (*models.UserSessi
 
 	params := user.NewRefreshTokenParams()
 	params.SetOrganizationCanonical(&org)
-	res, err := m.api.User.RefreshToken(params, common.ClientCredentials())
+	res, err := m.api.User.RefreshToken(params, common.ClientCredentials(nil))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to log user")
 	}
