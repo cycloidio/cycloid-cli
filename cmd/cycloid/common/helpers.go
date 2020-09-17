@@ -98,15 +98,27 @@ func NewAPI() *client.APIClient {
 	return api
 }
 
-func ClientCredentials() runtime.ClientAuthInfoWriter {
+func ClientCredentials(org *string) runtime.ClientAuthInfoWriter {
 	var token string
 	// we first try to get the token from the env variable
 	token = os.Getenv("TOKEN")
 	// if the token is not set with env variable we try to fetch
 	// him from the config (if the user is logged)
 	if len(token) == 0 {
+		// we fetch the running config
 		config, _ := config.ReadConfig()
-		token = config.Token
+		if org == nil {
+			// if there is no org, it means we need to use
+			// the user token (the first token in the config)
+			token = config.Token
+		} else {
+			// we try to find a token for this `org`
+			if t, ok := config.Organizations[*org]; ok {
+				token = t.Token
+			} else {
+				return nil
+			}
+		}
 	}
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
 		r.SetHeaderParam("Authorization", "Bearer "+token)
