@@ -26,6 +26,7 @@
 [ ] work on logger (--debug / verbose)
 [ ] Migrate /define to git tag
 [ ] Reduce swagger generated files
+[ ] Add a logger into the cli to be able to display --debug mode
 [ ] Feature idea: jobs time history. Basic ascii histogram to display job time/status
 [ ] Implement extra flags ?
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
@@ -44,6 +45,7 @@
 	// --log-http
 	//    Log all HTTP server requests and responses to stderr. Overrides the
 	//    default core/log_http property value for this command invocation.
+[ ] Create alias on all commands to make them singular or plurial like : user/users
 
 
 Example of all working calls (tested on staging)
