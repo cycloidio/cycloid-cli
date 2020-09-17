@@ -12,7 +12,7 @@ func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
 	params := organization_members.NewGetOrgMembersParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (m *middleware) GetMember(org string, name string) (*models.MemberOrg, erro
 	params.SetOrganizationCanonical(org)
 	params.SetUsername(name)
 
-	resp, err := m.api.OrganizationMembers.GetOrgMember(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationMembers.GetOrgMember(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (m *middleware) DeleteMember(org string, name string) error {
 	params.SetOrganizationCanonical(org)
 	params.SetUsername(name)
 
-	_, err := m.api.OrganizationMembers.RemoveOrgMember(params, common.ClientCredentials())
+	_, err := m.api.OrganizationMembers.RemoveOrgMember(params, common.ClientCredentials(&org))
 
 	return err
 }
@@ -79,7 +79,7 @@ func (m *middleware) UpdateMembers(org string, name string, roleID uint32) (*mod
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationMembers.UpdateOrgMember(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationMembers.UpdateOrgMember(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -113,7 +113,7 @@ func (m *middleware) InviteMember(org string, email string, roleID uint32) error
 		return err
 	}
 
-	_, err = m.api.OrganizationMembers.InviteUserToOrgMember(params, common.ClientCredentials())
+	_, err = m.api.OrganizationMembers.InviteUserToOrgMember(params, common.ClientCredentials(&org))
 
 	return err
 }

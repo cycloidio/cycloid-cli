@@ -49,7 +49,7 @@ func (m *middleware) PushConfig(org string, project string, env string, configs 
 	}
 
 	params.SetBody(body)
-	_, err = m.api.OrganizationConfigRepositories.CreateConfigRepositoryConfig(params, common.ClientCredentials())
+	_, err = m.api.OrganizationConfigRepositories.CreateConfigRepositoryConfig(params, common.ClientCredentials(&org))
 	if err != nil {
 		return err
 	}
@@ -62,7 +62,7 @@ func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigReposit
 	params := organization_config_repositories.NewGetConfigRepositoriesParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepositories(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepositories(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -85,7 +85,7 @@ func (m *middleware) GetConfigRepository(org string, configRepo uint32) (*models
 	params.SetOrganizationCanonical(org)
 	params.SetConfigRepositoryID(configRepo)
 
-	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepository(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepository(params, common.ClientCredentials(&org))
 
 	if err != nil {
 		return nil, err
@@ -108,7 +108,7 @@ func (m *middleware) DeleteConfigRepository(org string, configRepo uint32) error
 	params.SetOrganizationCanonical(org)
 	params.SetConfigRepositoryID(configRepo)
 
-	_, err := m.api.OrganizationConfigRepositories.DeleteConfigRepository(params, common.ClientCredentials())
+	_, err := m.api.OrganizationConfigRepositories.DeleteConfigRepository(params, common.ClientCredentials(&org))
 	return err
 }
 
@@ -131,7 +131,7 @@ func (m *middleware) CreateConfigRepository(org, name, url, branch string, setDe
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationConfigRepositories.CreateConfigRepository(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationConfigRepositories.CreateConfigRepository(params, common.ClientCredentials(&org))
 
 	if err != nil {
 		return nil, err
@@ -169,7 +169,7 @@ func (m *middleware) UpdateConfigRepository(org string, configRepo uint32, name,
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationConfigRepositories.UpdateConfigRepository(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationConfigRepositories.UpdateConfigRepository(params, common.ClientCredentials(&org))
 
 	if err != nil {
 		return nil, err

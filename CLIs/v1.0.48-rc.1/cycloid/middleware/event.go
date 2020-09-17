@@ -43,7 +43,7 @@ func (m *middleware) SendEvent(org, eventType, title, message, severity string, 
 		return err
 	}
 
-	_, err = m.api.Organizations.SendOrgEvent(params, common.ClientCredentials())
+	_, err = m.api.Organizations.SendOrgEvent(params, common.ClientCredentials(&org))
 
 	return err
 }
