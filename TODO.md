@@ -113,3 +113,8 @@ V=1 ./cy pipeline update --org seraf --project gael --env new \
 --vars /home/gael/Desktop/git/github/cycloidio/stack-dummy/pipeline/variables.sample.yml \
 --pipeline /home/gael/Desktop/git/github/cycloidio/stack-dummy/pipeline/pipeline.yml \
 --config '/home/gael/Desktop/git/github/cycloidio/stack-dummy/pipeline/variables.sample.yml=($ project $)/pipeline/variables-($ environment $).yml'
+
+V=1 ./cy stack  --org seraf  list
+V=1 ./cy stack  --org seraf  get --ref seraf:relationships-summit-661
+
+V=1 ./cy version

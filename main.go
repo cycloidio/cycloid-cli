@@ -1,14 +1,19 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+	"net/url"
 	"os"
+	"path"
 	"plugin"
-	"strconv"
 	"strings"
 
 	// Commented for now while figure out how do plugins
 	// "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
+
 	models "github.com/cycloidio/youdeploy-cli/client/models"
 
 	"github.com/davecgh/go-spew/spew"
@@ -73,7 +78,6 @@ func Execute() {
 				fmt.Println(*e.Code)
 				for _, d := range e.Details {
 					fmt.Println(d)
-
 				}
 			}
 		}
@@ -114,19 +118,75 @@ func init() {
 
 }
 
-func main() {
-	// Commented for now while figure out how do plugins
-	// if err := cmd.Execute(); err != nil {
-	// 	log.Printf("%+v\n", err)
-	// 	os.Exit(1)
-	// }
+type AppVersionResp struct {
+	Data *AppVersion `json:"data"`
+}
+type AppVersion struct {
+	Branch   string `json:"branch"`
+	Revision string `json:"revision"`
+	Version  string `json:"version"`
+}
 
-	ver, err := strconv.Atoi(os.Getenv("V"))
-	if err == nil {
-		version = ver
+func getAPIVersion() (*AppVersion, error) {
+	// Because of https://github.com/golang/go/issues/27751
+	// When a Go plugin import a lib. And The static go binary import the same lib with a different version,
+	// Basically in our case, we can't use swagger generated client in the plugin and the static.
+	// you end up with this kind of error "plugin was built with a different version of package"
+	// So we decided to not use swagger lib to get /version endpoint.
+	// This is also the reason why -trim is enabled during the build of the CLI. It prevent this error but use the version of
+	// the lib from the static build (even if the version from the plugin is newer)
+
+	var versionResp *AppVersionResp
+	host := "http-api-stoplight.cycloid.io"
+	scheme := "https"
+	basePath := "/"
+
+	rawApiUrl := viper.GetString("api-url")
+	apiUrl, err := url.Parse(rawApiUrl)
+	if err != nil {
+		return nil, err
 	}
 
-	p, err := plugin.Open(fmt.Sprintf("plugins/v%d.so", version))
+	if apiUrl.Host != "" {
+		host = apiUrl.Host
+	}
+	if apiUrl.Scheme != "" {
+		scheme = apiUrl.Scheme
+	}
+	if apiUrl.Path != "" {
+		basePath = apiUrl.Path
+	}
+	basePath = strings.Trim(basePath, "/")
+
+	// Curl version endpoint
+	resp, err := http.Get(fmt.Sprintf("%s://%s/%s", scheme, host, path.Join(basePath, "version")))
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	// Unmarchal the json
+	if err := json.Unmarshal(body, &versionResp); err != nil {
+		return nil, err
+	}
+
+	return versionResp.Data, nil
+}
+
+func main() {
+
+	v, err := getAPIVersion()
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Running plugin version %s\n", v.Version)
+
+	p, err := plugin.Open(fmt.Sprintf("plugins/v%d.so", v.Version))
 	if err != nil {
 		panic(err)
 	}

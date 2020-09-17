@@ -1,6 +1,10 @@
 package root
 
 import (
+	"fmt"
+
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
@@ -16,20 +20,13 @@ func NewVersionCmd() *cobra.Command {
 }
 
 func version(cmd *cobra.Command, args []string) error {
-	// api := NewAPI()
-	// m := middleware.NewMiddleware(api)
-	//
-	// org, err := cmd.Flags().GetString("org")
-	// if err != nil {
-	// 	return err
-	// }
-	//
-	// d, err := m.ListProjects(org)
-	//
-	// for _, pr := range d {
-	// 	fmt.Printf("cannonical: %s    svcat: %s    name: %s  \n", *pr.Canonical, pr.ServiceCatalogName, *pr.Name)
-	// }
-	// fmt.Println(d)
-	// fmt.Printf("%+v\n", err)
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	d, err := m.GetAppVersion()
+
+	fmt.Printf("ver: %s    rev: %s    branch: %s  \n", *d.Version, *d.Revision, *d.Branch)
+
+	fmt.Printf("%+v\n", err)
 	return nil
 }

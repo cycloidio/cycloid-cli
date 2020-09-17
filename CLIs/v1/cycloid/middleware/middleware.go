@@ -72,6 +72,8 @@ type Middleware interface {
 	UpdateMembers(org string, name string, roleID uint32) (*models.MemberOrg, error)
 	DeleteMember(org string, name string) error
 	InviteMember(org string, email string, roleID uint32) error
+
+	GetAppVersion() (*models.AppVersion, error)
 }
 
 type middleware struct {

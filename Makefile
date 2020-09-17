@@ -119,6 +119,7 @@ lint: ## Verify the sources of the project are goimports compliant
 .PHONY: build
 build: ## Builds the binary
 	GO111MODULE=on CGO_ENABLED=1 GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
+	#GO111MODULE=on CGO_ENABLED=1 GOARCH=amd64 go build -trimpath -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
 	#GO111MODULE=on CGO_ENABLED=0 GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
 
 .PHONY: tidy
