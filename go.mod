@@ -3,6 +3,7 @@ module github.com/cycloidio/youdeploy-cli
 go 1.14
 
 require (
+	github.com/adrg/xdg v0.2.1
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-openapi/errors v0.19.6
 	github.com/go-openapi/runtime v0.19.20
@@ -17,4 +18,5 @@ require (
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/text v0.3.3 // indirect
 	gopkg.in/yaml.v1 v1.0.0-20140924161607-9f9df34309c0
+	gopkg.in/yaml.v2 v2.3.0
 )

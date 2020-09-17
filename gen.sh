@@ -42,7 +42,8 @@ docker-compose run swagger generate client \
 --tags="Organization pipelines jobs build" \
 --tags="Organization Config Repositories" \
 --tags="Organization Service Catalog Sources" \
---tags="Organizations"
+--tags="Organizations" \
+--tags="User"
 fi
 
 echo "- Generate plugin"
