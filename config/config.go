@@ -17,8 +17,18 @@ var (
 // Config is the structure handling the config
 // of the CLI
 type Config struct {
-	// Token can be, at the moment, the user token
-	// or the organization token
+	// Token is the user token
+	Token string `yaml:"token"`
+
+	// Organizations is the list of Organization where the user
+	// is currently logged in
+	Organizations map[string]Organization `yaml:"organizations"`
+}
+
+// Organization is an organization where the user
+// is logged in
+type Organization struct {
+	// Organization token
 	Token string `yaml:"token"`
 }
 
@@ -31,7 +41,9 @@ func ReadConfig() (*Config, error) {
 	}
 	content, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to read config from file")
+		// we return an empty Config in case it's the first time we try to access
+		// the config and it does not exist yet
+		return &Config{}, errors.Wrap(err, "unable to read config from file")
 	}
 	var c Config
 	if err := yaml.Unmarshal(content, &c); err != nil {
