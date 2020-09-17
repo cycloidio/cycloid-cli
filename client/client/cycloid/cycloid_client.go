@@ -6,6 +6,8 @@ package cycloid
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"fmt"
+
 	"github.com/go-openapi/runtime"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -28,6 +30,8 @@ type Client struct {
 GetAppVersion Get the version of the Cycloid's API.
 */
 func (a *Client) GetAppVersion(params *GetAppVersionParams) (*GetAppVersionOK, error) {
+	fmt.Println("In GetAppVersion v1")
+
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetAppVersionParams()

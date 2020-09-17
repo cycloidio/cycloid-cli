@@ -76,7 +76,6 @@ func GetPipelineName(project, env string) string {
 }
 
 func NewAPI() *client.APIClient {
-
 	cfg := client.DefaultTransportConfig()
 
 	rawApiUrl := viper.GetString("api-url")
