@@ -66,6 +66,12 @@ type Middleware interface {
 
 	// LoginOrg is the used to log the user into a Cycloid organization
 	LoginOrg(org, email, password string) (*models.UserSession, error)
+
+	ListMembers(org string) ([]*models.MemberOrg, error)
+	GetMember(org string, name string) (*models.MemberOrg, error)
+	UpdateMembers(org string, name string, roleID uint32) (*models.MemberOrg, error)
+	DeleteMember(org string, name string) error
+	InviteMember(org string, email string, roleID uint32) error
 }
 
 type middleware struct {

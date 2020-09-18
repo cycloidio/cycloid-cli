@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/cycloidio/youdeploy-cli/printer"
-
 	"github.com/olekukonko/tablewriter"
 )
 
