@@ -1,4 +1,5 @@
 [X] Move and make sure all commands are migrated to middleware
+[ ] Put plugins with xdg into home
 [ ] Make cycloid url env var or --api-url
 [ ] Implement diff pipeline display (same as fly) using see https://github.com/aryann/difflib
 [ ] Work on login part -> have a look to login per orgs
