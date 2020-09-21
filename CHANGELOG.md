@@ -9,6 +9,10 @@
 
 ### Changed
 
+- Second iteration of login command : allow multiple orgs login
+:warning: the signature of common.ClientCredentials has changed
+([PR #15](https://github.com/cycloidio/youdeploy-cli/pull/15))
+
 ### Deprecated
 
 ### Removed

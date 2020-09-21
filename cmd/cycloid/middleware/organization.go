@@ -12,7 +12,7 @@ func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
 	params := organizations.NewGetOrgParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.Organizations.GetOrg(params, common.ClientCredentials())
+	resp, err := m.api.Organizations.GetOrg(params, common.ClientCredentials(&org))
 
 	if err != nil {
 		return nil, err
@@ -34,7 +34,7 @@ func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, erro
 	params := organization_workers.NewGetWorkersParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationWorkers.GetWorkers(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationWorkers.GetWorkers(params, common.ClientCredentials(&org))
 
 	if err != nil {
 		return nil, err
@@ -55,7 +55,7 @@ func (m *middleware) ListOrganizations() ([]*models.OrganizationBasicInfo, error
 
 	params := organizations.NewGetOrgsParams()
 
-	resp, err := m.api.Organizations.GetOrgs(params, common.ClientCredentials())
+	resp, err := m.api.Organizations.GetOrgs(params, common.ClientCredentials(nil))
 	if err != nil {
 		return nil, err
 	}

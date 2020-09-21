@@ -12,7 +12,7 @@ func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend
 	params := organization_external_backends.NewGetExternalBackendsParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationExternalBackends.GetExternalBackends(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationExternalBackends.GetExternalBackends(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +34,7 @@ func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) e
 	params.SetOrganizationCanonical(org)
 	params.SetExternalBackendID(externalBackend)
 
-	_, err := m.api.OrganizationExternalBackends.DeleteExternalBackend(params, common.ClientCredentials())
+	_, err := m.api.OrganizationExternalBackends.DeleteExternalBackend(params, common.ClientCredentials(&org))
 
 	return err
 }
@@ -76,7 +76,7 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose string, c
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationExternalBackends.CreateExternalBackend(params, common.ClientCredentials())
+	resp, err := m.api.OrganizationExternalBackends.CreateExternalBackend(params, common.ClientCredentials(&org))
 
 	if err != nil {
 		return nil, err

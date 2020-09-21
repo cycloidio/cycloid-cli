@@ -1,6 +1,7 @@
 package members
 
 import (
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
@@ -45,6 +46,8 @@ func deleteMember(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteMember(org, name)
-
-	return err
+	if err != nil {
+		return errors.Wrapf(err, "unable to remove member: %s", name)
+	}
+	return nil
 }
