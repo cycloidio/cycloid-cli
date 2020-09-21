@@ -16,3 +16,4 @@
 
 plugins/gen/*
 cy
+pkged.go
