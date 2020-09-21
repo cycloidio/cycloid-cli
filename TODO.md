@@ -1,4 +1,5 @@
 [X] Move and make sure all commands are migrated to middleware
+[ ] Put plugins with xdg into home
 [ ] Make cycloid url env var or --api-url
 [ ] Implement diff pipeline display (same as fly) using see https://github.com/aryann/difflib
 [ ] Work on login part -> have a look to login per orgs
@@ -26,6 +27,7 @@
 [ ] work on logger (--debug / verbose)
 [ ] Migrate /define to git tag
 [ ] Reduce swagger generated files
+[ ] Add a logger into the cli to be able to display --debug mode
 [ ] Feature idea: jobs time history. Basic ascii histogram to display job time/status
 [ ] Implement extra flags ?
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
@@ -44,6 +46,7 @@
 	// --log-http
 	//    Log all HTTP server requests and responses to stderr. Overrides the
 	//    default core/log_http property value for this command invocation.
+[ ] Create alias on all commands to make them singular or plurial like : user/users
 
 
 Example of all working calls (tested on staging)
@@ -113,3 +116,8 @@ V=1 ./cy pipeline update --org seraf --project gael --env new \
 --vars /home/gael/Desktop/git/github/cycloidio/stack-dummy/pipeline/variables.sample.yml \
 --pipeline /home/gael/Desktop/git/github/cycloidio/stack-dummy/pipeline/pipeline.yml \
 --config '/home/gael/Desktop/git/github/cycloidio/stack-dummy/pipeline/variables.sample.yml=($ project $)/pipeline/variables-($ environment $).yml'
+
+V=1 ./cy stack  --org seraf  list
+V=1 ./cy stack  --org seraf  get --ref seraf:relationships-summit-661
+
+V=1 ./cy version

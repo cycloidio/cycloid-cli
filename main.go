@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"os"
 	"plugin"
-	"strconv"
 	"strings"
 
-	// Commented for now while figure out how do plugins
-	// "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
 	models "github.com/cycloidio/youdeploy-cli/client/models"
+	"github.com/cycloidio/youdeploy-cli/lookup"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-openapi/runtime"
@@ -73,7 +71,6 @@ func Execute() {
 				fmt.Println(*e.Code)
 				for _, d := range e.Details {
 					fmt.Println(d)
-
 				}
 			}
 		}
@@ -112,21 +109,29 @@ func init() {
 	rootCmd.PersistentFlags().String("api-url", "", ".....")
 	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
 
+	rootCmd.PersistentFlags().String("cy-plugin-dir", "/tmp/cy-plugins", "directory where the CLI plugins are stored")
+	viper.BindPFlag("cy-plugin-dir", rootCmd.PersistentFlags().Lookup("cy-plugin-dir"))
+
 }
 
 func main() {
-	// Commented for now while figure out how do plugins
-	// if err := cmd.Execute(); err != nil {
-	// 	log.Printf("%+v\n", err)
-	// 	os.Exit(1)
-	// }
 
-	ver, err := strconv.Atoi(os.Getenv("V"))
-	if err == nil {
-		version = ver
+	var err error
+
+	v, err := lookup.GetAPIVersion()
+	if err != nil {
+		panic(err)
 	}
 
-	p, err := plugin.Open(fmt.Sprintf("plugins/v%d.so", version))
+	version := v.Version
+	// Plugin not found locally, lookup for the plugin
+	pluginPath, err := lookup.LookupPlugin(version)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Running plugin version %s\n", version)
+	p, err := plugin.Open(pluginPath)
 	if err != nil {
 		panic(err)
 	}
@@ -135,9 +140,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	// *v.(*int) = 7
-	// f.(func(*cobra.Command))(rootCmd) // prints "Hello, number 7"
-	// rootCmd = f.(func() *cobra.Command)()
+
 	f.(func(*cobra.Command))(rootCmd)
 
 	Execute()

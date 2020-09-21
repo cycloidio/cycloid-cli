@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 
-	"github.com/cycloidio/youdeploy-cli/CLIs/v1/cycloid/middleware"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 )

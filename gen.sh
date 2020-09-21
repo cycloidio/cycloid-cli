@@ -27,7 +27,7 @@ echo "- Generate swagger client"
 rm -rf ./client
 mkdir ./client
 docker-compose run swagger generate client \
---spec=swagger-files/api-v10${1}.yml \
+--spec=swagger-files/api-v${1}.yml \
 --default-produces="application/vnd.cycloid.io.v1+json" \
 --target=./client \
 --name=api \
@@ -50,3 +50,5 @@ fi
 
 echo "- Generate plugin"
 go build -buildmode=plugin -o "plugins/v${1}.so" cmd/cycloid.go
+#go build -trimpath -buildmode=plugin -o "plugins/v${1}.so" cmd/cycloid.go
+#go build -x -trimpath -buildmode=plugin -o "plugins/v${1}.so" cmd/cycloid.go
