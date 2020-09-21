@@ -1,4 +1,3 @@
-
 ## [v1.0.47] _2020-09-21_
 - **ADDED**
   - Printer with support for `json`, `yaml` and `table` format
