@@ -7,6 +7,7 @@ import (
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/creds"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/events"
 	externalBackends "github.com/cycloidio/youdeploy-cli/cmd/cycloid/external-backends"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/login"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/members"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/organizations"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/pipelines"
@@ -26,7 +27,6 @@ func init() {
 func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(
 		// Root
-		root.LoginCmd,
 		root.NewStatusCmd(),
 		root.NewVersionCmd(),
 		root.NewDeprecatedExampleCmd(),
@@ -41,5 +41,6 @@ func AttachCommands(cmd *cobra.Command) {
 		projects.NewCommands(),
 		stacks.NewCommands(),
 		members.NewCommands(),
+		login.LoginCmd,
 	)
 }
