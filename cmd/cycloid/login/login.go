@@ -1,4 +1,4 @@
-package root
+package login
 
 import (
 	"github.com/pkg/errors"
@@ -88,4 +88,6 @@ func init() {
 	LoginCmd.PersistentFlags().StringVar(&org, "org", "", "organization")
 	LoginCmd.PersistentFlags().StringVar(&email, "email", "", "email")
 	LoginCmd.PersistentFlags().StringVar(&password, "password", "", "password")
+
+	LoginCmd.AddCommand(list)
 }
