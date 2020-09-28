@@ -13,9 +13,12 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  get,
+		Short: "get a credential",
+		Example: `
+	# get a credential by its ID
+	cy --org my-org credential get --id 123
+`,
+		RunE: get,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)

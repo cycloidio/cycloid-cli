@@ -12,9 +12,15 @@ import (
 
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create [type]",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use:   "create [ssh|basic_auth|custom]",
+		Short: "create a credential",
+		Example: `
+	# create a credential for basic authentication
+	cy --my-org credential create basic_auth --username my-username --password my-password
+
+	# create a credential for SSH
+	cy --my-org credential create ssh --ssh-key /path/to/private/key
+`,
 	}
 
 	WithPersistentFlagDescription(cmd)
@@ -24,12 +30,20 @@ func NewCreateCommand() *cobra.Command {
 	var ssh = &cobra.Command{
 		Use:  "ssh",
 		RunE: create,
+		Example: `
+	# create a credential for SSH
+	cy --my-org credential create ssh --ssh-key /path/to/private/key
+`,
 	}
 	common.RequiredFlag(WithFlagSSHKey, ssh)
 
 	var basicAuth = &cobra.Command{
 		Use:  "basic_auth",
 		RunE: create,
+		Example: `
+	# create a credential for basic authentication
+	cy --my-org credential create basic_auth --username my-username --password my-password
+`,
 	}
 	common.RequiredFlag(WithFlagUsername, basicAuth)
 	common.RequiredFlag(WithFlagPassword, basicAuth)
@@ -37,6 +51,10 @@ func NewCreateCommand() *cobra.Command {
 	var custom = &cobra.Command{
 		Use:  "custom",
 		RunE: create,
+		Example: `
+	# create a credential for custom type
+	cy --my-org credential create custom --my-key=my-value
+`,
 	}
 	common.RequiredFlag(WithFlagField, custom)
 

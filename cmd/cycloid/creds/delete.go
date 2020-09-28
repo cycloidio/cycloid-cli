@@ -11,16 +11,19 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  delete,
+		Short: "delete a credential",
+		Example: `
+	# delete a credential with ID 123
+	cy --org my-org creds delete --id 123
+`,
+		RunE: del,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)
 	return cmd
 }
 
-func delete(cmd *cobra.Command, args []string) error {
+func del(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
