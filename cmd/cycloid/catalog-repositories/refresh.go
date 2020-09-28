@@ -12,9 +12,13 @@ import (
 func NewRefreshCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "refresh",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  refreshCatalogRepository,
+		Short: "refresh a catalog repository",
+		Long:  "refresh action can be used if the .cycloid.yml definition has been updated",
+		Example: `
+	# refresh a catalog repository with the ID 123
+	cy --org my-org catalog-repo refresh --id 123
+`,
+		RunE: refreshCatalogRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)

@@ -11,8 +11,11 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Short: "delete a catalog repository",
+		Example: `
+	# delete a catalog repository with the ID 123
+	cy  --org my-org catalog-repository delete --id 123
+`,
 		RunE:  deleteCatalogRepository,
 	}
 

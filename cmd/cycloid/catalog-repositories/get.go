@@ -14,9 +14,12 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  getCatalogRepository,
+		Short: "get a catalog repository",
+		Example: `
+	# get the catalog repository with the id 123 and display the result in YAML
+	cy  --org my-org cr get --id 123 -o yaml
+`,
+		RunE: getCatalogRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)
