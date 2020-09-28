@@ -3,20 +3,24 @@ package root
 import (
 	"os"
 
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
 func NewVersionCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "version",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  version,
+		Short: "Get the version of the consumed API",
+		Example: `
+	# get the version in JSON format
+	cy version -o json
+`,
+		RunE: version,
 	}
 	return cmd
 
