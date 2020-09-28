@@ -1,13 +1,15 @@
 package creds
 
 import (
-	"errors"
+	"fmt"
 	"io/ioutil"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/client/models"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func NewCreateCommand() *cobra.Command {
@@ -88,7 +90,8 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if credT == "ssh" {
+	switch credT {
+	case "ssh":
 		sshKeyPath, err := cmd.Flags().GetString("ssh-key")
 		if err != nil {
 			return err
@@ -96,14 +99,13 @@ func create(cmd *cobra.Command, args []string) error {
 
 		sshKey, err := ioutil.ReadFile(sshKeyPath)
 		if err != nil {
-			return errors.New("File reading error")
+			return errors.Wrap(err, "unable to read SSH key")
 		}
 
 		rawCred = &models.CredentialRaw{
 			SSHKey: string(sshKey),
 		}
-
-	} else if credT == "basic_auth" {
+	case "basic_auth":
 		username, err := cmd.Flags().GetString("username")
 		if err != nil {
 			return err
@@ -116,7 +118,7 @@ func create(cmd *cobra.Command, args []string) error {
 			Username: username,
 			Password: password,
 		}
-	} else if credT == "custom" {
+	case "custom":
 		fields, err := cmd.Flags().GetStringToString("field")
 		if err != nil {
 			return err
@@ -124,11 +126,12 @@ func create(cmd *cobra.Command, args []string) error {
 		rawCred = &models.CredentialRaw{
 			Raw: fields,
 		}
-	} else {
-		return errors.New("Unexpected type")
+	default:
+		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	err = m.CreateCredential(org, name, credT, rawCred, path, description)
-
-	return err
+	if err := m.CreateCredential(org, name, credT, rawCred, path, description); err != nil {
+		return errors.Wrap(err, "unable to create credential")
+	}
+	return nil
 }

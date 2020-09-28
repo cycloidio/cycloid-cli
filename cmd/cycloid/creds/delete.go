@@ -1,11 +1,11 @@
 package creds
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -36,8 +36,8 @@ func del(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.DeleteCredential(org, id)
-
-	fmt.Printf("%+v\n", err)
+	if err := m.DeleteCredential(org, id); err != nil {
+		return errors.Wrap(err, "unable to delete credential")
+	}
 	return nil
 }
