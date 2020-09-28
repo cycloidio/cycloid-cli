@@ -1,19 +1,25 @@
 package projects
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  list,
+		Short: "list the projects within the organization",
+		Example: `
+	# list projects in 'my-org' and display result in JSON
+	cy --org my-org projects list -o json
+`,
+		RunE: list,
 	}
 	return cmd
 
@@ -27,13 +33,25 @@ func list(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
-	d, err := m.ListProjects(org)
-
-	for _, pr := range d {
-		fmt.Printf("cannonical: %s    svcat: %s    name: %s  \n", *pr.Canonical, pr.ServiceCatalogName, *pr.Name)
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
 	}
-	fmt.Println(d)
-	fmt.Printf("%+v\n", err)
+
+	projects, err := m.ListProjects(org)
+	if err != nil {
+		return errors.Wrap(err, "unable to list project")
+	}
+
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(projects, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 	return nil
 }

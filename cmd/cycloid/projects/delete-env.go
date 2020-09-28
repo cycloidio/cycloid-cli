@@ -1,18 +1,22 @@
 package projects
 
 import (
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-
-	"github.com/spf13/cobra"
 )
 
 func NewDeleteEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete-env",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  deleteEnv,
+		Short: "delete an environment within a project",
+		Example: `
+	# delete env 'my-env' in 'my-project'
+	cy --org my-org project --project my-project --env my-env
+`,
+		RunE: deleteEnv,
 	}
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
@@ -37,7 +41,9 @@ func deleteEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.DeleteProjectEnv(org, project, env)
+	if err := m.DeleteProjectEnv(org, project, env); err != nil {
+		return errors.Wrap(err, "unable to delete environment")
+	}
 
-	return err
+	return nil
 }

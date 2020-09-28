@@ -1,22 +1,39 @@
 package projects
 
 import (
-	"fmt"
 	"io/ioutil"
+	"os"
+
+	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  create,
+		Short: "create a project",
+		Example: `
+	# create a project
+	cy --org my-org project create \
+		--name my-project \
+		--canonical my-project \
+		--description "an awesome project" \
+		--cloud-provider gcp|aws|... \
+		--stack-ref my-stack-ref \
+		--config-repo config-repo-id \
+		--env environment-name \
+		--usecase usecase-1 \
+		--vars /path/to/variables.yml \
+		--pipeline /path/to/pipeline.yml \
+		--config /path/to/config
+`,
+		RunE: create,
 	}
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagStackRef, cmd)
@@ -85,16 +102,20 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
 
 	rawPipeline, err := ioutil.ReadFile(pipelinePath)
 	if err != nil {
-		return fmt.Errorf("Pipeline file reading error : %s", err.Error())
+		return errors.Wrap(err, "unable to read pipeline file")
 	}
 	pipelineTemplate := string(rawPipeline)
 
 	rawVars, err := ioutil.ReadFile(varsPath)
 	if err != nil {
-		return fmt.Errorf("Pipeline variables file reading error : %s", err.Error())
+		return errors.Wrap(err, "unable to read variables file")
 	}
 	vars := string(rawVars)
 
@@ -110,18 +131,26 @@ func create(cmd *cobra.Command, args []string) error {
 			var c strfmt.Base64
 			c, err = ioutil.ReadFile(fp)
 			if err != nil {
-				return fmt.Errorf("Config file reading error : %s", err.Error())
+				return errors.Wrap(err, "unable to read config file")
 			}
 			cfs[dest] = c
 		}
 
-		err = m.PushConfig(org, *project.Canonical, env, cfs)
-		if err != nil {
-			return err
+		if err := m.PushConfig(org, *project.Canonical, env, cfs); err != nil {
+			return errors.Wrap(err, "unable to push config")
 		}
 	}
 
-	fmt.Println(project)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(project, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 
 	return nil
 }

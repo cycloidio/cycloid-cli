@@ -3,20 +3,34 @@ package projects
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
+
+	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func NewCreateEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create-env",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  createEnv,
+		Short: "create an environment within a project",
+		Example: `
+	# create 'prod' environment in 'my-project'
+	cy --org my-org project create-env \
+		--project my-project \
+		--env prod \
+		--usecase usecase-1 \
+		--pipeline /my/pipeline.yml \
+		--vars /my/pipeline/vars.yml \
+		--config /my/config/path.yml
+`,
+
+		RunE: createEnv,
 	}
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
@@ -33,7 +47,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	var err error
-	// var pipelines []*models.NewPipeline
 
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
@@ -68,9 +81,13 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
 
 	if common.IsInList(env, projectData.Environments) {
-		return fmt.Errorf("Environment %s already exist for this project %s", env, project)
+		return fmt.Errorf("environment: %s already exists for this project: %s", env, project)
 	}
 	envs := append(projectData.Environments, env)
 
@@ -87,9 +104,8 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryID)
 
-	// TODO create a error handeling function to format our error with a better display
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to update project")
 	}
 
 	//
@@ -98,19 +114,19 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 	rawPipeline, err := ioutil.ReadFile(pipelinePath)
 	if err != nil {
-		return fmt.Errorf("Pipeline file reading error : %s", err.Error())
+		return errors.Wrap(err, "unable to read pipeline file")
 	}
 	pipelineTemplate := string(rawPipeline)
 
 	rawVars, err := ioutil.ReadFile(varsPath)
 	if err != nil {
-		return fmt.Errorf("Pipeline variables file reading error : %s", err.Error())
+		return errors.Wrap(err, "unable to read variables file")
 	}
+
 	variables := string(rawVars)
 
-	_, err = m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase)
-	if err != nil {
-		return err
+	if _, err := m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase); err != nil {
+		return errors.Wrap(err, "unable to create pipeline")
 	}
 
 	//
@@ -124,27 +140,33 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			var c strfmt.Base64
 			c, err = ioutil.ReadFile(fp)
 			if err != nil {
-				return fmt.Errorf("Config file reading error : %s", err.Error())
+				return errors.Wrap(err, "unable to read config file")
 			}
 			cfs[dest] = c
 		}
 
-		err = m.PushConfig(org, project, env, cfs)
-		if err != nil {
-			return err
+		if err := m.PushConfig(org, project, env, cfs); err != nil {
+			return errors.Wrap(err, "unable to push config")
 		}
-
 	}
 
 	//
 	// PIPELINE UNPAUSE
 	//
-	err = m.UnpausePipeline(org, project, env)
-	if err != nil {
-		return err
+	if err := m.UnpausePipeline(org, project, env); err != nil {
+		return errors.Wrap(err, "unable to unpause pipeline")
 	}
 
-	fmt.Println(resp)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(resp, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 
 	return nil
 }
