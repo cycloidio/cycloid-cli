@@ -1,15 +1,19 @@
 package configRepositories
 
 import (
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 )
 
 func NewCommands() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "config-repo",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use: "config-repository",
+		Aliases: []string{
+			"config-repo",
+			"config-repositories",
+		},
+		Short: "Manage the catalog repositories",
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
