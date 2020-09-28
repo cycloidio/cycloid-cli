@@ -15,9 +15,12 @@ import (
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  listCatalogRepositories,
+		Short: "list the catalog repositories",
+		Example: `
+	# list the catalog repositories in the org 'my-org' and display the result in JSON format
+	cy  --org my-org cr list -o json
+`,
+		RunE: listCatalogRepositories,
 	}
 
 	return cmd

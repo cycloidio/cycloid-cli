@@ -15,9 +15,12 @@ import (
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  updateCatalogRepository,
+		Short: "update a catalog repository",
+		Example: `
+	# update a catalog repository
+	cy  --org my-org cr update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --id 123
+`,
+		RunE: updateCatalogRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)

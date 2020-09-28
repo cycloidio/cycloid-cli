@@ -15,9 +15,15 @@ import (
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  createCatalogRepository,
+		Short: "create a catalog repository",
+		Example: `
+	# create a catalog repository using credential ID 123, branch 'stacks' and git URL
+	cy --org my-org catalog-repo create --branch stacks --cred 123 --url "git@github.com:my/repo.git" --name my-catalog-name
+
+	# create a catalog repository using public git repository
+	cy --org my-org catalog-repo create --branch stacks --url "https://github.com:my/repo.git" --name my-catalog-name
+`,
+		RunE: createCatalogRepository,
 	}
 
 	// create --branch test --cred 105 --url "git@github.com:foo/bla.git"  --name catalogname

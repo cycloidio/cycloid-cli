@@ -7,9 +7,13 @@ import (
 
 func NewCommands() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "catalog-repo",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use: "catalog-repository",
+		Aliases: []string{
+			"catalog-repo",
+			"catalog-repositories",
+			"cr",
+		},
+		Short: "Manage the catalog repositories",
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
