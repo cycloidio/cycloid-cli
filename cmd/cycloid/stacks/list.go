@@ -1,20 +1,26 @@
 package stacks
 
 import (
-	"fmt"
+	"os"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  list,
+		Short: "list the stacks",
+		Example: `
+	# list the stacks in 'my-org'
+	cy --org my-org s list
+`,
+		RunE: list,
 	}
 	return cmd
 
@@ -28,17 +34,26 @@ func list(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
-	d, err := m.ListStacks(org)
-
-	for _, s := range d {
-		fmt.Printf("ref: %s    name: %s    status: %s  \n", *s.Ref, *s.Name, s.Status)
-		fmt.Printf("  author: %s    describ: %s  \n", *s.Author, *s.Description)
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
 	}
-	fmt.Printf("%+v\n", err)
+
+	stacks, err := m.ListStacks(org)
+	if err != nil {
+		return errors.Wrap(err, "unable to list stacks")
+	}
+
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(stacks, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
+
 	return nil
 }
-
-// /organizations/{organization_canonical}/service_catalogs
-// get: getServiceCatalogs
-// Return all the service catalogs
