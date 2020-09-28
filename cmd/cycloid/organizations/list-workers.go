@@ -1,19 +1,21 @@
 package organizations
 
 import (
-	"fmt"
+	"os"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func NewListWorkersCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list-workers",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Short: "list the organization workers",
 		RunE:  listWorkers,
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
@@ -29,17 +31,25 @@ func listWorkers(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
 
 	ws, err := m.ListOrganizationWorkers(org)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to list organization workers")
 	}
 
-	for _, d := range ws {
-		fmt.Printf("Name: %s    StartTime: %s     State: %s    Ephemeral: %s  \n", *d.Name, *d.StartTime, *d.State, *d.Ephemeral)
-		fmt.Printf("  ActiveContainers: %s    ActiveVolumes: %s     Tags: %s    Version: %s  \n", *d.ActiveContainers, *d.ActiveVolumes, d.Tags, *d.Version)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
 	}
-	fmt.Println(ws)
-	fmt.Printf("%+v\n", err)
+
+	// print the result on the standard output
+	if err := p.Print(ws, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 	return nil
 }
