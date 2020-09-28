@@ -1,20 +1,25 @@
 package configRepositories
 
 import (
-	"fmt"
-	"time"
+	"os"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  getConfigRepository,
+		Short: "get a config repository",
+		Example: `
+	# get the config repository with the id 123 and display the result in YAML
+	cy  --org my-org config-repo get --id 123 -o yaml
+`,
+		RunE: getConfigRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)
@@ -39,17 +44,25 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
 
 	cr, err := m.GetConfigRepository(org, id)
 	if err != nil {
 		return err
 	}
 
-	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    default: %t    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, *cr.Default, cr.CredentialID)
-	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.CreatedAt, 0), time.Unix(*cr.UpdatedAt, 0))
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
 
-	fmt.Println(cr)
-	fmt.Printf("%+v\n", err)
-
+	// print the result on the standard output
+	if err := p.Print(cr, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 	return nil
 }
