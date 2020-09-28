@@ -11,9 +11,12 @@ import (
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  list,
+		Short: "list the credentials",
+		Example: `
+	# list the credentials with the org 'my-org' in JSON format
+	cy --org my-org credentials list -o json
+`,
+		RunE: list,
 	}
 
 	WithFlagType(cmd)
