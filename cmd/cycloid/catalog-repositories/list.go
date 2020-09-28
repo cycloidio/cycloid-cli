@@ -1,12 +1,15 @@
 package catalogRepositories
 
 import (
-	"fmt"
-	"time"
+	"os"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func NewListCommand() *cobra.Command {
@@ -32,14 +35,26 @@ func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	crs, err := m.ListCatalogRepositories(org)
-
-	for _, cr := range crs {
-		fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialID)
-		fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.CreatedAt, 0), time.Unix(*cr.UpdatedAt, 0))
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
 	}
-	fmt.Println(crs)
-	fmt.Printf("%+v\n", err)
+
+	crs, err := m.ListCatalogRepositories(org)
+	if err != nil {
+		return errors.Wrap(err, "unable to list catalog repositories")
+	}
+
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(crs, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 
 	return nil
 }
