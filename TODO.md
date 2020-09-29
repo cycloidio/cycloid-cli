@@ -1,3 +1,4 @@
+[ ] CLI default url should be the prod SaaS one
 [X] Move and make sure all commands are migrated to middleware
 [ ] Put plugins with xdg into home
 [ ] Make cycloid url env var or --api-url
