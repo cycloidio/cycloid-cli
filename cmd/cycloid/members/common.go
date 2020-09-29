@@ -4,8 +4,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var nameFlag, emailFlag string
-var roleIDFlag uint32
+var (
+	nameFlag, emailFlag string
+	roleIDFlag          uint32
+)
 
 func WithFlagName(cmd *cobra.Command) string {
 	flagName := "name"

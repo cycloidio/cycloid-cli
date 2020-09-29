@@ -1,19 +1,26 @@
 package pipelines
 
 import (
-	"fmt"
+	"os"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func NewListJobsCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list-jobs",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  listJobs,
+		Short: "list pipeline jobs",
+		Example: `
+	# list jobs in pipeline my-project-env and display it in JSON
+	cy --org my-org pp list-jobs --project my-project --env env -o json
+`,
+		RunE: listJobs,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
@@ -38,22 +45,25 @@ func listJobs(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
-	js, err := m.ListPipelineJobs(org, project, env)
+	output, err := cmd.Flags().GetString("output")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	for _, d := range js {
-		fmt.Printf("Name: %s    Paused: %s  \n", *d.Name, d.Paused)
-		fmt.Printf("    FinishedBuild: %s\n", d.FinishedBuild)
+	jobs, err := m.ListPipelineJobs(org, project, env)
+	if err != nil {
+		return errors.Wrap(err, "unable to list pipeline jobs")
 	}
 
-	fmt.Printf("%+v\n", err)
-	fmt.Printf("%+v\n", js)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(jobs, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 	return nil
 }
-
-// /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs
-// get: getJobs
-// Get the jobs of the pipeline that the authenticated user has access to.

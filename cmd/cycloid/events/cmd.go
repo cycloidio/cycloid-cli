@@ -7,9 +7,12 @@ import (
 
 func NewCommands() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "events",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use: "event",
+		Aliases: []string{
+			"events",
+			"e",
+		},
+		Short: "Manage the events",
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)

@@ -8,16 +8,13 @@ import (
 
 func NewStatusCmd() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "status",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use:    "status",
+		Hidden: true,
+		Short:  "...",
+		Long:   `........ . . .... .. .. ....`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("...")
+			fmt.Println("not implemented yet")
 		},
 	}
 	return cmd
 }
-
-// /status
-// get: getStatus
-// Get the status of the Cycloid's services.

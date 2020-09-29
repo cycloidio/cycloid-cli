@@ -1,20 +1,28 @@
 package creds
 
 import (
-	"errors"
+	"fmt"
 	"io/ioutil"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/client/models"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create [type]",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use:   "create [ssh|basic_auth|custom]",
+		Short: "create a credential",
+		Example: `
+	# create a credential for basic authentication
+	cy --my-org credential create basic_auth --username my-username --password my-password
+
+	# create a credential for SSH
+	cy --my-org credential create ssh --ssh-key /path/to/private/key
+`,
 	}
 
 	WithPersistentFlagDescription(cmd)
@@ -24,12 +32,20 @@ func NewCreateCommand() *cobra.Command {
 	var ssh = &cobra.Command{
 		Use:  "ssh",
 		RunE: create,
+		Example: `
+	# create a credential for SSH
+	cy --my-org credential create ssh --ssh-key /path/to/private/key
+`,
 	}
 	common.RequiredFlag(WithFlagSSHKey, ssh)
 
 	var basicAuth = &cobra.Command{
 		Use:  "basic_auth",
 		RunE: create,
+		Example: `
+	# create a credential for basic authentication
+	cy --my-org credential create basic_auth --username my-username --password my-password
+`,
 	}
 	common.RequiredFlag(WithFlagUsername, basicAuth)
 	common.RequiredFlag(WithFlagPassword, basicAuth)
@@ -37,6 +53,10 @@ func NewCreateCommand() *cobra.Command {
 	var custom = &cobra.Command{
 		Use:  "custom",
 		RunE: create,
+		Example: `
+	# create a credential for custom type
+	cy --my-org credential create custom --my-key=my-value
+`,
 	}
 	common.RequiredFlag(WithFlagField, custom)
 
@@ -70,7 +90,8 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if credT == "ssh" {
+	switch credT {
+	case "ssh":
 		sshKeyPath, err := cmd.Flags().GetString("ssh-key")
 		if err != nil {
 			return err
@@ -78,14 +99,13 @@ func create(cmd *cobra.Command, args []string) error {
 
 		sshKey, err := ioutil.ReadFile(sshKeyPath)
 		if err != nil {
-			return errors.New("File reading error")
+			return errors.Wrap(err, "unable to read SSH key")
 		}
 
 		rawCred = &models.CredentialRaw{
 			SSHKey: string(sshKey),
 		}
-
-	} else if credT == "basic_auth" {
+	case "basic_auth":
 		username, err := cmd.Flags().GetString("username")
 		if err != nil {
 			return err
@@ -98,7 +118,7 @@ func create(cmd *cobra.Command, args []string) error {
 			Username: username,
 			Password: password,
 		}
-	} else if credT == "custom" {
+	case "custom":
 		fields, err := cmd.Flags().GetStringToString("field")
 		if err != nil {
 			return err
@@ -106,11 +126,12 @@ func create(cmd *cobra.Command, args []string) error {
 		rawCred = &models.CredentialRaw{
 			Raw: fields,
 		}
-	} else {
-		return errors.New("Unexpected type")
+	default:
+		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	err = m.CreateCredential(org, name, credT, rawCred, path, description)
-
-	return err
+	if err := m.CreateCredential(org, name, credT, rawCred, path, description); err != nil {
+		return errors.Wrap(err, "unable to create credential")
+	}
+	return nil
 }

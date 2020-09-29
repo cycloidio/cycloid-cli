@@ -1,18 +1,21 @@
 package catalogRepositories
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Short: "delete a catalog repository",
+		Example: `
+	# delete a catalog repository with the ID 123
+	cy  --org my-org catalog-repository delete --id 123
+`,
 		RunE:  deleteCatalogRepository,
 	}
 
@@ -39,7 +42,8 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.DeleteCatalogRepository(org, id)
-	fmt.Printf("%+v\n", err)
-	return err
+	if err := m.DeleteCatalogRepository(org, id); err != nil {
+		return errors.Wrap(err, "unable to delete repository")
+	}
+	return nil
 }

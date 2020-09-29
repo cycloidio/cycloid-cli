@@ -1,17 +1,17 @@
 package creds
 
-import (
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
-var typeFlag string
-var nameFlag string
-var descriptionFlag string
-var pathFlag string
-var fieldsFlags map[string]string
-var usernameFlag string
-var passwordFlag string
-var sshKeyFlag string
+var (
+	typeFlag        string
+	nameFlag        string
+	descriptionFlag string
+	pathFlag        string
+	fieldsFlags     map[string]string
+	usernameFlag    string
+	passwordFlag    string
+	sshKeyFlag      string
+)
 
 func WithFlagField(cmd *cobra.Command) string {
 	flagName := "field"

@@ -7,9 +7,12 @@ import (
 
 func NewCommands() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "pipeline",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use: "pipeline",
+		Aliases: []string{
+			"pp",
+			"pipelines",
+		},
+		Short: "Manage the pipelines",
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
@@ -22,11 +25,11 @@ func NewCommands() *cobra.Command {
 		NewDiffCommand(),
 		NewUnpauseCommand(),
 		NewPauseCommand(),
-		// NewGetBuildCommand(),
+		NewGetBuildCommand(),
 		NewTriggerBuildCommand(),
-		// NewGetCommand(),
+		NewGetCommand(),
 		NewClearTaskCacheCommand(),
-		// NewListCommand(),
+		NewListCommand(),
 		NewPauseJobCommand())
 
 	return cmd

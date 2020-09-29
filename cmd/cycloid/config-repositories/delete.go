@@ -1,19 +1,21 @@
 package configRepositories
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  deleteConfigRepository,
+		Short: "delete a config repository",
+		Example: `
+	# delete a catalog repository with the ID 123
+	cy  --org my-org config-repository delete --id 123
+`,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)
@@ -39,7 +41,9 @@ func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.DeleteConfigRepository(org, id)
-	fmt.Printf("%+v\n", err)
-	return err
+	if err := m.DeleteConfigRepository(org, id); err != nil {
+		return errors.Wrap(err, "unable to delete config repository")
+	}
+
+	return nil
 }

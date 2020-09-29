@@ -1,20 +1,26 @@
 package catalogRepositories
 
 import (
-	"fmt"
-	"time"
+	"os"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  updateCatalogRepository,
+		Short: "update a catalog repository",
+		Example: `
+	# update a catalog repository
+	cy  --org my-org cr update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --id 123
+`,
+		RunE: updateCatalogRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)
@@ -66,16 +72,26 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cr, err := m.UpdateCatalogRepository(org, id, name, url, branch, cred)
+	output, err := cmd.Flags().GetString("output")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialID)
-	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(*cr.CreatedAt, 0), time.Unix(*cr.UpdatedAt, 0))
+	cr, err := m.UpdateCatalogRepository(org, id, name, url, branch, cred)
+	if err != nil {
+		return errors.Wrap(err, "unable to update catalog repository")
+	}
 
-	fmt.Println(cr)
-	fmt.Printf("%+v\n", err)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(cr, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 
 	return nil
 }

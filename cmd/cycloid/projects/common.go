@@ -4,16 +4,18 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var nameFlag string
-var canonicalFlag string
-var descriptionFlag string
-var CloudProviderFlag string
-var stackRefFlag string
-var usecaseFlag string
-var configRepositoryFlag uint32
-var configsFlag map[string]string
-var pipelineFlag string
-var varsFlag string
+var (
+	nameFlag             string
+	canonicalFlag        string
+	descriptionFlag      string
+	CloudProviderFlag    string
+	stackRefFlag         string
+	usecaseFlag          string
+	configRepositoryFlag uint32
+	configsFlag          map[string]string
+	pipelineFlag         string
+	varsFlag             string
+)
 
 func WithFlagConfig(cmd *cobra.Command) string {
 	flagName := "config"

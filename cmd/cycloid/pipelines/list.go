@@ -8,9 +8,10 @@ import (
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "list",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use:    "list",
+		Hidden: true,
+		Short:  "...",
+		Long:   `........ . . .... .. .. ....`,
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("...")
 		},

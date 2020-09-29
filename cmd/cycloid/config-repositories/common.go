@@ -4,8 +4,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var nameFlag, branchFlag, urlFlag string
-var defaultFlag bool
+var (
+	nameFlag, branchFlag, urlFlag string
+	defaultFlag                   bool
+)
 
 func WithFlagName(cmd *cobra.Command) string {
 	flagName := "name"

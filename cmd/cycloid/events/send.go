@@ -1,43 +1,49 @@
 package events
 
 import (
-	"errors"
 	"fmt"
 	"io/ioutil"
 
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
-var colorFlag string
-var iconFlag string
-var messageFlag string
-var messageFileFlag string
-var severityFlag string
-var titleFlag string
-var typeFlag string
-var tagsFlag map[string]string
+var (
+	colorFlag       string
+	iconFlag        string
+	messageFlag     string
+	messageFileFlag string
+	severityFlag    string
+	titleFlag       string
+	typeFlag        string
+	tagsFlag        map[string]string
+)
 
 func NewSendCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "send",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  send,
+		Use:   "create",
+		Short: "create an event",
+		Example: `
+	# create a custom event
+	cy --org my-org event create --tag env=staging --title success --message "successful deployment"
+`,
+		RunE: send,
 	}
 
-	cmd.Flags().StringToStringVar(&tagsFlag, "tag", nil, "key=value")
+	cmd.Flags().StringToStringVar(&tagsFlag, "tag", nil, "tags of the event (key=value)")
 	cmd.MarkFlagRequired("tag")
-	cmd.Flags().StringVar(&titleFlag, "title", "", "...")
+	cmd.Flags().StringVar(&titleFlag, "title", "", "title of the event")
 	cmd.MarkFlagRequired("title")
 
-	cmd.Flags().StringVar(&colorFlag, "color", "", "...")
-	cmd.Flags().StringVar(&messageFlag, "message", "", "...")
-	cmd.Flags().StringVar(&messageFileFlag, "message-file", "", "...")
-	cmd.Flags().StringVar(&iconFlag, "icon", "", "...")
-	cmd.Flags().StringVar(&severityFlag, "severity", "info", "...")
-	cmd.Flags().StringVar(&typeFlag, "type", "Custom", "...")
+	cmd.Flags().StringVar(&colorFlag, "color", "", "color of the event")
+	cmd.Flags().StringVar(&messageFlag, "message", "", "message of the event")
+	cmd.Flags().StringVar(&messageFileFlag, "message-file", "", "path to the file holding the message")
+	cmd.Flags().StringVar(&iconFlag, "icon", "", "icon of the event")
+	cmd.Flags().StringVar(&severityFlag, "severity", "info", "severity of the event")
+	cmd.Flags().StringVar(&typeFlag, "type", "Custom", "type of the event")
 
 	return cmd
 }
@@ -85,16 +91,18 @@ func send(cmd *cobra.Command, args []string) error {
 	if messageFile != "" {
 		rawMsg, err := ioutil.ReadFile(messageFile)
 		if err != nil {
-			return fmt.Errorf("Message file reading error : %s", err.Error())
+			return errors.Wrap(err, "unable to read message file")
 		}
 		msg = string(rawMsg)
 	} else if message != "" {
 		msg = message
 	} else {
-		return errors.New("required flag(s) \"message\" or \"message-file\" not set")
+		return fmt.Errorf("required flag(s) \"message\" or \"message-file\" not set")
 	}
 
-	err = m.SendEvent(org, eType, title, msg, severity, tags, color)
+	if err := m.SendEvent(org, eType, title, msg, severity, tags, color); err != nil {
+		return errors.Wrap(err, "unable to send event")
+	}
 
-	return err
+	return nil
 }

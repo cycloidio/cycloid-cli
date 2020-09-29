@@ -1,23 +1,30 @@
 package externalBackends
 
 import (
-	"errors"
 	"fmt"
+	"os"
+
+	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	models "github.com/cycloidio/youdeploy-cli/client/models"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	strfmt "github.com/go-openapi/strfmt"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func createLogs(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	var purpose = "logs"
-	var cred uint32
-	cred = 0
+	var (
+		ebC     models.ExternalBackendConfiguration
+		engine         = cmd.CalledAs()
+		cred    uint32 = 0
+		purpose        = "logs"
+	)
 
 	project, err := cmd.Flags().GetString("project")
 	if err != nil {
@@ -27,12 +34,13 @@ func createLogs(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
 
-	var ebC models.ExternalBackendConfiguration
-	var engine = cmd.CalledAs()
-
-	// AWS CW logs
-	if engine == "AWSCloudWatchLogs" {
+	switch engine {
+	case "AWSCloudWatchLogs":
 		region, err := cmd.Flags().GetString("region")
 		if err != nil {
 			return err
@@ -42,8 +50,7 @@ func createLogs(cmd *cobra.Command, args []string) error {
 			Region: &region,
 		}
 
-		// Elasticsearch
-	} else if engine == "ElasticsearchLogs" {
+	case "ElasticsearchLogs":
 		prefilters, err := cmd.Flags().GetStringToString("prefilter")
 		if err != nil {
 			return err
@@ -114,29 +121,27 @@ func createLogs(cmd *cobra.Command, args []string) error {
 			Sources: sources,
 		}
 
-	} else {
-		return errors.New("Unexpected backend name")
+	default:
+		return fmt.Errorf("Unexpected backend name")
 	}
 
 	// Set env to empty cause is not used to create log eb
 	envP := ""
 	resp, err := m.CreateExternalBackends(org, project, envP, purpose, cred, ebC)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to create external backend")
 	}
 
-	// if err != nil {
-	// 	// *errors.Validation, not *runtime.APIError
-	// 	apiErr, ok := err.(*runtime.APIError)
-	// 	if ok {
-	// 		spew.Dump(apiErr.Error())
-	// 		r := apiErr.Response.(runtime.ClientResponse)
-	// 		spew.Dump(r.Message())
-	// 	}
-	// 	// fmt.Printf("%+v\n", err.Error())
-	// 	return err
-	// }
-	fmt.Println(resp)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(resp, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 
 	return nil
 }

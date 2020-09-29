@@ -8,11 +8,11 @@ import (
 
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "update",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use:    "update",
+		Short:  "...",
+		Hidden: true,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("...")
+			fmt.Println("not implemented yet")
 		},
 	}
 	return cmd
