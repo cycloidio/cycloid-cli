@@ -1,19 +1,22 @@
 package pipelines
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func NewPauseJobCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "pause-job",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  pauseJob,
+		Short: "pause a pipeline job",
+		Example: `
+	# pause job 'my-job'
+	cy --org my-org pp pause-job --project my-project --env env --job my-job
+`,
+		RunE: pauseJob,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
@@ -44,12 +47,9 @@ func pauseJob(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.PausePipelineJob(org, project, env, job)
+	if err := m.PausePipelineJob(org, project, env, job); err != nil {
+		return errors.Wrap(err, "unable to pause pipeline's job")
+	}
 
-	fmt.Printf("%+v\n", err)
-	return err
+	return nil
 }
-
-// /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause
-// put: pauseJob
-// pause a job

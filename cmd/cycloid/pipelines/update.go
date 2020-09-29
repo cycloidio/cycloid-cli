@@ -1,21 +1,28 @@
 package pipelines
 
 import (
-	"fmt"
 	"io/ioutil"
+	"os"
+
+	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	strfmt "github.com/go-openapi/strfmt"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  update,
+		Short: "update a running pipeline",
+		Example: `
+	# update a running pipeline
+	cy --org my-org pp update --project my-project --env my-env --vars /path/to/vars.yml --pipeline /path/to/pipeline.yml --config /path/config.tf
+`,
+		RunE: update,
 	}
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
@@ -56,24 +63,37 @@ func update(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
 
 	rawPipeline, err := ioutil.ReadFile(pipelinePath)
 	if err != nil {
-		return fmt.Errorf("Pipeline file reading error : %s", err.Error())
+		return errors.Wrap(err, "unable to read pipeline file")
 	}
 	pipeline := string(rawPipeline)
 
 	rawVars, err := ioutil.ReadFile(varsPath)
 	if err != nil {
-		return fmt.Errorf("Pipeline variables file reading error : %s", err.Error())
+		return errors.Wrap(err, "unable to read variables file")
 	}
 	variables := string(rawVars)
 
 	resp, err := m.UpdatePipeline(org, project, env, pipeline, variables)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to update pipeline")
 	}
-	fmt.Println(resp)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(resp, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 
 	//
 	// PUSH CONFIG If pipeline update succeeded
@@ -87,14 +107,13 @@ func update(cmd *cobra.Command, args []string) error {
 			var c strfmt.Base64
 			c, err = ioutil.ReadFile(fp)
 			if err != nil {
-				return fmt.Errorf("Config file reading error : %s", err.Error())
+				return errors.Wrap(err, "unable to read config file")
 			}
 			cfs[dest] = c
 		}
 
-		err = m.PushConfig(org, project, env, cfs)
-		if err != nil {
-			return err
+		if err := m.PushConfig(org, project, env, cfs); err != nil {
+			return errors.Wrap(err, "unable to push config")
 		}
 	}
 

@@ -1,17 +1,22 @@
 package pipelines
 
 import (
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func NewClearTaskCacheCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "clear-task-cache",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  cleartaskCache,
+		Short: "clear cache for a task",
+		Example: `
+	# clean cache for task 'my-task'
+	cy --org my-org pp clear-task-cache --project my-project --job my-job --env my-env --task my-task
+`,
+		RunE: cleartaskCache,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
@@ -47,11 +52,9 @@ func cleartaskCache(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.ClearTaskCachePipeline(org, project, env, job, task)
+	if err := m.ClearTaskCachePipeline(org, project, env, job, task); err != nil {
+		return errors.Wrap(err, "unable to clear task cache")
+	}
 
-	return err
+	return nil
 }
-
-// /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/tasks/{step_name}/cache
-// delete: clearTaskCache
-// Clear task cache

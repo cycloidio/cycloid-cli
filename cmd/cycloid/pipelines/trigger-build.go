@@ -1,18 +1,21 @@
 package pipelines
 
 import (
-	"fmt"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func NewTriggerBuildCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "trigger-build",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use: "trigger-build",
+		Example: `
+	# trigger a pipeline build for 'my-job'
+	cy --org my-org pp trigger-build --project my-project --env my-env --job my-job
+`,
+		Short: "trigger a pipeline build",
 		RunE:  createBuild,
 	}
 
@@ -44,12 +47,9 @@ func createBuild(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.TriggerPipelineBuild(org, project, env, job)
+	if err := m.TriggerPipelineBuild(org, project, env, job); err != nil {
+		return errors.Wrap(err, "unable to trigger pipeline build")
+	}
 
-	fmt.Printf("%+v\n", err)
 	return nil
 }
-
-// /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds
-// post: createBuild
-// Create a new build for the job

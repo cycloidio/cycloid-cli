@@ -11,10 +11,11 @@ import (
 
 func NewDiffCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "diff",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  diff,
+		Use:    "diff",
+		Hidden: true,
+		Short:  "...",
+		Long:   `........ . . .... .. .. ....`,
+		RunE:   diff,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
