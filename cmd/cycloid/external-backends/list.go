@@ -15,11 +15,11 @@ import (
 
 var (
 	example = `
-# List all the external backends within my-org organization in JSON output format
-cy --org my-org external-backends list --output=json
+	# List all the external backends within my-org organization in JSON output format
+	cy --org my-org external-backends list --output=json
 
-# List all the external backends within my-org organization in YAML output format
-cy --org my-org external-backends list --output=yaml
+	# List all the external backends within my-org organization in YAML output format
+	cy --org my-org external-backends list --output=yaml
 `
 	short = "Get the list of organization external backends"
 	long  = short
