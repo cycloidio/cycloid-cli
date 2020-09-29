@@ -7,9 +7,12 @@ import (
 
 func NewCommands() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "external-backends",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use: "external-backend",
+		Aliases: []string{
+			"external-backends",
+			"eb",
+		},
+		Short: "manage external backends",
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 

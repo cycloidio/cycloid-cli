@@ -9,11 +9,15 @@ var hostMapping, messageMapping, timestampMapping, esIndex string
 
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "create [purpose]",
-		// Args:       cobra.OnlyValidArgs,
-		// ValidArgs:  []string{"log", "infraview"},
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use:   "create [log|infraview]",
+		Short: "create an external-backend",
+		Example: `
+       # create AWS external backend for logs
+       cy --org my-org eb create logs AWSCloudWatchLogs --project foo --org bar --region eu-west-1
+
+       # create Elasticsearch external backend for logs
+       cy --org my-org eb create logs ElasticsearchLogs source-name --project foo --org bar --env foo --cred 1 --url http://elasticsearch.local.tld --prefilter foo=bar
+`,
 	}
 
 	infraViewCmd := newInfraViewCommand()

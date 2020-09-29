@@ -1,25 +1,35 @@
 package externalBackends
 
 import (
-	"errors"
 	"fmt"
+	"os"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	models "github.com/cycloidio/youdeploy-cli/client/models"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/youdeploy-cli/printer/factory"
 )
 
 func createInfraView(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	var purpose = "remote_tfstate"
-	var err error
-	var org, project, env string
-	var ebC models.ExternalBackendConfiguration
-	var engine = cmd.CalledAs()
+	var (
+		purpose           = "remote_tfstate"
+		err               error
+		org, project, env string
+		ebC               models.ExternalBackendConfiguration
+		engine            = cmd.CalledAs()
+	)
 
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
 	org, err = cmd.Flags().GetString("org")
 	if err != nil {
 		return err
@@ -63,8 +73,8 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// AWSRemoteTFState
-	if engine == "AWSRemoteTFState" {
+	switch engine {
+	case "AWSRemoteTFState":
 		endpoint, err := cmd.Flags().GetString("endpoint")
 		if err != nil {
 			return err
@@ -92,8 +102,7 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 			}
 		}
 
-		// SwiftRemoteTFState
-	} else if engine == "SwiftRemoteTFState" {
+	case "SwiftRemoteTFState":
 
 		ebC = &models.SwiftRemoteTFState{
 			Container:     &bucketName,
@@ -102,24 +111,31 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 			Region:        &region,
 		}
 
-		// GCPRemoteTFState
-	} else if engine == "GCPRemoteTFState" {
+	case "GCPRemoteTFState":
 
 		ebC = &models.GCPRemoteTFState{
 			Bucket: &bucketName,
 			Object: &bucketpath,
 		}
-
-	} else {
-		return errors.New("Unexpected backend name")
+	default:
+		return fmt.Errorf("Unexpected backend name")
 	}
 
 	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, ebC)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to create external backend")
 	}
 
-	fmt.Println(resp)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// print the result on the standard output
+	if err := p.Print(resp, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 
 	return nil
 }
