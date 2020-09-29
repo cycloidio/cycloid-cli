@@ -1,18 +1,22 @@
 package pipelines
 
 import (
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-
-	"github.com/spf13/cobra"
 )
 
 func NewUnpauseCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "unpause",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
-		RunE:  unpause,
+		Short: "unpause a pipeline",
+		Example: `
+	# unpause pipeline my-project-env
+	cy --org my-org pipeline unpause --project my-project --env env
+`,
+		RunE: unpause,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
@@ -38,7 +42,9 @@ func unpause(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.UnpausePipeline(org, project, env)
+	if err := m.UnpausePipeline(org, project, env); err != nil {
+		return errors.Wrap(err, "unable to unpause pipeline")
+	}
 
-	return err
+	return nil
 }

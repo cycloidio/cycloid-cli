@@ -8,9 +8,10 @@ import (
 
 func NewGetBuildCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get-build",
-		Short: "...",
-		Long:  `........ . . .... .. .. ....`,
+		Use:    "get-build",
+		Hidden: true,
+		Short:  "...",
+		Long:   `........ . . .... .. .. ....`,
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("...")
 		},
