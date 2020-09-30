@@ -54,23 +54,10 @@ SWAGGER_GENERATE = rm -rf ./client; \
 help: ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
 
-# .PHONY: build-plugin
-# build-plugin: ## Build a plugin from local code
-# 	go build -buildmode=plugin -o "plugins/$(VERSION).so" cmd/cycloid.go
-
-# .PHONY: build-plugins-package
-# build-plugins-package: ## Build pkged.go package file from local plugins
-# 	go get github.com/markbates/pkger/cmd/pkger
-# 	pkger -include /plugins
 
 .PHONY: build
 build: ## Builds the binary
 	GO111MODULE=on CGO_ENABLED=1 GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
-	@#GO111MODULE=on CGO_ENABLED=1 GOARCH=amd64 go build -trimpath -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
-	@#GO111MODULE=on CGO_ENABLED=0 GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
-
-#.PHONY: build-full
-#build-full: build-plugin build-plugins-package build ## Builds the binary, the plugin and the package
 
 .PHONY: generate-local-client
 generate-local-client: ## Generate client from local swagger file SWAGGER_FILE path
