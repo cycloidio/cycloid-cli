@@ -3,10 +3,10 @@ package main
 import (
 	"fmt"
 	"os"
-	"plugin"
 	"strings"
 
 	models "github.com/cycloidio/youdeploy-cli/client/models"
+	"github.com/cycloidio/youdeploy-cli/cmd"
 	"github.com/cycloidio/youdeploy-cli/lookup"
 
 	"github.com/davecgh/go-spew/spew"
@@ -124,25 +124,33 @@ func main() {
 	}
 
 	version := v.Version
-	// Plugin not found locally, lookup for the plugin
-	pluginPath, err := lookup.LookupPlugin(version)
-	if err != nil {
-		panic(err)
-	}
+	_ = version
+	// TODO display a warning or error message if the API version does not match the CLI version
 
-	fmt.Printf("Running plugin version %s\n", version)
-	p, err := plugin.Open(pluginPath)
-	if err != nil {
-		rootCmd.Usage()
-		panic(err)
-	}
+	// Plugin have been removed for now because of :
+	// https://github.com/golang/go/issues/27751
+	// and https://www.reddit.com/r/golang/comments/b6h8qq/is_anyone_actually_using_go_plugins/ejkxd2k/
+	// // Plugin not found locally, lookup for the plugin
+	// pluginPath, err := lookup.LookupPlugin(version)
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	f, err := p.Lookup("AttachCommands")
-	if err != nil {
-		panic(err)
-	}
+	// fmt.Printf("Running plugin version %s\n", version)
+	// p, err := plugin.Open(pluginPath)
+	// if err != nil {
+	// 	rootCmd.Usage()
+	// 	panic(err)
+	// }
 
-	f.(func(*cobra.Command))(rootCmd)
+	// f, err := p.Lookup("AttachCommands")
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// f.(func(*cobra.Command))(rootCmd)
+
+	cmd.AttachCommands(rootCmd)
 
 	Execute()
 
