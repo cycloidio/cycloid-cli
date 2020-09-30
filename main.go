@@ -107,7 +107,7 @@ func init() {
 	viper.BindPFlag("verbosity", rootCmd.PersistentFlags().Lookup("verbosity"))
 	viper.SetDefault("verbosity", "warning")
 
-	rootCmd.PersistentFlags().String("api-url", "", "Specify the HTTP url of Cycloid API to use eg https://http-api.cycloid.io. This can also be given by CY_API_URL environment variable.")
+	rootCmd.PersistentFlags().String("api-url", "https://http-api.cycloid.io", "Specify the HTTP url of Cycloid API to use eg https://http-api.cycloid.io. This can also be given by CY_API_URL environment variable.")
 	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
 }
 
