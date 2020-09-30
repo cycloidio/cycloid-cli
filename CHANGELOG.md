@@ -1,3 +1,11 @@
+## [Unreleased]
+
+- **ADDED**
+  - printer /helpers for each command
+   ([PR #25](https://github.com/cycloidio/youdeploy-cli/pull/25))
+  - `login list` subcommand
+   ([PR #24](https://github.com/cycloidio/youdeploy-cli/pull/24))
+
 ## [v1.0.47] _2020-09-21_
 - **ADDED**
   - Printer with support for `json`, `yaml` and `table` format
