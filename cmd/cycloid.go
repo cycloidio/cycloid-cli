@@ -1,4 +1,6 @@
-package main
+// Change the package name because it it not a go plugin anymore
+// package main
+package cmd
 
 import (
 	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
