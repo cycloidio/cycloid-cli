@@ -24,10 +24,10 @@ func CheckAPIAndCLIVersion(cmd *cobra.Command, args []string) error {
 		warning("Warning: Unable to get the API version\n")
 		return nil
 	}
-	apiVersion := *d.Version
+	apiVersion := fmt.Sprintf("v%s", *d.Version)
 
 	if cliVersion != apiVersion {
-		warning(fmt.Sprintf("Warning: CLI version does not match the API version. You should consider to download CLI version %s\n", apiVersion))
+		warning(fmt.Sprintf("Warning: CLI version %s does not match the API version. You should consider to download CLI version %s\n", cliVersion, apiVersion))
 	}
 
 	return nil
