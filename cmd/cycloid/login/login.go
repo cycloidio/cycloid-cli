@@ -11,11 +11,11 @@ import (
 
 var (
 	example = `
-# Login into my-org using email / password as flags
-cy login --org my-org --email my-email --password my-password
+	# Login into my-org using email / password as flags
+	cy login --org my-org --email my-email --password my-password
 
-# Login without organization (can be used to access endpoint without organization)
-cy login --email my-email --password my-password
+	# Login without organization (can be used to access endpoint without organization)
+	cy login --email my-email --password my-password
 `
 	short    = "Login against the Cycloid console"
 	long     = short
