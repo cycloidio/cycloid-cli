@@ -73,10 +73,6 @@ func NewCreateProjectOK() *CreateProjectOK {
 Project created. The body contains the information of the new project of the organization.
 */
 type CreateProjectOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *CreateProjectOKBody
 }
 
@@ -89,13 +85,6 @@ func (o *CreateProjectOK) GetPayload() *CreateProjectOKBody {
 }
 
 func (o *CreateProjectOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(CreateProjectOKBody)
 
@@ -117,10 +106,6 @@ func NewCreateProjectNotFound() *CreateProjectNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type CreateProjectNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -133,13 +118,6 @@ func (o *CreateProjectNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateProjectNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -182,10 +160,6 @@ func NewCreateProjectUnprocessableEntity() *CreateProjectUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type CreateProjectUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -198,13 +172,6 @@ func (o *CreateProjectUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateProjectUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -230,10 +197,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type CreateProjectDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -251,13 +214,6 @@ func (o *CreateProjectDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateProjectDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

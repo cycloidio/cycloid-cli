@@ -9,9 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -87,10 +85,6 @@ func NewRemoveOrgMemberForbidden() *RemoveOrgMemberForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type RemoveOrgMemberForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -103,13 +97,6 @@ func (o *RemoveOrgMemberForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *RemoveOrgMemberForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -131,10 +118,6 @@ func NewRemoveOrgMemberNotFound() *RemoveOrgMemberNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type RemoveOrgMemberNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -147,13 +130,6 @@ func (o *RemoveOrgMemberNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *RemoveOrgMemberNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -179,10 +155,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type RemoveOrgMemberDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -200,13 +172,6 @@ func (o *RemoveOrgMemberDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *RemoveOrgMemberDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

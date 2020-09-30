@@ -67,10 +67,6 @@ func NewLoginOK() *LoginOK {
 The token which represents the session of the user.
 */
 type LoginOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *LoginOKBody
 }
 
@@ -83,13 +79,6 @@ func (o *LoginOK) GetPayload() *LoginOKBody {
 }
 
 func (o *LoginOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(LoginOKBody)
 
@@ -111,10 +100,6 @@ func NewLoginUnauthorized() *LoginUnauthorized {
 The user cannot be authenticated with the credentials which she/he has used.
 */
 type LoginUnauthorized struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -127,13 +112,6 @@ func (o *LoginUnauthorized) GetPayload() *models.ErrorPayload {
 }
 
 func (o *LoginUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -155,10 +133,6 @@ func NewLoginUnprocessableEntity() *LoginUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type LoginUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -171,13 +145,6 @@ func (o *LoginUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *LoginUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -203,10 +170,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type LoginDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -224,13 +187,6 @@ func (o *LoginDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *LoginDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

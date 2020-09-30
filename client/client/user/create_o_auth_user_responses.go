@@ -61,10 +61,6 @@ func NewCreateOAuthUserOK() *CreateOAuthUserOK {
 Create a user from the OAuth 'social_type'
 */
 type CreateOAuthUserOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *CreateOAuthUserOKBody
 }
 
@@ -77,13 +73,6 @@ func (o *CreateOAuthUserOK) GetPayload() *CreateOAuthUserOKBody {
 }
 
 func (o *CreateOAuthUserOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(CreateOAuthUserOKBody)
 
@@ -105,10 +94,6 @@ func NewCreateOAuthUserUnauthorized() *CreateOAuthUserUnauthorized {
 The user cannot be authenticated with the credentials which she/he has used.
 */
 type CreateOAuthUserUnauthorized struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -121,13 +106,6 @@ func (o *CreateOAuthUserUnauthorized) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateOAuthUserUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -153,10 +131,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type CreateOAuthUserDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -174,13 +148,6 @@ func (o *CreateOAuthUserDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateOAuthUserDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

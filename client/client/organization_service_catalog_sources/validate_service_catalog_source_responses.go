@@ -9,9 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -99,10 +97,6 @@ func NewValidateServiceCatalogSourceForbidden() *ValidateServiceCatalogSourceFor
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ValidateServiceCatalogSourceForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -115,13 +109,6 @@ func (o *ValidateServiceCatalogSourceForbidden) GetPayload() *models.ErrorPayloa
 }
 
 func (o *ValidateServiceCatalogSourceForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -143,10 +130,6 @@ func NewValidateServiceCatalogSourceNotFound() *ValidateServiceCatalogSourceNotF
 The response sent when any of the entities present in the path is not found.
 */
 type ValidateServiceCatalogSourceNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -159,13 +142,6 @@ func (o *ValidateServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload
 }
 
 func (o *ValidateServiceCatalogSourceNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -208,10 +184,6 @@ func NewValidateServiceCatalogSourceUnprocessableEntity() *ValidateServiceCatalo
 All the custom errors that are generated from the Cycloid API
 */
 type ValidateServiceCatalogSourceUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -224,13 +196,6 @@ func (o *ValidateServiceCatalogSourceUnprocessableEntity) GetPayload() *models.E
 }
 
 func (o *ValidateServiceCatalogSourceUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -256,10 +221,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type ValidateServiceCatalogSourceDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -277,13 +238,6 @@ func (o *ValidateServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload 
 }
 
 func (o *ValidateServiceCatalogSourceDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

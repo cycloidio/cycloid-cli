@@ -67,10 +67,6 @@ func NewValidateServiceCatalogDependenciesOK() *ValidateServiceCatalogDependenci
 The result of the service catalog's dependencies validation
 */
 type ValidateServiceCatalogDependenciesOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *ValidateServiceCatalogDependenciesOKBody
 }
 
@@ -83,13 +79,6 @@ func (o *ValidateServiceCatalogDependenciesOK) GetPayload() *ValidateServiceCata
 }
 
 func (o *ValidateServiceCatalogDependenciesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(ValidateServiceCatalogDependenciesOKBody)
 
@@ -111,10 +100,6 @@ func NewValidateServiceCatalogDependenciesForbidden() *ValidateServiceCatalogDep
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ValidateServiceCatalogDependenciesForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -127,13 +112,6 @@ func (o *ValidateServiceCatalogDependenciesForbidden) GetPayload() *models.Error
 }
 
 func (o *ValidateServiceCatalogDependenciesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -155,10 +133,6 @@ func NewValidateServiceCatalogDependenciesUnprocessableEntity() *ValidateService
 All the custom errors that are generated from the Cycloid API
 */
 type ValidateServiceCatalogDependenciesUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -171,13 +145,6 @@ func (o *ValidateServiceCatalogDependenciesUnprocessableEntity) GetPayload() *mo
 }
 
 func (o *ValidateServiceCatalogDependenciesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -203,10 +170,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type ValidateServiceCatalogDependenciesDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -224,13 +187,6 @@ func (o *ValidateServiceCatalogDependenciesDefault) GetPayload() *models.ErrorPa
 }
 
 func (o *ValidateServiceCatalogDependenciesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

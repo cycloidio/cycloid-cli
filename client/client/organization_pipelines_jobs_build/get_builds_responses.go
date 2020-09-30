@@ -74,10 +74,6 @@ func NewGetBuildsOK() *GetBuildsOK {
 List the pipeline job's builds which authenticated user has access to.
 */
 type GetBuildsOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *GetBuildsOKBody
 }
 
@@ -90,13 +86,6 @@ func (o *GetBuildsOK) GetPayload() *GetBuildsOKBody {
 }
 
 func (o *GetBuildsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(GetBuildsOKBody)
 
@@ -118,10 +107,6 @@ func NewGetBuildsForbidden() *GetBuildsForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetBuildsForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -134,13 +119,6 @@ func (o *GetBuildsForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetBuildsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -162,10 +140,6 @@ func NewGetBuildsNotFound() *GetBuildsNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type GetBuildsNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -178,13 +152,6 @@ func (o *GetBuildsNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetBuildsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -206,10 +173,6 @@ func NewGetBuildsUnprocessableEntity() *GetBuildsUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type GetBuildsUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -222,13 +185,6 @@ func (o *GetBuildsUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetBuildsUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -254,10 +210,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetBuildsDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength int64
-
 	Payload *models.ErrorPayload
 }
 
@@ -275,13 +227,6 @@ func (o *GetBuildsDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetBuildsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
