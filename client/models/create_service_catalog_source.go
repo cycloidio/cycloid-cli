@@ -29,6 +29,12 @@ type CreateServiceCatalogSource struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// User canonical that owns this service catalog source. If omitted then the person
+	// creating this service catalog source will be assigned as owner. When a user is the
+	// owner of a service catalog source they has all the permissions on it.
+	//
+	Owner string `json:"owner,omitempty"`
+
 	// url
 	// Required: true
 	// Pattern: (?:http|https|git|ssh|git@[-\w.]+):(\/\/)?(.*?)(\.git)?(\/?|\#[-\d\w._]+?)$

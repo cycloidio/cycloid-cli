@@ -9,7 +9,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -30,6 +32,18 @@ func (o *EmailVerificationReader) ReadResponse(response runtime.ClientResponse, 
 			return nil, err
 		}
 		return result, nil
+	case 404:
+		result := NewEmailVerificationNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
+	case 422:
+		result := NewEmailVerificationUnprocessableEntity()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	default:
 		result := NewEmailVerificationDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -63,6 +77,94 @@ func (o *EmailVerificationNoContent) readResponse(response runtime.ClientRespons
 	return nil
 }
 
+// NewEmailVerificationNotFound creates a EmailVerificationNotFound with default headers values
+func NewEmailVerificationNotFound() *EmailVerificationNotFound {
+	return &EmailVerificationNotFound{}
+}
+
+/*EmailVerificationNotFound handles this case with default header values.
+
+The response sent when any of the entities present in the path is not found.
+*/
+type EmailVerificationNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
+	Payload *models.ErrorPayload
+}
+
+func (o *EmailVerificationNotFound) Error() string {
+	return fmt.Sprintf("[PUT /user/email/verification/{verification_token}][%d] emailVerificationNotFound  %+v", 404, o.Payload)
+}
+
+func (o *EmailVerificationNotFound) GetPayload() *models.ErrorPayload {
+	return o.Payload
+}
+
+func (o *EmailVerificationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
+	o.Payload = new(models.ErrorPayload)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewEmailVerificationUnprocessableEntity creates a EmailVerificationUnprocessableEntity with default headers values
+func NewEmailVerificationUnprocessableEntity() *EmailVerificationUnprocessableEntity {
+	return &EmailVerificationUnprocessableEntity{}
+}
+
+/*EmailVerificationUnprocessableEntity handles this case with default header values.
+
+All the custom errors that are generated from the Cycloid API
+*/
+type EmailVerificationUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
+	Payload *models.ErrorPayload
+}
+
+func (o *EmailVerificationUnprocessableEntity) Error() string {
+	return fmt.Sprintf("[PUT /user/email/verification/{verification_token}][%d] emailVerificationUnprocessableEntity  %+v", 422, o.Payload)
+}
+
+func (o *EmailVerificationUnprocessableEntity) GetPayload() *models.ErrorPayload {
+	return o.Payload
+}
+
+func (o *EmailVerificationUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
+	o.Payload = new(models.ErrorPayload)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
 // NewEmailVerificationDefault creates a EmailVerificationDefault with default headers values
 func NewEmailVerificationDefault(code int) *EmailVerificationDefault {
 	return &EmailVerificationDefault{
@@ -76,6 +178,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 */
 type EmailVerificationDefault struct {
 	_statusCode int
+
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
 
 	Payload *models.ErrorPayload
 }
@@ -94,6 +200,13 @@ func (o *EmailVerificationDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *EmailVerificationDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

@@ -33,6 +33,12 @@ func (o *UpdateConfigRepositoryReader) ReadResponse(response runtime.ClientRespo
 			return nil, err
 		}
 		return result, nil
+	case 404:
+		result := NewUpdateConfigRepositoryNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 411:
 		result := NewUpdateConfigRepositoryLengthRequired()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -95,6 +101,50 @@ func (o *UpdateConfigRepositoryOK) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
+// NewUpdateConfigRepositoryNotFound creates a UpdateConfigRepositoryNotFound with default headers values
+func NewUpdateConfigRepositoryNotFound() *UpdateConfigRepositoryNotFound {
+	return &UpdateConfigRepositoryNotFound{}
+}
+
+/*UpdateConfigRepositoryNotFound handles this case with default header values.
+
+The response sent when any of the entities present in the path is not found.
+*/
+type UpdateConfigRepositoryNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
+	Payload *models.ErrorPayload
+}
+
+func (o *UpdateConfigRepositoryNotFound) Error() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] updateConfigRepositoryNotFound  %+v", 404, o.Payload)
+}
+
+func (o *UpdateConfigRepositoryNotFound) GetPayload() *models.ErrorPayload {
+	return o.Payload
+}
+
+func (o *UpdateConfigRepositoryNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
+	o.Payload = new(models.ErrorPayload)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
 // NewUpdateConfigRepositoryLengthRequired creates a UpdateConfigRepositoryLengthRequired with default headers values
 func NewUpdateConfigRepositoryLengthRequired() *UpdateConfigRepositoryLengthRequired {
 	return &UpdateConfigRepositoryLengthRequired{}
@@ -130,6 +180,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UpdateConfigRepositoryDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -147,6 +201,13 @@ func (o *UpdateConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateConfigRepositoryDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

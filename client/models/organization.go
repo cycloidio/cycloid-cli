@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -18,6 +20,9 @@ import (
 // The entity which holds all the direct information attached to an organization.
 // swagger:model Organization
 type Organization struct {
+
+	// admins
+	Admins []*MemberOrg `json:"admins"`
 
 	// blocked
 	// Required: true
@@ -59,6 +64,10 @@ type Organization struct {
 func (m *Organization) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAdmins(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateBlocked(formats); err != nil {
 		res = append(res, err)
 	}
@@ -90,6 +99,31 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Organization) validateAdmins(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Admins) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Admins); i++ {
+		if swag.IsZero(m.Admins[i]) { // not required
+			continue
+		}
+
+		if m.Admins[i] != nil {
+			if err := m.Admins[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("admins" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

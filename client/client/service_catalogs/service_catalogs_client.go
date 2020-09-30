@@ -435,6 +435,40 @@ func (a *Client) UpdateServiceCatalogTerraformImage(params *UpdateServiceCatalog
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
+/*
+ValidateServiceCatalogDependencies Validates the dependencies of a Service Catalog
+*/
+func (a *Client) ValidateServiceCatalogDependencies(params *ValidateServiceCatalogDependenciesParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateServiceCatalogDependenciesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewValidateServiceCatalogDependenciesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "validateServiceCatalogDependencies",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/dependencies/validate",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ValidateServiceCatalogDependenciesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ValidateServiceCatalogDependenciesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ValidateServiceCatalogDependenciesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
 // SetTransport changes the transport on the client
 func (a *Client) SetTransport(transport runtime.ClientTransport) {
 	a.transport = transport

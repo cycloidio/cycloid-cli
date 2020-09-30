@@ -67,6 +67,10 @@ func NewGetOrgMemberOK() *GetOrgMemberOK {
 The information of the member of the organization.
 */
 type GetOrgMemberOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *GetOrgMemberOKBody
 }
 
@@ -79,6 +83,13 @@ func (o *GetOrgMemberOK) GetPayload() *GetOrgMemberOKBody {
 }
 
 func (o *GetOrgMemberOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(GetOrgMemberOKBody)
 
@@ -192,6 +203,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetOrgMemberDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -209,6 +224,13 @@ func (o *GetOrgMemberDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetOrgMemberDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

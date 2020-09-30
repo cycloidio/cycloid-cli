@@ -79,6 +79,10 @@ func NewUpdateCredentialOK() *UpdateCredentialOK {
 Credential updated.
 */
 type UpdateCredentialOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *UpdateCredentialOKBody
 }
 
@@ -91,6 +95,13 @@ func (o *UpdateCredentialOK) GetPayload() *UpdateCredentialOKBody {
 }
 
 func (o *UpdateCredentialOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(UpdateCredentialOKBody)
 
@@ -221,6 +232,10 @@ func NewUpdateCredentialUnprocessableEntity() *UpdateCredentialUnprocessableEnti
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateCredentialUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -233,6 +248,13 @@ func (o *UpdateCredentialUnprocessableEntity) GetPayload() *models.ErrorPayload 
 }
 
 func (o *UpdateCredentialUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -258,6 +280,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UpdateCredentialDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -275,6 +301,13 @@ func (o *UpdateCredentialDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateCredentialDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

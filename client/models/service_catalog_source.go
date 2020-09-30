@@ -22,7 +22,7 @@ type ServiceCatalogSource struct {
 	// branch
 	Branch string `json:"branch,omitempty"`
 
-	// changes
+	// Represents map of service catalogs changes during the update of a service catalog source. Used only for update action on a service catalog source.
 	Changes *ServiceCatalogChanges `json:"changes,omitempty"`
 
 	// created at
@@ -42,8 +42,24 @@ type ServiceCatalogSource struct {
 	// Required: true
 	Name *string `json:"name"`
 
-	// service catalogs
+	// Organization member that owns this service catalog source. When a user is the owner of a
+	// service catalog source they has all the permissions on it.
+	// In the event where the user has been deleted this field might be empty.
+	//
+	// Required: true
+	Owner *MemberOrg `json:"owner"`
+
+	// The last time the Service Catalog Source was (successfully) refreshed.
+	// Minimum: 0
+	RefreshedAt *int64 `json:"refreshed_at,omitempty"`
+
+	// Represents list of service catalogs in the service catalog source. Not used during update action on a service catalog source.
 	ServiceCatalogs []*ServiceCatalog `json:"service_catalogs"`
+
+	// stack count
+	// Required: true
+	// Minimum: 0
+	StackCount *uint32 `json:"stack_count"`
 
 	// updated at
 	// Minimum: 0
@@ -79,7 +95,19 @@ func (m *ServiceCatalogSource) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateOwner(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateRefreshedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateServiceCatalogs(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStackCount(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -163,6 +191,37 @@ func (m *ServiceCatalogSource) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ServiceCatalogSource) validateOwner(formats strfmt.Registry) error {
+
+	if err := validate.Required("owner", "body", m.Owner); err != nil {
+		return err
+	}
+
+	if m.Owner != nil {
+		if err := m.Owner.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalogSource) validateRefreshedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.RefreshedAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("refreshed_at", "body", int64(*m.RefreshedAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ServiceCatalogSource) validateServiceCatalogs(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.ServiceCatalogs) { // not required
@@ -183,6 +242,19 @@ func (m *ServiceCatalogSource) validateServiceCatalogs(formats strfmt.Registry) 
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalogSource) validateStackCount(formats strfmt.Registry) error {
+
+	if err := validate.Required("stack_count", "body", m.StackCount); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumInt("stack_count", "body", int64(*m.StackCount), 0, false); err != nil {
+		return err
 	}
 
 	return nil

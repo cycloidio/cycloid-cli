@@ -79,6 +79,10 @@ func NewUpdateProjectOK() *UpdateProjectOK {
 Project updated. The body contains information of the updated project.
 */
 type UpdateProjectOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *UpdateProjectOKBody
 }
 
@@ -91,6 +95,13 @@ func (o *UpdateProjectOK) GetPayload() *UpdateProjectOKBody {
 }
 
 func (o *UpdateProjectOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(UpdateProjectOKBody)
 
@@ -221,6 +232,10 @@ func NewUpdateProjectUnprocessableEntity() *UpdateProjectUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateProjectUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -233,6 +248,13 @@ func (o *UpdateProjectUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateProjectUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -258,6 +280,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UpdateProjectDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -275,6 +301,13 @@ func (o *UpdateProjectDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateProjectDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

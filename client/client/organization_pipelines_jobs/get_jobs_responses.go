@@ -74,6 +74,10 @@ func NewGetJobsOK() *GetJobsOK {
 List of the pipeline's jobs which authenticated user has access to.
 */
 type GetJobsOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *GetJobsOKBody
 }
 
@@ -86,6 +90,13 @@ func (o *GetJobsOK) GetPayload() *GetJobsOKBody {
 }
 
 func (o *GetJobsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(GetJobsOKBody)
 
@@ -195,6 +206,10 @@ func NewGetJobsUnprocessableEntity() *GetJobsUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type GetJobsUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -207,6 +222,13 @@ func (o *GetJobsUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetJobsUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -232,6 +254,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetJobsDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -249,6 +275,13 @@ func (o *GetJobsDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetJobsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

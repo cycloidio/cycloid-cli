@@ -25,7 +25,7 @@ type NewPipeline struct {
 	// environment
 	// Required: true
 	// Max Length: 30
-	// Min Length: 3
+	// Min Length: 1
 	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
 	Environment *string `json:"environment"`
 
@@ -82,7 +82,7 @@ func (m *NewPipeline) validateEnvironment(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("environment", "body", string(*m.Environment), 3); err != nil {
+	if err := validate.MinLength("environment", "body", string(*m.Environment), 1); err != nil {
 		return err
 	}
 
