@@ -13,17 +13,17 @@ git clone git@github.com:cycloidio/cycloid-cli.git
 cd cycloid-cli
 ```
 
-To ease the build workflow, we use `docker` to build the CLI. Make sure that docker daemon is up and running.
+Build and install the binary
 
 ```
 make build
 sudo mv cy /usr/local/bin
+cy --version
 ```
 
 ### From the releases page
 
-:construction:
-
+You can download the latest Linux binary from the [release](https://github.com/cycloidio/cycloid-cli/releases) page.
 
 ## Getting started
 
