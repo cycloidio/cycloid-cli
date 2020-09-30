@@ -33,6 +33,12 @@ func (o *UpdateServiceCatalogSourceReader) ReadResponse(response runtime.ClientR
 			return nil, err
 		}
 		return result, nil
+	case 404:
+		result := NewUpdateServiceCatalogSourceNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 411:
 		result := NewUpdateServiceCatalogSourceLengthRequired()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -61,6 +67,10 @@ func NewUpdateServiceCatalogSourceOK() *UpdateServiceCatalogSourceOK {
 Success update
 */
 type UpdateServiceCatalogSourceOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *UpdateServiceCatalogSourceOKBody
 }
 
@@ -74,7 +84,58 @@ func (o *UpdateServiceCatalogSourceOK) GetPayload() *UpdateServiceCatalogSourceO
 
 func (o *UpdateServiceCatalogSourceOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
 	o.Payload = new(UpdateServiceCatalogSourceOKBody)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
+// NewUpdateServiceCatalogSourceNotFound creates a UpdateServiceCatalogSourceNotFound with default headers values
+func NewUpdateServiceCatalogSourceNotFound() *UpdateServiceCatalogSourceNotFound {
+	return &UpdateServiceCatalogSourceNotFound{}
+}
+
+/*UpdateServiceCatalogSourceNotFound handles this case with default header values.
+
+The response sent when any of the entities present in the path is not found.
+*/
+type UpdateServiceCatalogSourceNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
+	Payload *models.ErrorPayload
+}
+
+func (o *UpdateServiceCatalogSourceNotFound) Error() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] updateServiceCatalogSourceNotFound  %+v", 404, o.Payload)
+}
+
+func (o *UpdateServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload {
+	return o.Payload
+}
+
+func (o *UpdateServiceCatalogSourceNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
+	o.Payload = new(models.ErrorPayload)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -119,6 +180,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UpdateServiceCatalogSourceDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -136,6 +201,13 @@ func (o *UpdateServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateServiceCatalogSourceDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

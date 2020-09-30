@@ -22,8 +22,7 @@ import (
 type UpdateCredential struct {
 
 	// description
-	// Required: true
-	Description *string `json:"description"`
+	Description string `json:"description,omitempty"`
 
 	// name
 	// Required: true
@@ -32,8 +31,7 @@ type UpdateCredential struct {
 	// User canonical that owns this credential. When a user is the owner of a credential he has
 	// all the permissions on it.
 	//
-	// Required: true
-	Owner *string `json:"owner"`
+	Owner string `json:"owner,omitempty"`
 
 	// path
 	// Required: true
@@ -54,15 +52,7 @@ type UpdateCredential struct {
 func (m *UpdateCredential) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateDescription(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateOwner(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -84,27 +74,9 @@ func (m *UpdateCredential) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateCredential) validateDescription(formats strfmt.Registry) error {
-
-	if err := validate.Required("description", "body", m.Description); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *UpdateCredential) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateCredential) validateOwner(formats strfmt.Registry) error {
-
-	if err := validate.Required("owner", "body", m.Owner); err != nil {
 		return err
 	}
 

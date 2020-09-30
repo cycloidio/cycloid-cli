@@ -39,6 +39,12 @@ func (o *GetRepoBranchesReader) ReadResponse(response runtime.ClientResponse, co
 			return nil, err
 		}
 		return nil, result
+	case 404:
+		result := NewGetRepoBranchesNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 422:
 		result := NewGetRepoBranchesUnprocessableEntity()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -145,6 +151,50 @@ func (o *GetRepoBranchesForbidden) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
+// NewGetRepoBranchesNotFound creates a GetRepoBranchesNotFound with default headers values
+func NewGetRepoBranchesNotFound() *GetRepoBranchesNotFound {
+	return &GetRepoBranchesNotFound{}
+}
+
+/*GetRepoBranchesNotFound handles this case with default header values.
+
+The response sent when any of the entities present in the path is not found.
+*/
+type GetRepoBranchesNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
+	Payload *models.ErrorPayload
+}
+
+func (o *GetRepoBranchesNotFound) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesNotFound  %+v", 404, o.Payload)
+}
+
+func (o *GetRepoBranchesNotFound) GetPayload() *models.ErrorPayload {
+	return o.Payload
+}
+
+func (o *GetRepoBranchesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
+	o.Payload = new(models.ErrorPayload)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
 // NewGetRepoBranchesUnprocessableEntity creates a GetRepoBranchesUnprocessableEntity with default headers values
 func NewGetRepoBranchesUnprocessableEntity() *GetRepoBranchesUnprocessableEntity {
 	return &GetRepoBranchesUnprocessableEntity{}
@@ -155,6 +205,10 @@ func NewGetRepoBranchesUnprocessableEntity() *GetRepoBranchesUnprocessableEntity
 All the custom errors that are generated from the Cycloid API
 */
 type GetRepoBranchesUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -167,6 +221,13 @@ func (o *GetRepoBranchesUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetRepoBranchesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -192,6 +253,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetRepoBranchesDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -209,6 +274,13 @@ func (o *GetRepoBranchesDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetRepoBranchesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

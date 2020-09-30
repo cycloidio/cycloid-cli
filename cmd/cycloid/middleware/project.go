@@ -136,7 +136,7 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 		ServiceCatalogRef:  &stackRef,
 		ConfigRepositoryID: configRepo,
 		Environments:       envs,
-		Owner:              &owner,
+		Owner:              owner,
 	}
 
 	err := body.Validate(strfmt.Default)

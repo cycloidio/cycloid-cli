@@ -44,6 +44,9 @@ type MemberTeam struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
+	// Team member who invited the current user to the team.
+	InvitedBy *MemberTeam `json:"invited_by,omitempty"`
+
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
@@ -81,6 +84,10 @@ func (m *MemberTeam) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInvitedBy(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -162,6 +169,24 @@ func (m *MemberTeam) validateID(formats strfmt.Registry) error {
 
 	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.InvitedBy) { // not required
+		return nil
+	}
+
+	if m.InvitedBy != nil {
+		if err := m.InvitedBy.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("invited_by")
+			}
+			return err
+		}
 	}
 
 	return nil

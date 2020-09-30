@@ -154,6 +154,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetOrgAncestorsDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -172,6 +176,13 @@ func (o *GetOrgAncestorsDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetOrgAncestorsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
@@ -189,7 +200,7 @@ type GetOrgAncestorsOKBody struct {
 
 	// data
 	// Required: true
-	Data []*models.OrganizationBasicInfo `json:"data"`
+	Data []*models.Organization `json:"data"`
 
 	// pagination
 	// Required: true

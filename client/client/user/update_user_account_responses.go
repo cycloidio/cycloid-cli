@@ -33,6 +33,12 @@ func (o *UpdateUserAccountReader) ReadResponse(response runtime.ClientResponse, 
 			return nil, err
 		}
 		return result, nil
+	case 409:
+		result := NewUpdateUserAccountConflict()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 411:
 		result := NewUpdateUserAccountLengthRequired()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -107,6 +113,27 @@ func (o *UpdateUserAccountOK) readResponse(response runtime.ClientResponse, cons
 	return nil
 }
 
+// NewUpdateUserAccountConflict creates a UpdateUserAccountConflict with default headers values
+func NewUpdateUserAccountConflict() *UpdateUserAccountConflict {
+	return &UpdateUserAccountConflict{}
+}
+
+/*UpdateUserAccountConflict handles this case with default header values.
+
+Trying setting an unverified email as the primary
+*/
+type UpdateUserAccountConflict struct {
+}
+
+func (o *UpdateUserAccountConflict) Error() string {
+	return fmt.Sprintf("[PUT /user][%d] updateUserAccountConflict ", 409)
+}
+
+func (o *UpdateUserAccountConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	return nil
+}
+
 // NewUpdateUserAccountLengthRequired creates a UpdateUserAccountLengthRequired with default headers values
 func NewUpdateUserAccountLengthRequired() *UpdateUserAccountLengthRequired {
 	return &UpdateUserAccountLengthRequired{}
@@ -138,6 +165,10 @@ func NewUpdateUserAccountUnprocessableEntity() *UpdateUserAccountUnprocessableEn
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateUserAccountUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -150,6 +181,13 @@ func (o *UpdateUserAccountUnprocessableEntity) GetPayload() *models.ErrorPayload
 }
 
 func (o *UpdateUserAccountUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -219,6 +257,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UpdateUserAccountDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -236,6 +278,13 @@ func (o *UpdateUserAccountDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateUserAccountDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

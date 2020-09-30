@@ -67,6 +67,10 @@ func NewCreateBuildOK() *CreateBuildOK {
 Create a new build for the pipeline's job and returns its details
 */
 type CreateBuildOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *CreateBuildOKBody
 }
 
@@ -79,6 +83,13 @@ func (o *CreateBuildOK) GetPayload() *CreateBuildOKBody {
 }
 
 func (o *CreateBuildOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(CreateBuildOKBody)
 
@@ -192,6 +203,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type CreateBuildDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -209,6 +224,13 @@ func (o *CreateBuildDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateBuildDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

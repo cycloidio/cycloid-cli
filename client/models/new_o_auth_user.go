@@ -31,6 +31,10 @@ type NewOAuthUser struct {
 	// Required: true
 	GivenName *string `json:"given_name"`
 
+	// The field is used when a user signup from an invitation to an organization. Giving the token, the created user will be automatically added to the organization.
+	// Min Length: 5
+	InvitationToken string `json:"invitation_token,omitempty"`
+
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
@@ -56,6 +60,10 @@ func (m *NewOAuthUser) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateGivenName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInvitationToken(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -93,6 +101,19 @@ func (m *NewOAuthUser) validateEmail(formats strfmt.Registry) error {
 func (m *NewOAuthUser) validateGivenName(formats strfmt.Registry) error {
 
 	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewOAuthUser) validateInvitationToken(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.InvitationToken) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("invitation_token", "body", string(m.InvitationToken), 5); err != nil {
 		return err
 	}
 

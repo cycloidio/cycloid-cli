@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -66,13 +67,36 @@ func NewSendOrgEventOK() *SendOrgEventOK {
 Event has been registered
 */
 type SendOrgEventOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
+	Payload *SendOrgEventOKBody
 }
 
 func (o *SendOrgEventOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendOrgEventOK ", 200)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendOrgEventOK  %+v", 200, o.Payload)
+}
+
+func (o *SendOrgEventOK) GetPayload() *SendOrgEventOKBody {
+	return o.Payload
 }
 
 func (o *SendOrgEventOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
+	o.Payload = new(SendOrgEventOKBody)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
 
 	return nil
 }
@@ -175,6 +199,10 @@ func NewSendOrgEventUnprocessableEntity() *SendOrgEventUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type SendOrgEventUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -188,6 +216,13 @@ func (o *SendOrgEventUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *SendOrgEventUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
@@ -195,5 +230,65 @@ func (o *SendOrgEventUnprocessableEntity) readResponse(response runtime.ClientRe
 		return err
 	}
 
+	return nil
+}
+
+/*SendOrgEventOKBody The newly created event
+swagger:model SendOrgEventOKBody
+*/
+type SendOrgEventOKBody struct {
+
+	// data
+	// Required: true
+	Data *models.Event `json:"data"`
+}
+
+// Validate validates this send org event o k body
+func (o *SendOrgEventOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *SendOrgEventOKBody) validateData(formats strfmt.Registry) error {
+
+	if err := validate.Required("sendOrgEventOK"+"."+"data", "body", o.Data); err != nil {
+		return err
+	}
+
+	if o.Data != nil {
+		if err := o.Data.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("sendOrgEventOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *SendOrgEventOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *SendOrgEventOKBody) UnmarshalBinary(b []byte) error {
+	var res SendOrgEventOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

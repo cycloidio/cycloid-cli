@@ -68,6 +68,10 @@ func NewGetCredentialsOK() *GetCredentialsOK {
 List of the Credentials
 */
 type GetCredentialsOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *GetCredentialsOKBody
 }
 
@@ -80,6 +84,13 @@ func (o *GetCredentialsOK) GetPayload() *GetCredentialsOKBody {
 }
 
 func (o *GetCredentialsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(GetCredentialsOKBody)
 
@@ -193,6 +204,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetCredentialsDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -210,6 +225,13 @@ func (o *GetCredentialsDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetCredentialsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

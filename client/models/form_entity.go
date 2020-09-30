@@ -21,6 +21,9 @@ import (
 // swagger:model FormEntity
 type FormEntity struct {
 
+	// The current value that was previously configured for this variable upon creation or update.
+	Current interface{} `json:"current,omitempty"`
+
 	// The default to assign to the variable if nothing is returned and that the varialbe is required
 	Default interface{} `json:"default,omitempty"`
 

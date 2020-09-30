@@ -55,8 +55,7 @@ type UpdateProject struct {
 	// organization admin can update such a field. When a user is the owner
 	// of a project it has all the permission on it.
 	//
-	// Required: true
-	Owner *string `json:"owner"`
+	Owner string `json:"owner,omitempty"`
 
 	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
 	// Required: true
@@ -77,10 +76,6 @@ func (m *UpdateProject) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateOwner(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -170,15 +165,6 @@ func (m *UpdateProject) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateProject) validateOwner(formats strfmt.Registry) error {
-
-	if err := validate.Required("owner", "body", m.Owner); err != nil {
 		return err
 	}
 

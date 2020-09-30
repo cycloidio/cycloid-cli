@@ -51,7 +51,7 @@ func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, erro
 	return d, err
 }
 
-func (m *middleware) ListOrganizations() ([]*models.OrganizationBasicInfo, error) {
+func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 
 	params := organizations.NewGetOrgsParams()
 

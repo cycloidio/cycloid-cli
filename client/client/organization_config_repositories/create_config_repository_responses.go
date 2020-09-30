@@ -33,6 +33,12 @@ func (o *CreateConfigRepositoryReader) ReadResponse(response runtime.ClientRespo
 			return nil, err
 		}
 		return result, nil
+	case 404:
+		result := NewCreateConfigRepositoryNotFound()
+		if err := result.readResponse(response, consumer, o.formats); err != nil {
+			return nil, err
+		}
+		return nil, result
 	case 411:
 		result := NewCreateConfigRepositoryLengthRequired()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -101,6 +107,50 @@ func (o *CreateConfigRepositoryOK) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
+// NewCreateConfigRepositoryNotFound creates a CreateConfigRepositoryNotFound with default headers values
+func NewCreateConfigRepositoryNotFound() *CreateConfigRepositoryNotFound {
+	return &CreateConfigRepositoryNotFound{}
+}
+
+/*CreateConfigRepositoryNotFound handles this case with default header values.
+
+The response sent when any of the entities present in the path is not found.
+*/
+type CreateConfigRepositoryNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
+	Payload *models.ErrorPayload
+}
+
+func (o *CreateConfigRepositoryNotFound) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryNotFound  %+v", 404, o.Payload)
+}
+
+func (o *CreateConfigRepositoryNotFound) GetPayload() *models.ErrorPayload {
+	return o.Payload
+}
+
+func (o *CreateConfigRepositoryNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
+
+	o.Payload = new(models.ErrorPayload)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
+
+	return nil
+}
+
 // NewCreateConfigRepositoryLengthRequired creates a CreateConfigRepositoryLengthRequired with default headers values
 func NewCreateConfigRepositoryLengthRequired() *CreateConfigRepositoryLengthRequired {
 	return &CreateConfigRepositoryLengthRequired{}
@@ -132,6 +182,10 @@ func NewCreateConfigRepositoryUnprocessableEntity() *CreateConfigRepositoryUnpro
 All the custom errors that are generated from the Cycloid API
 */
 type CreateConfigRepositoryUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -144,6 +198,13 @@ func (o *CreateConfigRepositoryUnprocessableEntity) GetPayload() *models.ErrorPa
 }
 
 func (o *CreateConfigRepositoryUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -169,6 +230,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type CreateConfigRepositoryDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength int64
+
 	Payload *models.ErrorPayload
 }
 
@@ -186,6 +251,13 @@ func (o *CreateConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateConfigRepositoryDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertInt64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "int64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

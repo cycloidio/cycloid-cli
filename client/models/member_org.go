@@ -48,6 +48,9 @@ type MemberOrg struct {
 	// Minimum: 0
 	InvitedAt *int64 `json:"invited_at,omitempty"`
 
+	// Organization member who invited the current user.
+	InvitedBy *MemberOrg `json:"invited_by,omitempty"`
+
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
@@ -93,6 +96,10 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateInvitedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInvitedBy(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -191,6 +198,24 @@ func (m *MemberOrg) validateInvitedAt(formats strfmt.Registry) error {
 
 	if err := validate.MinimumInt("invited_at", "body", int64(*m.InvitedAt), 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *MemberOrg) validateInvitedBy(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.InvitedBy) { // not required
+		return nil
+	}
+
+	if m.InvitedBy != nil {
+		if err := m.InvitedBy.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("invited_by")
+			}
+			return err
+		}
 	}
 
 	return nil

@@ -36,6 +36,9 @@ type ServiceCatalog struct {
 	// Minimum: 0
 	CreatedAt *int64 `json:"created_at,omitempty"`
 
+	// dependencies
+	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
+
 	// description
 	// Required: true
 	Description *string `json:"description"`
@@ -94,6 +97,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDependencies(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -181,6 +188,31 @@ func (m *ServiceCatalog) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Dependencies) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Dependencies); i++ {
+		if swag.IsZero(m.Dependencies[i]) { // not required
+			continue
+		}
+
+		if m.Dependencies[i] != nil {
+			if err := m.Dependencies[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

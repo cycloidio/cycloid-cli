@@ -29,7 +29,7 @@ type Middleware interface {
 
 	GetOrganization(org string) (*models.Organization, error)
 	ListOrganizationWorkers(org string) ([]*models.Worker, error)
-	ListOrganizations() ([]*models.OrganizationBasicInfo, error)
+	ListOrganizations() ([]*models.Organization, error)
 
 	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
 	GetCatalogRepository(org string, catalogRepo uint32) (*models.ServiceCatalogSource, error)

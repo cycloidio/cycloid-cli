@@ -92,7 +92,7 @@ func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo run
 }
 
 /*
-EmailVerification Verify that the email address is own by the user. Due to security reasons, this endpoint doesn't return Not Found (404) when the verification token doesn't exist.
+EmailVerification Verify that the email address is own by the user.
 */
 func (a *Client) EmailVerification(params *EmailVerificationParams) (*EmailVerificationNoContent, error) {
 	// TODO: Validate the params before sending

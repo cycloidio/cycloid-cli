@@ -92,7 +92,7 @@ type GetOrgsParams struct {
 	  Search by organization's creation date
 
 	*/
-	OrganizationCreatedAt *strfmt.DateTime
+	OrganizationCreatedAt *uint64
 	/*OrganizationName
 	  Search by the organization's name
 
@@ -159,13 +159,13 @@ func (o *GetOrgsParams) SetOrderBy(orderBy *string) {
 }
 
 // WithOrganizationCreatedAt adds the organizationCreatedAt to the get orgs params
-func (o *GetOrgsParams) WithOrganizationCreatedAt(organizationCreatedAt *strfmt.DateTime) *GetOrgsParams {
+func (o *GetOrgsParams) WithOrganizationCreatedAt(organizationCreatedAt *uint64) *GetOrgsParams {
 	o.SetOrganizationCreatedAt(organizationCreatedAt)
 	return o
 }
 
 // SetOrganizationCreatedAt adds the organizationCreatedAt to the get orgs params
-func (o *GetOrgsParams) SetOrganizationCreatedAt(organizationCreatedAt *strfmt.DateTime) {
+func (o *GetOrgsParams) SetOrganizationCreatedAt(organizationCreatedAt *uint64) {
 	o.OrganizationCreatedAt = organizationCreatedAt
 }
 
@@ -229,11 +229,11 @@ func (o *GetOrgsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 	if o.OrganizationCreatedAt != nil {
 
 		// query param organization_created_at
-		var qrOrganizationCreatedAt strfmt.DateTime
+		var qrOrganizationCreatedAt uint64
 		if o.OrganizationCreatedAt != nil {
 			qrOrganizationCreatedAt = *o.OrganizationCreatedAt
 		}
-		qOrganizationCreatedAt := qrOrganizationCreatedAt.String()
+		qOrganizationCreatedAt := swag.FormatUint64(qrOrganizationCreatedAt)
 		if qOrganizationCreatedAt != "" {
 			if err := r.SetQueryParam("organization_created_at", qOrganizationCreatedAt); err != nil {
 				return err

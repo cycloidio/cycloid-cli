@@ -86,7 +86,7 @@ type GetOrgMembersParams struct {
 	  Search by member joining date
 
 	*/
-	MemberCreatedAt *strfmt.DateTime
+	MemberCreatedAt *uint64
 	/*OrderBy
 	  Allows to order the list of items. Example usage: field_name:asc
 
@@ -122,7 +122,7 @@ type GetOrgMembersParams struct {
 	  Search by user creation date
 
 	*/
-	UserCreatedAt *strfmt.DateTime
+	UserCreatedAt *uint64
 	/*UserFamilyName
 	  Search by the user's family name
 
@@ -173,13 +173,13 @@ func (o *GetOrgMembersParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithMemberCreatedAt adds the memberCreatedAt to the get org members params
-func (o *GetOrgMembersParams) WithMemberCreatedAt(memberCreatedAt *strfmt.DateTime) *GetOrgMembersParams {
+func (o *GetOrgMembersParams) WithMemberCreatedAt(memberCreatedAt *uint64) *GetOrgMembersParams {
 	o.SetMemberCreatedAt(memberCreatedAt)
 	return o
 }
 
 // SetMemberCreatedAt adds the memberCreatedAt to the get org members params
-func (o *GetOrgMembersParams) SetMemberCreatedAt(memberCreatedAt *strfmt.DateTime) {
+func (o *GetOrgMembersParams) SetMemberCreatedAt(memberCreatedAt *uint64) {
 	o.MemberCreatedAt = memberCreatedAt
 }
 
@@ -250,13 +250,13 @@ func (o *GetOrgMembersParams) SetUserCanonical(userCanonical *string) {
 }
 
 // WithUserCreatedAt adds the userCreatedAt to the get org members params
-func (o *GetOrgMembersParams) WithUserCreatedAt(userCreatedAt *strfmt.DateTime) *GetOrgMembersParams {
+func (o *GetOrgMembersParams) WithUserCreatedAt(userCreatedAt *uint64) *GetOrgMembersParams {
 	o.SetUserCreatedAt(userCreatedAt)
 	return o
 }
 
 // SetUserCreatedAt adds the userCreatedAt to the get org members params
-func (o *GetOrgMembersParams) SetUserCreatedAt(userCreatedAt *strfmt.DateTime) {
+func (o *GetOrgMembersParams) SetUserCreatedAt(userCreatedAt *uint64) {
 	o.UserCreatedAt = userCreatedAt
 }
 
@@ -293,11 +293,11 @@ func (o *GetOrgMembersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	if o.MemberCreatedAt != nil {
 
 		// query param member_created_at
-		var qrMemberCreatedAt strfmt.DateTime
+		var qrMemberCreatedAt uint64
 		if o.MemberCreatedAt != nil {
 			qrMemberCreatedAt = *o.MemberCreatedAt
 		}
-		qMemberCreatedAt := qrMemberCreatedAt.String()
+		qMemberCreatedAt := swag.FormatUint64(qrMemberCreatedAt)
 		if qMemberCreatedAt != "" {
 			if err := r.SetQueryParam("member_created_at", qMemberCreatedAt); err != nil {
 				return err
@@ -394,11 +394,11 @@ func (o *GetOrgMembersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	if o.UserCreatedAt != nil {
 
 		// query param user_created_at
-		var qrUserCreatedAt strfmt.DateTime
+		var qrUserCreatedAt uint64
 		if o.UserCreatedAt != nil {
 			qrUserCreatedAt = *o.UserCreatedAt
 		}
-		qUserCreatedAt := qrUserCreatedAt.String()
+		qUserCreatedAt := swag.FormatUint64(qrUserCreatedAt)
 		if qUserCreatedAt != "" {
 			if err := r.SetQueryParam("user_created_at", qUserCreatedAt); err != nil {
 				return err

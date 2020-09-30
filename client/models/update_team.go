@@ -35,8 +35,7 @@ type UpdateTeam struct {
 	// organization admin can update this field. When a user is the owner
 	// of a team it has all the permission on it.
 	//
-	// Required: true
-	Owner *string `json:"owner"`
+	Owner string `json:"owner,omitempty"`
 
 	// The roles to be re-assigned to a team.
 	// Required: true
@@ -52,10 +51,6 @@ func (m *UpdateTeam) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateOwner(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -97,15 +92,6 @@ func (m *UpdateTeam) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateTeam) validateOwner(formats strfmt.Registry) error {
-
-	if err := validate.Required("owner", "body", m.Owner); err != nil {
 		return err
 	}
 
