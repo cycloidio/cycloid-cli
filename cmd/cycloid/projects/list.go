@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -19,7 +20,8 @@ func NewListCommand() *cobra.Command {
 	# list projects in 'my-org' and display result in JSON
 	cy --org my-org projects list -o json
 `,
-		RunE: list,
+		RunE:    list,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	return cmd
 

@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -24,6 +25,7 @@ func NewDeleteCommand() *cobra.Command {
 		Short:   short,
 		Long:    long,
 		RunE:    deleteMember,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredFlag(WithFlagName, cmd)

@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -33,7 +34,8 @@ func NewCreateCommand() *cobra.Command {
 		--pipeline /path/to/pipeline.yml \
 		--config /path/to/config
 `,
-		RunE: create,
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagStackRef, cmd)

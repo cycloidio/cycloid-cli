@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -29,8 +30,8 @@ func NewCreateEnvCommand() *cobra.Command {
 		--vars /my/pipeline/vars.yml \
 		--config /my/config/path.yml
 `,
-
-		RunE: createEnv,
+		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE:    createEnv,
 	}
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)

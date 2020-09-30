@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -14,9 +15,10 @@ import (
 
 func NewListWorkersCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "list-workers",
-		Short: "list the organization workers",
-		RunE:  listWorkers,
+		Use:     "list-workers",
+		Short:   "list the organization workers",
+		RunE:    listWorkers,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 

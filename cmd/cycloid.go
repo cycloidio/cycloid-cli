@@ -31,7 +31,6 @@ func AttachCommands(cmd *cobra.Command) {
 		// Root
 		root.NewStatusCmd(),
 		root.NewVersionCmd(),
-		root.NewDeprecatedExampleCmd(),
 
 		organizations.NewCommands(),
 		catalogRepositories.NewCommands(),

@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -16,7 +17,8 @@ func NewClearTaskCacheCommand() *cobra.Command {
 	# clean cache for task 'my-task'
 	cy --org my-org pp clear-task-cache --project my-project --job my-job --env my-env --task my-task
 `,
-		RunE: cleartaskCache,
+		RunE:    cleartaskCache,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)

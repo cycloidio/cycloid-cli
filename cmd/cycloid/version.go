@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -20,7 +21,8 @@ func NewVersionCmd() *cobra.Command {
 	# get the version in JSON format
 	cy version -o json
 `,
-		RunE: version,
+		RunE:    version,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	return cmd
 

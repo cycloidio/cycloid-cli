@@ -5,17 +5,19 @@ import (
 	"io/ioutil"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
 
 func NewDiffCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:    "diff",
-		Hidden: true,
-		Short:  "...",
-		Long:   `........ . . .... .. .. ....`,
-		RunE:   diff,
+		Use:     "diff",
+		Hidden:  true,
+		Short:   "...",
+		Long:    `........ . . .... .. .. ....`,
+		RunE:    diff,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)

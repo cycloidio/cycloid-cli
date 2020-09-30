@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -20,7 +21,8 @@ func NewUpdateCommand() *cobra.Command {
 	# update a config repository
 	cy  --org my-org config-repo update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --id 123
 `,
-		RunE: updateConfigRepository,
+		RunE:    updateConfigRepository,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)

@@ -9,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -22,7 +23,8 @@ func NewUpdateCommand() *cobra.Command {
 	# update a running pipeline
 	cy --org my-org pp update --project my-project --env my-env --vars /path/to/vars.yml --pipeline /path/to/pipeline.yml --config /path/config.tf
 `,
-		RunE: update,
+		RunE:    update,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)

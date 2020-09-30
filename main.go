@@ -7,7 +7,7 @@ import (
 
 	models "github.com/cycloidio/youdeploy-cli/client/models"
 	"github.com/cycloidio/youdeploy-cli/cmd"
-	"github.com/cycloidio/youdeploy-cli/lookup"
+	"github.com/cycloidio/youdeploy-cli/internal/version"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-openapi/runtime"
@@ -21,14 +21,15 @@ var (
 	userOutput string
 	verbosity  string
 
+	versionString = fmt.Sprintf("%s, revision %s, branch %s, date %s; go %s", version.Version, version.Revision, version.Branch, version.BuildDate, version.GoVersion)
+
 	rootCmd = &cobra.Command{
-		Use:   "cy",
-		Short: "Cycloid CLI",
-		Long:  `Cy is a CLI for Cycloid framework. Learn more at https://www.cycloid.io/.`,
+		Version: versionString,
+		Use:     "cy",
+		Short:   "Cycloid CLI",
+		Long:    `Cy is a CLI for Cycloid framework. Learn more at https://www.cycloid.io/.`,
 	}
 )
-
-var version = 1
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
@@ -106,52 +107,12 @@ func init() {
 	viper.BindPFlag("verbosity", rootCmd.PersistentFlags().Lookup("verbosity"))
 	viper.SetDefault("verbosity", "warning")
 
-	rootCmd.PersistentFlags().String("api-url", "", ".....")
+	rootCmd.PersistentFlags().String("api-url", "https://http-api.cycloid.io", "Specify the HTTP url of Cycloid API to use eg https://http-api.cycloid.io. This can also be given by CY_API_URL environment variable.")
 	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
-
-	rootCmd.PersistentFlags().String("cy-plugin-dir", "/tmp/cy-plugins", "directory where the CLI plugins are stored")
-	viper.BindPFlag("cy-plugin-dir", rootCmd.PersistentFlags().Lookup("cy-plugin-dir"))
-
 }
 
 func main() {
-
-	var err error
-
-	v, err := lookup.GetAPIVersion()
-	if err != nil {
-		panic(err)
-	}
-
-	version := v.Version
-	_ = version
-	// TODO display a warning or error message if the API version does not match the CLI version
-
-	// Plugin have been removed for now because of :
-	// https://github.com/golang/go/issues/27751
-	// and https://www.reddit.com/r/golang/comments/b6h8qq/is_anyone_actually_using_go_plugins/ejkxd2k/
-	// // Plugin not found locally, lookup for the plugin
-	// pluginPath, err := lookup.LookupPlugin(version)
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// fmt.Printf("Running plugin version %s\n", version)
-	// p, err := plugin.Open(pluginPath)
-	// if err != nil {
-	// 	rootCmd.Usage()
-	// 	panic(err)
-	// }
-
-	// f, err := p.Lookup("AttachCommands")
-	// if err != nil {
-	// 	panic(err)
-	// }
-
-	// f.(func(*cobra.Command))(rootCmd)
-
 	cmd.AttachCommands(rootCmd)
 
 	Execute()
-
 }

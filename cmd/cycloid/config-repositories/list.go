@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -20,7 +21,8 @@ func NewListCommand() *cobra.Command {
 	# list the config repositories in the org 'my-org' and display the result in JSON format
 	cy  --org my-org config-repo list -o json
 `,
-		RunE: listConfigRepositories,
+		RunE:    listConfigRepositories,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	return cmd
