@@ -9,14 +9,15 @@ import (
 
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:    "update",
-		Short:  "...",
-		Hidden: true,
-		Long:   `........ . . .... .. .. ....`,
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("...")
-		},
+		Use:     "update",
+		Hidden:  true,
+		Short:   "not implemented yet",
+		Long:    `not implemented yet`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println("not implemented yet")
+			return nil
+		},
 	}
 
 	return cmd
