@@ -9,14 +9,15 @@ import (
 
 func NewGetBuildCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:    "get-build",
-		Hidden: true,
-		Short:  "...",
-		Long:   `........ . . .... .. .. ....`,
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("...")
-		},
+		Use:     "get-build",
+		Hidden:  true,
+		Short:   "not implemented yet",
+		Long:    `not implemented yet`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println("not implemented yet")
+			return nil
+		},
 	}
 	return cmd
 }

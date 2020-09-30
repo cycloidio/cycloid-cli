@@ -14,8 +14,8 @@ func NewDiffCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "diff",
 		Hidden:  true,
-		Short:   "...",
-		Long:    `........ . . .... .. .. ....`,
+		Short:   "not implemented yet",
+		Long:    `not implemented yet`,
 		RunE:    diff,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}

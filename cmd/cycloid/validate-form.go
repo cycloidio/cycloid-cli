@@ -10,11 +10,13 @@ import (
 func NewValidateFormCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "validate-form",
-		Short:   "...",
-		Long:    `........ . . .... .. .. ....`,
+		Hidden:  true,
+		Short:   "not implemented yet",
+		Long:    `not implemented yet`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("...")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			fmt.Println("not implemented yet")
+			return nil
 		},
 	}
 	return cmd

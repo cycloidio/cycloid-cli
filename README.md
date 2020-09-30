@@ -1,6 +1,6 @@
 # Cycloid CLI (cy)
 
-This repository hosts the source code of Cycloid command line to use Cycloid APIs. :warning: For testing purposes, we store several version of the CLI in `CLIs/` directory, this will evolve.
+This repository hosts the source code of Cycloid command line to use Cycloid APIs.
 
 ## Installation
 
@@ -24,9 +24,6 @@ sudo mv cy /usr/local/bin
 
 :construction:
 
-## Architecture
-
-To follow Cycloid APIs and avoid breaking changes, we use Go [Plugin](https://golang.org/pkg/plugin/). From a big picture, each plugin is a version of the Cycloid APIs.
 
 ## Getting started
 
@@ -41,4 +38,4 @@ From there, you can now explore the various commands using the `--help` flag for
 ## Common actions
 
 :construction:
-<!-- This is where we could add some useful examples: create a user, etc. --> 
+<!-- This is where we could add some useful examples: create a user, etc. -->

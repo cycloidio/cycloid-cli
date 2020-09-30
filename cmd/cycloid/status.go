@@ -11,11 +11,12 @@ func NewStatusCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "status",
 		Hidden:  true,
-		Short:   "...",
-		Long:    `........ . . .... .. .. ....`,
+		Short:   "not implemented yet",
+		Long:    `not implemented yet`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
-		Run: func(cmd *cobra.Command, args []string) {
+		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("not implemented yet")
+			return nil
 		},
 	}
 	return cmd
