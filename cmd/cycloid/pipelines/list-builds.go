@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -20,7 +21,8 @@ func NewGetListBuildsCommand() *cobra.Command {
 	# list the builds in job 'my-job' in pipeline my-project-env
 	cy --org my-org pp list-builds --project my-project --env env --job my-job
 `,
-		RunE: listBuilds,
+		RunE:    listBuilds,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)

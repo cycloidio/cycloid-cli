@@ -1,4 +1,5 @@
 [ ] CLI default url should be the prod SaaS one
+[ ] Adding output after a login to confirm to the user it's successful login or not
 [ ] Make the binary able to check api version and is own builded version to let a warning message you should update it cause the BE version does not match the binairy version
 [X] Move and make sure all commands are migrated to middleware
 [ ] Put plugins with xdg into home

@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -20,7 +21,8 @@ func NewListJobsCommand() *cobra.Command {
 	# list jobs in pipeline my-project-env and display it in JSON
 	cy --org my-org pp list-jobs --project my-project --env env -o json
 `,
-		RunE: listJobs,
+		RunE:    listJobs,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)

@@ -3,6 +3,7 @@ package projects
 import (
 	"fmt"
 
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -14,6 +15,7 @@ func NewUpdateCommand() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			fmt.Println("not implemented yet")
 		},
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	return cmd
 }

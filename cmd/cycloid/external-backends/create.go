@@ -2,6 +2,7 @@ package externalBackends
 
 import (
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/spf13/cobra"
 )
 
@@ -39,8 +40,9 @@ func newInfraViewCommand() *cobra.Command {
 
 	// AWSRemoteTFState
 	var aWSRemoteTFState = &cobra.Command{
-		Use:  "AWSRemoteTFState",
-		RunE: createInfraView,
+		Use:     "AWSRemoteTFState",
+		RunE:    createInfraView,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	WithFlagAwsRegion(aWSRemoteTFState)
 	common.RequiredFlag(common.WithFlagCred, aWSRemoteTFState)
@@ -51,16 +53,18 @@ func newInfraViewCommand() *cobra.Command {
 	WithFlagSkipVerifySSL(aWSRemoteTFState)
 
 	var gCPRemoteTFState = &cobra.Command{
-		Use:  "GCPRemoteTFState",
-		RunE: createInfraView,
+		Use:     "GCPRemoteTFState",
+		RunE:    createInfraView,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredFlag(common.WithFlagCred, gCPRemoteTFState)
 	WithFlagBucketName(gCPRemoteTFState)
 	WithFlagBucketPath(gCPRemoteTFState)
 
 	var swiftRemoteTFState = &cobra.Command{
-		Use:  "SwiftRemoteTFState",
-		RunE: createInfraView,
+		Use:     "SwiftRemoteTFState",
+		RunE:    createInfraView,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredFlag(common.WithFlagCred, swiftRemoteTFState)
 	WithFlagBucketName(swiftRemoteTFState)
@@ -81,8 +85,9 @@ func newEventsCommand() *cobra.Command {
 
 	// Aws CW logs
 	var eventsAWSCloudWatchLogsCmd = &cobra.Command{
-		Use:  "AWSCloudWatchLogs",
-		RunE: createEvents,
+		Use:     "AWSCloudWatchLogs",
+		RunE:    createEvents,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	WithFlagAwsRegion(eventsAWSCloudWatchLogsCmd)
 	common.RequiredFlag(common.WithFlagCred, eventsAWSCloudWatchLogsCmd)
@@ -98,17 +103,19 @@ func newLogsCommand() *cobra.Command {
 
 	// Aws CW logs
 	var logsAWSCloudWatchLogsCmd = &cobra.Command{
-		Use:  "AWSCloudWatchLogs",
-		RunE: createLogs,
+		Use:     "AWSCloudWatchLogs",
+		RunE:    createLogs,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	WithFlagAwsRegion(logsAWSCloudWatchLogsCmd)
 	common.RequiredPersistentFlag(common.WithFlagProject, logsAWSCloudWatchLogsCmd)
 
 	// Elasticsearch
 	var logsElasticsearchLogsCmd = &cobra.Command{
-		Use:  "ElasticsearchLogs [SourceName]",
-		Args: cobra.ExactArgs(1),
-		RunE: createLogs,
+		Use:     "ElasticsearchLogs [SourceName]",
+		Args:    cobra.ExactArgs(1),
+		RunE:    createLogs,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredPersistentFlag(common.WithFlagProject, logsElasticsearchLogsCmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, logsElasticsearchLogsCmd)

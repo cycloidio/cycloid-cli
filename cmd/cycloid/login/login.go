@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/config"
 )
@@ -27,6 +28,7 @@ var (
 		Short:   short,
 		Long:    long,
 		Example: example,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			org, err := cmd.Flags().GetString("org")
 			if err != nil {

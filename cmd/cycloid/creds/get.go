@@ -8,6 +8,7 @@ import (
 
 	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -21,7 +22,8 @@ func NewGetCommand() *cobra.Command {
 	# get a credential by its ID
 	cy --org my-org credential get --id 123
 `,
-		RunE: get,
+		RunE:    get,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)

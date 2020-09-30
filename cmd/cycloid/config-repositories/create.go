@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -20,7 +21,8 @@ func NewCreateCommand() *cobra.Command {
 	# create a config repository and set up as default
 	cy --org my-org config-repo create --branch stacks --cred 123 --url "git@github.com:my/repo.git" --name my-catalog-name --default
 `,
-		RunE: createConfigRepository,
+		RunE:    createConfigRepository,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	// create --branch test --cred 105 --url "git@github.com:foo/bla.git"  --name configname  --default

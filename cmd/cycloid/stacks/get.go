@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -22,7 +23,8 @@ func NewGetCommand() *cobra.Command {
 	# get a stack in 'my-org' using its ref
 	cy --org my-org stacks get --ref my:stack-ref
 `,
-		RunE: get,
+		RunE:    get,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	cmd.Flags().StringVar(&refFlag, "ref", "", "referential of the stack")

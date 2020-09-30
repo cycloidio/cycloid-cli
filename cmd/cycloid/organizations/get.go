@@ -8,6 +8,7 @@ import (
 
 	"github.com/cycloidio/youdeploy-cli/client/client/organizations"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -21,7 +22,8 @@ func NewGetCommand() *cobra.Command {
 	# get an organization by its canonical
 	cy organization --org my-org -o yaml
 `,
-		RunE: get,
+		RunE:    get,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 

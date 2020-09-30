@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -16,7 +17,8 @@ func NewDeleteCommand() *cobra.Command {
 	# delete an existing external backend with ID 123
 	cy --org my-org eb delete --id 123
 `,
-		RunE: del,
+		RunE:    del,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredFlag(common.WithFlagID, cmd)
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)

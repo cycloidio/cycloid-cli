@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -15,8 +16,9 @@ func NewTriggerBuildCommand() *cobra.Command {
 	# trigger a pipeline build for 'my-job'
 	cy --org my-org pp trigger-build --project my-project --env my-env --job my-job
 `,
-		Short: "trigger a pipeline build",
-		RunE:  createBuild,
+		Short:   "trigger a pipeline build",
+		RunE:    createBuild,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)

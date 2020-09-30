@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -16,7 +17,8 @@ func NewPauseJobCommand() *cobra.Command {
 	# pause job 'my-job'
 	cy --org my-org pp pause-job --project my-project --env env --job my-job
 `,
-		RunE: pauseJob,
+		RunE:    pauseJob,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)

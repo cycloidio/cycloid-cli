@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/adrg/xdg v0.2.1
+	github.com/coreos/dex v2.13.0+incompatible
 	github.com/davecgh/go-spew v1.1.1
 	github.com/go-openapi/errors v0.19.6
 	github.com/go-openapi/runtime v0.19.20

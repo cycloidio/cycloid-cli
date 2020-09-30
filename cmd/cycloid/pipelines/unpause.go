@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -16,7 +17,8 @@ func NewUnpauseCommand() *cobra.Command {
 	# unpause pipeline my-project-env
 	cy --org my-org pipeline unpause --project my-project --env env
 `,
-		RunE: unpause,
+		RunE:    unpause,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)

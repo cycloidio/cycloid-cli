@@ -9,6 +9,7 @@ import (
 
 	"github.com/cycloidio/youdeploy-cli/client/models"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -30,8 +31,9 @@ func NewCreateCommand() *cobra.Command {
 	WithPersistentFlagPath(cmd)
 
 	var ssh = &cobra.Command{
-		Use:  "ssh",
-		RunE: create,
+		Use:     "ssh",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for SSH
 	cy --my-org credential create ssh --ssh-key /path/to/private/key
@@ -40,8 +42,9 @@ func NewCreateCommand() *cobra.Command {
 	common.RequiredFlag(WithFlagSSHKey, ssh)
 
 	var basicAuth = &cobra.Command{
-		Use:  "basic_auth",
-		RunE: create,
+		Use:     "basic_auth",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for basic authentication
 	cy --my-org credential create basic_auth --username my-username --password my-password
@@ -51,8 +54,9 @@ func NewCreateCommand() *cobra.Command {
 	common.RequiredFlag(WithFlagPassword, basicAuth)
 
 	var custom = &cobra.Command{
-		Use:  "custom",
-		RunE: create,
+		Use:     "custom",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for custom type
 	cy --my-org credential create custom --my-key=my-value

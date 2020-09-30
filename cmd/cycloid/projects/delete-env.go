@@ -5,6 +5,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 )
 
@@ -16,7 +17,8 @@ func NewDeleteEnvCommand() *cobra.Command {
 	# delete env 'my-env' in 'my-project'
 	cy --org my-org project --project my-project --env my-env
 `,
-		RunE: deleteEnv,
+		RunE:    deleteEnv,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)

@@ -4,6 +4,7 @@ import (
 	"os"
 
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/youdeploy-cli/printer"
 	"github.com/cycloidio/youdeploy-cli/printer/factory"
@@ -19,7 +20,8 @@ func NewGetCommand() *cobra.Command {
 	# get the config repository with the id 123 and display the result in YAML
 	cy  --org my-org config-repo get --id 123 -o yaml
 `,
-		RunE: getConfigRepository,
+		RunE:    getConfigRepository,
+		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredFlag(common.WithFlagID, cmd)
