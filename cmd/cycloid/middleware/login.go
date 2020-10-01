@@ -33,10 +33,13 @@ func (m *middleware) Login(email, password string) (*models.UserSession, error) 
 	return res.GetPayload().Data, nil
 }
 
-func (m *middleware) LoginOrg(org, username, password string) (*models.UserSession, error) {
+func (m *middleware) LoginOrg(org, child, username, password string) (*models.UserSession, error) {
 
 	params := user.NewRefreshTokenParams()
 	params.SetOrganizationCanonical(&org)
+	if len(child) != 0 {
+		params.SetChildCanonical(&child)
+	}
 	res, err := m.api.User.RefreshToken(params, common.ClientCredentials(nil))
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to log user")
