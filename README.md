@@ -62,3 +62,11 @@ Available Commands:
 
 :construction:
 <!-- This is where we could add some useful examples: create a user, etc. -->
+
+## Contributing
+
+Have a look to our [CONTRIBUTING.md](CONTRIBUTING.md)
+
+## License
+
+This project is under MIT License, see [LICENSE](LICENSE)
