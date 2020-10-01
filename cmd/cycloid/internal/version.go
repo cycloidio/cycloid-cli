@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/youdeploy-cli/internal/version"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/version"
 	"github.com/spf13/cobra"
 )
 

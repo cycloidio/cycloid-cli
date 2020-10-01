@@ -6,9 +6,9 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/youdeploy-cli/config"
-	"github.com/cycloidio/youdeploy-cli/printer"
-	"github.com/cycloidio/youdeploy-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/config"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 var (

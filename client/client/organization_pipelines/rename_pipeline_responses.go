@@ -13,7 +13,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	models "github.com/cycloidio/youdeploy-cli/client/models"
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // RenamePipelineReader is a Reader for the RenamePipeline structure.
