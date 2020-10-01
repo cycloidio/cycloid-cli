@@ -62,6 +62,10 @@ func NewGetOrgAncestorsOK() *GetOrgAncestorsOK {
 Get all the ancestors between the Organization and the User with the shortest path. 0 index is the parent and n is the searched child
 */
 type GetOrgAncestorsOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *GetOrgAncestorsOKBody
 }
 
@@ -74,6 +78,13 @@ func (o *GetOrgAncestorsOK) GetPayload() *GetOrgAncestorsOKBody {
 }
 
 func (o *GetOrgAncestorsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(GetOrgAncestorsOKBody)
 
@@ -95,6 +106,10 @@ func NewGetOrgAncestorsUnauthorized() *GetOrgAncestorsUnauthorized {
 The user cannot be authenticated with the credentials which she/he has used.
 */
 type GetOrgAncestorsUnauthorized struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -107,6 +122,13 @@ func (o *GetOrgAncestorsUnauthorized) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetOrgAncestorsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -132,6 +154,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetOrgAncestorsDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -149,6 +175,13 @@ func (o *GetOrgAncestorsDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetOrgAncestorsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

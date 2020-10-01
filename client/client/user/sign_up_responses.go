@@ -9,7 +9,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -106,6 +108,10 @@ func NewSignUpUnprocessableEntity() *SignUpUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type SignUpUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -118,6 +124,13 @@ func (o *SignUpUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *SignUpUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -143,6 +156,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type SignUpDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -160,6 +177,13 @@ func (o *SignUpDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *SignUpDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

@@ -79,6 +79,10 @@ func NewDiffPipelineOK() *DiffPipelineOK {
 The diff between the provided pipeline configuration and the existing pipeline has been done.
 */
 type DiffPipelineOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *DiffPipelineOKBody
 }
 
@@ -91,6 +95,13 @@ func (o *DiffPipelineOK) GetPayload() *DiffPipelineOKBody {
 }
 
 func (o *DiffPipelineOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(DiffPipelineOKBody)
 
@@ -112,6 +123,10 @@ func NewDiffPipelineForbidden() *DiffPipelineForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DiffPipelineForbidden struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -124,6 +139,13 @@ func (o *DiffPipelineForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DiffPipelineForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -145,6 +167,10 @@ func NewDiffPipelineNotFound() *DiffPipelineNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type DiffPipelineNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -157,6 +183,13 @@ func (o *DiffPipelineNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DiffPipelineNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -199,6 +232,10 @@ func NewDiffPipelineUnprocessableEntity() *DiffPipelineUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type DiffPipelineUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -211,6 +248,13 @@ func (o *DiffPipelineUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DiffPipelineUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -236,6 +280,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type DiffPipelineDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -253,6 +301,13 @@ func (o *DiffPipelineDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DiffPipelineDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
