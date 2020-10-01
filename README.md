@@ -2,29 +2,6 @@
 
 This repository hosts the source code of Cycloid command line to use Cycloid APIs.
 
-## Installation
-
-### From the sources
-
-You can clone the repository and build from sources (we use `Go Modules` (1.13+)):
-
-```shell
-git clone git@github.com:cycloidio/cycloid-cli.git
-cd cycloid-cli
-```
-
-Build and install the binary
-
-```
-make build
-sudo mv cy /usr/local/bin
-cy --version
-```
-
-### From the releases page
-
-You can download the latest Linux binary from the [release](https://github.com/cycloidio/cycloid-cli/releases) page.
-
 ## Getting started
 
 Before playing with the CLI, you first need to authenticate a user into the Cycloid API:
@@ -57,6 +34,29 @@ Available Commands:
   stack              Manage the stacks
   version            Get the version of the consumed API
 ```
+
+## Installation
+
+### From the sources
+
+You can clone the repository and build from sources (we use `Go Modules` (1.13+)):
+
+```shell
+git clone git@github.com:cycloidio/youdeploy-cli.git
+cd youdeploy-cli
+```
+
+Build and install the binary
+
+```
+make build
+sudo mv cy /usr/local/bin
+cy --version
+```
+
+### From the releases page
+
+You can download the latest Linux binary from the [release](https://github.com/cycloidio/cycloid-cli/releases) page.
 
 ## Common actions
 
