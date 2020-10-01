@@ -11,7 +11,7 @@ SHELL      := /bin/sh
 REPO_PATH    := github.com/cycloidio/cycloid-cli
 BINARY       ?= cy
 # VERSION example v1.0.47
-VERSION      ?= $(shell git describe --tags --always)
+VERSION      ?= $(shell cat client/version)
 REVISION     ?= $(shell git rev-parse --short HEAD 2> /dev/null  || echo 'unknown')
 BRANCH       ?= $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null  || echo 'unknown')
 BUILD_ORIGIN ?= $(USER)@$(shell hostname -f)
@@ -61,7 +61,8 @@ build: ## Builds the binary
 
 .PHONY: generate-local-client
 generate-local-client: ## Generate client from local swagger file SWAGGER_FILE path
-	$(SWAGGER_GENERATE)
+	$(SWAGGER_GENERATE) && \
+	echo 'v0.0-dev' > client/version
 
 .PHONY: generate-client
 generate-client: ## Generate client from latest swagger file
@@ -73,8 +74,8 @@ generate-client: ## Generate client from latest swagger file
 	if [ -n "$$IS_GIT_TAG_EXIST" ]; then echo "Version tag $$SWAGGER_VERSION already exist in git"; exit 0; fi; \
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE) && \
+	echo $$SWAGGER_VERSION > client/version && \
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
-	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'" && \
-	echo "git tag $$SWAGGER_VERSION"
+	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 	@rm -rf ./gen-swagger
