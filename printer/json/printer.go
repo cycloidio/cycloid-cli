@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer"
 )
 
 // JSON implements the printer interface

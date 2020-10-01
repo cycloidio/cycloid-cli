@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/cycloidio/youdeploy-cli/client/client"
-	"github.com/cycloidio/youdeploy-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/client"
+	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
 )
 

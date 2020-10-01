@@ -5,9 +5,9 @@ import (
 	"os"
 	"strings"
 
-	models "github.com/cycloidio/youdeploy-cli/client/models"
-	"github.com/cycloidio/youdeploy-cli/cmd"
-	"github.com/cycloidio/youdeploy-cli/internal/version"
+	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd"
+	"github.com/cycloidio/cycloid-cli/internal/version"
 
 	"github.com/davecgh/go-spew/spew"
 	"github.com/go-openapi/runtime"

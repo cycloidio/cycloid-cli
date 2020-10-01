@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	"github.com/cycloidio/youdeploy-cli/client/client/service_catalogs"
-	"github.com/cycloidio/youdeploy-cli/client/models"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {

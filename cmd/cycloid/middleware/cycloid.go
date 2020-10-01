@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/cycloidio/youdeploy-cli/client/client/cycloid"
-	"github.com/cycloidio/youdeploy-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func (m *middleware) GetAppVersion() (*models.AppVersion, error) {

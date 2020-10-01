@@ -1,4 +1,4 @@
-module github.com/cycloidio/youdeploy-cli
+module github.com/cycloidio/cycloid-cli
 
 go 1.14
 

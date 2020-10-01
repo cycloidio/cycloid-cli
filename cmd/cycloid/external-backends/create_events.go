@@ -7,11 +7,11 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	models "github.com/cycloidio/youdeploy-cli/client/models"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/youdeploy-cli/printer"
-	"github.com/cycloidio/youdeploy-cli/printer/factory"
+	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func createEvents(cmd *cobra.Command, args []string) error {

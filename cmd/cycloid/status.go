@@ -3,7 +3,7 @@ package root
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/spf13/cobra"
 )
 

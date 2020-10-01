@@ -8,7 +8,7 @@ endif
 
 SHELL      := /bin/sh
 
-REPO_PATH    := github.com/cycloidio/youdeploy-cli
+REPO_PATH    := github.com/cycloidio/cycloid-cli
 BINARY       ?= cy
 # VERSION example v1.0.47
 VERSION      ?= $(shell git describe --tags --always)

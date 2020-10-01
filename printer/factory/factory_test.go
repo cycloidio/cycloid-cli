@@ -3,9 +3,9 @@ package factory
 import (
 	"testing"
 
-	"github.com/cycloidio/youdeploy-cli/printer"
-	"github.com/cycloidio/youdeploy-cli/printer/json"
-	"github.com/cycloidio/youdeploy-cli/printer/yaml"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/json"
+	"github.com/cycloidio/cycloid-cli/printer/yaml"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )

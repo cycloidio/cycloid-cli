@@ -1,11 +1,11 @@
 package middleware
 
 import (
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs_build"
-	"github.com/cycloidio/youdeploy-cli/client/models"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs_build"
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 )
 

@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/olekukonko/tablewriter"
 )
 

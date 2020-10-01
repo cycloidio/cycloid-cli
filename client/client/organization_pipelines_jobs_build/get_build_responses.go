@@ -16,7 +16,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	models "github.com/cycloidio/youdeploy-cli/client/models"
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetBuildReader is a Reader for the GetBuild structure.
