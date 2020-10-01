@@ -42,8 +42,8 @@ Available Commands:
 You can clone the repository and build from sources (we use `Go Modules` (1.13+)):
 
 ```shell
-git clone git@github.com:cycloidio/youdeploy-cli.git
-cd youdeploy-cli
+git clone git@github.com:cycloidio/cycloid-cli.git
+cd cycloid-cli
 ```
 
 Build and install the binary
