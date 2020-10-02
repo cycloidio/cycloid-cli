@@ -67,10 +67,6 @@ func NewGetCredentialOK() *GetCredentialOK {
 The information of the Credential which has the specified ID.
 */
 type GetCredentialOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *GetCredentialOKBody
 }
 
@@ -83,13 +79,6 @@ func (o *GetCredentialOK) GetPayload() *GetCredentialOKBody {
 }
 
 func (o *GetCredentialOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(GetCredentialOKBody)
 
@@ -111,10 +100,6 @@ func NewGetCredentialForbidden() *GetCredentialForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetCredentialForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -127,13 +112,6 @@ func (o *GetCredentialForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetCredentialForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -155,10 +133,6 @@ func NewGetCredentialNotFound() *GetCredentialNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type GetCredentialNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -171,13 +145,6 @@ func (o *GetCredentialNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetCredentialNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -203,10 +170,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetCredentialDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -224,13 +187,6 @@ func (o *GetCredentialDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetCredentialDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

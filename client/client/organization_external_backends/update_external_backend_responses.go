@@ -73,10 +73,6 @@ func NewUpdateExternalBackendOK() *UpdateExternalBackendOK {
 Success update
 */
 type UpdateExternalBackendOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *UpdateExternalBackendOKBody
 }
 
@@ -89,13 +85,6 @@ func (o *UpdateExternalBackendOK) GetPayload() *UpdateExternalBackendOKBody {
 }
 
 func (o *UpdateExternalBackendOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(UpdateExternalBackendOKBody)
 
@@ -117,10 +106,6 @@ func NewUpdateExternalBackendForbidden() *UpdateExternalBackendForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UpdateExternalBackendForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -133,13 +118,6 @@ func (o *UpdateExternalBackendForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateExternalBackendForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -182,10 +160,6 @@ func NewUpdateExternalBackendUnprocessableEntity() *UpdateExternalBackendUnproce
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateExternalBackendUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -198,13 +172,6 @@ func (o *UpdateExternalBackendUnprocessableEntity) GetPayload() *models.ErrorPay
 }
 
 func (o *UpdateExternalBackendUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -230,10 +197,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UpdateExternalBackendDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -251,13 +214,6 @@ func (o *UpdateExternalBackendDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateExternalBackendDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

@@ -79,10 +79,6 @@ func NewUpdateUserAccountOK() *UpdateUserAccountOK {
 The updated user profile information.
 */
 type UpdateUserAccountOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *UpdateUserAccountOKBody
 }
 
@@ -95,13 +91,6 @@ func (o *UpdateUserAccountOK) GetPayload() *UpdateUserAccountOKBody {
 }
 
 func (o *UpdateUserAccountOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(UpdateUserAccountOKBody)
 
@@ -165,10 +154,6 @@ func NewUpdateUserAccountUnprocessableEntity() *UpdateUserAccountUnprocessableEn
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateUserAccountUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -181,13 +166,6 @@ func (o *UpdateUserAccountUnprocessableEntity) GetPayload() *models.ErrorPayload
 }
 
 func (o *UpdateUserAccountUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -209,10 +187,6 @@ func NewUpdateUserAccountServiceUnavailable() *UpdateUserAccountServiceUnavailab
 The operation couldn't be executed or completed and it should retried.
 */
 type UpdateUserAccountServiceUnavailable struct {
-	/*The number of seconds to wait until retry the request
-	 */
-	RetryAfter uint16
-
 	Payload *models.ErrorPayload
 }
 
@@ -225,13 +199,6 @@ func (o *UpdateUserAccountServiceUnavailable) GetPayload() *models.ErrorPayload 
 }
 
 func (o *UpdateUserAccountServiceUnavailable) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Retry-After
-	retryAfter, err := swag.ConvertUint16(response.GetHeader("Retry-After"))
-	if err != nil {
-		return errors.InvalidType("Retry-After", "header", "uint16", response.GetHeader("Retry-After"))
-	}
-	o.RetryAfter = retryAfter
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -257,10 +224,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UpdateUserAccountDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -278,13 +241,6 @@ func (o *UpdateUserAccountDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateUserAccountDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

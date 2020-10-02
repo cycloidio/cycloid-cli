@@ -73,10 +73,6 @@ func NewUpdateOrgMemberOK() *UpdateOrgMemberOK {
 The information of the member of the organization.
 */
 type UpdateOrgMemberOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *UpdateOrgMemberOKBody
 }
 
@@ -89,13 +85,6 @@ func (o *UpdateOrgMemberOK) GetPayload() *UpdateOrgMemberOKBody {
 }
 
 func (o *UpdateOrgMemberOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(UpdateOrgMemberOKBody)
 
@@ -117,10 +106,6 @@ func NewUpdateOrgMemberForbidden() *UpdateOrgMemberForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UpdateOrgMemberForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -133,13 +118,6 @@ func (o *UpdateOrgMemberForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateOrgMemberForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -161,10 +139,6 @@ func NewUpdateOrgMemberNotFound() *UpdateOrgMemberNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type UpdateOrgMemberNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -177,13 +151,6 @@ func (o *UpdateOrgMemberNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateOrgMemberNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -205,10 +172,6 @@ func NewUpdateOrgMemberUnprocessableEntity() *UpdateOrgMemberUnprocessableEntity
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateOrgMemberUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -221,13 +184,6 @@ func (o *UpdateOrgMemberUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateOrgMemberUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -253,10 +209,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UpdateOrgMemberDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -274,13 +226,6 @@ func (o *UpdateOrgMemberDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UpdateOrgMemberDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

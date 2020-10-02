@@ -9,9 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -99,10 +97,6 @@ func NewCreateConfigRepositoryConfigForbidden() *CreateConfigRepositoryConfigFor
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type CreateConfigRepositoryConfigForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -115,13 +109,6 @@ func (o *CreateConfigRepositoryConfigForbidden) GetPayload() *models.ErrorPayloa
 }
 
 func (o *CreateConfigRepositoryConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -143,10 +130,6 @@ func NewCreateConfigRepositoryConfigNotFound() *CreateConfigRepositoryConfigNotF
 The response sent when any of the entities present in the path is not found.
 */
 type CreateConfigRepositoryConfigNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -159,13 +142,6 @@ func (o *CreateConfigRepositoryConfigNotFound) GetPayload() *models.ErrorPayload
 }
 
 func (o *CreateConfigRepositoryConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -208,10 +184,6 @@ func NewCreateConfigRepositoryConfigUnprocessableEntity() *CreateConfigRepositor
 All the custom errors that are generated from the Cycloid API
 */
 type CreateConfigRepositoryConfigUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -224,13 +196,6 @@ func (o *CreateConfigRepositoryConfigUnprocessableEntity) GetPayload() *models.E
 }
 
 func (o *CreateConfigRepositoryConfigUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -256,10 +221,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type CreateConfigRepositoryConfigDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -277,13 +238,6 @@ func (o *CreateConfigRepositoryConfigDefault) GetPayload() *models.ErrorPayload 
 }
 
 func (o *CreateConfigRepositoryConfigDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

@@ -9,9 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -93,10 +91,6 @@ func NewDeleteExternalBackendForbidden() *DeleteExternalBackendForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteExternalBackendForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -109,13 +103,6 @@ func (o *DeleteExternalBackendForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DeleteExternalBackendForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -137,10 +124,6 @@ func NewDeleteExternalBackendNotFound() *DeleteExternalBackendNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteExternalBackendNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -153,13 +136,6 @@ func (o *DeleteExternalBackendNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DeleteExternalBackendNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -181,10 +157,6 @@ func NewDeleteExternalBackendUnprocessableEntity() *DeleteExternalBackendUnproce
 All the custom errors that are generated from the Cycloid API
 */
 type DeleteExternalBackendUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -197,13 +169,6 @@ func (o *DeleteExternalBackendUnprocessableEntity) GetPayload() *models.ErrorPay
 }
 
 func (o *DeleteExternalBackendUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -229,10 +194,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type DeleteExternalBackendDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -250,13 +211,6 @@ func (o *DeleteExternalBackendDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DeleteExternalBackendDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

@@ -67,10 +67,6 @@ func NewGetServiceCatalogTerraformDiagramOK() *GetServiceCatalogTerraformDiagram
 The information of Terraform Diagram
 */
 type GetServiceCatalogTerraformDiagramOK struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *GetServiceCatalogTerraformDiagramOKBody
 }
 
@@ -83,13 +79,6 @@ func (o *GetServiceCatalogTerraformDiagramOK) GetPayload() *GetServiceCatalogTer
 }
 
 func (o *GetServiceCatalogTerraformDiagramOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(GetServiceCatalogTerraformDiagramOKBody)
 
@@ -111,10 +100,6 @@ func NewGetServiceCatalogTerraformDiagramForbidden() *GetServiceCatalogTerraform
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetServiceCatalogTerraformDiagramForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -127,13 +112,6 @@ func (o *GetServiceCatalogTerraformDiagramForbidden) GetPayload() *models.ErrorP
 }
 
 func (o *GetServiceCatalogTerraformDiagramForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -155,10 +133,6 @@ func NewGetServiceCatalogTerraformDiagramNotFound() *GetServiceCatalogTerraformD
 The response sent when any of the entities present in the path is not found.
 */
 type GetServiceCatalogTerraformDiagramNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -171,13 +145,6 @@ func (o *GetServiceCatalogTerraformDiagramNotFound) GetPayload() *models.ErrorPa
 }
 
 func (o *GetServiceCatalogTerraformDiagramNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -203,10 +170,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetServiceCatalogTerraformDiagramDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -224,13 +187,6 @@ func (o *GetServiceCatalogTerraformDiagramDefault) GetPayload() *models.ErrorPay
 }
 
 func (o *GetServiceCatalogTerraformDiagramDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
