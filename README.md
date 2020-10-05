@@ -63,6 +63,12 @@ You can download the latest Linux binary from the [release](https://github.com/c
 
 ## Common actions
 
+### Get the Cycloid services in an unhealthy state
+
+```
+cy status -o json | jq '.[] | select( .status != "Success")'
+```
+
 :construction:
 <!-- This is where we could add some useful examples: create a user, etc. -->
 
