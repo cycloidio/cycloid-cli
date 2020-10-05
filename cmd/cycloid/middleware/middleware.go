@@ -59,6 +59,8 @@ type Middleware interface {
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
 
+	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
+
 	// Login methods
 
 	// Login is the method used to log the user into the Cycloid console
