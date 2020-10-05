@@ -73,6 +73,10 @@ type Middleware interface {
 	DeleteMember(org string, name string) error
 	InviteMember(org string, email string, roleID uint32) error
 
+	ListRoles(org string) ([]*models.Role, error)
+	GetRole(org string, id uint32) (*models.Role, error)
+	DeleteRole(org string, id uint32) error
+
 	GetAppVersion() (*models.AppVersion, error)
 }
 

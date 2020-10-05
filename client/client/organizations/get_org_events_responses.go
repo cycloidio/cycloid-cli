@@ -72,7 +72,7 @@ func NewGetOrgEventsOK() *GetOrgEventsOK {
 /*GetOrgEventsOK handles this case with default header values.
 
 The list of events which fulfills the query parameters filter
-  format: int64
+  format: uint64
 */
 type GetOrgEventsOK struct {
 	Payload *GetOrgEventsOKBody

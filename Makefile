@@ -35,25 +35,24 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--target=./client \
 		--name=api \
 		--tags=Cycloid \
-		--tags="Organization External Backends" \
+		--tags="Organizations" \
+		--tags="Organization Config Repositories" \
 		--tags="Organization Credentials" \
-		--tags="Organization projects" \
-		--tags="Service catalogs" \
-		--tags="Organization workers" \
+		--tags="Organization External Backends" \
+		--tags="Organization members" \
 		--tags="Organization pipelines" \
 		--tags="Organization pipelines jobs" \
 		--tags="Organization pipelines jobs build" \
-		--tags="Organization Config Repositories" \
+		--tags="Organization projects" \
+		--tags="Organization Roles" \
 		--tags="Organization Service Catalog Sources" \
-		--tags="Organizations" \
-		--tags="User" \
-		--tags="Organization members" \
-		--tags="Organizations"
+		--tags="Organization workers" \
+		--tags="Service catalogs" \
+		--tags="User"
 
 .PHONY: help
 help: ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
-
 
 .PHONY: build
 build: ## Builds the binary
