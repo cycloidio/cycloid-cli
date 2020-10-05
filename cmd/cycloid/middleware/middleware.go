@@ -34,6 +34,8 @@ type Middleware interface {
 	CreateExternalBackends(org, project, env, purpose string, cred uint32, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 	ListExternalBackends(org string) ([]*models.ExternalBackend, error)
 
+	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
+
 	// Login methods
 	// Login is the method used to log the user into the Cycloid console
 	Login(email, password string) (*models.UserSession, error)

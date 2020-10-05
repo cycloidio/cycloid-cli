@@ -32,7 +32,8 @@ func AttachCommands(cmd *cobra.Command) {
 		// Root
 		root.NewStatusCmd(),
 		root.NewVersionCmd(),
-
+		root.NewValidateFormCmd(),
+		organizations.NewCommands(),
 		catalogRepositories.NewCommands(),
 		configRepositories.NewCommands(),
 		creds.NewCommands(),
