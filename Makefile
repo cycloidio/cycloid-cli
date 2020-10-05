@@ -35,25 +35,24 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--target=./client \
 		--name=api \
 		--tags=Cycloid \
-		--tags="Organization External Backends" \
+		--tags="Organizations" \
+		--tags="Organization Config Repositories" \
 		--tags="Organization Credentials" \
-		--tags="Organization projects" \
-		--tags="Service catalogs" \
-		--tags="Organization workers" \
+		--tags="Organization External Backends" \
+		--tags="Organization members" \
 		--tags="Organization pipelines" \
 		--tags="Organization pipelines jobs" \
 		--tags="Organization pipelines jobs build" \
-		--tags="Organization Config Repositories" \
+		--tags="Organization projects" \
+		--tags="Organization Roles" \
 		--tags="Organization Service Catalog Sources" \
-		--tags="Organizations" \
-		--tags="User" \
-		--tags="Organization members" \
-		--tags="Organizations"
+		--tags="Organization workers" \
+		--tags="Service catalogs" \
+		--tags="User"
 
 .PHONY: help
 help: ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
-
 
 .PHONY: build
 build: ## Builds the binary
@@ -70,8 +69,6 @@ generate-client: ## Generate client from latest swagger file
 	@wget -O ./gen-swagger/swagger.yml https://docs.cycloid.io/api/swagger.yml
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < ./gen-swagger/swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
-	export IS_GIT_TAG_EXIST=$$(git --no-pager tag -l $$SWAGGER_VERSION); \
-	if [ -n "$$IS_GIT_TAG_EXIST" ]; then echo "Version tag $$SWAGGER_VERSION already exist in git"; exit 0; fi; \
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE) && \
 	echo $$SWAGGER_VERSION > client/version && \

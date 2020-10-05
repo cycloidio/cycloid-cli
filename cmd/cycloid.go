@@ -14,6 +14,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -32,16 +33,17 @@ func AttachCommands(cmd *cobra.Command) {
 		root.NewStatusCmd(),
 		root.NewVersionCmd(),
 
-		organizations.NewCommands(),
 		catalogRepositories.NewCommands(),
 		configRepositories.NewCommands(),
 		creds.NewCommands(),
-		externalBackends.NewCommands(),
 		events.NewCommands(),
+		externalBackends.NewCommands(),
+		members.NewCommands(),
+		organizations.NewCommands(),
 		pipelines.NewCommands(),
 		projects.NewCommands(),
+		roles.NewCommands(),
 		stacks.NewCommands(),
-		members.NewCommands(),
 		login.LoginCmd,
 	)
 }
