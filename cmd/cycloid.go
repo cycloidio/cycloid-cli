@@ -30,10 +30,9 @@ func init() {
 func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(
 		// Root
-		root.NewStatusCmd(),
 		root.NewVersionCmd(),
 		root.NewValidateFormCmd(),
-		organizations.NewCommands(),
+		root.NewStatusCmd(),
 		catalogRepositories.NewCommands(),
 		configRepositories.NewCommands(),
 		creds.NewCommands(),
