@@ -8,6 +8,7 @@ import (
 
 type Middleware interface {
 	GetAppVersion() (*models.AppVersion, error)
+	GetStatus() (*models.GeneralStatus, error)
 
 	CreateCatalogRepository(org, name, url, branch string, cred uint32) (*models.ServiceCatalogSource, error)
 	DeleteCatalogRepository(org string, catalogRepo uint32) error

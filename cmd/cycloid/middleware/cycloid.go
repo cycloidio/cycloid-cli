@@ -1,10 +1,13 @@
 package middleware
 
 import (
+	"github.com/pkg/errors"
+
 	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
+// GetAppVersion returns the version of the running Cycloid server
 func (m *middleware) GetAppVersion() (*models.AppVersion, error) {
 
 	params := cycloid.NewGetAppVersionParams()
@@ -15,13 +18,20 @@ func (m *middleware) GetAppVersion() (*models.AppVersion, error) {
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
 
 	d := p.Data
 
 	return d, err
+}
+
+// GetStatus returns the status of the various Cycloid services
+func (m *middleware) GetStatus() (*models.GeneralStatus, error) {
+	resp, err := m.api.Cycloid.GetStatus(nil)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to get answer from the API")
+	}
+
+	p := resp.GetPayload()
+
+	return p.Data, err
 }
