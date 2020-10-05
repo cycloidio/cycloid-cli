@@ -47,6 +47,8 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--tags="Organization Roles" \
 		--tags="Organization Service Catalog Sources" \
 		--tags="Organization workers" \
+		--tags="Organization members" \
+		--tags="Organization Forms" \
 		--tags="Service catalogs" \
 		--tags="User"
 
