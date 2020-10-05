@@ -1,35 +1,14 @@
-[ ] CLI default url should be the prod SaaS one
-[ ] Make the binary able to check api version and is own builded version to let a warning message you should update it cause the BE version does not match the binairy version
-[X] Move and make sure all commands are migrated to middleware
-[ ] Put plugins with xdg into home
-[ ] Make cycloid url env var or --api-url
 [ ] Implement diff pipeline display (same as fly) using see https://github.com/aryann/difflib
-[ ] Work on login part -> have a look to login per orgs
-  [ ] (Get org if not logged in fail. Should we remove --org and get it from the token ? Or use a user token. And let the cli do login each time on org)
 [ ] Create a proper error function to handle or display error correctly (thinking about error message/details in payload)
-[ ] Work on output formats
-      --field name --field bar --no-header --raw --separator :
-      |    name   |  sdfsdf |
-       fofo            foo
-      fofo:foo
 [ ] Define a bit what should be in env vars. Mostly thinking about project/env/org (to be pushed by the pipeline)
 [ ] (Keep canonical or name when you need an identifier for delete or create ?))
       cy project delete --project
       cy project delete --name
       cy project delete --canonical
 [ ] (Make usage of name possible "canonical like" when there is only ID. Using helper search. Return error if 2 found)
-[ ] Download of plugin how to ? embeed 3 last one ? https://github.com/markbates/pkger
-[ ] Implement e2e tests
-[ ] Create a build pipeline
-[ ] Work on help strings
-[ ] Add support for others creds types ?
 [ ] (Implement stack download: download a stack pipeline template, vars and config samples)
 [ ] (Implement create project from downloadded stack. It automatically do the call using the samples on the filesystem)
-[ ] Migrate the code into Cycloid API ?
 [ ] work on logger (--debug / verbose)
-[ ] Migrate /define to git tag
-[ ] Reduce swagger generated files
-[ ] Add a logger into the cli to be able to display --debug mode
 [ ] Feature idea: jobs time history. Basic ascii histogram to display job time/status
 [ ] Implement extra flags ?
 	// rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.cobra.yaml)")
@@ -50,11 +29,8 @@
 	//    default core/log_http property value for this command invocation.
 [ ] Create alias on all commands to make them singular or plurial like : user/users
 
-
 Example of all working calls (tested on staging)
 
-export CY_API_URL=https://http-api-staging.cycloid.io
-export TOKEN=
 
 # External BE
 V=1 ./cy  external-backends create logs ElasticsearchLogs eb2  --project gaeltest --org seraf --env dev --cred 743 --url http://test --prefilter foo=bar

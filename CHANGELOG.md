@@ -1,6 +1,9 @@
-## [Unreleased]
-
+## [v1.0.48]
 - **ADDED**
+  - Add validate-form command
+   ([PR #35](https://github.com/cycloidio/cycloid-cli/pull/35))
+  - Bump CLI version
+   ([PR #35](https://github.com/cycloidio/cycloid-cli/pull/35))
   - printer /helpers for each command
    ([PR #25](https://github.com/cycloidio/cycloid-cli/pull/25))
   - `login list` subcommand
