@@ -17,12 +17,16 @@ var (
 
 	# Login without organization (can be used to access endpoint without organization)
 	cy login --email my-email --password my-password
+
+	# Login in a org child of an organization
+	cy login --org my-org --child child-org  --email my-email --password my-password
 `
 	short    = "Login against the Cycloid console"
 	long     = short
 	org      string
 	email    string
 	password string
+	child    string
 	LoginCmd = &cobra.Command{
 		Use:     "login",
 		Short:   short,
@@ -41,6 +45,10 @@ var (
 			password, err := cmd.Flags().GetString("password")
 			if err != nil {
 				return errors.Wrap(err, "unable to get password flag")
+			}
+			child, err := cmd.Flags().GetString("child")
+			if err != nil {
+				return errors.Wrap(err, "unable to get child flag")
 			}
 
 			api := common.NewAPI()
@@ -64,7 +72,7 @@ var (
 			}
 
 			if len(org) != 0 {
-				orgSession, err := m.LoginOrg(org, email, password)
+				orgSession, err := m.LoginOrg(org, child, email, password)
 				if err != nil {
 					return errors.Wrapf(err, "unable to log user: %s", email)
 				}
@@ -74,8 +82,18 @@ var (
 				if err != nil {
 					return errors.Wrap(err, "unable to read config: %s")
 				}
-				conf.Organizations[org] = config.Organization{
-					Token: *orgSession.Token,
+				// there is no distinction between child or "root" org, we just
+				// need to save it once
+				// if the org and child are given, we save only the child token
+				// else we save the org token
+				if len(child) != 0 {
+					conf.Organizations[child] = config.Organization{
+						Token: *orgSession.Token,
+					}
+				} else {
+					conf.Organizations[org] = config.Organization{
+						Token: *orgSession.Token,
+					}
 				}
 				if err := config.WriteConfig(conf); err != nil {
 					return errors.Wrap(err, "unable to save config")
@@ -90,6 +108,7 @@ func init() {
 	LoginCmd.PersistentFlags().StringVar(&org, "org", "", "organization")
 	LoginCmd.PersistentFlags().StringVar(&email, "email", "", "email")
 	LoginCmd.PersistentFlags().StringVar(&password, "password", "", "password")
+	LoginCmd.PersistentFlags().StringVar(&child, "child", "", "child organization canonical")
 
 	LoginCmd.AddCommand(list)
 }

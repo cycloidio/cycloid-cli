@@ -5,6 +5,8 @@
    ([PR #25](https://github.com/cycloidio/cycloid-cli/pull/25))
   - `login list` subcommand
    ([PR #24](https://github.com/cycloidio/cycloid-cli/pull/24))
+  - support for child org login
+   ([PR #37](https://github.com/cycloidio/cycloid-cli/pull/37))
 
 ## [v1.0.47] _2020-09-21_
 - **ADDED**
