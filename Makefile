@@ -69,8 +69,6 @@ generate-client: ## Generate client from latest swagger file
 	@wget -O ./gen-swagger/swagger.yml https://docs.cycloid.io/api/swagger.yml
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < ./gen-swagger/swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
-	export IS_GIT_TAG_EXIST=$$(git --no-pager tag -l $$SWAGGER_VERSION); \
-	if [ -n "$$IS_GIT_TAG_EXIST" ]; then echo "Version tag $$SWAGGER_VERSION already exist in git"; exit 0; fi; \
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE) && \
 	echo $$SWAGGER_VERSION > client/version && \
