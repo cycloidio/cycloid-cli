@@ -48,6 +48,7 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--tags="Organizations" \
 		--tags="User" \
 		--tags="Organization members" \
+		--tags="Organization Forms" \
 		--tags="Organizations"
 
 .PHONY: help

@@ -15,6 +15,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs"
@@ -77,6 +78,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 	cli.OrganizationCredentials = organization_credentials.New(transport, formats)
 
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
+
+	cli.OrganizationForms = organization_forms.New(transport, formats)
 
 	cli.OrganizationMembers = organization_members.New(transport, formats)
 
@@ -150,6 +153,8 @@ type APIClient struct {
 
 	OrganizationExternalBackends *organization_external_backends.Client
 
+	OrganizationForms *organization_forms.Client
+
 	OrganizationMembers *organization_members.Client
 
 	OrganizationPipelines *organization_pipelines.Client
@@ -184,6 +189,8 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.OrganizationCredentials.SetTransport(transport)
 
 	c.OrganizationExternalBackends.SetTransport(transport)
+
+	c.OrganizationForms.SetTransport(transport)
 
 	c.OrganizationMembers.SetTransport(transport)
 
