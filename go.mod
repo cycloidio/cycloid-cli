@@ -4,14 +4,11 @@ go 1.14
 
 require (
 	github.com/adrg/xdg v0.2.1
-	github.com/coreos/dex v2.13.0+incompatible
-	github.com/davecgh/go-spew v1.1.1
 	github.com/go-openapi/errors v0.19.6
 	github.com/go-openapi/runtime v0.19.20
 	github.com/go-openapi/strfmt v0.19.5
 	github.com/go-openapi/swag v0.19.9
 	github.com/go-openapi/validate v0.19.10
-	github.com/markbates/pkger v0.17.1
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pkg/errors v0.8.1

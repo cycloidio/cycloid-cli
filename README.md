@@ -13,7 +13,7 @@ cy login --org my-org --email example@email.com --password my-password --api-url
 From there, you can now explore the various commands using the `--help` flag for each command / subcommand.
 
 ```shell
-$ cy help
+$ ./cy help
 Cy is a CLI for Cycloid framework. Learn more at https://www.cycloid.io/.
 
 Usage:
@@ -31,7 +31,10 @@ Available Commands:
   organization       Manage the organizations
   pipeline           Manage the pipelines
   project            Manage the projects
+  roles              Manage roles from the organization
   stack              Manage the stacks
+  status             Get the status of the Cycloid services
+  validate-form      validate a .forms.yml file
   version            Get the version of the consumed API
 ```
 
@@ -59,6 +62,12 @@ cy --version
 You can download the latest Linux binary from the [release](https://github.com/cycloidio/cycloid-cli/releases) page.
 
 ## Common actions
+
+### Get the Cycloid services in an unhealthy state
+
+```
+cy status -o json | jq '.[] | select( .status != "Success")'
+```
 
 :construction:
 <!-- This is where we could add some useful examples: create a user, etc. -->
