@@ -59,7 +59,7 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for custom type
-	cy --my-org credential create custom --my-key=my-value
+	cy --my-org credential create custom --field my-key=my-value --field my-key2=my-value2
 `,
 	}
 	common.RequiredFlag(WithFlagField, custom)
