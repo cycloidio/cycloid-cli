@@ -44,6 +44,6 @@ func AttachCommands(cmd *cobra.Command) {
 		projects.NewCommands(),
 		roles.NewCommands(),
 		stacks.NewCommands(),
-		login.LoginCmd,
+		login.NewCommands(),
 	)
 }
