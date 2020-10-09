@@ -12,6 +12,8 @@
    ([PR #37](https://github.com/cycloidio/cycloid-cli/pull/37))
   - status endpoint implementation
    ([PR #42](https://github.com/cycloidio/cycloid-cli/pull/42))
+  - bash/zsh auto-complete
+   ([PR #47](https://github.com/cycloidio/cycloid-cli/pull/47))
 
 ## [v1.0.47] _2020-09-21_
 - **ADDED**
