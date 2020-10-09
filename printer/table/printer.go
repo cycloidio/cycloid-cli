@@ -15,7 +15,7 @@ import (
 var (
 	// reference date format
 	// DD / MM / YYYY, HH:MM:SS
-	timeFormat = "02/01/2006, 15:04:05"
+	timeFormat = "02/01/2006:15:04:05"
 )
 
 type Table struct{}
