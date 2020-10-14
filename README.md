@@ -69,6 +69,20 @@ You can download the latest Linux binary from the [release](https://github.com/c
 cy status -o json | jq '.[] | select( .status != "Success")'
 ```
 
+### Create config repository using credential named "Git Config"
+
+```
+GIT_CRED=$(cy --org $ORG credential list -o json | jq '.[] | select( .name == ""Git Config") | .id')
+cy --org myorg  config-repository create --branch master --cred $GIT_CRED --name "lab-config" --default --url "git@github.com:org/repo.git"
+```
+
+### Invite members with "Admin" role
+
+```
+ADMIN_ROLE=$(cy --org $ORG  roles list -o json | jq '.[] | select( .name | contains("Admin")) | .id')
+cy  --org myorg  members invite --role-id $ADMIN_ROLE --email foo@email.com
+```
+
 :construction:
 <!-- This is where we could add some useful examples: create a user, etc. -->
 
