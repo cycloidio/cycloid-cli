@@ -30,8 +30,9 @@ func TestTablePrinter(t *testing.T) {
 			}
 		)
 
-		exp := `A      	B      	C     
-value a	value b	slice	
+		exp := `A      	B      	C   
+value a	value b	abc	
+       	       	def	
 `
 		err := tab.Print(&obj, printer.Options{}, &b)
 		require.NoError(t, err)
