@@ -13,7 +13,7 @@ cy login --org my-org --email example@email.com --password my-password --api-url
 From there, you can now explore the various commands using the `--help` flag for each command / subcommand.
 
 ```shell
-$ ./cy help
+$ cy help
 Cy is a CLI for Cycloid framework. Learn more at https://www.cycloid.io/.
 
 Usage:
@@ -21,6 +21,7 @@ Usage:
 
 Available Commands:
   catalog-repository Manage the catalog repositories
+  completion         Output shell completion for the given shell (bash or zsh)
   config-repository  Manage the catalog repositories
   credential         Manage the credentials
   event              Manage the events
