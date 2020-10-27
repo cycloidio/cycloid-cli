@@ -20,7 +20,7 @@ func NewGetCommand() *cobra.Command {
 		Short: "get an organization",
 		Example: `
 	# get an organization by its canonical
-	cy organization --org my-org -o yaml
+	cy organization get --org my-org -o yaml
 `,
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,
@@ -42,9 +42,6 @@ func get(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
-
-	params := organizations.NewGetOrgParams()
-	params.SetOrganizationCanonical(org)
 
 	o, err := m.GetOrganization(org)
 	if err != nil {

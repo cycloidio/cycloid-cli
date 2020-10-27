@@ -70,3 +70,11 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 	d := p.Data
 	return d, err
 }
+
+func (m *middleware) DeleteOrganization(org string) error {
+	params := organizations.NewDeleteOrgParams()
+	params.SetOrganizationCanonical(org)
+
+	_, err := m.api.Organizations.DeleteOrg(params, common.ClientCredentials(&org))
+	return err
+}
