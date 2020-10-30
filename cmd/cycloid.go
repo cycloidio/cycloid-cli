@@ -1,9 +1,8 @@
-// Change the package name because it it not a go plugin anymore
-// package main
 package cmd
 
 import (
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	catalogRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog-repositories"
 	configRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/config-repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
@@ -34,6 +33,7 @@ func AttachCommands(cmd *cobra.Command) {
 		root.NewValidateFormCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
+		apikey.NewCommands(),
 		catalogRepositories.NewCommands(),
 		configRepositories.NewCommands(),
 		creds.NewCommands(),
