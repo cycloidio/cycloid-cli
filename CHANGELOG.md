@@ -1,4 +1,6 @@
-## [v1.0.48]
+## [v1.0.50]
+
+## [v1.0.49] _2020-10-02_
 - **ADDED**
   - Add validate-form command
    ([PR #35](https://github.com/cycloidio/cycloid-cli/pull/35))
