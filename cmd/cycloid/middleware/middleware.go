@@ -86,6 +86,9 @@ type Middleware interface {
 	// API keys method
 	// CreateAPIKey will request API to generate and return an API key
 	CreateAPIKey(org, name, canonical, description string, roleID uint32) (*models.APIKey, error)
+
+	// ListAPIKey will request API to list generated API keys
+	ListAPIKey(org string) ([]*models.APIKey, error)
 }
 
 type middleware struct {

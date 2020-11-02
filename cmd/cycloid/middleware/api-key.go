@@ -29,3 +29,16 @@ func (m *middleware) CreateAPIKey(org, name, canonical, description string, role
 
 	return res.GetPayload().Data, nil
 }
+
+// ListAPIKey will request API to list generated API keys
+func (m *middleware) ListAPIKey(org string) ([]*models.APIKey, error) {
+	params := organization_api_keys.NewGetAPIKeysParams()
+	params.SetOrganizationCanonical(org)
+
+	res, err := m.api.OrganizationAPIKeys.GetAPIKeys(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, fmt.Errorf("unable to list API keys: %w", err)
+	}
+
+	return res.GetPayload().Data, nil
+}
