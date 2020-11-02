@@ -1,3 +1,8 @@
+## [v1.0.50]
+- **ADDED**
+  - Add organization create/delete
+   ([PR #51](https://github.com/cycloidio/cycloid-cli/pull/51))
+
 ## [v1.0.49]
 - **ADDED**
   - Add validate-form command
