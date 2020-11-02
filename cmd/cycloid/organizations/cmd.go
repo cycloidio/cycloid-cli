@@ -6,7 +6,7 @@ import (
 
 func NewCommands() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "organization",
+		Use: "organization",
 		Aliases: []string{
 			"org",
 			"organizations",
@@ -15,8 +15,10 @@ func NewCommands() *cobra.Command {
 		Short: "Manage the organizations",
 	}
 	cmd.AddCommand(
+		NewCreateCommand(),
 		NewListCommand(),
 		NewListWorkersCommand(),
+		NewDeleteCommand(),
 		NewGetCommand())
 	return cmd
 }
