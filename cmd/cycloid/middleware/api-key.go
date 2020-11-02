@@ -56,3 +56,15 @@ func (m *middleware) GetAPIKey(org, canonical string) (*models.APIKey, error) {
 
 	return res.GetPayload().Data, nil
 }
+
+// DeleteAPIKey will request API to delete a specified generated API key
+func (m *middleware) DeleteAPIKey(org, canonical string) error {
+	params := organization_api_keys.NewDeleteAPIKeyParams()
+	params.SetOrganizationCanonical(org)
+	params.SetAPIKeyCanonical(canonical)
+
+	if _, err := m.api.OrganizationAPIKeys.DeleteAPIKey(params, common.ClientCredentials(&org)); err != nil {
+		return fmt.Errorf("unable to delete API key: %w", err)
+	}
+	return nil
+}

@@ -92,6 +92,9 @@ type Middleware interface {
 
 	// GetAPIKey will request API to get a specified generated API key by its canonical
 	GetAPIKey(org, canonical string) (*models.APIKey, error)
+
+	// DeleteAPIKey will request API to delete a specified generated API key
+	DeleteAPIKey(org, canonical string) error
 }
 
 type middleware struct {
