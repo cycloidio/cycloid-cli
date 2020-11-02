@@ -26,5 +26,9 @@ func NewCommands() *cobra.Command {
 		Hidden:  true,
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
+
+	cmd.AddSubcommand(
+		NewCreateCommand,
+	)
 	return cmd
 }
