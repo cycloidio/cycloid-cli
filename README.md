@@ -20,6 +20,7 @@ Usage:
   cy [command]
 
 Available Commands:
+  api-key            Manage organization API keys
   catalog-repository Manage the catalog repositories
   completion         Output shell completion for the given shell (bash or zsh)
   config-repository  Manage the catalog repositories
