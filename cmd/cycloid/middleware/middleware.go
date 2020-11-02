@@ -89,6 +89,9 @@ type Middleware interface {
 
 	// ListAPIKey will request API to list generated API keys
 	ListAPIKey(org string) ([]*models.APIKey, error)
+
+	// GetAPIKey will request API to get a specified generated API key by its canonical
+	GetAPIKey(org, canonical string) (*models.APIKey, error)
 }
 
 type middleware struct {

@@ -42,3 +42,17 @@ func (m *middleware) ListAPIKey(org string) ([]*models.APIKey, error) {
 
 	return res.GetPayload().Data, nil
 }
+
+// GetAPIKey will request API to get a specified generated API key by its canonical
+func (m *middleware) GetAPIKey(org, canonical string) (*models.APIKey, error) {
+	params := organization_api_keys.NewGetAPIKeyParams()
+	params.SetOrganizationCanonical(org)
+	params.SetAPIKeyCanonical(canonical)
+
+	res, err := m.api.OrganizationAPIKeys.GetAPIKey(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, fmt.Errorf("unable to get API key: %w", err)
+	}
+
+	return res.GetPayload().Data, nil
+}
