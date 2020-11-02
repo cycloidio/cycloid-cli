@@ -42,7 +42,7 @@ type Middleware interface {
 	Login(email, password string) (*models.UserSession, error)
 
 	// LoginOrg is the used to log the user into a Cycloid organization
-	LoginOrg(org, child, email, password string) (*models.UserSession, error)
+	LoginOrg(org, child string) (*models.UserSession, error)
 
 	DeleteMember(org string, name string) error
 	GetMember(org string, name string) (*models.MemberOrg, error)
@@ -82,6 +82,10 @@ type Middleware interface {
 
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
+
+	// API keys method
+	// CreateAPIKey will request API to generate and return an API key
+	CreateAPIKey(org, name, canonical, description string, roleID uint32) (*models.APIKey, error)
 }
 
 type middleware struct {
