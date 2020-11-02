@@ -37,7 +37,7 @@ type ProjectsItem struct {
 	// created at
 	// Required: true
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *uint64 `json:"created_at"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -61,17 +61,14 @@ type ProjectsItem struct {
 	//
 	Owner *MemberOrg `json:"owner,omitempty"`
 
-	// service catalog name
-	ServiceCatalogName string `json:"service_catalog_name,omitempty"`
-
-	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
+	// The Service Catalog that was used to create project.
 	// Required: true
-	ServiceCatalogRef *string `json:"service_catalog_ref"`
+	ServiceCatalog *ServiceCatalog `json:"service_catalog"`
 
 	// updated at
 	// Required: true
 	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt *uint64 `json:"updated_at"`
 }
 
 // Validate validates this projects item
@@ -106,7 +103,7 @@ func (m *ProjectsItem) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogRef(formats); err != nil {
+	if err := m.validateServiceCatalog(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -233,10 +230,19 @@ func (m *ProjectsItem) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ProjectsItem) validateServiceCatalogRef(formats strfmt.Registry) error {
+func (m *ProjectsItem) validateServiceCatalog(formats strfmt.Registry) error {
 
-	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
+	if err := validate.Required("service_catalog", "body", m.ServiceCatalog); err != nil {
 		return err
+	}
+
+	if m.ServiceCatalog != nil {
+		if err := m.ServiceCatalog.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("service_catalog")
+			}
+			return err
+		}
 	}
 
 	return nil
