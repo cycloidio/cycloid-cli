@@ -29,7 +29,7 @@ type Job struct {
 	FinishedBuild *Build `json:"finished_build"`
 
 	// first logged build id
-	FirstLoggedBuildID int64 `json:"first_logged_build_id,omitempty"`
+	FirstLoggedBuildID uint64 `json:"first_logged_build_id,omitempty"`
 
 	// groups
 	// Required: true

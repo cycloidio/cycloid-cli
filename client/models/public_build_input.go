@@ -29,7 +29,7 @@ type PublicBuildInput struct {
 
 	// pipeline id
 	// Required: true
-	PipelineID *int64 `json:"pipeline_id"`
+	PipelineID *uint64 `json:"pipeline_id"`
 
 	// version
 	// Required: true
