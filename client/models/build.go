@@ -24,7 +24,7 @@ type Build struct {
 	APIURL *string `json:"api_url"`
 
 	// end time
-	EndTime int64 `json:"end_time,omitempty"`
+	EndTime uint64 `json:"end_time,omitempty"`
 
 	// id
 	// Required: true
@@ -41,10 +41,10 @@ type Build struct {
 	PipelineName string `json:"pipeline_name,omitempty"`
 
 	// reap time
-	ReapTime int64 `json:"reap_time,omitempty"`
+	ReapTime uint64 `json:"reap_time,omitempty"`
 
 	// start time
-	StartTime int64 `json:"start_time,omitempty"`
+	StartTime uint64 `json:"start_time,omitempty"`
 
 	// status
 	// Required: true

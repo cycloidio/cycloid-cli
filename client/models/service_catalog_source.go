@@ -27,7 +27,7 @@ type ServiceCatalogSource struct {
 
 	// created at
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at,omitempty"`
+	CreatedAt *uint64 `json:"created_at,omitempty"`
 
 	// credential id
 	// Minimum: 1
@@ -51,7 +51,7 @@ type ServiceCatalogSource struct {
 
 	// The last time the Service Catalog Source was (successfully) refreshed.
 	// Minimum: 0
-	RefreshedAt *int64 `json:"refreshed_at,omitempty"`
+	RefreshedAt *uint64 `json:"refreshed_at,omitempty"`
 
 	// Represents list of service catalogs in the service catalog source. Not used during update action on a service catalog source.
 	ServiceCatalogs []*ServiceCatalog `json:"service_catalogs"`
@@ -63,7 +63,7 @@ type ServiceCatalogSource struct {
 
 	// updated at
 	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at,omitempty"`
+	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 
 	// url
 	// Required: true
