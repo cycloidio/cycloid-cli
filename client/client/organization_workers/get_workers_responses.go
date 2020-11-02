@@ -68,6 +68,10 @@ func NewGetWorkersOK() *GetWorkersOK {
 List of the workers which authenticated user has access to.
 */
 type GetWorkersOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *GetWorkersOKBody
 }
 
@@ -80,6 +84,13 @@ func (o *GetWorkersOK) GetPayload() *GetWorkersOKBody {
 }
 
 func (o *GetWorkersOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(GetWorkersOKBody)
 
@@ -101,6 +112,10 @@ func NewGetWorkersNotFound() *GetWorkersNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type GetWorkersNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -113,6 +128,13 @@ func (o *GetWorkersNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetWorkersNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -134,6 +156,10 @@ func NewGetWorkersUnprocessableEntity() *GetWorkersUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type GetWorkersUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -146,6 +172,13 @@ func (o *GetWorkersUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetWorkersUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -171,6 +204,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetWorkersDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -188,6 +225,13 @@ func (o *GetWorkersDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetWorkersDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

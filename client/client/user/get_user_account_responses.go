@@ -55,6 +55,10 @@ func NewGetUserAccountOK() *GetUserAccountOK {
 The user account information.
 */
 type GetUserAccountOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *GetUserAccountOKBody
 }
 
@@ -67,6 +71,13 @@ func (o *GetUserAccountOK) GetPayload() *GetUserAccountOKBody {
 }
 
 func (o *GetUserAccountOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(GetUserAccountOKBody)
 
@@ -92,6 +103,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetUserAccountDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -109,6 +124,13 @@ func (o *GetUserAccountDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetUserAccountDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

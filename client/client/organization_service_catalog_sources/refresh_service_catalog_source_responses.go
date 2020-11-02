@@ -73,6 +73,10 @@ func NewRefreshServiceCatalogSourceOK() *RefreshServiceCatalogSourceOK {
 Success refresh
 */
 type RefreshServiceCatalogSourceOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *RefreshServiceCatalogSourceOKBody
 }
 
@@ -85,6 +89,13 @@ func (o *RefreshServiceCatalogSourceOK) GetPayload() *RefreshServiceCatalogSourc
 }
 
 func (o *RefreshServiceCatalogSourceOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(RefreshServiceCatalogSourceOKBody)
 
@@ -106,6 +117,10 @@ func NewRefreshServiceCatalogSourceNotFound() *RefreshServiceCatalogSourceNotFou
 The response sent when any of the entities present in the path is not found.
 */
 type RefreshServiceCatalogSourceNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -118,6 +133,13 @@ func (o *RefreshServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload 
 }
 
 func (o *RefreshServiceCatalogSourceNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -160,6 +182,10 @@ func NewRefreshServiceCatalogSourceUnprocessableEntity() *RefreshServiceCatalogS
 All the custom errors that are generated from the Cycloid API
 */
 type RefreshServiceCatalogSourceUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -172,6 +198,13 @@ func (o *RefreshServiceCatalogSourceUnprocessableEntity) GetPayload() *models.Er
 }
 
 func (o *RefreshServiceCatalogSourceUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -197,6 +230,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type RefreshServiceCatalogSourceDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -214,6 +251,13 @@ func (o *RefreshServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *RefreshServiceCatalogSourceDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

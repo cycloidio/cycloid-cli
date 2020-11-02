@@ -67,6 +67,10 @@ func NewGetOrgRoleOK() *GetOrgRoleOK {
 Role available in the organization with such ID.
 */
 type GetOrgRoleOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *GetOrgRoleOKBody
 }
 
@@ -79,6 +83,13 @@ func (o *GetOrgRoleOK) GetPayload() *GetOrgRoleOKBody {
 }
 
 func (o *GetOrgRoleOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(GetOrgRoleOKBody)
 
@@ -100,6 +111,10 @@ func NewGetOrgRoleForbidden() *GetOrgRoleForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetOrgRoleForbidden struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -112,6 +127,13 @@ func (o *GetOrgRoleForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetOrgRoleForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -133,6 +155,10 @@ func NewGetOrgRoleNotFound() *GetOrgRoleNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type GetOrgRoleNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -145,6 +171,13 @@ func (o *GetOrgRoleNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetOrgRoleNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -170,6 +203,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetOrgRoleDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -187,6 +224,13 @@ func (o *GetOrgRoleDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetOrgRoleDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

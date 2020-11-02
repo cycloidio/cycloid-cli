@@ -32,6 +32,10 @@ type Event struct {
 	// Min Length: 3
 	Icon string `json:"icon,omitempty"`
 
+	// The unique ID of the event from the database.
+	// Required: true
+	ID *uint32 `json:"id"`
+
 	// The message associated to the event.
 	// Required: true
 	// Min Length: 1
@@ -48,7 +52,7 @@ type Event struct {
 
 	// The timestamp when the event was created in milliseconds.
 	// Required: true
-	Timestamp *int64 `json:"timestamp"`
+	Timestamp *uint64 `json:"timestamp"`
 
 	// The title of the event.
 	// Required: true
@@ -70,6 +74,10 @@ func (m *Event) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateIcon(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -131,6 +139,15 @@ func (m *Event) validateIcon(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("icon", "body", string(m.Icon), 3); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Event) validateID(formats strfmt.Registry) error {
+
+	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
 	}
 

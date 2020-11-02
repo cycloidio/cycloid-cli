@@ -22,9 +22,9 @@ import (
 // with the default values initialized.
 func NewGetBuildsParams() *GetBuildsParams {
 	var (
-		concoursePageLimitDefault = int64(10)
-		concoursePageSinceDefault = int64(0)
-		concoursePageUntilDefault = int64(0)
+		concoursePageLimitDefault = uint64(10)
+		concoursePageSinceDefault = uint64(0)
+		concoursePageUntilDefault = uint64(0)
 	)
 	return &GetBuildsParams{
 		ConcoursePageLimit: &concoursePageLimitDefault,
@@ -39,9 +39,9 @@ func NewGetBuildsParams() *GetBuildsParams {
 // with the default values initialized, and the ability to set a timeout on a request
 func NewGetBuildsParamsWithTimeout(timeout time.Duration) *GetBuildsParams {
 	var (
-		concoursePageLimitDefault = int64(10)
-		concoursePageSinceDefault = int64(0)
-		concoursePageUntilDefault = int64(0)
+		concoursePageLimitDefault = uint64(10)
+		concoursePageSinceDefault = uint64(0)
+		concoursePageUntilDefault = uint64(0)
 	)
 	return &GetBuildsParams{
 		ConcoursePageLimit: &concoursePageLimitDefault,
@@ -56,9 +56,9 @@ func NewGetBuildsParamsWithTimeout(timeout time.Duration) *GetBuildsParams {
 // with the default values initialized, and the ability to set a context for a request
 func NewGetBuildsParamsWithContext(ctx context.Context) *GetBuildsParams {
 	var (
-		concoursePageLimitDefault = int64(10)
-		concoursePageSinceDefault = int64(0)
-		concoursePageUntilDefault = int64(0)
+		concoursePageLimitDefault = uint64(10)
+		concoursePageSinceDefault = uint64(0)
+		concoursePageUntilDefault = uint64(0)
 	)
 	return &GetBuildsParams{
 		ConcoursePageLimit: &concoursePageLimitDefault,
@@ -73,9 +73,9 @@ func NewGetBuildsParamsWithContext(ctx context.Context) *GetBuildsParams {
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetBuildsParamsWithHTTPClient(client *http.Client) *GetBuildsParams {
 	var (
-		concoursePageLimitDefault = int64(10)
-		concoursePageSinceDefault = int64(0)
-		concoursePageUntilDefault = int64(0)
+		concoursePageLimitDefault = uint64(10)
+		concoursePageSinceDefault = uint64(0)
+		concoursePageUntilDefault = uint64(0)
 	)
 	return &GetBuildsParams{
 		ConcoursePageLimit: &concoursePageLimitDefault,
@@ -94,17 +94,17 @@ type GetBuildsParams struct {
 	  The number of items at most which the response can have.
 
 	*/
-	ConcoursePageLimit *int64
+	ConcoursePageLimit *uint64
 	/*ConcoursePageSince
 	  The time after which we should look for entities to return.
 
 	*/
-	ConcoursePageSince *int64
+	ConcoursePageSince *uint64
 	/*ConcoursePageUntil
 	  The time before which we should look for entities to return.
 
 	*/
-	ConcoursePageUntil *int64
+	ConcoursePageUntil *uint64
 	/*InpathPipelineName
 	  A pipeline name
 
@@ -165,35 +165,35 @@ func (o *GetBuildsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithConcoursePageLimit adds the concoursePageLimit to the get builds params
-func (o *GetBuildsParams) WithConcoursePageLimit(concoursePageLimit *int64) *GetBuildsParams {
+func (o *GetBuildsParams) WithConcoursePageLimit(concoursePageLimit *uint64) *GetBuildsParams {
 	o.SetConcoursePageLimit(concoursePageLimit)
 	return o
 }
 
 // SetConcoursePageLimit adds the concoursePageLimit to the get builds params
-func (o *GetBuildsParams) SetConcoursePageLimit(concoursePageLimit *int64) {
+func (o *GetBuildsParams) SetConcoursePageLimit(concoursePageLimit *uint64) {
 	o.ConcoursePageLimit = concoursePageLimit
 }
 
 // WithConcoursePageSince adds the concoursePageSince to the get builds params
-func (o *GetBuildsParams) WithConcoursePageSince(concoursePageSince *int64) *GetBuildsParams {
+func (o *GetBuildsParams) WithConcoursePageSince(concoursePageSince *uint64) *GetBuildsParams {
 	o.SetConcoursePageSince(concoursePageSince)
 	return o
 }
 
 // SetConcoursePageSince adds the concoursePageSince to the get builds params
-func (o *GetBuildsParams) SetConcoursePageSince(concoursePageSince *int64) {
+func (o *GetBuildsParams) SetConcoursePageSince(concoursePageSince *uint64) {
 	o.ConcoursePageSince = concoursePageSince
 }
 
 // WithConcoursePageUntil adds the concoursePageUntil to the get builds params
-func (o *GetBuildsParams) WithConcoursePageUntil(concoursePageUntil *int64) *GetBuildsParams {
+func (o *GetBuildsParams) WithConcoursePageUntil(concoursePageUntil *uint64) *GetBuildsParams {
 	o.SetConcoursePageUntil(concoursePageUntil)
 	return o
 }
 
 // SetConcoursePageUntil adds the concoursePageUntil to the get builds params
-func (o *GetBuildsParams) SetConcoursePageUntil(concoursePageUntil *int64) {
+func (o *GetBuildsParams) SetConcoursePageUntil(concoursePageUntil *uint64) {
 	o.ConcoursePageUntil = concoursePageUntil
 }
 
@@ -252,11 +252,11 @@ func (o *GetBuildsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 	if o.ConcoursePageLimit != nil {
 
 		// query param concourse_page_limit
-		var qrConcoursePageLimit int64
+		var qrConcoursePageLimit uint64
 		if o.ConcoursePageLimit != nil {
 			qrConcoursePageLimit = *o.ConcoursePageLimit
 		}
-		qConcoursePageLimit := swag.FormatInt64(qrConcoursePageLimit)
+		qConcoursePageLimit := swag.FormatUint64(qrConcoursePageLimit)
 		if qConcoursePageLimit != "" {
 			if err := r.SetQueryParam("concourse_page_limit", qConcoursePageLimit); err != nil {
 				return err
@@ -268,11 +268,11 @@ func (o *GetBuildsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 	if o.ConcoursePageSince != nil {
 
 		// query param concourse_page_since
-		var qrConcoursePageSince int64
+		var qrConcoursePageSince uint64
 		if o.ConcoursePageSince != nil {
 			qrConcoursePageSince = *o.ConcoursePageSince
 		}
-		qConcoursePageSince := swag.FormatInt64(qrConcoursePageSince)
+		qConcoursePageSince := swag.FormatUint64(qrConcoursePageSince)
 		if qConcoursePageSince != "" {
 			if err := r.SetQueryParam("concourse_page_since", qConcoursePageSince); err != nil {
 				return err
@@ -284,11 +284,11 @@ func (o *GetBuildsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 	if o.ConcoursePageUntil != nil {
 
 		// query param concourse_page_until
-		var qrConcoursePageUntil int64
+		var qrConcoursePageUntil uint64
 		if o.ConcoursePageUntil != nil {
 			qrConcoursePageUntil = *o.ConcoursePageUntil
 		}
-		qConcoursePageUntil := swag.FormatInt64(qrConcoursePageUntil)
+		qConcoursePageUntil := swag.FormatUint64(qrConcoursePageUntil)
 		if qConcoursePageUntil != "" {
 			if err := r.SetQueryParam("concourse_page_until", qConcoursePageUntil); err != nil {
 				return err

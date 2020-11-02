@@ -67,6 +67,10 @@ func NewSendOrgEventOK() *SendOrgEventOK {
 Event has been registered
 */
 type SendOrgEventOK struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *SendOrgEventOKBody
 }
 
@@ -79,6 +83,13 @@ func (o *SendOrgEventOK) GetPayload() *SendOrgEventOKBody {
 }
 
 func (o *SendOrgEventOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(SendOrgEventOKBody)
 
@@ -100,6 +111,10 @@ func NewSendOrgEventForbidden() *SendOrgEventForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type SendOrgEventForbidden struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -112,6 +127,13 @@ func (o *SendOrgEventForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *SendOrgEventForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -133,6 +155,10 @@ func NewSendOrgEventNotFound() *SendOrgEventNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type SendOrgEventNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -145,6 +171,13 @@ func (o *SendOrgEventNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *SendOrgEventNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -166,6 +199,10 @@ func NewSendOrgEventUnprocessableEntity() *SendOrgEventUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type SendOrgEventUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -178,6 +215,13 @@ func (o *SendOrgEventUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *SendOrgEventUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
