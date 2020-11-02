@@ -15,6 +15,7 @@ func NewCommands() *cobra.Command {
 		Short: "Manage the organizations",
 	}
 	cmd.AddCommand(
+		NewCreateCommand(),
 		NewListCommand(),
 		NewListWorkersCommand(),
 		NewDeleteCommand(),
