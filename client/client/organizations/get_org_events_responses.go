@@ -17,7 +17,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	models "github.com/cycloidio/youdeploy-cli/client/models"
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetOrgEventsReader is a Reader for the GetOrgEvents structure.
@@ -72,7 +72,7 @@ func NewGetOrgEventsOK() *GetOrgEventsOK {
 /*GetOrgEventsOK handles this case with default header values.
 
 The list of events which fulfills the query parameters filter
-  format: int64
+  format: uint64
 */
 type GetOrgEventsOK struct {
 	Payload *GetOrgEventsOKBody

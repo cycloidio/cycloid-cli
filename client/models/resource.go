@@ -32,7 +32,7 @@ type Resource struct {
 	Icon string `json:"icon,omitempty"`
 
 	// last checked
-	LastChecked int64 `json:"last_checked,omitempty"`
+	LastChecked uint64 `json:"last_checked,omitempty"`
 
 	// name
 	// Required: true

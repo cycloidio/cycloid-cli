@@ -21,7 +21,7 @@ type UserAccountEmail struct {
 
 	// created at
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at,omitempty"`
+	CreatedAt *uint64 `json:"created_at,omitempty"`
 
 	// email
 	// Required: true

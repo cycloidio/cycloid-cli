@@ -29,7 +29,7 @@ type Environment struct {
 	// created at
 	// Required: true
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *uint64 `json:"created_at"`
 
 	// id
 	// Required: true
@@ -39,7 +39,7 @@ type Environment struct {
 	// updated at
 	// Required: true
 	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt *uint64 `json:"updated_at"`
 }
 
 // Validate validates this environment

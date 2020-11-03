@@ -22,7 +22,7 @@ type MemberTeam struct {
 	// When the user became a member.
 	// Required: true
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *uint64 `json:"created_at"`
 
 	// user email
 	// Required: true
@@ -47,13 +47,17 @@ type MemberTeam struct {
 	// Team member who invited the current user to the team.
 	InvitedBy *MemberTeam `json:"invited_by,omitempty"`
 
+	// When the user logged in last time.
+	// Minimum: 0
+	LastLoginAt *uint64 `json:"last_login_at,omitempty"`
+
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
 
 	// When the user had the role modified.
 	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at,omitempty"`
+	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 
 	// username
 	// Required: true
@@ -88,6 +92,10 @@ func (m *MemberTeam) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateInvitedBy(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLastLoginAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -187,6 +195,19 @@ func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *MemberTeam) validateLastLoginAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.LastLoginAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("last_login_at", "body", int64(*m.LastLoginAt), 0, false); err != nil {
+		return err
 	}
 
 	return nil

@@ -3,9 +3,9 @@ package middleware
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_members"
-	"github.com/cycloidio/youdeploy-cli/client/models"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {

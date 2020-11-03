@@ -3,18 +3,19 @@
 package cmd
 
 import (
-	root "github.com/cycloidio/youdeploy-cli/cmd/cycloid"
-	catalogRepositories "github.com/cycloidio/youdeploy-cli/cmd/cycloid/catalog-repositories"
-	configRepositories "github.com/cycloidio/youdeploy-cli/cmd/cycloid/config-repositories"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/creds"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/events"
-	externalBackends "github.com/cycloidio/youdeploy-cli/cmd/cycloid/external-backends"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/login"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/members"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/organizations"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/pipelines"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/projects"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/stacks"
+	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
+	catalogRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog-repositories"
+	configRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/config-repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
+	externalBackends "github.com/cycloidio/cycloid-cli/cmd/cycloid/external-backends"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -29,19 +30,21 @@ func init() {
 func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(
 		// Root
-		root.NewStatusCmd(),
 		root.NewVersionCmd(),
-
-		organizations.NewCommands(),
+		root.NewValidateFormCmd(),
+		root.NewStatusCmd(),
+		root.NewCompletionCmd(),
 		catalogRepositories.NewCommands(),
 		configRepositories.NewCommands(),
 		creds.NewCommands(),
-		externalBackends.NewCommands(),
 		events.NewCommands(),
+		externalBackends.NewCommands(),
+		members.NewCommands(),
+		organizations.NewCommands(),
 		pipelines.NewCommands(),
 		projects.NewCommands(),
+		roles.NewCommands(),
 		stacks.NewCommands(),
-		members.NewCommands(),
-		login.LoginCmd,
+		login.NewCommands(),
 	)
 }

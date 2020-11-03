@@ -8,10 +8,10 @@ endif
 
 SHELL      := /bin/sh
 
-REPO_PATH    := github.com/cycloidio/youdeploy-cli
+REPO_PATH    := github.com/cycloidio/cycloid-cli
 BINARY       ?= cy
 # VERSION example v1.0.47
-VERSION      ?= $(shell git describe --tags --always)
+VERSION      ?= $(shell cat client/version)
 REVISION     ?= $(shell git rev-parse --short HEAD 2> /dev/null  || echo 'unknown')
 BRANCH       ?= $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null  || echo 'unknown')
 BUILD_ORIGIN ?= $(USER)@$(shell hostname -f)
@@ -35,25 +35,26 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--target=./client \
 		--name=api \
 		--tags=Cycloid \
-		--tags="Organization External Backends" \
+		--tags="Organizations" \
+		--tags="Organization Config Repositories" \
 		--tags="Organization Credentials" \
-		--tags="Organization projects" \
-		--tags="Service catalogs" \
-		--tags="Organization workers" \
+		--tags="Organization External Backends" \
+		--tags="Organization members" \
 		--tags="Organization pipelines" \
 		--tags="Organization pipelines jobs" \
 		--tags="Organization pipelines jobs build" \
-		--tags="Organization Config Repositories" \
+		--tags="Organization projects" \
+		--tags="Organization Roles" \
 		--tags="Organization Service Catalog Sources" \
-		--tags="Organizations" \
-		--tags="User" \
+		--tags="Organization workers" \
 		--tags="Organization members" \
-		--tags="Organizations"
+		--tags="Organization Forms" \
+		--tags="Service catalogs" \
+		--tags="User"
 
 .PHONY: help
 help: ## Show this help
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
-
 
 .PHONY: build
 build: ## Builds the binary
@@ -61,7 +62,8 @@ build: ## Builds the binary
 
 .PHONY: generate-local-client
 generate-local-client: ## Generate client from local swagger file SWAGGER_FILE path
-	$(SWAGGER_GENERATE)
+	$(SWAGGER_GENERATE) && \
+	echo 'v0.0-dev' > client/version
 
 .PHONY: generate-client
 generate-client: ## Generate client from latest swagger file
@@ -69,12 +71,10 @@ generate-client: ## Generate client from latest swagger file
 	@wget -O ./gen-swagger/swagger.yml https://docs.cycloid.io/api/swagger.yml
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < ./gen-swagger/swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
-	export IS_GIT_TAG_EXIST=$$(git --no-pager tag -l $$SWAGGER_VERSION); \
-	if [ -n "$$IS_GIT_TAG_EXIST" ]; then echo "Version tag $$SWAGGER_VERSION already exist in git"; exit 0; fi; \
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE) && \
+	echo $$SWAGGER_VERSION > client/version && \
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
-	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'" && \
-	echo "git tag $$SWAGGER_VERSION"
+	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 	@rm -rf ./gen-swagger

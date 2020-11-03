@@ -3,10 +3,10 @@ package factory
 import (
 	"fmt"
 
-	"github.com/cycloidio/youdeploy-cli/printer"
-	"github.com/cycloidio/youdeploy-cli/printer/json"
-	"github.com/cycloidio/youdeploy-cli/printer/table"
-	"github.com/cycloidio/youdeploy-cli/printer/yaml"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/json"
+	"github.com/cycloidio/cycloid-cli/printer/table"
+	"github.com/cycloidio/cycloid-cli/printer/yaml"
 )
 
 var (

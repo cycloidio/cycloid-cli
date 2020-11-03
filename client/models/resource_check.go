@@ -21,16 +21,16 @@ type ResourceCheck struct {
 	CheckError string `json:"check_error,omitempty"`
 
 	// create time
-	CreateTime int64 `json:"create_time,omitempty"`
+	CreateTime uint64 `json:"create_time,omitempty"`
 
 	// end time
-	EndTime int64 `json:"end_time,omitempty"`
+	EndTime uint64 `json:"end_time,omitempty"`
 
 	// id
-	ID int64 `json:"id,omitempty"`
+	ID uint64 `json:"id,omitempty"`
 
 	// start time
-	StartTime int64 `json:"start_time,omitempty"`
+	StartTime uint64 `json:"start_time,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`

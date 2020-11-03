@@ -11,20 +11,22 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/cycloid"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_config_repositories"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_external_backends"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_members"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_pipelines_jobs_build"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_projects"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_service_catalog_sources"
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_workers"
-	"github.com/cycloidio/youdeploy-cli/client/client/organizations"
-	"github.com/cycloidio/youdeploy-cli/client/client/service_catalogs"
-	"github.com/cycloidio/youdeploy-cli/client/client/user"
+	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs_build"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_roles"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
+	"github.com/cycloidio/cycloid-cli/client/client/organizations"
+	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
+	"github.com/cycloidio/cycloid-cli/client/client/user"
 )
 
 // Default API client HTTP client.
@@ -78,6 +80,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 
+	cli.OrganizationForms = organization_forms.New(transport, formats)
+
 	cli.OrganizationMembers = organization_members.New(transport, formats)
 
 	cli.OrganizationPipelines = organization_pipelines.New(transport, formats)
@@ -87,6 +91,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 	cli.OrganizationPipelinesJobsBuild = organization_pipelines_jobs_build.New(transport, formats)
 
 	cli.OrganizationProjects = organization_projects.New(transport, formats)
+
+	cli.OrganizationRoles = organization_roles.New(transport, formats)
 
 	cli.OrganizationServiceCatalogSources = organization_service_catalog_sources.New(transport, formats)
 
@@ -150,6 +156,8 @@ type APIClient struct {
 
 	OrganizationExternalBackends *organization_external_backends.Client
 
+	OrganizationForms *organization_forms.Client
+
 	OrganizationMembers *organization_members.Client
 
 	OrganizationPipelines *organization_pipelines.Client
@@ -159,6 +167,8 @@ type APIClient struct {
 	OrganizationPipelinesJobsBuild *organization_pipelines_jobs_build.Client
 
 	OrganizationProjects *organization_projects.Client
+
+	OrganizationRoles *organization_roles.Client
 
 	OrganizationServiceCatalogSources *organization_service_catalog_sources.Client
 
@@ -185,6 +195,8 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 
 	c.OrganizationExternalBackends.SetTransport(transport)
 
+	c.OrganizationForms.SetTransport(transport)
+
 	c.OrganizationMembers.SetTransport(transport)
 
 	c.OrganizationPipelines.SetTransport(transport)
@@ -194,6 +206,8 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.OrganizationPipelinesJobsBuild.SetTransport(transport)
 
 	c.OrganizationProjects.SetTransport(transport)
+
+	c.OrganizationRoles.SetTransport(transport)
 
 	c.OrganizationServiceCatalogSources.SetTransport(transport)
 

@@ -1,7 +1,7 @@
 package externalBackends
 
 import (
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 )
 

@@ -24,7 +24,7 @@ type UserAccount struct {
 	// created at
 	// Required: true
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *uint64 `json:"created_at"`
 
 	// emails
 	// Required: true
@@ -47,7 +47,7 @@ type UserAccount struct {
 	// last login
 	// Required: true
 	// Minimum: 0
-	LastLogin *int64 `json:"last_login"`
+	LastLogin *uint64 `json:"last_login"`
 
 	// The local that the user prefer.
 	// Required: true
@@ -61,7 +61,7 @@ type UserAccount struct {
 	// updated at
 	// Required: true
 	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt *uint64 `json:"updated_at"`
 
 	// username
 	// Required: true

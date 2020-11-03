@@ -5,9 +5,10 @@ import (
 	"io"
 	"reflect"
 	"strconv"
+	"strings"
 	"time"
 
-	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/olekukonko/tablewriter"
 )
 
@@ -33,6 +34,18 @@ func entryFromStruct(obj reflect.Value, h []string) []string {
 			values = append(values, value.String())
 		case reflect.Uint32:
 			values = append(values, strconv.FormatInt(int64(value.Uint()), 10))
+		case reflect.Slice:
+			// Render Slice of strings
+			typ := value.Type().Elem()
+			if typ.Kind() == reflect.String {
+				stringSlice := make([]string, value.Len())
+				for i := 0; i < value.Len(); i++ {
+					stringSlice[i] = value.Index(i).String()
+				}
+				values = append(values, strings.Join(stringSlice[:], "\n"))
+			} else {
+				values = append(values, value.Kind().String())
+			}
 		case reflect.Ptr:
 			elt := value.Elem()
 			switch elt.Kind() {

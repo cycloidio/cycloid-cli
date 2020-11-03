@@ -25,7 +25,7 @@ type BillingInformation struct {
 	// created at
 	// Required: true
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *uint64 `json:"created_at"`
 
 	// email
 	// Required: true
@@ -54,7 +54,7 @@ type BillingInformation struct {
 	// updated at
 	// Required: true
 	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt *uint64 `json:"updated_at"`
 }
 
 // Validate validates this billing information

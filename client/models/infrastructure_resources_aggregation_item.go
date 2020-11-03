@@ -21,7 +21,7 @@ type InfrastructureResourcesAggregationItem struct {
 
 	// The number of items of the specific type of resource.
 	// Required: true
-	TotalAmount *int32 `json:"total_amount"`
+	TotalAmount *uint32 `json:"total_amount"`
 }
 
 // Validate validates this infrastructure resources aggregation item

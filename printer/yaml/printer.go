@@ -5,7 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer"
 	"gopkg.in/yaml.v1"
 )
 

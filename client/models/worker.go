@@ -21,11 +21,11 @@ type Worker struct {
 
 	// active containers
 	// Required: true
-	ActiveContainers *int64 `json:"active_containers"`
+	ActiveContainers *uint64 `json:"active_containers"`
 
 	// active volumes
 	// Required: true
-	ActiveVolumes *int64 `json:"active_volumes"`
+	ActiveVolumes *uint64 `json:"active_volumes"`
 
 	// ephemeral
 	// Required: true
@@ -41,7 +41,7 @@ type Worker struct {
 
 	// start time
 	// Required: true
-	StartTime *int64 `json:"start_time"`
+	StartTime *uint64 `json:"start_time"`
 
 	// state
 	// Required: true

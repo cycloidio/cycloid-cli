@@ -19,15 +19,15 @@ type PageConcourse struct {
 
 	// The maximum number of entities to return
 	// Required: true
-	Limit *int64 `json:"limit"`
+	Limit *uint64 `json:"limit"`
 
 	// Entities returned should have a higher timestamp than this one
 	// Required: true
-	Since *int64 `json:"since"`
+	Since *uint64 `json:"since"`
 
 	// Entities returned should have a lower timestamp than this one
 	// Required: true
-	Until *int64 `json:"until"`
+	Until *uint64 `json:"until"`
 }
 
 // Validate validates this page concourse

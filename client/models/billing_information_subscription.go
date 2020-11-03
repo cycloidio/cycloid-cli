@@ -27,12 +27,12 @@ type BillingInformationSubscription struct {
 	// current period end
 	// Required: true
 	// Minimum: 0
-	CurrentPeriodEnd *int64 `json:"current_period_end"`
+	CurrentPeriodEnd *uint64 `json:"current_period_end"`
 
 	// quantity
 	// Required: true
 	// Minimum: 0
-	Quantity *int64 `json:"quantity"`
+	Quantity *uint64 `json:"quantity"`
 }
 
 // Validate validates this billing information subscription

@@ -7,8 +7,8 @@ import (
 
 	"net/url"
 
-	"github.com/cycloidio/youdeploy-cli/client/client"
-	"github.com/cycloidio/youdeploy-cli/config"
+	"github.com/cycloidio/cycloid-cli/client/client"
+	"github.com/cycloidio/cycloid-cli/config"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/spf13/cobra"

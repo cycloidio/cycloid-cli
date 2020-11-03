@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/cycloidio/youdeploy-cli/client/client/organization_credentials"
-	"github.com/cycloidio/youdeploy-cli/client/models"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 )
 

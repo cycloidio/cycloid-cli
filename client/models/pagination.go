@@ -20,17 +20,17 @@ type Pagination struct {
 	// The index of the page sent (the first page is 1).
 	// Required: true
 	// Minimum: 1
-	Index *int64 `json:"index"`
+	Index *uint64 `json:"index"`
 
 	// The size of the page (the number of entities per page)
 	// Required: true
 	// Minimum: 1
-	Size *int64 `json:"size"`
+	Size *uint64 `json:"size"`
 
 	// The total number of items.
 	// Required: true
 	// Minimum: 0
-	Total *int64 `json:"total"`
+	Total *uint64 `json:"total"`
 }
 
 // Validate validates this pagination

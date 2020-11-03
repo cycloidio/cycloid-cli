@@ -28,7 +28,7 @@ type Policy struct {
 
 	// created at
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at,omitempty"`
+	CreatedAt *uint64 `json:"created_at,omitempty"`
 
 	// description
 	// Required: true
@@ -44,7 +44,7 @@ type Policy struct {
 
 	// updated at
 	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at,omitempty"`
+	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 }
 
 // Validate validates this policy

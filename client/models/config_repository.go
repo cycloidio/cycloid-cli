@@ -22,7 +22,7 @@ type ConfigRepository struct {
 
 	// created at
 	// Minimum: 0
-	CreatedAt *int64 `json:"created_at,omitempty"`
+	CreatedAt *uint64 `json:"created_at,omitempty"`
 
 	// credential id
 	// Minimum: 1
@@ -43,7 +43,7 @@ type ConfigRepository struct {
 
 	// updated at
 	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at,omitempty"`
+	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 
 	// url
 	// Required: true

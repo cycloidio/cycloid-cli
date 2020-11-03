@@ -9,9 +9,9 @@ services:
     container_name: yd-go
     image: cycloid/golang:1.14.4-r2
     volumes:
-      - .:/go/src/github.com/cycloidio/youdeploy-cli
+      - .:/go/src/github.com/cycloidio/cycloid-cli
       - $GOPATH/pkg/mod:/go/pkg/mod
-    working_dir: /go/src/github.com/cycloidio/youdeploy-cli
+    working_dir: /go/src/github.com/cycloidio/cycloid-cli
 
   swagger:
     container_name: yd-swagger
@@ -19,5 +19,5 @@ services:
     environment:
       - GOPATH=/go
     volumes:
-      - .:/go/src/github.com/cycloidio/youdeploy-cli
-    working_dir: /go/src/github.com/cycloidio/youdeploy-cli
+      - .:/go/src/github.com/cycloidio/cycloid-cli
+    working_dir: /go/src/github.com/cycloidio/cycloid-cli

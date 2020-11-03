@@ -29,7 +29,7 @@ type InfrastructureGraphNode struct {
 
 	// It holds [x,y]
 	// Required: true
-	Position []int64 `json:"position"`
+	Position []uint64 `json:"position"`
 
 	// resource
 	// Required: true

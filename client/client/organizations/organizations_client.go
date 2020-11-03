@@ -163,14 +163,9 @@ func (a *Client) GetOrgAncestors(params *GetOrgAncestorsParams, authInfo runtime
 }
 
 /*
-GetOrgEvents Retrieve the list of events which has been registered on the organization. The events to request can be filtered using by the unix timestamps ( begin and end timestamps range), the event type and severity; when more than one are applied then they are applied with a logical AND.
-- The unix timestamps must be always be specified, the rest of the
-  filters aren't required.
-- Some constraints are established by the third party system, which
-  actual register the events; so in the hypothetical case that the same
-  events would be registered in two different underlying systems, the
-  list of retrieved events may be slightly different, in terms of the
-  amount and the returned set, not the order.
+GetOrgEvents Retrieve the list of events which has been registered on the organization. The events to request can be filtered using Unix timestamps in  milliseconds (begin and end timestamps range), the event type and  severity; when more than one are applied then they are applied with a  logical AND.
+- The Unix timestamps must always be specified, the rest of the filters
+  are not mandatory.
 */
 func (a *Client) GetOrgEvents(params *GetOrgEventsParams, authInfo runtime.ClientAuthInfoWriter) (*GetOrgEventsOK, error) {
 	// TODO: Validate the params before sending
@@ -200,6 +195,40 @@ func (a *Client) GetOrgEvents(params *GetOrgEventsParams, authInfo runtime.Clien
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetOrgEventsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetOrgEventsTags Retrieve the list of tags and set of values for all the events of the organization.
+*/
+func (a *Client) GetOrgEventsTags(params *GetOrgEventsTagsParams, authInfo runtime.ClientAuthInfoWriter) (*GetOrgEventsTagsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetOrgEventsTagsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "getOrgEventsTags",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/events/tags",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetOrgEventsTagsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetOrgEventsTagsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetOrgEventsTagsDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

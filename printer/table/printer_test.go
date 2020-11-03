@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/cycloidio/youdeploy-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -30,8 +30,9 @@ func TestTablePrinter(t *testing.T) {
 			}
 		)
 
-		exp := `A      	B      	C     
-value a	value b	slice	
+		exp := `A      	B      	C   
+value a	value b	abc	
+       	       	def	
 `
 		err := tab.Print(&obj, printer.Options{}, &b)
 		require.NoError(t, err)

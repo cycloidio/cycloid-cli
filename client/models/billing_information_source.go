@@ -26,11 +26,11 @@ type BillingInformationSource struct {
 	// expiration month
 	// Required: true
 	// Minimum: 1
-	ExpirationMonth *int8 `json:"expiration_month"`
+	ExpirationMonth *uint8 `json:"expiration_month"`
 
 	// expiration year
 	// Required: true
-	ExpirationYear *int8 `json:"expiration_year"`
+	ExpirationYear *uint8 `json:"expiration_year"`
 
 	// last4
 	// Required: true

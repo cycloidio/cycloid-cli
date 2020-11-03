@@ -6,11 +6,11 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/internal"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/youdeploy-cli/printer"
-	"github.com/cycloidio/youdeploy-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewVersionCmd() *cobra.Command {

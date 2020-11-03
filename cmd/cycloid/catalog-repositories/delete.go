@@ -4,8 +4,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
 
 func NewDeleteCommand() *cobra.Command {

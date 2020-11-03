@@ -3,7 +3,7 @@ package configRepositories
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/youdeploy-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 func NewCommands() *cobra.Command {
