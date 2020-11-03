@@ -28,7 +28,7 @@ func NewCreateEnvCommand() *cobra.Command {
 		--usecase usecase-1 \
 		--pipeline /my/pipeline.yml \
 		--vars /my/pipeline/vars.yml \
-		--config /my/config/path.yml
+		--config /path/to/config=/path/in/config_repo
 `,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    createEnv,
