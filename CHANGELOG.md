@@ -1,4 +1,4 @@
-## [v1.0.50] _2020-11-03_
+## [v1.0.50] _2020-11-04_
 - **ADDED**
   - Add organization create/delete
    ([PR #51](https://github.com/cycloidio/cycloid-cli/pull/51))
