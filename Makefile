@@ -36,6 +36,7 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--name=api \
 		--tags=Cycloid \
 		--tags="Organizations" \
+		--tags="Organization API keys" \
 		--tags="Organization Config Repositories" \
 		--tags="Organization Credentials" \
 		--tags="Organization External Backends" \

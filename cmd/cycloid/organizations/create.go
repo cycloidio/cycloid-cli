@@ -13,38 +13,45 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewGetCommand() *cobra.Command {
+func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
-		Short: "get an organization",
+		Use:   "create",
+		Short: "create an organization",
 		Example: `
-	# get an organization by its canonical
-	cy organization get --org my-org -o yaml
+	# create an organization foo
+	cy organization create --name foo
 `,
-		RunE:    get,
+		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
+
+	common.RequiredFlag(WithFlagName, cmd)
+	WithPersistentFlagCanonical(cmd)
 
 	return cmd
 }
 
-func get(cmd *cobra.Command, args []string) error {
+func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	name, err := cmd.Flags().GetString("name")
 	if err != nil {
 		return err
 	}
+	canonical, err := cmd.Flags().GetString("canonical")
+	if err != nil {
+		return err
+	}
+
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	o, err := m.GetOrganization(org)
+	o, err := m.CreateOrganization(name, canonical)
 	if err != nil {
-		return errors.Wrap(err, "unable to get organization")
+		return errors.Wrap(err, "unable to create organization")
 	}
 
 	// fetch the printer from the factory

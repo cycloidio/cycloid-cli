@@ -23,7 +23,6 @@ func NewCreateCommand() *cobra.Command {
 	# create a project
 	cy --org my-org project create \
 		--name my-project \
-		--canonical my-project \
 		--description "an awesome project" \
 		--cloud-provider gcp|aws|... \
 		--stack-ref my-stack-ref \
@@ -32,7 +31,7 @@ func NewCreateCommand() *cobra.Command {
 		--usecase usecase-1 \
 		--vars /path/to/variables.yml \
 		--pipeline /path/to/pipeline.yml \
-		--config /path/to/config
+		--config /path/to/config=/path/in/config_repo
 `,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,

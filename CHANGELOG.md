@@ -1,4 +1,9 @@
-## [v1.0.49]
+## [v1.0.50] _2020-11-04_
+- **ADDED**
+  - Add organization create/delete
+   ([PR #51](https://github.com/cycloidio/cycloid-cli/pull/51))
+
+## [v1.0.49] _2020-11-02_
 - **ADDED**
   - Add validate-form command
    ([PR #35](https://github.com/cycloidio/cycloid-cli/pull/35))
