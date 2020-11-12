@@ -1,3 +1,8 @@
+## [v1.0.51] _2020-11-12_
+- **CHANGED**
+  - Update to version 1.0.51
+   ([PR #52](https://github.com/cycloidio/cycloid-cli/pull/52))
+
 ## [v1.0.50] _2020-11-04_
 - **ADDED**
   - Add organization create/delete
