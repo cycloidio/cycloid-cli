@@ -27,8 +27,8 @@ func NewCreateCommand() *cobra.Command {
 	}
 
 	// create --branch test --cred 105 --url "git@github.com:foo/bla.git"  --name catalogname
+	common.WithFlagCred(cmd)
 
-	common.RequiredFlag(common.WithFlagCred, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
 	common.RequiredFlag(WithFlagURL, cmd)
@@ -41,6 +41,7 @@ func NewCreateCommand() *cobra.Command {
 // Creates a Service catalog source
 
 func createCatalogRepository(cmd *cobra.Command, args []string) error {
+
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
