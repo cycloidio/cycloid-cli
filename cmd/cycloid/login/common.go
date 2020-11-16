@@ -7,6 +7,7 @@ var (
 	email    string
 	password string
 	child    string
+	apiKey   string
 )
 
 func WithFlagOrg(cmd *cobra.Command) {
@@ -23,4 +24,8 @@ func WithFlagPassword(cmd *cobra.Command) {
 
 func WithFlagChild(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&child, "child", "", "child organization")
+}
+
+func WithFlagAPIKey(cmd *cobra.Command) {
+	cmd.Flags().StringVar(&apiKey, "api-key", "", "API key")
 }

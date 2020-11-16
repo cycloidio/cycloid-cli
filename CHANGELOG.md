@@ -2,6 +2,12 @@
 - **ADDED**
   - Add organization create/delete
    ([PR #51](https://github.com/cycloidio/cycloid-cli/pull/51))
+  - `api-keys` commands
+   ([PR #57](https://github.com/cycloidio/cycloid-cli/pull/57))
+
+- **CHANGED**
+  - `login` method to allow login using API key
+   ([PR #57](https://github.com/cycloidio/cycloid-cli/pull/57))
 
 ## [v1.0.49] _2020-11-02_
 - **ADDED**
