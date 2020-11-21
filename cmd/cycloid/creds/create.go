@@ -19,10 +19,10 @@ func NewCreateCommand() *cobra.Command {
 		Short: "create a credential",
 		Example: `
 	# create a credential for basic authentication
-	cy --my-org credential create basic_auth --username my-username --password my-password
+	cy --org my-org credential create basic_auth --username my-username --password my-password
 
 	# create a credential for SSH
-	cy --my-org credential create ssh --ssh-key /path/to/private/key
+	cy --org my-org credential create ssh --ssh-key /path/to/private/key
 `,
 	}
 
