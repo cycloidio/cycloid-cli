@@ -96,6 +96,10 @@ type Middleware interface {
 
 	// DeleteAPIKey will request API to delete a specified generated API key
 	DeleteAPIKey(org, canonical string) error
+
+	// ValidateInfraPolicies will validate the TF plan against
+	// OPA policies defined on the Cycloid server
+	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error)
 }
 
 type middleware struct {
