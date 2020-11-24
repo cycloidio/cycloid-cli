@@ -71,4 +71,26 @@ value a	value b	abc
 		require.NoError(t, err)
 		assert.Equal(t, len(b.String()), 0)
 	})
+	t.Run("SuccessSlicePtr", func(t *testing.T) {
+		var (
+			tab Table
+			b   bytes.Buffer
+			obj = struct {
+				A []*struct{}
+			}{
+				A: []*struct{}{
+					&struct{}{},
+					&struct{}{},
+				},
+			}
+		)
+
+		exp := `A 
+2	
+`
+
+		err := tab.Print(&obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Equal(t, exp, b.String())
+	})
 }
