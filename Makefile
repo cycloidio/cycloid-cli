@@ -40,6 +40,7 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--tags="Organization Config Repositories" \
 		--tags="Organization Credentials" \
 		--tags="Organization External Backends" \
+		--tags="Organization Infrastructure Policies" \
 		--tags="Organization members" \
 		--tags="Organization pipelines" \
 		--tags="Organization pipelines jobs" \
