@@ -1,3 +1,8 @@
+## [v1.0.53] _2020-12-01_
+- **CHANGED**
+  - Update to version 1.0.53
+   ([PR #62](https://github.com/cycloidio/cycloid-cli/pull/62))
+
 ## [v1.0.51] _2020-11-12_
 - **CHANGED**
   - Update to version 1.0.51
