@@ -33,7 +33,7 @@ if [[ -z "$CY_VERSION" ]]; then
 fi
 
 # Download the binary if not present
-export CY_BINARY="${CY_BINARIES_PATH}/cy-${CY_VERSION}"
+export CY_BINARY="${CY_BINARY:-"${CY_BINARIES_PATH}/cy-${CY_VERSION}"}"
 if ! [[ -f "${CY_BINARY}" ]]; then
 
   # Download the exact CLI version
