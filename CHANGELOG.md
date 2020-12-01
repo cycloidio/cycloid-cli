@@ -2,6 +2,10 @@
 - **CHANGED**
   - Update to version 1.0.53
    ([PR #62](https://github.com/cycloidio/cycloid-cli/pull/62))
+  - Wrapper now fallback to RC version before trying the dev one
+   ([PR #62](https://github.com/cycloidio/cycloid-cli/pull/62))
+  - Add pipeline list command to list all pipeline in an organization
+   ([PR #62](https://github.com/cycloidio/cycloid-cli/pull/62))
 
 ## [v1.0.51] _2020-11-12_
 - **CHANGED**
