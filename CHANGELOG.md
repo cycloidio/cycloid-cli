@@ -1,7 +1,27 @@
+## [v1.0.53] _2020-12-01_
+- **CHANGED**
+  - Update to version 1.0.53
+   ([PR #62](https://github.com/cycloidio/cycloid-cli/pull/62))
+  - Wrapper now fallback to RC version before trying the dev one
+   ([PR #62](https://github.com/cycloidio/cycloid-cli/pull/62))
+  - Add pipeline list command to list all pipeline in an organization
+   ([PR #62](https://github.com/cycloidio/cycloid-cli/pull/62))
+
+## [v1.0.51] _2020-11-12_
+- **CHANGED**
+  - Update to version 1.0.51
+   ([PR #52](https://github.com/cycloidio/cycloid-cli/pull/52))
+
 ## [v1.0.50] _2020-11-04_
 - **ADDED**
   - Add organization create/delete
    ([PR #51](https://github.com/cycloidio/cycloid-cli/pull/51))
+  - `api-keys` commands
+   ([PR #57](https://github.com/cycloidio/cycloid-cli/pull/57))
+
+- **CHANGED**
+  - `login` method to allow login using API key
+   ([PR #57](https://github.com/cycloidio/cycloid-cli/pull/57))
 
 ## [v1.0.49] _2020-11-02_
 - **ADDED**

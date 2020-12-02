@@ -23,18 +23,12 @@ type JobInput struct {
 	// Required: true
 	Name *string `json:"name"`
 
-	// params
-	Params map[string]interface{} `json:"params,omitempty"`
-
 	// passed
 	Passed []string `json:"passed"`
 
 	// resource
 	// Required: true
 	Resource *string `json:"resource"`
-
-	// tags
-	Tags []string `json:"tags"`
 
 	// trigger
 	// Required: true

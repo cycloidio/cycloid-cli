@@ -20,11 +20,15 @@ func NewCommands() *cobra.Command {
 	# Login into my-org using email / password as flags
 	cy login --org my-org --email my-email --password my-password
 
+	# Login in a org child of an organization
+	cy login --org my-org --child child-org  --email my-email --password my-password
+
+	# Login in an org using an API token
+	cy login --org my-org --api-key eyJhbGciOiJI...
+
 	# Login without organization (can be used to access endpoint without organization)
 	cy login --email my-email --password my-password
 
-	# Login in a org child of an organization
-	cy login --org my-org --child child-org  --email my-email --password my-password
 `,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE: func(cmd *cobra.Command, args []string) error {
@@ -45,17 +49,21 @@ func NewCommands() *cobra.Command {
 			if err != nil {
 				return errors.Wrap(err, "unable to get child flag")
 			}
+			apiKey, err := cmd.Flags().GetString("api-key")
+			if err != nil {
+				return errors.Wrap(err, "unable to get child flag")
+			}
 
-			return login(org, child, email, password)
+			return login(org, child, email, password, apiKey)
 		},
 	}
 
-	WithFlagOrg(cmd)
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
+
 	WithFlagEmail(cmd)
 	WithFlagPassword(cmd)
 	WithFlagChild(cmd)
-	cmd.MarkFlagRequired("email")
-	cmd.MarkFlagRequired("password")
+	WithFlagAPIKey(cmd)
 
 	cmd.AddCommand(
 		NewListCommand(),
@@ -64,49 +72,55 @@ func NewCommands() *cobra.Command {
 	return cmd
 }
 
-func login(org, child, email, password string) error {
+func login(org, child, email, password, key string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// we first need to authenticate the user against cycloid console
-	session, err := m.Login(email, password)
-	if err != nil {
-		return errors.Wrapf(err, "unable to log user: %s", email)
-	}
-
-	// fetch any existing config
-	// we skip the error in case it's the first usage and the config
-	// file does not exist
-	conf, _ := config.ReadConfig()
-
-	// we save the new generated token into the config file
-	conf.Token = *session.Token
-	if err := config.WriteConfig(conf); err != nil {
-		return errors.Wrap(err, "unable to save config")
-	}
-
-	if len(org) != 0 {
-		orgSession, err := m.LoginOrg(org, child, email, password)
+	// if the email and the password are set, it means
+	// we need to use the user login
+	if len(email) != 0 && len(password) != 0 {
+		session, err := m.Login(email, password)
 		if err != nil {
 			return errors.Wrapf(err, "unable to log user: %s", email)
 		}
 
-		// we save the new generated token and remove the previous one
-		conf, err := config.ReadConfig()
-		if err != nil {
-			return errors.Wrap(err, "unable to read config: %s")
+		// fetch any existing config
+		// we skip the error in case it's the first usage and the config
+		// file does not exist
+		conf, _ := config.ReadConfig()
+
+		// we save the new generated token into the config file
+		conf.Token = *session.Token
+		if err := config.WriteConfig(conf); err != nil {
+			return errors.Wrap(err, "unable to save config")
 		}
+	}
+
+	if len(org) != 0 {
+
+		// if the API key is not provided, we fallback on the
+		// default org authentication using user the token
+		if len(key) == 0 {
+			orgSession, err := m.LoginOrg(org, child)
+			if err != nil {
+				return errors.Wrapf(err, "unable to log user: %s", email)
+			}
+			key = *orgSession.Token
+		}
+		// we save the new generated token and remove the previous one
+		conf, _ := config.ReadConfig()
+
 		// there is no distinction between child or "root" org, we just
 		// need to save it once
 		// if the org and child are given, we save only the child token
 		// else we save the org token
 		if len(child) != 0 {
 			conf.Organizations[child] = config.Organization{
-				Token: *orgSession.Token,
+				Token: key,
 			}
 		} else {
 			conf.Organizations[org] = config.Organization{
-				Token: *orgSession.Token,
+				Token: key,
 			}
 		}
 		if err := config.WriteConfig(conf); err != nil {

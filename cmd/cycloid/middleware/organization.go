@@ -3,7 +3,6 @@ package middleware
 import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
-	"regexp"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
@@ -16,8 +15,7 @@ func (m *middleware) CreateOrganization(name string, canonical string) (*models.
 	params := organizations.NewCreateOrgParams()
 
 	if canonical == "" {
-		re := regexp.MustCompile(`[^a-zA-z0-9_\-]`)
-		canonical = re.ReplaceAllString(name, "-")
+		canonical = common.GenerateCanonical(name)
 	}
 
 	body := &models.NewOrganization{

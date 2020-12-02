@@ -66,11 +66,21 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch string, cred
 	params := organization_service_catalog_sources.NewCreateServiceCatalogSourceParams()
 	params.SetOrganizationCanonical(org)
 
-	body := &models.CreateServiceCatalogSource{
-		Branch:       &branch,
-		CredentialID: cred,
-		Name:         &name,
-		URL:          &url,
+	var body *models.CreateServiceCatalogSource
+
+	if cred != 0 {
+		body = &models.CreateServiceCatalogSource{
+			Branch:       &branch,
+			CredentialID: cred,
+			Name:         &name,
+			URL:          &url,
+		}
+	} else {
+		body = &models.CreateServiceCatalogSource{
+			Branch: &branch,
+			Name:   &name,
+			URL:    &url,
+		}
 	}
 
 	params.SetBody(body)

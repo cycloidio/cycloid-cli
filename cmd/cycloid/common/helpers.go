@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"regexp"
+	"strings"
 
 	"net/url"
 
@@ -124,4 +125,19 @@ func ClientCredentials(org *string) runtime.ClientAuthInfoWriter {
 		r.SetHeaderParam("Authorization", "Bearer "+token)
 		return nil
 	})
+}
+
+// GenerateCanonical will generate a canonical from the
+// name passed in input
+func GenerateCanonical(name string) string {
+	var (
+		extraspaces = regexp.MustCompile(`\s+`)
+		spaces      = regexp.MustCompile(`[^a-zA-z0-9_\-]`)
+		canonical   string
+	)
+
+	canonical = extraspaces.ReplaceAllString(name, " ")
+	canonical = spaces.ReplaceAllString(canonical, "-")
+
+	return strings.ToLower(canonical)
 }

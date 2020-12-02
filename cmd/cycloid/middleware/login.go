@@ -33,7 +33,7 @@ func (m *middleware) Login(email, password string) (*models.UserSession, error) 
 	return res.GetPayload().Data, nil
 }
 
-func (m *middleware) LoginOrg(org, child, username, password string) (*models.UserSession, error) {
+func (m *middleware) LoginOrg(org, child string) (*models.UserSession, error) {
 
 	params := user.NewRefreshTokenParams()
 	params.SetOrganizationCanonical(&org)

@@ -37,13 +37,19 @@ type Organization struct {
 func ReadConfig() (*Config, error) {
 	configFilePath, err := xdg.ConfigFile(fmt.Sprintf("%s/%s", appName, path))
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to find XDG config path")
+		return &Config{
+			Token:         "",
+			Organizations: make(map[string]Organization),
+		}, errors.Wrap(err, "unable to find XDG config path")
 	}
 	content, err := ioutil.ReadFile(configFilePath)
 	if err != nil {
 		// we return an empty Config in case it's the first time we try to access
 		// the config and it does not exist yet
-		return &Config{}, errors.Wrap(err, "unable to read config from file")
+		return &Config{
+			Token:         "",
+			Organizations: make(map[string]Organization),
+		}, errors.Wrap(err, "unable to read config from file")
 	}
 	var c Config
 	if err := yaml.Unmarshal(content, &c); err != nil {
