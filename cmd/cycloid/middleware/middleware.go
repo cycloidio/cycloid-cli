@@ -68,6 +68,7 @@ type Middleware interface {
 	UnpausePipelineJob(org, project, env, job string) error
 	UnpausePipeline(org string, project string, env string) error
 	UpdatePipeline(org string, project string, env string, pipeline string, variables string) (*models.Pipeline, error)
+	ListPipelines(org string) ([]*models.Pipeline, error)
 
 	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, cloudProvider, stackRef, usecase string, configRepo uint32) (*models.Project, error)
 	DeleteProjectEnv(org, project, env string) error

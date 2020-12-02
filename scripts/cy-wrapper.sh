@@ -33,9 +33,10 @@ if [[ -z "$CY_VERSION" ]]; then
 fi
 
 # Download the binary if not present
-export CY_BINARY="${CY_BINARIES_PATH}/cy-${CY_VERSION}"
+export CY_BINARY="${CY_BINARY:-"${CY_BINARIES_PATH}/cy-${CY_VERSION}"}"
 if ! [[ -f "${CY_BINARY}" ]]; then
 
+  # Download the exact CLI version
   CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/cy"
   wget -q -O "${CY_BINARY}" "$CY_URL"
   STATUS=$?
@@ -44,13 +45,28 @@ if ! [[ -f "${CY_BINARY}" ]]; then
     rm -f "${CY_BINARY}"
   fi
 
+  # In case of 404, download RC CLI version
+  if [ $STATUS == 8 ]; then
+    echo "Warning: Unable to download CLI version ${CY_VERSION}. Fallback to RC version" >&2
+    CY_BINARY="${CY_BINARIES_PATH}/cy-${CY_VERSION}-rc"
+    CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/cy"
+    wget -q -O "${CY_BINARY}" "$CY_URL"
+    STATUS=$?
+    if [ $STATUS != 0 ]; then
+      rm -f "${CY_BINARY}"
+    fi
+  fi
+
   # In case of 404, fallback on latest develop version
   if [ $STATUS == 8 ]; then
-    echo "Warning: Unable to download CLI version ${CY_VERSION}. Fallback to latest develop version" >&2
+    echo "Warning: Unable to download CLI version ${CY_VERSION}-rc. Fallback to latest develop version" >&2
     CY_BINARY="${CY_BINARIES_PATH}/cy-latest"
     CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v0.0-dev/cy"
     wget -q -O "${CY_BINARY}" "$CY_URL"
     STATUS=$?
+    if [ $STATUS != 0 ]; then
+      rm -f "${CY_BINARY}"
+    fi
   fi
 
   if [ $STATUS != 0 ]; then
