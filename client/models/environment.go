@@ -15,7 +15,7 @@ import (
 
 // Environment Environment
 //
-// Represent an environment with may be realted to a Project and Pipeline
+// Represent an environment with may be related to a Project and Pipeline
 // swagger:model Environment
 type Environment struct {
 
@@ -25,6 +25,12 @@ type Environment struct {
 	// Min Length: 1
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	Canonical *string `json:"canonical"`
+
+	// The cloud provider object that this environment is using.
+	// In the event where the cloud provider is not yet defined/supported
+	// that field might be empty.
+	//
+	CloudProvider *CloudProvider `json:"cloud_provider,omitempty"`
 
 	// created at
 	// Required: true
@@ -47,6 +53,10 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCloudProvider(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -84,6 +94,24 @@ func (m *Environment) validateCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *Environment) validateCloudProvider(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CloudProvider) { // not required
+		return nil
+	}
+
+	if m.CloudProvider != nil {
+		if err := m.CloudProvider.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cloud_provider")
+			}
+			return err
+		}
 	}
 
 	return nil
