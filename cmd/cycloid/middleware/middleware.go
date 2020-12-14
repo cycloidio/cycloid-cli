@@ -70,12 +70,12 @@ type Middleware interface {
 	UpdatePipeline(org string, project string, env string, pipeline string, variables string) (*models.Pipeline, error)
 	ListPipelines(org string) ([]*models.Pipeline, error)
 
-	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, cloudProvider, stackRef, usecase string, configRepo uint32) (*models.Project, error)
+	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase string, configRepo uint32) (*models.Project, error)
 	DeleteProjectEnv(org, project, env string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	ListProjects(org string) ([]*models.ProjectsItem, error)
-	UpdateProject(org, projectName, projectCanonical string, envs []string, description, cloudProvider, stackRef, owner string, configRepo uint32) (*models.Project, error)
+	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner string, configRepo uint32) (*models.Project, error)
 
 	DeleteRole(org string, id uint32) error
 	GetRole(org string, id uint32) (*models.Role, error)
