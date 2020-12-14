@@ -46,7 +46,6 @@ func NewCreateCommand() *cobra.Command {
 	WithFlagUsecase(cmd)
 	WithFlagDescription(cmd)
 	WithFlagCanonical(cmd)
-	WithFlagCloudProvider(cmd)
 	WithFlagConfig(cmd)
 	return cmd
 }
@@ -68,10 +67,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	description, err := cmd.Flags().GetString("description")
-	if err != nil {
-		return err
-	}
-	cloudProvider, err := cmd.Flags().GetString("cloud-provider")
 	if err != nil {
 		return err
 	}
@@ -120,7 +115,7 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 	vars := string(rawVars)
 
-	project, err := m.CreateProject(org, name, canonical, env, pipelineTemplate, vars, description, cloudProvider, stackRef, usecase, configRepo)
+	project, err := m.CreateProject(org, name, canonical, env, pipelineTemplate, vars, description, stackRef, usecase, configRepo)
 	if err != nil {
 		return err
 	}
