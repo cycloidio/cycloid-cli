@@ -9,6 +9,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -87,10 +88,24 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	if common.IsInList(env, projectData.Environments) {
-		return fmt.Errorf("environment: %s already exists for this project: %s", env, project)
+	// need to conver the environment to "new environment" as required
+	// by the API
+	envs := make([]*models.NewEnvironment, len(projectData.Environments))
+
+	for i, e := range projectData.Environments {
+		if *e.Canonical == env {
+			return fmt.Errorf("environment %s exists already in %s", env, project)
+		}
+		envs[i] = &models.NewEnvironment{
+			Canonical: e.Canonical,
+		}
 	}
-	envs := append(projectData.Environments, env)
+
+	// finally add the new environment
+	envs = append(envs, &models.NewEnvironment{
+		// TODO: https://github.com/cycloidio/cycloid-cli/issues/67
+		Canonical: &env,
+	})
 
 	//
 	// UPDATE PROJECT
@@ -100,7 +115,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		project,
 		envs,
 		projectData.Description,
-		*projectData.CloudProvider.Canonical,
 		*projectData.ServiceCatalogRef,
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryID)
