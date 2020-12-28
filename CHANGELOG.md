@@ -1,3 +1,8 @@
+## [v1.0.57] _2020-12-01_
+- **ADDED**
+  - Adding new list-invites command
+   ([PR #72](https://github.com/cycloidio/cycloid-cli/pull/72))
+
 ## [v1.0.53] _2020-12-01_
 - **CHANGED**
   - Update to version 1.0.53

@@ -48,6 +48,7 @@ type Middleware interface {
 	GetMember(org string, name string) (*models.MemberOrg, error)
 	InviteMember(org string, email string, roleID uint32) error
 	ListMembers(org string) ([]*models.MemberOrg, error)
+	ListInvites(org string) ([]*models.Invitation, error)
 	UpdateMembers(org string, name string, roleID uint32) (*models.MemberOrg, error)
 
 	CreateOrganization(name string, canonical string) (*models.Organization, error)
