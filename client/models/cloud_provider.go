@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -29,6 +31,7 @@ type CloudProvider struct {
 	// Max Length: 30
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Enum: [aws google azurerm flexibleengine openstack]
 	Canonical *string `json:"canonical"`
 
 	// created at
@@ -101,6 +104,44 @@ func (m *CloudProvider) validateAbbreviation(formats strfmt.Registry) error {
 	return nil
 }
 
+var cloudProviderTypeCanonicalPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["aws","google","azurerm","flexibleengine","openstack"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		cloudProviderTypeCanonicalPropEnum = append(cloudProviderTypeCanonicalPropEnum, v)
+	}
+}
+
+const (
+
+	// CloudProviderCanonicalAws captures enum value "aws"
+	CloudProviderCanonicalAws string = "aws"
+
+	// CloudProviderCanonicalGoogle captures enum value "google"
+	CloudProviderCanonicalGoogle string = "google"
+
+	// CloudProviderCanonicalAzurerm captures enum value "azurerm"
+	CloudProviderCanonicalAzurerm string = "azurerm"
+
+	// CloudProviderCanonicalFlexibleengine captures enum value "flexibleengine"
+	CloudProviderCanonicalFlexibleengine string = "flexibleengine"
+
+	// CloudProviderCanonicalOpenstack captures enum value "openstack"
+	CloudProviderCanonicalOpenstack string = "openstack"
+)
+
+// prop value enum
+func (m *CloudProvider) validateCanonicalEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, cloudProviderTypeCanonicalPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *CloudProvider) validateCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
@@ -116,6 +157,11 @@ func (m *CloudProvider) validateCanonical(formats strfmt.Registry) error {
 	}
 
 	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateCanonicalEnum("canonical", "body", *m.Canonical); err != nil {
 		return err
 	}
 

@@ -28,12 +28,6 @@ type Project struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
 
-	// The cloud provider object that this project is using.
-	// In the event where the cloud provider is not yet defined/supported
-	// that field might be empty.
-	//
-	CloudProvider *CloudProvider `json:"cloud_provider,omitempty"`
-
 	// config repository id
 	// Minimum: 1
 	ConfigRepositoryID uint32 `json:"config_repository_id,omitempty"`
@@ -47,7 +41,8 @@ type Project struct {
 	Description string `json:"description,omitempty"`
 
 	// environments
-	Environments []string `json:"environments"`
+	// Required: true
+	Environments []*Environment `json:"environments"`
 
 	// id
 	// Required: true
@@ -80,10 +75,6 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateCloudProvider(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -146,24 +137,6 @@ func (m *Project) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateCloudProvider(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.CloudProvider) { // not required
-		return nil
-	}
-
-	if m.CloudProvider != nil {
-		if err := m.CloudProvider.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cloud_provider")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (m *Project) validateConfigRepositoryID(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.ConfigRepositoryID) { // not required
@@ -192,14 +165,22 @@ func (m *Project) validateCreatedAt(formats strfmt.Registry) error {
 
 func (m *Project) validateEnvironments(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Environments) { // not required
-		return nil
+	if err := validate.Required("environments", "body", m.Environments); err != nil {
+		return err
 	}
 
 	for i := 0; i < len(m.Environments); i++ {
+		if swag.IsZero(m.Environments[i]) { // not required
+			continue
+		}
 
-		if err := validate.Pattern("environments"+"."+strconv.Itoa(i), "body", string(m.Environments[i]), `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
-			return err
+		if m.Environments[i] != nil {
+			if err := m.Environments[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
 		}
 
 	}
