@@ -50,6 +50,7 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--tags="Organization workers" \
 		--tags="Organization members" \
 		--tags="Organization Forms" \
+ 		--tags="Organization Infrastructure Policies" \
 		--tags="Service catalogs" \
 		--tags="User"
 

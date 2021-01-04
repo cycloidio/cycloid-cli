@@ -44,7 +44,7 @@ func entryFromStruct(obj reflect.Value, h []string) []string {
 				}
 				values = append(values, strings.Join(stringSlice[:], "\n"))
 			} else {
-				values = append(values, value.Kind().String())
+				values = append(values, strconv.Itoa(value.Len()))
 			}
 		case reflect.Ptr:
 			elt := value.Elem()

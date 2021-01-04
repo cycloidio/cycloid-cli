@@ -8,6 +8,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
 	externalBackends "github.com/cycloidio/cycloid-cli/cmd/cycloid/external-backends"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/infrapolicies"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
@@ -39,6 +40,7 @@ func AttachCommands(cmd *cobra.Command) {
 		creds.NewCommands(),
 		events.NewCommands(),
 		externalBackends.NewCommands(),
+		infrapolicies.NewCommands(),
 		members.NewCommands(),
 		organizations.NewCommands(),
 		pipelines.NewCommands(),
