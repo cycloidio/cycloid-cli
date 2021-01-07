@@ -62,7 +62,12 @@ type InfraPolicy struct {
 	// Required: true
 	Owner *MemberOrg `json:"owner"`
 
-	// severity
+	// It defines the enforcement level. It must be used from the caller of the InfraPolicy
+	// validation endpoint to apply the specific logic in case of not respected InfraPolicies.
+	// Uses critical to block the changes.
+	// Uses warning to block the changes but allow to override manually.
+	// Uses advisory to allow them but a notification must be send.
+	//
 	// Required: true
 	// Enum: [critical warning advisory]
 	Severity *string `json:"severity"`
