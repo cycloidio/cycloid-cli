@@ -55,6 +55,26 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	return d, err
 }
 
+// convertFormFile takes a models.FormsFile and converts its variables
+// from map[interface{}]interface{} to map[string]interface{}, allowing
+// to use those properly with the API - as JSON cannot marshal/unmarshal
+// map[interface{}]interface{}
+func convertFormFile(mff models.FormsFile) models.FormsFile {
+	for _, useCases := range mff {
+		for _, groups := range useCases {
+			for _, entities := range groups {
+				for i, entity := range entities {
+					entities[i].Default = ConvertMapInterfaceToMapString(entity.Default)
+					for ni, v := range entity.Values {
+						entities[i].Values[ni] = ConvertMapInterfaceToMapString(v)
+					}
+				}
+			}
+		}
+	}
+	return mff
+}
+
 func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error) {
 	var body *models.FormsValidation
 	var formsfile models.FormsFile
@@ -69,6 +89,7 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 		}
 		return ve, nil
 	}
+	formsfile = convertFormFile(formsfile)
 
 	params := organization_forms.NewValidateFormsFileParams()
 	params.SetOrganizationCanonical(org)
