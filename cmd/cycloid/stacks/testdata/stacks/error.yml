@@ -1,0 +1,16 @@
+---
+default:
+  terraform:
+    MalformedYAML
+    LogicApp:
+      - name: "Logic APP Action body"
+        description: "JSON Body to define the HTTP App action"
+        key: app_action_body
+        widget: text_area
+        type: string
+    VirtualMachines:
+      - name: "ARM Resource group name"
+        description: "Name of the resource group"
+        key: resource_group_name
+        type: string
+        widget: simple_text
