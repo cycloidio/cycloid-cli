@@ -72,7 +72,7 @@ func diff(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	fmt.Printf("Groups: %s\n", pd.Groups)
+	fmt.Printf("Groups: %v\n", pd.Groups)
 
 	fmt.Printf("%+v\n", err)
 	fmt.Printf("%+v\n", pd)
