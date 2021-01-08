@@ -1,4 +1,4 @@
-package root
+package stacks
 
 import (
 	"io/ioutil"
@@ -13,24 +13,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var formsFlag string
-
 func NewValidateFormCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "validate-form",
 		Short: "validate a .forms.yml file",
 		Example: `
 		# validate a stackforms file
-		cy validate-form --org my-org --forms .forms.yml
+		cy stacks validate-form --org my-org --forms .forms.yml
 		`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    validateForm,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
-
-	cmd.Flags().StringVar(&formsFlag, "forms", ".forms.yml", "Path to your stackform file, default .forms.yml")
-
 	return cmd
 }
 

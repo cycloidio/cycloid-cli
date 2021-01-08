@@ -31,7 +31,6 @@ func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(
 		// Root
 		root.NewVersionCmd(),
-		root.NewValidateFormCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
 		apikey.NewCommands(),

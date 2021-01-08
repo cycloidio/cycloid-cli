@@ -24,6 +24,7 @@ func NewListCommand() *cobra.Command {
 		RunE:    list,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 	return cmd
 
 }

@@ -2,6 +2,8 @@
 - **ADDED**
   - Adding new list-invites command
    ([PR #72](https://github.com/cycloidio/cycloid-cli/pull/72))
+  - `gen-doc` subcommand
+   ([PR #61](https://github.com/cycloidio/cycloid-cli/pull/61))
 
 ## [v1.0.53] _2020-12-01_
 - **CHANGED**
