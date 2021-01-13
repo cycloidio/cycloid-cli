@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -50,20 +51,12 @@ func get(org, canonical, output string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	key, err := m.GetAPIKey(org, canonical)
-	if err != nil {
-		return fmt.Errorf("unable to get API key: %w", err)
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
-		return fmt.Errorf("unable to get printer: %w", err)
+		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(key, printer.Options{}, os.Stdout); err != nil {
-		return fmt.Errorf("unable to print result: %w", err)
-	}
-	return nil
+	key, err := m.GetAPIKey(org, canonical)
+	return printer.SmartPrint(p, key, err, "unable to get API key", printer.Options{}, os.Stdout)
 }

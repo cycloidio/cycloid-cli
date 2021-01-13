@@ -15,7 +15,7 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 	params := organizations.NewCreateOrgParams()
 
 	body := &models.NewOrganization{
-		Name:      &name,
+		Name: &name,
 	}
 
 	params.SetBody(body)

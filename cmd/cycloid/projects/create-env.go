@@ -88,6 +88,12 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
 	// need to conver the environment to "new environment" as required
 	// by the API
 	envs := make([]*models.NewEnvironment, len(projectData.Environments))
@@ -119,9 +125,11 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryCanonical)
 
+	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, os.Stdout)
 	if err != nil {
-		return errors.Wrap(err, "unable to update project")
+		return err
 	}
+
 
 	//
 	// CREATE PIPELINE
@@ -140,8 +148,10 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 	variables := string(rawVars)
 
-	if _, err := m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase); err != nil {
-		return errors.Wrap(err, "unable to create pipeline")
+	_, err = m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase)
+	err = printer.SmartPrint(p, nil, err, "unable to create pipeline", printer.Options{}, os.Stdout)
+	if err != nil {
+		return err
 	}
 
 	//
@@ -160,28 +170,21 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			cfs[dest] = c
 		}
 
-		if err := m.PushConfig(org, project, env, cfs); err != nil {
-			return errors.Wrap(err, "unable to push config")
+		err = m.PushConfig(org, project, env, cfs)
+		err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, os.Stdout)
+		if err != nil {
+			return err
 		}
 	}
 
 	//
 	// PIPELINE UNPAUSE
 	//
-	if err := m.UnpausePipeline(org, project, env); err != nil {
-		return errors.Wrap(err, "unable to unpause pipeline")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
+	err = m.UnpausePipeline(org, project, env)
+	err = printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, os.Stdout)
 	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
+		return err
 	}
 
-	// print the result on the standard output
-	if err := p.Print(resp, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	return printer.SmartPrint(p, resp, err, "", printer.Options{}, os.Stdout)
 }

@@ -1,12 +1,16 @@
 package organizations
 
 import (
+	"os"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -35,8 +39,17 @@ func del(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable get org flag")
 	}
 
-	if err := m.DeleteOrganization(org); err != nil {
-		return errors.Wrap(err, "unable to delete organization")
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
 	}
-	return nil
+
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	err = m.DeleteOrganization(org)
+	return printer.SmartPrint(p, nil, err, "unable to delete organization", printer.Options{}, os.Stdout)
 }

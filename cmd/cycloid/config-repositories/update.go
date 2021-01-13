@@ -75,14 +75,10 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	cr, err := m.UpdateConfigRepository(org, can, cred, name, url, branch, setDefault)
-	if err != nil {
-		return errors.Wrap(err, "unable to update config repository")
 	}
 
 	// fetch the printer from the factory
@@ -91,10 +87,6 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(cr, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	cr, err := m.UpdateConfigRepository(org, can, cred, name, url, branch, setDefault)
+	return printer.SmartPrint(p, cr, err, "unable to update config repository", printer.Options{}, os.Stdout)
 }

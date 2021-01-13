@@ -38,20 +38,12 @@ func listWorkers(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	ws, err := m.ListOrganizationWorkers(org)
-	if err != nil {
-		return errors.Wrap(err, "unable to list organization workers")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(ws, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-	return nil
+	ws, err := m.ListOrganizationWorkers(org)
+	return printer.SmartPrint(p, ws, err, "unable to list organization workers", printer.Options{}, os.Stdout)
 }
