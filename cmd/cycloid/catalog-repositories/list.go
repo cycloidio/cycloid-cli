@@ -18,7 +18,7 @@ func NewListCommand() *cobra.Command {
 		Short: "list the catalog repositories",
 		Example: `
 	# list the catalog repositories in the org 'my-org' and display the result in JSON format
-	cy  --org my-org cr list -o json
+	cy --org my-org cr list -o json
 `,
 		RunE: listCatalogRepositories,
 	}
@@ -26,9 +26,6 @@ func NewListCommand() *cobra.Command {
 	return cmd
 }
 
-// /organizations/{organization_canonical}/service_catalog_sources
-// get: getServiceCatalogSources
-// Return all the private service catalogs
 func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
@@ -43,15 +40,19 @@ func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	crs, err := m.ListCatalogRepositories(org)
-	if err != nil {
-		return errors.Wrap(err, "unable to list catalog repositories")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	crs, err := m.ListCatalogRepositories(org)
+	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
+		return errors.Wrap(err, "unable to list catalog repositories")
 	}
 
 	// print the result on the standard output

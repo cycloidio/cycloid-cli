@@ -17,7 +17,7 @@ func NewGetCommand() *cobra.Command {
 	var (
 		example = `
 	# Get a role within my-org organization
-	cy --org my-org roles get --id my-role-id
+	cy --org my-org roles get --canonical my-role
 	`
 		short = "Get the organization role"
 		long  = short
@@ -56,15 +56,19 @@ func getRole(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	mb, err := m.GetRole(org, can)
-	if err != nil {
-		return err
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	mb, err := m.GetRole(org, can)
+	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
+		return err
 	}
 
 	// print the result on the standard output

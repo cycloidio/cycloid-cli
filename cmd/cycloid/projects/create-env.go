@@ -88,6 +88,12 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
 	// need to conver the environment to "new environment" as required
 	// by the API
 	envs := make([]*models.NewEnvironment, len(projectData.Environments))
@@ -120,6 +126,10 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		projectData.ConfigRepositoryCanonical)
 
 	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
 		return errors.Wrap(err, "unable to update project")
 	}
 
@@ -141,6 +151,10 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	variables := string(rawVars)
 
 	if _, err := m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase); err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
 		return errors.Wrap(err, "unable to create pipeline")
 	}
 
@@ -161,6 +175,10 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		}
 
 		if err := m.PushConfig(org, project, env, cfs); err != nil {
+			// print the result on the standard output
+			if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+				return errors.Wrap(err, "unable to print result")
+			}
 			return errors.Wrap(err, "unable to push config")
 		}
 	}
@@ -169,13 +187,11 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	// PIPELINE UNPAUSE
 	//
 	if err := m.UnpausePipeline(org, project, env); err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
 		return errors.Wrap(err, "unable to unpause pipeline")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
 	}
 
 	// print the result on the standard output

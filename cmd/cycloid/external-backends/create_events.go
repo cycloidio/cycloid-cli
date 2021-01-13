@@ -53,18 +53,22 @@ func createEvents(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("Unexpected backend name")
 	}
 
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
 	// Set project and env to empty cause events are not linked to a project
 	project := ""
 	env := ""
 	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, ebC)
 	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
 		return errors.Wrap(err, "unable to create external backend")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
 	}
 
 	// print the result on the standard output

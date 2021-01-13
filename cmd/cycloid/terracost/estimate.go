@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -44,17 +45,21 @@ func estimate(org, planPath, output string) error {
 		return fmt.Errorf("unable to read terraform plan file: %w", err)
 	}
 
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-	res, err := m.CostEstimation(org, plan)
-	if err != nil {
-		return fmt.Errorf("unable to estimate terraform plan file: %w", err)
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return fmt.Errorf("unable to get printer: %w", err)
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+	res, err := m.CostEstimation(org, plan)
+	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
+		return fmt.Errorf("unable to estimate terraform plan file: %w", err)
 	}
 
 	// print the result on the standard output

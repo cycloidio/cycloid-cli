@@ -17,7 +17,7 @@ func NewCreateCommand() *cobra.Command {
 		Use:   "create",
 		Short: "create a catalog repository",
 		Example: `
-	# create a catalog repository using credential ID 123, branch 'stacks' and git URL
+	# create a catalog repository using credential canonical 123, branch 'stacks' and git URL
 	cy --org my-org catalog-repo create --branch stacks --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name
 
 	# create a catalog repository using public git repository
@@ -75,15 +75,19 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.CreateCatalogRepository(org, name, url, branch, cred)
-	if err != nil {
-		return err
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	cr, err := m.CreateCatalogRepository(org, name, url, branch, cred)
+	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
+		return err
 	}
 
 	// print the result on the standard output

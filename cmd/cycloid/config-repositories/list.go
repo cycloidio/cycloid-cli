@@ -28,9 +28,6 @@ func NewListCommand() *cobra.Command {
 	return cmd
 }
 
-// /organizations/{organization_canonical}/config_repositories
-// get: getConfigRepositories
-// Return all the config repositories
 func listConfigRepositories(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
@@ -44,15 +41,19 @@ func listConfigRepositories(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	crs, err := m.ListConfigRepositories(org)
-	if err != nil {
-		return errors.Wrap(err, "unable to list config repositories")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	crs, err := m.ListConfigRepositories(org)
+	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
+		return errors.Wrap(err, "unable to list config repositories")
 	}
 
 	// print the result on the standard output

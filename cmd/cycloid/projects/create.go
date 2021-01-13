@@ -103,6 +103,12 @@ func create(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
 	rawPipeline, err := ioutil.ReadFile(pipelinePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read pipeline file")
@@ -117,6 +123,10 @@ func create(cmd *cobra.Command, args []string) error {
 
 	project, err := m.CreateProject(org, name, canonical, env, pipelineTemplate, vars, description, stackRef, usecase, configRepo)
 	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
 		return err
 	}
 
@@ -133,14 +143,12 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 
 		if err := m.PushConfig(org, *project.Canonical, env, cfs); err != nil {
+			// print the result on the standard output
+			if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+				return errors.Wrap(err, "unable to print result")
+			}
 			return errors.Wrap(err, "unable to push config")
 		}
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
 	}
 
 	// print the result on the standard output

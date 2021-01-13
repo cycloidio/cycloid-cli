@@ -10,6 +10,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/olekukonko/tablewriter"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 var (
@@ -161,6 +162,18 @@ func (t Table) Print(obj interface{}, opts printer.Options, w io.Writer) error {
 	table.SetTablePadding("\t") // pad with tabs
 	table.SetNoWhiteSpace(true)
 
+	// Check if the obj is an API error with payload containing errors details
+	apiErr, ok := obj.(interface {
+		GetPayload() *models.ErrorPayload
+	})
+	if ok {
+		errP := apiErr.GetPayload()
+		if reflect.TypeOf(errP) == reflect.TypeOf(&models.ErrorPayload{}) {
+			obj = errP.Errors
+		}
+	}
+
+	// Print our obj
 	headers, entries, err := generate(obj, opts)
 	if err != nil {
 		return err

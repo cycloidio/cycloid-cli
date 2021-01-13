@@ -46,15 +46,19 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	creds, err := m.ListCredentials(org, credT)
-	if err != nil {
-		return errors.Wrap(err, "unable to list credentials")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	creds, err := m.ListCredentials(org, credT)
+	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
+		return errors.Wrap(err, "unable to list credentials")
 	}
 
 	// print the result on the standard output

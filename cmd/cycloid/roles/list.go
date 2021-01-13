@@ -49,15 +49,19 @@ func listRoles(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	mbs, err := m.ListRoles(org)
-	if err != nil {
-		return err
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	mbs, err := m.ListRoles(org)
+	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
+		return err
 	}
 
 	// print the result on the standard output

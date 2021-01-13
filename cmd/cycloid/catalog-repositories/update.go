@@ -34,10 +34,6 @@ func NewUpdateCommand() *cobra.Command {
 	return cmd
 }
 
-// /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}
-// put: updateServiceCatalogSource
-// Update a Service catalog source
-
 func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
@@ -77,15 +73,19 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred)
-	if err != nil {
-		return errors.Wrap(err, "unable to update catalog repository")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	cr, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred)
+	if err != nil {
+		// print the result on the standard output
+		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+			return errors.Wrap(err, "unable to print result")
+		}
+		return errors.Wrap(err, "unable to update catalog repository")
 	}
 
 	// print the result on the standard output
