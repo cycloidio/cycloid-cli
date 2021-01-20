@@ -26,7 +26,6 @@ func NewCreateCommand() *cobra.Command {
 	}
 
 	common.RequiredFlag(WithFlagName, cmd)
-	WithPersistentFlagCanonical(cmd)
 
 	return cmd
 }
@@ -39,17 +38,13 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	canonical, err := cmd.Flags().GetString("canonical")
-	if err != nil {
-		return err
-	}
 
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	o, err := m.CreateOrganization(name, canonical)
+	o, err := m.CreateOrganization(name)
 	if err != nil {
 		return errors.Wrap(err, "unable to create organization")
 	}

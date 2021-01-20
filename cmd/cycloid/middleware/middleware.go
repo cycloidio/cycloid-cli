@@ -10,29 +10,29 @@ type Middleware interface {
 	GetAppVersion() (*models.AppVersion, error)
 	GetStatus() (*models.GeneralStatus, error)
 
-	CreateCatalogRepository(org, name, url, branch string, cred uint32) (*models.ServiceCatalogSource, error)
-	DeleteCatalogRepository(org string, catalogRepo uint32) error
-	GetCatalogRepository(org string, catalogRepo uint32) (*models.ServiceCatalogSource, error)
+	CreateCatalogRepository(org, name, url, branch, cred string) (*models.ServiceCatalogSource, error)
+	DeleteCatalogRepository(org, catalogRepo string) error
+	GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error)
 	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
-	RefreshCatalogRepository(org string, catalogRepo uint32) (*models.ServiceCatalogSource, error)
-	UpdateCatalogRepository(org string, catalogRepo uint32, name, url, branch string, cred uint32) (*models.ServiceCatalogSource, error)
+	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error)
+	UpdateCatalogRepository(org, name, url, branch, catalogRepo, cred string) (*models.ServiceCatalogSource, error)
 
-	CreateConfigRepository(org, name, url, branch string, setDefault bool, cred uint32) (*models.ConfigRepository, error)
-	DeleteConfigRepository(org string, configRepo uint32) error
-	GetConfigRepository(org string, configRepo uint32) (*models.ConfigRepository, error)
+	CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
+	DeleteConfigRepository(org, configRepo string) error
+	GetConfigRepository(org, configRepo string) (*models.ConfigRepository, error)
 	ListConfigRepositories(org string) ([]*models.ConfigRepository, error)
 	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
-	UpdateConfigRepository(org string, configRepo uint32, name, url, branch string, setDefault bool, cred uint32) (*models.ConfigRepository, error)
+	UpdateConfigRepository(org, configRepo, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
 
 	CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, description string) error
-	DeleteCredential(org string, cred uint32) error
-	GetCredential(org string, cred uint32) (*models.Credential, error)
+	DeleteCredential(org, cred string) error
+	GetCredential(org, cred string) (*models.Credential, error)
 	ListCredentials(org, cType string) ([]*models.CredentialSimple, error)
 
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error
 
 	DeleteExternalBackend(org string, externalBackend uint32) error
-	CreateExternalBackends(org, project, env, purpose string, cred uint32, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
+	CreateExternalBackends(org, project, env, purpose, cred string, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 	ListExternalBackends(org string) ([]*models.ExternalBackend, error)
 
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
@@ -46,12 +46,12 @@ type Middleware interface {
 
 	DeleteMember(org string, name string) error
 	GetMember(org string, name string) (*models.MemberOrg, error)
-	InviteMember(org string, email string, roleID uint32) error
+	InviteMember(org, email, role string) error
 	ListMembers(org string) ([]*models.MemberOrg, error)
 	ListInvites(org string) ([]*models.Invitation, error)
-	UpdateMembers(org string, name string, roleID uint32) (*models.MemberOrg, error)
+	UpdateMembers(org, name, role string) (*models.MemberOrg, error)
 
-	CreateOrganization(name string, canonical string) (*models.Organization, error)
+	CreateOrganization(name string) (*models.Organization, error)
 	DeleteOrganization(org string) error
 	GetOrganization(org string) (*models.Organization, error)
 	ListOrganizations() ([]*models.Organization, error)
@@ -71,15 +71,15 @@ type Middleware interface {
 	UpdatePipeline(org string, project string, env string, pipeline string, variables string) (*models.Pipeline, error)
 	ListPipelines(org string) ([]*models.Pipeline, error)
 
-	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase string, configRepo uint32) (*models.Project, error)
+	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error)
 	DeleteProjectEnv(org, project, env string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	ListProjects(org string) ([]*models.ProjectsItem, error)
-	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner string, configRepo uint32) (*models.Project, error)
+	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string) (*models.Project, error)
 
-	DeleteRole(org string, id uint32) error
-	GetRole(org string, id uint32) (*models.Role, error)
+	DeleteRole(org, role string) error
+	GetRole(org, role string) (*models.Role, error)
 	ListRoles(org string) ([]*models.Role, error)
 
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
@@ -87,7 +87,7 @@ type Middleware interface {
 
 	// API keys method
 	// CreateAPIKey will request API to generate and return an API key
-	CreateAPIKey(org, name, canonical, description string, roleID uint32) (*models.APIKey, error)
+	CreateAPIKey(org, name, description, role string) (*models.APIKey, error)
 
 	// ListAPIKey will request API to list generated API keys
 	ListAPIKey(org string) ([]*models.APIKey, error)

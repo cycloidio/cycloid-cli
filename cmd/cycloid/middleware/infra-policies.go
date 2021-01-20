@@ -17,7 +17,7 @@ func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte
 	params.SetEnvironmentCanonical(env)
 
 	tfplan := string(plan)
-	params.SetBody(organization_infrastructure_policies.ValidateProjectInfraPoliciesBody{
+	params.SetBody(&models.TerraformPlanInput{
 		Tfplan: &tfplan,
 	})
 

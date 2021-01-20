@@ -21,7 +21,7 @@ func NewRefreshCommand() *cobra.Command {
 		RunE: refreshCatalogRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 
 	return cmd
 }
@@ -38,16 +38,16 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
 
-	cr, err := m.RefreshCatalogRepository(org, id)
+	cr, err := m.RefreshCatalogRepository(org, can)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialID)
+	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialCanonical)
 	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(int64(*cr.CreatedAt), 0), time.Unix(int64(*cr.UpdatedAt), 0))
 
 	//TODO: Wait PR merged https://github.com/cycloidio/youdeploy-http-api/pull/2066

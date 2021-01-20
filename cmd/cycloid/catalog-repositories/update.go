@@ -23,7 +23,7 @@ func NewUpdateCommand() *cobra.Command {
 		RunE: updateCatalogRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 	common.RequiredFlag(common.WithFlagCred, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
@@ -47,7 +47,7 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cred, err := cmd.Flags().GetUint32("cred")
+	cred, err := cmd.Flags().GetString("cred")
 	if err != nil {
 		return err
 	}
@@ -77,7 +77,7 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.UpdateCatalogRepository(org, id, name, url, branch, cred)
+	cr, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred)
 	if err != nil {
 		return errors.Wrap(err, "unable to update catalog repository")
 	}
