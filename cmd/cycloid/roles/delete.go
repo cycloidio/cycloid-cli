@@ -28,7 +28,7 @@ func NewDeleteCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 
 	return cmd
 }
@@ -42,14 +42,14 @@ func deleteRole(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
 
-	err = m.DeleteRole(org, id)
+	err = m.DeleteRole(org, can)
 	if err != nil {
-		return errors.Wrapf(err, "unable to remove role: %d", id)
+		return errors.Wrapf(err, "unable to remove role: %s", can)
 	}
 	return nil
 }

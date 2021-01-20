@@ -6,7 +6,7 @@ var (
 	canonical   string
 	name        string
 	description string
-	roleID      uint32
+	role        string
 )
 
 func WithFlagName(cmd *cobra.Command) {
@@ -17,8 +17,8 @@ func WithFlagDescription(cmd *cobra.Command) {
 	cmd.Flags().StringVar(&description, "description", "", "description of the API key")
 }
 
-func WithFlagRoleID(cmd *cobra.Command) {
-	cmd.Flags().Uint32Var(&roleID, "role-id", 0, "ID of the role")
+func WithFlagRole(cmd *cobra.Command) {
+	cmd.Flags().StringVar(&role, "role", "", "Canonical of the role")
 }
 
 func WithFlagCanonical(cmd *cobra.Command) {

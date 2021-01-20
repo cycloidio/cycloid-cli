@@ -117,7 +117,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		projectData.Description,
 		*projectData.ServiceCatalogRef,
 		*projectData.Owner.Username,
-		projectData.ConfigRepositoryID)
+		projectData.ConfigRepositoryCanonical)
 
 	if err != nil {
 		return errors.Wrap(err, "unable to update project")

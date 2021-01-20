@@ -25,7 +25,7 @@ func NewUpdateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 	common.RequiredFlag(common.WithFlagCred, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
@@ -46,7 +46,7 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cred, err := cmd.Flags().GetUint32("cred")
+	cred, err := cmd.Flags().GetString("cred")
 	if err != nil {
 		return err
 	}
@@ -80,7 +80,7 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.UpdateConfigRepository(org, id, name, url, branch, setDefault, cred)
+	cr, err := m.UpdateConfigRepository(org, can, cred, name, url, branch, setDefault)
 	if err != nil {
 		return errors.Wrap(err, "unable to update config repository")
 	}

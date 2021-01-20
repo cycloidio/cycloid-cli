@@ -39,19 +39,19 @@ func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) e
 	return err
 }
 
-func (m *middleware) CreateExternalBackends(org, project, env, purpose string, cred uint32, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
+func (m *middleware) CreateExternalBackends(org, project, env, purpose, cred string, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
 
 	params := organization_external_backends.NewCreateExternalBackendParams()
 	params.SetOrganizationCanonical(org)
 
 	var body *models.NewExternalBackend
 
-	if cred != 0 {
+	if len(cred) != 0 {
 		body = &models.NewExternalBackend{
 			ProjectCanonical:     project,
 			Purpose:              &purpose,
 			EnvironmentCanonical: env,
-			CredentialID:         cred,
+			CredentialCanonical:  cred,
 		}
 	} else {
 		body = &models.NewExternalBackend{

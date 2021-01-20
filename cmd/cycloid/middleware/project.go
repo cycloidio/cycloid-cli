@@ -55,7 +55,7 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 	return d, err
 }
 
-func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase string, configRepo uint32) (*models.Project, error) {
+func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error) {
 
 	var body *models.NewProject
 	var pipelines []*models.NewPipeline
@@ -94,12 +94,12 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 	pipelines = append(pipelines, pipeline)
 
 	body = &models.NewProject{
-		Name:               &projectName,
-		Description:        description,
-		Canonical:          &projectCanonical,
-		ServiceCatalogRef:  &stackRef,
-		ConfigRepositoryID: &configRepo,
-		Pipelines:          pipelines,
+		Name:                      &projectName,
+		Description:               description,
+		Canonical:                 projectCanonical,
+		ServiceCatalogRef:         &stackRef,
+		ConfigRepositoryCanonical: &configRepo,
+		Pipelines:                 pipelines,
 	}
 
 	err = body.Validate(strfmt.Default)
@@ -125,19 +125,19 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 	return d, err
 }
 
-func (m *middleware) UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner string, configRepo uint32) (*models.Project, error) {
+func (m *middleware) UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string) (*models.Project, error) {
 
 	params := organization_projects.NewUpdateProjectParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(projectCanonical)
 
 	body := &models.UpdateProject{
-		Name:               &projectName,
-		Description:        description,
-		ServiceCatalogRef:  &stackRef,
-		ConfigRepositoryID: configRepo,
-		Environments:       envs,
-		Owner:              owner,
+		Name:                      &projectName,
+		Description:               description,
+		ServiceCatalogRef:         &stackRef,
+		ConfigRepositoryCanonical: configRepo,
+		Environments:              envs,
+		Owner:                     owner,
 	}
 
 	err := body.Validate(strfmt.Default)
