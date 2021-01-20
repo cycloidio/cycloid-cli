@@ -21,10 +21,19 @@ type CreateConfigRepository struct {
 	// Required: true
 	Branch *string `json:"branch"`
 
-	// credential id
+	// canonical
 	// Required: true
-	// Minimum: 1
-	CredentialID *uint32 `json:"credential_id"`
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	Canonical *string `json:"canonical"`
+
+	// credential canonical
+	// Required: true
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	CredentialCanonical *string `json:"credential_canonical"`
 
 	// default
 	// Required: true
@@ -48,7 +57,11 @@ func (m *CreateConfigRepository) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCredentialID(formats); err != nil {
+	if err := m.validateCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCredentialCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -79,13 +92,42 @@ func (m *CreateConfigRepository) validateBranch(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateConfigRepository) validateCredentialID(formats strfmt.Registry) error {
+func (m *CreateConfigRepository) validateCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("credential_id", "body", m.CredentialID); err != nil {
+	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
 		return err
 	}
 
-	if err := validate.MinimumInt("credential_id", "body", int64(*m.CredentialID), 1, false); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CreateConfigRepository) validateCredentialCanonical(formats strfmt.Registry) error {
+
+	if err := validate.Required("credential_canonical", "body", m.CredentialCanonical); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("credential_canonical", "body", string(*m.CredentialCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("credential_canonical", "body", string(*m.CredentialCanonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("credential_canonical", "body", string(*m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

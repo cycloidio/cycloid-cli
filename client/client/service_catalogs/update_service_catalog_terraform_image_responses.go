@@ -36,12 +36,6 @@ func (o *UpdateServiceCatalogTerraformImageReader) ReadResponse(response runtime
 			return nil, err
 		}
 		return nil, result
-	case 404:
-		result := NewUpdateServiceCatalogTerraformImageNotFound()
-		if err := result.readResponse(response, consumer, o.formats); err != nil {
-			return nil, err
-		}
-		return nil, result
 	case 422:
 		result := NewUpdateServiceCatalogTerraformImageUnprocessableEntity()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
@@ -103,39 +97,6 @@ func (o *UpdateServiceCatalogTerraformImageForbidden) GetPayload() *models.Error
 }
 
 func (o *UpdateServiceCatalogTerraformImageForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	o.Payload = new(models.ErrorPayload)
-
-	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
-		return err
-	}
-
-	return nil
-}
-
-// NewUpdateServiceCatalogTerraformImageNotFound creates a UpdateServiceCatalogTerraformImageNotFound with default headers values
-func NewUpdateServiceCatalogTerraformImageNotFound() *UpdateServiceCatalogTerraformImageNotFound {
-	return &UpdateServiceCatalogTerraformImageNotFound{}
-}
-
-/*UpdateServiceCatalogTerraformImageNotFound handles this case with default header values.
-
-The response sent when any of the entities present in the path is not found.
-*/
-type UpdateServiceCatalogTerraformImageNotFound struct {
-	Payload *models.ErrorPayload
-}
-
-func (o *UpdateServiceCatalogTerraformImageNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageNotFound  %+v", 404, o.Payload)
-}
-
-func (o *UpdateServiceCatalogTerraformImageNotFound) GetPayload() *models.ErrorPayload {
-	return o.Payload
-}
-
-func (o *UpdateServiceCatalogTerraformImageNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	o.Payload = new(models.ErrorPayload)
 

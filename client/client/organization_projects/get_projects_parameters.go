@@ -103,11 +103,11 @@ type GetProjectsParams struct {
 
 	*/
 	PageSize *uint32
-	/*ProjectConfigRepositoryID
+	/*ProjectConfigRepositoryCanonical
 	  Search by project's config repository's ID
 
 	*/
-	ProjectConfigRepositoryID *uint32
+	ProjectConfigRepositoryCanonical *uint32
 	/*ProjectCreatedAt
 	  Search by project's creation date
 
@@ -123,11 +123,11 @@ type GetProjectsParams struct {
 
 	*/
 	ProjectName *string
-	/*ServiceCatalogSourceID
-	  Organization Service Catalog Sources ID
+	/*ServiceCatalogSourceCanonical
+	  Organization Service Catalog Sources canonical
 
 	*/
-	ServiceCatalogSourceID *uint32
+	ServiceCatalogSourceCanonical *string
 	/*UserID
 	  Search by entity's owner
 
@@ -216,15 +216,15 @@ func (o *GetProjectsParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
-// WithProjectConfigRepositoryID adds the projectConfigRepositoryID to the get projects params
-func (o *GetProjectsParams) WithProjectConfigRepositoryID(projectConfigRepositoryID *uint32) *GetProjectsParams {
-	o.SetProjectConfigRepositoryID(projectConfigRepositoryID)
+// WithProjectConfigRepositoryCanonical adds the projectConfigRepositoryCanonical to the get projects params
+func (o *GetProjectsParams) WithProjectConfigRepositoryCanonical(projectConfigRepositoryCanonical *uint32) *GetProjectsParams {
+	o.SetProjectConfigRepositoryCanonical(projectConfigRepositoryCanonical)
 	return o
 }
 
-// SetProjectConfigRepositoryID adds the projectConfigRepositoryId to the get projects params
-func (o *GetProjectsParams) SetProjectConfigRepositoryID(projectConfigRepositoryID *uint32) {
-	o.ProjectConfigRepositoryID = projectConfigRepositoryID
+// SetProjectConfigRepositoryCanonical adds the projectConfigRepositoryCanonical to the get projects params
+func (o *GetProjectsParams) SetProjectConfigRepositoryCanonical(projectConfigRepositoryCanonical *uint32) {
+	o.ProjectConfigRepositoryCanonical = projectConfigRepositoryCanonical
 }
 
 // WithProjectCreatedAt adds the projectCreatedAt to the get projects params
@@ -260,15 +260,15 @@ func (o *GetProjectsParams) SetProjectName(projectName *string) {
 	o.ProjectName = projectName
 }
 
-// WithServiceCatalogSourceID adds the serviceCatalogSourceID to the get projects params
-func (o *GetProjectsParams) WithServiceCatalogSourceID(serviceCatalogSourceID *uint32) *GetProjectsParams {
-	o.SetServiceCatalogSourceID(serviceCatalogSourceID)
+// WithServiceCatalogSourceCanonical adds the serviceCatalogSourceCanonical to the get projects params
+func (o *GetProjectsParams) WithServiceCatalogSourceCanonical(serviceCatalogSourceCanonical *string) *GetProjectsParams {
+	o.SetServiceCatalogSourceCanonical(serviceCatalogSourceCanonical)
 	return o
 }
 
-// SetServiceCatalogSourceID adds the serviceCatalogSourceId to the get projects params
-func (o *GetProjectsParams) SetServiceCatalogSourceID(serviceCatalogSourceID *uint32) {
-	o.ServiceCatalogSourceID = serviceCatalogSourceID
+// SetServiceCatalogSourceCanonical adds the serviceCatalogSourceCanonical to the get projects params
+func (o *GetProjectsParams) SetServiceCatalogSourceCanonical(serviceCatalogSourceCanonical *string) {
+	o.ServiceCatalogSourceCanonical = serviceCatalogSourceCanonical
 }
 
 // WithUserID adds the userID to the get projects params
@@ -343,16 +343,16 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 
 	}
 
-	if o.ProjectConfigRepositoryID != nil {
+	if o.ProjectConfigRepositoryCanonical != nil {
 
-		// query param project_config_repository_id
-		var qrProjectConfigRepositoryID uint32
-		if o.ProjectConfigRepositoryID != nil {
-			qrProjectConfigRepositoryID = *o.ProjectConfigRepositoryID
+		// query param project_config_repository_canonical
+		var qrProjectConfigRepositoryCanonical uint32
+		if o.ProjectConfigRepositoryCanonical != nil {
+			qrProjectConfigRepositoryCanonical = *o.ProjectConfigRepositoryCanonical
 		}
-		qProjectConfigRepositoryID := swag.FormatUint32(qrProjectConfigRepositoryID)
-		if qProjectConfigRepositoryID != "" {
-			if err := r.SetQueryParam("project_config_repository_id", qProjectConfigRepositoryID); err != nil {
+		qProjectConfigRepositoryCanonical := swag.FormatUint32(qrProjectConfigRepositoryCanonical)
+		if qProjectConfigRepositoryCanonical != "" {
+			if err := r.SetQueryParam("project_config_repository_canonical", qProjectConfigRepositoryCanonical); err != nil {
 				return err
 			}
 		}
@@ -407,16 +407,16 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 
 	}
 
-	if o.ServiceCatalogSourceID != nil {
+	if o.ServiceCatalogSourceCanonical != nil {
 
-		// query param service_catalog_source_id
-		var qrServiceCatalogSourceID uint32
-		if o.ServiceCatalogSourceID != nil {
-			qrServiceCatalogSourceID = *o.ServiceCatalogSourceID
+		// query param service_catalog_source_canonical
+		var qrServiceCatalogSourceCanonical string
+		if o.ServiceCatalogSourceCanonical != nil {
+			qrServiceCatalogSourceCanonical = *o.ServiceCatalogSourceCanonical
 		}
-		qServiceCatalogSourceID := swag.FormatUint32(qrServiceCatalogSourceID)
-		if qServiceCatalogSourceID != "" {
-			if err := r.SetQueryParam("service_catalog_source_id", qServiceCatalogSourceID); err != nil {
+		qServiceCatalogSourceCanonical := qrServiceCatalogSourceCanonical
+		if qServiceCatalogSourceCanonical != "" {
+			if err := r.SetQueryParam("service_catalog_source_canonical", qServiceCatalogSourceCanonical); err != nil {
 				return err
 			}
 		}

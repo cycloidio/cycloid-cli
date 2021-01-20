@@ -34,8 +34,7 @@ type InfraPolicy struct {
 
 	// created at
 	// Required: true
-	// Minimum: 0
-	CreatedAt *int64 `json:"created_at"`
+	CreatedAt *uint64 `json:"created_at"`
 
 	// description
 	// Required: true
@@ -74,8 +73,7 @@ type InfraPolicy struct {
 
 	// updated at
 	// Required: true
-	// Minimum: 0
-	UpdatedAt *int64 `json:"updated_at"`
+	UpdatedAt *uint64 `json:"updated_at"`
 }
 
 // Validate validates this infra policy
@@ -161,10 +159,6 @@ func (m *InfraPolicy) validateCanonical(formats strfmt.Registry) error {
 func (m *InfraPolicy) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
-		return err
-	}
-
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -282,10 +276,6 @@ func (m *InfraPolicy) validateSeverity(formats strfmt.Registry) error {
 func (m *InfraPolicy) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
-		return err
-	}
-
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 

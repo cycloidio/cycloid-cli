@@ -21,6 +21,13 @@ import (
 // swagger:model CredentialSimple
 type CredentialSimple struct {
 
+	// canonical
+	// Required: true
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	Canonical *string `json:"canonical"`
+
 	// description
 	Description string `json:"description,omitempty"`
 
@@ -47,6 +54,10 @@ type CredentialSimple struct {
 func (m *CredentialSimple) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
@@ -66,6 +77,27 @@ func (m *CredentialSimple) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *CredentialSimple) validateCanonical(formats strfmt.Registry) error {
+
+	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
