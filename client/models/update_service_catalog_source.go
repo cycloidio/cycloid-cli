@@ -20,9 +20,11 @@ type UpdateServiceCatalogSource struct {
 	// branch
 	Branch string `json:"branch,omitempty"`
 
-	// credential id
-	// Minimum: 1
-	CredentialID uint32 `json:"credential_id,omitempty"`
+	// credential canonical
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 	// name
 	// Required: true
@@ -44,7 +46,7 @@ type UpdateServiceCatalogSource struct {
 func (m *UpdateServiceCatalogSource) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateCredentialID(formats); err != nil {
+	if err := m.validateCredentialCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -62,13 +64,21 @@ func (m *UpdateServiceCatalogSource) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateServiceCatalogSource) validateCredentialID(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalogSource) validateCredentialCanonical(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.CredentialID) { // not required
+	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("credential_id", "body", int64(m.CredentialID), 1, false); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", string(m.CredentialCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

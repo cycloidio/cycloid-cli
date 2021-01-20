@@ -79,7 +79,7 @@ type ValidateServiceCatalogSourceNoContent struct {
 }
 
 func (o *ValidateServiceCatalogSourceNoContent) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/validate][%d] validateServiceCatalogSourceNoContent ", 204)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/validate][%d] validateServiceCatalogSourceNoContent ", 204)
 }
 
 func (o *ValidateServiceCatalogSourceNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -101,7 +101,7 @@ type ValidateServiceCatalogSourceForbidden struct {
 }
 
 func (o *ValidateServiceCatalogSourceForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/validate][%d] validateServiceCatalogSourceForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/validate][%d] validateServiceCatalogSourceForbidden  %+v", 403, o.Payload)
 }
 
 func (o *ValidateServiceCatalogSourceForbidden) GetPayload() *models.ErrorPayload {
@@ -134,7 +134,7 @@ type ValidateServiceCatalogSourceNotFound struct {
 }
 
 func (o *ValidateServiceCatalogSourceNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/validate][%d] validateServiceCatalogSourceNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/validate][%d] validateServiceCatalogSourceNotFound  %+v", 404, o.Payload)
 }
 
 func (o *ValidateServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload {
@@ -166,7 +166,7 @@ type ValidateServiceCatalogSourceLengthRequired struct {
 }
 
 func (o *ValidateServiceCatalogSourceLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/validate][%d] validateServiceCatalogSourceLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/validate][%d] validateServiceCatalogSourceLengthRequired ", 411)
 }
 
 func (o *ValidateServiceCatalogSourceLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -188,7 +188,7 @@ type ValidateServiceCatalogSourceUnprocessableEntity struct {
 }
 
 func (o *ValidateServiceCatalogSourceUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/validate][%d] validateServiceCatalogSourceUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/validate][%d] validateServiceCatalogSourceUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *ValidateServiceCatalogSourceUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -230,7 +230,7 @@ func (o *ValidateServiceCatalogSourceDefault) Code() int {
 }
 
 func (o *ValidateServiceCatalogSourceDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/validate][%d] validateServiceCatalogSource default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/validate][%d] validateServiceCatalogSource default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *ValidateServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {

@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -20,11 +22,10 @@ import (
 type NewTeam struct {
 
 	// canonical
-	// Required: true
 	// Max Length: 30
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Canonical *string `json:"canonical"`
+	Canonical string `json:"canonical,omitempty"`
 
 	// name
 	// Required: true
@@ -39,7 +40,7 @@ type NewTeam struct {
 
 	// The roles to be assigned to a team.
 	// Required: true
-	RolesID []uint32 `json:"roles_id"`
+	RolesCanonical []string `json:"roles_canonical"`
 }
 
 // Validate validates this new team
@@ -54,7 +55,7 @@ func (m *NewTeam) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateRolesID(formats); err != nil {
+	if err := m.validateRolesCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -66,19 +67,19 @@ func (m *NewTeam) Validate(formats strfmt.Registry) error {
 
 func (m *NewTeam) validateCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
+	if swag.IsZero(m.Canonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -98,10 +99,26 @@ func (m *NewTeam) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewTeam) validateRolesID(formats strfmt.Registry) error {
+func (m *NewTeam) validateRolesCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("roles_id", "body", m.RolesID); err != nil {
+	if err := validate.Required("roles_canonical", "body", m.RolesCanonical); err != nil {
 		return err
+	}
+
+	for i := 0; i < len(m.RolesCanonical); i++ {
+
+		if err := validate.MinLength("roles_canonical"+"."+strconv.Itoa(i), "body", string(m.RolesCanonical[i]), 3); err != nil {
+			return err
+		}
+
+		if err := validate.MaxLength("roles_canonical"+"."+strconv.Itoa(i), "body", string(m.RolesCanonical[i]), 30); err != nil {
+			return err
+		}
+
+		if err := validate.Pattern("roles_canonical"+"."+strconv.Itoa(i), "body", string(m.RolesCanonical[i]), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+			return err
+		}
+
 	}
 
 	return nil

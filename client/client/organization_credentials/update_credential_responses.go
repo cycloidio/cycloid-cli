@@ -83,7 +83,7 @@ type UpdateCredentialOK struct {
 }
 
 func (o *UpdateCredentialOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_id}][%d] updateCredentialOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] updateCredentialOK  %+v", 200, o.Payload)
 }
 
 func (o *UpdateCredentialOK) GetPayload() *UpdateCredentialOKBody {
@@ -116,7 +116,7 @@ type UpdateCredentialForbidden struct {
 }
 
 func (o *UpdateCredentialForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_id}][%d] updateCredentialForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] updateCredentialForbidden  %+v", 403, o.Payload)
 }
 
 func (o *UpdateCredentialForbidden) GetPayload() *models.ErrorPayload {
@@ -149,7 +149,7 @@ type UpdateCredentialNotFound struct {
 }
 
 func (o *UpdateCredentialNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_id}][%d] updateCredentialNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] updateCredentialNotFound  %+v", 404, o.Payload)
 }
 
 func (o *UpdateCredentialNotFound) GetPayload() *models.ErrorPayload {
@@ -181,7 +181,7 @@ type UpdateCredentialLengthRequired struct {
 }
 
 func (o *UpdateCredentialLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_id}][%d] updateCredentialLengthRequired ", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] updateCredentialLengthRequired ", 411)
 }
 
 func (o *UpdateCredentialLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -203,7 +203,7 @@ type UpdateCredentialUnprocessableEntity struct {
 }
 
 func (o *UpdateCredentialUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_id}][%d] updateCredentialUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] updateCredentialUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *UpdateCredentialUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -245,7 +245,7 @@ func (o *UpdateCredentialDefault) Code() int {
 }
 
 func (o *UpdateCredentialDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_id}][%d] updateCredential default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] updateCredential default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *UpdateCredentialDefault) GetPayload() *models.ErrorPayload {

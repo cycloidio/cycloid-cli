@@ -26,11 +26,10 @@ type NewServiceCatalog struct {
 	Author *string `json:"author"`
 
 	// canonical
-	// Required: true
 	// Max Length: 30
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Canonical *string `json:"canonical"`
+	Canonical string `json:"canonical,omitempty"`
 
 	// created at
 	// Minimum: 0
@@ -55,10 +54,12 @@ type NewServiceCatalog struct {
 	// Required: true
 	Name *string `json:"name"`
 
-	// service catalog source id
+	// service catalog source canonical
 	// Required: true
-	// Minimum: 1
-	ServiceCatalogSourceID *uint32 `json:"service_catalog_source_id"`
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	ServiceCatalogSourceCanonical *string `json:"service_catalog_source_canonical"`
 
 	// status
 	Status string `json:"status,omitempty"`
@@ -107,7 +108,7 @@ func (m *NewServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogSourceID(formats); err != nil {
+	if err := m.validateServiceCatalogSourceCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -136,19 +137,19 @@ func (m *NewServiceCatalog) validateAuthor(formats strfmt.Registry) error {
 
 func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
+	if swag.IsZero(m.Canonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -233,13 +234,21 @@ func (m *NewServiceCatalog) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewServiceCatalog) validateServiceCatalogSourceID(formats strfmt.Registry) error {
+func (m *NewServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("service_catalog_source_id", "body", m.ServiceCatalogSourceID); err != nil {
+	if err := validate.Required("service_catalog_source_canonical", "body", m.ServiceCatalogSourceCanonical); err != nil {
 		return err
 	}
 
-	if err := validate.MinimumInt("service_catalog_source_id", "body", int64(*m.ServiceCatalogSourceID), 1, false); err != nil {
+	if err := validate.MinLength("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

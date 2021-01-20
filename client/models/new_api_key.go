@@ -20,11 +20,10 @@ import (
 type NewAPIKey struct {
 
 	// canonical
-	// Required: true
 	// Max Length: 30
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Canonical *string `json:"canonical"`
+	Canonical string `json:"canonical,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -40,10 +39,12 @@ type NewAPIKey struct {
 	//
 	Owner string `json:"owner,omitempty"`
 
-	// The role of the member.
+	// The role of the APIKey.
 	// Required: true
-	// Minimum: 1
-	RoleID *uint32 `json:"role_id"`
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	RoleCanonical *string `json:"role_canonical"`
 }
 
 // Validate validates this new API key
@@ -58,7 +59,7 @@ func (m *NewAPIKey) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateRoleID(formats); err != nil {
+	if err := m.validateRoleCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -70,19 +71,19 @@ func (m *NewAPIKey) Validate(formats strfmt.Registry) error {
 
 func (m *NewAPIKey) validateCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
+	if swag.IsZero(m.Canonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -102,13 +103,21 @@ func (m *NewAPIKey) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewAPIKey) validateRoleID(formats strfmt.Registry) error {
+func (m *NewAPIKey) validateRoleCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("role_id", "body", m.RoleID); err != nil {
+	if err := validate.Required("role_canonical", "body", m.RoleCanonical); err != nil {
 		return err
 	}
 
-	if err := validate.MinimumInt("role_id", "body", int64(*m.RoleID), 1, false); err != nil {
+	if err := validate.MinLength("role_canonical", "body", string(*m.RoleCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("role_canonical", "body", string(*m.RoleCanonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("role_canonical", "body", string(*m.RoleCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

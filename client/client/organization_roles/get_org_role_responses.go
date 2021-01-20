@@ -64,14 +64,14 @@ func NewGetOrgRoleOK() *GetOrgRoleOK {
 
 /*GetOrgRoleOK handles this case with default header values.
 
-Role available in the organization with such ID.
+Role available in the organization with such canonical.
 */
 type GetOrgRoleOK struct {
 	Payload *GetOrgRoleOKBody
 }
 
 func (o *GetOrgRoleOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_id}][%d] getOrgRoleOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getOrgRoleOK  %+v", 200, o.Payload)
 }
 
 func (o *GetOrgRoleOK) GetPayload() *GetOrgRoleOKBody {
@@ -104,7 +104,7 @@ type GetOrgRoleForbidden struct {
 }
 
 func (o *GetOrgRoleForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_id}][%d] getOrgRoleForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getOrgRoleForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetOrgRoleForbidden) GetPayload() *models.ErrorPayload {
@@ -137,7 +137,7 @@ type GetOrgRoleNotFound struct {
 }
 
 func (o *GetOrgRoleNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_id}][%d] getOrgRoleNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getOrgRoleNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetOrgRoleNotFound) GetPayload() *models.ErrorPayload {
@@ -179,7 +179,7 @@ func (o *GetOrgRoleDefault) Code() int {
 }
 
 func (o *GetOrgRoleDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_id}][%d] getOrgRole default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getOrgRole default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetOrgRoleDefault) GetPayload() *models.ErrorPayload {

@@ -67,7 +67,7 @@ type DeleteOrgRoleNoContent struct {
 }
 
 func (o *DeleteOrgRoleNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_id}][%d] deleteOrgRoleNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteOrgRoleNoContent ", 204)
 }
 
 func (o *DeleteOrgRoleNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -89,7 +89,7 @@ type DeleteOrgRoleForbidden struct {
 }
 
 func (o *DeleteOrgRoleForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_id}][%d] deleteOrgRoleForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteOrgRoleForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DeleteOrgRoleForbidden) GetPayload() *models.ErrorPayload {
@@ -122,7 +122,7 @@ type DeleteOrgRoleNotFound struct {
 }
 
 func (o *DeleteOrgRoleNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_id}][%d] deleteOrgRoleNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteOrgRoleNotFound  %+v", 404, o.Payload)
 }
 
 func (o *DeleteOrgRoleNotFound) GetPayload() *models.ErrorPayload {
@@ -164,7 +164,7 @@ func (o *DeleteOrgRoleDefault) Code() int {
 }
 
 func (o *DeleteOrgRoleDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_id}][%d] deleteOrgRole default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteOrgRole default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteOrgRoleDefault) GetPayload() *models.ErrorPayload {

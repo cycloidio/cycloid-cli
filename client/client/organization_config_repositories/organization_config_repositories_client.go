@@ -70,7 +70,7 @@ func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConf
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createConfigRepositoryConfig",
 		Method:             "POST",
-		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_id}/config",
+		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -104,7 +104,7 @@ func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, au
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteConfigRepository",
 		Method:             "DELETE",
-		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_id}",
+		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -172,7 +172,7 @@ func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getConfigRepository",
 		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_id}",
+		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -206,7 +206,7 @@ func (a *Client) UpdateConfigRepository(params *UpdateConfigRepositoryParams, au
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateConfigRepository",
 		Method:             "PUT",
-		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_id}",
+		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},

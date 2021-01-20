@@ -70,7 +70,7 @@ func (a *Client) DeleteServiceCatalogSource(params *DeleteServiceCatalogSourcePa
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteServiceCatalogSource",
 		Method:             "DELETE",
-		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -104,7 +104,7 @@ func (a *Client) GetServiceCatalogSource(params *GetServiceCatalogSourceParams, 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getServiceCatalogSource",
 		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -172,7 +172,7 @@ func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSource
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "refreshServiceCatalogSource",
 		Method:             "POST",
-		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/refresh",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -206,7 +206,7 @@ func (a *Client) UpdateServiceCatalogSource(params *UpdateServiceCatalogSourcePa
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateServiceCatalogSource",
 		Method:             "PUT",
-		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -240,7 +240,7 @@ func (a *Client) ValidateServiceCatalogSource(params *ValidateServiceCatalogSour
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "validateServiceCatalogSource",
 		Method:             "POST",
-		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/validate",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/validate",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
