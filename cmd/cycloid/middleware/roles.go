@@ -28,10 +28,10 @@ func (m *middleware) ListRoles(org string) ([]*models.Role, error) {
 	return d, err
 }
 
-func (m *middleware) GetRole(org string, id uint32) (*models.Role, error) {
+func (m *middleware) GetRole(org, role string) (*models.Role, error) {
 	params := organization_roles.NewGetOrgRoleParams()
 	params.SetOrganizationCanonical(org)
-	params.SetRoleID(id)
+	params.SetRoleCanonical(role)
 
 	resp, err := m.api.OrganizationRoles.GetOrgRole(params, common.ClientCredentials(&org))
 	if err != nil {
@@ -51,10 +51,10 @@ func (m *middleware) GetRole(org string, id uint32) (*models.Role, error) {
 	return d, err
 }
 
-func (m *middleware) DeleteRole(org string, id uint32) error {
+func (m *middleware) DeleteRole(org, role string) error {
 	params := organization_roles.NewDeleteOrgRoleParams()
 	params.SetOrganizationCanonical(org)
-	params.SetRoleID(id)
+	params.SetRoleCanonical(role)
 
 	_, err := m.api.OrganizationRoles.DeleteOrgRole(params, common.ClientCredentials(&org))
 

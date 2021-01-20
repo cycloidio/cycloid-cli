@@ -20,7 +20,7 @@ func NewCreateCommand() *cobra.Command {
 		Short: "create an API key",
 		Example: `
 	# create an API key in the org my-org
-	cy api-key create --role-id 2 --name "CI API key" --description "Cycloid API key to be used in a CI context"
+	cy api-key create --role my-role --name "CI API key" --description "Cycloid API key to be used in a CI context"
 `,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			output, err := cmd.Flags().GetString("output")
@@ -35,9 +35,9 @@ func NewCreateCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get description flag: %w", err)
 			}
-			roleID, err := cmd.Flags().GetUint32("role-id")
+			role, err := cmd.Flags().GetString("role")
 			if err != nil {
-				return fmt.Errorf("unable to get role ID flag: %w", err)
+				return fmt.Errorf("unable to get role flag: %w", err)
 			}
 			canonical, err := cmd.Flags().GetString("canonical")
 			if err != nil {
@@ -47,13 +47,13 @@ func NewCreateCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get org flag: %w", err)
 			}
-			return create(org, name, canonical, description, output, roleID)
+			return create(org, name, canonical, description, output, role)
 		},
 	}
 
 	WithFlagName(cmd)
 	WithFlagDescription(cmd)
-	WithFlagRoleID(cmd)
+	WithFlagRole(cmd)
 	WithFlagCanonical(cmd)
 
 	return cmd
@@ -61,7 +61,7 @@ func NewCreateCommand() *cobra.Command {
 
 // create will send the POST request to the API in order to
 // create an API token which will be displayed on the screen
-func create(org, name, canonical, description, output string, roleID uint32) error {
+func create(org, name, canonical, description, output, role string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -69,7 +69,7 @@ func create(org, name, canonical, description, output string, roleID uint32) err
 		canonical = common.GenerateCanonical(name)
 	}
 
-	key, err := m.CreateAPIKey(org, name, canonical, description, roleID)
+	key, err := m.CreateAPIKey(org, name, canonical, description, role)
 	if err != nil {
 		return fmt.Errorf("unable to create API key: %w", err)
 	}
