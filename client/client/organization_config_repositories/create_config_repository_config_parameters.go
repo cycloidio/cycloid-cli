@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -70,11 +69,11 @@ type CreateConfigRepositoryConfigParams struct {
 
 	*/
 	Body *models.SCConfig
-	/*ConfigRepositoryID
-	  Organization Config Repositories ID
+	/*ConfigRepositoryCanonical
+	  Organization Config Repositories canonical
 
 	*/
-	ConfigRepositoryID uint32
+	ConfigRepositoryCanonical string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -130,15 +129,15 @@ func (o *CreateConfigRepositoryConfigParams) SetBody(body *models.SCConfig) {
 	o.Body = body
 }
 
-// WithConfigRepositoryID adds the configRepositoryID to the create config repository config params
-func (o *CreateConfigRepositoryConfigParams) WithConfigRepositoryID(configRepositoryID uint32) *CreateConfigRepositoryConfigParams {
-	o.SetConfigRepositoryID(configRepositoryID)
+// WithConfigRepositoryCanonical adds the configRepositoryCanonical to the create config repository config params
+func (o *CreateConfigRepositoryConfigParams) WithConfigRepositoryCanonical(configRepositoryCanonical string) *CreateConfigRepositoryConfigParams {
+	o.SetConfigRepositoryCanonical(configRepositoryCanonical)
 	return o
 }
 
-// SetConfigRepositoryID adds the configRepositoryId to the create config repository config params
-func (o *CreateConfigRepositoryConfigParams) SetConfigRepositoryID(configRepositoryID uint32) {
-	o.ConfigRepositoryID = configRepositoryID
+// SetConfigRepositoryCanonical adds the configRepositoryCanonical to the create config repository config params
+func (o *CreateConfigRepositoryConfigParams) SetConfigRepositoryCanonical(configRepositoryCanonical string) {
+	o.ConfigRepositoryCanonical = configRepositoryCanonical
 }
 
 // WithOrganizationCanonical adds the organizationCanonical to the create config repository config params
@@ -166,8 +165,8 @@ func (o *CreateConfigRepositoryConfigParams) WriteToRequest(r runtime.ClientRequ
 		}
 	}
 
-	// path param config_repository_id
-	if err := r.SetPathParam("config_repository_id", swag.FormatUint32(o.ConfigRepositoryID)); err != nil {
+	// path param config_repository_canonical
+	if err := r.SetPathParam("config_repository_canonical", o.ConfigRepositoryCanonical); err != nil {
 		return err
 	}
 

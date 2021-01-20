@@ -19,6 +19,14 @@ import (
 // swagger:model UserSession
 type UserSession struct {
 
+	// owns
+	// Required: true
+	Owns []string `json:"owns"`
+
+	// permissions
+	// Required: true
+	Permissions map[string]Rule `json:"permissions"`
+
 	// token
 	// Required: true
 	Token *string `json:"token"`
@@ -28,6 +36,14 @@ type UserSession struct {
 func (m *UserSession) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateOwns(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePermissions(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateToken(formats); err != nil {
 		res = append(res, err)
 	}
@@ -35,6 +51,33 @@ func (m *UserSession) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *UserSession) validateOwns(formats strfmt.Registry) error {
+
+	if err := validate.Required("owns", "body", m.Owns); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserSession) validatePermissions(formats strfmt.Registry) error {
+
+	for k := range m.Permissions {
+
+		if err := validate.Required("permissions"+"."+k, "body", m.Permissions[k]); err != nil {
+			return err
+		}
+		if val, ok := m.Permissions[k]; ok {
+			if err := val.Validate(formats); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

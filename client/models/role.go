@@ -17,13 +17,24 @@ import (
 
 // Role Role access control
 //
-// Role represents the authorization level that an user has to access to a specific entity of the system. A role contains a list of policies to define the access control. Note not all the entities supports roles access control; see the API endpoints to know which entities support them.
+// Role represents the authorization level that an user has to access to a specific entity of the system. A role contains a list of rules to define the access control. Note not all the entities supports roles access control; see the API endpoints to know which entities support them.
 // swagger:model Role
 type Role struct {
+
+	// canonical
+	// Required: true
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	Canonical *string `json:"canonical"`
 
 	// created at
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at,omitempty"`
+
+	// default
+	// Required: true
+	Default *bool `json:"default"`
 
 	// description
 	// Required: true
@@ -40,9 +51,9 @@ type Role struct {
 	// Min Length: 3
 	Name *string `json:"name"`
 
-	// policies
+	// rules
 	// Required: true
-	Policies []*Policy `json:"policies"`
+	Rules []*Rule `json:"rules"`
 
 	// updated at
 	// Minimum: 0
@@ -53,7 +64,15 @@ type Role struct {
 func (m *Role) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDefault(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -69,7 +88,7 @@ func (m *Role) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validatePolicies(formats); err != nil {
+	if err := m.validateRules(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -83,6 +102,27 @@ func (m *Role) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Role) validateCanonical(formats strfmt.Registry) error {
+
+	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Role) validateCreatedAt(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.CreatedAt) { // not required
@@ -90,6 +130,15 @@ func (m *Role) validateCreatedAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Role) validateDefault(formats strfmt.Registry) error {
+
+	if err := validate.Required("default", "body", m.Default); err != nil {
 		return err
 	}
 
@@ -135,21 +184,21 @@ func (m *Role) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Role) validatePolicies(formats strfmt.Registry) error {
+func (m *Role) validateRules(formats strfmt.Registry) error {
 
-	if err := validate.Required("policies", "body", m.Policies); err != nil {
+	if err := validate.Required("rules", "body", m.Rules); err != nil {
 		return err
 	}
 
-	for i := 0; i < len(m.Policies); i++ {
-		if swag.IsZero(m.Policies[i]) { // not required
+	for i := 0; i < len(m.Rules); i++ {
+		if swag.IsZero(m.Rules[i]) { // not required
 			continue
 		}
 
-		if m.Policies[i] != nil {
-			if err := m.Policies[i].Validate(formats); err != nil {
+		if m.Rules[i] != nil {
+			if err := m.Rules[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("policies" + "." + strconv.Itoa(i))
+					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

@@ -38,6 +38,9 @@ type APIKey struct {
 	// Required: true
 	LastSeven *string `json:"last_seven"`
 
+	// This field contains the date of the last usage of the API key
+	LastUsed uint64 `json:"last_used,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 3

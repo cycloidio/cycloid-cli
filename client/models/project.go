@@ -28,9 +28,11 @@ type Project struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
 
-	// config repository id
-	// Minimum: 1
-	ConfigRepositoryID uint32 `json:"config_repository_id,omitempty"`
+	// config repository canonical
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	ConfigRepositoryCanonical string `json:"config_repository_canonical,omitempty"`
 
 	// created at
 	// Required: true
@@ -78,7 +80,7 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateConfigRepositoryID(formats); err != nil {
+	if err := m.validateConfigRepositoryCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -137,13 +139,21 @@ func (m *Project) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateConfigRepositoryID(formats strfmt.Registry) error {
+func (m *Project) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.ConfigRepositoryID) { // not required
+	if swag.IsZero(m.ConfigRepositoryCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("config_repository_id", "body", int64(m.ConfigRepositoryID), 1, false); err != nil {
+	if err := validate.MinLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

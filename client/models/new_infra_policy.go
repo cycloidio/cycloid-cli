@@ -26,11 +26,10 @@ type NewInfraPolicy struct {
 	Body *string `json:"body"`
 
 	// canonical
-	// Required: true
 	// Max Length: 30
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Canonical *string `json:"canonical"`
+	Canonical string `json:"canonical,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -99,19 +98,19 @@ func (m *NewInfraPolicy) validateBody(formats strfmt.Registry) error {
 
 func (m *NewInfraPolicy) validateCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
+	if swag.IsZero(m.Canonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

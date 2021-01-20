@@ -71,7 +71,7 @@ type GetServiceCatalogSourceOK struct {
 }
 
 func (o *GetServiceCatalogSourceOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] getServiceCatalogSourceOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] getServiceCatalogSourceOK  %+v", 200, o.Payload)
 }
 
 func (o *GetServiceCatalogSourceOK) GetPayload() *GetServiceCatalogSourceOKBody {
@@ -104,7 +104,7 @@ type GetServiceCatalogSourceForbidden struct {
 }
 
 func (o *GetServiceCatalogSourceForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] getServiceCatalogSourceForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] getServiceCatalogSourceForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetServiceCatalogSourceForbidden) GetPayload() *models.ErrorPayload {
@@ -137,7 +137,7 @@ type GetServiceCatalogSourceUnprocessableEntity struct {
 }
 
 func (o *GetServiceCatalogSourceUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] getServiceCatalogSourceUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] getServiceCatalogSourceUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetServiceCatalogSourceUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -179,7 +179,7 @@ func (o *GetServiceCatalogSourceDefault) Code() int {
 }
 
 func (o *GetServiceCatalogSourceDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] getServiceCatalogSource default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] getServiceCatalogSource default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {

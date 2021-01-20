@@ -17,9 +17,15 @@ import (
 
 // NewRole New role access control
 //
-// New role represents the authorization level that a user has access to. A role contains a list of policies to define the access control. Note not all the entities supports roles access control; see the API endpoints to know which entities support them.
+// New role represents the authorization level that a user has access to. A role contains a list of rules to define the access control. Note not all the entities supports roles access control; see the API endpoints to know which entities support them.
 // swagger:model NewRole
 type NewRole struct {
+
+	// canonical
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	Canonical string `json:"canonical,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -30,26 +36,51 @@ type NewRole struct {
 	// Min Length: 3
 	Name *string `json:"name"`
 
-	// policies
+	// rules
 	// Required: true
-	Policies []*PolicyReference `json:"policies"`
+	Rules []*NewRule `json:"rules"`
 }
 
 // Validate validates this new role
 func (m *NewRole) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validatePolicies(formats); err != nil {
+	if err := m.validateRules(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *NewRole) validateCanonical(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Canonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -70,21 +101,21 @@ func (m *NewRole) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewRole) validatePolicies(formats strfmt.Registry) error {
+func (m *NewRole) validateRules(formats strfmt.Registry) error {
 
-	if err := validate.Required("policies", "body", m.Policies); err != nil {
+	if err := validate.Required("rules", "body", m.Rules); err != nil {
 		return err
 	}
 
-	for i := 0; i < len(m.Policies); i++ {
-		if swag.IsZero(m.Policies[i]) { // not required
+	for i := 0; i < len(m.Rules); i++ {
+		if swag.IsZero(m.Rules[i]) { // not required
 			continue
 		}
 
-		if m.Policies[i] != nil {
-			if err := m.Policies[i].Validate(formats); err != nil {
+		if m.Rules[i] != nil {
+			if err := m.Rules[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("policies" + "." + strconv.Itoa(i))
+					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

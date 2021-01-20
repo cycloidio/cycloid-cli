@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -67,11 +66,11 @@ type DeleteServiceCatalogSourceParams struct {
 
 	*/
 	OrganizationCanonical string
-	/*ServiceCatalogSourceID
-	  Organization Service Catalog Sources ID
+	/*ServiceCatalogSourceCanonical
+	  Organization Service Catalog Sources canonical
 
 	*/
-	ServiceCatalogSourceID uint32
+	ServiceCatalogSourceCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -122,15 +121,15 @@ func (o *DeleteServiceCatalogSourceParams) SetOrganizationCanonical(organization
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithServiceCatalogSourceID adds the serviceCatalogSourceID to the delete service catalog source params
-func (o *DeleteServiceCatalogSourceParams) WithServiceCatalogSourceID(serviceCatalogSourceID uint32) *DeleteServiceCatalogSourceParams {
-	o.SetServiceCatalogSourceID(serviceCatalogSourceID)
+// WithServiceCatalogSourceCanonical adds the serviceCatalogSourceCanonical to the delete service catalog source params
+func (o *DeleteServiceCatalogSourceParams) WithServiceCatalogSourceCanonical(serviceCatalogSourceCanonical string) *DeleteServiceCatalogSourceParams {
+	o.SetServiceCatalogSourceCanonical(serviceCatalogSourceCanonical)
 	return o
 }
 
-// SetServiceCatalogSourceID adds the serviceCatalogSourceId to the delete service catalog source params
-func (o *DeleteServiceCatalogSourceParams) SetServiceCatalogSourceID(serviceCatalogSourceID uint32) {
-	o.ServiceCatalogSourceID = serviceCatalogSourceID
+// SetServiceCatalogSourceCanonical adds the serviceCatalogSourceCanonical to the delete service catalog source params
+func (o *DeleteServiceCatalogSourceParams) SetServiceCatalogSourceCanonical(serviceCatalogSourceCanonical string) {
+	o.ServiceCatalogSourceCanonical = serviceCatalogSourceCanonical
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -146,8 +145,8 @@ func (o *DeleteServiceCatalogSourceParams) WriteToRequest(r runtime.ClientReques
 		return err
 	}
 
-	// path param service_catalog_source_id
-	if err := r.SetPathParam("service_catalog_source_id", swag.FormatUint32(o.ServiceCatalogSourceID)); err != nil {
+	// path param service_catalog_source_canonical
+	if err := r.SetPathParam("service_catalog_source_canonical", o.ServiceCatalogSourceCanonical); err != nil {
 		return err
 	}
 

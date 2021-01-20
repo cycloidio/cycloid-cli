@@ -64,10 +64,12 @@ type ServiceCatalog struct {
 	// Required: true
 	Ref *string `json:"ref"`
 
-	// service catalog source id
+	// service catalog source canonical
 	// Required: true
-	// Minimum: 1
-	ServiceCatalogSourceID *uint32 `json:"service_catalog_source_id"`
+	// Max Length: 30
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	ServiceCatalogSourceCanonical *string `json:"service_catalog_source_canonical"`
 
 	// status
 	Status string `json:"status,omitempty"`
@@ -128,7 +130,7 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogSourceID(formats); err != nil {
+	if err := m.validateServiceCatalogSourceCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -280,13 +282,21 @@ func (m *ServiceCatalog) validateRef(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ServiceCatalog) validateServiceCatalogSourceID(formats strfmt.Registry) error {
+func (m *ServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("service_catalog_source_id", "body", m.ServiceCatalogSourceID); err != nil {
+	if err := validate.Required("service_catalog_source_canonical", "body", m.ServiceCatalogSourceCanonical); err != nil {
 		return err
 	}
 
-	if err := validate.MinimumInt("service_catalog_source_id", "body", int64(*m.ServiceCatalogSourceID), 1, false); err != nil {
+	if err := validate.MinLength("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), 30); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
