@@ -101,6 +101,9 @@ type Middleware interface {
 	// ValidateInfraPolicies will validate the TF plan against
 	// OPA policies defined on the Cycloid server
 	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error)
+
+	// CostEstimation will consume the backend API endpoint for cost estimation
+	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, error)
 }
 
 type middleware struct {
