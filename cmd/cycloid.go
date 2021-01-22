@@ -16,6 +16,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -47,5 +48,6 @@ func AttachCommands(cmd *cobra.Command) {
 		roles.NewCommands(),
 		stacks.NewCommands(),
 		login.NewCommands(),
+		terracost.NewCommands(),
 	)
 }
