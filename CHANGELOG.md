@@ -4,6 +4,8 @@
    ([PR #72](https://github.com/cycloidio/cycloid-cli/pull/72))
   - `gen-doc` subcommand
    ([PR #61](https://github.com/cycloidio/cycloid-cli/pull/61))
+  - `--insecure` flag to allow TLS verification skipping
+   ([Issue #70](https://github.com/cycloidio/cycloid-cli/issues/70))
 
 ## [v1.0.53] _2020-12-01_
 - **CHANGED**
