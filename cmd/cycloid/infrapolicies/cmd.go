@@ -9,7 +9,7 @@ import (
 var (
 	example = `
 	# Manage infrapolicies and validate Terraform plan against
-	cy --org my-org api-key validate
+	cy --org my-org --env my-env --project my-project infrapolicy validate --plan-path ./plan.json
 `
 	short = "Manage infrapolicies"
 )
