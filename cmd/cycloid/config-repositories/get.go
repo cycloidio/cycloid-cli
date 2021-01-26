@@ -17,8 +17,8 @@ func NewGetCommand() *cobra.Command {
 		Use:   "get",
 		Short: "get a config repository",
 		Example: `
-	# get the config repository with the id 123 and display the result in YAML
-	cy  --org my-org config-repo get --id 123 -o yaml
+	# get the config repository with the canonical my-config-repo and display the result in YAML
+	cy  --org my-org config-repo get --canonical my-config-repo -o yaml
 `,
 		RunE:    getConfigRepository,
 		PreRunE: internal.CheckAPIAndCLIVersion,

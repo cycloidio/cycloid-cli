@@ -18,7 +18,7 @@ func NewUpdateCommand() *cobra.Command {
 		Short: "update a catalog repository",
 		Example: `
 	# update a catalog repository
-	cy  --org my-org cr update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --id 123
+	cy  --org my-org cr update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-catalog-repository
 `,
 		RunE: updateCatalogRepository,
 	}

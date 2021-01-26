@@ -36,6 +36,7 @@ Available Commands:
   roles              Manage roles from the organization
   stack              Manage the stacks
   status             Get the status of the Cycloid services
+  terracost          Use terracost feature
   version            Get the version of the consumed API
 ```
 

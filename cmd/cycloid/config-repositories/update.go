@@ -19,7 +19,7 @@ func NewUpdateCommand() *cobra.Command {
 		Short: "update a config repository",
 		Example: `
 	# update a config repository
-	cy  --org my-org config-repo update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --id 123
+	cy  --org my-org config-repo update --branch my-branch --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-config-repo
 `,
 		RunE:    updateConfigRepository,
 		PreRunE: internal.CheckAPIAndCLIVersion,
