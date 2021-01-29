@@ -12,7 +12,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -234,57 +233,6 @@ func (o *ValidateProjectInfraPoliciesDefault) readResponse(response runtime.Clie
 		return err
 	}
 
-	return nil
-}
-
-/*ValidateProjectInfraPoliciesBody validate project infra policies body
-swagger:model ValidateProjectInfraPoliciesBody
-*/
-type ValidateProjectInfraPoliciesBody struct {
-
-	// The generated Terraform Plan in escaped JSON format.
-	// Required: true
-	Tfplan *string `json:"tfplan"`
-}
-
-// Validate validates this validate project infra policies body
-func (o *ValidateProjectInfraPoliciesBody) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.validateTfplan(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *ValidateProjectInfraPoliciesBody) validateTfplan(formats strfmt.Registry) error {
-
-	if err := validate.Required("body"+"."+"tfplan", "body", o.Tfplan); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (o *ValidateProjectInfraPoliciesBody) MarshalBinary() ([]byte, error) {
-	if o == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(o)
-}
-
-// UnmarshalBinary interface implementation
-func (o *ValidateProjectInfraPoliciesBody) UnmarshalBinary(b []byte) error {
-	var res ValidateProjectInfraPoliciesBody
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*o = res
 	return nil
 }
 

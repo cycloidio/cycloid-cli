@@ -198,57 +198,6 @@ func (o *CostEstimateTfPlanDefault) readResponse(response runtime.ClientResponse
 	return nil
 }
 
-/*CostEstimateTfPlanBody cost estimate tf plan body
-swagger:model CostEstimateTfPlanBody
-*/
-type CostEstimateTfPlanBody struct {
-
-	// The generated Terraform Plan in escaped JSON format.
-	// Required: true
-	Tfplan *string `json:"tfplan"`
-}
-
-// Validate validates this cost estimate tf plan body
-func (o *CostEstimateTfPlanBody) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.validateTfplan(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *CostEstimateTfPlanBody) validateTfplan(formats strfmt.Registry) error {
-
-	if err := validate.Required("body"+"."+"tfplan", "body", o.Tfplan); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// MarshalBinary interface implementation
-func (o *CostEstimateTfPlanBody) MarshalBinary() ([]byte, error) {
-	if o == nil {
-		return nil, nil
-	}
-	return swag.WriteJSON(o)
-}
-
-// UnmarshalBinary interface implementation
-func (o *CostEstimateTfPlanBody) UnmarshalBinary(b []byte) error {
-	var res CostEstimateTfPlanBody
-	if err := swag.ReadJSON(b, &res); err != nil {
-		return err
-	}
-	*o = res
-	return nil
-}
-
 /*CostEstimateTfPlanOKBody cost estimate tf plan o k body
 swagger:model CostEstimateTfPlanOKBody
 */

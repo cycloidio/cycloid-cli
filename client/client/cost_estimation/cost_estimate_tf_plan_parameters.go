@@ -15,6 +15,8 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // NewCostEstimateTfPlanParams creates a new CostEstimateTfPlanParams object
@@ -61,11 +63,8 @@ for the cost estimate tf plan operation typically these are written to a http.Re
 */
 type CostEstimateTfPlanParams struct {
 
-	/*Body
-	  The project's attributes to check before to apply an infrastructure change.
-
-	*/
-	Body CostEstimateTfPlanBody
+	/*Body*/
+	Body *models.TerraformPlanInput
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -111,13 +110,13 @@ func (o *CostEstimateTfPlanParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the cost estimate tf plan params
-func (o *CostEstimateTfPlanParams) WithBody(body CostEstimateTfPlanBody) *CostEstimateTfPlanParams {
+func (o *CostEstimateTfPlanParams) WithBody(body *models.TerraformPlanInput) *CostEstimateTfPlanParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the cost estimate tf plan params
-func (o *CostEstimateTfPlanParams) SetBody(body CostEstimateTfPlanBody) {
+func (o *CostEstimateTfPlanParams) SetBody(body *models.TerraformPlanInput) {
 	o.Body = body
 }
 
@@ -140,8 +139,10 @@ func (o *CostEstimateTfPlanParams) WriteToRequest(r runtime.ClientRequest, reg s
 	}
 	var res []error
 
-	if err := r.SetBodyParam(o.Body); err != nil {
-		return err
+	if o.Body != nil {
+		if err := r.SetBodyParam(o.Body); err != nil {
+			return err
+		}
 	}
 
 	// path param organization_canonical
