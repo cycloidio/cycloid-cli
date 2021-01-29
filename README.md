@@ -4,10 +4,12 @@ This repository hosts the source code of Cycloid command line to use Cycloid API
 
 ## Getting started
 
-Before playing with the CLI, you first need to authenticate a user into the Cycloid API:
+Before playing with the CLI, you first need to authenticate a user into the Cycloid API. We highly recommend the usage of API keys for all your CLI calls:
 
 ```
 cy login --org my-org --email example@email.com --password my-password --api-url https://cycloid-api.local.tld
+cy api-key create --org my-org --role my-role-canonical --name "CLI API key" --description "API key for the CLI" -o json | jq -r .token > token
+cy login --org my-org --api-key $(cat token)
 ```
 
 From there, you can now explore the various commands using the `--help` flag for each command / subcommand.
@@ -20,6 +22,7 @@ Usage:
   cy [command]
 
 Available Commands:
+  api-key            Manage organization API keys
   catalog-repository Manage the catalog repositories
   completion         Output shell completion for the given shell (bash or zsh)
   config-repository  Manage the catalog repositories
