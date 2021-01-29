@@ -14,7 +14,7 @@ func (m *middleware) CostEstimation(org string, plan []byte) (*models.CostEstima
 	params.SetOrganizationCanonical(org)
 
 	tfplan := string(plan)
-	params.SetBody(cost_estimation.CostEstimateTfPlanBody{
+	params.SetBody(&models.TerraformPlanInput{
 		Tfplan: &tfplan,
 	})
 
