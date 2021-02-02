@@ -15,14 +15,32 @@ import (
 
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create [ssh|basic_auth|custom]",
+		Use:   "create [ssh|basic_auth|custom|aws|azure|azure_storage|gcp|elasticsearch|swift]",
 		Short: "create a credential",
 		Example: `
 	# create a credential for basic authentication
-	cy --org my-org credential create basic_auth --username my-username --password my-password
+	cy --org my-org credential create basic_auth --name foo --username my-username --password my-password
 
 	# create a credential for SSH
-	cy --org my-org credential create ssh --ssh-key /path/to/private/key
+	cy --org my-org credential create ssh --name foo --ssh-key /path/to/private/key
+
+	# create a credential for AWS
+	cy --org my-org credential create aws --name foo --access-key foo --secret-key bar
+
+	# create a credential for Azure
+	cy --org my-org credential create azure --name foo --client-id myid --client-secret mysec --subscription-id mysub --tenant-id mytenant
+
+	# create a credential for Azure storage
+	cy --org my-org credential create azure_storage --name foo --account-name myaccount --access-key mykey
+
+	# create a credential for GCP
+	cy --org my-org credential create gcp --name foo --json-key /path/to/json/key
+
+	# create a credential for Elasticsearch
+	cy --org my-org credential create elasticsearch --name foo --username foo --password bar --ca-cert /path/to/cert
+
+	# create a credential for Swift
+	cy --org my-org credential create swift --name foo --username foo --password bar --tenant-id mytenant --auth-url url --domain-id mydomain
 `,
 	}
 
@@ -30,41 +48,128 @@ func NewCreateCommand() *cobra.Command {
 	common.RequiredPersistentFlag(WithPersistentFlagName, cmd)
 	WithPersistentFlagPath(cmd)
 
+	// SSH
 	var ssh = &cobra.Command{
 		Use:     "ssh",
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for SSH
-	cy --my-org credential create ssh --ssh-key /path/to/private/key
+	cy --org my-org credential create ssh --ssh-key /path/to/private/key
 `,
 	}
 	common.RequiredFlag(WithFlagSSHKey, ssh)
 
+	// Basic auth
 	var basicAuth = &cobra.Command{
 		Use:     "basic_auth",
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for basic authentication
-	cy --my-org credential create basic_auth --username my-username --password my-password
+	cy --org my-org credential create basic_auth --username my-username --password my-password
 `,
 	}
 	common.RequiredFlag(WithFlagUsername, basicAuth)
 	common.RequiredFlag(WithFlagPassword, basicAuth)
 
+	// Custom
 	var custom = &cobra.Command{
 		Use:     "custom",
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for custom type
-	cy --my-org credential create custom --field my-key=my-value --field my-key2=my-value2
+	cy --org my-org credential create custom --field my-key=my-value --field my-key2=my-value2
 `,
 	}
 	common.RequiredFlag(WithFlagField, custom)
 
-	cmd.AddCommand(custom, basicAuth, ssh)
+	// AWS
+	var aws = &cobra.Command{
+		Use:     "aws",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
+		Example: `
+	# create a credential for AWS
+	cy --org my-org credential create aws --name foo --access-key foo --secret-key bar
+`,
+	}
+	common.RequiredFlag(WithFlagAccessKey, aws)
+	common.RequiredFlag(WithFlagSecretKey, aws)
+
+	// Azure
+	var azure = &cobra.Command{
+		Use:     "azure",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
+		Example: `
+	# create a credential for Azure
+	cy --org my-org credential create azure --name foo --client-id myid --client-secret mysec --subscription-id mysub --tenant-id mytenant
+`,
+	}
+	common.RequiredFlag(WithFlagClientID, azure)
+	common.RequiredFlag(WithFlagClientSecret, azure)
+	common.RequiredFlag(WithFlagSubscriptionID, azure)
+	common.RequiredFlag(WithFlagTenantID, azure)
+
+	// Azure Storage
+	var azureStorage = &cobra.Command{
+		Use:     "azure_storage",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
+		Example: `
+	# create a credential for Azure storage
+	cy --org my-org credential create azure_storage --name foo --account-name myaccount --access-key mykey
+`,
+	}
+	common.RequiredFlag(WithFlagAccountName, azureStorage)
+	common.RequiredFlag(WithFlagAccessKey, azureStorage)
+
+	// GCP
+	var gcp = &cobra.Command{
+		Use:     "gcp",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
+		Example: `
+	# create a credential for GCP
+	cy --org my-org credential create gcp --name foo --json-key /path/to/json/key
+`,
+	}
+	common.RequiredFlag(WithFlagJsonKey, gcp)
+
+	// Swift
+	var swift = &cobra.Command{
+		Use:     "swift",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
+		Example: `
+	# create a credential for Swift
+	cy --org my-org credential create swift --name foo --username foo --password bar --tenant-id mytenant --auth-url url --domain-id mydomain
+`,
+	}
+	common.RequiredFlag(WithFlagUsername, swift)
+	common.RequiredFlag(WithFlagPassword, swift)
+	common.RequiredFlag(WithFlagTenantID, swift)
+	common.RequiredFlag(WithFlagAuthUrl, swift)
+	common.RequiredFlag(WithFlagDomainID, swift)
+
+	// Elasticsearch
+	var elasticsearch = &cobra.Command{
+		Use:     "elasticsearch",
+		RunE:    create,
+		PreRunE: internal.CheckAPIAndCLIVersion,
+		Example: `
+	# create a credential for Elasticsearch
+	cy --org my-org credential create elasticsearch --name foo --username foo --password bar --ca-cert /path/to/cert
+`,
+	}
+	WithFlagUsername(elasticsearch)
+	WithFlagPassword(elasticsearch)
+	common.RequiredFlag(WithFlagCaCert, elasticsearch)
+
+	// Command
+	cmd.AddCommand(custom, basicAuth, ssh, aws, azure, azureStorage, gcp, swift, elasticsearch)
 
 	return cmd
 }
@@ -129,6 +234,120 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 		rawCred = &models.CredentialRaw{
 			Raw: fields,
+		}
+	case "aws":
+		accessKey, err := cmd.Flags().GetString("access-key")
+		if err != nil {
+			return err
+		}
+		secretKey, err := cmd.Flags().GetString("secret-key")
+		if err != nil {
+			return err
+		}
+		rawCred = &models.CredentialRaw{
+			AccessKey: accessKey,
+			SecretKey: secretKey,
+		}
+	case "azure":
+		clientID, err := cmd.Flags().GetString("client-id")
+		if err != nil {
+			return err
+		}
+		clientSecret, err := cmd.Flags().GetString("client-secret")
+		if err != nil {
+			return err
+		}
+		subscriptionID, err := cmd.Flags().GetString("subscription-id")
+		if err != nil {
+			return err
+		}
+		tenantID, err := cmd.Flags().GetString("tenant-id")
+		if err != nil {
+			return err
+		}
+		rawCred = &models.CredentialRaw{
+			ClientID:       clientID,
+			ClientSecret:   clientSecret,
+			SubscriptionID: subscriptionID,
+			TenantID:       tenantID,
+		}
+	case "azure_storage":
+		accessKey, err := cmd.Flags().GetString("access-key")
+		if err != nil {
+			return err
+		}
+		accountName, err := cmd.Flags().GetString("account-name")
+		if err != nil {
+			return err
+		}
+		rawCred = &models.CredentialRaw{
+			AccessKey:   accessKey,
+			AccountName: accountName,
+		}
+	case "gcp":
+		jsonKeyPath, err := cmd.Flags().GetString("json-key")
+		if err != nil {
+			return err
+		}
+
+		jsonKey, err := ioutil.ReadFile(jsonKeyPath)
+		if err != nil {
+			return errors.Wrap(err, "unable to read JSON key")
+		}
+
+		rawCred = &models.CredentialRaw{
+			JSONKey: string(jsonKey),
+		}
+	case "swift":
+		username, err := cmd.Flags().GetString("username")
+		if err != nil {
+			return err
+		}
+		password, err := cmd.Flags().GetString("password")
+		if err != nil {
+			return err
+		}
+		authURL, err := cmd.Flags().GetString("auth-url")
+		if err != nil {
+			return err
+		}
+		domainID, err := cmd.Flags().GetString("domain-id")
+		if err != nil {
+			return err
+		}
+		tenantID, err := cmd.Flags().GetString("tenant-id")
+		if err != nil {
+			return err
+		}
+		rawCred = &models.CredentialRaw{
+			Username: username,
+			Password: password,
+			AuthURL:  authURL,
+			DomainID: domainID,
+			TenantID: tenantID,
+		}
+	case "elasticsearch":
+		caCertPath, err := cmd.Flags().GetString("ca-cert")
+		if err != nil {
+			return err
+		}
+
+		caCert, err := ioutil.ReadFile(caCertPath)
+		if err != nil {
+			return errors.Wrap(err, "unable to read CA cert file")
+		}
+		username, err := cmd.Flags().GetString("username")
+		if err != nil {
+			return err
+		}
+		password, err := cmd.Flags().GetString("password")
+		if err != nil {
+			return err
+		}
+		rawCred = &models.CredentialRaw{
+			Username: username,
+			Password: password,
+			CaCert:   string(caCert),
 		}
 	default:
 		return fmt.Errorf("unsupported credential type: %s", credT)
