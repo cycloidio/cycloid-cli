@@ -27,6 +27,40 @@ type Client struct {
 }
 
 /*
+CanDo Checks if the JWT can do the action
+*/
+func (a *Client) CanDo(params *CanDoParams, authInfo runtime.ClientAuthInfoWriter) (*CanDoOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCanDoParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "canDo",
+		Method:             "POST",
+		PathPattern:        "/organizations/{organization_canonical}/can_do",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CanDoReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CanDoOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*CanDoDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 CreateOrg Create a new organization, making the authenticated user the owner of it.
 */
 func (a *Client) CreateOrg(params *CreateOrgParams, authInfo runtime.ClientAuthInfoWriter) (*CreateOrgOK, error) {

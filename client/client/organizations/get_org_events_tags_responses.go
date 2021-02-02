@@ -65,7 +65,6 @@ func NewGetOrgEventsTagsOK() *GetOrgEventsTagsOK {
 /*GetOrgEventsTagsOK handles this case with default header values.
 
 The list of tags and set of values for all the events of the organization.
-  format: int64
 */
 type GetOrgEventsTagsOK struct {
 	Payload *GetOrgEventsTagsOKBody

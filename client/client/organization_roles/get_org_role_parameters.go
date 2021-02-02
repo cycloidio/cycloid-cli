@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -67,11 +66,11 @@ type GetOrgRoleParams struct {
 
 	*/
 	OrganizationCanonical string
-	/*RoleID
-	  Organization Role ID
+	/*RoleCanonical
+	  Organization Role canonical
 
 	*/
-	RoleID uint32
+	RoleCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -122,15 +121,15 @@ func (o *GetOrgRoleParams) SetOrganizationCanonical(organizationCanonical string
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithRoleID adds the roleID to the get org role params
-func (o *GetOrgRoleParams) WithRoleID(roleID uint32) *GetOrgRoleParams {
-	o.SetRoleID(roleID)
+// WithRoleCanonical adds the roleCanonical to the get org role params
+func (o *GetOrgRoleParams) WithRoleCanonical(roleCanonical string) *GetOrgRoleParams {
+	o.SetRoleCanonical(roleCanonical)
 	return o
 }
 
-// SetRoleID adds the roleId to the get org role params
-func (o *GetOrgRoleParams) SetRoleID(roleID uint32) {
-	o.RoleID = roleID
+// SetRoleCanonical adds the roleCanonical to the get org role params
+func (o *GetOrgRoleParams) SetRoleCanonical(roleCanonical string) {
+	o.RoleCanonical = roleCanonical
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -146,8 +145,8 @@ func (o *GetOrgRoleParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		return err
 	}
 
-	// path param role_id
-	if err := r.SetPathParam("role_id", swag.FormatUint32(o.RoleID)); err != nil {
+	// path param role_canonical
+	if err := r.SetPathParam("role_canonical", o.RoleCanonical); err != nil {
 		return err
 	}
 

@@ -11,6 +11,7 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/cycloidio/cycloid-cli/client/client/cost_estimation"
 	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_api_keys"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
@@ -74,6 +75,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 
 	cli := new(APIClient)
 	cli.Transport = transport
+
+	cli.CostEstimation = cost_estimation.New(transport, formats)
 
 	cli.Cycloid = cycloid.New(transport, formats)
 
@@ -157,6 +160,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // APIClient is a client for API client
 type APIClient struct {
+	CostEstimation *cost_estimation.Client
+
 	Cycloid *cycloid.Client
 
 	OrganizationAPIKeys *organization_api_keys.Client
@@ -201,6 +206,8 @@ type APIClient struct {
 // SetTransport changes the transport on the client and all its subresources
 func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
+
+	c.CostEstimation.SetTransport(transport)
 
 	c.Cycloid.SetTransport(transport)
 

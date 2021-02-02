@@ -21,7 +21,7 @@ func NewDeleteCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 	return cmd
 }
 
@@ -33,12 +33,12 @@ func del(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
 
-	if err := m.DeleteCredential(org, id); err != nil {
+	if err := m.DeleteCredential(org, can); err != nil {
 		return errors.Wrap(err, "unable to delete credential")
 	}
 	return nil

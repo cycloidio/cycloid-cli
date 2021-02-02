@@ -55,7 +55,7 @@ type DeleteServiceCatalogSourceNoContent struct {
 }
 
 func (o *DeleteServiceCatalogSourceNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] deleteServiceCatalogSourceNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] deleteServiceCatalogSourceNoContent ", 204)
 }
 
 func (o *DeleteServiceCatalogSourceNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -86,7 +86,7 @@ func (o *DeleteServiceCatalogSourceDefault) Code() int {
 }
 
 func (o *DeleteServiceCatalogSourceDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] deleteServiceCatalogSource default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] deleteServiceCatalogSource default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {

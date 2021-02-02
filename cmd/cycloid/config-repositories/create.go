@@ -69,7 +69,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cred, err := cmd.Flags().GetUint32("cred")
+	cred, err := cmd.Flags().GetString("cred")
 	if err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.CreateConfigRepository(org, name, url, branch, setDefault, cred)
+	cr, err := m.CreateConfigRepository(org, name, url, branch, cred, setDefault)
 	if err != nil {
 		return err
 	}

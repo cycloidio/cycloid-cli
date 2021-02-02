@@ -74,7 +74,7 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	configRepo, err := cmd.Flags().GetUint32("config-repo")
+	configRepo, err := cmd.Flags().GetString("config-repo")
 	if err != nil {
 		return err
 	}

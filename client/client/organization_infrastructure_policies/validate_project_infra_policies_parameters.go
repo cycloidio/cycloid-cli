@@ -15,6 +15,8 @@ import (
 	cr "github.com/go-openapi/runtime/client"
 
 	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // NewValidateProjectInfraPoliciesParams creates a new ValidateProjectInfraPoliciesParams object
@@ -65,7 +67,7 @@ type ValidateProjectInfraPoliciesParams struct {
 	  The project's attributes to check before to apply an infrastructure change.
 
 	*/
-	Body ValidateProjectInfraPoliciesBody
+	Body *models.TerraformPlanInput
 	/*EnvironmentCanonical
 	  The environment canonical to use as part of a path
 
@@ -121,13 +123,13 @@ func (o *ValidateProjectInfraPoliciesParams) SetHTTPClient(client *http.Client) 
 }
 
 // WithBody adds the body to the validate project infra policies params
-func (o *ValidateProjectInfraPoliciesParams) WithBody(body ValidateProjectInfraPoliciesBody) *ValidateProjectInfraPoliciesParams {
+func (o *ValidateProjectInfraPoliciesParams) WithBody(body *models.TerraformPlanInput) *ValidateProjectInfraPoliciesParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the validate project infra policies params
-func (o *ValidateProjectInfraPoliciesParams) SetBody(body ValidateProjectInfraPoliciesBody) {
+func (o *ValidateProjectInfraPoliciesParams) SetBody(body *models.TerraformPlanInput) {
 	o.Body = body
 }
 
@@ -172,8 +174,10 @@ func (o *ValidateProjectInfraPoliciesParams) WriteToRequest(r runtime.ClientRequ
 	}
 	var res []error
 
-	if err := r.SetBodyParam(o.Body); err != nil {
-		return err
+	if o.Body != nil {
+		if err := r.SetBodyParam(o.Body); err != nil {
+			return err
+		}
 	}
 
 	// path param environment_canonical

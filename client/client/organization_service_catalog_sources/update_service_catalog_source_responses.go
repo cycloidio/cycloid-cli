@@ -71,7 +71,7 @@ type UpdateServiceCatalogSourceOK struct {
 }
 
 func (o *UpdateServiceCatalogSourceOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] updateServiceCatalogSourceOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] updateServiceCatalogSourceOK  %+v", 200, o.Payload)
 }
 
 func (o *UpdateServiceCatalogSourceOK) GetPayload() *UpdateServiceCatalogSourceOKBody {
@@ -104,7 +104,7 @@ type UpdateServiceCatalogSourceNotFound struct {
 }
 
 func (o *UpdateServiceCatalogSourceNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] updateServiceCatalogSourceNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] updateServiceCatalogSourceNotFound  %+v", 404, o.Payload)
 }
 
 func (o *UpdateServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload {
@@ -136,7 +136,7 @@ type UpdateServiceCatalogSourceLengthRequired struct {
 }
 
 func (o *UpdateServiceCatalogSourceLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] updateServiceCatalogSourceLengthRequired ", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] updateServiceCatalogSourceLengthRequired ", 411)
 }
 
 func (o *UpdateServiceCatalogSourceLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -167,7 +167,7 @@ func (o *UpdateServiceCatalogSourceDefault) Code() int {
 }
 
 func (o *UpdateServiceCatalogSourceDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}][%d] updateServiceCatalogSource default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] updateServiceCatalogSource default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *UpdateServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {

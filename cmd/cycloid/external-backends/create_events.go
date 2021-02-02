@@ -19,12 +19,11 @@ func createEvents(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	var (
-		cred    uint32 = 0
-		err     error
-		org     string
-		purpose = "events"
-		ebC     models.ExternalBackendConfiguration
-		engine  = cmd.CalledAs()
+		err       error
+		org, cred string
+		purpose   = "events"
+		ebC       models.ExternalBackendConfiguration
+		engine    = cmd.CalledAs()
 	)
 
 	org, err = cmd.Flags().GetString("org")
@@ -42,7 +41,7 @@ func createEvents(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		cred, err = cmd.Flags().GetUint32("cred")
+		cred, err = cmd.Flags().GetString("cred")
 		if err != nil {
 			return err
 		}
