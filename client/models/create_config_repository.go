@@ -22,14 +22,14 @@ type CreateConfigRepository struct {
 	Branch *string `json:"branch"`
 
 	// canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical string `json:"canonical,omitempty"`
 
 	// credential canonical
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	CredentialCanonical *string `json:"credential_canonical"`
@@ -101,7 +101,7 @@ func (m *CreateConfigRepository) validateCanonical(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
 		return err
 	}
 
@@ -122,7 +122,7 @@ func (m *CreateConfigRepository) validateCredentialCanonical(formats strfmt.Regi
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", string(*m.CredentialCanonical), 30); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(*m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 

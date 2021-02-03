@@ -22,7 +22,7 @@ import (
 type NewRole struct {
 
 	// canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical string `json:"canonical,omitempty"`
@@ -32,7 +32,7 @@ type NewRole struct {
 
 	// name
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	Name *string `json:"name"`
 
@@ -73,7 +73,7 @@ func (m *NewRole) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
 		return err
 	}
 
@@ -94,7 +94,7 @@ func (m *NewRole) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("name", "body", string(*m.Name), 30); err != nil {
+	if err := validate.MaxLength("name", "body", string(*m.Name), 100); err != nil {
 		return err
 	}
 

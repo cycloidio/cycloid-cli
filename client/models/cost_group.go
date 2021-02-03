@@ -21,7 +21,7 @@ type CostGroup struct {
 
 	// amount
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[0-9]+.[0-9]+$
 	Amount *string `json:"amount"`
@@ -70,7 +70,7 @@ func (m *CostGroup) validateAmount(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("amount", "body", string(*m.Amount), 30); err != nil {
+	if err := validate.MaxLength("amount", "body", string(*m.Amount), 100); err != nil {
 		return err
 	}
 

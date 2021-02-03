@@ -26,7 +26,7 @@ type NewServiceCatalog struct {
 	Author *string `json:"author"`
 
 	// canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical string `json:"canonical,omitempty"`
@@ -56,7 +56,7 @@ type NewServiceCatalog struct {
 
 	// service catalog source canonical
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	ServiceCatalogSourceCanonical *string `json:"service_catalog_source_canonical"`
@@ -145,7 +145,7 @@ func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
 		return err
 	}
 
@@ -244,7 +244,7 @@ func (m *NewServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt
 		return err
 	}
 
-	if err := validate.MaxLength("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), 30); err != nil {
+	if err := validate.MaxLength("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), 100); err != nil {
 		return err
 	}
 

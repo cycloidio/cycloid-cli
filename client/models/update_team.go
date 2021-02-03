@@ -23,7 +23,7 @@ type UpdateTeam struct {
 
 	// canonical
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
@@ -76,7 +76,7 @@ func (m *UpdateTeam) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
@@ -112,7 +112,7 @@ func (m *UpdateTeam) validateRolesCanonical(formats strfmt.Registry) error {
 			return err
 		}
 
-		if err := validate.MaxLength("roles_canonical"+"."+strconv.Itoa(i), "body", string(m.RolesCanonical[i]), 30); err != nil {
+		if err := validate.MaxLength("roles_canonical"+"."+strconv.Itoa(i), "body", string(m.RolesCanonical[i]), 100); err != nil {
 			return err
 		}
 

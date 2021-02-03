@@ -26,13 +26,13 @@ type ExternalBackend struct {
 	configurationField ExternalBackendConfiguration
 
 	// credential canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 	// environment canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 1
 	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
 	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
@@ -42,7 +42,7 @@ type ExternalBackend struct {
 	ID uint32 `json:"id,omitempty"`
 
 	// project canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	ProjectCanonical string `json:"project_canonical,omitempty"`
@@ -219,7 +219,7 @@ func (m *ExternalBackend) validateCredentialCanonical(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 30); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 
@@ -240,7 +240,7 @@ func (m *ExternalBackend) validateEnvironmentCanonical(formats strfmt.Registry) 
 		return err
 	}
 
-	if err := validate.MaxLength("environment_canonical", "body", string(m.EnvironmentCanonical), 30); err != nil {
+	if err := validate.MaxLength("environment_canonical", "body", string(m.EnvironmentCanonical), 100); err != nil {
 		return err
 	}
 
@@ -274,7 +274,7 @@ func (m *ExternalBackend) validateProjectCanonical(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MaxLength("project_canonical", "body", string(m.ProjectCanonical), 30); err != nil {
+	if err := validate.MaxLength("project_canonical", "body", string(m.ProjectCanonical), 100); err != nil {
 		return err
 	}
 

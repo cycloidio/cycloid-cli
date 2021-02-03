@@ -38,7 +38,7 @@ type NewPipeline struct {
 	PipelineName *string `json:"pipeline_name"`
 
 	// use case
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	UseCase string `json:"use_case,omitempty"`
@@ -131,7 +131,7 @@ func (m *NewPipeline) validateUseCase(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("use_case", "body", string(m.UseCase), 30); err != nil {
+	if err := validate.MaxLength("use_case", "body", string(m.UseCase), 100); err != nil {
 		return err
 	}
 

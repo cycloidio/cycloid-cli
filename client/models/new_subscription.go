@@ -21,7 +21,7 @@ type NewSubscription struct {
 
 	// plan canonical
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	PlanCanonical *string `json:"plan_canonical"`
@@ -51,7 +51,7 @@ func (m *NewSubscription) validatePlanCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("plan_canonical", "body", string(*m.PlanCanonical), 30); err != nil {
+	if err := validate.MaxLength("plan_canonical", "body", string(*m.PlanCanonical), 100); err != nil {
 		return err
 	}
 

@@ -26,7 +26,7 @@ type NewInfraPolicy struct {
 	Body *string `json:"body"`
 
 	// canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical string `json:"canonical,omitempty"`
@@ -46,7 +46,7 @@ type NewInfraPolicy struct {
 	// owner of an InfraPolicy it has all the permissions on it.
 	//
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Owner *string `json:"owner"`
@@ -106,7 +106,7 @@ func (m *NewInfraPolicy) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
 		return err
 	}
 
@@ -140,7 +140,7 @@ func (m *NewInfraPolicy) validateOwner(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("owner", "body", string(*m.Owner), 30); err != nil {
+	if err := validate.MaxLength("owner", "body", string(*m.Owner), 100); err != nil {
 		return err
 	}
 

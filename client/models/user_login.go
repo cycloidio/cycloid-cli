@@ -30,7 +30,7 @@ type UserLogin struct {
 	Password *strfmt.Password `json:"password"`
 
 	// username
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Username string `json:"username,omitempty"`
@@ -98,7 +98,7 @@ func (m *UserLogin) validateUsername(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", string(m.Username), 30); err != nil {
+	if err := validate.MaxLength("username", "body", string(m.Username), 100); err != nil {
 		return err
 	}
 
