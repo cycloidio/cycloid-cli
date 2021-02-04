@@ -26,6 +26,8 @@ func NewValidateFormCmd() *cobra.Command {
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
+	common.RequiredPersistentFlag(WithFlagForms, cmd)
+
 	return cmd
 }
 
