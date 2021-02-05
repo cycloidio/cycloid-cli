@@ -38,7 +38,7 @@ type UpdateProject struct {
 	// config_repository_canonical is pointing at the CR with the same git
 	// repository that was used during project creation.
 	//
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	ConfigRepositoryCanonical string `json:"config_repository_canonical,omitempty"`
@@ -159,7 +159,7 @@ func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registr
 		return err
 	}
 
-	if err := validate.MaxLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 30); err != nil {
+	if err := validate.MaxLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 100); err != nil {
 		return err
 	}
 

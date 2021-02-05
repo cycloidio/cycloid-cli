@@ -21,7 +21,7 @@ type Environment struct {
 
 	// canonical
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 1
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	Canonical *string `json:"canonical"`
@@ -88,7 +88,7 @@ func (m *Environment) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 

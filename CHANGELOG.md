@@ -1,5 +1,7 @@
 ## [v1.0.58] _2021-02-02_
 - **ADDED**
+  - Adding new kpis command
+   ([PR #81](https://github.com/cycloidio/cycloid-cli/pull/81))
   - Adding new list-invites command
    ([PR #72](https://github.com/cycloidio/cycloid-cli/pull/72))
   - `gen-doc` subcommand

@@ -21,13 +21,13 @@ type NewEnvironment struct {
 
 	// canonical
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 1
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	Canonical *string `json:"canonical"`
 
 	// cloud provider canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	CloudProviderCanonical string `json:"cloud_provider_canonical,omitempty"`
@@ -61,7 +61,7 @@ func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
@@ -82,7 +82,7 @@ func (m *NewEnvironment) validateCloudProviderCanonical(formats strfmt.Registry)
 		return err
 	}
 
-	if err := validate.MaxLength("cloud_provider_canonical", "body", string(m.CloudProviderCanonical), 30); err != nil {
+	if err := validate.MaxLength("cloud_provider_canonical", "body", string(m.CloudProviderCanonical), 100); err != nil {
 		return err
 	}
 

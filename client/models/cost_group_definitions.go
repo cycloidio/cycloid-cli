@@ -21,14 +21,14 @@ type CostGroupDefinitions struct {
 
 	// group
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 1
 	// Pattern: ^[a-zA-Z]+$
 	Group *string `json:"group"`
 
 	// key
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 1
 	// Pattern: ^[a-zA-Z]+$
 	Key *string `json:"key"`
@@ -62,7 +62,7 @@ func (m *CostGroupDefinitions) validateGroup(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("group", "body", string(*m.Group), 30); err != nil {
+	if err := validate.MaxLength("group", "body", string(*m.Group), 100); err != nil {
 		return err
 	}
 
@@ -83,7 +83,7 @@ func (m *CostGroupDefinitions) validateKey(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("key", "body", string(*m.Key), 30); err != nil {
+	if err := validate.MaxLength("key", "body", string(*m.Key), 100); err != nil {
 		return err
 	}
 

@@ -22,13 +22,13 @@ type CreateServiceCatalogSource struct {
 	Branch *string `json:"branch"`
 
 	// canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical string `json:"canonical,omitempty"`
 
 	// credential canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	CredentialCanonical string `json:"credential_canonical,omitempty"`
@@ -98,7 +98,7 @@ func (m *CreateServiceCatalogSource) validateCanonical(formats strfmt.Registry) 
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
 		return err
 	}
 
@@ -119,7 +119,7 @@ func (m *CreateServiceCatalogSource) validateCredentialCanonical(formats strfmt.
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 30); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 

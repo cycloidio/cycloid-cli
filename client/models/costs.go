@@ -31,7 +31,7 @@ type Costs struct {
 
 	// total
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[0-9]+.[0-9]+$
 	Total *string `json:"total"`
@@ -130,7 +130,7 @@ func (m *Costs) validateTotal(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("total", "body", string(*m.Total), 30); err != nil {
+	if err := validate.MaxLength("total", "body", string(*m.Total), 100); err != nil {
 		return err
 	}
 

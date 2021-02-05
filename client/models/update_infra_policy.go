@@ -44,7 +44,7 @@ type UpdateInfraPolicy struct {
 	// or an empty canonical is allowed to not reset it.
 	//
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	Owner *string `json:"owner"`
 
 	// severity
@@ -133,7 +133,7 @@ func (m *UpdateInfraPolicy) validateOwner(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("owner", "body", string(*m.Owner), 30); err != nil {
+	if err := validate.MaxLength("owner", "body", string(*m.Owner), 100); err != nil {
 		return err
 	}
 
