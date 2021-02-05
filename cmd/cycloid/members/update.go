@@ -17,7 +17,7 @@ func NewUpdateCommand() *cobra.Command {
 	var (
 		example = `
 	# Update a member within my-org organization
-	cy --org my-org members update --name my_user --role-id 271
+	cy --org my-org members update --name my_user --role my-role
 	`
 		short = "Update a member"
 		long  = short
@@ -33,7 +33,7 @@ func NewUpdateCommand() *cobra.Command {
 	}
 
 	common.RequiredFlag(WithFlagName, cmd)
-	common.RequiredFlag(WithFlagRoleID, cmd)
+	common.RequiredFlag(WithFlagRoleCanonical, cmd)
 
 	//TODO : dont Required flags and if not set, use value from the getConfigRepository
 
@@ -59,12 +59,12 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	roleID, err := cmd.Flags().GetUint32("role-id")
+	role, err := cmd.Flags().GetString("role")
 	if err != nil {
 		return err
 	}
 
-	mb, err := m.UpdateMembers(org, name, roleID)
+	mb, err := m.UpdateMembers(org, name, role)
 	if err != nil {
 		return err
 	}

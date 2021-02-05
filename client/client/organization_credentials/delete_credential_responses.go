@@ -73,7 +73,7 @@ type DeleteCredentialNoContent struct {
 }
 
 func (o *DeleteCredentialNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_id}][%d] deleteCredentialNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] deleteCredentialNoContent ", 204)
 }
 
 func (o *DeleteCredentialNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -95,7 +95,7 @@ type DeleteCredentialForbidden struct {
 }
 
 func (o *DeleteCredentialForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_id}][%d] deleteCredentialForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] deleteCredentialForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DeleteCredentialForbidden) GetPayload() *models.ErrorPayload {
@@ -128,7 +128,7 @@ type DeleteCredentialNotFound struct {
 }
 
 func (o *DeleteCredentialNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_id}][%d] deleteCredentialNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] deleteCredentialNotFound  %+v", 404, o.Payload)
 }
 
 func (o *DeleteCredentialNotFound) GetPayload() *models.ErrorPayload {
@@ -160,7 +160,7 @@ type DeleteCredentialConflict struct {
 }
 
 func (o *DeleteCredentialConflict) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_id}][%d] deleteCredentialConflict ", 409)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] deleteCredentialConflict ", 409)
 }
 
 func (o *DeleteCredentialConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -191,7 +191,7 @@ func (o *DeleteCredentialDefault) Code() int {
 }
 
 func (o *DeleteCredentialDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_id}][%d] deleteCredential default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] deleteCredential default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteCredentialDefault) GetPayload() *models.ErrorPayload {

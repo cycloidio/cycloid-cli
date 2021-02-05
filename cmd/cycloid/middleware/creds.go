@@ -40,11 +40,11 @@ func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.C
 	return err
 }
 
-func (m *middleware) GetCredential(org string, cred uint32) (*models.Credential, error) {
+func (m *middleware) GetCredential(org, cred string) (*models.Credential, error) {
 
 	params := organization_credentials.NewGetCredentialParams()
 	params.SetOrganizationCanonical(org)
-	params.SetCredentialID(cred)
+	params.SetCredentialCanonical(cred)
 
 	resp, err := m.api.OrganizationCredentials.GetCredential(params, common.ClientCredentials(&org))
 	if err != nil {
@@ -57,11 +57,11 @@ func (m *middleware) GetCredential(org string, cred uint32) (*models.Credential,
 	return d, err
 }
 
-func (m *middleware) DeleteCredential(org string, cred uint32) error {
+func (m *middleware) DeleteCredential(org, cred string) error {
 
 	params := organization_credentials.NewDeleteCredentialParams()
 	params.SetOrganizationCanonical(org)
-	params.SetCredentialID(cred)
+	params.SetCredentialCanonical(cred)
 
 	_, err := m.api.OrganizationCredentials.DeleteCredential(params, common.ClientCredentials(&org))
 

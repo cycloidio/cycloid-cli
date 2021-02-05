@@ -1,3 +1,16 @@
+## [v1.0.58] _2021-02-02_
+- **ADDED**
+  - Adding new kpis command
+   ([PR #81](https://github.com/cycloidio/cycloid-cli/pull/81))
+  - Adding new list-invites command
+   ([PR #72](https://github.com/cycloidio/cycloid-cli/pull/72))
+  - `gen-doc` subcommand
+   ([PR #61](https://github.com/cycloidio/cycloid-cli/pull/61))
+  - `--insecure` flag to allow TLS verification skipping
+   ([Issue #70](https://github.com/cycloidio/cycloid-cli/issues/70))
+  - Adding all missing creds type into the CLI (GCP, AWS, ...)
+   ([PR #74](https://github.com/cycloidio/cycloid-cli/pull/74))
+
 ## [v1.0.53] _2020-12-01_
 - **CHANGED**
   - Update to version 1.0.53

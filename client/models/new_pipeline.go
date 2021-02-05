@@ -24,10 +24,7 @@ type NewPipeline struct {
 
 	// environment
 	// Required: true
-	// Max Length: 30
-	// Min Length: 1
-	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
-	Environment *string `json:"environment"`
+	Environment *NewEnvironment `json:"environment"`
 
 	// passed config
 	// Required: true
@@ -41,7 +38,7 @@ type NewPipeline struct {
 	PipelineName *string `json:"pipeline_name"`
 
 	// use case
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	UseCase string `json:"use_case,omitempty"`
@@ -82,16 +79,13 @@ func (m *NewPipeline) validateEnvironment(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("environment", "body", string(*m.Environment), 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("environment", "body", string(*m.Environment), 30); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("environment", "body", string(*m.Environment), `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
-		return err
+	if m.Environment != nil {
+		if err := m.Environment.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("environment")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -137,7 +131,7 @@ func (m *NewPipeline) validateUseCase(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("use_case", "body", string(m.UseCase), 30); err != nil {
+	if err := validate.MaxLength("use_case", "body", string(m.UseCase), 100); err != nil {
 		return err
 	}
 

@@ -19,14 +19,14 @@ func NewGetCommand() *cobra.Command {
 		Use:   "get",
 		Short: "get a credential",
 		Example: `
-	# get a credential by its ID
-	cy --org my-org credential get --id 123
+	# get a credential by its canonical
+	cy --org my-org credential get --canonical my-cred
 `,
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 	return cmd
 }
 
@@ -38,7 +38,7 @@ func get(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -49,9 +49,9 @@ func get(cmd *cobra.Command, args []string) error {
 
 	params := organization_credentials.NewGetCredentialParams()
 	params.SetOrganizationCanonical(org)
-	params.SetCredentialID(id)
+	params.SetCredentialCanonical(can)
 
-	c, err := m.GetCredential(org, id)
+	c, err := m.GetCredential(org, can)
 	if err != nil {
 		return errors.Wrap(err, "unable to get credential")
 	}

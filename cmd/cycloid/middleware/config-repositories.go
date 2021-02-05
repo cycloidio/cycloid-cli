@@ -20,7 +20,7 @@ func (m *middleware) PushConfig(org string, project string, env string, configs 
 
 	params := organization_config_repositories.NewCreateConfigRepositoryConfigParams()
 	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryID(projectData.ConfigRepositoryID)
+	params.SetConfigRepositoryCanonical(projectData.ConfigRepositoryCanonical)
 
 	var cfs []*models.ConfigFile
 
@@ -79,11 +79,11 @@ func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigReposit
 	return d, err
 }
 
-func (m *middleware) GetConfigRepository(org string, configRepo uint32) (*models.ConfigRepository, error) {
+func (m *middleware) GetConfigRepository(org, configRepo string) (*models.ConfigRepository, error) {
 
 	params := organization_config_repositories.NewGetConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryID(configRepo)
+	params.SetConfigRepositoryCanonical(configRepo)
 
 	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepository(params, common.ClientCredentials(&org))
 
@@ -103,26 +103,26 @@ func (m *middleware) GetConfigRepository(org string, configRepo uint32) (*models
 	return d, err
 }
 
-func (m *middleware) DeleteConfigRepository(org string, configRepo uint32) error {
+func (m *middleware) DeleteConfigRepository(org, configRepo string) error {
 	params := organization_config_repositories.NewDeleteConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryID(configRepo)
+	params.SetConfigRepositoryCanonical(configRepo)
 
 	_, err := m.api.OrganizationConfigRepositories.DeleteConfigRepository(params, common.ClientCredentials(&org))
 	return err
 }
 
-func (m *middleware) CreateConfigRepository(org, name, url, branch string, setDefault bool, cred uint32) (*models.ConfigRepository, error) {
+func (m *middleware) CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error) {
 
 	params := organization_config_repositories.NewCreateConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
 
 	body := &models.CreateConfigRepository{
-		Branch:       &branch,
-		CredentialID: &cred,
-		Default:      &setDefault,
-		Name:         &name,
-		URL:          &url,
+		Branch:              &branch,
+		CredentialCanonical: &cred,
+		Default:             &setDefault,
+		Name:                &name,
+		URL:                 &url,
 	}
 
 	params.SetBody(body)
@@ -149,18 +149,18 @@ func (m *middleware) CreateConfigRepository(org, name, url, branch string, setDe
 	return d, err
 }
 
-func (m *middleware) UpdateConfigRepository(org string, configRepo uint32, name, url, branch string, setDefault bool, cred uint32) (*models.ConfigRepository, error) {
+func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, error) {
 
 	params := organization_config_repositories.NewUpdateConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryID(configRepo)
+	params.SetConfigRepositoryCanonical(configRepo)
 
 	body := &models.UpdateConfigRepository{
-		Branch:       &branch,
-		CredentialID: &cred,
-		Default:      &setDefault,
-		Name:         &name,
-		URL:          &url,
+		Branch:              &branch,
+		CredentialCanonical: &cred,
+		Default:             &setDefault,
+		Name:                &name,
+		URL:                 &url,
 	}
 
 	params.SetBody(body)

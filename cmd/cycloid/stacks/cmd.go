@@ -1,7 +1,6 @@
 package stacks
 
 import (
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 )
 
@@ -14,10 +13,13 @@ func NewCommands() *cobra.Command {
 		},
 		Short: "Manage the stacks",
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
-	cmd.AddCommand(NewListCommand(),
-		NewGetCommand())
+	cmd.AddCommand(
+		NewListCommand(),
+		NewGetCommand(),
+		NewValidateFormCmd(),
+		NewGenDocCmd(),
+	)
 
 	return cmd
 }

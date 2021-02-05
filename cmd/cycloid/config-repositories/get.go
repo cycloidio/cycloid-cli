@@ -17,14 +17,14 @@ func NewGetCommand() *cobra.Command {
 		Use:   "get",
 		Short: "get a config repository",
 		Example: `
-	# get the config repository with the id 123 and display the result in YAML
-	cy  --org my-org config-repo get --id 123 -o yaml
+	# get the config repository with the canonical my-config-repo and display the result in YAML
+	cy  --org my-org config-repo get --canonical my-config-repo -o yaml
 `,
 		RunE:    getConfigRepository,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 
 	return cmd
 }
@@ -42,7 +42,7 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.GetConfigRepository(org, id)
+	cr, err := m.GetConfigRepository(org, can)
 	if err != nil {
 		return err
 	}

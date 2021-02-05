@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -67,11 +66,11 @@ type DeleteOrgRoleParams struct {
 
 	*/
 	OrganizationCanonical string
-	/*RoleID
-	  Organization Role ID
+	/*RoleCanonical
+	  Organization Role canonical
 
 	*/
-	RoleID uint32
+	RoleCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -122,15 +121,15 @@ func (o *DeleteOrgRoleParams) SetOrganizationCanonical(organizationCanonical str
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithRoleID adds the roleID to the delete org role params
-func (o *DeleteOrgRoleParams) WithRoleID(roleID uint32) *DeleteOrgRoleParams {
-	o.SetRoleID(roleID)
+// WithRoleCanonical adds the roleCanonical to the delete org role params
+func (o *DeleteOrgRoleParams) WithRoleCanonical(roleCanonical string) *DeleteOrgRoleParams {
+	o.SetRoleCanonical(roleCanonical)
 	return o
 }
 
-// SetRoleID adds the roleId to the delete org role params
-func (o *DeleteOrgRoleParams) SetRoleID(roleID uint32) {
-	o.RoleID = roleID
+// SetRoleCanonical adds the roleCanonical to the delete org role params
+func (o *DeleteOrgRoleParams) SetRoleCanonical(roleCanonical string) {
+	o.RoleCanonical = roleCanonical
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -146,8 +145,8 @@ func (o *DeleteOrgRoleParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 
-	// path param role_id
-	if err := r.SetPathParam("role_id", swag.FormatUint32(o.RoleID)); err != nil {
+	// path param role_canonical
+	if err := r.SetPathParam("role_canonical", o.RoleCanonical); err != nil {
 		return err
 	}
 

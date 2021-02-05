@@ -10,17 +10,12 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
-func (m *middleware) CreateOrganization(name string, canonical string) (*models.Organization, error) {
+func (m *middleware) CreateOrganization(name string) (*models.Organization, error) {
 
 	params := organizations.NewCreateOrgParams()
 
-	if canonical == "" {
-		canonical = common.GenerateCanonical(name)
-	}
-
 	body := &models.NewOrganization{
 		Name:      &name,
-		Canonical: &canonical,
 	}
 
 	params.SetBody(body)

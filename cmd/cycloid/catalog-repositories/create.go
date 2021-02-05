@@ -18,7 +18,7 @@ func NewCreateCommand() *cobra.Command {
 		Short: "create a catalog repository",
 		Example: `
 	# create a catalog repository using credential ID 123, branch 'stacks' and git URL
-	cy --org my-org catalog-repo create --branch stacks --cred 123 --url "git@github.com:my/repo.git" --name my-catalog-name
+	cy --org my-org catalog-repo create --branch stacks --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name
 
 	# create a catalog repository using public git repository
 	cy --org my-org catalog-repo create --branch stacks --url "https://github.com:my/repo.git" --name my-catalog-name
@@ -26,7 +26,7 @@ func NewCreateCommand() *cobra.Command {
 		RunE: createCatalogRepository,
 	}
 
-	// create --branch test --cred 105 --url "git@github.com:foo/bla.git"  --name catalogname
+	// create --branch test --cred my-cred --url "git@github.com:foo/bla.git"  --name catalogname
 	common.WithFlagCred(cmd)
 
 	common.RequiredFlag(WithFlagName, cmd)
@@ -65,7 +65,7 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cred, err := cmd.Flags().GetUint32("cred")
+	cred, err := cmd.Flags().GetString("cred")
 	if err != nil {
 		return err
 	}

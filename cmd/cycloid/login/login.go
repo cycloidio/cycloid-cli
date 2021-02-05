@@ -58,12 +58,11 @@ func NewCommands() *cobra.Command {
 		},
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
-
 	WithFlagEmail(cmd)
 	WithFlagPassword(cmd)
 	WithFlagChild(cmd)
 	WithFlagAPIKey(cmd)
+	WithFlagOrg(cmd)
 
 	cmd.AddCommand(
 		NewListCommand(),

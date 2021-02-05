@@ -71,7 +71,7 @@ type GetCredentialOK struct {
 }
 
 func (o *GetCredentialOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_id}][%d] getCredentialOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialOK  %+v", 200, o.Payload)
 }
 
 func (o *GetCredentialOK) GetPayload() *GetCredentialOKBody {
@@ -104,7 +104,7 @@ type GetCredentialForbidden struct {
 }
 
 func (o *GetCredentialForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_id}][%d] getCredentialForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetCredentialForbidden) GetPayload() *models.ErrorPayload {
@@ -137,7 +137,7 @@ type GetCredentialNotFound struct {
 }
 
 func (o *GetCredentialNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_id}][%d] getCredentialNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetCredentialNotFound) GetPayload() *models.ErrorPayload {
@@ -179,7 +179,7 @@ func (o *GetCredentialDefault) Code() int {
 }
 
 func (o *GetCredentialDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_id}][%d] getCredential default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredential default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetCredentialDefault) GetPayload() *models.ErrorPayload {

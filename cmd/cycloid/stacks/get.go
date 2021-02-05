@@ -26,6 +26,7 @@ func NewGetCommand() *cobra.Command {
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.Flags().StringVar(&refFlag, "ref", "", "referential of the stack")
 	cmd.MarkFlagRequired("ref")

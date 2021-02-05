@@ -28,23 +28,27 @@ type UpdateProject struct {
 	// Enum: [aws google azurerm flexibleengine openstack]
 	CloudProvider string `json:"cloud_provider,omitempty"`
 
-	// The config_repository_id points to new Config Repository the project
+	// The config_repository_canonical points to new Config Repository the project
 	// will be using. If this value is filled and it's different from the
 	// current one, the whole project will be migrated to new CR, meaning
 	// configuration files will also be moved.
-	// If the project didn't has config_repository_id set, this action will
+	// If the project didn't has config_repository_canonical set, this action will
 	// only attach the project to the CR, it won't create/move any files.
 	// In order to be sure everything works, make sure the
-	// config_repository_id is pointing at the CR with the same git
+	// config_repository_canonical is pointing at the CR with the same git
 	// repository that was used during project creation.
 	//
-	ConfigRepositoryID uint32 `json:"config_repository_id,omitempty"`
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	ConfigRepositoryCanonical string `json:"config_repository_canonical,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
 
 	// environments
-	Environments []string `json:"environments"`
+	// Min Items: 1
+	Environments []*NewEnvironment `json:"environments"`
 
 	// name
 	// Required: true
@@ -68,6 +72,10 @@ func (m *UpdateProject) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCloudProvider(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateConfigRepositoryCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -141,16 +149,51 @@ func (m *UpdateProject) validateCloudProvider(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ConfigRepositoryCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *UpdateProject) validateEnvironments(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Environments) { // not required
 		return nil
 	}
 
-	for i := 0; i < len(m.Environments); i++ {
+	iEnvironmentsSize := int64(len(m.Environments))
 
-		if err := validate.Pattern("environments"+"."+strconv.Itoa(i), "body", string(m.Environments[i]), `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
-			return err
+	if err := validate.MinItems("environments", "body", iEnvironmentsSize, 1); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Environments); i++ {
+		if swag.IsZero(m.Environments[i]) { // not required
+			continue
+		}
+
+		if m.Environments[i] != nil {
+			if err := m.Environments[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
 		}
 
 	}

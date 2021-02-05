@@ -79,7 +79,7 @@ type CreateConfigRepositoryConfigNoContent struct {
 }
 
 func (o *CreateConfigRepositoryConfigNoContent) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_id}/config][%d] createConfigRepositoryConfigNoContent ", 204)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config][%d] createConfigRepositoryConfigNoContent ", 204)
 }
 
 func (o *CreateConfigRepositoryConfigNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -101,7 +101,7 @@ type CreateConfigRepositoryConfigForbidden struct {
 }
 
 func (o *CreateConfigRepositoryConfigForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_id}/config][%d] createConfigRepositoryConfigForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config][%d] createConfigRepositoryConfigForbidden  %+v", 403, o.Payload)
 }
 
 func (o *CreateConfigRepositoryConfigForbidden) GetPayload() *models.ErrorPayload {
@@ -134,7 +134,7 @@ type CreateConfigRepositoryConfigNotFound struct {
 }
 
 func (o *CreateConfigRepositoryConfigNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_id}/config][%d] createConfigRepositoryConfigNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config][%d] createConfigRepositoryConfigNotFound  %+v", 404, o.Payload)
 }
 
 func (o *CreateConfigRepositoryConfigNotFound) GetPayload() *models.ErrorPayload {
@@ -166,7 +166,7 @@ type CreateConfigRepositoryConfigLengthRequired struct {
 }
 
 func (o *CreateConfigRepositoryConfigLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_id}/config][%d] createConfigRepositoryConfigLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config][%d] createConfigRepositoryConfigLengthRequired ", 411)
 }
 
 func (o *CreateConfigRepositoryConfigLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -188,7 +188,7 @@ type CreateConfigRepositoryConfigUnprocessableEntity struct {
 }
 
 func (o *CreateConfigRepositoryConfigUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_id}/config][%d] createConfigRepositoryConfigUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config][%d] createConfigRepositoryConfigUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *CreateConfigRepositoryConfigUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -230,7 +230,7 @@ func (o *CreateConfigRepositoryConfigDefault) Code() int {
 }
 
 func (o *CreateConfigRepositoryConfigDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_id}/config][%d] createConfigRepositoryConfig default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config][%d] createConfigRepositoryConfig default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *CreateConfigRepositoryConfigDefault) GetPayload() *models.ErrorPayload {

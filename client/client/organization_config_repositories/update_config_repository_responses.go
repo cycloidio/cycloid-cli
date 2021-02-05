@@ -71,7 +71,7 @@ type UpdateConfigRepositoryOK struct {
 }
 
 func (o *UpdateConfigRepositoryOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] updateConfigRepositoryOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryOK  %+v", 200, o.Payload)
 }
 
 func (o *UpdateConfigRepositoryOK) GetPayload() *UpdateConfigRepositoryOKBody {
@@ -104,7 +104,7 @@ type UpdateConfigRepositoryNotFound struct {
 }
 
 func (o *UpdateConfigRepositoryNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] updateConfigRepositoryNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryNotFound  %+v", 404, o.Payload)
 }
 
 func (o *UpdateConfigRepositoryNotFound) GetPayload() *models.ErrorPayload {
@@ -136,7 +136,7 @@ type UpdateConfigRepositoryLengthRequired struct {
 }
 
 func (o *UpdateConfigRepositoryLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] updateConfigRepositoryLengthRequired ", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryLengthRequired ", 411)
 }
 
 func (o *UpdateConfigRepositoryLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -167,7 +167,7 @@ func (o *UpdateConfigRepositoryDefault) Code() int {
 }
 
 func (o *UpdateConfigRepositoryDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] updateConfigRepository default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepository default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *UpdateConfigRepositoryDefault) GetPayload() *models.ErrorPayload {

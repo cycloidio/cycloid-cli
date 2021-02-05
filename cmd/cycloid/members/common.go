@@ -5,8 +5,7 @@ import (
 )
 
 var (
-	nameFlag, emailFlag string
-	roleIDFlag          uint32
+	nameFlag, emailFlag, roleFlag string
 )
 
 func WithFlagName(cmd *cobra.Command) string {
@@ -21,8 +20,8 @@ func WithFlagEmail(cmd *cobra.Command) string {
 	return flagName
 }
 
-func WithFlagRoleID(cmd *cobra.Command) string {
-	flagRoleID := "role-id"
-	cmd.Flags().Uint32Var(&roleIDFlag, flagRoleID, 0, "role-id")
-	return flagRoleID
+func WithFlagRoleCanonical(cmd *cobra.Command) string {
+	flagName := "role"
+	cmd.Flags().StringVar(&roleFlag, flagName, "", "role")
+	return flagName
 }

@@ -21,7 +21,7 @@ type APIKey struct {
 
 	// canonical
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
@@ -37,6 +37,9 @@ type APIKey struct {
 	// The last seven characters of API key. Allows user to differentiante between keys.
 	// Required: true
 	LastSeven *string `json:"last_seven"`
+
+	// This field contains the date of the last usage of the API key
+	LastUsed uint64 `json:"last_used,omitempty"`
 
 	// name
 	// Required: true
@@ -101,7 +104,7 @@ func (m *APIKey) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 

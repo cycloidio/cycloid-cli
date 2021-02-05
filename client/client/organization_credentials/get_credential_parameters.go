@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -62,11 +61,11 @@ for the get credential operation typically these are written to a http.Request
 */
 type GetCredentialParams struct {
 
-	/*CredentialID
-	  A Credential id
+	/*CredentialCanonical
+	  A Credential canonical
 
 	*/
-	CredentialID uint32
+	CredentialCanonical string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -111,15 +110,15 @@ func (o *GetCredentialParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithCredentialID adds the credentialID to the get credential params
-func (o *GetCredentialParams) WithCredentialID(credentialID uint32) *GetCredentialParams {
-	o.SetCredentialID(credentialID)
+// WithCredentialCanonical adds the credentialCanonical to the get credential params
+func (o *GetCredentialParams) WithCredentialCanonical(credentialCanonical string) *GetCredentialParams {
+	o.SetCredentialCanonical(credentialCanonical)
 	return o
 }
 
-// SetCredentialID adds the credentialId to the get credential params
-func (o *GetCredentialParams) SetCredentialID(credentialID uint32) {
-	o.CredentialID = credentialID
+// SetCredentialCanonical adds the credentialCanonical to the get credential params
+func (o *GetCredentialParams) SetCredentialCanonical(credentialCanonical string) {
+	o.CredentialCanonical = credentialCanonical
 }
 
 // WithOrganizationCanonical adds the organizationCanonical to the get credential params
@@ -141,8 +140,8 @@ func (o *GetCredentialParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	}
 	var res []error
 
-	// path param credential_id
-	if err := r.SetPathParam("credential_id", swag.FormatUint32(o.CredentialID)); err != nil {
+	// path param credential_canonical
+	if err := r.SetPathParam("credential_canonical", o.CredentialCanonical); err != nil {
 		return err
 	}
 

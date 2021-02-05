@@ -77,7 +77,7 @@ type RefreshServiceCatalogSourceOK struct {
 }
 
 func (o *RefreshServiceCatalogSourceOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/refresh][%d] refreshServiceCatalogSourceOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceOK  %+v", 200, o.Payload)
 }
 
 func (o *RefreshServiceCatalogSourceOK) GetPayload() *RefreshServiceCatalogSourceOKBody {
@@ -110,7 +110,7 @@ type RefreshServiceCatalogSourceNotFound struct {
 }
 
 func (o *RefreshServiceCatalogSourceNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/refresh][%d] refreshServiceCatalogSourceNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceNotFound  %+v", 404, o.Payload)
 }
 
 func (o *RefreshServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload {
@@ -142,7 +142,7 @@ type RefreshServiceCatalogSourceLengthRequired struct {
 }
 
 func (o *RefreshServiceCatalogSourceLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/refresh][%d] refreshServiceCatalogSourceLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceLengthRequired ", 411)
 }
 
 func (o *RefreshServiceCatalogSourceLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -164,7 +164,7 @@ type RefreshServiceCatalogSourceUnprocessableEntity struct {
 }
 
 func (o *RefreshServiceCatalogSourceUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/refresh][%d] refreshServiceCatalogSourceUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *RefreshServiceCatalogSourceUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -206,7 +206,7 @@ func (o *RefreshServiceCatalogSourceDefault) Code() int {
 }
 
 func (o *RefreshServiceCatalogSourceDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/refresh][%d] refreshServiceCatalogSource default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSource default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *RefreshServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {

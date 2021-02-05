@@ -55,7 +55,7 @@ type DeleteConfigRepositoryNoContent struct {
 }
 
 func (o *DeleteConfigRepositoryNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] deleteConfigRepositoryNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] deleteConfigRepositoryNoContent ", 204)
 }
 
 func (o *DeleteConfigRepositoryNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -86,7 +86,7 @@ func (o *DeleteConfigRepositoryDefault) Code() int {
 }
 
 func (o *DeleteConfigRepositoryDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] deleteConfigRepository default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] deleteConfigRepository default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteConfigRepositoryDefault) GetPayload() *models.ErrorPayload {

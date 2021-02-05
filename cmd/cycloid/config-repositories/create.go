@@ -19,7 +19,7 @@ func NewCreateCommand() *cobra.Command {
 		Short: "create a config repository",
 		Example: `
 	# create a config repository and set up as default
-	cy --org my-org config-repo create --branch stacks --cred 123 --url "git@github.com:my/repo.git" --name my-catalog-name --default
+	cy --org my-org config-repo create --branch stacks --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name --default
 `,
 		RunE:    createConfigRepository,
 		PreRunE: internal.CheckAPIAndCLIVersion,
@@ -69,7 +69,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cred, err := cmd.Flags().GetUint32("cred")
+	cred, err := cmd.Flags().GetString("cred")
 	if err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.CreateConfigRepository(org, name, url, branch, setDefault, cred)
+	cr, err := m.CreateConfigRepository(org, name, url, branch, cred, setDefault)
 	if err != nil {
 		return err
 	}

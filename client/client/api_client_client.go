@@ -11,12 +11,16 @@ import (
 
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/cycloidio/cycloid-cli/client/client/cost_estimation"
 	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_api_keys"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_invitations"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_kpis"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs"
@@ -73,6 +77,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 	cli := new(APIClient)
 	cli.Transport = transport
 
+	cli.CostEstimation = cost_estimation.New(transport, formats)
+
 	cli.Cycloid = cycloid.New(transport, formats)
 
 	cli.OrganizationAPIKeys = organization_api_keys.New(transport, formats)
@@ -84,6 +90,12 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 
 	cli.OrganizationForms = organization_forms.New(transport, formats)
+
+	cli.OrganizationInfrastructurePolicies = organization_infrastructure_policies.New(transport, formats)
+
+	cli.OrganizationInvitations = organization_invitations.New(transport, formats)
+
+	cli.OrganizationKpis = organization_kpis.New(transport, formats)
 
 	cli.OrganizationMembers = organization_members.New(transport, formats)
 
@@ -151,6 +163,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // APIClient is a client for API client
 type APIClient struct {
+	CostEstimation *cost_estimation.Client
+
 	Cycloid *cycloid.Client
 
 	OrganizationAPIKeys *organization_api_keys.Client
@@ -162,6 +176,12 @@ type APIClient struct {
 	OrganizationExternalBackends *organization_external_backends.Client
 
 	OrganizationForms *organization_forms.Client
+
+	OrganizationInfrastructurePolicies *organization_infrastructure_policies.Client
+
+	OrganizationInvitations *organization_invitations.Client
+
+	OrganizationKpis *organization_kpis.Client
 
 	OrganizationMembers *organization_members.Client
 
@@ -192,6 +212,8 @@ type APIClient struct {
 func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 
+	c.CostEstimation.SetTransport(transport)
+
 	c.Cycloid.SetTransport(transport)
 
 	c.OrganizationAPIKeys.SetTransport(transport)
@@ -203,6 +225,12 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.OrganizationExternalBackends.SetTransport(transport)
 
 	c.OrganizationForms.SetTransport(transport)
+
+	c.OrganizationInfrastructurePolicies.SetTransport(transport)
+
+	c.OrganizationInvitations.SetTransport(transport)
+
+	c.OrganizationKpis.SetTransport(transport)
 
 	c.OrganizationMembers.SetTransport(transport)
 

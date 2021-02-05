@@ -3,6 +3,7 @@ package middleware
 import (
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/cycloidio/cycloid-cli/client/client/organization_invitations"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -24,6 +25,22 @@ func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
 	// if err != nil {
 	// 	return err
 	// }
+
+	d := p.Data
+
+	return d, err
+}
+
+func (m *middleware) ListInvites(org string) ([]*models.Invitation, error) {
+	params := organization_invitations.NewGetInvitationsParams()
+	params.SetOrganizationCanonical(org)
+
+	resp, err := m.api.OrganizationInvitations.GetInvitations(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, err
+	}
+
+	p := resp.GetPayload()
 
 	d := p.Data
 
@@ -63,14 +80,14 @@ func (m *middleware) DeleteMember(org string, name string) error {
 	return err
 }
 
-func (m *middleware) UpdateMembers(org string, name string, roleID uint32) (*models.MemberOrg, error) {
+func (m *middleware) UpdateMembers(org, name, role string) (*models.MemberOrg, error) {
 	params := organization_members.NewUpdateOrgMemberParams()
 
 	params.SetOrganizationCanonical(org)
 	params.SetUsername(name)
 
 	body := &models.MemberAssignation{
-		RoleID: &roleID,
+		RoleCanonical: &role,
 	}
 
 	params.SetBody(body)
@@ -97,14 +114,14 @@ func (m *middleware) UpdateMembers(org string, name string, roleID uint32) (*mod
 	return d, err
 }
 
-func (m *middleware) InviteMember(org string, email string, roleID uint32) error {
+func (m *middleware) InviteMember(org, email, role string) error {
 	params := organization_members.NewInviteUserToOrgMemberParams()
 	params.SetOrganizationCanonical(org)
 
 	fmtEmail := strfmt.Email(email)
 	body := &models.NewMemberInvitation{
-		Email:  &fmtEmail,
-		RoleID: &roleID,
+		Email:         &fmtEmail,
+		RoleCanonical: &role,
 	}
 
 	params.SetBody(body)

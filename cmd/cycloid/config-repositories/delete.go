@@ -14,14 +14,14 @@ func NewDeleteCommand() *cobra.Command {
 		Use:   "delete",
 		Short: "delete a config repository",
 		Example: `
-	# delete a catalog repository with the ID 123
-	cy  --org my-org config-repository delete --id 123
+	# delete a config repository with the canonical my-config-repo
+	cy  --org my-org config-repository delete --canonical my-config-repo
 `,
 		RunE:    deleteConfigRepository,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 
 	return cmd
 }
@@ -39,12 +39,12 @@ func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
 
-	if err := m.DeleteConfigRepository(org, id); err != nil {
+	if err := m.DeleteConfigRepository(org, can); err != nil {
 		return errors.Wrap(err, "unable to delete config repository")
 	}
 

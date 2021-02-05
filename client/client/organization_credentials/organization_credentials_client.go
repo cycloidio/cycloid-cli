@@ -78,7 +78,7 @@ func (a *Client) DeleteCredential(params *DeleteCredentialParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteCredential",
 		Method:             "DELETE",
-		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_id}",
+		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -112,7 +112,7 @@ func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.Cli
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getCredential",
 		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_id}",
+		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -188,7 +188,7 @@ func (a *Client) UpdateCredential(params *UpdateCredentialParams, authInfo runti
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateCredential",
 		Method:             "PUT",
-		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_id}",
+		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},

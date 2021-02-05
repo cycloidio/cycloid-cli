@@ -70,7 +70,7 @@ func (a *Client) DeleteOrgRole(params *DeleteOrgRoleParams, authInfo runtime.Cli
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteOrgRole",
 		Method:             "DELETE",
-		PathPattern:        "/organizations/{organization_canonical}/roles/{role_id}",
+		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -93,7 +93,7 @@ func (a *Client) DeleteOrgRole(params *DeleteOrgRoleParams, authInfo runtime.Cli
 }
 
 /*
-GetOrgRole Get the role available in the organization with an ID.
+GetOrgRole Get the role available in the organization with an canonical
 */
 func (a *Client) GetOrgRole(params *GetOrgRoleParams, authInfo runtime.ClientAuthInfoWriter) (*GetOrgRoleOK, error) {
 	// TODO: Validate the params before sending
@@ -104,7 +104,7 @@ func (a *Client) GetOrgRole(params *GetOrgRoleParams, authInfo runtime.ClientAut
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getOrgRole",
 		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/roles/{role_id}",
+		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
@@ -172,7 +172,7 @@ func (a *Client) UpdateOrgRole(params *UpdateOrgRoleParams, authInfo runtime.Cli
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateOrgRole",
 		Method:             "PUT",
-		PathPattern:        "/organizations/{organization_canonical}/roles/{role_id}",
+		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},

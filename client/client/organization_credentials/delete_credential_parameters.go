@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -62,11 +61,11 @@ for the delete credential operation typically these are written to a http.Reques
 */
 type DeleteCredentialParams struct {
 
-	/*CredentialID
-	  A Credential id
+	/*CredentialCanonical
+	  A Credential canonical
 
 	*/
-	CredentialID uint32
+	CredentialCanonical string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -111,15 +110,15 @@ func (o *DeleteCredentialParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithCredentialID adds the credentialID to the delete credential params
-func (o *DeleteCredentialParams) WithCredentialID(credentialID uint32) *DeleteCredentialParams {
-	o.SetCredentialID(credentialID)
+// WithCredentialCanonical adds the credentialCanonical to the delete credential params
+func (o *DeleteCredentialParams) WithCredentialCanonical(credentialCanonical string) *DeleteCredentialParams {
+	o.SetCredentialCanonical(credentialCanonical)
 	return o
 }
 
-// SetCredentialID adds the credentialId to the delete credential params
-func (o *DeleteCredentialParams) SetCredentialID(credentialID uint32) {
-	o.CredentialID = credentialID
+// SetCredentialCanonical adds the credentialCanonical to the delete credential params
+func (o *DeleteCredentialParams) SetCredentialCanonical(credentialCanonical string) {
+	o.CredentialCanonical = credentialCanonical
 }
 
 // WithOrganizationCanonical adds the organizationCanonical to the delete credential params
@@ -141,8 +140,8 @@ func (o *DeleteCredentialParams) WriteToRequest(r runtime.ClientRequest, reg str
 	}
 	var res []error
 
-	// path param credential_id
-	if err := r.SetPathParam("credential_id", swag.FormatUint32(o.CredentialID)); err != nil {
+	// path param credential_canonical
+	if err := r.SetPathParam("credential_canonical", o.CredentialCanonical); err != nil {
 		return err
 	}
 

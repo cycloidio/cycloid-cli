@@ -82,11 +82,11 @@ for the get config repository operation typically these are written to a http.Re
 */
 type GetConfigRepositoryParams struct {
 
-	/*ConfigRepositoryID
-	  Organization Config Repositories ID
+	/*ConfigRepositoryCanonical
+	  Organization Config Repositories canonical
 
 	*/
-	ConfigRepositoryID uint32
+	ConfigRepositoryCanonical string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -141,15 +141,15 @@ func (o *GetConfigRepositoryParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithConfigRepositoryID adds the configRepositoryID to the get config repository params
-func (o *GetConfigRepositoryParams) WithConfigRepositoryID(configRepositoryID uint32) *GetConfigRepositoryParams {
-	o.SetConfigRepositoryID(configRepositoryID)
+// WithConfigRepositoryCanonical adds the configRepositoryCanonical to the get config repository params
+func (o *GetConfigRepositoryParams) WithConfigRepositoryCanonical(configRepositoryCanonical string) *GetConfigRepositoryParams {
+	o.SetConfigRepositoryCanonical(configRepositoryCanonical)
 	return o
 }
 
-// SetConfigRepositoryID adds the configRepositoryId to the get config repository params
-func (o *GetConfigRepositoryParams) SetConfigRepositoryID(configRepositoryID uint32) {
-	o.ConfigRepositoryID = configRepositoryID
+// SetConfigRepositoryCanonical adds the configRepositoryCanonical to the get config repository params
+func (o *GetConfigRepositoryParams) SetConfigRepositoryCanonical(configRepositoryCanonical string) {
+	o.ConfigRepositoryCanonical = configRepositoryCanonical
 }
 
 // WithOrganizationCanonical adds the organizationCanonical to the get config repository params
@@ -193,8 +193,8 @@ func (o *GetConfigRepositoryParams) WriteToRequest(r runtime.ClientRequest, reg 
 	}
 	var res []error
 
-	// path param config_repository_id
-	if err := r.SetPathParam("config_repository_id", swag.FormatUint32(o.ConfigRepositoryID)); err != nil {
+	// path param config_repository_canonical
+	if err := r.SetPathParam("config_repository_canonical", o.ConfigRepositoryCanonical); err != nil {
 		return err
 	}
 

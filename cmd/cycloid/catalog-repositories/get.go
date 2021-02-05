@@ -17,12 +17,12 @@ func NewGetCommand() *cobra.Command {
 		Short: "get a catalog repository",
 		Example: `
 	# get the catalog repository with the id 123 and display the result in YAML
-	cy  --org my-org cr get --id 123 -o yaml
+	cy  --org my-org cr get --canonical my-catalog-repository -o yaml
 `,
 		RunE: getCatalogRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 
 	return cmd
 }
@@ -40,7 +40,7 @@ func getCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -49,7 +49,7 @@ func getCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.GetCatalogRepository(org, id)
+	cr, err := m.GetCatalogRepository(org, can)
 	if err != nil {
 		return err
 	}

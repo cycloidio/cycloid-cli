@@ -16,9 +16,11 @@ func (m *middleware) SendEvent(org, eventType, title, message, severity string, 
 	var err error
 
 	for k, v := range tags {
+		_k := k
+		_v := v
 		tag := &models.Tag{
-			Key:   &k,
-			Value: &v,
+			Key:   &_k,
+			Value: &_v,
 		}
 		err = tag.Validate(strfmt.Default)
 		if err != nil {

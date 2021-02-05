@@ -9,14 +9,13 @@ import (
 )
 
 // CreateAPIKey will request API to generate and return an API key
-func (m *middleware) CreateAPIKey(org, name, canonical, description string, roleID uint32) (*models.APIKey, error) {
+func (m *middleware) CreateAPIKey(org, name, description, role string) (*models.APIKey, error) {
 	params := organization_api_keys.NewCreateAPIKeyParams()
 
 	body := &models.NewAPIKey{
-		Canonical:   &canonical,
-		Description: description,
-		Name:        &name,
-		RoleID:      &roleID,
+		Description:   description,
+		Name:          &name,
+		RoleCanonical: &role,
 	}
 
 	params.SetBody(body)

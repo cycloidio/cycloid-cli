@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -21,7 +23,7 @@ type UpdateTeam struct {
 
 	// canonical
 	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
@@ -39,7 +41,7 @@ type UpdateTeam struct {
 
 	// The roles to be re-assigned to a team.
 	// Required: true
-	RolesID []uint32 `json:"roles_id"`
+	RolesCanonical []string `json:"roles_canonical"`
 }
 
 // Validate validates this update team
@@ -54,7 +56,7 @@ func (m *UpdateTeam) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateRolesID(formats); err != nil {
+	if err := m.validateRolesCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -74,7 +76,7 @@ func (m *UpdateTeam) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
@@ -98,10 +100,26 @@ func (m *UpdateTeam) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateTeam) validateRolesID(formats strfmt.Registry) error {
+func (m *UpdateTeam) validateRolesCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("roles_id", "body", m.RolesID); err != nil {
+	if err := validate.Required("roles_canonical", "body", m.RolesCanonical); err != nil {
 		return err
+	}
+
+	for i := 0; i < len(m.RolesCanonical); i++ {
+
+		if err := validate.MinLength("roles_canonical"+"."+strconv.Itoa(i), "body", string(m.RolesCanonical[i]), 3); err != nil {
+			return err
+		}
+
+		if err := validate.MaxLength("roles_canonical"+"."+strconv.Itoa(i), "body", string(m.RolesCanonical[i]), 100); err != nil {
+			return err
+		}
+
+		if err := validate.Pattern("roles_canonical"+"."+strconv.Itoa(i), "body", string(m.RolesCanonical[i]), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+			return err
+		}
+
 	}
 
 	return nil

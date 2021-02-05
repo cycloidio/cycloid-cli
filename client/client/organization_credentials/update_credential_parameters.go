@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -69,11 +68,11 @@ type UpdateCredentialParams struct {
 
 	*/
 	Body *models.UpdateCredential
-	/*CredentialID
-	  A Credential id
+	/*CredentialCanonical
+	  A Credential canonical
 
 	*/
-	CredentialID uint32
+	CredentialCanonical string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -129,15 +128,15 @@ func (o *UpdateCredentialParams) SetBody(body *models.UpdateCredential) {
 	o.Body = body
 }
 
-// WithCredentialID adds the credentialID to the update credential params
-func (o *UpdateCredentialParams) WithCredentialID(credentialID uint32) *UpdateCredentialParams {
-	o.SetCredentialID(credentialID)
+// WithCredentialCanonical adds the credentialCanonical to the update credential params
+func (o *UpdateCredentialParams) WithCredentialCanonical(credentialCanonical string) *UpdateCredentialParams {
+	o.SetCredentialCanonical(credentialCanonical)
 	return o
 }
 
-// SetCredentialID adds the credentialId to the update credential params
-func (o *UpdateCredentialParams) SetCredentialID(credentialID uint32) {
-	o.CredentialID = credentialID
+// SetCredentialCanonical adds the credentialCanonical to the update credential params
+func (o *UpdateCredentialParams) SetCredentialCanonical(credentialCanonical string) {
+	o.CredentialCanonical = credentialCanonical
 }
 
 // WithOrganizationCanonical adds the organizationCanonical to the update credential params
@@ -165,8 +164,8 @@ func (o *UpdateCredentialParams) WriteToRequest(r runtime.ClientRequest, reg str
 		}
 	}
 
-	// path param credential_id
-	if err := r.SetPathParam("credential_id", swag.FormatUint32(o.CredentialID)); err != nil {
+	// path param credential_canonical
+	if err := r.SetPathParam("credential_canonical", o.CredentialCanonical); err != nil {
 		return err
 	}
 

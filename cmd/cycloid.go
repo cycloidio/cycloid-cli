@@ -8,6 +8,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
 	externalBackends "github.com/cycloidio/cycloid-cli/cmd/cycloid/external-backends"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/infrapolicies"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
@@ -15,6 +17,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -30,7 +33,6 @@ func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(
 		// Root
 		root.NewVersionCmd(),
-		root.NewValidateFormCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
 		apikey.NewCommands(),
@@ -39,12 +41,15 @@ func AttachCommands(cmd *cobra.Command) {
 		creds.NewCommands(),
 		events.NewCommands(),
 		externalBackends.NewCommands(),
+		infrapolicies.NewCommands(),
 		members.NewCommands(),
 		organizations.NewCommands(),
 		pipelines.NewCommands(),
 		projects.NewCommands(),
+		kpis.NewCommands(),
 		roles.NewCommands(),
 		stacks.NewCommands(),
 		login.NewCommands(),
+		terracost.NewCommands(),
 	)
 }

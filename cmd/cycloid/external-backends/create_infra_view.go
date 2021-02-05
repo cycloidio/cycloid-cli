@@ -44,7 +44,7 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 	}
 
 	//Common
-	cred, err := cmd.Flags().GetUint32("cred")
+	cred, err := cmd.Flags().GetString("cred")
 	if err != nil {
 		return err
 	}

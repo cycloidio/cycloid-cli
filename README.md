@@ -20,7 +20,6 @@ Usage:
   cy [command]
 
 Available Commands:
-  api-key            Manage organization API keys
   catalog-repository Manage the catalog repositories
   completion         Output shell completion for the given shell (bash or zsh)
   config-repository  Manage the catalog repositories
@@ -28,6 +27,7 @@ Available Commands:
   event              Manage the events
   external-backend   manage external backends
   help               Help about any command
+  infrapolicy        Manage infrapolicies
   login              Login against the Cycloid console
   members            Manage members from the organization
   organization       Manage the organizations
@@ -36,7 +36,7 @@ Available Commands:
   roles              Manage roles from the organization
   stack              Manage the stacks
   status             Get the status of the Cycloid services
-  validate-form      validate a .forms.yml file
+  terracost          Use terracost feature
   version            Get the version of the consumed API
 ```
 

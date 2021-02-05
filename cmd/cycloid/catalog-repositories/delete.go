@@ -14,12 +14,12 @@ func NewDeleteCommand() *cobra.Command {
 		Short: "delete a catalog repository",
 		Example: `
 	# delete a catalog repository with the ID 123
-	cy  --org my-org catalog-repository delete --id 123
+	cy  --org my-org catalog-repository delete --canonical my-catalog-repository
 `,
-		RunE:  deleteCatalogRepository,
+		RunE: deleteCatalogRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagID, cmd)
+	common.RequiredFlag(common.WithFlagCan, cmd)
 
 	return cmd
 }
@@ -37,12 +37,12 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	canonical, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
 
-	if err := m.DeleteCatalogRepository(org, id); err != nil {
+	if err := m.DeleteCatalogRepository(org, canonical); err != nil {
 		return errors.Wrap(err, "unable to delete repository")
 	}
 	return nil

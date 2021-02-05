@@ -25,18 +25,20 @@ import (
 type NewExternalBackend struct {
 	configurationField ExternalBackendConfiguration
 
-	// credential id
-	// Minimum: 1
-	CredentialID uint32 `json:"credential_id,omitempty"`
+	// credential canonical
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 	// environment canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 1
 	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
 	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
 	// project canonical
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	ProjectCanonical string `json:"project_canonical,omitempty"`
@@ -62,7 +64,7 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 	var data struct {
 		Configuration json.RawMessage `json:"configuration"`
 
-		CredentialID uint32 `json:"credential_id,omitempty"`
+		CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 		EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
@@ -88,8 +90,8 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 	// configuration
 	result.configurationField = propConfiguration
 
-	// credential_id
-	result.CredentialID = data.CredentialID
+	// credential_canonical
+	result.CredentialCanonical = data.CredentialCanonical
 
 	// environment_canonical
 	result.EnvironmentCanonical = data.EnvironmentCanonical
@@ -110,7 +112,7 @@ func (m NewExternalBackend) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
-		CredentialID uint32 `json:"credential_id,omitempty"`
+		CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 		EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
@@ -119,7 +121,7 @@ func (m NewExternalBackend) MarshalJSON() ([]byte, error) {
 		Purpose *string `json:"purpose"`
 	}{
 
-		CredentialID: m.CredentialID,
+		CredentialCanonical: m.CredentialCanonical,
 
 		EnvironmentCanonical: m.EnvironmentCanonical,
 
@@ -153,7 +155,7 @@ func (m *NewExternalBackend) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCredentialID(formats); err != nil {
+	if err := m.validateCredentialCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -191,13 +193,21 @@ func (m *NewExternalBackend) validateConfiguration(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *NewExternalBackend) validateCredentialID(formats strfmt.Registry) error {
+func (m *NewExternalBackend) validateCredentialCanonical(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.CredentialID) { // not required
+	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("credential_id", "body", int64(m.CredentialID), 1, false); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", string(m.CredentialCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -214,7 +224,7 @@ func (m *NewExternalBackend) validateEnvironmentCanonical(formats strfmt.Registr
 		return err
 	}
 
-	if err := validate.MaxLength("environment_canonical", "body", string(m.EnvironmentCanonical), 30); err != nil {
+	if err := validate.MaxLength("environment_canonical", "body", string(m.EnvironmentCanonical), 100); err != nil {
 		return err
 	}
 
@@ -235,7 +245,7 @@ func (m *NewExternalBackend) validateProjectCanonical(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MaxLength("project_canonical", "body", string(m.ProjectCanonical), 30); err != nil {
+	if err := validate.MaxLength("project_canonical", "body", string(m.ProjectCanonical), 100); err != nil {
 		return err
 	}
 

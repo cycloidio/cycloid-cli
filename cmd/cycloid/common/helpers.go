@@ -80,6 +80,7 @@ func NewAPI() *client.APIClient {
 	cfg := client.DefaultTransportConfig()
 
 	rawApiUrl := viper.GetString("api-url")
+	insecure := viper.GetBool("insecure")
 
 	apiUrl, err := url.Parse(rawApiUrl)
 	if err == nil && apiUrl.Host != "" {
@@ -90,10 +91,18 @@ func NewAPI() *client.APIClient {
 
 	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
 
+	rt, err := httptransport.TLSTransport(httptransport.TLSClientOptions{InsecureSkipVerify: insecure})
+	if err != nil {
+		// TODO: error handling ...
+		fmt.Printf("unable to create round tripper: %v", err)
+		return nil
+	}
+
 	// Hack because https://github.com/go-swagger/go-swagger/issues/1899
 	// none of producers: map[application/json:0x7f7dff8da3d0 application/octet-stream:0x7f7dff8d8ff0 application/xml:0x7f7dff8db1d0 text/csv:0x7f7dff8d9da0 text/html:0x7f7dff8daa60 text/plain:0x7f7dff8daa60] registered. try application/vnd.cycloid.io.v1+json
 	tr := api.Transport.(*httptransport.Runtime)
 	tr.Producers["application/vnd.cycloid.io.v1+json"] = runtime.JSONProducer()
+	tr.Transport = rt
 	// tr.DefaultAuthentication = httptransport.BearerToken("token")
 	// api.SetTransport(tr)
 	return api

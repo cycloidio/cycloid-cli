@@ -6,7 +6,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -23,21 +22,17 @@ import (
 type NewProject struct {
 
 	// canonical
-	// Required: true
-	// Max Length: 30
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Canonical *string `json:"canonical"`
+	Canonical string `json:"canonical,omitempty"`
 
-	// The cloud provider canonical that this project is using - between the
-	// supported ones.
-	//
-	// Enum: [aws google azurerm flexibleengine openstack]
-	CloudProvider string `json:"cloud_provider,omitempty"`
-
-	// config repository id
+	// config repository canonical
 	// Required: true
-	ConfigRepositoryID *uint32 `json:"config_repository_id"`
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	ConfigRepositoryCanonical *string `json:"config_repository_canonical"`
 
 	// A description regarding the project to help identify/remember details,
 	// implementation, purpose, etc.
@@ -73,11 +68,7 @@ func (m *NewProject) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCloudProvider(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateConfigRepositoryID(formats); err != nil {
+	if err := m.validateConfigRepositoryCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -101,80 +92,40 @@ func (m *NewProject) Validate(formats strfmt.Registry) error {
 
 func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 30); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var newProjectTypeCloudProviderPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["aws","google","azurerm","flexibleengine","openstack"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		newProjectTypeCloudProviderPropEnum = append(newProjectTypeCloudProviderPropEnum, v)
-	}
-}
-
-const (
-
-	// NewProjectCloudProviderAws captures enum value "aws"
-	NewProjectCloudProviderAws string = "aws"
-
-	// NewProjectCloudProviderGoogle captures enum value "google"
-	NewProjectCloudProviderGoogle string = "google"
-
-	// NewProjectCloudProviderAzurerm captures enum value "azurerm"
-	NewProjectCloudProviderAzurerm string = "azurerm"
-
-	// NewProjectCloudProviderFlexibleengine captures enum value "flexibleengine"
-	NewProjectCloudProviderFlexibleengine string = "flexibleengine"
-
-	// NewProjectCloudProviderOpenstack captures enum value "openstack"
-	NewProjectCloudProviderOpenstack string = "openstack"
-)
-
-// prop value enum
-func (m *NewProject) validateCloudProviderEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, newProjectTypeCloudProviderPropEnum); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *NewProject) validateCloudProvider(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.CloudProvider) { // not required
+	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	// value enum
-	if err := m.validateCloudProviderEnum("cloud_provider", "body", m.CloudProvider); err != nil {
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *NewProject) validateConfigRepositoryID(formats strfmt.Registry) error {
+func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
 
-	if err := validate.Required("config_repository_id", "body", m.ConfigRepositoryID); err != nil {
+	if err := validate.Required("config_repository_canonical", "body", m.ConfigRepositoryCanonical); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

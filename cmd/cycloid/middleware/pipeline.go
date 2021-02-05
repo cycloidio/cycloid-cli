@@ -152,7 +152,10 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, variables, usec
 	pipelineName := common.GetPipelineName(project, env)
 
 	body := &models.NewPipeline{
-		Environment:  &env,
+		Environment: &models.NewEnvironment{
+			// TODO: https://github.com/cycloidio/cycloid-cli/issues/67
+			Canonical: &env,
+		},
 		PipelineName: &pipelineName,
 		UseCase:      usecase,
 		PassedConfig: &pipeline,
@@ -303,7 +306,6 @@ func (m *middleware) TriggerPipelineBuild(org, project, env, job string) error {
 
 	return err
 }
-
 
 func (m *middleware) ListPipelines(org string) ([]*models.Pipeline, error) {
 

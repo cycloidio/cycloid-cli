@@ -49,9 +49,13 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--tags="Organization Service Catalog Sources" \
 		--tags="Organization workers" \
 		--tags="Organization members" \
+		--tags="Organization Invitations" \
 		--tags="Organization Forms" \
+		--tags="Organization kpis" \
+ 		--tags="Organization Infrastructure Policies" \
 		--tags="Service catalogs" \
-		--tags="User"
+		--tags="User" \
+		--tags="Cost Estimation"
 
 .PHONY: help
 help: ## Show this help

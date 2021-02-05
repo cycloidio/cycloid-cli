@@ -97,11 +97,11 @@ type GetServiceCatalogSourceParams struct {
 
 	*/
 	PageSize *uint32
-	/*ServiceCatalogSourceID
-	  Organization Service Catalog Sources ID
+	/*ServiceCatalogSourceCanonical
+	  Organization Service Catalog Sources canonical
 
 	*/
-	ServiceCatalogSourceID uint32
+	ServiceCatalogSourceCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -174,15 +174,15 @@ func (o *GetServiceCatalogSourceParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
-// WithServiceCatalogSourceID adds the serviceCatalogSourceID to the get service catalog source params
-func (o *GetServiceCatalogSourceParams) WithServiceCatalogSourceID(serviceCatalogSourceID uint32) *GetServiceCatalogSourceParams {
-	o.SetServiceCatalogSourceID(serviceCatalogSourceID)
+// WithServiceCatalogSourceCanonical adds the serviceCatalogSourceCanonical to the get service catalog source params
+func (o *GetServiceCatalogSourceParams) WithServiceCatalogSourceCanonical(serviceCatalogSourceCanonical string) *GetServiceCatalogSourceParams {
+	o.SetServiceCatalogSourceCanonical(serviceCatalogSourceCanonical)
 	return o
 }
 
-// SetServiceCatalogSourceID adds the serviceCatalogSourceId to the get service catalog source params
-func (o *GetServiceCatalogSourceParams) SetServiceCatalogSourceID(serviceCatalogSourceID uint32) {
-	o.ServiceCatalogSourceID = serviceCatalogSourceID
+// SetServiceCatalogSourceCanonical adds the serviceCatalogSourceCanonical to the get service catalog source params
+func (o *GetServiceCatalogSourceParams) SetServiceCatalogSourceCanonical(serviceCatalogSourceCanonical string) {
+	o.ServiceCatalogSourceCanonical = serviceCatalogSourceCanonical
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -230,8 +230,8 @@ func (o *GetServiceCatalogSourceParams) WriteToRequest(r runtime.ClientRequest, 
 
 	}
 
-	// path param service_catalog_source_id
-	if err := r.SetPathParam("service_catalog_source_id", swag.FormatUint32(o.ServiceCatalogSourceID)); err != nil {
+	// path param service_catalog_source_canonical
+	if err := r.SetPathParam("service_catalog_source_canonical", o.ServiceCatalogSourceCanonical); err != nil {
 		return err
 	}
 

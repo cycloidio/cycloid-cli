@@ -13,7 +13,6 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -62,11 +61,11 @@ for the get repo branches operation typically these are written to a http.Reques
 */
 type GetRepoBranchesParams struct {
 
-	/*CredentialID
-	  A Credential id
+	/*CredentialCanonical
+	  A Credential canonical
 
 	*/
-	CredentialID *uint32
+	CredentialCanonical *string
 	/*GitURL
 	  Git URL to repository
 
@@ -116,15 +115,15 @@ func (o *GetRepoBranchesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithCredentialID adds the credentialID to the get repo branches params
-func (o *GetRepoBranchesParams) WithCredentialID(credentialID *uint32) *GetRepoBranchesParams {
-	o.SetCredentialID(credentialID)
+// WithCredentialCanonical adds the credentialCanonical to the get repo branches params
+func (o *GetRepoBranchesParams) WithCredentialCanonical(credentialCanonical *string) *GetRepoBranchesParams {
+	o.SetCredentialCanonical(credentialCanonical)
 	return o
 }
 
-// SetCredentialID adds the credentialId to the get repo branches params
-func (o *GetRepoBranchesParams) SetCredentialID(credentialID *uint32) {
-	o.CredentialID = credentialID
+// SetCredentialCanonical adds the credentialCanonical to the get repo branches params
+func (o *GetRepoBranchesParams) SetCredentialCanonical(credentialCanonical *string) {
+	o.CredentialCanonical = credentialCanonical
 }
 
 // WithGitURL adds the gitURL to the get repo branches params
@@ -157,16 +156,16 @@ func (o *GetRepoBranchesParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	}
 	var res []error
 
-	if o.CredentialID != nil {
+	if o.CredentialCanonical != nil {
 
-		// query param credential_id
-		var qrCredentialID uint32
-		if o.CredentialID != nil {
-			qrCredentialID = *o.CredentialID
+		// query param credential_canonical
+		var qrCredentialCanonical string
+		if o.CredentialCanonical != nil {
+			qrCredentialCanonical = *o.CredentialCanonical
 		}
-		qCredentialID := swag.FormatUint32(qrCredentialID)
-		if qCredentialID != "" {
-			if err := r.SetQueryParam("credential_id", qCredentialID); err != nil {
+		qCredentialCanonical := qrCredentialCanonical
+		if qCredentialCanonical != "" {
+			if err := r.SetQueryParam("credential_canonical", qCredentialCanonical); err != nil {
 				return err
 			}
 		}

@@ -71,7 +71,7 @@ type GetConfigRepositoryOK struct {
 }
 
 func (o *GetConfigRepositoryOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] getConfigRepositoryOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryOK  %+v", 200, o.Payload)
 }
 
 func (o *GetConfigRepositoryOK) GetPayload() *GetConfigRepositoryOKBody {
@@ -104,7 +104,7 @@ type GetConfigRepositoryForbidden struct {
 }
 
 func (o *GetConfigRepositoryForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] getConfigRepositoryForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetConfigRepositoryForbidden) GetPayload() *models.ErrorPayload {
@@ -137,7 +137,7 @@ type GetConfigRepositoryUnprocessableEntity struct {
 }
 
 func (o *GetConfigRepositoryUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] getConfigRepositoryUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetConfigRepositoryUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -179,7 +179,7 @@ func (o *GetConfigRepositoryDefault) Code() int {
 }
 
 func (o *GetConfigRepositoryDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_id}][%d] getConfigRepository default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepository default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetConfigRepositoryDefault) GetPayload() *models.ErrorPayload {

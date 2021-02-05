@@ -77,7 +77,7 @@ type UpdateOrgRoleOK struct {
 }
 
 func (o *UpdateOrgRoleOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_id}][%d] updateOrgRoleOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRoleOK  %+v", 200, o.Payload)
 }
 
 func (o *UpdateOrgRoleOK) GetPayload() *UpdateOrgRoleOKBody {
@@ -110,7 +110,7 @@ type UpdateOrgRoleForbidden struct {
 }
 
 func (o *UpdateOrgRoleForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_id}][%d] updateOrgRoleForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRoleForbidden  %+v", 403, o.Payload)
 }
 
 func (o *UpdateOrgRoleForbidden) GetPayload() *models.ErrorPayload {
@@ -143,7 +143,7 @@ type UpdateOrgRoleNotFound struct {
 }
 
 func (o *UpdateOrgRoleNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_id}][%d] updateOrgRoleNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRoleNotFound  %+v", 404, o.Payload)
 }
 
 func (o *UpdateOrgRoleNotFound) GetPayload() *models.ErrorPayload {
@@ -176,7 +176,7 @@ type UpdateOrgRoleUnprocessableEntity struct {
 }
 
 func (o *UpdateOrgRoleUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_id}][%d] updateOrgRoleUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRoleUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *UpdateOrgRoleUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -218,7 +218,7 @@ func (o *UpdateOrgRoleDefault) Code() int {
 }
 
 func (o *UpdateOrgRoleDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_id}][%d] updateOrgRole default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRole default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *UpdateOrgRoleDefault) GetPayload() *models.ErrorPayload {

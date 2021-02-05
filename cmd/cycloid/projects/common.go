@@ -8,7 +8,6 @@ var (
 	nameFlag             string
 	canonicalFlag        string
 	descriptionFlag      string
-	CloudProviderFlag    string
 	stackRefFlag         string
 	usecaseFlag          string
 	configRepositoryFlag uint32
@@ -57,12 +56,6 @@ func WithFlagDescription(cmd *cobra.Command) string {
 	cmd.Flags().StringVar(&descriptionFlag, flagName, "", "")
 	return flagName
 }
-func WithFlagCloudProvider(cmd *cobra.Command) string {
-	flagName := "cloud-provider"
-	cmd.Flags().StringVar(&CloudProviderFlag, flagName, "", "")
-	return flagName
-}
-
 func WithFlagConfigRepository(cmd *cobra.Command) string {
 	flagName := "config-repo"
 	cmd.Flags().Uint32Var(&configRepositoryFlag, flagName, 0, "")

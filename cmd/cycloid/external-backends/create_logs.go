@@ -21,9 +21,9 @@ func createLogs(cmd *cobra.Command, args []string) error {
 
 	var (
 		ebC     models.ExternalBackendConfiguration
-		engine         = cmd.CalledAs()
-		cred    uint32 = 0
-		purpose        = "logs"
+		engine  = cmd.CalledAs()
+		cred    string
+		purpose = "logs"
 	)
 
 	project, err := cmd.Flags().GetString("project")
@@ -59,7 +59,7 @@ func createLogs(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
-		cred, err = cmd.Flags().GetUint32("cred")
+		cred, err = cmd.Flags().GetString("cred")
 		if err != nil {
 			return err
 		}

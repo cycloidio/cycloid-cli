@@ -29,7 +29,7 @@ func NewInviteCommand() *cobra.Command {
 	}
 
 	common.RequiredFlag(WithFlagEmail, cmd)
-	common.RequiredFlag(WithFlagRoleID, cmd)
+	common.RequiredFlag(WithFlagRoleCanonical, cmd)
 
 	return cmd
 }
@@ -51,12 +51,12 @@ func inviteMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	roleID, err := cmd.Flags().GetUint32("role-id")
+	role, err := cmd.Flags().GetString("role")
 	if err != nil {
 		return err
 	}
 
-	err = m.InviteMember(org, email, roleID)
+	err = m.InviteMember(org, email, role)
 	if err != nil {
 		return errors.Wrapf(err, "unable to invite member: %s", email)
 	}

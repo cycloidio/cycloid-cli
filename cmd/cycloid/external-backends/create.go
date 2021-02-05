@@ -17,7 +17,7 @@ func NewCreateCommand() *cobra.Command {
        cy --org my-org eb create logs AWSCloudWatchLogs --project foo --org bar --region eu-west-1
 
        # create Elasticsearch external backend for logs
-       cy --org my-org eb create logs ElasticsearchLogs source-name --project foo --org bar --env foo --cred 1 --url http://elasticsearch.local.tld --prefilter foo=bar
+       cy --org my-org eb create logs ElasticsearchLogs source-name --project foo --org bar --env foo --cred my-credential --url http://elasticsearch.local.tld --prefilter foo=bar
 `,
 	}
 
