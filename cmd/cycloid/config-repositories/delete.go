@@ -14,8 +14,8 @@ func NewDeleteCommand() *cobra.Command {
 		Use:   "delete",
 		Short: "delete a config repository",
 		Example: `
-	# delete a catalog repository with the ID 123
-	cy  --org my-org config-repository delete --id 123
+	# delete a config repository with the canonical my-config-repo
+	cy  --org my-org config-repository delete --canonical my-config-repo
 `,
 		RunE:    deleteConfigRepository,
 		PreRunE: internal.CheckAPIAndCLIVersion,

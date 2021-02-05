@@ -14,7 +14,7 @@ func NewDeleteCommand() *cobra.Command {
 		Short: "delete a catalog repository",
 		Example: `
 	# delete a catalog repository with the ID 123
-	cy  --org my-org catalog-repository delete --id 123
+	cy  --org my-org catalog-repository delete --canonical my-catalog-repository
 `,
 		RunE: deleteCatalogRepository,
 	}

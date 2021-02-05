@@ -17,7 +17,7 @@ func NewUpdateCommand() *cobra.Command {
 	var (
 		example = `
 	# Update a member within my-org organization
-	cy --org my-org members update --name my_user --role-id 271
+	cy --org my-org members update --name my_user --role my-role
 	`
 		short = "Update a member"
 		long  = short

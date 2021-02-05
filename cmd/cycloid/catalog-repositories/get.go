@@ -17,7 +17,7 @@ func NewGetCommand() *cobra.Command {
 		Short: "get a catalog repository",
 		Example: `
 	# get the catalog repository with the id 123 and display the result in YAML
-	cy  --org my-org cr get --id 123 -o yaml
+	cy  --org my-org cr get --canonical my-catalog-repository -o yaml
 `,
 		RunE: getCatalogRepository,
 	}

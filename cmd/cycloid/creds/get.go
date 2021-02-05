@@ -19,8 +19,8 @@ func NewGetCommand() *cobra.Command {
 		Use:   "get",
 		Short: "get a credential",
 		Example: `
-	# get a credential by its ID
-	cy --org my-org credential get --id 123
+	# get a credential by its canonical
+	cy --org my-org credential get --canonical my-cred
 `,
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,

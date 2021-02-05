@@ -16,7 +16,7 @@ func NewRefreshCommand() *cobra.Command {
 		Long:  "refresh action can be used if the .cycloid.yml definition has been updated",
 		Example: `
 	# refresh a catalog repository with the ID 123
-	cy --org my-org catalog-repo refresh --id 123
+	cy --org my-org catalog-repo refresh --canonical my-catalog-repository
 `,
 		RunE: refreshCatalogRepository,
 	}
