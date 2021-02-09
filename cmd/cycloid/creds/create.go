@@ -372,7 +372,7 @@ func create(cmd *cobra.Command, args []string) error {
 		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
 			return errors.Wrap(err, "unable to print result")
 		}
-		return errors.Wrap(err, "unable to create credential")
+		return errors.Wrapf(err, "unable to create credential: %s", name)
 	}
 	return nil
 }
