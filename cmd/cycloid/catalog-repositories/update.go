@@ -85,7 +85,7 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
 			return errors.Wrap(err, "unable to print result")
 		}
-		return errors.Wrap(err, "unable to update catalog repository")
+		return errors.Wrapf(err, "unable to update catalog repository: %s", can)
 	}
 
 	// print the result on the standard output
