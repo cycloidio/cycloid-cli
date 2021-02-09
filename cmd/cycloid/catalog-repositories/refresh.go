@@ -60,7 +60,7 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
 			return errors.Wrap(err, "unable to print result")
 		}
-		return err
+		return errors.Wrapf(err, "unable to refresh catalog repository: %s", can)
 	}
 
 	// print the result on the standard output
