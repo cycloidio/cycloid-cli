@@ -87,7 +87,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
 			return errors.Wrap(err, "unable to print result")
 		}
-		return err
+		return errors.Wrapf(err, "unable to create config repository: %s", name)
 	}
 
 	// print the result on the standard output
