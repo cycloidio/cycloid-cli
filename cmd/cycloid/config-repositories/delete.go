@@ -60,7 +60,7 @@ func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
 			return errors.Wrap(err, "unable to print result")
 		}
-		return errors.Wrap(err, "unable to delete config repository")
+		return errors.Wrapf(err, "unable to delete config repository: %s", can)
 	}
 
 	return nil
