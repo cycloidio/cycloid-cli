@@ -2,7 +2,6 @@ package catalogRepositories
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -47,14 +46,14 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialCanonical)
-	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(int64(*cr.CreatedAt), 0), time.Unix(int64(*cr.UpdatedAt), 0))
+	//fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialCanonical)
+	//fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(int64(*cr.CreatedAt), 0), time.Unix(int64(*cr.UpdatedAt), 0))
 
 	//TODO: Wait PR merged https://github.com/cycloidio/youdeploy-http-api/pull/2066
 	// output is not available yet
-	for stack := range cr.ServiceCatalogs {
-		_ = stack
-	}
+	//for stack := range cr.ServiceCatalogs {
+	//	_ = stack
+	//}
 
 	fmt.Println(cr)
 	fmt.Printf("%+v\n", err)
