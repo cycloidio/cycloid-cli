@@ -1,12 +1,15 @@
 package catalogRepositories
 
 import (
-	"fmt"
-	"time"
+	"os"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewRefreshCommand() *cobra.Command {
@@ -43,21 +46,26 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
+
 	cr, err := m.RefreshCatalogRepository(org, can)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("id: %d    name: %s    url: %s    branch: %s    credential_id: %d\n", *cr.ID, *cr.Name, *cr.URL, cr.Branch, cr.CredentialCanonical)
-	fmt.Printf("created_at: %v    updated_at: %v\n", time.Unix(int64(*cr.CreatedAt), 0), time.Unix(int64(*cr.UpdatedAt), 0))
 
-	//TODO: Wait PR merged https://github.com/cycloidio/youdeploy-http-api/pull/2066
-	// output is not available yet
-	for stack := range cr.ServiceCatalogs {
-		_ = stack
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
 	}
 
-	fmt.Println(cr)
-	fmt.Printf("%+v\n", err)
+	// print the result on the standard output
+	if err := p.Print(cr, printer.Options{}, os.Stdout); err != nil {
+		return errors.Wrap(err, "unable to print result")
+	}
 
 	return nil
 }

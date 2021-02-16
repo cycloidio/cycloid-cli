@@ -14,7 +14,7 @@ type Middleware interface {
 	DeleteCatalogRepository(org, catalogRepo string) error
 	GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error)
 	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
-	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error)
+	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error)
 	UpdateCatalogRepository(org, name, url, branch, catalogRepo, cred string) (*models.ServiceCatalogSource, error)
 
 	CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
