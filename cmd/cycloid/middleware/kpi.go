@@ -84,21 +84,6 @@ func (m *middleware) ListKpi(org, project, env string) ([]*models.KPI, error) {
 	return d, err
 }
 
-func (m *middleware) ListAvailableKpi(org string) ([]*models.KPI, error) {
-	params := organization_kpis.NewGetKpisAvailableParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.OrganizationKpis.GetKpisAvailable(params, common.ClientCredentials(&org))
-	if err != nil {
-		return nil, err
-	}
-
-	p := resp.GetPayload()
-
-	d := p.Data
-	return d, err
-}
-
 func (m *middleware) DeleteKpi(org, kpi string) error {
 	params := organization_kpis.NewDeleteKpiParams()
 	params.SetOrganizationCanonical(org)

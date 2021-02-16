@@ -88,7 +88,6 @@ type Middleware interface {
 	CreateKpi(name, kpiType, widget, org, project, job, env, config string) (*models.KPI, error)
 	DeleteKpi(org, kpi string) error
 	ListKpi(org, project, env string) ([]*models.KPI, error)
-	ListAvailableKpi(org string) ([]*models.KPI, error)
 
 	// API keys method
 	// CreateAPIKey will request API to generate and return an API key
