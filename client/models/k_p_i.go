@@ -83,9 +83,10 @@ type KPI struct {
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
 
-	// This field contains either the possible KPI's widgets when the it isn't yet configured (e.g. ['bars', 'line']), or the KPI's current configured widget within the ones available (e.g. ['line']). The list of available widgets will also be fetched from the available KPIs when updating an existing one.
+	// widget
 	// Required: true
-	Widgets []string `json:"widgets"`
+	// Enum: [bars stackbars doughnut history line pie summary]
+	Widget *string `json:"widget"`
 }
 
 // Validate validates this k p i
@@ -132,7 +133,7 @@ func (m *KPI) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateWidgets(formats); err != nil {
+	if err := m.validateWidget(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -327,9 +328,58 @@ func (m *KPI) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *KPI) validateWidgets(formats strfmt.Registry) error {
+var kPITypeWidgetPropEnum []interface{}
 
-	if err := validate.Required("widgets", "body", m.Widgets); err != nil {
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["bars","stackbars","doughnut","history","line","pie","summary"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		kPITypeWidgetPropEnum = append(kPITypeWidgetPropEnum, v)
+	}
+}
+
+const (
+
+	// KPIWidgetBars captures enum value "bars"
+	KPIWidgetBars string = "bars"
+
+	// KPIWidgetStackbars captures enum value "stackbars"
+	KPIWidgetStackbars string = "stackbars"
+
+	// KPIWidgetDoughnut captures enum value "doughnut"
+	KPIWidgetDoughnut string = "doughnut"
+
+	// KPIWidgetHistory captures enum value "history"
+	KPIWidgetHistory string = "history"
+
+	// KPIWidgetLine captures enum value "line"
+	KPIWidgetLine string = "line"
+
+	// KPIWidgetPie captures enum value "pie"
+	KPIWidgetPie string = "pie"
+
+	// KPIWidgetSummary captures enum value "summary"
+	KPIWidgetSummary string = "summary"
+)
+
+// prop value enum
+func (m *KPI) validateWidgetEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, kPITypeWidgetPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *KPI) validateWidget(formats strfmt.Registry) error {
+
+	if err := validate.Required("widget", "body", m.Widget); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateWidgetEnum("widget", "body", *m.Widget); err != nil {
 		return err
 	}
 

@@ -42,6 +42,10 @@ type Invitation struct {
 	// invitee
 	Invitee *UserAccount `json:"invitee,omitempty"`
 
+	// resent at
+	// Minimum: 0
+	ResentAt *uint64 `json:"resent_at,omitempty"`
+
 	// role
 	// Required: true
 	Role *Role `json:"role"`
@@ -73,6 +77,10 @@ func (m *Invitation) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateInvitee(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateResentAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -160,6 +168,19 @@ func (m *Invitation) validateInvitee(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Invitation) validateResentAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ResentAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("resent_at", "body", int64(*m.ResentAt), 0, false); err != nil {
+		return err
 	}
 
 	return nil
