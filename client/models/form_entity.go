@@ -57,7 +57,7 @@ type FormEntity struct {
 
 	// The widget used to display the data in the most suitable way
 	// Required: true
-	// Enum: [auto_complete dropdown radios slider_list slider_range number simple_text text_area cy_cred cy_scs cy_crs cy_branch]
+	// Enum: [auto_complete dropdown radios slider_list slider_range number simple_text switch text_area cy_cred cy_scs cy_crs cy_branch]
 	Widget *string `json:"widget"`
 }
 
@@ -161,7 +161,7 @@ var formEntityTypeWidgetPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","text_area","cy_cred","cy_scs","cy_crs","cy_branch"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -191,6 +191,9 @@ const (
 
 	// FormEntityWidgetSimpleText captures enum value "simple_text"
 	FormEntityWidgetSimpleText string = "simple_text"
+
+	// FormEntityWidgetSwitch captures enum value "switch"
+	FormEntityWidgetSwitch string = "switch"
 
 	// FormEntityWidgetTextArea captures enum value "text_area"
 	FormEntityWidgetTextArea string = "text_area"
