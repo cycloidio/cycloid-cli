@@ -14,6 +14,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/cost_estimation"
 	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_api_keys"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_children"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
@@ -82,6 +83,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 	cli.Cycloid = cycloid.New(transport, formats)
 
 	cli.OrganizationAPIKeys = organization_api_keys.New(transport, formats)
+
+	cli.OrganizationChildren = organization_children.New(transport, formats)
 
 	cli.OrganizationConfigRepositories = organization_config_repositories.New(transport, formats)
 
@@ -169,6 +172,8 @@ type APIClient struct {
 
 	OrganizationAPIKeys *organization_api_keys.Client
 
+	OrganizationChildren *organization_children.Client
+
 	OrganizationConfigRepositories *organization_config_repositories.Client
 
 	OrganizationCredentials *organization_credentials.Client
@@ -217,6 +222,8 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.Cycloid.SetTransport(transport)
 
 	c.OrganizationAPIKeys.SetTransport(transport)
+
+	c.OrganizationChildren.SetTransport(transport)
 
 	c.OrganizationConfigRepositories.SetTransport(transport)
 

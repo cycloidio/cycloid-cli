@@ -5,6 +5,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_children"
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -95,6 +96,25 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 	// if err != nil {
 	// 	return err
 	// }
+
+	d := p.Data
+	return d, err
+}
+
+func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organization, error) {
+
+	params := organization_children.NewGetOrgChildrenParams()
+	orderBy := "organization_canonical:asc"
+	params.SetOrderBy(&orderBy)
+	params.SetOrganizationCanonical(org)
+
+	resp, err := m.api.OrganizationChildren.GetOrgChildren(params, common.ClientCredentials(&org))
+
+	if err != nil {
+		return nil, err
+	}
+
+	p := resp.GetPayload()
 
 	d := p.Data
 	return d, err
