@@ -49,21 +49,12 @@ func listInvites(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	mbs, err := m.ListInvites(org)
-	if err != nil {
-		return err
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(mbs, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	mbs, err := m.ListInvites(org)
+	return printer.SmartPrint(p, mbs, err, "unable to list invites", printer.Options{}, os.Stdout)
 }

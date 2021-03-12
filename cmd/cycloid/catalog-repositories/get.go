@@ -16,7 +16,7 @@ func NewGetCommand() *cobra.Command {
 		Use:   "get",
 		Short: "get a catalog repository",
 		Example: `
-	# get the catalog repository with the id 123 and display the result in YAML
+	# get the catalog repository with the canonical 123 and display the result in YAML
 	cy  --org my-org cr get --canonical my-catalog-repository -o yaml
 `,
 		RunE: getCatalogRepository,
@@ -26,10 +26,6 @@ func NewGetCommand() *cobra.Command {
 
 	return cmd
 }
-
-// /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}
-// get: getServiceCatalogSource
-// Return the Service Catalog Source
 
 func getCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
@@ -49,21 +45,12 @@ func getCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.GetCatalogRepository(org, can)
-	if err != nil {
-		return err
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(cr, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	cr, err := m.GetCatalogRepository(org, can)
+	return printer.SmartPrint(p, cr, err, "unable to get catalog repository", printer.Options{}, os.Stdout)
 }

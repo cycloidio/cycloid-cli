@@ -1,4 +1,9 @@
-## [v1.0.58] _2021-02-02_
+## [v1.0.59] _2021-02-05_
+- **ADDED**
+  - Adding better error details display
+   ([PR #76](https://github.com/cycloidio/cycloid-cli/pull/76))
+
+## [v1.0.58] _2021-02-05_
 - **ADDED**
   - Adding new kpis command
    ([PR #81](https://github.com/cycloidio/cycloid-cli/pull/81))

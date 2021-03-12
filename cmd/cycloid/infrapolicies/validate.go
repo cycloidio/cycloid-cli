@@ -59,22 +59,14 @@ func validate(org, project, env, planPath, output string) error {
 		return fmt.Errorf("unable to read terraform plan file: %w", err)
 	}
 
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-	res, err := m.ValidateInfraPolicies(org, project, env, plan)
-	if err != nil {
-		return fmt.Errorf("unable to validate terraform plan file: %w", err)
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return fmt.Errorf("unable to get printer: %w", err)
 	}
 
-	// print the result on the standard output
-	if err := p.Print(res, printer.Options{}, os.Stdout); err != nil {
-		return fmt.Errorf("unable to print result: %w", err)
-	}
-	return nil
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+	res, err := m.ValidateInfraPolicies(org, project, env, plan)
+	return printer.SmartPrint(p, res, err, "unable to validate terraform plan file", printer.Options{}, os.Stdout)
 }

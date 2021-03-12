@@ -62,8 +62,6 @@ func list(output string) error {
 	}
 
 	// print the result on the standard output
-	if err := p.Print(orgs, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-	return nil
+	err = p.Print(orgs, printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "", printer.Options{}, os.Stdout)
 }

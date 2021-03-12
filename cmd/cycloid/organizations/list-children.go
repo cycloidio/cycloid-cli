@@ -1,4 +1,4 @@
-package projects
+package organizations
 
 import (
 	"os"
@@ -13,31 +13,26 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewDeleteCommand() *cobra.Command {
+func NewListChildrensCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
-		Short: "delete a project",
-		Example: `
-	# delete a project in 'my-org' organization
-	cy --org my-org project delete --project my-project
-`,
-		RunE:    del,
+		Use:     "list-children",
+		Aliases: []string{
+			"list-childrens",
+		},
+		Short:   "list the organization childrens",
+		RunE:    listChildrens,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
-	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	return cmd
 }
 
-func del(cmd *cobra.Command, args []string) error {
+func listChildrens(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cmd.Flags().GetString("org")
-	if err != nil {
-		return err
-	}
-	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err
 	}
@@ -52,6 +47,6 @@ func del(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteProject(org, project)
-	return printer.SmartPrint(p, nil, err, "unable to delete project", printer.Options{}, os.Stdout)
+	oc, err := m.ListOrganizationChildrens(org)
+	return printer.SmartPrint(p, oc, err, "unable to list organization childrens", printer.Options{}, os.Stdout)
 }

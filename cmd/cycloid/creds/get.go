@@ -51,21 +51,12 @@ func get(cmd *cobra.Command, args []string) error {
 	params.SetOrganizationCanonical(org)
 	params.SetCredentialCanonical(can)
 
-	c, err := m.GetCredential(org, can)
-	if err != nil {
-		return errors.Wrap(err, "unable to get credential")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(c, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	c, err := m.GetCredential(org, can)
+	return printer.SmartPrint(p, c, err, "unable to get credential", printer.Options{}, os.Stdout)
 }

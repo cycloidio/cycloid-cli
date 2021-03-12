@@ -1,12 +1,16 @@
 package apikey
 
 import (
+	"os"
 	"fmt"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // NewDeleteCommand returns the cobra command holding
@@ -47,8 +51,11 @@ func remove(org, canonical, output string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	if err := m.DeleteAPIKey(org, canonical); err != nil {
-		return fmt.Errorf("unable to delete API key: %w", err)
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
 	}
-	return nil
+	err = m.DeleteAPIKey(org, canonical)
+	return printer.SmartPrint(p, nil, err, "unable to delete API key", printer.Options{}, os.Stdout)
 }

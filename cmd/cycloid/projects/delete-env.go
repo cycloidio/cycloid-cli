@@ -1,12 +1,16 @@
 package projects
 
 import (
+	"os"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteEnvCommand() *cobra.Command {
@@ -42,10 +46,17 @@ func deleteEnv(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
-	if err := m.DeleteProjectEnv(org, project, env); err != nil {
-		return errors.Wrap(err, "unable to delete environment")
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	return nil
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	err = m.DeleteProjectEnv(org, project, env)
+	return printer.SmartPrint(p, nil, err, "unable to delete environment", printer.Options{}, os.Stdout)
 }

@@ -70,6 +70,12 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
 	rawPipeline, err := ioutil.ReadFile(pipelinePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read pipeline file")
@@ -83,18 +89,9 @@ func update(cmd *cobra.Command, args []string) error {
 	variables := string(rawVars)
 
 	resp, err := m.UpdatePipeline(org, project, env, pipeline, variables)
+	err = printer.SmartPrint(p, resp, err, "unable to update pipeline", printer.Options{}, os.Stdout)
 	if err != nil {
-		return errors.Wrap(err, "unable to update pipeline")
-	}
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
-	// print the result on the standard output
-	if err := p.Print(resp, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
+			return err
 	}
 
 	//
@@ -102,7 +99,6 @@ func update(cmd *cobra.Command, args []string) error {
 	//
 
 	if len(configs) > 0 {
-
 		cfs := make(map[string]strfmt.Base64)
 
 		for fp, dest := range configs {
@@ -114,9 +110,8 @@ func update(cmd *cobra.Command, args []string) error {
 			cfs[dest] = c
 		}
 
-		if err := m.PushConfig(org, project, env, cfs); err != nil {
-			return errors.Wrap(err, "unable to push config")
-		}
+		err = m.PushConfig(org, project, env, cfs)
+		return printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, os.Stdout)
 	}
 
 	return nil

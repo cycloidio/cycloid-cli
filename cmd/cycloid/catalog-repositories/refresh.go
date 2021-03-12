@@ -18,7 +18,7 @@ func NewRefreshCommand() *cobra.Command {
 		Short: "refresh a catalog repository",
 		Long:  "refresh action can be used if the .cycloid.yml definition has been updated",
 		Example: `
-	# refresh a catalog repository with the ID 123
+	# refresh a catalog repository with the canonical my-catalog-repository
 	cy --org my-org catalog-repo refresh --canonical my-catalog-repository
 `,
 		RunE: refreshCatalogRepository,
@@ -29,9 +29,6 @@ func NewRefreshCommand() *cobra.Command {
 	return cmd
 }
 
-// /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}/refresh
-// post: refreshServiceCatalogSource
-// refresh a Service catalog source
 func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
@@ -51,21 +48,12 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.RefreshCatalogRepository(org, can)
-	if err != nil {
-		return err
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(cr, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	cr, err := m.RefreshCatalogRepository(org, can)
+	return printer.SmartPrint(p, cr, err, "unable to refresh catalog repository", printer.Options{}, os.Stdout)
 }

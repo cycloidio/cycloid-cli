@@ -54,20 +54,12 @@ func validateForm(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to read the form file")
 	}
 
-	vf, err := m.ValidateForm(org, rawForms)
-	if err != nil {
-		return errors.Wrap(err, "unable validate form")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(vf, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-	return nil
+	vf, err := m.ValidateForm(org, rawForms)
+	return printer.SmartPrint(p, vf, err, "unable validate form", printer.Options{}, os.Stdout)
 }

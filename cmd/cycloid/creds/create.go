@@ -3,6 +3,7 @@ package creds
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -11,6 +12,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateCommand() *cobra.Command {
@@ -199,6 +202,17 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
+
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
 	switch credT {
 	case "ssh":
 		sshKeyPath, err := cmd.Flags().GetString("ssh-key")
@@ -353,8 +367,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	if err := m.CreateCredential(org, name, credT, rawCred, path, description); err != nil {
-		return errors.Wrap(err, "unable to create credential")
-	}
-	return nil
+	err = m.CreateCredential(org, name, credT, rawCred, path, description)
+	return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, os.Stdout)
 }
