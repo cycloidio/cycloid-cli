@@ -232,7 +232,7 @@ type RefreshServiceCatalogSourceOKBody struct {
 
 	// data
 	// Required: true
-	Data *models.ServiceCatalogSource `json:"data"`
+	Data *models.ServiceCatalogChanges `json:"data"`
 }
 
 // Validate validates this refresh service catalog source o k body

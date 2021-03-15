@@ -58,6 +58,39 @@ func (a *Client) GetAppVersion(params *GetAppVersionParams) (*GetAppVersionOK, e
 }
 
 /*
+GetConfig Get the Cycloid configuration.
+*/
+func (a *Client) GetConfig(params *GetConfigParams) (*GetConfigOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetConfigParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "getConfig",
+		Method:             "GET",
+		PathPattern:        "/config",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetConfigReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetConfigOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetConfigDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 GetStatus Get the status of the Cycloid's services.
 */
 func (a *Client) GetStatus(params *GetStatusParams) (*GetStatusOK, error) {

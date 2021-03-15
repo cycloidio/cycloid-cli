@@ -53,6 +53,7 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--tags="Organization Forms" \
 		--tags="Organization kpis" \
  		--tags="Organization Infrastructure Policies" \
+ 		--tags="Organization Children" \
 		--tags="Service catalogs" \
 		--tags="User" \
 		--tags="Cost Estimation"

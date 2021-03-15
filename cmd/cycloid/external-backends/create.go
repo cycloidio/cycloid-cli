@@ -133,7 +133,3 @@ func newLogsCommand() *cobra.Command {
 	logsCmd.AddCommand(logsAWSCloudWatchLogsCmd, logsElasticsearchLogsCmd)
 	return logsCmd
 }
-
-// /organizations/{organization_canonical}/external_backends
-// post: createExternalBackend
-// Save information about the external backend

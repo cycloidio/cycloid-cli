@@ -21,7 +21,3 @@ func NewGetCommand() *cobra.Command {
 	}
 	return cmd
 }
-
-// /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}
-// get: getPipeline
-// Get the configuration of the pipeline.

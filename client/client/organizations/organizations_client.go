@@ -197,7 +197,7 @@ func (a *Client) GetOrgAncestors(params *GetOrgAncestorsParams, authInfo runtime
 }
 
 /*
-GetOrgEvents Retrieve the list of events which has been registered on the organization. The events to request can be filtered using Unix timestamps in  milliseconds (begin and end timestamps range), the event type and  severity; when more than one are applied then they are applied with a  logical AND.
+GetOrgEvents Retrieve the list of events which has been registered on the organization. The events to request can be filtered using Unix timestamps in milliseconds (begin and end timestamps range), the event type and severity; when more than one are applied then they are applied with a logical AND.
 - The Unix timestamps must always be specified, the rest of the filters
   are not mandatory.
 */

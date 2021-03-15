@@ -52,20 +52,12 @@ func listJobs(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	jobs, err := m.ListPipelineJobs(org, project, env)
-	if err != nil {
-		return errors.Wrap(err, "unable to list pipeline jobs")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(jobs, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-	return nil
+	jobs, err := m.ListPipelineJobs(org, project, env)
+	return printer.SmartPrint(p, jobs, err, "unable to list pipeline jobs", printer.Options{}, os.Stdout)
 }

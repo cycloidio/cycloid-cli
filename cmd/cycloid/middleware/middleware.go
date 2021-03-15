@@ -14,7 +14,7 @@ type Middleware interface {
 	DeleteCatalogRepository(org, catalogRepo string) error
 	GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error)
 	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
-	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error)
+	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error)
 	UpdateCatalogRepository(org, name, url, branch, catalogRepo, cred string) (*models.ServiceCatalogSource, error)
 
 	CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
@@ -56,6 +56,7 @@ type Middleware interface {
 	GetOrganization(org string) (*models.Organization, error)
 	ListOrganizations() ([]*models.Organization, error)
 	ListOrganizationWorkers(org string) ([]*models.Worker, error)
+	ListOrganizationChildrens(org string) ([]*models.Organization, error)
 
 	ClearTaskCachePipeline(org, project, env, job, task string) error
 	CreatePipeline(org, project, env, pipeline, variables, usecase string) (*models.Pipeline, error)
@@ -88,7 +89,6 @@ type Middleware interface {
 	CreateKpi(name, kpiType, widget, org, project, job, env, config string) (*models.KPI, error)
 	DeleteKpi(org, kpi string) error
 	ListKpi(org, project, env string) ([]*models.KPI, error)
-	ListAvailableKpi(org string) ([]*models.KPI, error)
 
 	// API keys method
 	// CreateAPIKey will request API to generate and return an API key

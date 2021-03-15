@@ -1,11 +1,15 @@
 package catalogRepositories
 
 import (
+	"os"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -13,7 +17,7 @@ func NewDeleteCommand() *cobra.Command {
 		Use:   "delete",
 		Short: "delete a catalog repository",
 		Example: `
-	# delete a catalog repository with the ID 123
+	# delete a catalog repository with the canonical my-catalog-repository
 	cy  --org my-org catalog-repository delete --canonical my-catalog-repository
 `,
 		RunE: deleteCatalogRepository,
@@ -23,10 +27,6 @@ func NewDeleteCommand() *cobra.Command {
 
 	return cmd
 }
-
-// /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_id}
-// delete: deleteServiceCatalogSource
-// delete a Service catalog source
 
 func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
@@ -42,8 +42,17 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if err := m.DeleteCatalogRepository(org, canonical); err != nil {
-		return errors.Wrap(err, "unable to delete repository")
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
 	}
-	return nil
+
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	err = m.DeleteCatalogRepository(org, canonical)
+	return printer.SmartPrint(p, nil, err, "unable to delete catalog repository", printer.Options{}, os.Stdout)
 }

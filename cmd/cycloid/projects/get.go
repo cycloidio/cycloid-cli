@@ -47,19 +47,12 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	proj, err := m.GetProject(org, project)
-	if err != nil {
-		return errors.Wrap(err, "unable to get project")
-	}
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(proj, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-	return nil
+	proj, err := m.GetProject(org, project)
+	return printer.SmartPrint(p, proj, err, "unable to get project", printer.Options{}, os.Stdout)
 }

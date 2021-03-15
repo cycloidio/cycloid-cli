@@ -36,10 +36,6 @@ func NewCreateCommand() *cobra.Command {
 	return cmd
 }
 
-// /organizations/{organization_canonical}/config_repositories
-// post: createConfigRepository
-// Creates a config repository
-
 func createConfigRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
@@ -79,20 +75,12 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	cr, err := m.CreateConfigRepository(org, name, url, branch, cred, setDefault)
-	if err != nil {
-		return err
-	}
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(cr, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	cr, err := m.CreateConfigRepository(org, name, url, branch, cred, setDefault)
+	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, os.Stdout)
 }

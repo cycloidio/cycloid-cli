@@ -45,17 +45,11 @@ func list(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// org := viper.GetString("org")
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
 		return err
 	}
 	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return err
-	}
-
-	ebs, err := m.ListExternalBackends(org)
 	if err != nil {
 		return err
 	}
@@ -66,9 +60,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(ebs, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-	return nil
+	ebs, err := m.ListExternalBackends(org)
+	return printer.SmartPrint(p, ebs, err, "unable to list external backends", printer.Options{}, os.Stdout)
 }

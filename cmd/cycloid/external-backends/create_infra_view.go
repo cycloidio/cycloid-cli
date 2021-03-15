@@ -121,21 +121,12 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("Unexpected backend name")
 	}
 
-	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, ebC)
-	if err != nil {
-		return errors.Wrap(err, "unable to create external backend")
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(resp, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, ebC)
+	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, os.Stdout)
 }

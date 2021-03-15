@@ -1,4 +1,21 @@
-## [v1.0.58] _2021-02-02_
+## [v1.0.61] _2021-03-15_
+- **ADDED**
+  - Adding better error details display
+   ([PR #76](https://github.com/cycloidio/cycloid-cli/pull/76))
+  - Adding organizations `list-children` command
+   ([PR #76](https://github.com/cycloidio/cycloid-cli/pull/76))
+
+- **CHANGED**
+  - Update to version 1.0.61
+   ([PR #84](https://github.com/cycloidio/cycloid-cli/pull/84))
+  - wrapper: change behavior to look for the closest lower version
+   ([PR #85](https://github.com/cycloidio/cycloid-cli/pull/85))
+
+- **REMOVED**
+  - Remove deprecated KPIs `list-avaiable` command
+   ([PR #84](https://github.com/cycloidio/cycloid-cli/pull/84))
+
+## [v1.0.58] _2021-02-05_
 - **ADDED**
   - Adding new kpis command
    ([PR #81](https://github.com/cycloidio/cycloid-cli/pull/81))

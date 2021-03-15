@@ -143,7 +143,7 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 	return d, err
 }
 
-func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error) {
+func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error) {
 
 	params := organization_service_catalog_sources.NewRefreshServiceCatalogSourceParams()
 	params.SetOrganizationCanonical(org)

@@ -1,4 +1,4 @@
-package kpis
+package organizations
 
 import (
 	"os"
@@ -13,22 +13,22 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewlistAvailableCommand() *cobra.Command {
+func NewListChildrensCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "list-available",
-		Short: "list available kpis",
-		Example: `
-	# list kpis
-	cy --org my-org kpi list
-`,
-		RunE:    listAvailable,
+		Use:     "list-children",
+		Aliases: []string{
+			"list-childrens",
+		},
+		Short:   "list the organization childrens",
+		RunE:    listChildrens,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
+	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	return cmd
 }
 
-func listAvailable(cmd *cobra.Command, args []string) error {
+func listChildrens(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -36,15 +36,9 @@ func listAvailable(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	kpis, err := m.ListAvailableKpi(org)
-	if err != nil {
-		return err
 	}
 
 	// fetch the printer from the factory
@@ -53,10 +47,6 @@ func listAvailable(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(kpis, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	oc, err := m.ListOrganizationChildrens(org)
+	return printer.SmartPrint(p, oc, err, "unable to list organization childrens", printer.Options{}, os.Stdout)
 }

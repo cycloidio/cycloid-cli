@@ -56,21 +56,12 @@ func getMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	mb, err := m.GetMember(org, name)
-	if err != nil {
-		return err
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// print the result on the standard output
-	if err := p.Print(mb, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-
-	return nil
+	mb, err := m.GetMember(org, name)
+	return printer.SmartPrint(p, mb, err, "unable to get members", printer.Options{}, os.Stdout)
 }

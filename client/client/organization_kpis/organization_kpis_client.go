@@ -161,40 +161,6 @@ func (a *Client) GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoW
 }
 
 /*
-GetKpisAvailable Get the list of possible organization KPIs to configure
-*/
-func (a *Client) GetKpisAvailable(params *GetKpisAvailableParams, authInfo runtime.ClientAuthInfoWriter) (*GetKpisAvailableOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetKpisAvailableParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getKpisAvailable",
-		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/kpis_available",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetKpisAvailableReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetKpisAvailableOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	unexpectedSuccess := result.(*GetKpisAvailableDefault)
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
 UpdateKpi Update a KPI
 */
 func (a *Client) UpdateKpi(params *UpdateKpiParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateKpiOK, error) {

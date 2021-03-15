@@ -7,7 +7,6 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd"
 	"github.com/cycloidio/cycloid-cli/internal/version"
-
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -21,15 +20,23 @@ var (
 	versionString = fmt.Sprintf("%s, revision %s, branch %s, date %s; go %s", version.Version, version.Revision, version.Branch, version.BuildDate, version.GoVersion)
 
 	rootCmd = &cobra.Command{
-		Version: versionString,
-		Use:     "cy",
-		Short:   "Cycloid CLI",
-		Long:    `Cy is a CLI for Cycloid framework. Learn more at https://www.cycloid.io/.`,
+		Version:       versionString,
+		SilenceErrors: true,
+		SilenceUsage:  false,
+		Use:           "cy",
+		Short:         "Cycloid CLI",
+		Long:          `Cy is a CLI for Cycloid framework. Learn more at https://www.cycloid.io/.`,
 	}
 )
 
+func inRed(msg string) string {
+	return fmt.Sprintf("\033[1;31m%s\033[0m", msg)
+}
+
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
+		rootCmd.PrintErrln(inRed("Error:"), err.Error())
+		// rootCmd.PrintErrf("Run '%v --help' for usage.\n", rootCmd.CommandPath())
 		os.Exit(1)
 	}
 }
