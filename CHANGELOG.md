@@ -1,3 +1,11 @@
+## [v1.0.64] _2021-03-15_
+- **CHANGED**
+  - Update to version 1.0.64
+   ([PR #92](https://github.com/cycloidio/cycloid-cli/pull/92))
+- **BREAKING**
+  - Remove create api key command
+   ([PR #92](https://github.com/cycloidio/cycloid-cli/pull/92))
+
 ## [v1.0.61] _2021-03-15_
 - **ADDED**
   - Adding better error details display
