@@ -91,9 +91,6 @@ type Middleware interface {
 	ListKpi(org, project, env string) ([]*models.KPI, error)
 
 	// API keys method
-	// CreateAPIKey will request API to generate and return an API key
-	CreateAPIKey(org, name, description, role string) (*models.APIKey, error)
-
 	// ListAPIKey will request API to list generated API keys
 	ListAPIKey(org string) ([]*models.APIKey, error)
 
