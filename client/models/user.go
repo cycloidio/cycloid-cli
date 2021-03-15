@@ -6,8 +6,6 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -15,18 +13,23 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// MemberOrg Member of an organization
+// User Basic info of a user
 //
-// Member is a user who is associated to an organization.
-// swagger:model MemberOrg
-type MemberOrg struct {
+// A summary of a user to be used in places where only the basic information are need or are enough.
+// swagger:model User
+type User struct {
+
+	// Code of a country the user is from
+	// Required: true
+	// Pattern: ^[A-Z]{2}$
+	CountryCode *string `json:"country_code"`
 
 	// When the user became a member.
 	// Required: true
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at"`
 
-	// user email
+	// User's primary email.
 	// Required: true
 	// Format: email
 	Email *strfmt.Email `json:"email"`
@@ -46,29 +49,18 @@ type MemberOrg struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
-	// When the user had been invited to join as a member. When not present, the user is already a member, so she/he has verified her/his invitation.
-	// Minimum: 0
-	InvitedAt *uint64 `json:"invited_at,omitempty"`
-
-	// Organization member who invited the current user.
-	InvitedBy *MemberOrg `json:"invited_by,omitempty"`
-
 	// When the user logged in last time.
 	// Minimum: 0
 	LastLoginAt *uint64 `json:"last_login_at,omitempty"`
 
-	// User's preferred language
+	// The local that the user prefer.
 	// Required: true
-	// Enum: [en fr es]
+	// Pattern: ^[a-z]{2}(?:-[a-z][a-z])?$
 	Locale *string `json:"locale"`
 
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
-
-	// role
-	// Required: true
-	Role *Role `json:"role"`
 
 	// When the user had the role modified.
 	// Minimum: 0
@@ -76,15 +68,19 @@ type MemberOrg struct {
 
 	// username
 	// Required: true
-	// Max Length: 100
+	// Max Length: 30
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Username *string `json:"username"`
 }
 
-// Validate validates this member org
-func (m *MemberOrg) Validate(formats strfmt.Registry) error {
+// Validate validates this user
+func (m *User) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateCountryCode(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
@@ -106,14 +102,6 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateInvitedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateInvitedBy(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateLastLoginAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -123,10 +111,6 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePictureURL(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateRole(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -144,7 +128,20 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateCreatedAt(formats strfmt.Registry) error {
+func (m *User) validateCountryCode(formats strfmt.Registry) error {
+
+	if err := validate.Required("country_code", "body", m.CountryCode); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("country_code", "body", string(*m.CountryCode), `^[A-Z]{2}$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *User) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
 		return err
@@ -157,7 +154,7 @@ func (m *MemberOrg) validateCreatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateEmail(formats strfmt.Registry) error {
+func (m *User) validateEmail(formats strfmt.Registry) error {
 
 	if err := validate.Required("email", "body", m.Email); err != nil {
 		return err
@@ -170,7 +167,7 @@ func (m *MemberOrg) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateFamilyName(formats strfmt.Registry) error {
+func (m *User) validateFamilyName(formats strfmt.Registry) error {
 
 	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
 		return err
@@ -183,7 +180,7 @@ func (m *MemberOrg) validateFamilyName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateGivenName(formats strfmt.Registry) error {
+func (m *User) validateGivenName(formats strfmt.Registry) error {
 
 	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
 		return err
@@ -196,7 +193,7 @@ func (m *MemberOrg) validateGivenName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateID(formats strfmt.Registry) error {
+func (m *User) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
@@ -209,38 +206,7 @@ func (m *MemberOrg) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateInvitedAt(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.InvitedAt) { // not required
-		return nil
-	}
-
-	if err := validate.MinimumInt("invited_at", "body", int64(*m.InvitedAt), 0, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MemberOrg) validateInvitedBy(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.InvitedBy) { // not required
-		return nil
-	}
-
-	if m.InvitedBy != nil {
-		if err := m.InvitedBy.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("invited_by")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *MemberOrg) validateLastLoginAt(formats strfmt.Registry) error {
+func (m *User) validateLastLoginAt(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.LastLoginAt) { // not required
 		return nil
@@ -253,53 +219,20 @@ func (m *MemberOrg) validateLastLoginAt(formats strfmt.Registry) error {
 	return nil
 }
 
-var memberOrgTypeLocalePropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["en","fr","es"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		memberOrgTypeLocalePropEnum = append(memberOrgTypeLocalePropEnum, v)
-	}
-}
-
-const (
-
-	// MemberOrgLocaleEn captures enum value "en"
-	MemberOrgLocaleEn string = "en"
-
-	// MemberOrgLocaleFr captures enum value "fr"
-	MemberOrgLocaleFr string = "fr"
-
-	// MemberOrgLocaleEs captures enum value "es"
-	MemberOrgLocaleEs string = "es"
-)
-
-// prop value enum
-func (m *MemberOrg) validateLocaleEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, memberOrgTypeLocalePropEnum); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *MemberOrg) validateLocale(formats strfmt.Registry) error {
+func (m *User) validateLocale(formats strfmt.Registry) error {
 
 	if err := validate.Required("locale", "body", m.Locale); err != nil {
 		return err
 	}
 
-	// value enum
-	if err := m.validateLocaleEnum("locale", "body", *m.Locale); err != nil {
+	if err := validate.Pattern("locale", "body", string(*m.Locale), `^[a-z]{2}(?:-[a-z][a-z])?$`); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *MemberOrg) validatePictureURL(formats strfmt.Registry) error {
+func (m *User) validatePictureURL(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.PictureURL) { // not required
 		return nil
@@ -312,25 +245,7 @@ func (m *MemberOrg) validatePictureURL(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateRole(formats strfmt.Registry) error {
-
-	if err := validate.Required("role", "body", m.Role); err != nil {
-		return err
-	}
-
-	if m.Role != nil {
-		if err := m.Role.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("role")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *MemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
+func (m *User) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -343,7 +258,7 @@ func (m *MemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateUsername(formats strfmt.Registry) error {
+func (m *User) validateUsername(formats strfmt.Registry) error {
 
 	if err := validate.Required("username", "body", m.Username); err != nil {
 		return err
@@ -353,7 +268,7 @@ func (m *MemberOrg) validateUsername(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", string(*m.Username), 100); err != nil {
+	if err := validate.MaxLength("username", "body", string(*m.Username), 30); err != nil {
 		return err
 	}
 
@@ -365,7 +280,7 @@ func (m *MemberOrg) validateUsername(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *MemberOrg) MarshalBinary() ([]byte, error) {
+func (m *User) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -373,8 +288,8 @@ func (m *MemberOrg) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *MemberOrg) UnmarshalBinary(b []byte) error {
-	var res MemberOrg
+func (m *User) UnmarshalBinary(b []byte) error {
+	var res User
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

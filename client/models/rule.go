@@ -30,13 +30,12 @@ type Rule struct {
 	// Enum: [allow]
 	Effect *string `json:"effect"`
 
-	// id
+	// This is the id of the row from the database, but for blocking organizations we generate rules that are not in the database. When this happens the id is allowed to be 0.
 	// Required: true
-	// Minimum: 1
+	// Minimum: 0
 	ID *uint32 `json:"id"`
 
 	// It is the list of resources in which this Rule applies to, the format of it is the one on the Policy.Code but with the `canonical` of the entities like `organization:org-can:team:team-can` for an action of `organization:team:read`
-	// Required: true
 	Resources []string `json:"resources"`
 }
 
@@ -53,10 +52,6 @@ func (m *Rule) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateResources(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -121,16 +116,7 @@ func (m *Rule) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Rule) validateResources(formats strfmt.Registry) error {
-
-	if err := validate.Required("resources", "body", m.Resources); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 0, false); err != nil {
 		return err
 	}
 

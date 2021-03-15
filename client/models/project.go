@@ -60,7 +60,7 @@ type Project struct {
 	// project it has all the permissions on it.
 	// In the event where the user has been deleted that field might be empty.
 	//
-	Owner *MemberOrg `json:"owner,omitempty"`
+	Owner *User `json:"owner,omitempty"`
 
 	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
 	// Required: true

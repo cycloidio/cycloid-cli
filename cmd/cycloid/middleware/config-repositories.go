@@ -117,7 +117,7 @@ func (m *middleware) CreateConfigRepository(org, name, url, branch, cred string,
 	params := organization_config_repositories.NewCreateConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
 
-	body := &models.CreateConfigRepository{
+	body := &models.NewConfigRepository{
 		Branch:              &branch,
 		CredentialCanonical: &cred,
 		Default:             &setDefault,

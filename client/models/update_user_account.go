@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -21,6 +22,10 @@ import (
 // swagger:model UpdateUserAccount
 type UpdateUserAccount struct {
 
+	// Code of a country the user is from
+	// Pattern: ^[A-Z]{2}$
+	CountryCode string `json:"country_code,omitempty"`
+
 	// emails
 	// Min Items: 1
 	Emails []*UpdateUserAccountEmail `json:"emails"`
@@ -35,9 +40,9 @@ type UpdateUserAccount struct {
 	// Min Length: 2
 	GivenName *string `json:"given_name"`
 
-	// The local that the user prefer.
+	// User's preferred language
 	// Required: true
-	// Pattern: ^[a-z]{2}(?:-[a-z][a-z])?$
+	// Enum: [en fr es]
 	Locale *string `json:"locale"`
 
 	// password update
@@ -58,6 +63,10 @@ type UpdateUserAccount struct {
 // Validate validates this update user account
 func (m *UpdateUserAccount) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateCountryCode(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateEmails(formats); err != nil {
 		res = append(res, err)
@@ -90,6 +99,19 @@ func (m *UpdateUserAccount) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *UpdateUserAccount) validateCountryCode(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CountryCode) { // not required
+		return nil
+	}
+
+	if err := validate.Pattern("country_code", "body", string(m.CountryCode), `^[A-Z]{2}$`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -150,13 +172,46 @@ func (m *UpdateUserAccount) validateGivenName(formats strfmt.Registry) error {
 	return nil
 }
 
+var updateUserAccountTypeLocalePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["en","fr","es"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		updateUserAccountTypeLocalePropEnum = append(updateUserAccountTypeLocalePropEnum, v)
+	}
+}
+
+const (
+
+	// UpdateUserAccountLocaleEn captures enum value "en"
+	UpdateUserAccountLocaleEn string = "en"
+
+	// UpdateUserAccountLocaleFr captures enum value "fr"
+	UpdateUserAccountLocaleFr string = "fr"
+
+	// UpdateUserAccountLocaleEs captures enum value "es"
+	UpdateUserAccountLocaleEs string = "es"
+)
+
+// prop value enum
+func (m *UpdateUserAccount) validateLocaleEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, updateUserAccountTypeLocalePropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *UpdateUserAccount) validateLocale(formats strfmt.Registry) error {
 
 	if err := validate.Required("locale", "body", m.Locale); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("locale", "body", string(*m.Locale), `^[a-z]{2}(?:-[a-z][a-z])?$`); err != nil {
+	// value enum
+	if err := m.validateLocaleEnum("locale", "body", *m.Locale); err != nil {
 		return err
 	}
 
