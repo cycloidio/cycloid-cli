@@ -21,7 +21,7 @@ func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.C
 		path = fmt.Sprintf("%s_%s", cType, safePath)
 	}
 
-	body := &models.CreateCredential{
+	body := &models.NewCredential{
 		Description: description,
 		Name:        &name,
 		Path:        &path,

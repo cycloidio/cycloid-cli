@@ -15,11 +15,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// CreateCredential Credential
+// NewCredential Credential
 //
 // Represents the Credential
-// swagger:model CreateCredential
-type CreateCredential struct {
+// swagger:model NewCredential
+type NewCredential struct {
 
 	// canonical
 	// Max Length: 100
@@ -55,8 +55,8 @@ type CreateCredential struct {
 	Type *string `json:"type"`
 }
 
-// Validate validates this create credential
-func (m *CreateCredential) Validate(formats strfmt.Registry) error {
+// Validate validates this new credential
+func (m *NewCredential) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCanonical(formats); err != nil {
@@ -85,7 +85,7 @@ func (m *CreateCredential) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateCredential) validateCanonical(formats strfmt.Registry) error {
+func (m *NewCredential) validateCanonical(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
@@ -106,7 +106,7 @@ func (m *CreateCredential) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateCredential) validateName(formats strfmt.Registry) error {
+func (m *NewCredential) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
@@ -115,7 +115,7 @@ func (m *CreateCredential) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateCredential) validatePath(formats strfmt.Registry) error {
+func (m *NewCredential) validatePath(formats strfmt.Registry) error {
 
 	if err := validate.Required("path", "body", m.Path); err != nil {
 		return err
@@ -128,7 +128,7 @@ func (m *CreateCredential) validatePath(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateCredential) validateRaw(formats strfmt.Registry) error {
+func (m *NewCredential) validateRaw(formats strfmt.Registry) error {
 
 	if err := validate.Required("raw", "body", m.Raw); err != nil {
 		return err
@@ -146,7 +146,7 @@ func (m *CreateCredential) validateRaw(formats strfmt.Registry) error {
 	return nil
 }
 
-var createCredentialTypeTypePropEnum []interface{}
+var newCredentialTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -154,49 +154,49 @@ func init() {
 		panic(err)
 	}
 	for _, v := range res {
-		createCredentialTypeTypePropEnum = append(createCredentialTypeTypePropEnum, v)
+		newCredentialTypeTypePropEnum = append(newCredentialTypeTypePropEnum, v)
 	}
 }
 
 const (
 
-	// CreateCredentialTypeSSH captures enum value "ssh"
-	CreateCredentialTypeSSH string = "ssh"
+	// NewCredentialTypeSSH captures enum value "ssh"
+	NewCredentialTypeSSH string = "ssh"
 
-	// CreateCredentialTypeAws captures enum value "aws"
-	CreateCredentialTypeAws string = "aws"
+	// NewCredentialTypeAws captures enum value "aws"
+	NewCredentialTypeAws string = "aws"
 
-	// CreateCredentialTypeCustom captures enum value "custom"
-	CreateCredentialTypeCustom string = "custom"
+	// NewCredentialTypeCustom captures enum value "custom"
+	NewCredentialTypeCustom string = "custom"
 
-	// CreateCredentialTypeAzure captures enum value "azure"
-	CreateCredentialTypeAzure string = "azure"
+	// NewCredentialTypeAzure captures enum value "azure"
+	NewCredentialTypeAzure string = "azure"
 
-	// CreateCredentialTypeAzureStorage captures enum value "azure_storage"
-	CreateCredentialTypeAzureStorage string = "azure_storage"
+	// NewCredentialTypeAzureStorage captures enum value "azure_storage"
+	NewCredentialTypeAzureStorage string = "azure_storage"
 
-	// CreateCredentialTypeGcp captures enum value "gcp"
-	CreateCredentialTypeGcp string = "gcp"
+	// NewCredentialTypeGcp captures enum value "gcp"
+	NewCredentialTypeGcp string = "gcp"
 
-	// CreateCredentialTypeBasicAuth captures enum value "basic_auth"
-	CreateCredentialTypeBasicAuth string = "basic_auth"
+	// NewCredentialTypeBasicAuth captures enum value "basic_auth"
+	NewCredentialTypeBasicAuth string = "basic_auth"
 
-	// CreateCredentialTypeElasticsearch captures enum value "elasticsearch"
-	CreateCredentialTypeElasticsearch string = "elasticsearch"
+	// NewCredentialTypeElasticsearch captures enum value "elasticsearch"
+	NewCredentialTypeElasticsearch string = "elasticsearch"
 
-	// CreateCredentialTypeSwift captures enum value "swift"
-	CreateCredentialTypeSwift string = "swift"
+	// NewCredentialTypeSwift captures enum value "swift"
+	NewCredentialTypeSwift string = "swift"
 )
 
 // prop value enum
-func (m *CreateCredential) validateTypeEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, createCredentialTypeTypePropEnum); err != nil {
+func (m *NewCredential) validateTypeEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, newCredentialTypeTypePropEnum); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *CreateCredential) validateType(formats strfmt.Registry) error {
+func (m *NewCredential) validateType(formats strfmt.Registry) error {
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
 		return err
@@ -211,7 +211,7 @@ func (m *CreateCredential) validateType(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *CreateCredential) MarshalBinary() ([]byte, error) {
+func (m *NewCredential) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -219,8 +219,8 @@ func (m *CreateCredential) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *CreateCredential) UnmarshalBinary(b []byte) error {
-	var res CreateCredential
+func (m *NewCredential) UnmarshalBinary(b []byte) error {
+	var res NewCredential
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

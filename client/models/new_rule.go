@@ -31,7 +31,6 @@ type NewRule struct {
 	Effect *string `json:"effect"`
 
 	// It is the list of resources in which this Rule applies to, the format of it is the one on the Policy.Code but with the `canonical` of the entities like `organization:org-can:team:team-can` for an action of `organization:team:read`
-	// Required: true
 	Resources []string `json:"resources"`
 }
 
@@ -44,10 +43,6 @@ func (m *NewRule) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEffect(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateResources(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -100,15 +95,6 @@ func (m *NewRule) validateEffect(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validateEffectEnum("effect", "body", *m.Effect); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *NewRule) validateResources(formats strfmt.Registry) error {
-
-	if err := validate.Required("resources", "body", m.Resources); err != nil {
 		return err
 	}
 

@@ -28,7 +28,6 @@ type Pipeline struct {
 	Environment *string `json:"environment"`
 
 	// groups
-	// Required: true
 	Groups []*GroupConfig `json:"groups"`
 
 	// id
@@ -124,8 +123,8 @@ func (m *Pipeline) validateEnvironment(formats strfmt.Registry) error {
 
 func (m *Pipeline) validateGroups(formats strfmt.Registry) error {
 
-	if err := validate.Required("groups", "body", m.Groups); err != nil {
-		return err
+	if swag.IsZero(m.Groups) { // not required
+		return nil
 	}
 
 	for i := 0; i < len(m.Groups); i++ {

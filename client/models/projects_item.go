@@ -54,7 +54,7 @@ type ProjectsItem struct {
 	// project it has all the permissions on it.
 	// In the event where the user has been deleted that field might be empty.
 	//
-	Owner *MemberOrg `json:"owner,omitempty"`
+	Owner *User `json:"owner,omitempty"`
 
 	// The Service Catalog that was used to create project.
 	// Required: true

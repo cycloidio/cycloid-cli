@@ -67,7 +67,7 @@ type CreateServiceCatalogSourceParams struct {
 	  The information of the organization to create.
 
 	*/
-	Body *models.CreateServiceCatalogSource
+	Body *models.NewServiceCatalogSource
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -113,13 +113,13 @@ func (o *CreateServiceCatalogSourceParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the create service catalog source params
-func (o *CreateServiceCatalogSourceParams) WithBody(body *models.CreateServiceCatalogSource) *CreateServiceCatalogSourceParams {
+func (o *CreateServiceCatalogSourceParams) WithBody(body *models.NewServiceCatalogSource) *CreateServiceCatalogSourceParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the create service catalog source params
-func (o *CreateServiceCatalogSourceParams) SetBody(body *models.CreateServiceCatalogSource) {
+func (o *CreateServiceCatalogSourceParams) SetBody(body *models.NewServiceCatalogSource) {
 	o.Body = body
 }
 
