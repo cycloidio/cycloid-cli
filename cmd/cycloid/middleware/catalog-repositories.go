@@ -1,18 +1,18 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_catalog_repositories"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error) {
+func (m *middleware) ListCatalogRepositories(org string) ([]*models.CatalogRepository, error) {
 
-	params := organization_service_catalog_sources.NewGetServiceCatalogSourcesParams()
+	params := organization_catalog_repositories.NewGetCatalogRepositoriesParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSources(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationCatalogRepositories.GetCatalogRepositories(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -29,13 +29,13 @@ func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatal
 	return d, err
 }
 
-func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error) {
+func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.CatalogRepository, error) {
 
-	params := organization_service_catalog_sources.NewGetServiceCatalogSourceParams()
+	params := organization_catalog_repositories.NewGetCatalogRepositoryParams()
 	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceCanonical(catalogRepo)
+	params.SetCatalogRepositoryCanonical(catalogRepo)
 
-	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSource(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationCatalogRepositories.GetCatalogRepository(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -53,30 +53,30 @@ func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.Serv
 }
 
 func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) error {
-	params := organization_service_catalog_sources.NewDeleteServiceCatalogSourceParams()
+	params := organization_catalog_repositories.NewDeleteCatalogRepositoryParams()
 	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceCanonical(catalogRepo)
+	params.SetCatalogRepositoryCanonical(catalogRepo)
 
-	_, err := m.api.OrganizationServiceCatalogSources.DeleteServiceCatalogSource(params, common.ClientCredentials(&org))
+	_, err := m.api.OrganizationCatalogRepositories.DeleteCatalogRepository(params, common.ClientCredentials(&org))
 	return err
 }
 
-func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string) (*models.ServiceCatalogSource, error) {
+func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string) (*models.CatalogRepository, error) {
 
-	params := organization_service_catalog_sources.NewCreateServiceCatalogSourceParams()
+	params := organization_catalog_repositories.NewCreateCatalogRepositoryParams()
 	params.SetOrganizationCanonical(org)
 
-	var body *models.NewServiceCatalogSource
+	var body *models.NewCatalogRepository
 
 	if len(cred) != 0 {
-		body = &models.NewServiceCatalogSource{
+		body = &models.NewCatalogRepository{
 			Branch:              &branch,
 			CredentialCanonical: cred,
 			Name:                &name,
 			URL:                 &url,
 		}
 	} else {
-		body = &models.NewServiceCatalogSource{
+		body = &models.NewCatalogRepository{
 			Branch: &branch,
 			Name:   &name,
 			URL:    &url,
@@ -89,7 +89,7 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationServiceCatalogSources.CreateServiceCatalogSource(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationCatalogRepositories.CreateCatalogRepository(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -107,13 +107,13 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string
 	return d, err
 }
 
-func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string) (*models.ServiceCatalogSource, error) {
+func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string) (*models.CatalogRepository, error) {
 
-	params := organization_service_catalog_sources.NewUpdateServiceCatalogSourceParams()
+	params := organization_catalog_repositories.NewUpdateCatalogRepositoryParams()
 	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceCanonical(catalogRepo)
+	params.SetCatalogRepositoryCanonical(catalogRepo)
 
-	body := &models.UpdateServiceCatalogSource{
+	body := &models.UpdateCatalogRepository{
 		Branch:              branch,
 		CredentialCanonical: cred,
 		Name:                &name,
@@ -126,7 +126,7 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationServiceCatalogSources.UpdateServiceCatalogSource(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationCatalogRepositories.UpdateCatalogRepository(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -143,13 +143,13 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 	return d, err
 }
 
-func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error) {
+func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.StackChanges, error) {
 
-	params := organization_service_catalog_sources.NewRefreshServiceCatalogSourceParams()
+	params := organization_catalog_repositories.NewRefreshCatalogRepositoryParams()
 	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceCanonical(catalogRepo)
+	params.SetCatalogRepositoryCanonical(catalogRepo)
 
-	resp, err := m.api.OrganizationServiceCatalogSources.RefreshServiceCatalogSource(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationCatalogRepositories.RefreshCatalogRepository(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
