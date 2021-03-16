@@ -48,7 +48,7 @@ type Credential struct {
 	// credential he has all the permissions on it.
 	// In the event where the user has been deleted that field might be empty.
 	//
-	Owner *User `json:"owner,omitempty"`
+	Owner *MemberOrg `json:"owner,omitempty"`
 
 	// path
 	// Required: true

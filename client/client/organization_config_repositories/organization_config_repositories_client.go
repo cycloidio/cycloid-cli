@@ -59,7 +59,7 @@ func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, au
 }
 
 /*
-CreateConfigRepositoryConfig Create Service Catalog config files in the Config Repository.
+CreateConfigRepositoryConfig Create Stack config files in the Config Repository.
 */
 func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConfigParams, authInfo runtime.ClientAuthInfoWriter) (*CreateConfigRepositoryConfigNoContent, error) {
 	// TODO: Validate the params before sending

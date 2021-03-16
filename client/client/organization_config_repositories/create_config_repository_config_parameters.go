@@ -64,11 +64,11 @@ for the create config repository config operation typically these are written to
 type CreateConfigRepositoryConfigParams struct {
 
 	/*Body
-	  The body contains Service Catalog's config files and paths where they'll be created in the Config Repository.
+	  The body contains Stack's config files and paths where they'll be created in the Config Repository.
 
 
 	*/
-	Body *models.SCConfig
+	Body *models.StackConfig
 	/*ConfigRepositoryCanonical
 	  Organization Config Repositories canonical
 
@@ -119,13 +119,13 @@ func (o *CreateConfigRepositoryConfigParams) SetHTTPClient(client *http.Client) 
 }
 
 // WithBody adds the body to the create config repository config params
-func (o *CreateConfigRepositoryConfigParams) WithBody(body *models.SCConfig) *CreateConfigRepositoryConfigParams {
+func (o *CreateConfigRepositoryConfigParams) WithBody(body *models.StackConfig) *CreateConfigRepositoryConfigParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the create config repository config params
-func (o *CreateConfigRepositoryConfigParams) SetBody(body *models.SCConfig) {
+func (o *CreateConfigRepositoryConfigParams) SetBody(body *models.StackConfig) {
 	o.Body = body
 }
 

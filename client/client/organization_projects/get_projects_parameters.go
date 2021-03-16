@@ -82,6 +82,11 @@ for the get projects operation typically these are written to a http.Request
 */
 type GetProjectsParams struct {
 
+	/*CatalogRepositoryCanonical
+	  Organization Catalog Repositories canonical
+
+	*/
+	CatalogRepositoryCanonical *string
 	/*OrderBy
 	  Allows to order the list of items. Example usage: field_name:asc
 
@@ -123,11 +128,6 @@ type GetProjectsParams struct {
 
 	*/
 	ProjectName *string
-	/*ServiceCatalogSourceCanonical
-	  Organization Service Catalog Sources canonical
-
-	*/
-	ServiceCatalogSourceCanonical *string
 	/*UserID
 	  Search by entity's owner
 
@@ -170,6 +170,17 @@ func (o *GetProjectsParams) WithHTTPClient(client *http.Client) *GetProjectsPara
 // SetHTTPClient adds the HTTPClient to the get projects params
 func (o *GetProjectsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithCatalogRepositoryCanonical adds the catalogRepositoryCanonical to the get projects params
+func (o *GetProjectsParams) WithCatalogRepositoryCanonical(catalogRepositoryCanonical *string) *GetProjectsParams {
+	o.SetCatalogRepositoryCanonical(catalogRepositoryCanonical)
+	return o
+}
+
+// SetCatalogRepositoryCanonical adds the catalogRepositoryCanonical to the get projects params
+func (o *GetProjectsParams) SetCatalogRepositoryCanonical(catalogRepositoryCanonical *string) {
+	o.CatalogRepositoryCanonical = catalogRepositoryCanonical
 }
 
 // WithOrderBy adds the orderBy to the get projects params
@@ -260,17 +271,6 @@ func (o *GetProjectsParams) SetProjectName(projectName *string) {
 	o.ProjectName = projectName
 }
 
-// WithServiceCatalogSourceCanonical adds the serviceCatalogSourceCanonical to the get projects params
-func (o *GetProjectsParams) WithServiceCatalogSourceCanonical(serviceCatalogSourceCanonical *string) *GetProjectsParams {
-	o.SetServiceCatalogSourceCanonical(serviceCatalogSourceCanonical)
-	return o
-}
-
-// SetServiceCatalogSourceCanonical adds the serviceCatalogSourceCanonical to the get projects params
-func (o *GetProjectsParams) SetServiceCatalogSourceCanonical(serviceCatalogSourceCanonical *string) {
-	o.ServiceCatalogSourceCanonical = serviceCatalogSourceCanonical
-}
-
 // WithUserID adds the userID to the get projects params
 func (o *GetProjectsParams) WithUserID(userID *uint32) *GetProjectsParams {
 	o.SetUserID(userID)
@@ -289,6 +289,22 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		return err
 	}
 	var res []error
+
+	if o.CatalogRepositoryCanonical != nil {
+
+		// query param catalog_repository_canonical
+		var qrCatalogRepositoryCanonical string
+		if o.CatalogRepositoryCanonical != nil {
+			qrCatalogRepositoryCanonical = *o.CatalogRepositoryCanonical
+		}
+		qCatalogRepositoryCanonical := qrCatalogRepositoryCanonical
+		if qCatalogRepositoryCanonical != "" {
+			if err := r.SetQueryParam("catalog_repository_canonical", qCatalogRepositoryCanonical); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.OrderBy != nil {
 
@@ -401,22 +417,6 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		qProjectName := qrProjectName
 		if qProjectName != "" {
 			if err := r.SetQueryParam("project_name", qProjectName); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.ServiceCatalogSourceCanonical != nil {
-
-		// query param service_catalog_source_canonical
-		var qrServiceCatalogSourceCanonical string
-		if o.ServiceCatalogSourceCanonical != nil {
-			qrServiceCatalogSourceCanonical = *o.ServiceCatalogSourceCanonical
-		}
-		qServiceCatalogSourceCanonical := qrServiceCatalogSourceCanonical
-		if qServiceCatalogSourceCanonical != "" {
-			if err := r.SetQueryParam("service_catalog_source_canonical", qServiceCatalogSourceCanonical); err != nil {
 				return err
 			}
 		}

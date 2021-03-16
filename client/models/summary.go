@@ -17,6 +17,10 @@ import (
 // swagger:model Summary
 type Summary struct {
 
+	// catalog repositories
+	// Required: true
+	CatalogRepositories *uint64 `json:"catalog_repositories"`
+
 	// config repositories
 	// Required: true
 	ConfigRepositories *uint64 `json:"config_repositories"`
@@ -37,10 +41,6 @@ type Summary struct {
 	// Required: true
 	Roles *uint64 `json:"roles"`
 
-	// service catalog sources
-	// Required: true
-	ServiceCatalogSources *uint64 `json:"service_catalog_sources"`
-
 	// teams
 	// Required: true
 	Teams *uint64 `json:"teams"`
@@ -53,6 +53,10 @@ type Summary struct {
 // Validate validates this summary
 func (m *Summary) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateCatalogRepositories(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateConfigRepositories(formats); err != nil {
 		res = append(res, err)
@@ -74,10 +78,6 @@ func (m *Summary) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogSources(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateTeams(formats); err != nil {
 		res = append(res, err)
 	}
@@ -89,6 +89,15 @@ func (m *Summary) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Summary) validateCatalogRepositories(formats strfmt.Registry) error {
+
+	if err := validate.Required("catalog_repositories", "body", m.CatalogRepositories); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -131,15 +140,6 @@ func (m *Summary) validateProjects(formats strfmt.Registry) error {
 func (m *Summary) validateRoles(formats strfmt.Registry) error {
 
 	if err := validate.Required("roles", "body", m.Roles); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Summary) validateServiceCatalogSources(formats strfmt.Registry) error {
-
-	if err := validate.Required("service_catalog_sources", "body", m.ServiceCatalogSources); err != nil {
 		return err
 	}
 

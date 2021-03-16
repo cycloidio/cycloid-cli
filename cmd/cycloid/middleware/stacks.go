@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
-	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
+	"github.com/cycloidio/cycloid-cli/client/client/stacks"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -10,12 +10,12 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
+func (m *middleware) ListStacks(org string) ([]*models.Stack, error) {
 
-	params := service_catalogs.NewGetServiceCatalogsParams()
+	params := stacks.NewGetStacksParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalogs(params, common.ClientCredentials(&org))
+	resp, err := m.api.Stacks.GetStacks(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -32,13 +32,13 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	return d, err
 }
 
-func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
+func (m *middleware) GetStack(org, ref string) (*models.Stack, error) {
 
-	params := service_catalogs.NewGetServiceCatalogParams()
+	params := stacks.NewGetStackParams()
 	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogRef(ref)
+	params.SetStackRef(ref)
 
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, common.ClientCredentials(&org))
+	resp, err := m.api.Stacks.GetStack(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}

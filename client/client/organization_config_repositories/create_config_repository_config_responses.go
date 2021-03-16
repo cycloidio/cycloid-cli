@@ -73,7 +73,7 @@ func NewCreateConfigRepositoryConfigNoContent() *CreateConfigRepositoryConfigNoC
 
 /*CreateConfigRepositoryConfigNoContent handles this case with default header values.
 
-SC config files have been created successfully
+Stack config files have been created successfully
 */
 type CreateConfigRepositoryConfigNoContent struct {
 }

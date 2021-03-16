@@ -41,7 +41,7 @@ func (m *middleware) PushConfig(org string, project string, env string, configs 
 		cfs = append(cfs, cf)
 	}
 
-	body := &models.SCConfig{Configs: cfs}
+	body := &models.StackConfig{Configs: cfs}
 
 	err = body.Validate(strfmt.Default)
 	if err != nil {

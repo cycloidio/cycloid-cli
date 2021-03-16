@@ -60,11 +60,11 @@ type Project struct {
 	// project it has all the permissions on it.
 	// In the event where the user has been deleted that field might be empty.
 	//
-	Owner *User `json:"owner,omitempty"`
+	Owner *MemberOrg `json:"owner,omitempty"`
 
 	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
 	// Required: true
-	ServiceCatalogRef *string `json:"service_catalog_ref"`
+	StackRef *string `json:"stack_ref"`
 
 	// updated at
 	// Required: true
@@ -104,7 +104,7 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogRef(formats); err != nil {
+	if err := m.validateStackRef(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -242,9 +242,9 @@ func (m *Project) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateServiceCatalogRef(formats strfmt.Registry) error {
+func (m *Project) validateStackRef(formats strfmt.Registry) error {
 
-	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
+	if err := validate.Required("stack_ref", "body", m.StackRef); err != nil {
 		return err
 	}
 

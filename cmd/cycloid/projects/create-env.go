@@ -121,7 +121,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		project,
 		envs,
 		projectData.Description,
-		*projectData.ServiceCatalogRef,
+		*projectData.StackRef,
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryCanonical)
 

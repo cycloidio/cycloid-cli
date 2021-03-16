@@ -13,9 +13,9 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// ConfigFile SC config file
+// ConfigFile Stack config file
 //
-// This object contains SC config file name and its content
+// This object contains stack config file name and its content
 // swagger:model ConfigFile
 type ConfigFile struct {
 

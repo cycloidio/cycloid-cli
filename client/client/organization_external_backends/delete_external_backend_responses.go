@@ -67,7 +67,7 @@ func NewDeleteExternalBackendNoContent() *DeleteExternalBackendNoContent {
 
 /*DeleteExternalBackendNoContent handles this case with default header values.
 
-Organization Service Catalog Sources has been deleted
+Organization Catalog Repositories has been deleted
 */
 type DeleteExternalBackendNoContent struct {
 }

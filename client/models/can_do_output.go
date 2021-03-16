@@ -20,6 +20,7 @@ import (
 type CanDoOutput struct {
 
 	// entity canonicals
+	// Required: true
 	EntityCanonicals []string `json:"entity_canonicals"`
 
 	// ok
@@ -31,6 +32,10 @@ type CanDoOutput struct {
 func (m *CanDoOutput) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateEntityCanonicals(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateOk(formats); err != nil {
 		res = append(res, err)
 	}
@@ -38,6 +43,15 @@ func (m *CanDoOutput) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *CanDoOutput) validateEntityCanonicals(formats strfmt.Registry) error {
+
+	if err := validate.Required("entity_canonicals", "body", m.EntityCanonicals); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -97,7 +97,7 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 		Name:                      &projectName,
 		Description:               description,
 		Canonical:                 projectCanonical,
-		ServiceCatalogRef:         &stackRef,
+		StackRef:                  &stackRef,
 		ConfigRepositoryCanonical: &configRepo,
 		Pipelines:                 pipelines,
 	}
@@ -134,7 +134,7 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 	body := &models.UpdateProject{
 		Name:                      &projectName,
 		Description:               description,
-		ServiceCatalogRef:         &stackRef,
+		StackRef:                  &stackRef,
 		ConfigRepositoryCanonical: configRepo,
 		Environments:              envs,
 		Owner:                     owner,

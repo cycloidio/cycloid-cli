@@ -14,6 +14,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/cost_estimation"
 	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_api_keys"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_catalog_repositories"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_children"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
@@ -28,10 +29,9 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs_build"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_roles"
-	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
-	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
+	"github.com/cycloidio/cycloid-cli/client/client/stacks"
 	"github.com/cycloidio/cycloid-cli/client/client/user"
 )
 
@@ -84,6 +84,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 
 	cli.OrganizationAPIKeys = organization_api_keys.New(transport, formats)
 
+	cli.OrganizationCatalogRepositories = organization_catalog_repositories.New(transport, formats)
+
 	cli.OrganizationChildren = organization_children.New(transport, formats)
 
 	cli.OrganizationConfigRepositories = organization_config_repositories.New(transport, formats)
@@ -112,13 +114,11 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 
 	cli.OrganizationRoles = organization_roles.New(transport, formats)
 
-	cli.OrganizationServiceCatalogSources = organization_service_catalog_sources.New(transport, formats)
-
 	cli.OrganizationWorkers = organization_workers.New(transport, formats)
 
 	cli.Organizations = organizations.New(transport, formats)
 
-	cli.ServiceCatalogs = service_catalogs.New(transport, formats)
+	cli.Stacks = stacks.New(transport, formats)
 
 	cli.User = user.New(transport, formats)
 
@@ -172,6 +172,8 @@ type APIClient struct {
 
 	OrganizationAPIKeys *organization_api_keys.Client
 
+	OrganizationCatalogRepositories *organization_catalog_repositories.Client
+
 	OrganizationChildren *organization_children.Client
 
 	OrganizationConfigRepositories *organization_config_repositories.Client
@@ -200,13 +202,11 @@ type APIClient struct {
 
 	OrganizationRoles *organization_roles.Client
 
-	OrganizationServiceCatalogSources *organization_service_catalog_sources.Client
-
 	OrganizationWorkers *organization_workers.Client
 
 	Organizations *organizations.Client
 
-	ServiceCatalogs *service_catalogs.Client
+	Stacks *stacks.Client
 
 	User *user.Client
 
@@ -222,6 +222,8 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.Cycloid.SetTransport(transport)
 
 	c.OrganizationAPIKeys.SetTransport(transport)
+
+	c.OrganizationCatalogRepositories.SetTransport(transport)
 
 	c.OrganizationChildren.SetTransport(transport)
 
@@ -251,13 +253,11 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 
 	c.OrganizationRoles.SetTransport(transport)
 
-	c.OrganizationServiceCatalogSources.SetTransport(transport)
-
 	c.OrganizationWorkers.SetTransport(transport)
 
 	c.Organizations.SetTransport(transport)
 
-	c.ServiceCatalogs.SetTransport(transport)
+	c.Stacks.SetTransport(transport)
 
 	c.User.SetTransport(transport)
 

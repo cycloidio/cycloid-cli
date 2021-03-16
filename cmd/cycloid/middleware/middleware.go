@@ -10,12 +10,12 @@ type Middleware interface {
 	GetAppVersion() (*models.AppVersion, error)
 	GetStatus() (*models.GeneralStatus, error)
 
-	CreateCatalogRepository(org, name, url, branch, cred string) (*models.ServiceCatalogSource, error)
+	CreateCatalogRepository(org, name, url, branch, cred string) (*models.CatalogRepository, error)
 	DeleteCatalogRepository(org, catalogRepo string) error
-	GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error)
-	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
-	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error)
-	UpdateCatalogRepository(org, name, url, branch, catalogRepo, cred string) (*models.ServiceCatalogSource, error)
+	GetCatalogRepository(org, catalogRepo string) (*models.CatalogRepository, error)
+	ListCatalogRepositories(org string) ([]*models.CatalogRepository, error)
+	RefreshCatalogRepository(org, catalogRepo string) (*models.StackChanges, error)
+	UpdateCatalogRepository(org, name, url, branch, catalogRepo, cred string) (*models.CatalogRepository, error)
 
 	CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
 	DeleteConfigRepository(org, configRepo string) error
@@ -83,8 +83,8 @@ type Middleware interface {
 	GetRole(org, role string) (*models.Role, error)
 	ListRoles(org string) ([]*models.Role, error)
 
-	GetStack(org, ref string) (*models.ServiceCatalog, error)
-	ListStacks(org string) ([]*models.ServiceCatalog, error)
+	GetStack(org, ref string) (*models.Stack, error)
+	ListStacks(org string) ([]*models.Stack, error)
 
 	CreateKpi(name, kpiType, widget, org, project, job, env, config string) (*models.KPI, error)
 	DeleteKpi(org, kpi string) error
