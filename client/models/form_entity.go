@@ -41,7 +41,7 @@ type FormEntity struct {
 	// Whether or not the field is required - that helps distinguish "optional" variables and allows to set default if necessary and present
 	Required bool `json:"required,omitempty"`
 
-	// The source is only used for the branch widget to reference the key of the SCS or CR that the branches have to be read from. Because a branch in itself cannot exist, the user has to indicate from which SCS or CR he wants to retrieve branches. The source has to reference the key of an entity of a widget: 'CyCRS' or 'CySCS'
+	// The source is only used for the branch widget to reference the key of the Catalog Repository or Config Repository that the branches have to be read from. Because a branch in itself cannot exist, the user has to indicate from which Catalog Repository or Config Repository he wants to retrieve branches. The source has to reference the key of an entity of a widget: 'CyCRS' or 'CySCS'
 	Source string `json:"source,omitempty"`
 
 	// The type of data handled - used to manipulate/validate the input, and also validate default/values

@@ -57,7 +57,7 @@ type NewProject struct {
 
 	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
 	// Required: true
-	ServiceCatalogRef *string `json:"service_catalog_ref"`
+	StackRef *string `json:"stack_ref"`
 }
 
 // Validate validates this new project
@@ -80,7 +80,7 @@ func (m *NewProject) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogRef(formats); err != nil {
+	if err := m.validateStackRef(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -176,9 +176,9 @@ func (m *NewProject) validatePipelines(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewProject) validateServiceCatalogRef(formats strfmt.Registry) error {
+func (m *NewProject) validateStackRef(formats strfmt.Registry) error {
 
-	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
+	if err := validate.Required("stack_ref", "body", m.StackRef); err != nil {
 		return err
 	}
 

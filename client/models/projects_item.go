@@ -54,11 +54,11 @@ type ProjectsItem struct {
 	// project it has all the permissions on it.
 	// In the event where the user has been deleted that field might be empty.
 	//
-	Owner *User `json:"owner,omitempty"`
+	Owner *MemberOrg `json:"owner,omitempty"`
 
 	// The Service Catalog that was used to create project.
 	// Required: true
-	ServiceCatalog *ServiceCatalog `json:"service_catalog"`
+	Stack *Stack `json:"stack"`
 
 	// updated at
 	// Required: true
@@ -94,7 +94,7 @@ func (m *ProjectsItem) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalog(formats); err != nil {
+	if err := m.validateStack(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -211,16 +211,16 @@ func (m *ProjectsItem) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ProjectsItem) validateServiceCatalog(formats strfmt.Registry) error {
+func (m *ProjectsItem) validateStack(formats strfmt.Registry) error {
 
-	if err := validate.Required("service_catalog", "body", m.ServiceCatalog); err != nil {
+	if err := validate.Required("stack", "body", m.Stack); err != nil {
 		return err
 	}
 
-	if m.ServiceCatalog != nil {
-		if err := m.ServiceCatalog.Validate(formats); err != nil {
+	if m.Stack != nil {
+		if err := m.Stack.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("service_catalog")
+				return ve.ValidateName("stack")
 			}
 			return err
 		}
