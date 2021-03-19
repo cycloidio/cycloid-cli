@@ -28,7 +28,7 @@ func NewListInvitesCommand() *cobra.Command {
 		Example: example,
 		Short:   short,
 		Long:    long,
-		RunE:    listMembers,
+		RunE:    listInvites,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
