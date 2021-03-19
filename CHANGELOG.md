@@ -1,3 +1,8 @@
+## [UNRELEASED] _xxxx-xx-xx_
+- **FIXED**
+  - Fix wrong list function execution in `members list-invites`
+  ([PR #94](https://github.com/cycloidio/cycloid-cli/pull/94))
+
 ## [v1.0.64] _2021-03-15_
 - **CHANGED**
   - Update to version 1.0.64
