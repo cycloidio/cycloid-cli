@@ -51,7 +51,8 @@ func list(output string) error {
 			Token string
 		}{
 			Name:  name,
-			Token: o.Token,
+			// Special formatting to display only the 6 last chars of a token
+			Token: o.Token[len(o.Token)-6:],
 		})
 	}
 
