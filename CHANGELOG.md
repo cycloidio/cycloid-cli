@@ -1,5 +1,3 @@
-## [UNRELEASED] _xxxx-xx-xx_
-
 ## [v1.0.64] _2021-03-23_
 - **CHANGED**
   - Update to version 1.0.64
