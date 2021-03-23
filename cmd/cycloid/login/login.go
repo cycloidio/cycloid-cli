@@ -6,7 +6,6 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/config"
 )
 
@@ -46,20 +45,13 @@ func NewCommands() *cobra.Command {
 	return cmd
 }
 
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
 func login(org, key string) error {
 
-		// fetch any existing config
-		// we skip the error in case it's the first usage and the config
-		// file does not exist
-		conf, _ := config.ReadConfig()
+	// we save the new token and remove the previous one
+	conf, _ := config.ReadConfig()
 
-		// we save the new generated token into the config file
-		conf.Token = *session.Token
-		if err := config.WriteConfig(conf); err != nil {
-			return errors.Wrap(err, "unable to save config")
-		}
+	conf.Organizations[org] = config.Organization{
+		Token: key,
 	}
 
 	if err := config.WriteConfig(conf); err != nil {
