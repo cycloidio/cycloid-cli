@@ -35,7 +35,7 @@ func list(output string) error {
 	// fetch any existing config
 	// we skip the error in case it's the first usage and the config
 	// file does not exist
-	conf, _ := config.ReadConfig()
+	conf, _ := config.Read()
 
 	// we need to peform this hack because the printer is waiting for
 	// a struct or a slice of structs. Not a map, since the header of the table

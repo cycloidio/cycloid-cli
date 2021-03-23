@@ -116,7 +116,7 @@ func ClientCredentials(org *string) runtime.ClientAuthInfoWriter {
 	// him from the config (if the user is logged)
 	if len(token) == 0 {
 		// we fetch the running config
-		config, _ := config.ReadConfig()
+		config, _ := config.Read()
 
 		if org == nil {
 			return nil

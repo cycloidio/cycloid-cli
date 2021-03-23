@@ -48,13 +48,13 @@ func NewCommands() *cobra.Command {
 func login(org, key string) error {
 
 	// we save the new token and remove the previous one
-	conf, _ := config.ReadConfig()
+	conf, _ := config.Read()
 
 	conf.Organizations[org] = config.Organization{
 		Token: key,
 	}
 
-	if err := config.WriteConfig(conf); err != nil {
+	if err := config.Write(conf); err != nil {
 		return errors.Wrap(err, "unable to save config")
 	}
 
