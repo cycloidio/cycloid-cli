@@ -17,47 +17,31 @@ import (
 // swagger:model AuthConfigSAML
 type AuthConfigSAML struct {
 
-	// API path to use to login with the SAML response.
-	// Required: true
-	LoginPath *string `json:"login_path"`
-
 	// Entity ID of the SAML2 identity provider.
 	// Required: true
 	Provider *string `json:"provider"`
 
-	// API path to use to request the SSO URL.
+	// SSO URL to which the user should be redirected in order to authenticate with the Identity Provider.
 	// Required: true
-	RequestPath *string `json:"request_path"`
+	// Format: uri
+	SsoURL *strfmt.URI `json:"sso_url"`
 }
 
 // Validate validates this auth config s a m l
 func (m *AuthConfigSAML) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateLoginPath(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateProvider(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateRequestPath(formats); err != nil {
+	if err := m.validateSsoURL(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *AuthConfigSAML) validateLoginPath(formats strfmt.Registry) error {
-
-	if err := validate.Required("login_path", "body", m.LoginPath); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -70,9 +54,13 @@ func (m *AuthConfigSAML) validateProvider(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *AuthConfigSAML) validateRequestPath(formats strfmt.Registry) error {
+func (m *AuthConfigSAML) validateSsoURL(formats strfmt.Registry) error {
 
-	if err := validate.Required("request_path", "body", m.RequestPath); err != nil {
+	if err := validate.Required("sso_url", "body", m.SsoURL); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("sso_url", "body", "uri", m.SsoURL.String(), formats); err != nil {
 		return err
 	}
 

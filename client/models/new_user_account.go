@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -13,11 +15,16 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewAccount Sign up
+// NewUserAccount Sign up
 //
 // Create a new user account.
-// swagger:model NewAccount
-type NewAccount struct {
+// swagger:model NewUserAccount
+type NewUserAccount struct {
+
+	// Code of a country the user is from
+	// Required: true
+	// Pattern: ^[A-Z]{2}$
+	CountryCode *string `json:"country_code"`
 
 	// email
 	// Required: true
@@ -38,6 +45,11 @@ type NewAccount struct {
 	// Min Length: 5
 	InvitationToken string `json:"invitation_token,omitempty"`
 
+	// User's preferred language
+	// Required: true
+	// Enum: [en fr es]
+	Locale *string `json:"locale"`
+
 	// password
 	// Required: true
 	// Min Length: 8
@@ -52,9 +64,13 @@ type NewAccount struct {
 	Username *string `json:"username"`
 }
 
-// Validate validates this new account
-func (m *NewAccount) Validate(formats strfmt.Registry) error {
+// Validate validates this new user account
+func (m *NewUserAccount) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateCountryCode(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateEmail(formats); err != nil {
 		res = append(res, err)
@@ -72,6 +88,10 @@ func (m *NewAccount) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateLocale(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePassword(formats); err != nil {
 		res = append(res, err)
 	}
@@ -86,7 +106,20 @@ func (m *NewAccount) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewAccount) validateEmail(formats strfmt.Registry) error {
+func (m *NewUserAccount) validateCountryCode(formats strfmt.Registry) error {
+
+	if err := validate.Required("country_code", "body", m.CountryCode); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("country_code", "body", string(*m.CountryCode), `^[A-Z]{2}$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewUserAccount) validateEmail(formats strfmt.Registry) error {
 
 	if err := validate.Required("email", "body", m.Email); err != nil {
 		return err
@@ -99,7 +132,7 @@ func (m *NewAccount) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewAccount) validateFamilyName(formats strfmt.Registry) error {
+func (m *NewUserAccount) validateFamilyName(formats strfmt.Registry) error {
 
 	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
 		return err
@@ -112,7 +145,7 @@ func (m *NewAccount) validateFamilyName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewAccount) validateGivenName(formats strfmt.Registry) error {
+func (m *NewUserAccount) validateGivenName(formats strfmt.Registry) error {
 
 	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
 		return err
@@ -125,7 +158,7 @@ func (m *NewAccount) validateGivenName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewAccount) validateInvitationToken(formats strfmt.Registry) error {
+func (m *NewUserAccount) validateInvitationToken(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.InvitationToken) { // not required
 		return nil
@@ -138,7 +171,53 @@ func (m *NewAccount) validateInvitationToken(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewAccount) validatePassword(formats strfmt.Registry) error {
+var newUserAccountTypeLocalePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["en","fr","es"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		newUserAccountTypeLocalePropEnum = append(newUserAccountTypeLocalePropEnum, v)
+	}
+}
+
+const (
+
+	// NewUserAccountLocaleEn captures enum value "en"
+	NewUserAccountLocaleEn string = "en"
+
+	// NewUserAccountLocaleFr captures enum value "fr"
+	NewUserAccountLocaleFr string = "fr"
+
+	// NewUserAccountLocaleEs captures enum value "es"
+	NewUserAccountLocaleEs string = "es"
+)
+
+// prop value enum
+func (m *NewUserAccount) validateLocaleEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, newUserAccountTypeLocalePropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *NewUserAccount) validateLocale(formats strfmt.Registry) error {
+
+	if err := validate.Required("locale", "body", m.Locale); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateLocaleEnum("locale", "body", *m.Locale); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewUserAccount) validatePassword(formats strfmt.Registry) error {
 
 	if err := validate.Required("password", "body", m.Password); err != nil {
 		return err
@@ -155,7 +234,7 @@ func (m *NewAccount) validatePassword(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewAccount) validateUsername(formats strfmt.Registry) error {
+func (m *NewUserAccount) validateUsername(formats strfmt.Registry) error {
 
 	if err := validate.Required("username", "body", m.Username); err != nil {
 		return err
@@ -177,7 +256,7 @@ func (m *NewAccount) validateUsername(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *NewAccount) MarshalBinary() ([]byte, error) {
+func (m *NewUserAccount) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -185,8 +264,8 @@ func (m *NewAccount) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *NewAccount) UnmarshalBinary(b []byte) error {
-	var res NewAccount
+func (m *NewUserAccount) UnmarshalBinary(b []byte) error {
+	var res NewUserAccount
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

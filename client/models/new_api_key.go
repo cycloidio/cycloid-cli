@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -39,12 +41,9 @@ type NewAPIKey struct {
 	//
 	Owner string `json:"owner,omitempty"`
 
-	// The role of the APIKey.
+	// rules
 	// Required: true
-	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	RoleCanonical *string `json:"role_canonical"`
+	Rules []*NewRule `json:"rules"`
 }
 
 // Validate validates this new API key
@@ -59,7 +58,7 @@ func (m *NewAPIKey) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateRoleCanonical(formats); err != nil {
+	if err := m.validateRules(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -103,22 +102,26 @@ func (m *NewAPIKey) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewAPIKey) validateRoleCanonical(formats strfmt.Registry) error {
+func (m *NewAPIKey) validateRules(formats strfmt.Registry) error {
 
-	if err := validate.Required("role_canonical", "body", m.RoleCanonical); err != nil {
+	if err := validate.Required("rules", "body", m.Rules); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("role_canonical", "body", string(*m.RoleCanonical), 3); err != nil {
-		return err
-	}
+	for i := 0; i < len(m.Rules); i++ {
+		if swag.IsZero(m.Rules[i]) { // not required
+			continue
+		}
 
-	if err := validate.MaxLength("role_canonical", "body", string(*m.RoleCanonical), 100); err != nil {
-		return err
-	}
+		if m.Rules[i] != nil {
+			if err := m.Rules[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
 
-	if err := validate.Pattern("role_canonical", "body", string(*m.RoleCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
 	}
 
 	return nil

@@ -67,7 +67,7 @@ type SignUpParams struct {
 	  The user content
 
 	*/
-	Body *models.NewAccount
+	Body *models.NewUserAccount
 
 	timeout    time.Duration
 	Context    context.Context
@@ -108,13 +108,13 @@ func (o *SignUpParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the sign up params
-func (o *SignUpParams) WithBody(body *models.NewAccount) *SignUpParams {
+func (o *SignUpParams) WithBody(body *models.NewUserAccount) *SignUpParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the sign up params
-func (o *SignUpParams) SetBody(body *models.NewAccount) {
+func (o *SignUpParams) SetBody(body *models.NewUserAccount) {
 	o.Body = body
 }
 

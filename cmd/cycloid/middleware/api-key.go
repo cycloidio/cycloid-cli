@@ -8,27 +8,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
-// CreateAPIKey will request API to generate and return an API key
-func (m *middleware) CreateAPIKey(org, name, description, role string) (*models.APIKey, error) {
-	params := organization_api_keys.NewCreateAPIKeyParams()
-
-	body := &models.NewAPIKey{
-		Description:   description,
-		Name:          &name,
-		RoleCanonical: &role,
-	}
-
-	params.SetBody(body)
-	params.SetOrganizationCanonical(org)
-
-	res, err := m.api.OrganizationAPIKeys.CreateAPIKey(params, common.ClientCredentials(&org))
-	if err != nil {
-		return nil, fmt.Errorf("unable to create API key: %w", err)
-	}
-
-	return res.GetPayload().Data, nil
-}
-
 // ListAPIKey will request API to list generated API keys
 func (m *middleware) ListAPIKey(org string) ([]*models.APIKey, error) {
 	params := organization_api_keys.NewGetAPIKeysParams()

@@ -67,7 +67,7 @@ type CreateCredentialParams struct {
 	  The information of the organization to create.
 
 	*/
-	Body *models.CreateCredential
+	Body *models.NewCredential
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -113,13 +113,13 @@ func (o *CreateCredentialParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the create credential params
-func (o *CreateCredentialParams) WithBody(body *models.CreateCredential) *CreateCredentialParams {
+func (o *CreateCredentialParams) WithBody(body *models.NewCredential) *CreateCredentialParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the create credential params
-func (o *CreateCredentialParams) SetBody(body *models.CreateCredential) {
+func (o *CreateCredentialParams) SetBody(body *models.NewCredential) {
 	o.Body = body
 }
 

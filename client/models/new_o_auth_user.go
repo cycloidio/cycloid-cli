@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -18,6 +20,11 @@ import (
 // The User OAuth information
 // swagger:model NewOAuthUser
 type NewOAuthUser struct {
+
+	// Code of a country the user is from
+	// Required: true
+	// Pattern: ^[A-Z]{2}$
+	CountryCode *string `json:"country_code"`
 
 	// email
 	// Required: true
@@ -34,6 +41,11 @@ type NewOAuthUser struct {
 	// The field is used when a user signup from an invitation to an organization. Giving the token, the created user will be automatically added to the organization.
 	// Min Length: 5
 	InvitationToken string `json:"invitation_token,omitempty"`
+
+	// User's preferred language
+	// Required: true
+	// Enum: [en fr es]
+	Locale *string `json:"locale"`
 
 	// picture url
 	// Format: uri
@@ -55,6 +67,10 @@ type NewOAuthUser struct {
 func (m *NewOAuthUser) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCountryCode(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateEmail(formats); err != nil {
 		res = append(res, err)
 	}
@@ -64,6 +80,10 @@ func (m *NewOAuthUser) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateInvitationToken(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLocale(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -82,6 +102,19 @@ func (m *NewOAuthUser) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *NewOAuthUser) validateCountryCode(formats strfmt.Registry) error {
+
+	if err := validate.Required("country_code", "body", m.CountryCode); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("country_code", "body", string(*m.CountryCode), `^[A-Z]{2}$`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -114,6 +147,52 @@ func (m *NewOAuthUser) validateInvitationToken(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("invitation_token", "body", string(m.InvitationToken), 5); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var newOAuthUserTypeLocalePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["en","fr","es"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		newOAuthUserTypeLocalePropEnum = append(newOAuthUserTypeLocalePropEnum, v)
+	}
+}
+
+const (
+
+	// NewOAuthUserLocaleEn captures enum value "en"
+	NewOAuthUserLocaleEn string = "en"
+
+	// NewOAuthUserLocaleFr captures enum value "fr"
+	NewOAuthUserLocaleFr string = "fr"
+
+	// NewOAuthUserLocaleEs captures enum value "es"
+	NewOAuthUserLocaleEs string = "es"
+)
+
+// prop value enum
+func (m *NewOAuthUser) validateLocaleEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, newOAuthUserTypeLocalePropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *NewOAuthUser) validateLocale(formats strfmt.Registry) error {
+
+	if err := validate.Required("locale", "body", m.Locale); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateLocaleEnum("locale", "body", *m.Locale); err != nil {
 		return err
 	}
 

@@ -91,6 +91,39 @@ func (a *Client) GetConfig(params *GetConfigParams) (*GetConfigOK, error) {
 }
 
 /*
+GetCountries Get the Cycloid supported countries.
+*/
+func (a *Client) GetCountries(params *GetCountriesParams) (*GetCountriesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetCountriesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "getCountries",
+		Method:             "GET",
+		PathPattern:        "/countries",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetCountriesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetCountriesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetCountriesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 GetStatus Get the status of the Cycloid's services.
 */
 func (a *Client) GetStatus(params *GetStatusParams) (*GetStatusOK, error) {

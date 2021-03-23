@@ -6,6 +6,8 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
@@ -50,11 +52,11 @@ type APIKey struct {
 	// API key he has all the permissions on it.
 	// In the event where the user has been deleted that field might be empty.
 	//
-	Owner *MemberOrg `json:"owner,omitempty"`
+	Owner *User `json:"owner,omitempty"`
 
-	// role
+	// rules
 	// Required: true
-	Role *Role `json:"role"`
+	Rules []*Rule `json:"rules"`
 
 	// The actual API key in the format of JWT token, returned only upon creation.
 	Token string `json:"token,omitempty"`
@@ -84,7 +86,7 @@ func (m *APIKey) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateRole(formats); err != nil {
+	if err := m.validateRules(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -168,19 +170,26 @@ func (m *APIKey) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *APIKey) validateRole(formats strfmt.Registry) error {
+func (m *APIKey) validateRules(formats strfmt.Registry) error {
 
-	if err := validate.Required("role", "body", m.Role); err != nil {
+	if err := validate.Required("rules", "body", m.Rules); err != nil {
 		return err
 	}
 
-	if m.Role != nil {
-		if err := m.Role.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("role")
-			}
-			return err
+	for i := 0; i < len(m.Rules); i++ {
+		if swag.IsZero(m.Rules[i]) { // not required
+			continue
 		}
+
+		if m.Rules[i] != nil {
+			if err := m.Rules[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

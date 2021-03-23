@@ -13,9 +13,9 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// CreateConfigRepository CreateConfigRepository
-// swagger:model CreateConfigRepository
-type CreateConfigRepository struct {
+// NewConfigRepository NewConfigRepository
+// swagger:model NewConfigRepository
+type NewConfigRepository struct {
 
 	// branch
 	// Required: true
@@ -48,8 +48,8 @@ type CreateConfigRepository struct {
 	URL *string `json:"url"`
 }
 
-// Validate validates this create config repository
-func (m *CreateConfigRepository) Validate(formats strfmt.Registry) error {
+// Validate validates this new config repository
+func (m *NewConfigRepository) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateBranch(formats); err != nil {
@@ -82,7 +82,7 @@ func (m *CreateConfigRepository) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateConfigRepository) validateBranch(formats strfmt.Registry) error {
+func (m *NewConfigRepository) validateBranch(formats strfmt.Registry) error {
 
 	if err := validate.Required("branch", "body", m.Branch); err != nil {
 		return err
@@ -91,7 +91,7 @@ func (m *CreateConfigRepository) validateBranch(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateConfigRepository) validateCanonical(formats strfmt.Registry) error {
+func (m *NewConfigRepository) validateCanonical(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
@@ -112,7 +112,7 @@ func (m *CreateConfigRepository) validateCanonical(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *CreateConfigRepository) validateCredentialCanonical(formats strfmt.Registry) error {
+func (m *NewConfigRepository) validateCredentialCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Required("credential_canonical", "body", m.CredentialCanonical); err != nil {
 		return err
@@ -133,7 +133,7 @@ func (m *CreateConfigRepository) validateCredentialCanonical(formats strfmt.Regi
 	return nil
 }
 
-func (m *CreateConfigRepository) validateDefault(formats strfmt.Registry) error {
+func (m *NewConfigRepository) validateDefault(formats strfmt.Registry) error {
 
 	if err := validate.Required("default", "body", m.Default); err != nil {
 		return err
@@ -142,7 +142,7 @@ func (m *CreateConfigRepository) validateDefault(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *CreateConfigRepository) validateName(formats strfmt.Registry) error {
+func (m *NewConfigRepository) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
@@ -151,7 +151,7 @@ func (m *CreateConfigRepository) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateConfigRepository) validateURL(formats strfmt.Registry) error {
+func (m *NewConfigRepository) validateURL(formats strfmt.Registry) error {
 
 	if err := validate.Required("url", "body", m.URL); err != nil {
 		return err
@@ -165,7 +165,7 @@ func (m *CreateConfigRepository) validateURL(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *CreateConfigRepository) MarshalBinary() ([]byte, error) {
+func (m *NewConfigRepository) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -173,8 +173,8 @@ func (m *CreateConfigRepository) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *CreateConfigRepository) UnmarshalBinary(b []byte) error {
-	var res CreateConfigRepository
+func (m *NewConfigRepository) UnmarshalBinary(b []byte) error {
+	var res NewConfigRepository
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

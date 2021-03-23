@@ -28,7 +28,6 @@ func NewCommands() *cobra.Command {
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.AddCommand(
-		NewCreateCommand(),
 		NewDeleteCommand(),
 		NewGetCommand(),
 		NewListCommand(),

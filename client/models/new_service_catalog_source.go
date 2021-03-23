@@ -13,9 +13,9 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// CreateServiceCatalogSource ServiceCatalogSource
-// swagger:model CreateServiceCatalogSource
-type CreateServiceCatalogSource struct {
+// NewServiceCatalogSource NewServiceCatalogSource
+// swagger:model NewServiceCatalogSource
+type NewServiceCatalogSource struct {
 
 	// branch
 	// Required: true
@@ -49,8 +49,8 @@ type CreateServiceCatalogSource struct {
 	URL *string `json:"url"`
 }
 
-// Validate validates this create service catalog source
-func (m *CreateServiceCatalogSource) Validate(formats strfmt.Registry) error {
+// Validate validates this new service catalog source
+func (m *NewServiceCatalogSource) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateBranch(formats); err != nil {
@@ -79,7 +79,7 @@ func (m *CreateServiceCatalogSource) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CreateServiceCatalogSource) validateBranch(formats strfmt.Registry) error {
+func (m *NewServiceCatalogSource) validateBranch(formats strfmt.Registry) error {
 
 	if err := validate.Required("branch", "body", m.Branch); err != nil {
 		return err
@@ -88,7 +88,7 @@ func (m *CreateServiceCatalogSource) validateBranch(formats strfmt.Registry) err
 	return nil
 }
 
-func (m *CreateServiceCatalogSource) validateCanonical(formats strfmt.Registry) error {
+func (m *NewServiceCatalogSource) validateCanonical(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
@@ -109,7 +109,7 @@ func (m *CreateServiceCatalogSource) validateCanonical(formats strfmt.Registry) 
 	return nil
 }
 
-func (m *CreateServiceCatalogSource) validateCredentialCanonical(formats strfmt.Registry) error {
+func (m *NewServiceCatalogSource) validateCredentialCanonical(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
@@ -130,7 +130,7 @@ func (m *CreateServiceCatalogSource) validateCredentialCanonical(formats strfmt.
 	return nil
 }
 
-func (m *CreateServiceCatalogSource) validateName(formats strfmt.Registry) error {
+func (m *NewServiceCatalogSource) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
@@ -139,7 +139,7 @@ func (m *CreateServiceCatalogSource) validateName(formats strfmt.Registry) error
 	return nil
 }
 
-func (m *CreateServiceCatalogSource) validateURL(formats strfmt.Registry) error {
+func (m *NewServiceCatalogSource) validateURL(formats strfmt.Registry) error {
 
 	if err := validate.Required("url", "body", m.URL); err != nil {
 		return err
@@ -153,7 +153,7 @@ func (m *CreateServiceCatalogSource) validateURL(formats strfmt.Registry) error 
 }
 
 // MarshalBinary interface implementation
-func (m *CreateServiceCatalogSource) MarshalBinary() ([]byte, error) {
+func (m *NewServiceCatalogSource) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -161,8 +161,8 @@ func (m *CreateServiceCatalogSource) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *CreateServiceCatalogSource) UnmarshalBinary(b []byte) error {
-	var res CreateServiceCatalogSource
+func (m *NewServiceCatalogSource) UnmarshalBinary(b []byte) error {
+	var res NewServiceCatalogSource
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

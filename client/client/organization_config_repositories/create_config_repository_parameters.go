@@ -67,7 +67,7 @@ type CreateConfigRepositoryParams struct {
 	  The information of the config repository to create.
 
 	*/
-	Body *models.CreateConfigRepository
+	Body *models.NewConfigRepository
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -113,13 +113,13 @@ func (o *CreateConfigRepositoryParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the create config repository params
-func (o *CreateConfigRepositoryParams) WithBody(body *models.CreateConfigRepository) *CreateConfigRepositoryParams {
+func (o *CreateConfigRepositoryParams) WithBody(body *models.NewConfigRepository) *CreateConfigRepositoryParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the create config repository params
-func (o *CreateConfigRepositoryParams) SetBody(body *models.CreateConfigRepository) {
+func (o *CreateConfigRepositoryParams) SetBody(body *models.NewConfigRepository) {
 	o.Body = body
 }
 
