@@ -1,3 +1,8 @@
+## [v1.0.67] _2021-04-19_
+- **BREAKING**
+  * Switching to API KEY login only
+   ([PR #79](https://github.com/cycloidio/cycloid-cli/pull/79))
+
 ## [v1.0.64] _2021-03-23_
 - **CHANGED**
   - Update to version 1.0.64
