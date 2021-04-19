@@ -17,9 +17,6 @@ var (
 // Config is the structure handling the config
 // of the CLI
 type Config struct {
-	// Token is the user token
-	Token string `yaml:"token"`
-
 	// Organizations is the list of Organization where the user
 	// is currently logged in
 	Organizations map[string]Organization `yaml:"organizations"`
@@ -32,13 +29,12 @@ type Organization struct {
 	Token string `yaml:"token"`
 }
 
-// ReadConfig will read the config from the
+// Read will read the config from the
 // path and returns a config struct
-func ReadConfig() (*Config, error) {
+func Read() (*Config, error) {
 	configFilePath, err := xdg.ConfigFile(fmt.Sprintf("%s/%s", appName, path))
 	if err != nil {
 		return &Config{
-			Token:         "",
 			Organizations: make(map[string]Organization),
 		}, errors.Wrap(err, "unable to find XDG config path")
 	}
@@ -47,7 +43,6 @@ func ReadConfig() (*Config, error) {
 		// we return an empty Config in case it's the first time we try to access
 		// the config and it does not exist yet
 		return &Config{
-			Token:         "",
 			Organizations: make(map[string]Organization),
 		}, errors.Wrap(err, "unable to read config from file")
 	}
@@ -58,9 +53,9 @@ func ReadConfig() (*Config, error) {
 	return &c, nil
 }
 
-// WriteConfig will write the config into the
+// Write will write the config into the
 // path location
-func WriteConfig(c *Config) error {
+func Write(c *Config) error {
 	content, err := yaml.Marshal(c)
 	configFilePath, err := xdg.ConfigFile(fmt.Sprintf("%s/%s", appName, path))
 	if err != nil {

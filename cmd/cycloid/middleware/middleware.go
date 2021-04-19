@@ -37,13 +37,6 @@ type Middleware interface {
 
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
 
-	// Login methods
-	// Login is the method used to log the user into the Cycloid console
-	Login(email, password string) (*models.UserSession, error)
-
-	// LoginOrg is the used to log the user into a Cycloid organization
-	LoginOrg(org, child string) (*models.UserSession, error)
-
 	DeleteMember(org string, name string) error
 	GetMember(org string, name string) (*models.MemberOrg, error)
 	InviteMember(org, email, role string) error

@@ -2,12 +2,16 @@
 
 This repository hosts the source code of Cycloid command line to use Cycloid APIs.
 
+## Installation
+
+Precompiled binaries for released versions are available in the [release](https://github.com/cycloidio/cycloid-cli/releases) page on Github. Using the latest production release binary is the recommended way of installing the Cycloid CLI.
+
 ## Getting started
 
-Before playing with the CLI, you first need to authenticate a user into the Cycloid API:
+Before playing with the CLI, you will first need to authenticate yourself into the Cycloid API using an API key as described in our [official documentation](http://docs.cycloid.io/cli.md).
 
 ```
-cy login --org my-org --email example@email.com --password my-password --api-url https://cycloid-api.local.tld
+cy login --org my-org --api-key "<MY_API_KEY>"
 ```
 
 From there, you can now explore the various commands using the `--help` flag for each command / subcommand.
@@ -20,6 +24,7 @@ Usage:
   cy [command]
 
 Available Commands:
+  api-key            Manage organization API keys
   catalog-repository Manage the catalog repositories
   completion         Output shell completion for the given shell (bash or zsh)
   config-repository  Manage the catalog repositories
@@ -40,29 +45,6 @@ Available Commands:
   version            Get the version of the consumed API
 ```
 
-## Installation
-
-### From the sources
-
-You can clone the repository and build from sources (we use `Go Modules` (1.13+)):
-
-```shell
-git clone git@github.com:cycloidio/cycloid-cli.git
-cd cycloid-cli
-```
-
-Build and install the binary
-
-```
-make build
-sudo mv cy /usr/local/bin
-cy --version
-```
-
-### From the releases page
-
-You can download the latest Linux binary from the [release](https://github.com/cycloidio/cycloid-cli/releases) page.
-
 ## Common actions
 
 ### Get the Cycloid services in an unhealthy state
@@ -74,19 +56,34 @@ cy status -o json | jq '.[] | select( .status != "Success")'
 ### Create config repository using credential named "Git Config"
 
 ```
-GIT_CRED=$(cy --org $ORG credential list -o json | jq '.[] | select( .name == ""Git Config") | .id')
+GIT_CRED=$(cy --org $ORG credential list -o json | jq '.[] | select( .name == ""Git Config") | .canonical')
 cy --org myorg  config-repository create --branch master --cred $GIT_CRED --name "lab-config" --default --url "git@github.com:org/repo.git"
 ```
 
 ### Invite members with "Admin" role
 
 ```
-ADMIN_ROLE=$(cy --org $ORG  roles list -o json | jq '.[] | select( .name | contains("Admin")) | .id')
-cy  --org myorg  members invite --role-id $ADMIN_ROLE --email foo@email.com
+ADMIN_ROLE=$(cy --org $ORG  roles list -o json | jq '.[] | select( .name | contains("Admin")) | .canonical')
+cy  --org myorg  members invite --role $ADMIN_ROLE --email foo@email.com
 ```
 
 :construction:
 <!-- This is where we could add some useful examples: create a user, etc. -->
+
+## Building from source
+
+To build the CLI from source code, first ensure that have a working Go environment with version 1.13 or greater installed and the `make` command available.
+After that, you can clone the repository yourself, build using `make build` and move the built binary where you want it to be (eg. in `/usr/local/bin` for a global install):
+
+```shell
+git clone git@github.com:cycloidio/cycloid-cli.git
+cd cycloid-cli
+
+make build
+sudo mv cy /usr/local/bin
+sudo chmod +x /usr/local/bin/cy
+cy --version
+```
 
 ## Contributing
 

@@ -35,7 +35,7 @@ func list(output string) error {
 	// fetch any existing config
 	// we skip the error in case it's the first usage and the config
 	// file does not exist
-	conf, _ := config.ReadConfig()
+	conf, _ := config.Read()
 
 	// we need to peform this hack because the printer is waiting for
 	// a struct or a slice of structs. Not a map, since the header of the table
@@ -51,7 +51,8 @@ func list(output string) error {
 			Token string
 		}{
 			Name:  name,
-			Token: o.Token,
+			// Special formatting to display only the 7 last chars of a token
+			Token: o.Token[len(o.Token)-7:],
 		})
 	}
 
