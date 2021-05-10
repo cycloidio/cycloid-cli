@@ -160,6 +160,40 @@ func (a *Client) GetAPIKeys(params *GetAPIKeysParams, authInfo runtime.ClientAut
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
+/*
+UpdateAPIkey Update the information of an API key of the organization. If the API key has some information on the fields which aren't required and they are not sent or set to their default vaules, which depend of their types, the information will be removed.
+*/
+func (a *Client) UpdateAPIkey(params *UpdateAPIkeyParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateAPIkeyOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUpdateAPIkeyParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "updateAPIkey",
+		Method:             "PUT",
+		PathPattern:        "/organizations/{organization_canonical}/api_keys/{api_key_canonical}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &UpdateAPIkeyReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*UpdateAPIkeyOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*UpdateAPIkeyDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
 // SetTransport changes the transport on the client
 func (a *Client) SetTransport(transport runtime.ClientTransport) {
 	a.transport = transport

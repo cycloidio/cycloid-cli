@@ -22,9 +22,8 @@ import (
 type NewUserAccount struct {
 
 	// Code of a country the user is from
-	// Required: true
 	// Pattern: ^[A-Z]{2}$
-	CountryCode *string `json:"country_code"`
+	CountryCode string `json:"country_code,omitempty"`
 
 	// email
 	// Required: true
@@ -46,9 +45,8 @@ type NewUserAccount struct {
 	InvitationToken string `json:"invitation_token,omitempty"`
 
 	// User's preferred language
-	// Required: true
 	// Enum: [en fr es]
-	Locale *string `json:"locale"`
+	Locale string `json:"locale,omitempty"`
 
 	// password
 	// Required: true
@@ -108,11 +106,11 @@ func (m *NewUserAccount) Validate(formats strfmt.Registry) error {
 
 func (m *NewUserAccount) validateCountryCode(formats strfmt.Registry) error {
 
-	if err := validate.Required("country_code", "body", m.CountryCode); err != nil {
-		return err
+	if swag.IsZero(m.CountryCode) { // not required
+		return nil
 	}
 
-	if err := validate.Pattern("country_code", "body", string(*m.CountryCode), `^[A-Z]{2}$`); err != nil {
+	if err := validate.Pattern("country_code", "body", string(m.CountryCode), `^[A-Z]{2}$`); err != nil {
 		return err
 	}
 
@@ -205,12 +203,12 @@ func (m *NewUserAccount) validateLocaleEnum(path, location string, value string)
 
 func (m *NewUserAccount) validateLocale(formats strfmt.Registry) error {
 
-	if err := validate.Required("locale", "body", m.Locale); err != nil {
-		return err
+	if swag.IsZero(m.Locale) { // not required
+		return nil
 	}
 
 	// value enum
-	if err := m.validateLocaleEnum("locale", "body", *m.Locale); err != nil {
+	if err := m.validateLocaleEnum("locale", "body", m.Locale); err != nil {
 		return err
 	}
 

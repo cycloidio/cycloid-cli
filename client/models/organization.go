@@ -44,6 +44,10 @@ type Organization struct {
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at"`
 
+	// has children
+	// Required: true
+	HasChildren *bool `json:"has_children"`
+
 	// id
 	// Required: true
 	// Minimum: 1
@@ -84,6 +88,10 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateHasChildren(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -180,6 +188,15 @@ func (m *Organization) validateCreatedAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateHasChildren(formats strfmt.Registry) error {
+
+	if err := validate.Required("has_children", "body", m.HasChildren); err != nil {
 		return err
 	}
 

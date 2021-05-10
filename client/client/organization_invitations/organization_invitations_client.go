@@ -25,6 +25,40 @@ type Client struct {
 }
 
 /*
+DeleteInvitation Delete an Organization's Invitation.
+*/
+func (a *Client) DeleteInvitation(params *DeleteInvitationParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteInvitationNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteInvitationParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "deleteInvitation",
+		Method:             "DELETE",
+		PathPattern:        "/organizations/{organization_canonical}/invitations/{invitation_id}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteInvitationReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteInvitationNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*DeleteInvitationDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 GetInvitations Get list of the Organization's Invitations.
 */
 func (a *Client) GetInvitations(params *GetInvitationsParams, authInfo runtime.ClientAuthInfoWriter) (*GetInvitationsOK, error) {
@@ -55,6 +89,72 @@ func (a *Client) GetInvitations(params *GetInvitationsParams, authInfo runtime.C
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetInvitationsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetPendingInvitation Get the email address used for the pending invitation
+*/
+func (a *Client) GetPendingInvitation(params *GetPendingInvitationParams) (*GetPendingInvitationOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetPendingInvitationParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "getPendingInvitation",
+		Method:             "GET",
+		PathPattern:        "/invitations/{verification_token}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetPendingInvitationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetPendingInvitationOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetPendingInvitationDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ResendInvitation Resend the email containing the verification token to accept the Invitation.
+*/
+func (a *Client) ResendInvitation(params *ResendInvitationParams) (*ResendInvitationNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewResendInvitationParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "resendInvitation",
+		Method:             "PUT",
+		PathPattern:        "/organizations/{organization_canonical}/invitations/{invitation_id}/resend",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ResendInvitationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ResendInvitationNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ResendInvitationDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

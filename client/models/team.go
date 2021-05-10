@@ -56,8 +56,7 @@ type Team struct {
 	// team it has all the permissions on it.
 	// In the event where the user has been deleted this field might be empty.
 	//
-	// Required: true
-	Owner *MemberOrg `json:"owner"`
+	Owner *User `json:"owner,omitempty"`
 
 	// roles
 	// Required: true
@@ -218,8 +217,8 @@ func (m *Team) validateName(formats strfmt.Registry) error {
 
 func (m *Team) validateOwner(formats strfmt.Registry) error {
 
-	if err := validate.Required("owner", "body", m.Owner); err != nil {
-		return err
+	if swag.IsZero(m.Owner) { // not required
+		return nil
 	}
 
 	if m.Owner != nil {

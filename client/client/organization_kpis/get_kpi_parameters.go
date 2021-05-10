@@ -13,6 +13,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -61,6 +62,22 @@ for the get kpi operation typically these are written to a http.Request
 */
 type GetKpiParams struct {
 
+	/*Begin
+	  The unix timestamp in seconds, which indicate the start of the time range.
+
+	*/
+	Begin *uint64
+	/*End
+	  The unix timestamp in seconds, which indicate the end of the time range.
+
+	*/
+	End *uint64
+	/*FetchData
+	  Flag to retrieve KPIs' data upon retrieveing KPIs themselves
+
+
+	*/
+	FetchData *bool
 	/*KpiCanonical
 	  A canonical of a kpi.
 
@@ -110,6 +127,39 @@ func (o *GetKpiParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithBegin adds the begin to the get kpi params
+func (o *GetKpiParams) WithBegin(begin *uint64) *GetKpiParams {
+	o.SetBegin(begin)
+	return o
+}
+
+// SetBegin adds the begin to the get kpi params
+func (o *GetKpiParams) SetBegin(begin *uint64) {
+	o.Begin = begin
+}
+
+// WithEnd adds the end to the get kpi params
+func (o *GetKpiParams) WithEnd(end *uint64) *GetKpiParams {
+	o.SetEnd(end)
+	return o
+}
+
+// SetEnd adds the end to the get kpi params
+func (o *GetKpiParams) SetEnd(end *uint64) {
+	o.End = end
+}
+
+// WithFetchData adds the fetchData to the get kpi params
+func (o *GetKpiParams) WithFetchData(fetchData *bool) *GetKpiParams {
+	o.SetFetchData(fetchData)
+	return o
+}
+
+// SetFetchData adds the fetchData to the get kpi params
+func (o *GetKpiParams) SetFetchData(fetchData *bool) {
+	o.FetchData = fetchData
+}
+
 // WithKpiCanonical adds the kpiCanonical to the get kpi params
 func (o *GetKpiParams) WithKpiCanonical(kpiCanonical string) *GetKpiParams {
 	o.SetKpiCanonical(kpiCanonical)
@@ -139,6 +189,54 @@ func (o *GetKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regist
 		return err
 	}
 	var res []error
+
+	if o.Begin != nil {
+
+		// query param begin
+		var qrBegin uint64
+		if o.Begin != nil {
+			qrBegin = *o.Begin
+		}
+		qBegin := swag.FormatUint64(qrBegin)
+		if qBegin != "" {
+			if err := r.SetQueryParam("begin", qBegin); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.End != nil {
+
+		// query param end
+		var qrEnd uint64
+		if o.End != nil {
+			qrEnd = *o.End
+		}
+		qEnd := swag.FormatUint64(qrEnd)
+		if qEnd != "" {
+			if err := r.SetQueryParam("end", qEnd); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.FetchData != nil {
+
+		// query param fetch_data
+		var qrFetchData bool
+		if o.FetchData != nil {
+			qrFetchData = *o.FetchData
+		}
+		qFetchData := swag.FormatBool(qrFetchData)
+		if qFetchData != "" {
+			if err := r.SetQueryParam("fetch_data", qFetchData); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	// path param kpi_canonical
 	if err := r.SetPathParam("kpi_canonical", o.KpiCanonical); err != nil {
