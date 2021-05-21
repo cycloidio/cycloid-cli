@@ -3,7 +3,6 @@ package projects
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
@@ -125,7 +124,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryCanonical)
 
-	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, os.Stdout)
+	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
 		return err
 	}
@@ -148,7 +147,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	variables := string(rawVars)
 
 	_, err = m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase)
-	err = printer.SmartPrint(p, nil, err, "unable to create pipeline", printer.Options{}, os.Stdout)
+	err = printer.SmartPrint(p, nil, err, "unable to create pipeline", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
 		return err
 	}
@@ -170,7 +169,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		}
 
 		err = m.PushConfig(org, project, env, cfs)
-		err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, os.Stdout)
+		err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
 		if err != nil {
 			return err
 		}
@@ -180,10 +179,10 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	// PIPELINE UNPAUSE
 	//
 	err = m.UnpausePipeline(org, project, env)
-	err = printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, os.Stdout)
+	err = printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
 		return err
 	}
 
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
 }

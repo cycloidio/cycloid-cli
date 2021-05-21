@@ -1,8 +1,6 @@
 package roles
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -62,5 +60,5 @@ func deleteRole(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteRole(org, can)
-	return printer.SmartPrint(p, nil, err, "unable to remove role", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to remove role", printer.Options{}, cmd.OutOrStdout())
 }

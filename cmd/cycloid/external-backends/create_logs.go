@@ -2,7 +2,6 @@ package externalBackends
 
 import (
 	"fmt"
-	"os"
 
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
@@ -134,5 +133,5 @@ func createLogs(cmd *cobra.Command, args []string) error {
 	// Set env to empty cause is not used to create log eb
 	envP := ""
 	resp, err := m.CreateExternalBackends(org, project, envP, purpose, cred, ebC)
-	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, cmd.OutOrStdout())
 }

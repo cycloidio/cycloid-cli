@@ -1,8 +1,6 @@
 package members
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -69,5 +67,5 @@ func inviteMember(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.InviteMember(org, email, role)
-	return printer.SmartPrint(p, nil, err, "unable to invite member", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to invite member", printer.Options{}, cmd.OutOrStdout())
 }

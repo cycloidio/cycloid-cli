@@ -1,8 +1,6 @@
 package organizations
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -49,5 +47,5 @@ func get(cmd *cobra.Command, args []string) error {
 	}
 
 	o, err := m.GetOrganization(org)
-	return printer.SmartPrint(p, o, err, "unable to get organization", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, o, err, "unable to get organization", printer.Options{}, cmd.OutOrStdout())
 }

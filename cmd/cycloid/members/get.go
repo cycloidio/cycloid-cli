@@ -1,8 +1,6 @@
 package members
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -63,5 +61,5 @@ func getMember(cmd *cobra.Command, args []string) error {
 	}
 
 	mb, err := m.GetMember(org, name)
-	return printer.SmartPrint(p, mb, err, "unable to get members", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, mb, err, "unable to get members", printer.Options{}, cmd.OutOrStdout())
 }

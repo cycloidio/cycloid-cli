@@ -1,8 +1,6 @@
 package stacks
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -49,5 +47,5 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	stacks, err := m.ListStacks(org)
-	return printer.SmartPrint(p, stacks, err, "unable to list stacks", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, stacks, err, "unable to list stacks", printer.Options{}, cmd.OutOrStdout())
 }

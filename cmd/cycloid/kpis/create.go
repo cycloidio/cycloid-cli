@@ -1,8 +1,6 @@
 package kpis
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -90,5 +88,5 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	kpi, err := m.CreateKpi(name, kpiType, widget, org, project, job, env, config)
-	return printer.SmartPrint(p, kpi, err, "Unable to create the KPI", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, kpi, err, "Unable to create the KPI", printer.Options{}, cmd.OutOrStdout())
 }

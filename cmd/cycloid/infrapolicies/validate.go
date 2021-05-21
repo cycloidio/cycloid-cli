@@ -3,7 +3,6 @@ package infrapolicies
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/spf13/cobra"
 
@@ -44,7 +43,7 @@ func NewValidateCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get output flag: %w", err)
 			}
-			return validate(org, project, env, planPath, output)
+			return validate(cmd, org, project, env, planPath, output)
 		},
 	}
 	common.RequiredFlag(WithFlagPlanPath, cmd)
@@ -53,7 +52,7 @@ func NewValidateCommand() *cobra.Command {
 
 // validate will send the GET request to the API in order to
 // validate the terraform Plan located in planPath
-func validate(org, project, env, planPath, output string) error {
+func validate(cmd *cobra.Command, org, project, env, planPath, output string) error {
 	plan, err := ioutil.ReadFile(planPath)
 	if err != nil {
 		return fmt.Errorf("unable to read terraform plan file: %w", err)
@@ -68,5 +67,5 @@ func validate(org, project, env, planPath, output string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 	res, err := m.ValidateInfraPolicies(org, project, env, plan)
-	return printer.SmartPrint(p, res, err, "unable to validate terraform plan file", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, res, err, "unable to validate terraform plan file", printer.Options{}, cmd.OutOrStdout())
 }

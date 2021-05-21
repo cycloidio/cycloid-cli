@@ -1,8 +1,6 @@
 package roles
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -63,5 +61,5 @@ func getRole(cmd *cobra.Command, args []string) error {
 	}
 
 	mb, err := m.GetRole(org, can)
-	return printer.SmartPrint(p, mb, err, "unable to get role", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, mb, err, "unable to get role", printer.Options{}, cmd.OutOrStdout())
 }

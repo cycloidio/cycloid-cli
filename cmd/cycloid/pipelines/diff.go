@@ -3,7 +3,6 @@ package pipelines
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/pkg/errors"
 
@@ -85,14 +84,14 @@ func diff(cmd *cobra.Command, args []string) error {
 	pd, err := m.DiffPipeline(org, project, env, pipelineTemplate, vars)
 	if err != nil {
 		// print the result on the standard output
-		if err := p.Print(err, printer.Options{}, os.Stdout); err != nil {
+		if err := p.Print(err, printer.Options{}, cmd.OutOrStdout()); err != nil {
 			return errors.Wrap(err, "unable to print result")
 		}
 		return errors.Wrap(err, "unable obtain a diff")
 	}
 
 	// print the result on the standard output
-	if err := p.Print(pd, printer.Options{}, os.Stdout); err != nil {
+	if err := p.Print(pd, printer.Options{}, cmd.OutOrStdout()); err != nil {
 		return errors.Wrap(err, "unable to print result")
 	}
 

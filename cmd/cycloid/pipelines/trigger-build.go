@@ -1,8 +1,6 @@
 package pipelines
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -64,5 +62,5 @@ func createBuild(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.TriggerPipelineBuild(org, project, env, job)
-	return printer.SmartPrint(p, nil, err, "unable to trigger pipeline build", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to trigger pipeline build", printer.Options{}, cmd.OutOrStdout())
 }

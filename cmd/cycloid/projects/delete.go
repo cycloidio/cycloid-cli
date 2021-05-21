@@ -1,8 +1,6 @@
 package projects
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -53,5 +51,5 @@ func del(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteProject(org, project)
-	return printer.SmartPrint(p, nil, err, "unable to delete project", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to delete project", printer.Options{}, cmd.OutOrStdout())
 }

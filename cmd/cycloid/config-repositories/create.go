@@ -1,8 +1,6 @@
 package configRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -82,5 +80,5 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	cr, err := m.CreateConfigRepository(org, name, url, branch, cred, setDefault)
-	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, cmd.OutOrStdout())
 }

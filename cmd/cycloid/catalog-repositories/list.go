@@ -1,8 +1,6 @@
 package catalogRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -47,5 +45,5 @@ func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 	}
 
 	crs, err := m.ListCatalogRepositories(org)
-	return printer.SmartPrint(p, crs, err, "unable to list catalog repositories", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, crs, err, "unable to list catalog repositories", printer.Options{}, cmd.OutOrStdout())
 }

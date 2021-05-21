@@ -3,7 +3,6 @@ package terracost
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/spf13/cobra"
 
@@ -31,14 +30,14 @@ func NewEstimateCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get output flag: %w", err)
 			}
-			return estimate(org, planPath, output)
+			return estimate(cmd, org, planPath, output)
 		},
 	}
 	common.RequiredFlag(WithFlagPlanPath, cmd)
 	return cmd
 }
 
-func estimate(org, planPath, output string) error {
+func estimate(cmd *cobra.Command, org, planPath, output string) error {
 	plan, err := ioutil.ReadFile(planPath)
 	if err != nil {
 		return fmt.Errorf("unable to read terraform plan file: %w", err)
@@ -53,5 +52,5 @@ func estimate(org, planPath, output string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 	res, err := m.CostEstimation(org, plan)
-	return printer.SmartPrint(p, res, err, "unable to estimate terraform plan file", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, res, err, "unable to estimate terraform plan file", printer.Options{}, cmd.OutOrStdout())
 }

@@ -3,7 +3,6 @@ package creds
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -368,5 +367,5 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.CreateCredential(org, name, credT, rawCred, path, description)
-	return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStdout())
 }
