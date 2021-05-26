@@ -68,7 +68,7 @@ type GetOrgEventsParams struct {
 	*/
 	Begin *uint64
 	/*End
-	  The unix timestamp in milliseconds, which indicate the end of the time range.
+	  The unix timestamp in seconds, which indicate the end of the time range.
 
 	*/
 	End *uint64

@@ -34,9 +34,8 @@ type TerraformProviderResourceSimple struct {
 	Description *string `json:"description"`
 
 	// image
-	// Required: true
 	// Format: uri
-	Image *strfmt.URI `json:"image"`
+	Image strfmt.URI `json:"image,omitempty"`
 
 	// is edge
 	// Required: true
@@ -134,8 +133,8 @@ func (m *TerraformProviderResourceSimple) validateDescription(formats strfmt.Reg
 
 func (m *TerraformProviderResourceSimple) validateImage(formats strfmt.Registry) error {
 
-	if err := validate.Required("image", "body", m.Image); err != nil {
-		return err
+	if swag.IsZero(m.Image) { // not required
+		return nil
 	}
 
 	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {
