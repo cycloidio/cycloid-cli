@@ -19,6 +19,10 @@ import (
 // swagger:model TerraformProviderResourceSimple
 type TerraformProviderResourceSimple struct {
 
+	// attributes
+	// Required: true
+	Attributes *TerraformProviderResourceAttributes `json:"attributes"`
+
 	// canonical
 	// Required: true
 	// Min Length: 3
@@ -58,6 +62,10 @@ type TerraformProviderResourceSimple struct {
 func (m *TerraformProviderResourceSimple) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAttributes(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCanonical(formats); err != nil {
 		res = append(res, err)
 	}
@@ -93,6 +101,24 @@ func (m *TerraformProviderResourceSimple) Validate(formats strfmt.Registry) erro
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *TerraformProviderResourceSimple) validateAttributes(formats strfmt.Registry) error {
+
+	if err := validate.Required("attributes", "body", m.Attributes); err != nil {
+		return err
+	}
+
+	if m.Attributes != nil {
+		if err := m.Attributes.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("attributes")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

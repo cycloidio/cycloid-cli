@@ -1,6 +1,10 @@
-## [v1.0.67] _2021-04-19_
+## [v1.0.72-rc] _2021-05-26_
+- **CHANGED**
+  - Update client to version 1.0.72
+    ([PR #99](https://github.com/cycloidio/cycloid-cli/pull/99))
+
 - **BREAKING**
-  * Switching to API KEY login only
+  - Switching to API KEY login only
    ([PR #79](https://github.com/cycloidio/cycloid-cli/pull/79))
 
 ## [v1.0.64] _2021-03-23_

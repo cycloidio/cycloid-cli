@@ -121,7 +121,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		project,
 		envs,
 		projectData.Description,
-		*projectData.ServiceCatalogRef,
+		*projectData.ServiceCatalog.Ref,
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryCanonical)
 
@@ -129,7 +129,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
 
 	//
 	// CREATE PIPELINE

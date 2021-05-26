@@ -19,13 +19,17 @@ import (
 // swagger:model CostEstimationComponentState
 type CostEstimationComponentState struct {
 
-	// Cost of the component state in decimal form.
+	// Monthly cost of the component state in decimal form.
 	// Required: true
 	Cost *string `json:"cost"`
 
 	// List of items on which the cost is dependent.
 	// Required: true
 	Details []string `json:"details"`
+
+	// Hourly cost of the component state in decimail form.
+	// Required: true
+	HourlyCost *string `json:"hourly_cost"`
 
 	// Quantity of units.
 	// Required: true
@@ -41,6 +45,10 @@ func (m *CostEstimationComponentState) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDetails(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateHourlyCost(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -66,6 +74,15 @@ func (m *CostEstimationComponentState) validateCost(formats strfmt.Registry) err
 func (m *CostEstimationComponentState) validateDetails(formats strfmt.Registry) error {
 
 	if err := validate.Required("details", "body", m.Details); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CostEstimationComponentState) validateHourlyCost(formats strfmt.Registry) error {
+
+	if err := validate.Required("hourly_cost", "body", m.HourlyCost); err != nil {
 		return err
 	}
 
