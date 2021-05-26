@@ -33,6 +33,7 @@ func inRed(msg string) string {
 	return fmt.Sprintf("\033[1;31m%s\033[0m", msg)
 }
 
+// Execute runs the CLI root command.
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		rootCmd.PrintErrln(inRed("Error:"), err.Error())
