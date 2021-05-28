@@ -40,6 +40,7 @@ type Middleware interface {
 	DeleteMember(org string, name string) error
 	GetMember(org string, name string) (*models.MemberOrg, error)
 	InviteMember(org, email, role string) error
+	DeleteInvite(org string, invite string) error
 	ListMembers(org string) ([]*models.MemberOrg, error)
 	ListInvites(org string) ([]*models.Invitation, error)
 	UpdateMembers(org, name, role string) (*models.MemberOrg, error)

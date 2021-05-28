@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	nameFlag, emailFlag, roleFlag string
+	nameFlag, emailFlag, roleFlag, inviteFlag string
 )
 
 func WithFlagName(cmd *cobra.Command) string {
@@ -23,5 +23,11 @@ func WithFlagEmail(cmd *cobra.Command) string {
 func WithFlagRoleCanonical(cmd *cobra.Command) string {
 	flagName := "role"
 	cmd.Flags().StringVar(&roleFlag, flagName, "", "role")
+	return flagName
+}
+
+func WithFlagInvite(cmd *cobra.Command) string {
+	flagName := "invite"
+	cmd.Flags().StringVar(&inviteFlag, flagName, "", "invite")
 	return flagName
 }
