@@ -58,7 +58,7 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for SSH
-	cy --org my-org credential create ssh --ssh-key /path/to/private/key
+	cy --org my-org credential create ssh --name foo --ssh-key /path/to/private/key
 `,
 	}
 	common.RequiredFlag(WithFlagSSHKey, ssh)
@@ -70,7 +70,7 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for basic authentication
-	cy --org my-org credential create basic_auth --username my-username --password my-password
+	cy --org my-org credential create basic_auth --name foo --username my-username --password my-password
 `,
 	}
 	common.RequiredFlag(WithFlagUsername, basicAuth)
@@ -83,7 +83,7 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for custom type
-	cy --org my-org credential create custom --field my-key=my-value --field my-key2=my-value2
+	cy --org my-org credential create custom --name foo --field my-key=my-value --field my-key2=my-value2
 `,
 	}
 	common.RequiredFlag(WithFlagField, custom)
