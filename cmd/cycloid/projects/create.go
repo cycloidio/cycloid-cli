@@ -24,9 +24,8 @@ func NewCreateCommand() *cobra.Command {
 	cy --org my-org project create \
 		--name my-project \
 		--description "an awesome project" \
-		--cloud-provider gcp|aws|... \
 		--stack-ref my-stack-ref \
-		--config-repo config-repo-id \
+		--config-repo config-repo-canonical \
 		--env environment-name \
 		--usecase usecase-1 \
 		--vars /path/to/variables.yml \
@@ -126,7 +125,6 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
 
 	if len(configs) > 0 {
 		cfs := make(map[string]strfmt.Base64)
