@@ -38,6 +38,10 @@ func createLogs(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
+	cred, err = cmd.Flags().GetString("cred")
+	if err != nil {
+		return err
+	}
 
 	switch engine {
 	case "AWSCloudWatchLogs":
@@ -56,10 +60,6 @@ func createLogs(cmd *cobra.Command, args []string) error {
 			return err
 		}
 		urls, err := cmd.Flags().GetStringSlice("url")
-		if err != nil {
-			return err
-		}
-		cred, err = cmd.Flags().GetString("cred")
 		if err != nil {
 			return err
 		}
