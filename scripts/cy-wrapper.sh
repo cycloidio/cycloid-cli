@@ -124,8 +124,8 @@ if ! [[ -f "${CY_BINARY}" ]]; then
     fi
   fi
 
-  # In case of 404, fallback on latest develop version
-  if [ $STATUS == 8 ]; then
+  # In case of error, fallback on latest lower version
+  if [ $STATUS != 0 ]; then
     CY_LOWER_VERSION=$(find_version_below ${CY_VERSION})
     echo "Warning: Unable to download CLI version ${CY_VERSION}-rc. Fallback to the closest n-1 version ${CY_LOWER_VERSION}" >&2
     # Removing the v prefix as we don't let it in the binary name
