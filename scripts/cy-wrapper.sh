@@ -60,7 +60,7 @@ format_version () {
 # So we only expect to find and take the n-1 version
 find_version_below () {
   api_version=$(format_version $1)
-  for cli_release in $(curl --silent "https://api.github.com/repos/cycloidio/cycloid-cli/releases" | jq -r '.[] | .name'); do
+  for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 5 --silent "https://api.github.com/repos/cycloidio/cycloid-cli/releases" | jq -r '.[] | .name'); do
     cli_version=$(format_version $cli_release)
     # Ignoring the dev version
     if [[ "$cli_version" == "0.0-dev" ]]; then
@@ -92,7 +92,7 @@ fi
 CY_API_URL=${CY_API_URL%/}
 
 # Get Cycloid API version
-export CY_VERSION=$(curl -s "${CY_API_URL}/version" | jq -r .data.version)
+export CY_VERSION=$(curl --fail --retry-all-errors --retry-delay 2 --retry 5 -s "${CY_API_URL}/version" | jq -r .data.version)
 
 if [[ -z "$CY_VERSION" ]]; then
   echo "Error: Unable to get Cycloid API version on ${CY_API_URL}/version" >&2
@@ -105,7 +105,7 @@ if ! [[ -f "${CY_BINARY}" ]]; then
 
   # Download the exact CLI version
   CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/cy"
-  wget -q -O "${CY_BINARY}" "$CY_URL"
+  wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
   STATUS=$?
 
   if [ $STATUS != 0 ]; then
@@ -117,7 +117,7 @@ if ! [[ -f "${CY_BINARY}" ]]; then
     echo "Warning: Unable to download CLI version ${CY_VERSION}. Fallback to RC version" >&2
     CY_BINARY="${CY_BINARIES_PATH}/cy-${CY_VERSION}-rc"
     CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/cy"
-    wget -q -O "${CY_BINARY}" "$CY_URL"
+    wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
     STATUS=$?
     if [ $STATUS != 0 ]; then
       rm -f "${CY_BINARY}"
@@ -131,7 +131,7 @@ if ! [[ -f "${CY_BINARY}" ]]; then
     # Removing the v prefix as we don't let it in the binary name
     CY_BINARY="${CY_BINARIES_PATH}/cy-$(echo $CY_LOWER_VERSION | sed 's/^v//')"
     CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/${CY_LOWER_VERSION}/cy"
-    wget -q -O "${CY_BINARY}" "$CY_URL"
+    wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
     STATUS=$?
     if [ $STATUS != 0 ]; then
       rm -f "${CY_BINARY}"
