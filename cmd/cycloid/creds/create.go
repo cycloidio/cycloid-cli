@@ -3,7 +3,6 @@ package creds
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -58,7 +57,7 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for SSH
-	cy --org my-org credential create ssh --ssh-key /path/to/private/key
+	cy --org my-org credential create ssh --name foo --ssh-key /path/to/private/key
 `,
 	}
 	common.RequiredFlag(WithFlagSSHKey, ssh)
@@ -70,7 +69,7 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for basic authentication
-	cy --org my-org credential create basic_auth --username my-username --password my-password
+	cy --org my-org credential create basic_auth --name foo --username my-username --password my-password
 `,
 	}
 	common.RequiredFlag(WithFlagUsername, basicAuth)
@@ -83,7 +82,7 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for custom type
-	cy --org my-org credential create custom --field my-key=my-value --field my-key2=my-value2
+	cy --org my-org credential create custom --name foo --field my-key=my-value --field my-key2=my-value2
 `,
 	}
 	common.RequiredFlag(WithFlagField, custom)
@@ -368,5 +367,5 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.CreateCredential(org, name, credT, rawCred, path, description)
-	return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStdout())
 }

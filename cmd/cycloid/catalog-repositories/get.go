@@ -1,8 +1,6 @@
 package catalogRepositories
 
 import (
-	"os"
-
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -52,5 +50,5 @@ func getCatalogRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	cr, err := m.GetCatalogRepository(org, can)
-	return printer.SmartPrint(p, cr, err, "unable to get catalog repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, cr, err, "unable to get catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

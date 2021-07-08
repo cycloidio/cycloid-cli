@@ -1,8 +1,6 @@
 package configRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -48,5 +46,5 @@ func listConfigRepositories(cmd *cobra.Command, args []string) error {
 	}
 
 	crs, err := m.ListConfigRepositories(org)
-	return printer.SmartPrint(p, crs, err, "unable to list config repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, crs, err, "unable to list config repository", printer.Options{}, cmd.OutOrStdout())
 }

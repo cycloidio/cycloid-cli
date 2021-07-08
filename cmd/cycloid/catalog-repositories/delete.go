@@ -1,8 +1,6 @@
 package catalogRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -54,5 +52,5 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteCatalogRepository(org, canonical)
-	return printer.SmartPrint(p, nil, err, "unable to delete catalog repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to delete catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

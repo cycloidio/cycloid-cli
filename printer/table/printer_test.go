@@ -2,7 +2,9 @@ package table
 
 import (
 	"bytes"
+	"fmt"
 	"testing"
+	"time"
 
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/stretchr/testify/assert"
@@ -39,19 +41,21 @@ value a	value b	abc
 		assert.Equal(t, b.String(), exp)
 	})
 	t.Run("SuccessTimestamp", func(t *testing.T) {
+		now := time.Now()
+		exptNow := now.Format(timeFormat) // timeFormat from table.timeFormat
 		var (
 			tab Table
 			b   bytes.Buffer
 			obj = struct {
 				A *int64 `json:"a"`
 			}{
-				A: int64Ptr(1578325983),
+				A: int64Ptr(now.Unix()), // int64Ptr(1578325983),
 			}
 		)
 
-		exp := `A                    
-06/01/2020, 16:53:03	
-`
+		exp := fmt.Sprintf(`A                    
+%s	
+`, exptNow)
 		err := tab.Print(&obj, printer.Options{}, &b)
 		require.NoError(t, err)
 		assert.Equal(t, b.String(), exp)

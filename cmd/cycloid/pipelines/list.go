@@ -1,8 +1,6 @@
 package pipelines
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -44,5 +42,5 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	pps, err := m.ListPipelines(org)
-	return printer.SmartPrint(p, pps, err, "unable to list pipelines", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, pps, err, "unable to list pipelines", printer.Options{}, cmd.OutOrStdout())
 }

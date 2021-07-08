@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"strings"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -26,6 +28,9 @@ func (m *middleware) PushConfig(org string, project string, env string, configs 
 
 	for rawP, rawC := range configs {
 		p := common.ReplaceCycloidVarsString(cyCtx, rawP)
+		// Ensure the path doesn't start with a / as it will not be valid for the API calls
+		p = strings.TrimLeft(p, "/")
+
 		var c strfmt.Base64
 		c = common.ReplaceCycloidVars(cyCtx, rawC)
 

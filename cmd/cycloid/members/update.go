@@ -1,8 +1,6 @@
 package members
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -71,5 +69,5 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	mb, err := m.UpdateMembers(org, name, role)
-	return printer.SmartPrint(p, mb, err, "unable to update member", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, mb, err, "unable to update member", printer.Options{}, cmd.OutOrStdout())
 }

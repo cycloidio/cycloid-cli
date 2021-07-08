@@ -1,8 +1,6 @@
 package configRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -56,5 +54,5 @@ func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteConfigRepository(org, can)
-	return printer.SmartPrint(p, nil, err, "unable to delete config repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to delete config repository", printer.Options{}, cmd.OutOrStdout())
 }

@@ -1,8 +1,6 @@
 package roles
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -56,5 +54,5 @@ func listRoles(cmd *cobra.Command, args []string) error {
 	}
 
 	mbs, err := m.ListRoles(org)
-	return printer.SmartPrint(p, mbs, err, "unable to list roles", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, mbs, err, "unable to list roles", printer.Options{}, cmd.OutOrStdout())
 }

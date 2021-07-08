@@ -1,8 +1,6 @@
 package configRepositories
 
 import (
-	"os"
-
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -54,5 +52,5 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	cr, err := m.GetConfigRepository(org, can)
-	return printer.SmartPrint(p, cr, err, "unable to get config repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, cr, err, "unable to get config repository", printer.Options{}, cmd.OutOrStdout())
 }

@@ -1,8 +1,6 @@
 package organizations
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -17,6 +15,7 @@ func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
 		Short: "delete an organization",
+		Hidden: true,
 		Example: `
 	# delete an organization with canonical name my-org
 	cy organization delete --org my-org
@@ -51,5 +50,5 @@ func del(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteOrganization(org)
-	return printer.SmartPrint(p, nil, err, "unable to delete organization", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to delete organization", printer.Options{}, cmd.OutOrStdout())
 }

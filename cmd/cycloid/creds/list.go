@@ -1,8 +1,6 @@
 package creds
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -53,5 +51,5 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	creds, err := m.ListCredentials(org, credT)
-	return printer.SmartPrint(p, creds, err, "unable to list credential", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, creds, err, "unable to list credential", printer.Options{}, cmd.OutOrStdout())
 }

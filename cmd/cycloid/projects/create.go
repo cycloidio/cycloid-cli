@@ -2,7 +2,6 @@ package projects
 
 import (
 	"io/ioutil"
-	"os"
 
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
@@ -24,9 +23,8 @@ func NewCreateCommand() *cobra.Command {
 	cy --org my-org project create \
 		--name my-project \
 		--description "an awesome project" \
-		--cloud-provider gcp|aws|... \
 		--stack-ref my-stack-ref \
-		--config-repo config-repo-id \
+		--config-repo config-repo-canonical \
 		--env environment-name \
 		--usecase usecase-1 \
 		--vars /path/to/variables.yml \
@@ -122,11 +120,10 @@ func create(cmd *cobra.Command, args []string) error {
 	vars := string(rawVars)
 
 	project, err := m.CreateProject(org, name, canonical, env, pipelineTemplate, vars, description, stackRef, usecase, configRepo)
-	err = printer.SmartPrint(p, nil, err, "unable to create project", printer.Options{}, os.Stdout)
+	err = printer.SmartPrint(p, nil, err, "unable to create project", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
 		return err
 	}
-
 
 	if len(configs) > 0 {
 		cfs := make(map[string]strfmt.Base64)
@@ -141,11 +138,11 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 
 		err = m.PushConfig(org, *project.Canonical, env, cfs)
-		err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, os.Stdout)
+		err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
 		if err != nil {
 			return err
 		}
 	}
 
-	return printer.SmartPrint(p, project, err, "", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, project, err, "", printer.Options{}, cmd.OutOrStdout())
 }

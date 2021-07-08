@@ -1,8 +1,6 @@
 package organizations
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -54,5 +52,5 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	o, err := m.CreateOrganization(name)
-	return printer.SmartPrint(p, o, err, "unable to create organization", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, o, err, "unable to create organization", printer.Options{}, cmd.OutOrStdout())
 }

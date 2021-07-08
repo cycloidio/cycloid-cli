@@ -1,7 +1,6 @@
 package pipelines
 
 import (
-	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -69,5 +68,5 @@ func cleartaskCache(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.ClearTaskCachePipeline(org, project, env, job, task)
-	return printer.SmartPrint(p, nil, err, "unable to clear task cache", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to clear task cache", printer.Options{}, cmd.OutOrStdout())
 }

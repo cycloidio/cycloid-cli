@@ -1,8 +1,6 @@
 package pipelines
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -59,5 +57,5 @@ func unpause(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.UnpausePipeline(org, project, env)
-	return printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, cmd.OutOrStdout())
 }

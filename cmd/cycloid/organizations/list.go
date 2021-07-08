@@ -1,8 +1,6 @@
 package organizations
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -18,6 +16,7 @@ func NewListCommand() *cobra.Command {
 		Use:   "list",
 		Short: "list the organizations",
 		RunE:  list,
+		Hidden: true,
 		Example: `
 	# list the organizations
 	cy o list --output json
@@ -44,5 +43,5 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	orgs, err := m.ListOrganizations()
-	return printer.SmartPrint(p, orgs, err, "unable to list organizations", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, orgs, err, "unable to list organizations", printer.Options{}, cmd.OutOrStdout())
 }

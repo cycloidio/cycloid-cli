@@ -8,7 +8,10 @@ endif
 
 SHELL      := /bin/sh
 
-REPO_PATH    := github.com/cycloidio/cycloid-cli
+REPO_PATH            := github.com/cycloidio/cycloid-cli
+CY_API_URL           ?= http://127.0.0.1:3001
+CY_TEST_GIT_CR_URL   ?= git@git-server:/git-server/repos/test-psc
+
 BINARY       ?= cy
 # VERSION example v1.0.47
 VERSION      ?= $(shell cat client/version)
@@ -65,6 +68,13 @@ help: ## Show this help
 .PHONY: build
 build: ## Builds the binary
 	GO111MODULE=on CGO_ENABLED=0 GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
+
+.PHONY: test
+test: ## Run end to end tests
+	@echo "Using API url: $(CY_API_URL) (from \$$CY_API_URL)"
+	@echo "Using GIT: $(CY_TEST_GIT_CR_URL) (from \$$CY_TEST_GIT_CR_URL)"
+	@if [ -z "$$CY_TEST_ROOT_API_KEY" ]; then echo "Unable to read API KEY from \$$CY_TEST_ROOT_API_KEY"; exit 1; fi; \
+	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" go test ./... --tags e2e
 
 .PHONY: generate-local-client
 generate-local-client: ## Generate client from local swagger file SWAGGER_FILE path

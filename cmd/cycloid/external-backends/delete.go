@@ -1,8 +1,6 @@
 package externalBackends
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -54,5 +52,5 @@ func del(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteExternalBackend(org, id)
-	return printer.SmartPrint(p, nil, err, "unable to delete external backend", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to delete external backend", printer.Options{}, cmd.OutOrStdout())
 }

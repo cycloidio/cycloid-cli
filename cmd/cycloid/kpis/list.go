@@ -1,8 +1,6 @@
 package kpis
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -60,5 +58,5 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	kpis, err := m.ListKpi(org, project, env)
-	return printer.SmartPrint(p, kpis, err, "unable to list kpis", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, kpis, err, "unable to list kpis", printer.Options{}, cmd.OutOrStdout())
 }

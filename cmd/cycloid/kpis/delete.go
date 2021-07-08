@@ -1,8 +1,6 @@
 package kpis
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -55,5 +53,5 @@ func delete(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteKpi(org, can)
-	return printer.SmartPrint(p, nil, err, "unable to delete kpi", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to delete kpi", printer.Options{}, cmd.OutOrStdout())
 }

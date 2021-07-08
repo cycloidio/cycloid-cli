@@ -1,8 +1,6 @@
 package configRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -19,7 +17,7 @@ func NewCreateCommand() *cobra.Command {
 		Short: "create a config repository",
 		Example: `
 	# create a config repository and set up as default
-	cy --org my-org config-repo create --branch stacks --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name --default
+	cy --org my-org config-repo create --branch config --cred my-cred --url "git@github.com:my/repo.git" --name default-config --default
 `,
 		RunE:    createConfigRepository,
 		PreRunE: internal.CheckAPIAndCLIVersion,
@@ -82,5 +80,5 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	cr, err := m.CreateConfigRepository(org, name, url, branch, cred, setDefault)
-	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, cmd.OutOrStdout())
 }
