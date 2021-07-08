@@ -106,10 +106,6 @@ func NewValidateFormsFileForbidden() *ValidateFormsFileForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ValidateFormsFileForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -122,13 +118,6 @@ func (o *ValidateFormsFileForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *ValidateFormsFileForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -150,10 +139,6 @@ func NewValidateFormsFileNotFound() *ValidateFormsFileNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type ValidateFormsFileNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -166,13 +151,6 @@ func (o *ValidateFormsFileNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *ValidateFormsFileNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -194,10 +172,6 @@ func NewValidateFormsFileUnprocessableEntity() *ValidateFormsFileUnprocessableEn
 All the custom errors that are generated from the Cycloid API
 */
 type ValidateFormsFileUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -210,13 +184,6 @@ func (o *ValidateFormsFileUnprocessableEntity) GetPayload() *models.ErrorPayload
 }
 
 func (o *ValidateFormsFileUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -242,10 +209,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type ValidateFormsFileDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -263,13 +226,6 @@ func (o *ValidateFormsFileDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *ValidateFormsFileDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

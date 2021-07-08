@@ -9,9 +9,7 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -87,10 +85,6 @@ func NewDeleteServiceCatalogForbidden() *DeleteServiceCatalogForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteServiceCatalogForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -103,13 +97,6 @@ func (o *DeleteServiceCatalogForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DeleteServiceCatalogForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -131,10 +118,6 @@ func NewDeleteServiceCatalogNotFound() *DeleteServiceCatalogNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteServiceCatalogNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -147,13 +130,6 @@ func (o *DeleteServiceCatalogNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *DeleteServiceCatalogNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

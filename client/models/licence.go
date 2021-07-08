@@ -13,11 +13,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// License License
+// Licence Licence
 //
-// Object containing license parameters
-// swagger:model License
-type License struct {
+// Object containing licence parameters
+// swagger:model Licence
+type Licence struct {
 
 	// company name
 	// Required: true
@@ -42,7 +42,7 @@ type License struct {
 	// Minimum: 0
 	ExpiresAt *uint64 `json:"expires_at"`
 
-	// License's key in the JWT format
+	// Licence's key in the JWT format
 	// Required: true
 	Key *string `json:"key"`
 
@@ -65,8 +65,8 @@ type License struct {
 	Version *string `json:"version"`
 }
 
-// Validate validates this license
-func (m *License) Validate(formats strfmt.Registry) error {
+// Validate validates this licence
+func (m *Licence) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCompanyName(formats); err != nil {
@@ -115,7 +115,7 @@ func (m *License) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateCompanyName(formats strfmt.Registry) error {
+func (m *Licence) validateCompanyName(formats strfmt.Registry) error {
 
 	if err := validate.Required("company_name", "body", m.CompanyName); err != nil {
 		return err
@@ -124,7 +124,7 @@ func (m *License) validateCompanyName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateCreatedAt(formats strfmt.Registry) error {
+func (m *Licence) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
 		return err
@@ -137,7 +137,7 @@ func (m *License) validateCreatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateCurrentMembers(formats strfmt.Registry) error {
+func (m *Licence) validateCurrentMembers(formats strfmt.Registry) error {
 
 	if err := validate.Required("current_members", "body", m.CurrentMembers); err != nil {
 		return err
@@ -150,7 +150,7 @@ func (m *License) validateCurrentMembers(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateEmailAddress(formats strfmt.Registry) error {
+func (m *Licence) validateEmailAddress(formats strfmt.Registry) error {
 
 	if err := validate.Required("email_address", "body", m.EmailAddress); err != nil {
 		return err
@@ -159,7 +159,7 @@ func (m *License) validateEmailAddress(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateExpiresAt(formats strfmt.Registry) error {
+func (m *Licence) validateExpiresAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("expires_at", "body", m.ExpiresAt); err != nil {
 		return err
@@ -172,7 +172,7 @@ func (m *License) validateExpiresAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateKey(formats strfmt.Registry) error {
+func (m *Licence) validateKey(formats strfmt.Registry) error {
 
 	if err := validate.Required("key", "body", m.Key); err != nil {
 		return err
@@ -181,7 +181,7 @@ func (m *License) validateKey(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateMembersCount(formats strfmt.Registry) error {
+func (m *Licence) validateMembersCount(formats strfmt.Registry) error {
 
 	if err := validate.Required("members_count", "body", m.MembersCount); err != nil {
 		return err
@@ -194,7 +194,7 @@ func (m *License) validateMembersCount(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateOnPrem(formats strfmt.Registry) error {
+func (m *Licence) validateOnPrem(formats strfmt.Registry) error {
 
 	if err := validate.Required("on_prem", "body", m.OnPrem); err != nil {
 		return err
@@ -203,7 +203,7 @@ func (m *License) validateOnPrem(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateUpdatedAt(formats strfmt.Registry) error {
+func (m *Licence) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
 		return err
@@ -216,7 +216,7 @@ func (m *License) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *License) validateVersion(formats strfmt.Registry) error {
+func (m *Licence) validateVersion(formats strfmt.Registry) error {
 
 	if err := validate.Required("version", "body", m.Version); err != nil {
 		return err
@@ -226,7 +226,7 @@ func (m *License) validateVersion(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *License) MarshalBinary() ([]byte, error) {
+func (m *Licence) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -234,8 +234,8 @@ func (m *License) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *License) UnmarshalBinary(b []byte) error {
-	var res License
+func (m *Licence) UnmarshalBinary(b []byte) error {
+	var res Licence
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

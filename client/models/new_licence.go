@@ -13,19 +13,19 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewLicense License
+// NewLicence Licence
 //
-// Object containing license parameters
-// swagger:model NewLicense
-type NewLicense struct {
+// Object containing licence parameters
+// swagger:model NewLicence
+type NewLicence struct {
 
-	// License's key in the JWT format
+	// Licence's key in the JWT format
 	// Required: true
 	Key *string `json:"key"`
 }
 
-// Validate validates this new license
-func (m *NewLicense) Validate(formats strfmt.Registry) error {
+// Validate validates this new licence
+func (m *NewLicence) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateKey(formats); err != nil {
@@ -38,7 +38,7 @@ func (m *NewLicense) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewLicense) validateKey(formats strfmt.Registry) error {
+func (m *NewLicence) validateKey(formats strfmt.Registry) error {
 
 	if err := validate.Required("key", "body", m.Key); err != nil {
 		return err
@@ -48,7 +48,7 @@ func (m *NewLicense) validateKey(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *NewLicense) MarshalBinary() ([]byte, error) {
+func (m *NewLicence) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -56,8 +56,8 @@ func (m *NewLicense) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *NewLicense) UnmarshalBinary(b []byte) error {
-	var res NewLicense
+func (m *NewLicence) UnmarshalBinary(b []byte) error {
+	var res NewLicence
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

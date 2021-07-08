@@ -105,10 +105,6 @@ func NewValidateProjectInfraPoliciesForbidden() *ValidateProjectInfraPoliciesFor
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ValidateProjectInfraPoliciesForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -121,13 +117,6 @@ func (o *ValidateProjectInfraPoliciesForbidden) GetPayload() *models.ErrorPayloa
 }
 
 func (o *ValidateProjectInfraPoliciesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -149,10 +138,6 @@ func NewValidateProjectInfraPoliciesNotFound() *ValidateProjectInfraPoliciesNotF
 The response sent when any of the entities present in the path is not found.
 */
 type ValidateProjectInfraPoliciesNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -165,13 +150,6 @@ func (o *ValidateProjectInfraPoliciesNotFound) GetPayload() *models.ErrorPayload
 }
 
 func (o *ValidateProjectInfraPoliciesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -193,10 +171,6 @@ func NewValidateProjectInfraPoliciesUnprocessableEntity() *ValidateProjectInfraP
 All the custom errors that are generated from the Cycloid API
 */
 type ValidateProjectInfraPoliciesUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -209,13 +183,6 @@ func (o *ValidateProjectInfraPoliciesUnprocessableEntity) GetPayload() *models.E
 }
 
 func (o *ValidateProjectInfraPoliciesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -241,10 +208,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type ValidateProjectInfraPoliciesDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -262,13 +225,6 @@ func (o *ValidateProjectInfraPoliciesDefault) GetPayload() *models.ErrorPayload 
 }
 
 func (o *ValidateProjectInfraPoliciesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
