@@ -1,8 +1,6 @@
 package configRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -88,5 +86,5 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	cr, err := m.UpdateConfigRepository(org, can, cred, name, url, branch, setDefault)
-	return printer.SmartPrint(p, cr, err, "unable to update config repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, cr, err, "unable to update config repository", printer.Options{}, cmd.OutOrStdout())
 }

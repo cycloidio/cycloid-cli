@@ -1,8 +1,6 @@
 package organizations
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -45,5 +43,5 @@ func listWorkers(cmd *cobra.Command, args []string) error {
 	}
 
 	ws, err := m.ListOrganizationWorkers(org)
-	return printer.SmartPrint(p, ws, err, "unable to list organization workers", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, ws, err, "unable to list organization workers", printer.Options{}, cmd.OutOrStdout())
 }

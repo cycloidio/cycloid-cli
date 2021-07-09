@@ -1,8 +1,6 @@
 package projects
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -54,5 +52,5 @@ func get(cmd *cobra.Command, args []string) error {
 	}
 
 	proj, err := m.GetProject(org, project)
-	return printer.SmartPrint(p, proj, err, "unable to get project", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, proj, err, "unable to get project", printer.Options{}, cmd.OutOrStdout())
 }

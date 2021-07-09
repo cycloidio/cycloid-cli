@@ -19,6 +19,10 @@ import (
 // swagger:model TerraformProviderResource
 type TerraformProviderResource struct {
 
+	// attributes
+	// Required: true
+	Attributes *TerraformProviderResourceAttributes `json:"attributes"`
+
 	// canonical
 	// Required: true
 	// Min Length: 3
@@ -34,9 +38,8 @@ type TerraformProviderResource struct {
 	Description *string `json:"description"`
 
 	// image
-	// Required: true
 	// Format: uri
-	Image *strfmt.URI `json:"image"`
+	Image strfmt.URI `json:"image,omitempty"`
 
 	// is edge
 	// Required: true
@@ -62,6 +65,10 @@ type TerraformProviderResource struct {
 // Validate validates this terraform provider resource
 func (m *TerraformProviderResource) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateAttributes(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateCanonical(formats); err != nil {
 		res = append(res, err)
@@ -105,6 +112,24 @@ func (m *TerraformProviderResource) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *TerraformProviderResource) validateAttributes(formats strfmt.Registry) error {
+
+	if err := validate.Required("attributes", "body", m.Attributes); err != nil {
+		return err
+	}
+
+	if m.Attributes != nil {
+		if err := m.Attributes.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("attributes")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *TerraformProviderResource) validateCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
@@ -142,8 +167,8 @@ func (m *TerraformProviderResource) validateDescription(formats strfmt.Registry)
 
 func (m *TerraformProviderResource) validateImage(formats strfmt.Registry) error {
 
-	if err := validate.Required("image", "body", m.Image); err != nil {
-		return err
+	if swag.IsZero(m.Image) { // not required
+		return nil
 	}
 
 	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {

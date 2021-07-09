@@ -2,7 +2,6 @@ package pipelines
 
 import (
 	"io/ioutil"
-	"os"
 
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
@@ -89,7 +88,7 @@ func update(cmd *cobra.Command, args []string) error {
 	variables := string(rawVars)
 
 	resp, err := m.UpdatePipeline(org, project, env, pipeline, variables)
-	err = printer.SmartPrint(p, resp, err, "unable to update pipeline", printer.Options{}, os.Stdout)
+	err = printer.SmartPrint(p, resp, err, "unable to update pipeline", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
 			return err
 	}
@@ -111,7 +110,7 @@ func update(cmd *cobra.Command, args []string) error {
 		}
 
 		err = m.PushConfig(org, project, env, cfs)
-		return printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, os.Stdout)
+		return printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
 	}
 
 	return nil

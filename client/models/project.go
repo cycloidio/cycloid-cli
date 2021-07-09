@@ -62,9 +62,8 @@ type Project struct {
 	//
 	Owner *User `json:"owner,omitempty"`
 
-	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
-	// Required: true
-	ServiceCatalogRef *string `json:"service_catalog_ref"`
+	// The Service Catalog that was used to create project.
+	ServiceCatalog *ServiceCatalog `json:"service_catalog,omitempty"`
 
 	// updated at
 	// Required: true
@@ -104,7 +103,7 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogRef(formats); err != nil {
+	if err := m.validateServiceCatalog(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -242,10 +241,19 @@ func (m *Project) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateServiceCatalogRef(formats strfmt.Registry) error {
+func (m *Project) validateServiceCatalog(formats strfmt.Registry) error {
 
-	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
-		return err
+	if swag.IsZero(m.ServiceCatalog) { // not required
+		return nil
+	}
+
+	if m.ServiceCatalog != nil {
+		if err := m.ServiceCatalog.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("service_catalog")
+			}
+			return err
+		}
 	}
 
 	return nil

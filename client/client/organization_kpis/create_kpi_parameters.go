@@ -13,6 +13,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -63,16 +64,32 @@ for the create kpi operation typically these are written to a http.Request
 */
 type CreateKpiParams struct {
 
+	/*Begin
+	  The unix timestamp in seconds, which indicate the start of the time range.
+
+	*/
+	Begin *uint64
 	/*Body
 	  The information of the KPI
 
 	*/
 	Body *models.NewKPI
+	/*End
+	  The unix timestamp in seconds, which indicate the end of the time range.
+
+	*/
+	End *uint64
 	/*Environment
 	  The environment canonical to use a query filter
 
 	*/
 	Environment *string
+	/*FetchData
+	  Flag to retrieve KPIs' data upon retrieveing KPIs themselves
+
+
+	*/
+	FetchData *bool
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -122,6 +139,17 @@ func (o *CreateKpiParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithBegin adds the begin to the create kpi params
+func (o *CreateKpiParams) WithBegin(begin *uint64) *CreateKpiParams {
+	o.SetBegin(begin)
+	return o
+}
+
+// SetBegin adds the begin to the create kpi params
+func (o *CreateKpiParams) SetBegin(begin *uint64) {
+	o.Begin = begin
+}
+
 // WithBody adds the body to the create kpi params
 func (o *CreateKpiParams) WithBody(body *models.NewKPI) *CreateKpiParams {
 	o.SetBody(body)
@@ -133,6 +161,17 @@ func (o *CreateKpiParams) SetBody(body *models.NewKPI) {
 	o.Body = body
 }
 
+// WithEnd adds the end to the create kpi params
+func (o *CreateKpiParams) WithEnd(end *uint64) *CreateKpiParams {
+	o.SetEnd(end)
+	return o
+}
+
+// SetEnd adds the end to the create kpi params
+func (o *CreateKpiParams) SetEnd(end *uint64) {
+	o.End = end
+}
+
 // WithEnvironment adds the environment to the create kpi params
 func (o *CreateKpiParams) WithEnvironment(environment *string) *CreateKpiParams {
 	o.SetEnvironment(environment)
@@ -142,6 +181,17 @@ func (o *CreateKpiParams) WithEnvironment(environment *string) *CreateKpiParams 
 // SetEnvironment adds the environment to the create kpi params
 func (o *CreateKpiParams) SetEnvironment(environment *string) {
 	o.Environment = environment
+}
+
+// WithFetchData adds the fetchData to the create kpi params
+func (o *CreateKpiParams) WithFetchData(fetchData *bool) *CreateKpiParams {
+	o.SetFetchData(fetchData)
+	return o
+}
+
+// SetFetchData adds the fetchData to the create kpi params
+func (o *CreateKpiParams) SetFetchData(fetchData *bool) {
+	o.FetchData = fetchData
 }
 
 // WithOrganizationCanonical adds the organizationCanonical to the create kpi params
@@ -174,10 +224,42 @@ func (o *CreateKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 	}
 	var res []error
 
+	if o.Begin != nil {
+
+		// query param begin
+		var qrBegin uint64
+		if o.Begin != nil {
+			qrBegin = *o.Begin
+		}
+		qBegin := swag.FormatUint64(qrBegin)
+		if qBegin != "" {
+			if err := r.SetQueryParam("begin", qBegin); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
+	}
+
+	if o.End != nil {
+
+		// query param end
+		var qrEnd uint64
+		if o.End != nil {
+			qrEnd = *o.End
+		}
+		qEnd := swag.FormatUint64(qrEnd)
+		if qEnd != "" {
+			if err := r.SetQueryParam("end", qEnd); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if o.Environment != nil {
@@ -190,6 +272,22 @@ func (o *CreateKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 		qEnvironment := qrEnvironment
 		if qEnvironment != "" {
 			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.FetchData != nil {
+
+		// query param fetch_data
+		var qrFetchData bool
+		if o.FetchData != nil {
+			qrFetchData = *o.FetchData
+		}
+		qFetchData := swag.FormatBool(qrFetchData)
+		if qFetchData != "" {
+			if err := r.SetQueryParam("fetch_data", qFetchData); err != nil {
 				return err
 			}
 		}

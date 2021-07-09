@@ -1,8 +1,6 @@
 package pipelines
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -59,5 +57,5 @@ func pause(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.PausePipeline(org, project, env)
-	return printer.SmartPrint(p, nil, err, "unable to pause pipeline", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to pause pipeline", printer.Options{}, cmd.OutOrStdout())
 }

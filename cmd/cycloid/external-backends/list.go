@@ -1,8 +1,6 @@
 package externalBackends
 
 import (
-	"os"
-
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -61,5 +59,5 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	ebs, err := m.ListExternalBackends(org)
-	return printer.SmartPrint(p, ebs, err, "unable to list external backends", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, ebs, err, "unable to list external backends", printer.Options{}, cmd.OutOrStdout())
 }

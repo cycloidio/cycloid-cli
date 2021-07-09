@@ -25,14 +25,12 @@ type Job struct {
 	DisableManualTrigger bool `json:"disable_manual_trigger,omitempty"`
 
 	// finished build
-	// Required: true
-	FinishedBuild *Build `json:"finished_build"`
+	FinishedBuild *Build `json:"finished_build,omitempty"`
 
 	// first logged build id
 	FirstLoggedBuildID uint64 `json:"first_logged_build_id,omitempty"`
 
 	// groups
-	// Required: true
 	Groups []string `json:"groups"`
 
 	// id
@@ -40,7 +38,6 @@ type Job struct {
 	ID *uint64 `json:"id"`
 
 	// inputs
-	// Required: true
 	Inputs []*JobInput `json:"inputs"`
 
 	// name
@@ -48,11 +45,9 @@ type Job struct {
 	Name *string `json:"name"`
 
 	// next build
-	// Required: true
-	NextBuild *Build `json:"next_build"`
+	NextBuild *Build `json:"next_build,omitempty"`
 
 	// outputs
-	// Required: true
 	Outputs []*JobOutput `json:"outputs"`
 
 	// paused
@@ -67,10 +62,6 @@ func (m *Job) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateFinishedBuild(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateGroups(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -106,8 +97,8 @@ func (m *Job) Validate(formats strfmt.Registry) error {
 
 func (m *Job) validateFinishedBuild(formats strfmt.Registry) error {
 
-	if err := validate.Required("finished_build", "body", m.FinishedBuild); err != nil {
-		return err
+	if swag.IsZero(m.FinishedBuild) { // not required
+		return nil
 	}
 
 	if m.FinishedBuild != nil {
@@ -117,15 +108,6 @@ func (m *Job) validateFinishedBuild(formats strfmt.Registry) error {
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *Job) validateGroups(formats strfmt.Registry) error {
-
-	if err := validate.Required("groups", "body", m.Groups); err != nil {
-		return err
 	}
 
 	return nil
@@ -142,8 +124,8 @@ func (m *Job) validateID(formats strfmt.Registry) error {
 
 func (m *Job) validateInputs(formats strfmt.Registry) error {
 
-	if err := validate.Required("inputs", "body", m.Inputs); err != nil {
-		return err
+	if swag.IsZero(m.Inputs) { // not required
+		return nil
 	}
 
 	for i := 0; i < len(m.Inputs); i++ {
@@ -176,8 +158,8 @@ func (m *Job) validateName(formats strfmt.Registry) error {
 
 func (m *Job) validateNextBuild(formats strfmt.Registry) error {
 
-	if err := validate.Required("next_build", "body", m.NextBuild); err != nil {
-		return err
+	if swag.IsZero(m.NextBuild) { // not required
+		return nil
 	}
 
 	if m.NextBuild != nil {
@@ -194,8 +176,8 @@ func (m *Job) validateNextBuild(formats strfmt.Registry) error {
 
 func (m *Job) validateOutputs(formats strfmt.Registry) error {
 
-	if err := validate.Required("outputs", "body", m.Outputs); err != nil {
-		return err
+	if swag.IsZero(m.Outputs) { // not required
+		return nil
 	}
 
 	for i := 0; i < len(m.Outputs); i++ {

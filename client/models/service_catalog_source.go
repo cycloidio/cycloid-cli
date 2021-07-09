@@ -56,7 +56,7 @@ type ServiceCatalogSource struct {
 	// In the event where the user has been deleted this field might be empty.
 	//
 	// Required: true
-	Owner *MemberOrg `json:"owner"`
+	Owner *User `json:"owner"`
 
 	// The last time the Service Catalog Source was (successfully) refreshed.
 	// Minimum: 0

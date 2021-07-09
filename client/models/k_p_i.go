@@ -75,7 +75,7 @@ type KPI struct {
 
 	// type
 	// Required: true
-	// Enum: [buildavgtime buildfrequency buildhistory codecoverage timetorelease]
+	// Enum: [build_avg_time build_frequency build_history code_coverage time_to_release]
 	Type *string `json:"type"`
 
 	// updated at
@@ -267,7 +267,7 @@ var kPITypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["buildavgtime","buildfrequency","buildhistory","codecoverage","timetorelease"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["build_avg_time","build_frequency","build_history","code_coverage","time_to_release"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -277,20 +277,20 @@ func init() {
 
 const (
 
-	// KPITypeBuildavgtime captures enum value "buildavgtime"
-	KPITypeBuildavgtime string = "buildavgtime"
+	// KPITypeBuildAvgTime captures enum value "build_avg_time"
+	KPITypeBuildAvgTime string = "build_avg_time"
 
-	// KPITypeBuildfrequency captures enum value "buildfrequency"
-	KPITypeBuildfrequency string = "buildfrequency"
+	// KPITypeBuildFrequency captures enum value "build_frequency"
+	KPITypeBuildFrequency string = "build_frequency"
 
-	// KPITypeBuildhistory captures enum value "buildhistory"
-	KPITypeBuildhistory string = "buildhistory"
+	// KPITypeBuildHistory captures enum value "build_history"
+	KPITypeBuildHistory string = "build_history"
 
-	// KPITypeCodecoverage captures enum value "codecoverage"
-	KPITypeCodecoverage string = "codecoverage"
+	// KPITypeCodeCoverage captures enum value "code_coverage"
+	KPITypeCodeCoverage string = "code_coverage"
 
-	// KPITypeTimetorelease captures enum value "timetorelease"
-	KPITypeTimetorelease string = "timetorelease"
+	// KPITypeTimeToRelease captures enum value "time_to_release"
+	KPITypeTimeToRelease string = "time_to_release"
 )
 
 // prop value enum

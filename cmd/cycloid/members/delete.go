@@ -1,8 +1,6 @@
 package members
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -63,5 +61,5 @@ func deleteMember(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteMember(org, name)
-	return printer.SmartPrint(p, nil, err, "unable to remove member", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to remove member", printer.Options{}, cmd.OutOrStdout())
 }

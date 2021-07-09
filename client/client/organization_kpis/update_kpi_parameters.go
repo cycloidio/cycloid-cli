@@ -13,6 +13,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -63,11 +64,27 @@ for the update kpi operation typically these are written to a http.Request
 */
 type UpdateKpiParams struct {
 
+	/*Begin
+	  The unix timestamp in seconds, which indicate the start of the time range.
+
+	*/
+	Begin *uint64
 	/*Body
 	  The information of the KPI new data
 
 	*/
 	Body *models.NewKPI
+	/*End
+	  The unix timestamp in seconds, which indicate the end of the time range.
+
+	*/
+	End *uint64
+	/*FetchData
+	  Flag to retrieve KPIs' data upon retrieveing KPIs themselves
+
+
+	*/
+	FetchData *bool
 	/*KpiCanonical
 	  A canonical of a kpi.
 
@@ -117,6 +134,17 @@ func (o *UpdateKpiParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithBegin adds the begin to the update kpi params
+func (o *UpdateKpiParams) WithBegin(begin *uint64) *UpdateKpiParams {
+	o.SetBegin(begin)
+	return o
+}
+
+// SetBegin adds the begin to the update kpi params
+func (o *UpdateKpiParams) SetBegin(begin *uint64) {
+	o.Begin = begin
+}
+
 // WithBody adds the body to the update kpi params
 func (o *UpdateKpiParams) WithBody(body *models.NewKPI) *UpdateKpiParams {
 	o.SetBody(body)
@@ -126,6 +154,28 @@ func (o *UpdateKpiParams) WithBody(body *models.NewKPI) *UpdateKpiParams {
 // SetBody adds the body to the update kpi params
 func (o *UpdateKpiParams) SetBody(body *models.NewKPI) {
 	o.Body = body
+}
+
+// WithEnd adds the end to the update kpi params
+func (o *UpdateKpiParams) WithEnd(end *uint64) *UpdateKpiParams {
+	o.SetEnd(end)
+	return o
+}
+
+// SetEnd adds the end to the update kpi params
+func (o *UpdateKpiParams) SetEnd(end *uint64) {
+	o.End = end
+}
+
+// WithFetchData adds the fetchData to the update kpi params
+func (o *UpdateKpiParams) WithFetchData(fetchData *bool) *UpdateKpiParams {
+	o.SetFetchData(fetchData)
+	return o
+}
+
+// SetFetchData adds the fetchData to the update kpi params
+func (o *UpdateKpiParams) SetFetchData(fetchData *bool) {
+	o.FetchData = fetchData
 }
 
 // WithKpiCanonical adds the kpiCanonical to the update kpi params
@@ -158,10 +208,58 @@ func (o *UpdateKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 	}
 	var res []error
 
+	if o.Begin != nil {
+
+		// query param begin
+		var qrBegin uint64
+		if o.Begin != nil {
+			qrBegin = *o.Begin
+		}
+		qBegin := swag.FormatUint64(qrBegin)
+		if qBegin != "" {
+			if err := r.SetQueryParam("begin", qBegin); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
 		}
+	}
+
+	if o.End != nil {
+
+		// query param end
+		var qrEnd uint64
+		if o.End != nil {
+			qrEnd = *o.End
+		}
+		qEnd := swag.FormatUint64(qrEnd)
+		if qEnd != "" {
+			if err := r.SetQueryParam("end", qEnd); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.FetchData != nil {
+
+		// query param fetch_data
+		var qrFetchData bool
+		if o.FetchData != nil {
+			qrFetchData = *o.FetchData
+		}
+		qFetchData := swag.FormatBool(qrFetchData)
+		if qFetchData != "" {
+			if err := r.SetQueryParam("fetch_data", qFetchData); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// path param kpi_canonical

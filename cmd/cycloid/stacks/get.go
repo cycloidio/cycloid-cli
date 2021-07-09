@@ -1,8 +1,6 @@
 package stacks
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -59,5 +57,5 @@ func get(cmd *cobra.Command, args []string) error {
 	}
 
 	s, err := m.GetStack(org, ref)
-	return printer.SmartPrint(p, s, err, "unable to get stack", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, s, err, "unable to get stack", printer.Options{}, cmd.OutOrStdout())
 }

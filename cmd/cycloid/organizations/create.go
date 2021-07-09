@@ -1,8 +1,6 @@
 package organizations
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -13,10 +11,13 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
+// This command have been Hidden because it is not compatible with API key login.
+// Advanced user still can use it passing a user token in CY_TOKEN env var during a login.
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
 		Short: "create an organization",
+		Hidden: true,
 		Example: `
 	# create an organization foo
 	cy organization create --name foo
@@ -51,5 +52,5 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	o, err := m.CreateOrganization(name)
-	return printer.SmartPrint(p, o, err, "unable to create organization", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, o, err, "unable to create organization", printer.Options{}, cmd.OutOrStdout())
 }

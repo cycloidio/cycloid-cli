@@ -1,8 +1,6 @@
 package catalogRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -80,5 +78,5 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	cr, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred)
-	return printer.SmartPrint(p, cr, err, "unable to update catalog repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, cr, err, "unable to update catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

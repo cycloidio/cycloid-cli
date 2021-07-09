@@ -116,18 +116,17 @@ func ClientCredentials(org *string) runtime.ClientAuthInfoWriter {
 	// him from the config (if the user is logged)
 	if len(token) == 0 {
 		// we fetch the running config
-		config, _ := config.ReadConfig()
+		config, _ := config.Read()
+
 		if org == nil {
-			// if there is no org, it means we need to use
-			// the user token (the first token in the config)
-			token = config.Token
+			return nil
+		}
+
+		// we try to find a token for this `org`
+		if t, ok := config.Organizations[*org]; ok {
+			token = t.Token
 		} else {
-			// we try to find a token for this `org`
-			if t, ok := config.Organizations[*org]; ok {
-				token = t.Token
-			} else {
-				return nil
-			}
+			return nil
 		}
 	}
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {

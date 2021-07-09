@@ -3,7 +3,6 @@ package events
 import (
 	"fmt"
 	"io/ioutil"
-	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -117,5 +116,5 @@ func send(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.SendEvent(org, eType, title, msg, severity, tags, color)
-	return printer.SmartPrint(p, nil, err, "unable to send event", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to send event", printer.Options{}, cmd.OutOrStdout())
 }

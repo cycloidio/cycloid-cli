@@ -81,6 +81,7 @@ func newInfraViewCommand() *cobra.Command {
 func newEventsCommand() *cobra.Command {
 	var eventCmd = &cobra.Command{
 		Use: "events [backend]",
+		Hidden: true,
 	}
 
 	// Aws CW logs
@@ -109,6 +110,7 @@ func newLogsCommand() *cobra.Command {
 	}
 	WithFlagAwsRegion(logsAWSCloudWatchLogsCmd)
 	common.RequiredPersistentFlag(common.WithFlagProject, logsAWSCloudWatchLogsCmd)
+	common.RequiredFlag(common.WithFlagCred, logsAWSCloudWatchLogsCmd)
 
 	// Elasticsearch
 	var logsElasticsearchLogsCmd = &cobra.Command{

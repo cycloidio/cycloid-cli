@@ -1,7 +1,6 @@
 package apikey
 
 import (
-	"os"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -36,7 +35,7 @@ func NewDeleteCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get canonical flag: %w", err)
 			}
-			return remove(org, canonical, output)
+			return remove(cmd, org, canonical, output)
 		},
 	}
 
@@ -47,7 +46,7 @@ func NewDeleteCommand() *cobra.Command {
 
 // remove will send the DELETE request to the API in order to
 // delete a generated token
-func remove(org, canonical, output string) error {
+func remove(cmd *cobra.Command, org, canonical, output string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -57,5 +56,5 @@ func remove(org, canonical, output string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 	err = m.DeleteAPIKey(org, canonical)
-	return printer.SmartPrint(p, nil, err, "unable to delete API key", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to delete API key", printer.Options{}, cmd.OutOrStdout())
 }

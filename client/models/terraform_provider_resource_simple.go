@@ -19,6 +19,10 @@ import (
 // swagger:model TerraformProviderResourceSimple
 type TerraformProviderResourceSimple struct {
 
+	// attributes
+	// Required: true
+	Attributes *TerraformProviderResourceAttributes `json:"attributes"`
+
 	// canonical
 	// Required: true
 	// Min Length: 3
@@ -34,9 +38,8 @@ type TerraformProviderResourceSimple struct {
 	Description *string `json:"description"`
 
 	// image
-	// Required: true
 	// Format: uri
-	Image *strfmt.URI `json:"image"`
+	Image strfmt.URI `json:"image,omitempty"`
 
 	// is edge
 	// Required: true
@@ -58,6 +61,10 @@ type TerraformProviderResourceSimple struct {
 // Validate validates this terraform provider resource simple
 func (m *TerraformProviderResourceSimple) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateAttributes(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateCanonical(formats); err != nil {
 		res = append(res, err)
@@ -94,6 +101,24 @@ func (m *TerraformProviderResourceSimple) Validate(formats strfmt.Registry) erro
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *TerraformProviderResourceSimple) validateAttributes(formats strfmt.Registry) error {
+
+	if err := validate.Required("attributes", "body", m.Attributes); err != nil {
+		return err
+	}
+
+	if m.Attributes != nil {
+		if err := m.Attributes.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("attributes")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -134,8 +159,8 @@ func (m *TerraformProviderResourceSimple) validateDescription(formats strfmt.Reg
 
 func (m *TerraformProviderResourceSimple) validateImage(formats strfmt.Registry) error {
 
-	if err := validate.Required("image", "body", m.Image); err != nil {
-		return err
+	if swag.IsZero(m.Image) { // not required
+		return nil
 	}
 
 	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {

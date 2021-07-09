@@ -2,7 +2,6 @@ package apikey
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -36,7 +35,7 @@ func NewGetCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get canonical flag: %w", err)
 			}
-			return get(org, canonical, output)
+			return get(cmd, org, canonical, output)
 		},
 	}
 
@@ -47,7 +46,7 @@ func NewGetCommand() *cobra.Command {
 
 // get will send the GET request to the API in order to
 // get the generated token
-func get(org, canonical, output string) error {
+func get(cmd *cobra.Command, org, canonical, output string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -58,5 +57,5 @@ func get(org, canonical, output string) error {
 	}
 
 	key, err := m.GetAPIKey(org, canonical)
-	return printer.SmartPrint(p, key, err, "unable to get API key", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, key, err, "unable to get API key", printer.Options{}, cmd.OutOrStdout())
 }

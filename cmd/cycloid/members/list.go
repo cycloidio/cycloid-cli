@@ -1,8 +1,6 @@
 package members
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -56,5 +54,5 @@ func listMembers(cmd *cobra.Command, args []string) error {
 	}
 
 	mbs, err := m.ListMembers(org)
-	return printer.SmartPrint(p, mbs, err, "unable to list members", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, mbs, err, "unable to list members", printer.Options{}, cmd.OutOrStdout())
 }

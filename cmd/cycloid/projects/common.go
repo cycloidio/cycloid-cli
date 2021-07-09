@@ -10,7 +10,7 @@ var (
 	descriptionFlag      string
 	stackRefFlag         string
 	usecaseFlag          string
-	configRepositoryFlag uint32
+	configRepositoryFlag string
 	configsFlag          map[string]string
 	pipelineFlag         string
 	varsFlag             string
@@ -58,6 +58,6 @@ func WithFlagDescription(cmd *cobra.Command) string {
 }
 func WithFlagConfigRepository(cmd *cobra.Command) string {
 	flagName := "config-repo"
-	cmd.Flags().Uint32Var(&configRepositoryFlag, flagName, 0, "")
+	cmd.Flags().StringVar(&configRepositoryFlag, flagName, "", "")
 	return flagName
 }

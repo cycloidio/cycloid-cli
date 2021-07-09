@@ -1,8 +1,6 @@
 package creds
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -58,5 +56,5 @@ func get(cmd *cobra.Command, args []string) error {
 	}
 
 	c, err := m.GetCredential(org, can)
-	return printer.SmartPrint(p, c, err, "unable to get credential", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, c, err, "unable to get credential", printer.Options{},  cmd.OutOrStdout())
 }

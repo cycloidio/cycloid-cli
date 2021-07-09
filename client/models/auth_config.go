@@ -6,11 +6,15 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
 	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -23,13 +27,91 @@ type AuthConfig struct {
 	// Required: true
 	Local *AuthConfigLocalAuth `json:"local"`
 
-	// List of OAuth providers.
-	// Required: true
-	Oauth []*AuthConfigOAuth `json:"oauth"`
+	oauthField []AuthConfigOAuth
 
 	// List of SAML2 providers.
 	// Required: true
 	Saml2 []*AuthConfigSAML `json:"saml2"`
+}
+
+// Oauth gets the oauth of this base type
+func (m *AuthConfig) Oauth() []AuthConfigOAuth {
+	return m.oauthField
+}
+
+// SetOauth sets the oauth of this base type
+func (m *AuthConfig) SetOauth(val []AuthConfigOAuth) {
+	m.oauthField = val
+}
+
+// UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
+func (m *AuthConfig) UnmarshalJSON(raw []byte) error {
+	var data struct {
+		Local *AuthConfigLocalAuth `json:"local"`
+
+		Oauth json.RawMessage `json:"oauth"`
+
+		Saml2 []*AuthConfigSAML `json:"saml2"`
+	}
+	buf := bytes.NewBuffer(raw)
+	dec := json.NewDecoder(buf)
+	dec.UseNumber()
+
+	if err := dec.Decode(&data); err != nil {
+		return err
+	}
+
+	propOauth, err := UnmarshalAuthConfigOAuthSlice(bytes.NewBuffer(data.Oauth), runtime.JSONConsumer())
+	if err != nil && err != io.EOF {
+		return err
+	}
+
+	var result AuthConfig
+
+	// local
+	result.Local = data.Local
+
+	// oauth
+	result.oauthField = propOauth
+
+	// saml2
+	result.Saml2 = data.Saml2
+
+	*m = result
+
+	return nil
+}
+
+// MarshalJSON marshals this object with a polymorphic type to a JSON structure
+func (m AuthConfig) MarshalJSON() ([]byte, error) {
+	var b1, b2, b3 []byte
+	var err error
+	b1, err = json.Marshal(struct {
+		Local *AuthConfigLocalAuth `json:"local"`
+
+		Saml2 []*AuthConfigSAML `json:"saml2"`
+	}{
+
+		Local: m.Local,
+
+		Saml2: m.Saml2,
+	},
+	)
+	if err != nil {
+		return nil, err
+	}
+	b2, err = json.Marshal(struct {
+		Oauth []AuthConfigOAuth `json:"oauth"`
+	}{
+
+		Oauth: m.oauthField,
+	},
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return swag.ConcatJSON(b1, b2, b3), nil
 }
 
 // Validate validates this auth config
@@ -74,22 +156,17 @@ func (m *AuthConfig) validateLocal(formats strfmt.Registry) error {
 
 func (m *AuthConfig) validateOauth(formats strfmt.Registry) error {
 
-	if err := validate.Required("oauth", "body", m.Oauth); err != nil {
+	if err := validate.Required("oauth", "body", m.Oauth()); err != nil {
 		return err
 	}
 
-	for i := 0; i < len(m.Oauth); i++ {
-		if swag.IsZero(m.Oauth[i]) { // not required
-			continue
-		}
+	for i := 0; i < len(m.Oauth()); i++ {
 
-		if m.Oauth[i] != nil {
-			if err := m.Oauth[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("oauth" + "." + strconv.Itoa(i))
-				}
-				return err
+		if err := m.oauthField[i].Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("oauth" + "." + strconv.Itoa(i))
 			}
+			return err
 		}
 
 	}

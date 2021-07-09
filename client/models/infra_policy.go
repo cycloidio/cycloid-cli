@@ -58,8 +58,7 @@ type InfraPolicy struct {
 	// InfraPolicy it has all the permissions on it.
 	// In the event where the user has been deleted then it will be null.
 	//
-	// Required: true
-	Owner *MemberOrg `json:"owner"`
+	Owner *User `json:"owner,omitempty"`
 
 	// It defines the enforcement level. It must be used from the caller of the InfraPolicy
 	// validation endpoint to apply the specific logic in case of not respected InfraPolicies.
@@ -211,8 +210,8 @@ func (m *InfraPolicy) validateName(formats strfmt.Registry) error {
 
 func (m *InfraPolicy) validateOwner(formats strfmt.Registry) error {
 
-	if err := validate.Required("owner", "body", m.Owner); err != nil {
-		return err
+	if swag.IsZero(m.Owner) { // not required
+		return nil
 	}
 
 	if m.Owner != nil {

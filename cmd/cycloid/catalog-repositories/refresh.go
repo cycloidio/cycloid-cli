@@ -1,8 +1,6 @@
 package catalogRepositories
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -55,5 +53,5 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 	}
 
 	cr, err := m.RefreshCatalogRepository(org, can)
-	return printer.SmartPrint(p, cr, err, "unable to refresh catalog repository", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, cr, err, "unable to refresh catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

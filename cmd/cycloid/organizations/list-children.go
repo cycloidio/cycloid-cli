@@ -1,8 +1,6 @@
 package organizations
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -48,5 +46,5 @@ func listChildrens(cmd *cobra.Command, args []string) error {
 	}
 
 	oc, err := m.ListOrganizationChildrens(org)
-	return printer.SmartPrint(p, oc, err, "unable to list organization childrens", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, oc, err, "unable to list organization childrens", printer.Options{}, cmd.OutOrStdout())
 }

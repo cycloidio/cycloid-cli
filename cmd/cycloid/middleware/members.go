@@ -2,6 +2,7 @@ package middleware
 
 import (
 	strfmt "github.com/go-openapi/strfmt"
+  "strconv"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_invitations"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
@@ -131,6 +132,21 @@ func (m *middleware) InviteMember(org, email, role string) error {
 	}
 
 	_, err = m.api.OrganizationMembers.InviteUserToOrgMember(params, common.ClientCredentials(&org))
+
+	return err
+}
+
+func (m *middleware) DeleteInvite(org string, invite string) error {
+	params := organization_invitations.NewDeleteInvitationParams()
+	params.SetOrganizationCanonical(org)
+
+	i64, err := strconv.ParseInt(invite, 10, 32)
+	if err != nil {
+		return err
+	}
+	params.SetInvitationID(uint32(i64))
+
+	_, err = m.api.OrganizationInvitations.DeleteInvitation(params, common.ClientCredentials(&org))
 
 	return err
 }

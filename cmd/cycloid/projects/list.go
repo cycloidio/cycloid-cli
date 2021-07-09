@@ -1,8 +1,6 @@
 package projects
 
 import (
-	"os"
-
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -47,5 +45,5 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	projects, err := m.ListProjects(org)
-	return printer.SmartPrint(p, projects, err, "unable to list project", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, projects, err, "unable to list project", printer.Options{}, cmd.OutOrStdout())
 }

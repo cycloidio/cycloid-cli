@@ -1,8 +1,6 @@
 package root
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -49,7 +47,7 @@ func version(cmd *cobra.Command, args []string) error {
 	}
 
 	// print the result on the standard output
-	if err := p.Print(d, printer.Options{}, os.Stdout); err != nil {
+	if err := p.Print(d, printer.Options{}, cmd.OutOrStdout()); err != nil {
 		return errors.Wrap(err, "unable to print result")
 	}
 	return nil

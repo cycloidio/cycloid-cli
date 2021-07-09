@@ -2,7 +2,6 @@ package apikey
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -32,7 +31,7 @@ func NewListCommand() *cobra.Command {
 			if err != nil {
 				return fmt.Errorf("unable to get output flag: %w", err)
 			}
-			return list(org, output)
+			return list(cmd, org, output)
 		},
 	}
 	return cmd
@@ -40,7 +39,7 @@ func NewListCommand() *cobra.Command {
 
 // list will send the GET request to the API in order to
 // list the generated tokens
-func list(org, output string) error {
+func list(cmd *cobra.Command, org, output string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -50,5 +49,5 @@ func list(org, output string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 	keys, err := m.ListAPIKey(org)
-	return printer.SmartPrint(p, keys, err, "unable to list API keys", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, keys, err, "unable to list API keys", printer.Options{}, cmd.OutOrStdout())
 }

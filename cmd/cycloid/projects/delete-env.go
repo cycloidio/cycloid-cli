@@ -1,8 +1,6 @@
 package projects
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -58,5 +56,5 @@ func deleteEnv(cmd *cobra.Command, args []string) error {
 	}
 
 	err = m.DeleteProjectEnv(org, project, env)
-	return printer.SmartPrint(p, nil, err, "unable to delete environment", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, nil, err, "unable to delete environment", printer.Options{}, cmd.OutOrStdout())
 }

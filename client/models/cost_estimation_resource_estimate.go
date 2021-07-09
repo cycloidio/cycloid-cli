@@ -29,11 +29,25 @@ type CostEstimationResourceEstimate struct {
 	// Required: true
 	Components []*CostEstimationComponent `json:"components"`
 
-	// Planned cost of the resource estimate in decimal form.
+	// Planned monthly cost of the resource estimate in decimal form.
 	PlannedCost string `json:"planned_cost,omitempty"`
 
-	// Prior cost of the resource estimate in decimal form.
+	// Planned hourly cost of the resource estimate in decimal form.
+	PlannedHourlyCost string `json:"planned_hourly_cost,omitempty"`
+
+	// Prior monthly cost of the resource estimate in decimal form.
 	PriorCost string `json:"prior_cost,omitempty"`
+
+	// Prior hourly cost of the resource estimate in decimal form.
+	PriorHourlyCost string `json:"prior_hourly_cost,omitempty"`
+
+	// The resource's cloud provider.
+	// Required: true
+	Provider *string `json:"provider"`
+
+	// Type of the resource.
+	// Required: true
+	Type *string `json:"type"`
 }
 
 // Validate validates this cost estimation resource estimate
@@ -45,6 +59,14 @@ func (m *CostEstimationResourceEstimate) Validate(formats strfmt.Registry) error
 	}
 
 	if err := m.validateComponents(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateProvider(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -83,6 +105,24 @@ func (m *CostEstimationResourceEstimate) validateComponents(formats strfmt.Regis
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *CostEstimationResourceEstimate) validateProvider(formats strfmt.Registry) error {
+
+	if err := validate.Required("provider", "body", m.Provider); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CostEstimationResourceEstimate) validateType(formats strfmt.Registry) error {
+
+	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
 	}
 
 	return nil

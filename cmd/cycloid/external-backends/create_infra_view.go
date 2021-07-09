@@ -2,7 +2,6 @@ package externalBackends
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -128,5 +127,5 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 	}
 
 	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, ebC)
-	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, cmd.OutOrStdout())
 }

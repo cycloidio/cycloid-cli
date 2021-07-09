@@ -33,11 +33,6 @@ type TerraformProvider struct {
 	// Required: true
 	Cloud *bool `json:"cloud"`
 
-	// image
-	// Required: true
-	// Format: uri
-	Image *strfmt.URI `json:"image"`
-
 	// name
 	// Required: true
 	Name *string `json:"name"`
@@ -60,10 +55,6 @@ func (m *TerraformProvider) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCloud(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateImage(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -110,19 +101,6 @@ func (m *TerraformProvider) validateCanonical(formats strfmt.Registry) error {
 func (m *TerraformProvider) validateCloud(formats strfmt.Registry) error {
 
 	if err := validate.Required("cloud", "body", m.Cloud); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *TerraformProvider) validateImage(formats strfmt.Registry) error {
-
-	if err := validate.Required("image", "body", m.Image); err != nil {
-		return err
-	}
-
-	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {
 		return err
 	}
 

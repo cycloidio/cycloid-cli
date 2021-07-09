@@ -23,7 +23,6 @@ func NewCommands() *cobra.Command {
 		},
 		Example: example,
 		Short:   short,
-		Hidden:  true,
 	}
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 

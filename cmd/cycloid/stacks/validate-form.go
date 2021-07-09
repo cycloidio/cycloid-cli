@@ -2,7 +2,6 @@ package stacks
 
 import (
 	"io/ioutil"
-	"os"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
@@ -61,5 +60,5 @@ func validateForm(cmd *cobra.Command, args []string) error {
 	}
 
 	vf, err := m.ValidateForm(org, rawForms)
-	return printer.SmartPrint(p, vf, err, "unable validate form", printer.Options{}, os.Stdout)
+	return printer.SmartPrint(p, vf, err, "unable validate form", printer.Options{}, cmd.OutOrStdout())
 }

@@ -21,15 +21,26 @@ import (
 // swagger:model CostEstimationResult
 type CostEstimationResult struct {
 
-	// Planned cost of the plan in decimal form.
+	// Planned monhtly cost of the plan in decimal form.
 	PlannedCost string `json:"planned_cost,omitempty"`
 
-	// Prior cost of the plan in decimal form.
+	// Planned hourly cost of the plan in decimal form.
+	PlannedHourlyCost string `json:"planned_hourly_cost,omitempty"`
+
+	// Prior monthly cost of the plan in decimal form.
 	PriorCost string `json:"prior_cost,omitempty"`
+
+	// Prior hourly cost of the plan in decimal form.
+	PriorHourlyCost string `json:"prior_hourly_cost,omitempty"`
 
 	// resource estimates
 	// Required: true
 	ResourceEstimates []*CostEstimationResourceEstimate `json:"resource_estimates"`
+
+	// A list of addresses of resources that were skipped from the estimation process. A resource might be skipped
+	// due to being invalid or unsupported by Terracost.
+	//
+	SkippedResourceAddresses []string `json:"skipped_resource_addresses"`
 }
 
 // Validate validates this cost estimation result
