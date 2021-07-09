@@ -100,10 +100,6 @@ func NewCreateKpiForbidden() *CreateKpiForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type CreateKpiForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -116,13 +112,6 @@ func (o *CreateKpiForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateKpiForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -144,10 +133,6 @@ func NewCreateKpiUnprocessableEntity() *CreateKpiUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type CreateKpiUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -160,13 +145,6 @@ func (o *CreateKpiUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateKpiUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -192,10 +170,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type CreateKpiDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -213,13 +187,6 @@ func (o *CreateKpiDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateKpiDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

@@ -94,10 +94,6 @@ func NewGetAppVersionUnprocessableEntity() *GetAppVersionUnprocessableEntity {
 All the custom errors that are generated from the Cycloid API
 */
 type GetAppVersionUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -110,13 +106,6 @@ func (o *GetAppVersionUnprocessableEntity) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetAppVersionUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -142,10 +131,6 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetAppVersionDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
-	ContentLength uint64
-
 	Payload *models.ErrorPayload
 }
 
@@ -163,13 +148,6 @@ func (o *GetAppVersionDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetAppVersionDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
-
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
-	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

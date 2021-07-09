@@ -1,5 +1,7 @@
-## [v1.0.72-rc] _2021-05-26_
+## [v1.0.76] _2021-07-08_
 - **CHANGED**
+  - Update client to version 1.0.76
+    ([PR #101](https://github.com/cycloidio/cycloid-cli/pull/101))
   - Update client to version 1.0.72
     ([PR #99](https://github.com/cycloidio/cycloid-cli/pull/99))
 
