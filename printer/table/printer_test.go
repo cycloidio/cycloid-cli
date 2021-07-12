@@ -42,7 +42,7 @@ value a	value b	abc
 	})
 	t.Run("SuccessTimestamp", func(t *testing.T) {
 		now := time.Now()
-		exptNow := now.Format(timeFormat) // timeFormat from table.timeFormat
+		exptNow := now.Format(time.RFC3339)
 		var (
 			tab Table
 			b   bytes.Buffer

@@ -9,15 +9,9 @@ import (
 	"time"
 
 	"github.com/olekukonko/tablewriter"
-	
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/printer"
-)
-
-var (
-	// reference date format
-	// DD / MM / YYYY, HH:MM:SS
-	timeFormat = "02/01/2006, 15:04:05"
 )
 
 type Table struct{}
@@ -57,7 +51,7 @@ func entryFromStruct(obj reflect.Value, h []string) []string {
 				values = append(values, strconv.FormatInt(int64(elt.Uint()), 10))
 			case reflect.Int64:
 				t := time.Unix(elt.Int(), 0)
-				values = append(values, t.Format(timeFormat))
+				values = append(values, t.Format(time.RFC3339))
 			default:
 				// in the case we don't support the type, we print it
 				// for further integration
