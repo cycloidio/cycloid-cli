@@ -10,7 +10,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-func (m *middleware) ListProjects(org string) ([]*models.ProjectsItem, error) {
+func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
 
 	params := organization_projects.NewGetProjectsParams()
 	params.SetOrganizationCanonical(org)

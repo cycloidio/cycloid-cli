@@ -70,7 +70,7 @@ type Middleware interface {
 	DeleteProjectEnv(org, project, env string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
-	ListProjects(org string) ([]*models.ProjectsItem, error)
+	ListProjects(org string) ([]*models.Project, error)
 	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string) (*models.Project, error)
 
 	DeleteRole(org, role string) error
