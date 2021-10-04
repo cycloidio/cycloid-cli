@@ -51,6 +51,10 @@ type KPI struct {
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
+	// If an error occured in the last import, that field will be filled with the message of the error
+	// Required: true
+	Error *string `json:"error"`
+
 	// id
 	// Required: true
 	// Minimum: 1
@@ -110,6 +114,10 @@ func (m *KPI) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEnvironmentCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateError(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -210,6 +218,15 @@ func (m *KPI) validateEnvironmentCanonical(formats strfmt.Registry) error {
 	}
 
 	if err := validate.Pattern("environment_canonical", "body", string(m.EnvironmentCanonical), `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *KPI) validateError(formats strfmt.Registry) error {
+
+	if err := validate.Required("error", "body", m.Error); err != nil {
 		return err
 	}
 

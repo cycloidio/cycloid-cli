@@ -22,6 +22,11 @@ import (
 // swagger:model Pipeline
 type Pipeline struct {
 
+	// created at
+	// Required: true
+	// Minimum: 0
+	CreatedAt *uint64 `json:"created_at"`
+
 	// environment
 	// Required: true
 	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
@@ -54,6 +59,11 @@ type Pipeline struct {
 	// Required: true
 	TeamName *string `json:"team_name"`
 
+	// updated at
+	// Required: true
+	// Minimum: 0
+	UpdatedAt *uint64 `json:"updated_at"`
+
 	// use case
 	// Required: true
 	// Max Length: 100
@@ -65,6 +75,10 @@ type Pipeline struct {
 // Validate validates this pipeline
 func (m *Pipeline) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateEnvironment(formats); err != nil {
 		res = append(res, err)
@@ -98,6 +112,10 @@ func (m *Pipeline) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateUseCase(formats); err != nil {
 		res = append(res, err)
 	}
@@ -105,6 +123,19 @@ func (m *Pipeline) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Pipeline) validateCreatedAt(formats strfmt.Registry) error {
+
+	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -203,6 +234,19 @@ func (m *Pipeline) validatePublic(formats strfmt.Registry) error {
 func (m *Pipeline) validateTeamName(formats strfmt.Registry) error {
 
 	if err := validate.Required("team_name", "body", m.TeamName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Pipeline) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 

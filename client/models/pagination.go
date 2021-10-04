@@ -19,7 +19,7 @@ type Pagination struct {
 
 	// The index of the page sent (the first page is 1).
 	// Required: true
-	// Minimum: 0
+	// Minimum: 1
 	Index *uint64 `json:"index"`
 
 	// The size of the page (the number of entities per page)
@@ -61,7 +61,7 @@ func (m *Pagination) validateIndex(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("index", "body", int64(*m.Index), 0, false); err != nil {
+	if err := validate.MinimumInt("index", "body", int64(*m.Index), 1, false); err != nil {
 		return err
 	}
 
