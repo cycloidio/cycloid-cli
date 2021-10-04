@@ -89,6 +89,12 @@ cy --version
 
 Have a look to our [CONTRIBUTING.md](CONTRIBUTING.md)
 
+## Testing for cycloid developers
+
+Take a look at our [DEVELOPING_TIPS.md](DEVELOPING_TIPS.md). It Gives some insights on how to perform ci testing using a local be.
+
+Note! It is meant for used of cycloid developers only, since it requires access to private cycloid repositories.
+
 ## License
 
 This project is under MIT License, see [LICENSE](LICENSE)
