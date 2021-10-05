@@ -327,3 +327,28 @@ func (m *middleware) ListPipelines(org string) ([]*models.Pipeline, error) {
 	d := p.Data
 	return d, err
 }
+
+func (m *middleware) GetPipeline(org, project, env string) (*models.Pipeline, error) {
+
+	pipelineName := common.GetPipelineName(project, env)
+
+	params := organization_pipelines.NewGetPipelineParams()
+	params.SetOrganizationCanonical(org)
+	params.SetProjectCanonical(project)
+	params.SetInpathPipelineName(pipelineName)
+
+	resp, err := m.api.OrganizationPipelines.GetPipeline(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, err
+	}
+
+	p := resp.GetPayload()
+	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return err
+	// }
+
+	d := p.Data
+	return d, err
+}

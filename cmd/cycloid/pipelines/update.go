@@ -3,9 +3,10 @@ package pipelines
 import (
 	"io/ioutil"
 
-	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
@@ -20,7 +21,7 @@ func NewUpdateCommand() *cobra.Command {
 		Short: "update a running pipeline",
 		Example: `
 	# update a running pipeline
-	cy --org my-org pp update --project my-project --env my-env --vars /path/to/vars.yml --pipeline /path/to/pipeline.yml --config /path/config.tf
+	cy --org my-org pp update --project my-project --env my-env --vars /path/to/vars.yml --pipeline /path/to/pipeline.yml
 `,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
@@ -29,7 +30,6 @@ func NewUpdateCommand() *cobra.Command {
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
 	common.RequiredFlag(WithFlagPipeline, cmd)
 	common.RequiredFlag(WithFlagVars, cmd)
-	WithFlagConfig(cmd)
 
 	return cmd
 }
@@ -60,10 +60,6 @@ func update(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	configs, err := cmd.Flags().GetStringToString("config")
-	if err != nil {
-		return err
-	}
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
@@ -90,28 +86,20 @@ func update(cmd *cobra.Command, args []string) error {
 	resp, err := m.UpdatePipeline(org, project, env, pipeline, variables)
 	err = printer.SmartPrint(p, resp, err, "unable to update pipeline", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
-			return err
+		return err
 	}
 
 	//
-	// PUSH CONFIG If pipeline update succeeded
+	// PUSH pipeline vars into CONFIG
 	//
-
-	if len(configs) > 0 {
-		cfs := make(map[string]strfmt.Base64)
-
-		for fp, dest := range configs {
-			var c strfmt.Base64
-			c, err = ioutil.ReadFile(fp)
-			if err != nil {
-				return errors.Wrap(err, "unable to read config file")
-			}
-			cfs[dest] = c
-		}
-
-		err = m.PushConfig(org, project, env, cfs)
-		return printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
+	crVarsPath, err := GetPipelineVarsPath(m, org, project, *resp.UseCase)
+	if err != nil {
+		printer.SmartPrint(p, nil, err, "unable to get pipeline variables destination path", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	return nil
+	cfs := make(map[string]strfmt.Base64)
+	cfs[crVarsPath] = rawVars
+	err = m.PushConfig(org, project, env, cfs)
+
+	return printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
 }

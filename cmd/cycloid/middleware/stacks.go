@@ -55,6 +55,29 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	return d, err
 }
 
+func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
+
+	params := service_catalogs.NewGetServiceCatalogConfigParams()
+	params.SetOrganizationCanonical(org)
+	params.SetServiceCatalogRef(ref)
+
+	resp, err := m.api.ServiceCatalogs.GetServiceCatalogConfig(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, err
+	}
+
+	p := resp.GetPayload()
+	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return err
+	// }
+
+	d := p.Data
+
+	return d, err
+}
+
 // convertFormFile takes a models.FormsFile and converts its variables
 // from map[interface{}]interface{} to map[string]interface{}, allowing
 // to use those properly with the API - as JSON cannot marshal/unmarshal

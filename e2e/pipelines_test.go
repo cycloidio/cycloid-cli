@@ -95,7 +95,6 @@ func TestPipelines(t *testing.T) {
 			"--env", "test",
 			"--vars", "/tmp/test_cli-pp-vars",
 			"--pipeline", "/tmp/test_cli-pp",
-			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
 		})
 
 		assert.Nil(t, cmdErr)
