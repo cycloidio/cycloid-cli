@@ -39,7 +39,7 @@ To launch the e2e tests, locally you should:
 
     2. ```API_LICENCE_KEY```: you can find the e2e license to use in the cycloid console. The name can be retrieved on the [pipeline variables file](https://github.com/cycloidio/cycloid-stacks/blob/config/cycloid-cli/pipeline/staging/variables.yaml#L28) in the config repository of the cli pipeline of staging.
 
-4. Then all you need to do is launch ```make local-ci-test```, which will launch a local BE server using fake generated data and then launch the e2e tests using the following variables, as required and defined in [e2e/e2e.go](e2e/e2e.go):
+4. Then all you need to do is launch ```make local-e2e-test```, which will launch a local BE server using fake generated data and then launch the e2e tests using the following variables, as required and defined in [e2e/e2e.go](e2e/e2e.go):
   
     - **CY_API_URL** : corresponding to the BE API URL. Set by default has `http://172.42.0.3:3001`
 
