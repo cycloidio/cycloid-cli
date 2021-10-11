@@ -60,12 +60,21 @@ format_version () {
 # So we only expect to find and take the n-1 version
 find_version_below () {
   api_version=$(format_version $1)
+
   for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 5 --silent "https://api.github.com/repos/cycloidio/cycloid-cli/releases" | jq -r '.[] | .name'); do
     cli_version=$(format_version $cli_release)
-    # Ignoring the dev version
+    # Ignoring the dev release from github
     if [[ "$cli_version" == "0.0-dev" ]]; then
       continue
     fi
+
+    # If the API version format does not match release version like "1.0.81" (eg local dev run provide the short commit ID as version).
+    # Use the latest CLI version found
+    if ! [[ "$api_version" =~ ^[0-9]+\..+$ ]]; then
+      echo $cli_release
+      return 0
+    fi
+
 
     # Take the first CLI version lower than the API version
     # ret 1 means >
@@ -92,7 +101,7 @@ fi
 CY_API_URL=${CY_API_URL%/}
 
 # Get Cycloid API version
-export CY_VERSION=$(curl --fail --retry-all-errors --retry-delay 2 --retry 5 -s "${CY_API_URL}/version" | jq -r .data.version)
+export CY_VERSION=$(curl --fail -k --retry-all-errors --retry-delay 2 --retry 5 -s "${CY_API_URL}/version" | jq -r .data.version)
 
 if [[ -z "$CY_VERSION" ]]; then
   echo "Error: Unable to get Cycloid API version on ${CY_API_URL}/version" >&2
@@ -112,15 +121,19 @@ if ! [[ -f "${CY_BINARY}" ]]; then
     rm -f "${CY_BINARY}"
   fi
 
-  # In case of 404, download RC CLI version
-  if [ $STATUS == 8 ]; then
+  # In case of error, download RC CLI version
+  if [ $STATUS != 0 ]; then
     echo "Warning: Unable to download CLI version ${CY_VERSION}. Fallback to RC version" >&2
     CY_BINARY="${CY_BINARIES_PATH}/cy-${CY_VERSION}-rc"
-    CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/cy"
-    wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
-    STATUS=$?
-    if [ $STATUS != 0 ]; then
-      rm -f "${CY_BINARY}"
+    if [[ -f "${CY_BINARY}" ]]; then
+        STATUS=0
+    else
+        CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/cy"
+        wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
+        STATUS=$?
+        if [ $STATUS != 0 ]; then
+          rm -f "${CY_BINARY}"
+        fi
     fi
   fi
 
@@ -130,11 +143,15 @@ if ! [[ -f "${CY_BINARY}" ]]; then
     echo "Warning: Unable to download CLI version ${CY_VERSION}-rc. Fallback to the closest n-1 version ${CY_LOWER_VERSION}" >&2
     # Removing the v prefix as we don't let it in the binary name
     CY_BINARY="${CY_BINARIES_PATH}/cy-$(echo $CY_LOWER_VERSION | sed 's/^v//')"
-    CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/${CY_LOWER_VERSION}/cy"
-    wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
-    STATUS=$?
-    if [ $STATUS != 0 ]; then
-      rm -f "${CY_BINARY}"
+    if [[ -f "${CY_BINARY}" ]]; then
+        STATUS=0
+    else
+        CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/${CY_LOWER_VERSION}/cy"
+        wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
+        STATUS=$?
+        if [ $STATUS != 0 ]; then
+          rm -f "${CY_BINARY}"
+        fi
     fi
   fi
 
