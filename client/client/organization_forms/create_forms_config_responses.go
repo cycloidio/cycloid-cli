@@ -106,6 +106,10 @@ func NewCreateFormsConfigForbidden() *CreateFormsConfigForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type CreateFormsConfigForbidden struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -118,6 +122,13 @@ func (o *CreateFormsConfigForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateFormsConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,6 +150,10 @@ func NewCreateFormsConfigNotFound() *CreateFormsConfigNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type CreateFormsConfigNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -151,6 +166,13 @@ func (o *CreateFormsConfigNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateFormsConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,6 +194,10 @@ func NewCreateFormsConfigUnprocessableEntity() *CreateFormsConfigUnprocessableEn
 All the custom errors that are generated from the Cycloid API
 */
 type CreateFormsConfigUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -184,6 +210,13 @@ func (o *CreateFormsConfigUnprocessableEntity) GetPayload() *models.ErrorPayload
 }
 
 func (o *CreateFormsConfigUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -209,6 +242,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type CreateFormsConfigDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -226,6 +263,13 @@ func (o *CreateFormsConfigDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *CreateFormsConfigDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

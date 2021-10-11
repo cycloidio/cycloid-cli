@@ -9,7 +9,9 @@ import (
 	"fmt"
 	"io"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -85,6 +87,10 @@ func NewUnpausePipelineForbidden() *UnpausePipelineForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UnpausePipelineForbidden struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -97,6 +103,13 @@ func (o *UnpausePipelineForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UnpausePipelineForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -118,6 +131,10 @@ func NewUnpausePipelineNotFound() *UnpausePipelineNotFound {
 The response sent when any of the entities present in the path is not found.
 */
 type UnpausePipelineNotFound struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -130,6 +147,13 @@ func (o *UnpausePipelineNotFound) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UnpausePipelineNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -155,6 +179,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type UnpausePipelineDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -172,6 +200,13 @@ func (o *UnpausePipelineDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *UnpausePipelineDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

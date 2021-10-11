@@ -101,6 +101,10 @@ func NewGetServiceCatalogSourcesForbidden() *GetServiceCatalogSourcesForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetServiceCatalogSourcesForbidden struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -113,6 +117,13 @@ func (o *GetServiceCatalogSourcesForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetServiceCatalogSourcesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -134,6 +145,10 @@ func NewGetServiceCatalogSourcesUnprocessableEntity() *GetServiceCatalogSourcesU
 All the custom errors that are generated from the Cycloid API
 */
 type GetServiceCatalogSourcesUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -146,6 +161,13 @@ func (o *GetServiceCatalogSourcesUnprocessableEntity) GetPayload() *models.Error
 }
 
 func (o *GetServiceCatalogSourcesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -171,6 +193,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetServiceCatalogSourcesDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -188,6 +214,13 @@ func (o *GetServiceCatalogSourcesDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetServiceCatalogSourcesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

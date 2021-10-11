@@ -124,6 +124,13 @@ func unmarshalExternalBackendConfiguration(data []byte, consumer runtime.Consume
 		}
 		return &result, nil
 
+	case "GCPCostStorage":
+		var result GCPCostStorage
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
 	case "GCPRemoteTFState":
 		var result GCPRemoteTFState
 		if err := consumer.Consume(buf2, &result); err != nil {

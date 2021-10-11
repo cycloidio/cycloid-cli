@@ -365,6 +365,40 @@ func (a *Client) RenamePipeline(params *RenamePipelineParams, authInfo runtime.C
 }
 
 /*
+SyncedPipeline Will check if the pipeline from the database and the one specified in the stack are synced or not
+*/
+func (a *Client) SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.ClientAuthInfoWriter) (*SyncedPipelineOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSyncedPipelineParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "syncedPipeline",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &SyncedPipelineReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*SyncedPipelineOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*SyncedPipelineDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 UnpausePipeline Unpause a pipeline
 */
 func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime.ClientAuthInfoWriter) (*UnpausePipelineNoContent, error) {

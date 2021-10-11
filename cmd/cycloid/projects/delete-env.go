@@ -17,7 +17,7 @@ func NewDeleteEnvCommand() *cobra.Command {
 		Short: "delete an environment within a project",
 		Example: `
 	# delete env 'my-env' in 'my-project'
-	cy --org my-org project --project my-project --env my-env
+	cy --org my-org project delete-env --project my-project --env my-env
 `,
 		RunE:    deleteEnv,
 		PreRunE: internal.CheckAPIAndCLIVersion,

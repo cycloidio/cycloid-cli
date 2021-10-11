@@ -45,7 +45,7 @@ type NewExternalBackend struct {
 
 	// purpose
 	// Required: true
-	// Enum: [events logs remote_tfstate]
+	// Enum: [events logs remote_tfstate cost_explorer]
 	Purpose *string `json:"purpose"`
 }
 
@@ -260,7 +260,7 @@ var newExternalBackendTypePurposePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["events","logs","remote_tfstate"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["events","logs","remote_tfstate","cost_explorer"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -278,6 +278,9 @@ const (
 
 	// NewExternalBackendPurposeRemoteTfstate captures enum value "remote_tfstate"
 	NewExternalBackendPurposeRemoteTfstate string = "remote_tfstate"
+
+	// NewExternalBackendPurposeCostExplorer captures enum value "cost_explorer"
+	NewExternalBackendPurposeCostExplorer string = "cost_explorer"
 )
 
 // prop value enum

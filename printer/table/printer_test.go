@@ -53,8 +53,8 @@ value a	value b	abc
 			}
 		)
 
-		exp := fmt.Sprintf(`A                    
-%s	
+		exp := fmt.Sprintf(`A                         
+%s 
 `, exptNow)
 		err := tab.Print(&obj, printer.Options{}, &b)
 		require.NoError(t, err)

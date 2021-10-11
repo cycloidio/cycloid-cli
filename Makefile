@@ -8,10 +8,9 @@ endif
 
 SHELL      := /bin/sh
 
-REPO_PATH            := github.com/cycloidio/cycloid-cli
-CY_API_URL           ?= http://127.0.0.1:3001
-CY_TEST_GIT_CR_URL   ?= git@git-server:/git-server/repos/test-psc
+REPO_PATH  := github.com/cycloidio/cycloid-cli
 
+# IMAGE BUILD
 BINARY       ?= cy
 # VERSION example v1.0.47
 VERSION      ?= $(shell cat client/version)
@@ -22,13 +21,14 @@ BUILD_DATE   ?= $(shell date --utc -Iseconds)
 
 # GO
 # Setup the -ldflags build option for go here, interpolate the variable values
-GO_LDFLAGS         ?= -ldflags \
+GO_LDFLAGS ?= -ldflags \
 	"-X $(REPO_PATH)/internal/version.Version=$(VERSION)\
 	 -X $(REPO_PATH)/internal/version.Revision=$(REVISION)\
 	 -X $(REPO_PATH)/internal/version.Branch=$(BRANCH)\
 	 -X $(REPO_PATH)/internal/version.BuildOrigin=$(BUILD_ORIGIN)\
 	 -X $(REPO_PATH)/internal/version.BuildDate=$(BUILD_DATE)"
 
+# SWAGGER 
 SWAGGER_FILE ?= "gen-swagger/swagger.yml"
 SWAGGER_GENERATE = rm -rf ./client; \
 	mkdir ./client; \
@@ -60,6 +60,23 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--tags="Service catalogs" \
 		--tags="User" \
 		--tags="Cost Estimation"
+
+# E2E tests
+CY_API_URL         ?= http://127.0.0.1:3001
+# Env list specified in file /e2e/e2e.go
+CY_TEST_GIT_CR_URL ?= git@git-server:/git-server/repos/test-psc
+	
+# Local E2E tests
+# Note! Requires access to the private cycloid BE, only acessible within the organisation
+# AWS - ECR login 
+AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws) 
+AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws) 
+AWS_DEFAULT_REGION    ?= eu-west-1
+AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
+# Local BE
+LOCAL_BE_GIT_PATH ?= ../youdeploy-http-api
+YD_API_TAG        ?= staging
+API_LICENCE_KEY   ?= (api-e2e-lincese-key)
 
 .PHONY: help
 help: ## Show this help
@@ -94,3 +111,31 @@ generate-client: ## Generate client from latest swagger file
 	echo "git add client" && \
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 	@rm -rf ./gen-swagger
+
+.PHONY: ecr-connect
+ecr-connect: ## Login to ecr, requires aws cli installed
+	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/youdeploy-http-api
+
+.PHONY: start-local-be
+start-local-be: ## Starts local BE instance. Note! Only for cycloid developers
+	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
+	@echo "Starting Local BE..."
+	@echo "Generating fake data to be used in the tests..."
+	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
+	docker-compose -f docker-compose.yml -f docker-compose.cli.yml up youdeploy-init > /dev/null 2>&1
+	@echo "Running BE server with the fake data generated..."
+	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
+	docker-compose -f docker-compose.yml -f docker-compose.cli.yml up -d youdeploy-api > /dev/null 2>&1
+
+.PHONY: local-e2e-test
+local-e2e-test: ## Launches local e2e tests. Note! Only for cycloid developers
+	@if [ -z "$(shell curl -I --connect-timeout 2 "172.42.0.3:3001" 2>&1 | grep -w "500")" ]; then make start-local-be; fi;
+	@echo "Local BE is up!"
+	@echo "Running Local e2e tests!"
+	@make test CY_TEST_ROOT_API_KEY=$(shell cat ${LOCAL_BE_GIT_PATH}/API_KEY)
+
+.PHONY: delete-local-be
+delete-local-be: ## Creates local BE instance and starts e2e tests. Note! Only for cycloid developers
+	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
+	@echo "Deleting local BE instances !"
+	@cd $(LOCAL_BE_GIT_PATH) && docker-compose down -v --remove-orphans

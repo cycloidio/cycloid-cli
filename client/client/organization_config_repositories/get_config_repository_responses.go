@@ -100,6 +100,10 @@ func NewGetConfigRepositoryForbidden() *GetConfigRepositoryForbidden {
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetConfigRepositoryForbidden struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -112,6 +116,13 @@ func (o *GetConfigRepositoryForbidden) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetConfigRepositoryForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -133,6 +144,10 @@ func NewGetConfigRepositoryUnprocessableEntity() *GetConfigRepositoryUnprocessab
 All the custom errors that are generated from the Cycloid API
 */
 type GetConfigRepositoryUnprocessableEntity struct {
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -145,6 +160,13 @@ func (o *GetConfigRepositoryUnprocessableEntity) GetPayload() *models.ErrorPaylo
 }
 
 func (o *GetConfigRepositoryUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -170,6 +192,10 @@ The response sent when an unexpected error happened, as known as an internal ser
 type GetConfigRepositoryDefault struct {
 	_statusCode int
 
+	/*The length of the response body in octets (8-bit bytes).
+	 */
+	ContentLength uint64
+
 	Payload *models.ErrorPayload
 }
 
@@ -187,6 +213,13 @@ func (o *GetConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
 }
 
 func (o *GetConfigRepositoryDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
