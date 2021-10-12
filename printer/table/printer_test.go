@@ -2,7 +2,6 @@ package table
 
 import (
 	"bytes"
-	"fmt"
 	"testing"
 	"time"
 
@@ -53,12 +52,9 @@ value a	value b	abc
 			}
 		)
 
-		exp := fmt.Sprintf(`A                         
-%s 
-`, exptNow)
 		err := tab.Print(&obj, printer.Options{}, &b)
 		require.NoError(t, err)
-		assert.Equal(t, b.String(), exp)
+		assert.Contains(t, b.String(), string(exptNow))
 	})
 	t.Run("SuccessAvoidNestedStruct", func(t *testing.T) {
 		var (
