@@ -60,7 +60,7 @@ func TestPipelines(t *testing.T) {
 			"create",
 			"--name", "pipeline-test",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy",  CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
 			"--config-repo", "project-config",
 			"--env", "test",
 			"--usecase", "default",
@@ -95,7 +95,6 @@ func TestPipelines(t *testing.T) {
 			"--env", "test",
 			"--vars", "/tmp/test_cli-pp-vars",
 			"--pipeline", "/tmp/test_cli-pp",
-			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
 		})
 
 		assert.Nil(t, cmdErr)
@@ -136,6 +135,20 @@ func TestPipelines(t *testing.T) {
 			"--org", CY_TEST_ROOT_ORG,
 			"pipeline",
 			"list",
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Contains(t, cmdOut, "name\":\"pipeline-test-test")
+	})
+
+	t.Run("SuccessPipelinesGet", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"pipeline",
+			"get",
+			"--project", "pipeline-test",
+			"--env", "test",
 		})
 
 		assert.Nil(t, cmdErr)

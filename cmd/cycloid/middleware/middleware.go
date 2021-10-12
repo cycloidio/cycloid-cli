@@ -16,6 +16,7 @@ type Middleware interface {
 	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
 	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error)
 	UpdateCatalogRepository(org, name, url, branch, catalogRepo, cred string) (*models.ServiceCatalogSource, error)
+	GetStackConfig(org, ref string) (interface{}, error)
 
 	CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
 	DeleteConfigRepository(org, configRepo string) error
@@ -65,6 +66,7 @@ type Middleware interface {
 	UnpausePipeline(org string, project string, env string) error
 	UpdatePipeline(org string, project string, env string, pipeline string, variables string) (*models.Pipeline, error)
 	ListPipelines(org string) ([]*models.Pipeline, error)
+	GetPipeline(org, project, env string) (*models.Pipeline, error)
 
 	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error)
 	DeleteProjectEnv(org, project, env string) error

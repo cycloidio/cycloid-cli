@@ -12,6 +12,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -146,7 +147,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 	variables := string(rawVars)
 
-	_, err = m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase)
+	newPP, err := m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase)
 	err = printer.SmartPrint(p, nil, err, "unable to create pipeline", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
 		return err
@@ -155,9 +156,16 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	//
 	// PUSH CONFIG If project creation succeeded we push the config files
 	//
-	if len(configs) > 0 {
+	// Pipeline vars file
+	crVarsPath, err := pipelines.GetPipelineVarsPath(m, org, project, *newPP.UseCase)
+	if err != nil {
+		printer.SmartPrint(p, nil, err, "unable to get pipeline variables destination path", printer.Options{}, cmd.OutOrStdout())
+	}
+	cfs := make(map[string]strfmt.Base64)
+	cfs[crVarsPath] = rawVars
 
-		cfs := make(map[string]strfmt.Base64)
+	// Additionals config files
+	if len(configs) > 0 {
 
 		for fp, dest := range configs {
 			var c strfmt.Base64
@@ -167,12 +175,12 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			}
 			cfs[dest] = c
 		}
+	}
 
-		err = m.PushConfig(org, project, env, cfs)
-		err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
-		if err != nil {
-			return err
-		}
+	err = m.PushConfig(org, project, env, cfs)
+	err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return err
 	}
 
 	//

@@ -10,6 +10,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -125,9 +126,19 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if len(configs) > 0 {
-		cfs := make(map[string]strfmt.Base64)
+	//
+	// PUSH CONFIG If project creation succeeded we push the config files
+	//
+	// Pipeline vars file
+	crVarsPath, err := pipelines.GetPipelineVarsPath(m, org, *project.Canonical, usecase)
+	if err != nil {
+		printer.SmartPrint(p, nil, err, "unable to get pipeline variables destination path", printer.Options{}, cmd.OutOrStdout())
+	}
+	cfs := make(map[string]strfmt.Base64)
+	cfs[crVarsPath] = rawVars
 
+	// Additionals config files
+	if len(configs) > 0 {
 		for fp, dest := range configs {
 			var c strfmt.Base64
 			c, err = ioutil.ReadFile(fp)
@@ -136,12 +147,12 @@ func create(cmd *cobra.Command, args []string) error {
 			}
 			cfs[dest] = c
 		}
+	}
 
-		err = m.PushConfig(org, *project.Canonical, env, cfs)
-		err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
-		if err != nil {
-			return err
-		}
+	err = m.PushConfig(org, *project.Canonical, env, cfs)
+	err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return err
 	}
 
 	return printer.SmartPrint(p, project, err, "", printer.Options{}, cmd.OutOrStdout())
