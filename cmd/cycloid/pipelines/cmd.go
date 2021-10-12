@@ -30,6 +30,7 @@ func NewCommands() *cobra.Command {
 		NewGetCommand(),
 		NewClearTaskCacheCommand(),
 		NewListCommand(),
+		NewGetCommand(),
 		NewPauseJobCommand())
 
 	return cmd
