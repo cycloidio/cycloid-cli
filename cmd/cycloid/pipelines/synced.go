@@ -11,16 +11,18 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewGetCommand() *cobra.Command {
+func NewSyncedCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:    "get",
+		Use:    "synced",
 		Hidden: true,
-		Short:  "get a pipeline",
+		Short:  "Check if a pipeline is up-to-date",
 		Example: `
-	# get a pipeline in 'my-org'
-	cy --org my-org pipeline get --project my-project --env env
+	# Check if a the running pipeline is synced with the template in the stack
+	cy --org my-org pipeline synced --project my-project --env env
+
+	# Parse the result in a script: | jq -r '[.[]] | all(. == null)'
 `, PreRunE: internal.CheckAPIAndCLIVersion,
-		RunE: get,
+		RunE: synced,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
@@ -31,7 +33,7 @@ func NewGetCommand() *cobra.Command {
 	return cmd
 }
 
-func get(cmd *cobra.Command, args []string) error {
+func synced(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -58,6 +60,6 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	pp, err := m.GetPipeline(org, project, env)
+	pp, err := m.SyncedPipeline(org, project, env)
 	return printer.SmartPrint(p, pp, err, "unable to get pipeline", printer.Options{}, cmd.OutOrStdout())
 }
