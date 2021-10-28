@@ -257,4 +257,21 @@ func TestPipelines(t *testing.T) {
 		assert.Nil(t, cmdErr)
 		require.Equal(t, "", cmdOut)
 	})
+
+	t.Run("SuccessPipelinesSynced", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"pipeline",
+			"synced",
+			"--project", "pipeline-test",
+			"--env", "test",
+		})
+
+		assert.Nil(t, cmdErr)
+		// Note: we expect no diff because the pipeline from helpers.go is the same as the dummy-stack.
+		// This mean if someone change the code from the dummy stack, this test could fail because the helper
+		// pipeline will differ from the one in the dummy stack
+		require.Contains(t, cmdOut, "jobs\":null")
+	})
 }
