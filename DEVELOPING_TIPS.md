@@ -37,7 +37,7 @@ To launch the e2e tests, locally you should:
 3. To run the BE infra we need to change the following variables in the Makefile:
     1. ```YD_API_TAG```: set by default has ```staging``` in the Makefile, so no need to change it. However, you can change it to a specific version, if required. You can check the available versions in the backend repository or pipeline and as well on the AWS ECR directly. Tip: use the following command to list the available images : ```aws ecr list-images --repository-name youdeploy-http-api``` 
 
-    2. ```API_LICENCE_KEY```: you can find the e2e license to use in the cycloid console. The name can be retrieved on the [pipeline variables file](https://github.com/cycloidio/cycloid-stacks/blob/config/cycloid-cli/pipeline/staging/variables.yaml#L28) in the config repository of the cli pipeline of staging.
+    2. **[/!\ Required]** ```API_LICENCE_KEY```: you can find the e2e license to use in the cycloid console. The name can be retrieved on the [pipeline variables file](https://github.com/cycloidio/cycloid-stacks/blob/config/cycloid-cli/pipeline/staging/variables.yaml#L28) in the config repository of the cli pipeline of staging.
 
 4. Then all you need to do is launch ```make local-e2e-test```, which will launch a local BE server using fake generated data and then launch the e2e tests using the following variables, as required and defined in [e2e/e2e.go](e2e/e2e.go):
   
