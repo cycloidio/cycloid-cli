@@ -352,3 +352,31 @@ func (m *middleware) GetPipeline(org, project, env string) (*models.Pipeline, er
 	d := p.Data
 	return d, err
 }
+
+func (m *middleware) SyncedPipeline(org, project, env string) (*models.PipelineDiffs, error) {
+
+	pipelineName := common.GetPipelineName(project, env)
+
+	params := organization_pipelines.NewSyncedPipelineParams()
+	params.SetOrganizationCanonical(org)
+	params.SetInpathPipelineName(pipelineName)
+
+	resp, err := m.api.OrganizationPipelines.SyncedPipeline(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, err
+	}
+
+	p := resp.GetPayload()
+	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return err
+	// }
+
+	d := p.Data
+	// In case of nil data, add an empty PipelineDiff model produce an homogen output
+	if d == nil {
+			d = &models.PipelineDiffs{}
+	}
+	return d, err
+}
