@@ -1,3 +1,8 @@
+## [v1.0.83] _2021-10-26_
+- **ADDED**
+  - Adding new pipeline synced command
+    ([PR #105](https://github.com/cycloidio/cycloid-cli/pull/111))
+
 ## [v1.0.82] _2021-10-04_
 - **ADDED**
   - Adding cycloid dev readme and local e2e make targets
