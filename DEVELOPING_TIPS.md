@@ -11,10 +11,39 @@ The cli pipeline is available in the [cycloid-stacks](https://github.com/cycloid
 
 To update the cli client you can either use either:
 
-- the **latest swagger version stored in the the [cycloid docs](https://docs.cycloid.io/api/swagger.yml)**. For that, you just need to run ```make generate-client```, which will run a docker local swagger,generate the new client version and then commit it to the cli git repo where it will be tested in the cli pipeline. </br>
+- the **latest swagger version stored in the the [cycloid docs](https://docs.cycloid.io/api/swagger.yml)**. For that, you just need to run ```make generate-client-from-docs```, which will run a docker local swagger,generate the new client version and then commit it to the cli git repo where it will be tested in the cli pipeline. </br>
 **Note!** After running the command you should validate that the e2e testing has been succefull and then if no issue has been found, you should edit the CHANGELOG.md to add the new version of swagger.
 
-- a **copied swagger file**, if you wish to use another version of the swagger file, you can create a folder called /gen-swagger and copy it inside. Once that's finished you can run ```make generate-local-client``` that will create the new client version files. After, you should change the client/version file with the corresponding BE version.</br> 
+- a **copied swagger file**, if you wish to use another version of the swagger file, you can create a folder called /gen-swagger and copy it inside. Once that's finished you can run ```make generate-client-from-local``` that will create the new client version files. After, you should change the client/version file with the corresponding BE version.</br> 
+
+## Add nem commands to the cli
+
+To add a new command you can start by verifying the api endpoint to implement in the [docs](https://docs.cycloid.io/api/index.html). And then you should:
+
+1. Define the method that implements the endpoint in ```cmd/middleware/<feature>.go```. </br>
+    
+    1. In this method you start by defining the set of params required for the endpoint as defined in ```client/client/<feature>/<method_parameters>.go``` </br> 
+    
+    2. Then, you call the api equivalent method and then return the reply.</br> **Note!** The method should always return error and depending on the method you may also be required to return an object. You can check the available object structs in the folder ```client/models```.
+    Here's some general logic: 
+        - delete methods -> return error only
+        - create/get methods -> return *models.object, error
+        - list methods -> return []*models.object, error</br> </br>
+
+
+2. Once you're method is defined you should add it to the middleware interface at ```cmd/middleware/middleware.go``` that implements the api endpoints.</br> 
+
+3. Now you need to define the cobra command at ```cmd/cycloid/<feature>/``` so that the method previously defined can be used in the cli. In this folder, you find the files: ```cmd.go``` where you define the available cobra commands for the feature, the ```common.go``` where you define the flag methods to associate with the cobra commands and then a set of files, one per command of the feature.
+
+    1. You should start by adding the type of command to the set of list of available commands in ```cmd.go```
+
+    2. Then create a new file on this folder, where you will specify the method that will return the cobra command that defines the cli command to implement with the flags possible to use. </br> **Note** You can define the flags as required or not for that you can use the methods specified in ```cmd/cycloid/common```
+
+    3. Then you define a method that will be run by this cobra command that will take as argument the multiple flags and pass them to the middleware interface method that you previsouly defined in step 1.
+
+4. To validate the created command you can build a local version of the cli using ```make build```and then use the generated binary to test the created commands. </br> **Tip!** Don't forget to login in the cli using ```./ci login --org cycloid-sandbox --api-key API_KEY```. You can generate a temporary key on the staging organisation of cycloid using the console.
+
+5. Finally, create the correspond e2e tests in ```e2e/<feature>_test.go``` and add a new entry on the changelog. To see how to launch tests locally you can check the CLI local testing section.
 
 
 ## CLI local testing 
@@ -41,11 +70,11 @@ To launch the e2e tests, locally you should:
 
 4. Then all you need to do is launch ```make local-e2e-test```, which will launch a local BE server using fake generated data and then launch the e2e tests using the following variables, as required and defined in [e2e/e2e.go](e2e/e2e.go):
   
-    - **CY_API_URL** : corresponding to the BE API URL. Set by default has `http://172.42.0.3:3001`
+    - **CY_API_URL** : corresponding to the BE API URL. You should change it in the Makefile to `http://172.42.0.3:3001`
 
     - **CY_TEST_ROOT_API_KEY** : the cycloid API_KEY generated in the BE repository. Set by default has `cat ${LOCAL_BE_GIT_PATH}/API_KEY)`
 
-    - **CY_TEST_GIT_CR_URL** : The local git server launched in the docker-compose. Set by default has `git@172.42.0.14:/git-server/repos/backend-test-config-repo.git`
+    - **CY_TEST_GIT_CR_URL** : The local git server launched in the docker-compose. You should change it in the Makefile to `git@172.42.0.14:/git-server/repos/backend-test-config-repo.git`
 
 5. To re-run the tests, you can just re-run the previous command has many times has you want.
 

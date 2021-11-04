@@ -8,7 +8,7 @@ Precompiled binaries for released versions are available in the [release](https:
 
 ## Getting started
 
-Before playing with the CLI, you will first need to authenticate yourself into the Cycloid API using an API key as described in our [official documentation](http://docs.cycloid.io/cli.md).
+Before playing with the CLI, you will first need to authenticate yourself into the Cycloid API using an API key as described in our [official documentation](https://docs.cycloid.io/open-source-software/cli.html).
 
 ```
 cy login --org my-org --api-key "<MY_API_KEY>"

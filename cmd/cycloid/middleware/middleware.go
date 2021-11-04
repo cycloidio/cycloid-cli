@@ -97,9 +97,14 @@ type Middleware interface {
 	// DeleteAPIKey will request API to delete a specified generated API key
 	DeleteAPIKey(org, canonical string) error
 
-	// ValidateInfraPolicies will validate the TF plan against
-	// OPA policies defined on the Cycloid server
+	// ValidateInfraPolicies will validate the TF plan against OPA policies defined on the Cycloid server
 	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error)
+	// CreateInfraPoliciy will create a new infraPolicy with the rego file suplied
+	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
+	DeleteInfraPolicy(org, policyCannonical string) error
+	ListInfraPolicies(org string) ([]*models.InfraPolicy, error)
+	GetInfraPolicy(org, infraPolicy string) (*models.InfraPolicy, error)
+	UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
 
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, error)
