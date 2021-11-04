@@ -11,6 +11,7 @@ fi
 export CY_API_URL="${CY_API_URL:-https://http-api.cycloid.io}"
 export CY_BINARIES_PATH="${CY_BINARIES_PATH:-/usr/local/bin}"
 
+export CY_WAIT_NETWORK="${CY_WAIT_NETWORK:-true}"
 
 # Compating version, this is used when there is no CLI matching your API version.
 # We compare your version and the one released to find the closest n-1 version
@@ -87,6 +88,58 @@ find_version_below () {
   return 2
 }
 
+# Look if the binary is present locally or try to download it 
+get_binary () {
+    # Download the binary if not present
+    export CY_BINARY="${CY_BINARY:-"${CY_BINARIES_PATH}/cy-${CY_VERSION}"}"
+    if [[ -f "${CY_BINARY}" ]]; then
+        return 0
+    fi
+
+    # Download the exact CLI version
+    CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/cy"
+    wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
+    STATUS=$?
+    if [ $STATUS != 0 ]; then
+      rm -f "${CY_BINARY}"
+    fi
+    
+    # In case of error, download RC CLI version
+    if [ $STATUS != 0 ]; then
+      echo "Warning: Unable to download CLI version ${CY_VERSION}. Fallback to RC version" >&2
+      export CY_BINARY="${CY_BINARIES_PATH}/cy-${CY_VERSION}-rc"
+      if [[ -f "${CY_BINARY}" ]]; then
+          STATUS=0
+      else
+          CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/cy"
+          wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
+          STATUS=$?
+          if [ $STATUS != 0 ]; then
+            rm -f "${CY_BINARY}"
+          fi
+      fi
+    fi
+    
+    # In case of error, fallback on latest lower version
+    if [ $STATUS != 0 ]; then
+      CY_LOWER_VERSION=$(find_version_below ${CY_VERSION})
+      echo "Warning: Unable to download CLI version ${CY_VERSION}-rc. Fallback to the closest n-1 version ${CY_LOWER_VERSION}" >&2
+      # Removing the v prefix as we don't let it in the binary name
+      export CY_BINARY="${CY_BINARIES_PATH}/cy-$(echo $CY_LOWER_VERSION | sed 's/^v//')"
+      if [[ -f "${CY_BINARY}" ]]; then
+          STATUS=0
+      else
+          CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/${CY_LOWER_VERSION}/cy"
+          wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
+          STATUS=$?
+          if [ $STATUS != 0 ]; then
+            rm -f "${CY_BINARY}"
+          fi
+      fi
+    fi
+    return $STATUS
+}
+
 # Ensure we have Cycloid directory created
 if ! [ -d "$CY_BINARIES_PATH" ]; then
   mkdir -p "$CY_BINARIES_PATH"
@@ -100,6 +153,11 @@ fi
 # Remove trailing /
 CY_API_URL=${CY_API_URL%/}
 
+# Wait for network access. This ensure in case of usage in a pipeline to ensure and wait in case network is not started.
+if [[ "$CY_WAIT_NETWORK" == "true" ]]; then
+    timeout 120 bash -c 'while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' https://api.github.com/repos/cycloidio/cycloid-cli/releases)" != "200" ]]; do sleep 3; done'
+fi
+
 # Get Cycloid API version
 export CY_VERSION=$(curl --fail -k --retry-all-errors --retry-delay 2 --retry 5 -s "${CY_API_URL}/version" | jq -r .data.version)
 
@@ -108,59 +166,22 @@ if [[ -z "$CY_VERSION" ]]; then
   exit 1
 fi
 
-# Download the binary if not present
-export CY_BINARY="${CY_BINARY:-"${CY_BINARIES_PATH}/cy-${CY_VERSION}"}"
-if ! [[ -f "${CY_BINARY}" ]]; then
-
-  # Download the exact CLI version
-  CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/cy"
-  wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
-  STATUS=$?
-
-  if [ $STATUS != 0 ]; then
-    rm -f "${CY_BINARY}"
-  fi
-
-  # In case of error, download RC CLI version
-  if [ $STATUS != 0 ]; then
-    echo "Warning: Unable to download CLI version ${CY_VERSION}. Fallback to RC version" >&2
-    CY_BINARY="${CY_BINARIES_PATH}/cy-${CY_VERSION}-rc"
-    if [[ -f "${CY_BINARY}" ]]; then
-        STATUS=0
-    else
-        CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/cy"
-        wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
-        STATUS=$?
-        if [ $STATUS != 0 ]; then
-          rm -f "${CY_BINARY}"
-        fi
+# Adding 3 retry to maximize changes when there is issue in CI tools
+for i in $(seq 1 3); do
+    get_binary
+    STATUS=$?
+    if [ $STATUS == 0 ]; then
+        break
     fi
-  fi
+done
 
-  # In case of error, fallback on latest lower version
-  if [ $STATUS != 0 ]; then
-    CY_LOWER_VERSION=$(find_version_below ${CY_VERSION})
-    echo "Warning: Unable to download CLI version ${CY_VERSION}-rc. Fallback to the closest n-1 version ${CY_LOWER_VERSION}" >&2
-    # Removing the v prefix as we don't let it in the binary name
-    CY_BINARY="${CY_BINARIES_PATH}/cy-$(echo $CY_LOWER_VERSION | sed 's/^v//')"
-    if [[ -f "${CY_BINARY}" ]]; then
-        STATUS=0
-    else
-        CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/${CY_LOWER_VERSION}/cy"
-        wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
-        STATUS=$?
-        if [ $STATUS != 0 ]; then
-          rm -f "${CY_BINARY}"
-        fi
-    fi
-  fi
-
-  if [ $STATUS != 0 ]; then
-    echo "Error: Unable to download Cycloid CLI from github ${CY_URL}" >&2
-    exit 1
-  fi
-  chmod +x "${CY_BINARY}"
+# If no binaries have been downloaded after 3 tries raise an error
+if [ $STATUS != 0 ]; then
+  echo "Error: Unable to download Cycloid CLI from github ${CY_URL}" >&2
+  exit 1
 fi
+
+chmod +x "${CY_BINARY}"
 
 # Run Cycloid CLI
 exec "${CY_BINARY}" "$@"
