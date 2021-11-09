@@ -17,6 +17,7 @@ import (
 )
 
 // SwiftRemoteTFState Representation of Swift remote tf state for external backend.
+// Must be matched with a credential of the "swift" type.
 //
 // swagger:model SwiftRemoteTFState
 type SwiftRemoteTFState struct {
@@ -31,7 +32,7 @@ type SwiftRemoteTFState struct {
 	// Required: true
 	Object *string `json:"object"`
 
-	// The Swift region were the resource exists
+	// The Swift region where the resource exists
 	//
 	// Required: true
 	Region *string `json:"region"`
@@ -73,7 +74,7 @@ func (m *SwiftRemoteTFState) UnmarshalJSON(raw []byte) error {
 		// Required: true
 		Object *string `json:"object"`
 
-		// The Swift region were the resource exists
+		// The Swift region where the resource exists
 		//
 		// Required: true
 		Region *string `json:"region"`
@@ -139,7 +140,7 @@ func (m SwiftRemoteTFState) MarshalJSON() ([]byte, error) {
 		// Required: true
 		Object *string `json:"object"`
 
-		// The Swift region were the resource exists
+		// The Swift region where the resource exists
 		//
 		// Required: true
 		Region *string `json:"region"`

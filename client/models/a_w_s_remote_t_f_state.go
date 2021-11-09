@@ -17,6 +17,7 @@ import (
 )
 
 // AWSRemoteTFState Representation of AWS remote tf state for external backend.
+// Must be matched with a credential of the "aws" type.
 //
 // swagger:model AWSRemoteTFState
 type AWSRemoteTFState struct {
@@ -35,7 +36,7 @@ type AWSRemoteTFState struct {
 	// Required: true
 	Key *string `json:"key"`
 
-	// The AWS region were the resource exists
+	// The AWS region where the resource exists
 	//
 	// Required: true
 	Region *string `json:"region"`
@@ -89,7 +90,7 @@ func (m *AWSRemoteTFState) UnmarshalJSON(raw []byte) error {
 		// Required: true
 		Key *string `json:"key"`
 
-		// The AWS region were the resource exists
+		// The AWS region where the resource exists
 		//
 		// Required: true
 		Region *string `json:"region"`
@@ -167,7 +168,7 @@ func (m AWSRemoteTFState) MarshalJSON() ([]byte, error) {
 		// Required: true
 		Key *string `json:"key"`
 
-		// The AWS region were the resource exists
+		// The AWS region where the resource exists
 		//
 		// Required: true
 		Region *string `json:"region"`

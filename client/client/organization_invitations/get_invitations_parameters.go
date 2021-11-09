@@ -23,7 +23,7 @@ import (
 func NewGetInvitationsParams() *GetInvitationsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetInvitationsParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetInvitationsParams() *GetInvitationsParams {
 func NewGetInvitationsParamsWithTimeout(timeout time.Duration) *GetInvitationsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetInvitationsParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetInvitationsParamsWithTimeout(timeout time.Duration) *GetInvitationsPa
 func NewGetInvitationsParamsWithContext(ctx context.Context) *GetInvitationsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetInvitationsParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetInvitationsParamsWithContext(ctx context.Context) *GetInvitationsPara
 func NewGetInvitationsParamsWithHTTPClient(client *http.Client) *GetInvitationsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetInvitationsParams{
 		PageIndex:  &pageIndexDefault,

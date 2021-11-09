@@ -23,7 +23,7 @@ import (
 func NewGetAPIKeysParams() *GetAPIKeysParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetAPIKeysParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetAPIKeysParams() *GetAPIKeysParams {
 func NewGetAPIKeysParamsWithTimeout(timeout time.Duration) *GetAPIKeysParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetAPIKeysParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetAPIKeysParamsWithTimeout(timeout time.Duration) *GetAPIKeysParams {
 func NewGetAPIKeysParamsWithContext(ctx context.Context) *GetAPIKeysParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetAPIKeysParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetAPIKeysParamsWithContext(ctx context.Context) *GetAPIKeysParams {
 func NewGetAPIKeysParamsWithHTTPClient(client *http.Client) *GetAPIKeysParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetAPIKeysParams{
 		PageIndex:  &pageIndexDefault,

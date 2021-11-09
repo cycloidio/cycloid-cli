@@ -23,7 +23,7 @@ import (
 func NewGetOrgsParams() *GetOrgsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgsParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetOrgsParams() *GetOrgsParams {
 func NewGetOrgsParamsWithTimeout(timeout time.Duration) *GetOrgsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgsParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetOrgsParamsWithTimeout(timeout time.Duration) *GetOrgsParams {
 func NewGetOrgsParamsWithContext(ctx context.Context) *GetOrgsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgsParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetOrgsParamsWithContext(ctx context.Context) *GetOrgsParams {
 func NewGetOrgsParamsWithHTTPClient(client *http.Client) *GetOrgsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgsParams{
 		PageIndex:  &pageIndexDefault,

@@ -23,7 +23,7 @@ import (
 func NewGetJobsParams() *GetJobsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetJobsParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetJobsParams() *GetJobsParams {
 func NewGetJobsParamsWithTimeout(timeout time.Duration) *GetJobsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetJobsParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetJobsParamsWithTimeout(timeout time.Duration) *GetJobsParams {
 func NewGetJobsParamsWithContext(ctx context.Context) *GetJobsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetJobsParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetJobsParamsWithContext(ctx context.Context) *GetJobsParams {
 func NewGetJobsParamsWithHTTPClient(client *http.Client) *GetJobsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetJobsParams{
 		PageIndex:  &pageIndexDefault,
