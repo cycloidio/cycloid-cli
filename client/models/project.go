@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -51,6 +52,10 @@ type Project struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
+	// The import process status.
+	// Enum: [succeeded failed importing]
+	ImportStatus string `json:"import_status,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 3
@@ -92,6 +97,10 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateImportStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -204,6 +213,52 @@ func (m *Project) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var projectTypeImportStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["succeeded","failed","importing"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		projectTypeImportStatusPropEnum = append(projectTypeImportStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// ProjectImportStatusSucceeded captures enum value "succeeded"
+	ProjectImportStatusSucceeded string = "succeeded"
+
+	// ProjectImportStatusFailed captures enum value "failed"
+	ProjectImportStatusFailed string = "failed"
+
+	// ProjectImportStatusImporting captures enum value "importing"
+	ProjectImportStatusImporting string = "importing"
+)
+
+// prop value enum
+func (m *Project) validateImportStatusEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, projectTypeImportStatusPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Project) validateImportStatus(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ImportStatus) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateImportStatusEnum("import_status", "body", m.ImportStatus); err != nil {
 		return err
 	}
 

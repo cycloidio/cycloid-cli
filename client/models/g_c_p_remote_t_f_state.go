@@ -17,6 +17,7 @@ import (
 )
 
 // GCPRemoteTFState Representation of GCP remote tf state for external backend.
+// Must be matched with a credential of the "gcp" type.
 //
 // swagger:model GCPRemoteTFState
 type GCPRemoteTFState struct {

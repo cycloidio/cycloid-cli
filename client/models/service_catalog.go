@@ -6,6 +6,7 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -51,6 +52,10 @@ type ServiceCatalog struct {
 	// image
 	// Format: uri
 	Image strfmt.URI `json:"image,omitempty"`
+
+	// The import process status.
+	// Enum: [succeeded failed importing]
+	ImportStatus string `json:"import_status,omitempty"`
 
 	// keywords
 	// Required: true
@@ -114,6 +119,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateImage(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateImportStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -248,6 +257,52 @@ func (m *ServiceCatalog) validateImage(formats strfmt.Registry) error {
 	}
 
 	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var serviceCatalogTypeImportStatusPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["succeeded","failed","importing"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		serviceCatalogTypeImportStatusPropEnum = append(serviceCatalogTypeImportStatusPropEnum, v)
+	}
+}
+
+const (
+
+	// ServiceCatalogImportStatusSucceeded captures enum value "succeeded"
+	ServiceCatalogImportStatusSucceeded string = "succeeded"
+
+	// ServiceCatalogImportStatusFailed captures enum value "failed"
+	ServiceCatalogImportStatusFailed string = "failed"
+
+	// ServiceCatalogImportStatusImporting captures enum value "importing"
+	ServiceCatalogImportStatusImporting string = "importing"
+)
+
+// prop value enum
+func (m *ServiceCatalog) validateImportStatusEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, serviceCatalogTypeImportStatusPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *ServiceCatalog) validateImportStatus(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ImportStatus) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateImportStatusEnum("import_status", "body", m.ImportStatus); err != nil {
 		return err
 	}
 

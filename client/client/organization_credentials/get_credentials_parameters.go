@@ -23,7 +23,7 @@ import (
 func NewGetCredentialsParams() *GetCredentialsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetCredentialsParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetCredentialsParams() *GetCredentialsParams {
 func NewGetCredentialsParamsWithTimeout(timeout time.Duration) *GetCredentialsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetCredentialsParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetCredentialsParamsWithTimeout(timeout time.Duration) *GetCredentialsPa
 func NewGetCredentialsParamsWithContext(ctx context.Context) *GetCredentialsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetCredentialsParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetCredentialsParamsWithContext(ctx context.Context) *GetCredentialsPara
 func NewGetCredentialsParamsWithHTTPClient(client *http.Client) *GetCredentialsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetCredentialsParams{
 		PageIndex:  &pageIndexDefault,

@@ -16,6 +16,7 @@ import (
 )
 
 // GCPCostStorage Representation of BigQuery external backend.
+// Must be matched with a credential of the "gcp" type.
 //
 // swagger:model GCPCostStorage
 type GCPCostStorage struct {

@@ -23,7 +23,7 @@ import (
 func NewGetWorkersParams() *GetWorkersParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetWorkersParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetWorkersParams() *GetWorkersParams {
 func NewGetWorkersParamsWithTimeout(timeout time.Duration) *GetWorkersParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetWorkersParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetWorkersParamsWithTimeout(timeout time.Duration) *GetWorkersParams {
 func NewGetWorkersParamsWithContext(ctx context.Context) *GetWorkersParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetWorkersParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetWorkersParamsWithContext(ctx context.Context) *GetWorkersParams {
 func NewGetWorkersParamsWithHTTPClient(client *http.Client) *GetWorkersParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetWorkersParams{
 		PageIndex:  &pageIndexDefault,

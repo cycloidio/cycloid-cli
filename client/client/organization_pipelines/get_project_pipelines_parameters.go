@@ -23,7 +23,7 @@ import (
 func NewGetProjectPipelinesParams() *GetProjectPipelinesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetProjectPipelinesParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetProjectPipelinesParams() *GetProjectPipelinesParams {
 func NewGetProjectPipelinesParamsWithTimeout(timeout time.Duration) *GetProjectPipelinesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetProjectPipelinesParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetProjectPipelinesParamsWithTimeout(timeout time.Duration) *GetProjectP
 func NewGetProjectPipelinesParamsWithContext(ctx context.Context) *GetProjectPipelinesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetProjectPipelinesParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetProjectPipelinesParamsWithContext(ctx context.Context) *GetProjectPip
 func NewGetProjectPipelinesParamsWithHTTPClient(client *http.Client) *GetProjectPipelinesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetProjectPipelinesParams{
 		PageIndex:  &pageIndexDefault,

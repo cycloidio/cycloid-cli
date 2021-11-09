@@ -23,7 +23,7 @@ import (
 func NewGetOrgMembersParams() *GetOrgMembersParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgMembersParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetOrgMembersParams() *GetOrgMembersParams {
 func NewGetOrgMembersParamsWithTimeout(timeout time.Duration) *GetOrgMembersParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgMembersParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetOrgMembersParamsWithTimeout(timeout time.Duration) *GetOrgMembersPara
 func NewGetOrgMembersParamsWithContext(ctx context.Context) *GetOrgMembersParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgMembersParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetOrgMembersParamsWithContext(ctx context.Context) *GetOrgMembersParams
 func NewGetOrgMembersParamsWithHTTPClient(client *http.Client) *GetOrgMembersParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgMembersParams{
 		PageIndex:  &pageIndexDefault,

@@ -23,7 +23,7 @@ import (
 func NewGetInfraPoliciesParams() *GetInfraPoliciesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetInfraPoliciesParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetInfraPoliciesParams() *GetInfraPoliciesParams {
 func NewGetInfraPoliciesParamsWithTimeout(timeout time.Duration) *GetInfraPoliciesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetInfraPoliciesParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetInfraPoliciesParamsWithTimeout(timeout time.Duration) *GetInfraPolici
 func NewGetInfraPoliciesParamsWithContext(ctx context.Context) *GetInfraPoliciesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetInfraPoliciesParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetInfraPoliciesParamsWithContext(ctx context.Context) *GetInfraPolicies
 func NewGetInfraPoliciesParamsWithHTTPClient(client *http.Client) *GetInfraPoliciesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetInfraPoliciesParams{
 		PageIndex:  &pageIndexDefault,

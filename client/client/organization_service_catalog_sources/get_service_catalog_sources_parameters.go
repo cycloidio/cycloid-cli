@@ -23,7 +23,7 @@ import (
 func NewGetServiceCatalogSourcesParams() *GetServiceCatalogSourcesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetServiceCatalogSourcesParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetServiceCatalogSourcesParams() *GetServiceCatalogSourcesParams {
 func NewGetServiceCatalogSourcesParamsWithTimeout(timeout time.Duration) *GetServiceCatalogSourcesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetServiceCatalogSourcesParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetServiceCatalogSourcesParamsWithTimeout(timeout time.Duration) *GetSer
 func NewGetServiceCatalogSourcesParamsWithContext(ctx context.Context) *GetServiceCatalogSourcesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetServiceCatalogSourcesParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetServiceCatalogSourcesParamsWithContext(ctx context.Context) *GetServi
 func NewGetServiceCatalogSourcesParamsWithHTTPClient(client *http.Client) *GetServiceCatalogSourcesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetServiceCatalogSourcesParams{
 		PageIndex:  &pageIndexDefault,

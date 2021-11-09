@@ -23,7 +23,7 @@ import (
 func NewGetConfigRepositoryParams() *GetConfigRepositoryParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetConfigRepositoryParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetConfigRepositoryParams() *GetConfigRepositoryParams {
 func NewGetConfigRepositoryParamsWithTimeout(timeout time.Duration) *GetConfigRepositoryParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetConfigRepositoryParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetConfigRepositoryParamsWithTimeout(timeout time.Duration) *GetConfigRe
 func NewGetConfigRepositoryParamsWithContext(ctx context.Context) *GetConfigRepositoryParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetConfigRepositoryParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetConfigRepositoryParamsWithContext(ctx context.Context) *GetConfigRepo
 func NewGetConfigRepositoryParamsWithHTTPClient(client *http.Client) *GetConfigRepositoryParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetConfigRepositoryParams{
 		PageIndex:  &pageIndexDefault,
