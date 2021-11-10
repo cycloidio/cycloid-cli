@@ -29,10 +29,8 @@ GO_LDFLAGS ?= -ldflags \
 	 -X $(REPO_PATH)/internal/version.BuildDate=$(BUILD_DATE)"
 
 # SWAGGER 
-SWAGGER_FILE ?= "gen-swagger/swagger.yml"
-SWAGGER_GENERATE = rm -rf ./client; \
-	mkdir ./client; \
-	docker-compose run swagger generate client \
+SWAGGER_FILE ?= "swagger.yml"
+SWAGGER_GENERATE = swagger generate client \
 		--spec=$(SWAGGER_FILE) \
 		--default-produces="application/vnd.cycloid.io.v1+json" \
 		--target=./client \
@@ -60,6 +58,10 @@ SWAGGER_GENERATE = rm -rf ./client; \
 		--tags="Service catalogs" \
 		--tags="User" \
 		--tags="Cost Estimation"
+
+SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
+	mkdir ./client; \
+	docker-compose run $(SWAGGER_COMMAND)
 
 # E2E tests
 CY_API_URL         ?= http://127.0.0.1:3001
@@ -93,24 +95,33 @@ test: ## Run end to end tests
 	@if [ -z "$$CY_TEST_ROOT_API_KEY" ]; then echo "Unable to read API KEY from \$$CY_TEST_ROOT_API_KEY"; exit 1; fi; \
 	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" go test ./... --tags e2e
 
-.PHONY: generate-local-client
-generate-local-client: ## Generate client from local swagger file SWAGGER_FILE path
-	$(SWAGGER_GENERATE) && \
-	echo 'v0.0-dev' > client/version
+.PHONY: delete-old-client
+reset-old-client: ## Resets old client folder
+	rm -rf ./client; \
+	mkdir ./client
 
 .PHONY: generate-client
-generate-client: ## Generate client from latest swagger file
-	@mkdir -p ./gen-swagger
-	@wget -O ./gen-swagger/swagger.yml https://docs.cycloid.io/api/swagger.yml
-	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < ./gen-swagger/swagger.yml); \
-	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
+generate-client: ## Generate client from file at SWAGGER_FILE path
 	echo "Creating swagger files"; \
-	$(SWAGGER_GENERATE) && \
-	echo $$SWAGGER_VERSION > client/version && \
+	rm -rf ./client; \
+	mkdir ./client;	
+	$(SWAGGER_GENERATE) && rm swagger.yml
+
+.PHONY: generate-client-from-local
+generate-client-from-local: reset-old-client ## Generates client using docker and local swagger (version -> v0.0-dev)
+	docker-compose run $(SWAGGER_GENERATE)
+	echo 'v0.0-dev' > client/version
+
+.PHONY: generate-client-from-docs
+generate-client-from-docs: reset-old-client ## Generates client using docker and swagger from docs (version -> latest-api)
+	@wget https://docs.cycloid.io/api/swagger.yml
+	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
+	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
+	docker-compose run $(SWAGGER_GENERATE) && \
+	echo $$SWAGGER_VERSION > client/version; \
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
-	@rm -rf ./gen-swagger
 
 .PHONY: ecr-connect
 ecr-connect: ## Login to ecr, requires aws cli installed
