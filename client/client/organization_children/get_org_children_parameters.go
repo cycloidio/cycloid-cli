@@ -23,7 +23,7 @@ import (
 func NewGetOrgChildrenParams() *GetOrgChildrenParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgChildrenParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetOrgChildrenParams() *GetOrgChildrenParams {
 func NewGetOrgChildrenParamsWithTimeout(timeout time.Duration) *GetOrgChildrenParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgChildrenParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetOrgChildrenParamsWithTimeout(timeout time.Duration) *GetOrgChildrenPa
 func NewGetOrgChildrenParamsWithContext(ctx context.Context) *GetOrgChildrenParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgChildrenParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetOrgChildrenParamsWithContext(ctx context.Context) *GetOrgChildrenPara
 func NewGetOrgChildrenParamsWithHTTPClient(client *http.Client) *GetOrgChildrenParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgChildrenParams{
 		PageIndex:  &pageIndexDefault,

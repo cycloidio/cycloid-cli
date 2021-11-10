@@ -17,6 +17,7 @@ import (
 )
 
 // AzureRemoteTFState Representation of azure remote tf state for external backend.
+// Must be matched with a credential of the "azure_storage" type.
 //
 // swagger:model AzureRemoteTFState
 type AzureRemoteTFState struct {
@@ -26,7 +27,7 @@ type AzureRemoteTFState struct {
 	// Required: true
 	Blob *string `json:"blob"`
 
-	// The Azure container were the resource exists
+	// The Azure container where the resource exists
 	//
 	// Required: true
 	Container *string `json:"container"`
@@ -55,7 +56,7 @@ func (m *AzureRemoteTFState) UnmarshalJSON(raw []byte) error {
 		// Required: true
 		Blob *string `json:"blob"`
 
-		// The Azure container were the resource exists
+		// The Azure container where the resource exists
 		//
 		// Required: true
 		Container *string `json:"container"`
@@ -108,7 +109,7 @@ func (m AzureRemoteTFState) MarshalJSON() ([]byte, error) {
 		// Required: true
 		Blob *string `json:"blob"`
 
-		// The Azure container were the resource exists
+		// The Azure container where the resource exists
 		//
 		// Required: true
 		Container *string `json:"container"`

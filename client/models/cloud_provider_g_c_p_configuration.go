@@ -16,35 +16,46 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// AWSCloudWatchLogs Representation of AWS cloud watch logs for external backend.
-// Must be matched with a credential of the "aws" type.
+// CloudProviderGCPConfiguration Representation of Google configuration
 //
-// swagger:model AWSCloudWatchLogs
-type AWSCloudWatchLogs struct {
+// swagger:model CloudProviderGCPConfiguration
+type CloudProviderGCPConfiguration struct {
 
-	// The AWS region where the resource exists
+	// The Google project where the resource exists
+	//
+	// Required: true
+	Project *string `json:"project"`
+
+	// The Google region where the resource exists
 	//
 	// Required: true
 	Region *string `json:"region"`
 }
 
-// Engine gets the engine of this subtype
-func (m *AWSCloudWatchLogs) Engine() string {
-	return "AWSCloudWatchLogs"
+// Type gets the type of this subtype
+func (m *CloudProviderGCPConfiguration) Type() string {
+	return "CloudProviderGCPConfiguration"
 }
 
-// SetEngine sets the engine of this subtype
-func (m *AWSCloudWatchLogs) SetEngine(val string) {
+// SetType sets the type of this subtype
+func (m *CloudProviderGCPConfiguration) SetType(val string) {
 
 }
+
+// Project gets the project of this subtype
 
 // Region gets the region of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
-func (m *AWSCloudWatchLogs) UnmarshalJSON(raw []byte) error {
+func (m *CloudProviderGCPConfiguration) UnmarshalJSON(raw []byte) error {
 	var data struct {
 
-		// The AWS region where the resource exists
+		// The Google project where the resource exists
+		//
+		// Required: true
+		Project *string `json:"project"`
+
+		// The Google region where the resource exists
 		//
 		// Required: true
 		Region *string `json:"region"`
@@ -60,7 +71,7 @@ func (m *AWSCloudWatchLogs) UnmarshalJSON(raw []byte) error {
 	var base struct {
 		/* Just the base type fields. Used for unmashalling polymorphic types.*/
 
-		Engine string `json:"engine"`
+		Type string `json:"type"`
 	}
 	buf = bytes.NewBuffer(raw)
 	dec = json.NewDecoder(buf)
@@ -70,12 +81,14 @@ func (m *AWSCloudWatchLogs) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	var result AWSCloudWatchLogs
+	var result CloudProviderGCPConfiguration
 
-	if base.Engine != result.Engine() {
+	if base.Type != result.Type() {
 		/* Not the type we're looking for. */
-		return errors.New(422, "invalid engine value: %q", base.Engine)
+		return errors.New(422, "invalid type value: %q", base.Type)
 	}
+
+	result.Project = data.Project
 
 	result.Region = data.Region
 
@@ -85,16 +98,23 @@ func (m *AWSCloudWatchLogs) UnmarshalJSON(raw []byte) error {
 }
 
 // MarshalJSON marshals this object with a polymorphic type to a JSON structure
-func (m AWSCloudWatchLogs) MarshalJSON() ([]byte, error) {
+func (m CloudProviderGCPConfiguration) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
 
-		// The AWS region where the resource exists
+		// The Google project where the resource exists
+		//
+		// Required: true
+		Project *string `json:"project"`
+
+		// The Google region where the resource exists
 		//
 		// Required: true
 		Region *string `json:"region"`
 	}{
+
+		Project: m.Project,
 
 		Region: m.Region,
 	},
@@ -103,10 +123,10 @@ func (m AWSCloudWatchLogs) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	b2, err = json.Marshal(struct {
-		Engine string `json:"engine"`
+		Type string `json:"type"`
 	}{
 
-		Engine: m.Engine(),
+		Type: m.Type(),
 	},
 	)
 	if err != nil {
@@ -116,9 +136,13 @@ func (m AWSCloudWatchLogs) MarshalJSON() ([]byte, error) {
 	return swag.ConcatJSON(b1, b2, b3), nil
 }
 
-// Validate validates this a w s cloud watch logs
-func (m *AWSCloudWatchLogs) Validate(formats strfmt.Registry) error {
+// Validate validates this cloud provider g c p configuration
+func (m *CloudProviderGCPConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateProject(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateRegion(formats); err != nil {
 		res = append(res, err)
@@ -130,7 +154,16 @@ func (m *AWSCloudWatchLogs) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *AWSCloudWatchLogs) validateRegion(formats strfmt.Registry) error {
+func (m *CloudProviderGCPConfiguration) validateProject(formats strfmt.Registry) error {
+
+	if err := validate.Required("project", "body", m.Project); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CloudProviderGCPConfiguration) validateRegion(formats strfmt.Registry) error {
 
 	if err := validate.Required("region", "body", m.Region); err != nil {
 		return err
@@ -140,7 +173,7 @@ func (m *AWSCloudWatchLogs) validateRegion(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *AWSCloudWatchLogs) MarshalBinary() ([]byte, error) {
+func (m *CloudProviderGCPConfiguration) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -148,8 +181,8 @@ func (m *AWSCloudWatchLogs) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *AWSCloudWatchLogs) UnmarshalBinary(b []byte) error {
-	var res AWSCloudWatchLogs
+func (m *CloudProviderGCPConfiguration) UnmarshalBinary(b []byte) error {
+	var res CloudProviderGCPConfiguration
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

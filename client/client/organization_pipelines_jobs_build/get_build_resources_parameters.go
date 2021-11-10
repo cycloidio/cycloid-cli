@@ -23,7 +23,7 @@ import (
 func NewGetBuildResourcesParams() *GetBuildResourcesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetBuildResourcesParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetBuildResourcesParams() *GetBuildResourcesParams {
 func NewGetBuildResourcesParamsWithTimeout(timeout time.Duration) *GetBuildResourcesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetBuildResourcesParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetBuildResourcesParamsWithTimeout(timeout time.Duration) *GetBuildResou
 func NewGetBuildResourcesParamsWithContext(ctx context.Context) *GetBuildResourcesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetBuildResourcesParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetBuildResourcesParamsWithContext(ctx context.Context) *GetBuildResourc
 func NewGetBuildResourcesParamsWithHTTPClient(client *http.Client) *GetBuildResourcesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetBuildResourcesParams{
 		PageIndex:  &pageIndexDefault,

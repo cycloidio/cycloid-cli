@@ -17,6 +17,7 @@ import (
 )
 
 // ElasticsearchLogs Representation of Elasticsearch logs for external backend.
+// Must be matched with a credential of the "elasticsearch" type.
 //
 // swagger:model ElasticsearchLogs
 type ElasticsearchLogs struct {

@@ -23,7 +23,7 @@ import (
 func NewGetOrgRolesParams() *GetOrgRolesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgRolesParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetOrgRolesParams() *GetOrgRolesParams {
 func NewGetOrgRolesParamsWithTimeout(timeout time.Duration) *GetOrgRolesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgRolesParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetOrgRolesParamsWithTimeout(timeout time.Duration) *GetOrgRolesParams {
 func NewGetOrgRolesParamsWithContext(ctx context.Context) *GetOrgRolesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgRolesParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetOrgRolesParamsWithContext(ctx context.Context) *GetOrgRolesParams {
 func NewGetOrgRolesParamsWithHTTPClient(client *http.Client) *GetOrgRolesParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetOrgRolesParams{
 		PageIndex:  &pageIndexDefault,

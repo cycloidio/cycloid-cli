@@ -32,11 +32,15 @@ type UpdateProject struct {
 	// will be using. If this value is filled and it's different from the
 	// current one, the whole project will be migrated to new CR, meaning
 	// configuration files will also be moved.
-	// If the project didn't has config_repository_canonical set, this action will
+	// If the project didn't have config_repository_canonical set, this action will
 	// only attach the project to the CR, it won't create/move any files.
 	// In order to be sure everything works, make sure the
 	// config_repository_canonical is pointing at the CR with the same git
 	// repository that was used during project creation.
+	// Although the config_repository_canonical is not marked as required,
+	// it's actually required for projects that are already using CR. This
+	// field not being required is only for compatibility with older projects,
+	// which are not having CR yet.
 	//
 	// Max Length: 100
 	// Min Length: 3

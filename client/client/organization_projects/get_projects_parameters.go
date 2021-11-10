@@ -23,7 +23,7 @@ import (
 func NewGetProjectsParams() *GetProjectsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetProjectsParams{
 		PageIndex: &pageIndexDefault,
@@ -38,7 +38,7 @@ func NewGetProjectsParams() *GetProjectsParams {
 func NewGetProjectsParamsWithTimeout(timeout time.Duration) *GetProjectsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetProjectsParams{
 		PageIndex: &pageIndexDefault,
@@ -53,7 +53,7 @@ func NewGetProjectsParamsWithTimeout(timeout time.Duration) *GetProjectsParams {
 func NewGetProjectsParamsWithContext(ctx context.Context) *GetProjectsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetProjectsParams{
 		PageIndex: &pageIndexDefault,
@@ -68,7 +68,7 @@ func NewGetProjectsParamsWithContext(ctx context.Context) *GetProjectsParams {
 func NewGetProjectsParamsWithHTTPClient(client *http.Client) *GetProjectsParams {
 	var (
 		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(10)
+		pageSizeDefault  = uint32(1000)
 	)
 	return &GetProjectsParams{
 		PageIndex:  &pageIndexDefault,
