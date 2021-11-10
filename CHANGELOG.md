@@ -2,8 +2,6 @@
 - **CHANGED**
   - Update client to version 1.0.84
     ([PR #115](https://github.com/cycloidio/cycloid-cli/pull/115))
-
-## [v1.0.83] _2021-10-26_
 - **ADDED**
   - Adding new pipeline synced command
     ([PR #111](https://github.com/cycloidio/cycloid-cli/pull/111))
