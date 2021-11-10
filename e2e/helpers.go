@@ -43,6 +43,23 @@ AAAEC0ryBZ1uJQ2drmjsO+WpsC2E/5SWheJD/r8+Q4LghWxfw72aGSXkICIPQ0t5Byg9/V
           MESSAGE: ((message))`)
 
 	TestPipelineVariables = []byte(`message: "hello world and especially to ($ organization_canonical $)"`)
+
+	TestInfraPolicySample = []byte(`
+	package test
+	import input.tfplan as tfplan
+	resource_types = { "aws_instance" }
+	
+	tags_ok(index) {
+	  tfplan.resource_changes[index].change.after.tags["env"] == "test"
+	}
+	
+	deny[reason] {
+		resources_not_ok := [resource_not_ok | resource_types[i] ==  tfplan.resource_changes[j].type
+											   not tags_ok(j); 
+											   resource_not_ok := resource_types[i]]
+		reason = sprintf("tag not in env: %s %s", [(resources_not_ok), test])
+	}
+`)
 )
 
 func LoginToRootOrg() {
@@ -76,7 +93,6 @@ func executeCommand(args []string) (string, error) {
 	if err != nil {
 		panic(fmt.Sprintf("Unable to read command output buffer"))
 	}
-
 	return string(cmdOut), cmdErr
 }
 
@@ -90,7 +106,6 @@ func WriteFile(path string, data []byte) {
 	if err != nil {
 		panic(fmt.Sprintf("Test setup, unable to write file %s : %s", path, err.Error()))
 	}
-	return
 }
 
 // toString convert interface from default json unmarchal to string

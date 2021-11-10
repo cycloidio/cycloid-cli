@@ -11,11 +11,14 @@
 ## [v1.0.82] _2021-10-04_
 - **ADDED**
   - Adding cycloid dev readme and local e2e make targets
-    ([PR #105](https://github.com/cycloidio/cycloid-cli/pull/105))
+    ([PR #112](https://github.com/cycloidio/cycloid-cli/pull/105))
 
 - **CHANGED**
   - Update client to version 1.0.82
     ([PR #105](https://github.com/cycloidio/cycloid-cli/pull/105))
+  - Changed makefile to allow better use of targets for the cli automatic bump
+    ([PR #112](https://github.com/cycloidio/cycloid-cli/pull/105))  
+    
 - **FIXED**
   - Fix error in help of delete-env command
     ([PR #105](https://github.com/cycloidio/cycloid-cli/pull/105))

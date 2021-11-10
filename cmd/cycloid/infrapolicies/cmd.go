@@ -6,14 +6,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
-var (
-	example = `
-	# Manage infrapolicies and validate Terraform plan against
-	cy --org my-org --env my-env --project my-project infrapolicy validate --plan-path ./plan.json
-`
-	short = "Manage infrapolicies"
-)
-
 func NewCommands() *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "infrapolicy",
@@ -23,14 +15,16 @@ func NewCommands() *cobra.Command {
 			"ip",
 			"infrapolicies",
 		},
-		Example: example,
-		Short:   short,
+		Short: "Manage the infraPolicies",
 	}
 
-	common.RequiredFlag(common.WithFlagProject, cmd)
-	common.RequiredFlag(common.WithFlagEnv, cmd)
 	common.RequiredFlag(common.WithFlagOrg, cmd)
 
-	cmd.AddCommand(NewValidateCommand())
+	cmd.AddCommand(NewValidateCommand(),
+		NewUpdateCommand(),
+		NewCreateCommand(),
+		NewListCommand(),
+		NewGetCommand(),
+		NewDeleteCommand())
 	return cmd
 }
