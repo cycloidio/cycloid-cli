@@ -1,3 +1,8 @@
+## [v1.0.85] _2021-12-08_
+- **CHANGED**
+  - Update client to version v1.0.85
+  ([PR #120](https://github.com/cycloidio/cycloid-cli/pull/120))
+
 ## [v1.0.84] _2021-11-10_
 - **CHANGED**
   - Update client to version 1.0.84
