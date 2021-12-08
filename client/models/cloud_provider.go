@@ -48,6 +48,9 @@ type CloudProvider struct {
 	// Min Length: 2
 	Name *string `json:"name"`
 
+	// regions
+	Regions []string `json:"regions"`
+
 	// updated at
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at,omitempty"`
