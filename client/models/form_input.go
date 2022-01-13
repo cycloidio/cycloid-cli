@@ -25,27 +25,34 @@ type FormInput struct {
 	// Required: true
 	EnvironmentCanonical *string `json:"environment_canonical"`
 
-	// The use-case to load
+	// The use case to load
 	// Required: true
 	UseCase *string `json:"use_case"`
 
 	// Forms variables filled, the format to respect is as follows
 	// {
-	//   "ansible": {
-	//     "key1": "value1",
-	//     "key2": "value2",
-	//     "key3": "value3"
+	//   "sectionX": {
+	//     "group1": {
+	//       "key1": "value1",
+	//       "key2": "value2",
+	//       "key3": "value3"
+	//     },
 	//   },
-	//   "terraform": {
-	//     "key1": "value1",
-	//     "key2": "value2",
-	//     "key3": "value3"
+	//   "sectionY": {
+	//     "group2": {
+	//       "key1": "value1",
+	//       "key2": "value2",
+	//       "key3": "value3"
+	//     },
 	//   },
-	//   "pipeline": {
-	//     "key1": "value2"
+	//   "sectionZ": {
+	//     "group3": {
+	//       "key1": "value2"
+	//     },
 	//   }
 	// }
-	// Keys being the variable name that you want to see substituted/defined.
+	// Keys being the variable name that you want to see substituted/defined,
+	// while the section and group are the one from the form's file.
 	//
 	// Required: true
 	Vars interface{} `json:"vars"`
