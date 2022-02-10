@@ -55,6 +55,9 @@ type KPI struct {
 	// Required: true
 	Error *string `json:"error"`
 
+	// favorite
+	Favorite bool `json:"favorite,omitempty"`
+
 	// id
 	// Required: true
 	// Minimum: 1

@@ -18,14 +18,14 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetCredentialsParams creates a new GetCredentialsParams object
+// NewListCredentialsParams creates a new ListCredentialsParams object
 // with the default values initialized.
-func NewGetCredentialsParams() *GetCredentialsParams {
+func NewListCredentialsParams() *ListCredentialsParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetCredentialsParams{
+	return &ListCredentialsParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -33,14 +33,14 @@ func NewGetCredentialsParams() *GetCredentialsParams {
 	}
 }
 
-// NewGetCredentialsParamsWithTimeout creates a new GetCredentialsParams object
+// NewListCredentialsParamsWithTimeout creates a new ListCredentialsParams object
 // with the default values initialized, and the ability to set a timeout on a request
-func NewGetCredentialsParamsWithTimeout(timeout time.Duration) *GetCredentialsParams {
+func NewListCredentialsParamsWithTimeout(timeout time.Duration) *ListCredentialsParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetCredentialsParams{
+	return &ListCredentialsParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -48,14 +48,14 @@ func NewGetCredentialsParamsWithTimeout(timeout time.Duration) *GetCredentialsPa
 	}
 }
 
-// NewGetCredentialsParamsWithContext creates a new GetCredentialsParams object
+// NewListCredentialsParamsWithContext creates a new ListCredentialsParams object
 // with the default values initialized, and the ability to set a context for a request
-func NewGetCredentialsParamsWithContext(ctx context.Context) *GetCredentialsParams {
+func NewListCredentialsParamsWithContext(ctx context.Context) *ListCredentialsParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetCredentialsParams{
+	return &ListCredentialsParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -63,24 +63,24 @@ func NewGetCredentialsParamsWithContext(ctx context.Context) *GetCredentialsPara
 	}
 }
 
-// NewGetCredentialsParamsWithHTTPClient creates a new GetCredentialsParams object
+// NewListCredentialsParamsWithHTTPClient creates a new ListCredentialsParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
-func NewGetCredentialsParamsWithHTTPClient(client *http.Client) *GetCredentialsParams {
+func NewListCredentialsParamsWithHTTPClient(client *http.Client) *ListCredentialsParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetCredentialsParams{
+	return &ListCredentialsParams{
 		PageIndex:  &pageIndexDefault,
 		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*GetCredentialsParams contains all the parameters to send to the API endpoint
-for the get credentials operation typically these are written to a http.Request
+/*ListCredentialsParams contains all the parameters to send to the API endpoint
+for the list credentials operation typically these are written to a http.Request
 */
-type GetCredentialsParams struct {
+type ListCredentialsParams struct {
 
 	/*CredentialType
 	  A Credential type
@@ -108,85 +108,85 @@ type GetCredentialsParams struct {
 	HTTPClient *http.Client
 }
 
-// WithTimeout adds the timeout to the get credentials params
-func (o *GetCredentialsParams) WithTimeout(timeout time.Duration) *GetCredentialsParams {
+// WithTimeout adds the timeout to the list credentials params
+func (o *ListCredentialsParams) WithTimeout(timeout time.Duration) *ListCredentialsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get credentials params
-func (o *GetCredentialsParams) SetTimeout(timeout time.Duration) {
+// SetTimeout adds the timeout to the list credentials params
+func (o *ListCredentialsParams) SetTimeout(timeout time.Duration) {
 	o.timeout = timeout
 }
 
-// WithContext adds the context to the get credentials params
-func (o *GetCredentialsParams) WithContext(ctx context.Context) *GetCredentialsParams {
+// WithContext adds the context to the list credentials params
+func (o *ListCredentialsParams) WithContext(ctx context.Context) *ListCredentialsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get credentials params
-func (o *GetCredentialsParams) SetContext(ctx context.Context) {
+// SetContext adds the context to the list credentials params
+func (o *ListCredentialsParams) SetContext(ctx context.Context) {
 	o.Context = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get credentials params
-func (o *GetCredentialsParams) WithHTTPClient(client *http.Client) *GetCredentialsParams {
+// WithHTTPClient adds the HTTPClient to the list credentials params
+func (o *ListCredentialsParams) WithHTTPClient(client *http.Client) *ListCredentialsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get credentials params
-func (o *GetCredentialsParams) SetHTTPClient(client *http.Client) {
+// SetHTTPClient adds the HTTPClient to the list credentials params
+func (o *ListCredentialsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithCredentialType adds the credentialType to the get credentials params
-func (o *GetCredentialsParams) WithCredentialType(credentialType *string) *GetCredentialsParams {
+// WithCredentialType adds the credentialType to the list credentials params
+func (o *ListCredentialsParams) WithCredentialType(credentialType *string) *ListCredentialsParams {
 	o.SetCredentialType(credentialType)
 	return o
 }
 
-// SetCredentialType adds the credentialType to the get credentials params
-func (o *GetCredentialsParams) SetCredentialType(credentialType *string) {
+// SetCredentialType adds the credentialType to the list credentials params
+func (o *ListCredentialsParams) SetCredentialType(credentialType *string) {
 	o.CredentialType = credentialType
 }
 
-// WithOrganizationCanonical adds the organizationCanonical to the get credentials params
-func (o *GetCredentialsParams) WithOrganizationCanonical(organizationCanonical string) *GetCredentialsParams {
+// WithOrganizationCanonical adds the organizationCanonical to the list credentials params
+func (o *ListCredentialsParams) WithOrganizationCanonical(organizationCanonical string) *ListCredentialsParams {
 	o.SetOrganizationCanonical(organizationCanonical)
 	return o
 }
 
-// SetOrganizationCanonical adds the organizationCanonical to the get credentials params
-func (o *GetCredentialsParams) SetOrganizationCanonical(organizationCanonical string) {
+// SetOrganizationCanonical adds the organizationCanonical to the list credentials params
+func (o *ListCredentialsParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithPageIndex adds the pageIndex to the get credentials params
-func (o *GetCredentialsParams) WithPageIndex(pageIndex *uint32) *GetCredentialsParams {
+// WithPageIndex adds the pageIndex to the list credentials params
+func (o *ListCredentialsParams) WithPageIndex(pageIndex *uint32) *ListCredentialsParams {
 	o.SetPageIndex(pageIndex)
 	return o
 }
 
-// SetPageIndex adds the pageIndex to the get credentials params
-func (o *GetCredentialsParams) SetPageIndex(pageIndex *uint32) {
+// SetPageIndex adds the pageIndex to the list credentials params
+func (o *ListCredentialsParams) SetPageIndex(pageIndex *uint32) {
 	o.PageIndex = pageIndex
 }
 
-// WithPageSize adds the pageSize to the get credentials params
-func (o *GetCredentialsParams) WithPageSize(pageSize *uint32) *GetCredentialsParams {
+// WithPageSize adds the pageSize to the list credentials params
+func (o *ListCredentialsParams) WithPageSize(pageSize *uint32) *ListCredentialsParams {
 	o.SetPageSize(pageSize)
 	return o
 }
 
-// SetPageSize adds the pageSize to the get credentials params
-func (o *GetCredentialsParams) SetPageSize(pageSize *uint32) {
+// SetPageSize adds the pageSize to the list credentials params
+func (o *ListCredentialsParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
 // WriteToRequest writes these params to a swagger request
-func (o *GetCredentialsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
+func (o *ListCredentialsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
 	if err := r.SetTimeout(o.timeout); err != nil {
 		return err

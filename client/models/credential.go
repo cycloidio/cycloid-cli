@@ -44,6 +44,10 @@ type Credential struct {
 	// in use
 	InUse *CredentialInUse `json:"in_use,omitempty"`
 
+	// List of all the keys available for the Credential
+	// Required: true
+	Keys []string `json:"keys"`
+
 	// name
 	// Required: true
 	Name *string `json:"name"`
@@ -89,6 +93,10 @@ func (m *Credential) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateInUse(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateKeys(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -182,6 +190,15 @@ func (m *Credential) validateInUse(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Credential) validateKeys(formats strfmt.Registry) error {
+
+	if err := validate.Required("keys", "body", m.Keys); err != nil {
+		return err
 	}
 
 	return nil

@@ -82,6 +82,12 @@ for the get projects operation typically these are written to a http.Request
 */
 type GetProjectsParams struct {
 
+	/*Favorite
+	  Flag to retrieve favorite data from the members favorite list.
+
+
+	*/
+	Favorite *bool
 	/*OrderBy
 	  Allows to order the list of items. Example usage: field_name:asc
 
@@ -170,6 +176,17 @@ func (o *GetProjectsParams) WithHTTPClient(client *http.Client) *GetProjectsPara
 // SetHTTPClient adds the HTTPClient to the get projects params
 func (o *GetProjectsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithFavorite adds the favorite to the get projects params
+func (o *GetProjectsParams) WithFavorite(favorite *bool) *GetProjectsParams {
+	o.SetFavorite(favorite)
+	return o
+}
+
+// SetFavorite adds the favorite to the get projects params
+func (o *GetProjectsParams) SetFavorite(favorite *bool) {
+	o.Favorite = favorite
 }
 
 // WithOrderBy adds the orderBy to the get projects params
@@ -289,6 +306,22 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		return err
 	}
 	var res []error
+
+	if o.Favorite != nil {
+
+		// query param favorite
+		var qrFavorite bool
+		if o.Favorite != nil {
+			qrFavorite = *o.Favorite
+		}
+		qFavorite := swag.FormatBool(qrFavorite)
+		if qFavorite != "" {
+			if err := r.SetQueryParam("favorite", qFavorite); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.OrderBy != nil {
 

@@ -135,23 +135,23 @@ func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.Cli
 }
 
 /*
-GetCredentials Return all the Credentials
+ListCredentials Return all the Credentials, depending on the caller permissions it'll return the Raw data or not. If the caller has List and not Get it'll not return the Raw, if it has List and Read it'll return the Raw.
 */
-func (a *Client) GetCredentials(params *GetCredentialsParams, authInfo runtime.ClientAuthInfoWriter) (*GetCredentialsOK, error) {
+func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime.ClientAuthInfoWriter) (*ListCredentialsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetCredentialsParams()
+		params = NewListCredentialsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getCredentials",
+		ID:                 "listCredentials",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/credentials",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetCredentialsReader{formats: a.formats},
+		Reader:             &ListCredentialsReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -159,12 +159,12 @@ func (a *Client) GetCredentials(params *GetCredentialsParams, authInfo runtime.C
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetCredentialsOK)
+	success, ok := result.(*ListCredentialsOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*GetCredentialsDefault)
+	unexpectedSuccess := result.(*ListCredentialsDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

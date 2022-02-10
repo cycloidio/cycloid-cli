@@ -28,6 +28,10 @@ type CredentialSimple struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
 
+	// created at
+	// Minimum: 0
+	CreatedAt *uint64 `json:"created_at,omitempty"`
+
 	// description
 	Description string `json:"description,omitempty"`
 
@@ -35,6 +39,10 @@ type CredentialSimple struct {
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
+
+	// List of all the keys available for the Credential
+	// Required: true
+	Keys []string `json:"keys"`
 
 	// name
 	// Required: true
@@ -48,6 +56,10 @@ type CredentialSimple struct {
 	// Required: true
 	// Enum: [ssh aws custom azure azure_storage gcp basic_auth elasticsearch swift]
 	Type *string `json:"type"`
+
+	// updated at
+	// Minimum: 0
+	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 }
 
 // Validate validates this credential simple
@@ -58,7 +70,15 @@ func (m *CredentialSimple) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateKeys(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -71,6 +91,10 @@ func (m *CredentialSimple) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -101,6 +125,19 @@ func (m *CredentialSimple) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *CredentialSimple) validateCreatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *CredentialSimple) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
@@ -108,6 +145,15 @@ func (m *CredentialSimple) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CredentialSimple) validateKeys(formats strfmt.Registry) error {
+
+	if err := validate.Required("keys", "body", m.Keys); err != nil {
 		return err
 	}
 
@@ -190,6 +236,19 @@ func (m *CredentialSimple) validateType(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CredentialSimple) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 

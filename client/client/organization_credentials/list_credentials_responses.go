@@ -20,34 +20,34 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// GetCredentialsReader is a Reader for the GetCredentials structure.
-type GetCredentialsReader struct {
+// ListCredentialsReader is a Reader for the ListCredentials structure.
+type ListCredentialsReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetCredentialsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *ListCredentialsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewGetCredentialsOK()
+		result := NewListCredentialsOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 403:
-		result := NewGetCredentialsForbidden()
+		result := NewListCredentialsForbidden()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 404:
-		result := NewGetCredentialsNotFound()
+		result := NewListCredentialsNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	default:
-		result := NewGetCredentialsDefault(response.Code())
+		result := NewListCredentialsDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -58,30 +58,30 @@ func (o *GetCredentialsReader) ReadResponse(response runtime.ClientResponse, con
 	}
 }
 
-// NewGetCredentialsOK creates a GetCredentialsOK with default headers values
-func NewGetCredentialsOK() *GetCredentialsOK {
-	return &GetCredentialsOK{}
+// NewListCredentialsOK creates a ListCredentialsOK with default headers values
+func NewListCredentialsOK() *ListCredentialsOK {
+	return &ListCredentialsOK{}
 }
 
-/*GetCredentialsOK handles this case with default header values.
+/*ListCredentialsOK handles this case with default header values.
 
 List of the Credentials
 */
-type GetCredentialsOK struct {
-	Payload *GetCredentialsOKBody
+type ListCredentialsOK struct {
+	Payload *ListCredentialsOKBody
 }
 
-func (o *GetCredentialsOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] getCredentialsOK  %+v", 200, o.Payload)
+func (o *ListCredentialsOK) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsOK  %+v", 200, o.Payload)
 }
 
-func (o *GetCredentialsOK) GetPayload() *GetCredentialsOKBody {
+func (o *ListCredentialsOK) GetPayload() *ListCredentialsOKBody {
 	return o.Payload
 }
 
-func (o *GetCredentialsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *ListCredentialsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(GetCredentialsOKBody)
+	o.Payload = new(ListCredentialsOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -91,16 +91,16 @@ func (o *GetCredentialsOK) readResponse(response runtime.ClientResponse, consume
 	return nil
 }
 
-// NewGetCredentialsForbidden creates a GetCredentialsForbidden with default headers values
-func NewGetCredentialsForbidden() *GetCredentialsForbidden {
-	return &GetCredentialsForbidden{}
+// NewListCredentialsForbidden creates a ListCredentialsForbidden with default headers values
+func NewListCredentialsForbidden() *ListCredentialsForbidden {
+	return &ListCredentialsForbidden{}
 }
 
-/*GetCredentialsForbidden handles this case with default header values.
+/*ListCredentialsForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
-type GetCredentialsForbidden struct {
+type ListCredentialsForbidden struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -108,15 +108,15 @@ type GetCredentialsForbidden struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetCredentialsForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] getCredentialsForbidden  %+v", 403, o.Payload)
+func (o *ListCredentialsForbidden) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsForbidden  %+v", 403, o.Payload)
 }
 
-func (o *GetCredentialsForbidden) GetPayload() *models.ErrorPayload {
+func (o *ListCredentialsForbidden) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetCredentialsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *ListCredentialsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -135,16 +135,16 @@ func (o *GetCredentialsForbidden) readResponse(response runtime.ClientResponse, 
 	return nil
 }
 
-// NewGetCredentialsNotFound creates a GetCredentialsNotFound with default headers values
-func NewGetCredentialsNotFound() *GetCredentialsNotFound {
-	return &GetCredentialsNotFound{}
+// NewListCredentialsNotFound creates a ListCredentialsNotFound with default headers values
+func NewListCredentialsNotFound() *ListCredentialsNotFound {
+	return &ListCredentialsNotFound{}
 }
 
-/*GetCredentialsNotFound handles this case with default header values.
+/*ListCredentialsNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
-type GetCredentialsNotFound struct {
+type ListCredentialsNotFound struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -152,15 +152,15 @@ type GetCredentialsNotFound struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetCredentialsNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] getCredentialsNotFound  %+v", 404, o.Payload)
+func (o *ListCredentialsNotFound) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsNotFound  %+v", 404, o.Payload)
 }
 
-func (o *GetCredentialsNotFound) GetPayload() *models.ErrorPayload {
+func (o *ListCredentialsNotFound) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetCredentialsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *ListCredentialsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -179,18 +179,18 @@ func (o *GetCredentialsNotFound) readResponse(response runtime.ClientResponse, c
 	return nil
 }
 
-// NewGetCredentialsDefault creates a GetCredentialsDefault with default headers values
-func NewGetCredentialsDefault(code int) *GetCredentialsDefault {
-	return &GetCredentialsDefault{
+// NewListCredentialsDefault creates a ListCredentialsDefault with default headers values
+func NewListCredentialsDefault(code int) *ListCredentialsDefault {
+	return &ListCredentialsDefault{
 		_statusCode: code,
 	}
 }
 
-/*GetCredentialsDefault handles this case with default header values.
+/*ListCredentialsDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
-type GetCredentialsDefault struct {
+type ListCredentialsDefault struct {
 	_statusCode int
 
 	/*The length of the response body in octets (8-bit bytes).
@@ -200,20 +200,20 @@ type GetCredentialsDefault struct {
 	Payload *models.ErrorPayload
 }
 
-// Code gets the status code for the get credentials default response
-func (o *GetCredentialsDefault) Code() int {
+// Code gets the status code for the list credentials default response
+func (o *ListCredentialsDefault) Code() int {
 	return o._statusCode
 }
 
-func (o *GetCredentialsDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] getCredentials default  %+v", o._statusCode, o.Payload)
+func (o *ListCredentialsDefault) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentials default  %+v", o._statusCode, o.Payload)
 }
 
-func (o *GetCredentialsDefault) GetPayload() *models.ErrorPayload {
+func (o *ListCredentialsDefault) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetCredentialsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *ListCredentialsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -232,10 +232,10 @@ func (o *GetCredentialsDefault) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-/*GetCredentialsOKBody get credentials o k body
-swagger:model GetCredentialsOKBody
+/*ListCredentialsOKBody list credentials o k body
+swagger:model ListCredentialsOKBody
 */
-type GetCredentialsOKBody struct {
+type ListCredentialsOKBody struct {
 
 	// data
 	// Required: true
@@ -246,8 +246,8 @@ type GetCredentialsOKBody struct {
 	Pagination *models.Pagination `json:"pagination"`
 }
 
-// Validate validates this get credentials o k body
-func (o *GetCredentialsOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this list credentials o k body
+func (o *ListCredentialsOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -264,9 +264,9 @@ func (o *GetCredentialsOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetCredentialsOKBody) validateData(formats strfmt.Registry) error {
+func (o *ListCredentialsOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("getCredentialsOK"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("listCredentialsOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
@@ -278,7 +278,7 @@ func (o *GetCredentialsOKBody) validateData(formats strfmt.Registry) error {
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("getCredentialsOK" + "." + "data" + "." + strconv.Itoa(i))
+					return ve.ValidateName("listCredentialsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -289,16 +289,16 @@ func (o *GetCredentialsOKBody) validateData(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetCredentialsOKBody) validatePagination(formats strfmt.Registry) error {
+func (o *ListCredentialsOKBody) validatePagination(formats strfmt.Registry) error {
 
-	if err := validate.Required("getCredentialsOK"+"."+"pagination", "body", o.Pagination); err != nil {
+	if err := validate.Required("listCredentialsOK"+"."+"pagination", "body", o.Pagination); err != nil {
 		return err
 	}
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getCredentialsOK" + "." + "pagination")
+				return ve.ValidateName("listCredentialsOK" + "." + "pagination")
 			}
 			return err
 		}
@@ -308,7 +308,7 @@ func (o *GetCredentialsOKBody) validatePagination(formats strfmt.Registry) error
 }
 
 // MarshalBinary interface implementation
-func (o *GetCredentialsOKBody) MarshalBinary() ([]byte, error) {
+func (o *ListCredentialsOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -316,8 +316,8 @@ func (o *GetCredentialsOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *GetCredentialsOKBody) UnmarshalBinary(b []byte) error {
-	var res GetCredentialsOKBody
+func (o *ListCredentialsOKBody) UnmarshalBinary(b []byte) error {
+	var res ListCredentialsOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

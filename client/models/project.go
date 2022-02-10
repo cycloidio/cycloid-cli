@@ -47,6 +47,9 @@ type Project struct {
 	// Required: true
 	Environments []*Environment `json:"environments"`
 
+	// favorite
+	Favorite bool `json:"favorite,omitempty"`
+
 	// id
 	// Required: true
 	// Minimum: 1

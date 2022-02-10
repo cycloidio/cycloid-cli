@@ -21,7 +21,7 @@ import (
 // swagger:model FormEntity
 type FormEntity struct {
 
-	// The current value that was previously configured for this variable upon creation or update.
+	// The current value that was previously configured for this variable upon creation or update. In case of shared variables having different values, it will be empty, and 'mismatch_values' will be filled instead.
 	Current interface{} `json:"current,omitempty"`
 
 	// The default to assign to the variable if nothing is returned and that the varialbe is required
@@ -33,6 +33,9 @@ type FormEntity struct {
 	// The key is the name of variables for the ansible/pipeline/terraform technologies. If this is a first level variable then: keyX. If you have multiple terraform modules then use: module.Y.keyX to help identify the unique variable.
 	// Required: true
 	Key *string `json:"key"`
+
+	// This is filled only when a shared variable does not have the same values anymore. e.g. a variable 'foo' was shared between 'ansible' and 'pipeline', was set to 'bar', but now the value found for 'ansible' is 'bus', while it's still 'bar' for the pipeline. In such situation, the Forms don't know anymore which is the correct data and will return both, while unseting the 'Current' field.
+	MismatchValues []interface{} `json:"mismatch_values"`
 
 	// The name of the variable displayed to the user
 	// Required: true
@@ -46,7 +49,7 @@ type FormEntity struct {
 
 	// The type of data handled - used to manipulate/validate the input, and also validate default/values
 	// Required: true
-	// Enum: [integer string array boolean map]
+	// Enum: [integer float string array boolean map]
 	Type *string `json:"type"`
 
 	// The unit to be displayed for the variable, helping to know what's being manipulated: amount of servers, Go, users, etc.
@@ -109,7 +112,7 @@ var formEntityTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["integer","string","array","boolean","map"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["integer","float","string","array","boolean","map"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -121,6 +124,9 @@ const (
 
 	// FormEntityTypeInteger captures enum value "integer"
 	FormEntityTypeInteger string = "integer"
+
+	// FormEntityTypeFloat captures enum value "float"
+	FormEntityTypeFloat string = "float"
 
 	// FormEntityTypeString captures enum value "string"
 	FormEntityTypeString string = "string"

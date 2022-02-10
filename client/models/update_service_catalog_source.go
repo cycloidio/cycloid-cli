@@ -38,7 +38,7 @@ type UpdateServiceCatalogSource struct {
 
 	// url
 	// Required: true
-	// Pattern: (?:http|https|git|ssh|git@[-\w.]+):(\/\/)?(.*?)(\.git)?(\/?|\#[-\d\w._]+?)$
+	// Pattern: ^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?
 	URL *string `json:"url"`
 }
 
@@ -100,7 +100,7 @@ func (m *UpdateServiceCatalogSource) validateURL(formats strfmt.Registry) error 
 		return err
 	}
 
-	if err := validate.Pattern("url", "body", string(*m.URL), `(?:http|https|git|ssh|git@[-\w.]+):(\/\/)?(.*?)(\.git)?(\/?|\#[-\d\w._]+?)$`); err != nil {
+	if err := validate.Pattern("url", "body", string(*m.URL), `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
 		return err
 	}
 

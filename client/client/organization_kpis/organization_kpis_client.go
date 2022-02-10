@@ -25,6 +25,40 @@ type Client struct {
 }
 
 /*
+CreateKPIFavorite Add a kpi in the user favorites list.
+*/
+func (a *Client) CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter) (*CreateKPIFavoriteNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateKPIFavoriteParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "createKPIFavorite",
+		Method:             "POST",
+		PathPattern:        "/organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CreateKPIFavoriteReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CreateKPIFavoriteNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*CreateKPIFavoriteDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 CreateKpi Save information about the KPI
 */
 func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthInfoWriter) (*CreateKpiOK, error) {
@@ -55,6 +89,40 @@ func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthI
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*CreateKpiDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+DeleteKPIFavorite Remove a kpi from the user favorites list.
+*/
+func (a *Client) DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteKPIFavoriteNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteKPIFavoriteParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "deleteKPIFavorite",
+		Method:             "DELETE",
+		PathPattern:        "/organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteKPIFavoriteReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteKPIFavoriteNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*DeleteKPIFavoriteDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

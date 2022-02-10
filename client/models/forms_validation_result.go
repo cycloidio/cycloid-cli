@@ -22,6 +22,10 @@ type FormsValidationResult struct {
 	// errors
 	// Required: true
 	Errors []string `json:"errors"`
+
+	// forms
+	// Required: true
+	Forms *FormsFileV2 `json:"forms"`
 }
 
 // Validate validates this forms validation result
@@ -29,6 +33,10 @@ func (m *FormsValidationResult) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateErrors(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateForms(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -42,6 +50,24 @@ func (m *FormsValidationResult) validateErrors(formats strfmt.Registry) error {
 
 	if err := validate.Required("errors", "body", m.Errors); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *FormsValidationResult) validateForms(formats strfmt.Registry) error {
+
+	if err := validate.Required("forms", "body", m.Forms); err != nil {
+		return err
+	}
+
+	if m.Forms != nil {
+		if err := m.Forms.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("forms")
+			}
+			return err
+		}
 	}
 
 	return nil
