@@ -70,14 +70,14 @@ func (m *middleware) DeleteCredential(org, cred string) error {
 
 func (m *middleware) ListCredentials(org, cType string) ([]*models.CredentialSimple, error) {
 
-	params := organization_credentials.NewGetCredentialsParams()
+	params := organization_credentials.NewListCredentialsParams()
 	params.SetOrganizationCanonical(org)
 
 	if cType != "" {
 		params.SetCredentialType(&cType)
 	}
 
-	resp, err := m.api.OrganizationCredentials.GetCredentials(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationCredentials.ListCredentials(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
