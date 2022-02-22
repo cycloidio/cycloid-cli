@@ -4,6 +4,8 @@
   ([PR #125](https://github.com/cycloidio/cycloid-cli/pull/125))
   - cy-wrapper: Now use Cycloid URL instead of Github to avoid API request limits
   ([PR #126](https://github.com/cycloidio/cycloid-cli/pull/126))
+  - cy-wrapper: provide debug mode using CY_DEBUG env var
+  ([PR #127](https://github.com/cycloidio/cycloid-cli/pull/127))
 
 ## [v1.0.86] _2022-01-04_
 - **CHANGED**
