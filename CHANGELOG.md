@@ -2,6 +2,8 @@
 - **CHANGED**
   - Update client to version v1.0.88
   ([PR #125](https://github.com/cycloidio/cycloid-cli/pull/125))
+  - cy-wrapper: Now use Cycloid URL instead of Github to avoid API request limits
+  ([PR #126](https://github.com/cycloidio/cycloid-cli/pull/126))
 
 ## [v1.0.86] _2022-01-04_
 - **CHANGED**
