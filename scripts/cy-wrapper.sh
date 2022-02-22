@@ -62,7 +62,7 @@ format_version () {
 find_version_below () {
   api_version=$(format_version $1)
 
-  for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 5 --silent "https://api.github.com/repos/cycloidio/cycloid-cli/releases" | jq -r '.[] | .name'); do
+  for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 5 --silent "https://cli-release.owl.cycloid.io/releases" | jq -r '.[] | .name'); do
     cli_version=$(format_version $cli_release)
     # Ignoring the dev release from github
     if [[ "$cli_version" == "0.0-dev" ]]; then
@@ -155,7 +155,7 @@ CY_API_URL=${CY_API_URL%/}
 
 # Wait for network access. This ensure in case of usage in a pipeline to ensure and wait in case network is not started.
 if [[ "$CY_WAIT_NETWORK" == "true" ]]; then
-    timeout 120 bash -c 'while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' https://api.github.com/repos/cycloidio/cycloid-cli/releases)" != "200" ]]; do sleep 3; done'
+    timeout 120 bash -c 'while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' https://cli-release.owl.cycloid.io/releases)" != "200" ]]; do sleep 3; done'
 fi
 
 # Get Cycloid API version
