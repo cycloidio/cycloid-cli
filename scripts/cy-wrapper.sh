@@ -9,6 +9,7 @@
 # CY_BINARIES_PATH: Specify the path where cy binaries will be stored, default "/usr/local/bin"
 # CY_WAIT_NETWORK: Ensure or wait to have internet access before trying to download the binary by trying to curl "cli-release.owl.cycloid.io/releases", default "false"
 # CY_BINARY: Enforce the usage of a specific local binary. Default path "${CY_BINARIES_PATH}/cy-${CY_VERSION}"
+# CY_DOWNLOAD_RETRIES: In case you have network failure, you can specify number of retries on download for binaries. Default "1"
 
 if [ -n "$CY_DEBUG" ]; then
   echo "CY_DEBUG provided, wrapper running in DEBUG mode" >&2
@@ -23,6 +24,7 @@ fi
 export CY_API_URL="${CY_API_URL:-https://http-api.cycloid.io}"
 export CY_BINARIES_PATH="${CY_BINARIES_PATH:-/usr/local/bin}"
 export CY_WAIT_NETWORK="${CY_WAIT_NETWORK:-false}"
+export CY_DOWNLOAD_RETRIES="${CY_DOWNLOAD_RETRIES:-1}"
 
 # Compating version, this is used when there is no CLI matching your API version.
 # We compare your version and the one released to find the closest n-1 version
@@ -73,7 +75,7 @@ format_version () {
 find_version_below () {
   api_version=$(format_version $1)
 
-  for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 5 --silent "https://cli-release.owl.cycloid.io/releases" | jq -r '.[] | .name'); do
+  for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 2 --silent "https://cli-release.owl.cycloid.io/releases" | jq -r '.[] | .name'); do
     cli_version=$(format_version $cli_release)
     # Ignoring the dev release from github
     if [[ "$cli_version" == "0.0-dev" ]]; then
@@ -109,7 +111,7 @@ get_binary () {
 
     # Download the exact CLI version
     CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/cy"
-    wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
+    wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"
     STATUS=$?
     if [ $STATUS != 0 ]; then
       rm -f "${CY_BINARY}"
@@ -123,14 +125,14 @@ get_binary () {
           STATUS=0
       else
           CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/cy"
-          wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
+          wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"
           STATUS=$?
           if [ $STATUS != 0 ]; then
             rm -f "${CY_BINARY}"
           fi
       fi
     fi
-    
+
     # In case of error, fallback on latest lower version
     if [ $STATUS != 0 ]; then
       CY_LOWER_VERSION=$(find_version_below ${CY_VERSION})
@@ -141,7 +143,7 @@ get_binary () {
           STATUS=0
       else
           CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/${CY_LOWER_VERSION}/cy"
-          wget --retry-connrefused --wait 2 --tries 5 -q -O "${CY_BINARY}" "$CY_URL"
+          wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"
           STATUS=$?
           if [ $STATUS != 0 ]; then
             rm -f "${CY_BINARY}"
@@ -170,7 +172,7 @@ if [[ "$CY_WAIT_NETWORK" == "true" ]]; then
 fi
 
 # Get Cycloid API version
-export CY_API_VERSION=$(curl --fail -k --retry-all-errors --retry-delay 2 --retry 5 -s "${CY_API_URL}/version" | jq -r .data.version)
+export CY_API_VERSION=$(curl --fail -k --retry-all-errors --retry-delay 2 --retry 2 -s "${CY_API_URL}/version" | jq -r .data.version)
 export CY_VERSION="${CY_VERSION:-$CY_API_VERSION}"
 
 if [[ -z "$CY_VERSION" ]]; then
@@ -179,7 +181,7 @@ if [[ -z "$CY_VERSION" ]]; then
 fi
 
 # Adding 3 retry to maximize changes when there is issue in CI tools
-for i in $(seq 1 3); do
+for i in $(seq 1 $CY_DOWNLOAD_RETRIES); do
     get_binary
     STATUS=$?
     if [ $STATUS == 0 ]; then
