@@ -3,6 +3,13 @@
 # Warning: this script is expected to be used in cycloid-toolkit docker image.
 # We do not recommand to use it in another context.
 
+## Environment variables:
+# CY_DEBUG: enable "set -x" for debugging purpose
+# CY_API_URL: Override the default API url "https://http-api.cycloid.io" required for Onprem setup
+# CY_BINARIES_PATH: Specify the path where cy binaries will be stored, default "/usr/local/bin"
+# CY_WAIT_NETWORK: Ensure or wait to have internet access before trying to download the binary by trying to curl "cli-release.owl.cycloid.io/releases", default "false"
+# CY_BINARY: Enforce the usage of a specific local binary. Default path "${CY_BINARIES_PATH}/cy-${CY_VERSION}"
+
 if [ -n "$CY_DEBUG" ]; then
   echo "CY_DEBUG provided, wrapper running in DEBUG mode" >&2
   set -x
@@ -15,8 +22,7 @@ fi
 
 export CY_API_URL="${CY_API_URL:-https://http-api.cycloid.io}"
 export CY_BINARIES_PATH="${CY_BINARIES_PATH:-/usr/local/bin}"
-
-export CY_WAIT_NETWORK="${CY_WAIT_NETWORK:-true}"
+export CY_WAIT_NETWORK="${CY_WAIT_NETWORK:-false}"
 
 # Compating version, this is used when there is no CLI matching your API version.
 # We compare your version and the one released to find the closest n-1 version
@@ -164,7 +170,8 @@ if [[ "$CY_WAIT_NETWORK" == "true" ]]; then
 fi
 
 # Get Cycloid API version
-export CY_VERSION=$(curl --fail -k --retry-all-errors --retry-delay 2 --retry 5 -s "${CY_API_URL}/version" | jq -r .data.version)
+export CY_API_VERSION=$(curl --fail -k --retry-all-errors --retry-delay 2 --retry 5 -s "${CY_API_URL}/version" | jq -r .data.version)
+export CY_VERSION="${CY_VERSION:-$CY_API_VERSION}"
 
 if [[ -z "$CY_VERSION" ]]; then
   echo "Error: Unable to get Cycloid API version on ${CY_API_URL}/version" >&2

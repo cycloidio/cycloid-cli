@@ -6,6 +6,10 @@
   ([PR #126](https://github.com/cycloidio/cycloid-cli/pull/126))
   - cy-wrapper: provide debug mode using CY_DEBUG env var
   ([PR #127](https://github.com/cycloidio/cycloid-cli/pull/127))
+  - cy-wrapper: CY_WAIT_NETWORK now default to false
+  ([PR #127](https://github.com/cycloidio/cycloid-cli/pull/127))
+  - cy-wrapper: CY_VERSION can be enforced to a specific version
+  ([PR #127](https://github.com/cycloidio/cycloid-cli/pull/127))
 
 ## [v1.0.86] _2022-01-04_
 - **CHANGED**
