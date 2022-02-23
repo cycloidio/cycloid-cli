@@ -12,6 +12,8 @@
   ([PR #127](https://github.com/cycloidio/cycloid-cli/pull/127))
   - cy-wrapper: Reduce the default number of retries and provide new CY_DOWNLOAD_RETRIES variable
   ([PR #127](https://github.com/cycloidio/cycloid-cli/pull/127))
+  - cy-wrapper: Error handling when CY_RELEASES_URL is not reachable or incorrect
+  ([PR #127](https://github.com/cycloidio/cycloid-cli/pull/127))
 
 ## [v1.0.86] _2022-01-04_
 - **CHANGED**

@@ -10,6 +10,7 @@
 # CY_WAIT_NETWORK: Ensure or wait to have internet access before trying to download the binary by trying to curl "cli-release.owl.cycloid.io/releases", default "false"
 # CY_BINARY: Enforce the usage of a specific local binary. Default path "${CY_BINARIES_PATH}/cy-${CY_VERSION}"
 # CY_DOWNLOAD_RETRIES: In case you have network failure, you can specify number of retries on download for binaries. Default "1"
+# CY_RELEASES_URL: Override Cycloid CLI release API URL, default https://cli-release.owl.cycloid.io/releases
 
 if [ -n "$CY_DEBUG" ]; then
   echo "CY_DEBUG provided, wrapper running in DEBUG mode" >&2
@@ -25,6 +26,7 @@ export CY_API_URL="${CY_API_URL:-https://http-api.cycloid.io}"
 export CY_BINARIES_PATH="${CY_BINARIES_PATH:-/usr/local/bin}"
 export CY_WAIT_NETWORK="${CY_WAIT_NETWORK:-false}"
 export CY_DOWNLOAD_RETRIES="${CY_DOWNLOAD_RETRIES:-1}"
+export CY_RELEASES_URL="${CY_RELEASES_URL:-https://cli-release.owl.cycloid.io/releases}"
 
 # Compating version, this is used when there is no CLI matching your API version.
 # We compare your version and the one released to find the closest n-1 version
@@ -75,7 +77,7 @@ format_version () {
 find_version_below () {
   api_version=$(format_version $1)
 
-  for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 2 --silent "https://cli-release.owl.cycloid.io/releases" | jq -r '.[] | .name'); do
+  for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 2 --silent $CY_RELEASES_URL | jq -r '.[] | .name'); do
     cli_version=$(format_version $cli_release)
     # Ignoring the dev release from github
     if [[ "$cli_version" == "0.0-dev" ]]; then
@@ -136,6 +138,10 @@ get_binary () {
     # In case of error, fallback on latest lower version
     if [ $STATUS != 0 ]; then
       CY_LOWER_VERSION=$(find_version_below ${CY_VERSION})
+      if [ $? != 0 ]; then
+        echo "Error: find_version_below unable to obtain closest n-1 version from $CY_RELEASES_URL" >&2
+        return 2
+      fi
       echo "Warning: Unable to download CLI version ${CY_VERSION}-rc. Fallback to the closest n-1 version ${CY_LOWER_VERSION}" >&2
       # Removing the v prefix as we don't let it in the binary name
       export CY_BINARY="${CY_BINARIES_PATH}/cy-$(echo $CY_LOWER_VERSION | sed 's/^v//')"
@@ -168,7 +174,7 @@ CY_API_URL=${CY_API_URL%/}
 
 # Wait for network access. This ensure in case of usage in a pipeline to ensure and wait in case network is not started.
 if [[ "$CY_WAIT_NETWORK" == "true" ]]; then
-    timeout 120 bash -c 'while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' https://cli-release.owl.cycloid.io/releases)" != "200" ]]; do sleep 3; done'
+    timeout 120 bash -c 'while [[ "$(curl --insecure -s -o /dev/null -w ''%{http_code}'' CY_RELEASES_URL != "200" ]]; do sleep 3; done'
 fi
 
 # Get Cycloid API version
@@ -191,7 +197,7 @@ done
 
 # If no binaries have been downloaded after 3 tries raise an error
 if [ $STATUS != 0 ]; then
-  echo "Error: Unable to download Cycloid CLI from github ${CY_URL}" >&2
+  echo "Global error: Unable to download Cycloid CLI from github ${CY_URL}" >&2
   exit 1
 fi
 
