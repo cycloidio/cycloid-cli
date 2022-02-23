@@ -17,7 +17,7 @@ func NewDeleteCommand() *cobra.Command {
 		Short: "delete a credential",
 		Example: `
 	# delete a credential with canonical my-cred
-	cy --org my-org creds delete --cred my-cred
+	cy --org my-org credential delete --canonical my-cred
 `,
 		RunE:    del,
 		PreRunE: internal.CheckAPIAndCLIVersion,
