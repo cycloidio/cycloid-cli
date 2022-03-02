@@ -18,7 +18,6 @@ func NewCommands() *cobra.Command {
 		NewListCommand(),
 		NewGetCommand(),
 		NewValidateFormCmd(),
-		NewGenDocCmd(),
 	)
 
 	return cmd

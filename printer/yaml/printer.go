@@ -6,7 +6,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/cycloidio/cycloid-cli/printer"
-	"gopkg.in/yaml.v1"
+	"gopkg.in/yaml.v3"
 )
 
 // YAML implements the printer interface
