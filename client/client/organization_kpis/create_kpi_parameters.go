@@ -23,8 +23,13 @@ import (
 // NewCreateKpiParams creates a new CreateKpiParams object
 // with the default values initialized.
 func NewCreateKpiParams() *CreateKpiParams {
-	var ()
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &CreateKpiParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
 
 		timeout: cr.DefaultTimeout,
 	}
@@ -33,8 +38,13 @@ func NewCreateKpiParams() *CreateKpiParams {
 // NewCreateKpiParamsWithTimeout creates a new CreateKpiParams object
 // with the default values initialized, and the ability to set a timeout on a request
 func NewCreateKpiParamsWithTimeout(timeout time.Duration) *CreateKpiParams {
-	var ()
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &CreateKpiParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
 
 		timeout: timeout,
 	}
@@ -43,8 +53,13 @@ func NewCreateKpiParamsWithTimeout(timeout time.Duration) *CreateKpiParams {
 // NewCreateKpiParamsWithContext creates a new CreateKpiParams object
 // with the default values initialized, and the ability to set a context for a request
 func NewCreateKpiParamsWithContext(ctx context.Context) *CreateKpiParams {
-	var ()
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &CreateKpiParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
 
 		Context: ctx,
 	}
@@ -53,8 +68,13 @@ func NewCreateKpiParamsWithContext(ctx context.Context) *CreateKpiParams {
 // NewCreateKpiParamsWithHTTPClient creates a new CreateKpiParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewCreateKpiParamsWithHTTPClient(client *http.Client) *CreateKpiParams {
-	var ()
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &CreateKpiParams{
+		PageIndex:  &pageIndexDefault,
+		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
@@ -84,6 +104,12 @@ type CreateKpiParams struct {
 
 	*/
 	Environment *string
+	/*Favorite
+	  Flag to retrieve favorite data from the members favorite list.
+
+
+	*/
+	Favorite *bool
 	/*FetchData
 	  Flag to retrieve KPIs' data upon retrieveing KPIs themselves
 
@@ -95,6 +121,16 @@ type CreateKpiParams struct {
 
 	*/
 	OrganizationCanonical string
+	/*PageIndex
+	  The page number to request. The first page is 1.
+
+	*/
+	PageIndex *uint32
+	/*PageSize
+	  The number of items at most which the response can have.
+
+	*/
+	PageSize *uint32
 	/*Project
 	  A canonical of a project used for filtering.
 
@@ -183,6 +219,17 @@ func (o *CreateKpiParams) SetEnvironment(environment *string) {
 	o.Environment = environment
 }
 
+// WithFavorite adds the favorite to the create kpi params
+func (o *CreateKpiParams) WithFavorite(favorite *bool) *CreateKpiParams {
+	o.SetFavorite(favorite)
+	return o
+}
+
+// SetFavorite adds the favorite to the create kpi params
+func (o *CreateKpiParams) SetFavorite(favorite *bool) {
+	o.Favorite = favorite
+}
+
 // WithFetchData adds the fetchData to the create kpi params
 func (o *CreateKpiParams) WithFetchData(fetchData *bool) *CreateKpiParams {
 	o.SetFetchData(fetchData)
@@ -203,6 +250,28 @@ func (o *CreateKpiParams) WithOrganizationCanonical(organizationCanonical string
 // SetOrganizationCanonical adds the organizationCanonical to the create kpi params
 func (o *CreateKpiParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
+}
+
+// WithPageIndex adds the pageIndex to the create kpi params
+func (o *CreateKpiParams) WithPageIndex(pageIndex *uint32) *CreateKpiParams {
+	o.SetPageIndex(pageIndex)
+	return o
+}
+
+// SetPageIndex adds the pageIndex to the create kpi params
+func (o *CreateKpiParams) SetPageIndex(pageIndex *uint32) {
+	o.PageIndex = pageIndex
+}
+
+// WithPageSize adds the pageSize to the create kpi params
+func (o *CreateKpiParams) WithPageSize(pageSize *uint32) *CreateKpiParams {
+	o.SetPageSize(pageSize)
+	return o
+}
+
+// SetPageSize adds the pageSize to the create kpi params
+func (o *CreateKpiParams) SetPageSize(pageSize *uint32) {
+	o.PageSize = pageSize
 }
 
 // WithProject adds the project to the create kpi params
@@ -278,6 +347,22 @@ func (o *CreateKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 
 	}
 
+	if o.Favorite != nil {
+
+		// query param favorite
+		var qrFavorite bool
+		if o.Favorite != nil {
+			qrFavorite = *o.Favorite
+		}
+		qFavorite := swag.FormatBool(qrFavorite)
+		if qFavorite != "" {
+			if err := r.SetQueryParam("favorite", qFavorite); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	if o.FetchData != nil {
 
 		// query param fetch_data
@@ -297,6 +382,38 @@ func (o *CreateKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 	// path param organization_canonical
 	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
 		return err
+	}
+
+	if o.PageIndex != nil {
+
+		// query param page_index
+		var qrPageIndex uint32
+		if o.PageIndex != nil {
+			qrPageIndex = *o.PageIndex
+		}
+		qPageIndex := swag.FormatUint32(qrPageIndex)
+		if qPageIndex != "" {
+			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.PageSize != nil {
+
+		// query param page_size
+		var qrPageSize uint32
+		if o.PageSize != nil {
+			qrPageSize = *o.PageSize
+		}
+		qPageSize := swag.FormatUint32(qrPageSize)
+		if qPageSize != "" {
+			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if o.Project != nil {

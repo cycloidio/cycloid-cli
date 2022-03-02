@@ -2,6 +2,8 @@ package middleware
 
 import "fmt"
 
+// from https://github.com/cycloidio/youdeploy-http-api/blob/develop/utils/convert.go
+
 func convertInterfaceArray(ia []interface{}) []interface{} {
 	res := make([]interface{}, len(ia))
 	for i, v := range ia {

@@ -16,7 +16,7 @@ import (
 // ProjectEnvironmentConfig Project Environment Config
 //
 // Representation of project's environment configuration done via the forms.
-// The full forms file is returned, but the use-case picked has the
+// The full forms file is returned, but the use case picked has the
 // Set variables matching the current configuration - if any.
 //
 // swagger:model ProjectEnvironmentConfig
@@ -24,7 +24,7 @@ type ProjectEnvironmentConfig struct {
 
 	// forms
 	// Required: true
-	Forms FormsFile `json:"forms"`
+	Forms *FormsFileV2 `json:"forms"`
 
 	// The use case picked for that environment
 	// Required: true
@@ -51,11 +51,17 @@ func (m *ProjectEnvironmentConfig) Validate(formats strfmt.Registry) error {
 
 func (m *ProjectEnvironmentConfig) validateForms(formats strfmt.Registry) error {
 
-	if err := m.Forms.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("forms")
-		}
+	if err := validate.Required("forms", "body", m.Forms); err != nil {
 		return err
+	}
+
+	if m.Forms != nil {
+		if err := m.Forms.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("forms")
+			}
+			return err
+		}
 	}
 
 	return nil

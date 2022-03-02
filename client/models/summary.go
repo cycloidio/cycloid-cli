@@ -41,6 +41,10 @@ type Summary struct {
 	// Required: true
 	ServiceCatalogSources *uint64 `json:"service_catalog_sources"`
 
+	// service catalogs
+	// Required: true
+	ServiceCatalogs *uint64 `json:"service_catalogs"`
+
 	// teams
 	// Required: true
 	Teams *uint64 `json:"teams"`
@@ -75,6 +79,10 @@ func (m *Summary) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateServiceCatalogSources(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateServiceCatalogs(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -140,6 +148,15 @@ func (m *Summary) validateRoles(formats strfmt.Registry) error {
 func (m *Summary) validateServiceCatalogSources(formats strfmt.Registry) error {
 
 	if err := validate.Required("service_catalog_sources", "body", m.ServiceCatalogSources); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Summary) validateServiceCatalogs(formats strfmt.Registry) error {
+
+	if err := validate.Required("service_catalogs", "body", m.ServiceCatalogs); err != nil {
 		return err
 	}
 

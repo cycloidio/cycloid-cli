@@ -7,7 +7,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
@@ -78,29 +78,17 @@ func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
 	return d, err
 }
 
-// convertFormFile takes a models.FormsFile and converts its variables
-// from map[interface{}]interface{} to map[string]interface{}, allowing
-// to use those properly with the API - as JSON cannot marshal/unmarshal
-// map[interface{}]interface{}
-func convertFormFile(mff models.FormsFile) models.FormsFile {
-	for _, useCases := range mff {
-		for _, groups := range useCases {
-			for _, entities := range groups {
-				for i, entity := range entities {
-					entities[i].Default = ConvertMapInterfaceToMapString(entity.Default)
-					for ni, v := range entity.Values {
-						entities[i].Values[ni] = ConvertMapInterfaceToMapString(v)
-					}
-				}
-			}
-		}
-	}
-	return mff
+// from https://github.com/cycloidio/youdeploy-http-api/blob/develop/services/youdeploy/svccat/form/file.go#L12
+// modify Entity by interface and add Data from FileV1
+type FileForms struct {
+	Version  *string                `yaml:"version" json:"version"`
+	UseCases interface{}            `yaml:"use_cases" json:"use_cases"`
+	Data     map[string]interface{} `yaml:",inline"`
 }
 
 func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error) {
 	var body *models.FormsValidation
-	var formsfile models.FormsFile
+	var formsfile FileForms
 
 	err := yaml.Unmarshal(rawForms, &formsfile)
 	if err != nil {
@@ -112,13 +100,32 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 		}
 		return ve, nil
 	}
-	formsfile = convertFormFile(formsfile)
+
+	// We unmarchal stackforms yaml file in a generic structure FileForms.
+	// Because the yaml file format could be v1 or v2 the FileForms is based on interfaces.
+	// Unfortunately golang produce an error when you unmarchal yaml from interface, and marchal it later on into json
+	// unable validate form: json: unsupported type: map[interface {}]interface {}
+
+	var bodyFormFile interface{}
+	if len(formsfile.Data) > 0 {
+		// v1
+		datas := map[string]interface{}{}
+		for key, element := range formsfile.Data {
+			datas[key] = ConvertMapInterfaceToMapString(element)
+			// if element under Data, that means we use v1
+		}
+		bodyFormFile = datas
+	} else {
+		// v2
+		formsfile.UseCases = ConvertMapInterfaceToMapString(formsfile.UseCases)
+		bodyFormFile = formsfile
+	}
 
 	params := organization_forms.NewValidateFormsFileParams()
 	params.SetOrganizationCanonical(org)
 
 	body = &models.FormsValidation{
-		FormFile: formsfile,
+		FormFile: bodyFormFile,
 	}
 	err = body.Validate(strfmt.Default)
 	if err != nil {
@@ -132,7 +139,6 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	}
 
 	params.SetBody(body)
-
 	resp, err := m.api.OrganizationForms.ValidateFormsFile(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err

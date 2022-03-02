@@ -59,6 +59,40 @@ func (a *Client) CreateProject(params *CreateProjectParams, authInfo runtime.Cli
 }
 
 /*
+CreateProjectFavorite Add a new project in the user favorites list.
+*/
+func (a *Client) CreateProjectFavorite(params *CreateProjectFavoriteParams, authInfo runtime.ClientAuthInfoWriter) (*CreateProjectFavoriteNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateProjectFavoriteParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "createProjectFavorite",
+		Method:             "POST",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/favorites",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CreateProjectFavoriteReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CreateProjectFavoriteNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*CreateProjectFavoriteDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 DeleteProject Delete a project of the organization.
 */
 func (a *Client) DeleteProject(params *DeleteProjectParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteProjectNoContent, error) {
@@ -123,6 +157,40 @@ func (a *Client) DeleteProjectEnvironment(params *DeleteProjectEnvironmentParams
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*DeleteProjectEnvironmentDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+DeleteProjectFavorite Remove a project from the user favorites list.
+*/
+func (a *Client) DeleteProjectFavorite(params *DeleteProjectFavoriteParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteProjectFavoriteNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteProjectFavoriteParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "deleteProjectFavorite",
+		Method:             "DELETE",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/favorites",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteProjectFavoriteReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteProjectFavoriteNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*DeleteProjectFavoriteDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

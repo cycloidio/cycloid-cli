@@ -10,38 +10,18 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // FormsValidation Forms validation
 //
-// This object contains a forms file's content, eg: ```
-//   useCase1:
-//     terraform:
-//       group1:
-//         - entity1
-//         - entity2
-//         - entity3
-//       group2:
-//         - entity4
-//   useCase2:
-//     terraform:
-//       group1:
-//         - entity1
-//         - entity2
-//         - entity3
-//       group2:
-//         - entity4
-//     ansible:
-//       group3:
-//         - entity5
-//         - entity6
-// ```
+// Validates a given Form's file
 // swagger:model FormsValidation
 type FormsValidation struct {
 
-	// form file
+	// A form's file to any given version
 	// Required: true
-	FormFile FormsFile `json:"form_file"`
+	FormFile interface{} `json:"form_file"`
 }
 
 // Validate validates this forms validation
@@ -60,10 +40,7 @@ func (m *FormsValidation) Validate(formats strfmt.Registry) error {
 
 func (m *FormsValidation) validateFormFile(formats strfmt.Registry) error {
 
-	if err := m.FormFile.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("form_file")
-		}
+	if err := validate.Required("form_file", "body", m.FormFile); err != nil {
 		return err
 	}
 

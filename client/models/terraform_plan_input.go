@@ -19,7 +19,7 @@ import (
 // swagger:model TerraformPlanInput
 type TerraformPlanInput struct {
 
-	// Terraform plan file in escaped JSON format. See more: https://www.terraform.io/docs/internals/json-format.html
+	// Terraform plan file in escaped JSON format. See more: https://www.terraform.io/internals/json-format
 	// Required: true
 	Tfplan *string `json:"tfplan"`
 }
