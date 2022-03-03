@@ -29,8 +29,8 @@ func TestYAMLPrinter(t *testing.T) {
 		exp := `a: value a
 b: value b
 c:
-- abc
-- def
+    - abc
+    - def
 `
 		err := y.Print(obj, printer.Options{}, &b)
 		require.NoError(t, err)
