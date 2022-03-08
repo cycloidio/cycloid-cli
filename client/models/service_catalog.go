@@ -65,6 +65,9 @@ type ServiceCatalog struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// Readme of the stack
+	Readme string `json:"readme,omitempty"`
+
 	// ref
 	// Required: true
 	Ref *string `json:"ref"`
