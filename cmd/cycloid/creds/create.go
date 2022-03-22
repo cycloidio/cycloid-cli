@@ -48,6 +48,7 @@ func NewCreateCommand() *cobra.Command {
 
 	WithPersistentFlagDescription(cmd)
 	common.RequiredPersistentFlag(WithPersistentFlagName, cmd)
+	common.WithPersistentFlagCan(cmd)
 	WithPersistentFlagPath(cmd)
 
 	// SSH
@@ -193,6 +194,10 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	path, err := cmd.Flags().GetString("path")
+	if err != nil {
+		return err
+	}
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -366,6 +371,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	err = m.CreateCredential(org, name, credT, rawCred, path, description)
+	err = m.CreateCredential(org, name, credT, rawCred, path, can, description)
 	return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStdout())
 }

@@ -10,7 +10,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, description string) error {
+func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) error {
 
 	params := organization_credentials.NewCreateCredentialParams()
 	params.SetOrganizationCanonical(org)
@@ -27,6 +27,7 @@ func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.C
 		Path:        &path,
 		Raw:         rawCred,
 		Type:        &cType,
+		Canonical:   can,
 	}
 
 	params.SetBody(body)
