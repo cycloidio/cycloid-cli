@@ -61,6 +61,30 @@ func TestCreds(t *testing.T) {
 		assert.Nil(t, cmdErr)
 		require.Equal(t, "", cmdOut)
 	})
+	t.Run("SuccessCredsCreateCustomWithFile", func(t *testing.T) {
+		// Cleanup just in case
+		executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"creds",
+			"delete",
+			"--canonical", "cli-custom-file",
+		})
+
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"creds",
+			"create",
+			"custom",
+			"--name", "cli-custom-file",
+			"--field", "foo=bar",
+			"--field-file", "key=/tmp/test_cli-ssh",
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Equal(t, "", cmdOut)
+	})
 
 	t.Run("SuccessCredsCreateSSH", func(t *testing.T) {
 		// Cleanup just in case

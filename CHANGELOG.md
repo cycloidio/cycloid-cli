@@ -4,6 +4,8 @@
   ([PR #130](https://github.com/cycloidio/cycloid-cli/pull/130))
   - Add the ability to specify canonical for credential create
   ([PR #130](https://github.com/cycloidio/cycloid-cli/pull/130))
+  - Add new field-file flag to custom credential create
+  ([PR #130](https://github.com/cycloidio/cycloid-cli/pull/130))
 
 ## [v1.0.88] _2022-02-10_
 - **CHANGED**
