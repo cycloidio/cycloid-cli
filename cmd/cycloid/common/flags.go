@@ -34,6 +34,13 @@ func WithFlagCan(cmd *cobra.Command) string {
 	return flagName
 }
 
+func WithPersistentFlagCan(cmd *cobra.Command) string {
+	flagName := "canonical"
+	// TODO  how make it nil or without any value in case we don't want any creds ?
+	cmd.PersistentFlags().StringVar(&canFlag, flagName, "", "canonical")
+	return flagName
+}
+
 func WithFlagCred(cmd *cobra.Command) string {
 	flagName := "cred"
 	// TODO  how make it nil or without any value in case we don't want any creds ?

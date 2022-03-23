@@ -39,6 +39,10 @@ type Pipeline struct {
 	// Required: true
 	ID *uint64 `json:"id"`
 
+	// jobs
+	// Required: true
+	Jobs []*Job `json:"jobs"`
+
 	// name
 	// Required: true
 	Name *string `json:"name"`
@@ -89,6 +93,10 @@ func (m *Pipeline) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateJobs(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -181,6 +189,31 @@ func (m *Pipeline) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *Pipeline) validateJobs(formats strfmt.Registry) error {
+
+	if err := validate.Required("jobs", "body", m.Jobs); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Jobs); i++ {
+		if swag.IsZero(m.Jobs[i]) { // not required
+			continue
+		}
+
+		if m.Jobs[i] != nil {
+			if err := m.Jobs[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

@@ -82,6 +82,16 @@ for the get pipelines operation typically these are written to a http.Request
 */
 type GetPipelinesParams struct {
 
+	/*ConcoursePipelineName
+	  A pipeline name
+
+	*/
+	ConcoursePipelineName *string
+	/*EnvironmentCanonical
+	  A list of environments' canonical to filter from
+
+	*/
+	EnvironmentCanonical []string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -97,6 +107,16 @@ type GetPipelinesParams struct {
 
 	*/
 	PageSize *uint32
+	/*ProjectCanonical
+	  A list of projects' canonical to filter from
+
+	*/
+	ProjectCanonical []string
+	/*Statuses
+	  List of statuses that you want to filter a pipeline/job with. Pipeline can be either paused or unpaused, but jobs can be started, pending, succeeded, failed, errored, aborted. So if any of a pipeline's job has one of the given status, the associated pipeline will be included in the response.
+
+	*/
+	Statuses []string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -136,6 +156,28 @@ func (o *GetPipelinesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithConcoursePipelineName adds the concoursePipelineName to the get pipelines params
+func (o *GetPipelinesParams) WithConcoursePipelineName(concoursePipelineName *string) *GetPipelinesParams {
+	o.SetConcoursePipelineName(concoursePipelineName)
+	return o
+}
+
+// SetConcoursePipelineName adds the concoursePipelineName to the get pipelines params
+func (o *GetPipelinesParams) SetConcoursePipelineName(concoursePipelineName *string) {
+	o.ConcoursePipelineName = concoursePipelineName
+}
+
+// WithEnvironmentCanonical adds the environmentCanonical to the get pipelines params
+func (o *GetPipelinesParams) WithEnvironmentCanonical(environmentCanonical []string) *GetPipelinesParams {
+	o.SetEnvironmentCanonical(environmentCanonical)
+	return o
+}
+
+// SetEnvironmentCanonical adds the environmentCanonical to the get pipelines params
+func (o *GetPipelinesParams) SetEnvironmentCanonical(environmentCanonical []string) {
+	o.EnvironmentCanonical = environmentCanonical
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the get pipelines params
 func (o *GetPipelinesParams) WithOrganizationCanonical(organizationCanonical string) *GetPipelinesParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -169,6 +211,28 @@ func (o *GetPipelinesParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
+// WithProjectCanonical adds the projectCanonical to the get pipelines params
+func (o *GetPipelinesParams) WithProjectCanonical(projectCanonical []string) *GetPipelinesParams {
+	o.SetProjectCanonical(projectCanonical)
+	return o
+}
+
+// SetProjectCanonical adds the projectCanonical to the get pipelines params
+func (o *GetPipelinesParams) SetProjectCanonical(projectCanonical []string) {
+	o.ProjectCanonical = projectCanonical
+}
+
+// WithStatuses adds the statuses to the get pipelines params
+func (o *GetPipelinesParams) WithStatuses(statuses []string) *GetPipelinesParams {
+	o.SetStatuses(statuses)
+	return o
+}
+
+// SetStatuses adds the statuses to the get pipelines params
+func (o *GetPipelinesParams) SetStatuses(statuses []string) {
+	o.Statuses = statuses
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetPipelinesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -176,6 +240,30 @@ func (o *GetPipelinesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		return err
 	}
 	var res []error
+
+	if o.ConcoursePipelineName != nil {
+
+		// query param concourse_pipeline_name
+		var qrConcoursePipelineName string
+		if o.ConcoursePipelineName != nil {
+			qrConcoursePipelineName = *o.ConcoursePipelineName
+		}
+		qConcoursePipelineName := qrConcoursePipelineName
+		if qConcoursePipelineName != "" {
+			if err := r.SetQueryParam("concourse_pipeline_name", qConcoursePipelineName); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	valuesEnvironmentCanonical := o.EnvironmentCanonical
+
+	joinedEnvironmentCanonical := swag.JoinByFormat(valuesEnvironmentCanonical, "")
+	// query array param environment_canonical
+	if err := r.SetQueryParam("environment_canonical", joinedEnvironmentCanonical...); err != nil {
+		return err
+	}
 
 	// path param organization_canonical
 	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
@@ -212,6 +300,22 @@ func (o *GetPipelinesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 			}
 		}
 
+	}
+
+	valuesProjectCanonical := o.ProjectCanonical
+
+	joinedProjectCanonical := swag.JoinByFormat(valuesProjectCanonical, "")
+	// query array param project_canonical
+	if err := r.SetQueryParam("project_canonical", joinedProjectCanonical...); err != nil {
+		return err
+	}
+
+	valuesStatuses := o.Statuses
+
+	joinedStatuses := swag.JoinByFormat(valuesStatuses, "multi")
+	// query array param statuses
+	if err := r.SetQueryParam("statuses", joinedStatuses...); err != nil {
+		return err
 	}
 
 	if len(res) > 0 {

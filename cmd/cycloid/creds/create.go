@@ -3,6 +3,7 @@ package creds
 import (
 	"fmt"
 	"io/ioutil"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -48,6 +49,7 @@ func NewCreateCommand() *cobra.Command {
 
 	WithPersistentFlagDescription(cmd)
 	common.RequiredPersistentFlag(WithPersistentFlagName, cmd)
+	common.WithPersistentFlagCan(cmd)
 	WithPersistentFlagPath(cmd)
 
 	// SSH
@@ -82,10 +84,11 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
 	# create a credential for custom type
-	cy --org my-org credential create custom --name foo --field my-key=my-value --field my-key2=my-value2
+	cy --org my-org credential create custom --name foo --field my-key=my-value --field my-key2=my-value2 --field-file my-key3=/file/path
 `,
 	}
-	common.RequiredFlag(WithFlagField, custom)
+	WithFlagField(custom)
+	WithFlagFieldFile(custom)
 
 	// AWS
 	var aws = &cobra.Command{
@@ -196,6 +199,10 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	can, err := cmd.Flags().GetString("canonical")
+	if err != nil {
+		return err
+	}
 	description, err := cmd.Flags().GetString("description")
 	if err != nil {
 		return err
@@ -245,6 +252,27 @@ func create(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return err
 		}
+		fileFields, err := cmd.Flags().GetStringToString("field-file")
+		if err != nil {
+			return err
+		}
+
+		if len(fields) == 0 && len(fileFields) == 0 {
+			return fmt.Errorf("at least one --field or --field-file has to be specified")
+		}
+
+		// Read file fields
+		if len(fileFields) > 0 {
+			for f, p := range fileFields {
+				fc, err := ioutil.ReadFile(p)
+				if err != nil {
+					return errors.Wrap(err, fmt.Sprintf("unable to read file path %s", p))
+				}
+
+				fields[f] = strings.TrimSuffix(string(fc), "\n")
+			}
+		}
+
 		rawCred = &models.CredentialRaw{
 			Raw: fields,
 		}
@@ -366,6 +394,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	err = m.CreateCredential(org, name, credT, rawCred, path, description)
+	err = m.CreateCredential(org, name, credT, rawCred, path, can, description)
 	return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStdout())
 }

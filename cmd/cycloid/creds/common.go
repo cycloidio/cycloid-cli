@@ -8,6 +8,7 @@ var (
 	descriptionFlag    string
 	pathFlag           string
 	fieldsFlags        map[string]string
+	fieldsFileFlags    map[string]string
 	usernameFlag       string
 	accessKeyFlag      string
 	secretKeyFlag      string
@@ -77,6 +78,11 @@ func WithFlagSecretKey(cmd *cobra.Command) string {
 func WithFlagField(cmd *cobra.Command) string {
 	flagName := "field"
 	cmd.Flags().StringToStringVar(&fieldsFlags, flagName, nil, "key=value")
+	return flagName
+}
+func WithFlagFieldFile(cmd *cobra.Command) string {
+	flagName := "field-file"
+	cmd.Flags().StringToStringVar(&fieldsFileFlags, flagName, nil, "key=/file/path")
 	return flagName
 }
 func WithFlagType(cmd *cobra.Command) string {
