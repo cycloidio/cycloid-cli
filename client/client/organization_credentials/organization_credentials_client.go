@@ -135,6 +135,40 @@ func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.Cli
 }
 
 /*
+GetCredentialOptions Get options of the Credential.
+*/
+func (a *Client) GetCredentialOptions(params *GetCredentialOptionsParams, authInfo runtime.ClientAuthInfoWriter) (*GetCredentialOptionsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetCredentialOptionsParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "getCredentialOptions",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_canonical}/options",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetCredentialOptionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetCredentialOptionsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetCredentialOptionsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 ListCredentials Return all the Credentials, depending on the caller permissions it'll return the Raw data or not. If the caller has List and not Get it'll not return the Raw, if it has List and Read it'll return the Raw.
 */
 func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime.ClientAuthInfoWriter) (*ListCredentialsOK, error) {

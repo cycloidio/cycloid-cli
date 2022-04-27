@@ -16,12 +16,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// SwiftRemoteTFState Deprecated. Please use SwiftStorage.
-// Representation of Swift remote tf state for external backend.
+// SwiftStorage Representation of Swift remote tf state for external backend.
 // Must be matched with a credential of the "swift" type.
 //
-// swagger:model SwiftRemoteTFState
-type SwiftRemoteTFState struct {
+// swagger:model SwiftStorage
+type SwiftStorage struct {
 
 	// The Swift container containing objects
 	//
@@ -44,12 +43,12 @@ type SwiftRemoteTFState struct {
 }
 
 // Engine gets the engine of this subtype
-func (m *SwiftRemoteTFState) Engine() string {
-	return "SwiftRemoteTFState"
+func (m *SwiftStorage) Engine() string {
+	return "SwiftStorage"
 }
 
 // SetEngine sets the engine of this subtype
-func (m *SwiftRemoteTFState) SetEngine(val string) {
+func (m *SwiftStorage) SetEngine(val string) {
 
 }
 
@@ -62,7 +61,7 @@ func (m *SwiftRemoteTFState) SetEngine(val string) {
 // SkipVerifySsl gets the skip verify ssl of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
-func (m *SwiftRemoteTFState) UnmarshalJSON(raw []byte) error {
+func (m *SwiftStorage) UnmarshalJSON(raw []byte) error {
 	var data struct {
 
 		// The Swift container containing objects
@@ -105,7 +104,7 @@ func (m *SwiftRemoteTFState) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	var result SwiftRemoteTFState
+	var result SwiftStorage
 
 	if base.Engine != result.Engine() {
 		/* Not the type we're looking for. */
@@ -126,7 +125,7 @@ func (m *SwiftRemoteTFState) UnmarshalJSON(raw []byte) error {
 }
 
 // MarshalJSON marshals this object with a polymorphic type to a JSON structure
-func (m SwiftRemoteTFState) MarshalJSON() ([]byte, error) {
+func (m SwiftStorage) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
@@ -177,8 +176,8 @@ func (m SwiftRemoteTFState) MarshalJSON() ([]byte, error) {
 	return swag.ConcatJSON(b1, b2, b3), nil
 }
 
-// Validate validates this swift remote t f state
-func (m *SwiftRemoteTFState) Validate(formats strfmt.Registry) error {
+// Validate validates this swift storage
+func (m *SwiftStorage) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateContainer(formats); err != nil {
@@ -199,7 +198,7 @@ func (m *SwiftRemoteTFState) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SwiftRemoteTFState) validateContainer(formats strfmt.Registry) error {
+func (m *SwiftStorage) validateContainer(formats strfmt.Registry) error {
 
 	if err := validate.Required("container", "body", m.Container); err != nil {
 		return err
@@ -208,7 +207,7 @@ func (m *SwiftRemoteTFState) validateContainer(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SwiftRemoteTFState) validateObject(formats strfmt.Registry) error {
+func (m *SwiftStorage) validateObject(formats strfmt.Registry) error {
 
 	if err := validate.Required("object", "body", m.Object); err != nil {
 		return err
@@ -217,7 +216,7 @@ func (m *SwiftRemoteTFState) validateObject(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SwiftRemoteTFState) validateRegion(formats strfmt.Registry) error {
+func (m *SwiftStorage) validateRegion(formats strfmt.Registry) error {
 
 	if err := validate.Required("region", "body", m.Region); err != nil {
 		return err
@@ -227,7 +226,7 @@ func (m *SwiftRemoteTFState) validateRegion(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *SwiftRemoteTFState) MarshalBinary() ([]byte, error) {
+func (m *SwiftStorage) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -235,8 +234,8 @@ func (m *SwiftRemoteTFState) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *SwiftRemoteTFState) UnmarshalBinary(b []byte) error {
-	var res SwiftRemoteTFState
+func (m *SwiftStorage) UnmarshalBinary(b []byte) error {
+	var res SwiftStorage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

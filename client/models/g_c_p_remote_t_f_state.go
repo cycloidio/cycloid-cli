@@ -16,7 +16,8 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// GCPRemoteTFState Representation of GCP remote tf state for external backend.
+// GCPRemoteTFState Deprecated. Please use GCPStorage.
+// Representation of GCP remote tf state for external backend.
 // Must be matched with a credential of the "gcp" type.
 //
 // swagger:model GCPRemoteTFState
