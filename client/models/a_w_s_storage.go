@@ -16,27 +16,34 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// SwiftRemoteTFState Deprecated. Please use SwiftStorage.
-// Representation of Swift remote tf state for external backend.
-// Must be matched with a credential of the "swift" type.
+// AWSStorage Representation of AWS storage for external backend.
+// Must be matched with a credential of the "aws" type.
 //
-// swagger:model SwiftRemoteTFState
-type SwiftRemoteTFState struct {
+// swagger:model AWSStorage
+type AWSStorage struct {
 
-	// The Swift container containing objects
+	// The AWS bucket containing objects
 	//
 	// Required: true
-	Container *string `json:"container"`
+	Bucket *string `json:"bucket"`
 
-	// The swift object uniquely identifying an object in a container
+	// A custom endpoint for the S3 API (default: s3.amazonaws.com)
+	//
+	Endpoint string `json:"endpoint,omitempty"`
+
+	// The S3 Key uniquely identifies an object in a bucket
 	//
 	// Required: true
-	Object *string `json:"object"`
+	Key *string `json:"key"`
 
-	// The Swift region where the resource exists
+	// The AWS region where the resource exists
 	//
 	// Required: true
 	Region *string `json:"region"`
+
+	// Always use path-style S3 URLs (https://<HOST>/<BUCKET> instead of https://<BUCKET>.<HOST>)
+	//
+	S3ForcePathStyle bool `json:"s3_force_path_style,omitempty"`
 
 	// Set this to `true` to not verify SSL certificates
 	//
@@ -44,41 +51,53 @@ type SwiftRemoteTFState struct {
 }
 
 // Engine gets the engine of this subtype
-func (m *SwiftRemoteTFState) Engine() string {
-	return "SwiftRemoteTFState"
+func (m *AWSStorage) Engine() string {
+	return "AWSStorage"
 }
 
 // SetEngine sets the engine of this subtype
-func (m *SwiftRemoteTFState) SetEngine(val string) {
+func (m *AWSStorage) SetEngine(val string) {
 
 }
 
-// Container gets the container of this subtype
+// Bucket gets the bucket of this subtype
 
-// Object gets the object of this subtype
+// Endpoint gets the endpoint of this subtype
+
+// Key gets the key of this subtype
 
 // Region gets the region of this subtype
+
+// S3ForcePathStyle gets the s3 force path style of this subtype
 
 // SkipVerifySsl gets the skip verify ssl of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
-func (m *SwiftRemoteTFState) UnmarshalJSON(raw []byte) error {
+func (m *AWSStorage) UnmarshalJSON(raw []byte) error {
 	var data struct {
 
-		// The Swift container containing objects
+		// The AWS bucket containing objects
 		//
 		// Required: true
-		Container *string `json:"container"`
+		Bucket *string `json:"bucket"`
 
-		// The swift object uniquely identifying an object in a container
+		// A custom endpoint for the S3 API (default: s3.amazonaws.com)
+		//
+		Endpoint string `json:"endpoint,omitempty"`
+
+		// The S3 Key uniquely identifies an object in a bucket
 		//
 		// Required: true
-		Object *string `json:"object"`
+		Key *string `json:"key"`
 
-		// The Swift region where the resource exists
+		// The AWS region where the resource exists
 		//
 		// Required: true
 		Region *string `json:"region"`
+
+		// Always use path-style S3 URLs (https://<HOST>/<BUCKET> instead of https://<BUCKET>.<HOST>)
+		//
+		S3ForcePathStyle bool `json:"s3_force_path_style,omitempty"`
 
 		// Set this to `true` to not verify SSL certificates
 		//
@@ -105,18 +124,22 @@ func (m *SwiftRemoteTFState) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	var result SwiftRemoteTFState
+	var result AWSStorage
 
 	if base.Engine != result.Engine() {
 		/* Not the type we're looking for. */
 		return errors.New(422, "invalid engine value: %q", base.Engine)
 	}
 
-	result.Container = data.Container
+	result.Bucket = data.Bucket
 
-	result.Object = data.Object
+	result.Endpoint = data.Endpoint
+
+	result.Key = data.Key
 
 	result.Region = data.Region
+
+	result.S3ForcePathStyle = data.S3ForcePathStyle
 
 	result.SkipVerifySsl = data.SkipVerifySsl
 
@@ -126,36 +149,48 @@ func (m *SwiftRemoteTFState) UnmarshalJSON(raw []byte) error {
 }
 
 // MarshalJSON marshals this object with a polymorphic type to a JSON structure
-func (m SwiftRemoteTFState) MarshalJSON() ([]byte, error) {
+func (m AWSStorage) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
 
-		// The Swift container containing objects
+		// The AWS bucket containing objects
 		//
 		// Required: true
-		Container *string `json:"container"`
+		Bucket *string `json:"bucket"`
 
-		// The swift object uniquely identifying an object in a container
+		// A custom endpoint for the S3 API (default: s3.amazonaws.com)
+		//
+		Endpoint string `json:"endpoint,omitempty"`
+
+		// The S3 Key uniquely identifies an object in a bucket
 		//
 		// Required: true
-		Object *string `json:"object"`
+		Key *string `json:"key"`
 
-		// The Swift region where the resource exists
+		// The AWS region where the resource exists
 		//
 		// Required: true
 		Region *string `json:"region"`
+
+		// Always use path-style S3 URLs (https://<HOST>/<BUCKET> instead of https://<BUCKET>.<HOST>)
+		//
+		S3ForcePathStyle bool `json:"s3_force_path_style,omitempty"`
 
 		// Set this to `true` to not verify SSL certificates
 		//
 		SkipVerifySsl bool `json:"skip_verify_ssl,omitempty"`
 	}{
 
-		Container: m.Container,
+		Bucket: m.Bucket,
 
-		Object: m.Object,
+		Endpoint: m.Endpoint,
+
+		Key: m.Key,
 
 		Region: m.Region,
+
+		S3ForcePathStyle: m.S3ForcePathStyle,
 
 		SkipVerifySsl: m.SkipVerifySsl,
 	},
@@ -177,15 +212,15 @@ func (m SwiftRemoteTFState) MarshalJSON() ([]byte, error) {
 	return swag.ConcatJSON(b1, b2, b3), nil
 }
 
-// Validate validates this swift remote t f state
-func (m *SwiftRemoteTFState) Validate(formats strfmt.Registry) error {
+// Validate validates this a w s storage
+func (m *AWSStorage) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateContainer(formats); err != nil {
+	if err := m.validateBucket(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateObject(formats); err != nil {
+	if err := m.validateKey(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -199,25 +234,25 @@ func (m *SwiftRemoteTFState) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *SwiftRemoteTFState) validateContainer(formats strfmt.Registry) error {
+func (m *AWSStorage) validateBucket(formats strfmt.Registry) error {
 
-	if err := validate.Required("container", "body", m.Container); err != nil {
+	if err := validate.Required("bucket", "body", m.Bucket); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *SwiftRemoteTFState) validateObject(formats strfmt.Registry) error {
+func (m *AWSStorage) validateKey(formats strfmt.Registry) error {
 
-	if err := validate.Required("object", "body", m.Object); err != nil {
+	if err := validate.Required("key", "body", m.Key); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *SwiftRemoteTFState) validateRegion(formats strfmt.Registry) error {
+func (m *AWSStorage) validateRegion(formats strfmt.Registry) error {
 
 	if err := validate.Required("region", "body", m.Region); err != nil {
 		return err
@@ -227,7 +262,7 @@ func (m *SwiftRemoteTFState) validateRegion(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *SwiftRemoteTFState) MarshalBinary() ([]byte, error) {
+func (m *AWSStorage) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -235,8 +270,8 @@ func (m *SwiftRemoteTFState) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *SwiftRemoteTFState) UnmarshalBinary(b []byte) error {
-	var res SwiftRemoteTFState
+func (m *AWSStorage) UnmarshalBinary(b []byte) error {
+	var res AWSStorage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

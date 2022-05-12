@@ -16,12 +16,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// AzureRemoteTFState Deprecated. Please use AzureStorage.
-// Representation of azure remote tf state for external backend.
+// AzureStorage Representation of azure remote tf state for external backend.
 // Must be matched with a credential of the "azure_storage" type.
 //
-// swagger:model AzureRemoteTFState
-type AzureRemoteTFState struct {
+// swagger:model AzureStorage
+type AzureStorage struct {
 
 	// The Azure blob contained in the container
 	//
@@ -41,12 +40,12 @@ type AzureRemoteTFState struct {
 }
 
 // Engine gets the engine of this subtype
-func (m *AzureRemoteTFState) Engine() string {
-	return "AzureRemoteTFState"
+func (m *AzureStorage) Engine() string {
+	return "AzureStorage"
 }
 
 // SetEngine sets the engine of this subtype
-func (m *AzureRemoteTFState) SetEngine(val string) {
+func (m *AzureStorage) SetEngine(val string) {
 
 }
 
@@ -57,7 +56,7 @@ func (m *AzureRemoteTFState) SetEngine(val string) {
 // Endpoint gets the endpoint of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
-func (m *AzureRemoteTFState) UnmarshalJSON(raw []byte) error {
+func (m *AzureStorage) UnmarshalJSON(raw []byte) error {
 	var data struct {
 
 		// The Azure blob contained in the container
@@ -97,7 +96,7 @@ func (m *AzureRemoteTFState) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	var result AzureRemoteTFState
+	var result AzureStorage
 
 	if base.Engine != result.Engine() {
 		/* Not the type we're looking for. */
@@ -116,7 +115,7 @@ func (m *AzureRemoteTFState) UnmarshalJSON(raw []byte) error {
 }
 
 // MarshalJSON marshals this object with a polymorphic type to a JSON structure
-func (m AzureRemoteTFState) MarshalJSON() ([]byte, error) {
+func (m AzureStorage) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
@@ -162,8 +161,8 @@ func (m AzureRemoteTFState) MarshalJSON() ([]byte, error) {
 	return swag.ConcatJSON(b1, b2, b3), nil
 }
 
-// Validate validates this azure remote t f state
-func (m *AzureRemoteTFState) Validate(formats strfmt.Registry) error {
+// Validate validates this azure storage
+func (m *AzureStorage) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateBlob(formats); err != nil {
@@ -180,7 +179,7 @@ func (m *AzureRemoteTFState) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *AzureRemoteTFState) validateBlob(formats strfmt.Registry) error {
+func (m *AzureStorage) validateBlob(formats strfmt.Registry) error {
 
 	if err := validate.Required("blob", "body", m.Blob); err != nil {
 		return err
@@ -189,7 +188,7 @@ func (m *AzureRemoteTFState) validateBlob(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *AzureRemoteTFState) validateContainer(formats strfmt.Registry) error {
+func (m *AzureStorage) validateContainer(formats strfmt.Registry) error {
 
 	if err := validate.Required("container", "body", m.Container); err != nil {
 		return err
@@ -199,7 +198,7 @@ func (m *AzureRemoteTFState) validateContainer(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *AzureRemoteTFState) MarshalBinary() ([]byte, error) {
+func (m *AzureStorage) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -207,8 +206,8 @@ func (m *AzureRemoteTFState) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *AzureRemoteTFState) UnmarshalBinary(b []byte) error {
-	var res AzureRemoteTFState
+func (m *AzureStorage) UnmarshalBinary(b []byte) error {
+	var res AzureStorage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
