@@ -103,8 +103,22 @@ func unmarshalExternalBackendConfiguration(data []byte, consumer runtime.Consume
 		}
 		return &result, nil
 
+	case "AWSStorage":
+		var result AWSStorage
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
 	case "AzureRemoteTFState":
 		var result AzureRemoteTFState
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
+	case "AzureStorage":
+		var result AzureStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
@@ -138,8 +152,22 @@ func unmarshalExternalBackendConfiguration(data []byte, consumer runtime.Consume
 		}
 		return &result, nil
 
+	case "GCPStorage":
+		var result GCPStorage
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
 	case "SwiftRemoteTFState":
 		var result SwiftRemoteTFState
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
+	case "SwiftStorage":
+		var result SwiftStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}

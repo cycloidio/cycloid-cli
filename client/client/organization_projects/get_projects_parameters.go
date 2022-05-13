@@ -110,10 +110,10 @@ type GetProjectsParams struct {
 	*/
 	PageSize *uint32
 	/*ProjectConfigRepositoryCanonical
-	  Search by project's config repository's ID
+	  Search by project's config repository's canonical
 
 	*/
-	ProjectConfigRepositoryCanonical *uint32
+	ProjectConfigRepositoryCanonical *string
 	/*ProjectCreatedAt
 	  Search by project's creation date
 
@@ -234,13 +234,13 @@ func (o *GetProjectsParams) SetPageSize(pageSize *uint32) {
 }
 
 // WithProjectConfigRepositoryCanonical adds the projectConfigRepositoryCanonical to the get projects params
-func (o *GetProjectsParams) WithProjectConfigRepositoryCanonical(projectConfigRepositoryCanonical *uint32) *GetProjectsParams {
+func (o *GetProjectsParams) WithProjectConfigRepositoryCanonical(projectConfigRepositoryCanonical *string) *GetProjectsParams {
 	o.SetProjectConfigRepositoryCanonical(projectConfigRepositoryCanonical)
 	return o
 }
 
 // SetProjectConfigRepositoryCanonical adds the projectConfigRepositoryCanonical to the get projects params
-func (o *GetProjectsParams) SetProjectConfigRepositoryCanonical(projectConfigRepositoryCanonical *uint32) {
+func (o *GetProjectsParams) SetProjectConfigRepositoryCanonical(projectConfigRepositoryCanonical *string) {
 	o.ProjectConfigRepositoryCanonical = projectConfigRepositoryCanonical
 }
 
@@ -379,11 +379,11 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 	if o.ProjectConfigRepositoryCanonical != nil {
 
 		// query param project_config_repository_canonical
-		var qrProjectConfigRepositoryCanonical uint32
+		var qrProjectConfigRepositoryCanonical string
 		if o.ProjectConfigRepositoryCanonical != nil {
 			qrProjectConfigRepositoryCanonical = *o.ProjectConfigRepositoryCanonical
 		}
-		qProjectConfigRepositoryCanonical := swag.FormatUint32(qrProjectConfigRepositoryCanonical)
+		qProjectConfigRepositoryCanonical := qrProjectConfigRepositoryCanonical
 		if qProjectConfigRepositoryCanonical != "" {
 			if err := r.SetQueryParam("project_config_repository_canonical", qProjectConfigRepositoryCanonical); err != nil {
 				return err

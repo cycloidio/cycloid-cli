@@ -83,10 +83,17 @@ for the list credentials operation typically these are written to a http.Request
 type ListCredentialsParams struct {
 
 	/*CredentialType
-	  A Credential type
+	  Deprecated. Please use credential_types.
+	A Credential type
+
 
 	*/
 	CredentialType *string
+	/*CredentialTypes
+	  Multiple Credential types
+
+	*/
+	CredentialTypes []string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -152,6 +159,17 @@ func (o *ListCredentialsParams) SetCredentialType(credentialType *string) {
 	o.CredentialType = credentialType
 }
 
+// WithCredentialTypes adds the credentialTypes to the list credentials params
+func (o *ListCredentialsParams) WithCredentialTypes(credentialTypes []string) *ListCredentialsParams {
+	o.SetCredentialTypes(credentialTypes)
+	return o
+}
+
+// SetCredentialTypes adds the credentialTypes to the list credentials params
+func (o *ListCredentialsParams) SetCredentialTypes(credentialTypes []string) {
+	o.CredentialTypes = credentialTypes
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the list credentials params
 func (o *ListCredentialsParams) WithOrganizationCanonical(organizationCanonical string) *ListCredentialsParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -207,6 +225,14 @@ func (o *ListCredentialsParams) WriteToRequest(r runtime.ClientRequest, reg strf
 			}
 		}
 
+	}
+
+	valuesCredentialTypes := o.CredentialTypes
+
+	joinedCredentialTypes := swag.JoinByFormat(valuesCredentialTypes, "multi")
+	// query array param credential_types
+	if err := r.SetQueryParam("credential_types", joinedCredentialTypes...); err != nil {
+		return err
 	}
 
 	// path param organization_canonical

@@ -16,7 +16,8 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// AWSRemoteTFState Representation of AWS remote tf state for external backend.
+// AWSRemoteTFState Deprecated. Please use AWSStorage.
+// Representation of AWS remote tf state for external backend.
 // Must be matched with a credential of the "aws" type.
 //
 // swagger:model AWSRemoteTFState
