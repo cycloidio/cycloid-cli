@@ -13,58 +13,53 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
-// GCPCostStorage Representation of BigQuery external backend.
+// GCPStorage Representation of GCP remote tf state for external backend.
 // Must be matched with a credential of the "gcp" type.
 //
-// swagger:model GCPCostStorage
-type GCPCostStorage struct {
+// swagger:model GCPStorage
+type GCPStorage struct {
 
-	// The GCP BigQuery dataset containing tables
+	// The GCP bucket containing objects
 	//
-	Dataset string `json:"dataset,omitempty"`
+	// Required: true
+	Bucket *string `json:"bucket"`
 
-	// The project that contains the BigQuery dataset.
+	// The GCP object uniquely identifying an object in a bucket,
+	// will be required if the EB is not default
 	//
-	ProjectID string `json:"project_id,omitempty"`
-
-	// The GCP BigQuery table containing data
-	//
-	Table string `json:"table,omitempty"`
+	Object string `json:"object,omitempty"`
 }
 
 // Engine gets the engine of this subtype
-func (m *GCPCostStorage) Engine() string {
-	return "GCPCostStorage"
+func (m *GCPStorage) Engine() string {
+	return "GCPStorage"
 }
 
 // SetEngine sets the engine of this subtype
-func (m *GCPCostStorage) SetEngine(val string) {
+func (m *GCPStorage) SetEngine(val string) {
 
 }
 
-// Dataset gets the dataset of this subtype
+// Bucket gets the bucket of this subtype
 
-// ProjectID gets the project id of this subtype
-
-// Table gets the table of this subtype
+// Object gets the object of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
-func (m *GCPCostStorage) UnmarshalJSON(raw []byte) error {
+func (m *GCPStorage) UnmarshalJSON(raw []byte) error {
 	var data struct {
 
-		// The GCP BigQuery dataset containing tables
+		// The GCP bucket containing objects
 		//
-		Dataset string `json:"dataset,omitempty"`
+		// Required: true
+		Bucket *string `json:"bucket"`
 
-		// The project that contains the BigQuery dataset.
+		// The GCP object uniquely identifying an object in a bucket,
+		// will be required if the EB is not default
 		//
-		ProjectID string `json:"project_id,omitempty"`
-
-		// The GCP BigQuery table containing data
-		//
-		Table string `json:"table,omitempty"`
+		Object string `json:"object,omitempty"`
 	}
 	buf := bytes.NewBuffer(raw)
 	dec := json.NewDecoder(buf)
@@ -87,18 +82,16 @@ func (m *GCPCostStorage) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	var result GCPCostStorage
+	var result GCPStorage
 
 	if base.Engine != result.Engine() {
 		/* Not the type we're looking for. */
 		return errors.New(422, "invalid engine value: %q", base.Engine)
 	}
 
-	result.Dataset = data.Dataset
+	result.Bucket = data.Bucket
 
-	result.ProjectID = data.ProjectID
-
-	result.Table = data.Table
+	result.Object = data.Object
 
 	*m = result
 
@@ -106,29 +99,25 @@ func (m *GCPCostStorage) UnmarshalJSON(raw []byte) error {
 }
 
 // MarshalJSON marshals this object with a polymorphic type to a JSON structure
-func (m GCPCostStorage) MarshalJSON() ([]byte, error) {
+func (m GCPStorage) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
 
-		// The GCP BigQuery dataset containing tables
+		// The GCP bucket containing objects
 		//
-		Dataset string `json:"dataset,omitempty"`
+		// Required: true
+		Bucket *string `json:"bucket"`
 
-		// The project that contains the BigQuery dataset.
+		// The GCP object uniquely identifying an object in a bucket,
+		// will be required if the EB is not default
 		//
-		ProjectID string `json:"project_id,omitempty"`
-
-		// The GCP BigQuery table containing data
-		//
-		Table string `json:"table,omitempty"`
+		Object string `json:"object,omitempty"`
 	}{
 
-		Dataset: m.Dataset,
+		Bucket: m.Bucket,
 
-		ProjectID: m.ProjectID,
-
-		Table: m.Table,
+		Object: m.Object,
 	},
 	)
 	if err != nil {
@@ -148,9 +137,13 @@ func (m GCPCostStorage) MarshalJSON() ([]byte, error) {
 	return swag.ConcatJSON(b1, b2, b3), nil
 }
 
-// Validate validates this g c p cost storage
-func (m *GCPCostStorage) Validate(formats strfmt.Registry) error {
+// Validate validates this g c p storage
+func (m *GCPStorage) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateBucket(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
@@ -158,8 +151,17 @@ func (m *GCPCostStorage) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *GCPStorage) validateBucket(formats strfmt.Registry) error {
+
+	if err := validate.Required("bucket", "body", m.Bucket); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
-func (m *GCPCostStorage) MarshalBinary() ([]byte, error) {
+func (m *GCPStorage) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -167,8 +169,8 @@ func (m *GCPCostStorage) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *GCPCostStorage) UnmarshalBinary(b []byte) error {
-	var res GCPCostStorage
+func (m *GCPStorage) UnmarshalBinary(b []byte) error {
+	var res GCPStorage
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

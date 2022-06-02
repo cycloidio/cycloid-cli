@@ -16,7 +16,8 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// AWSRemoteTFState Representation of AWS remote tf state for external backend.
+// AWSRemoteTFState Deprecated. Please use AWSStorage.
+// Representation of AWS remote tf state for external backend.
 // Must be matched with a credential of the "aws" type.
 //
 // swagger:model AWSRemoteTFState
@@ -31,10 +32,10 @@ type AWSRemoteTFState struct {
 	//
 	Endpoint string `json:"endpoint,omitempty"`
 
-	// The S3 Key uniquely identifies an object in a bucket
+	// The S3 Key uniquely identifies an object in a bucket, will
+	// be required if the EB is not the default one.
 	//
-	// Required: true
-	Key *string `json:"key"`
+	Key string `json:"key,omitempty"`
 
 	// The AWS region where the resource exists
 	//
@@ -85,10 +86,10 @@ func (m *AWSRemoteTFState) UnmarshalJSON(raw []byte) error {
 		//
 		Endpoint string `json:"endpoint,omitempty"`
 
-		// The S3 Key uniquely identifies an object in a bucket
+		// The S3 Key uniquely identifies an object in a bucket, will
+		// be required if the EB is not the default one.
 		//
-		// Required: true
-		Key *string `json:"key"`
+		Key string `json:"key,omitempty"`
 
 		// The AWS region where the resource exists
 		//
@@ -163,10 +164,10 @@ func (m AWSRemoteTFState) MarshalJSON() ([]byte, error) {
 		//
 		Endpoint string `json:"endpoint,omitempty"`
 
-		// The S3 Key uniquely identifies an object in a bucket
+		// The S3 Key uniquely identifies an object in a bucket, will
+		// be required if the EB is not the default one.
 		//
-		// Required: true
-		Key *string `json:"key"`
+		Key string `json:"key,omitempty"`
 
 		// The AWS region where the resource exists
 		//
@@ -220,10 +221,6 @@ func (m *AWSRemoteTFState) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateKey(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateRegion(formats); err != nil {
 		res = append(res, err)
 	}
@@ -237,15 +234,6 @@ func (m *AWSRemoteTFState) Validate(formats strfmt.Registry) error {
 func (m *AWSRemoteTFState) validateBucket(formats strfmt.Registry) error {
 
 	if err := validate.Required("bucket", "body", m.Bucket); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *AWSRemoteTFState) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("key", "body", m.Key); err != nil {
 		return err
 	}
 

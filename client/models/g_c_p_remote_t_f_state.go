@@ -16,7 +16,8 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// GCPRemoteTFState Representation of GCP remote tf state for external backend.
+// GCPRemoteTFState Deprecated. Please use GCPStorage.
+// Representation of GCP remote tf state for external backend.
 // Must be matched with a credential of the "gcp" type.
 //
 // swagger:model GCPRemoteTFState
@@ -29,8 +30,7 @@ type GCPRemoteTFState struct {
 
 	// The GCP object uniquely identifying an object in a bucket
 	//
-	// Required: true
-	Object *string `json:"object"`
+	Object string `json:"object,omitempty"`
 }
 
 // Engine gets the engine of this subtype
@@ -58,8 +58,7 @@ func (m *GCPRemoteTFState) UnmarshalJSON(raw []byte) error {
 
 		// The GCP object uniquely identifying an object in a bucket
 		//
-		// Required: true
-		Object *string `json:"object"`
+		Object string `json:"object,omitempty"`
 	}
 	buf := bytes.NewBuffer(raw)
 	dec := json.NewDecoder(buf)
@@ -111,8 +110,7 @@ func (m GCPRemoteTFState) MarshalJSON() ([]byte, error) {
 
 		// The GCP object uniquely identifying an object in a bucket
 		//
-		// Required: true
-		Object *string `json:"object"`
+		Object string `json:"object,omitempty"`
 	}{
 
 		Bucket: m.Bucket,
@@ -145,10 +143,6 @@ func (m *GCPRemoteTFState) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateObject(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -158,15 +152,6 @@ func (m *GCPRemoteTFState) Validate(formats strfmt.Registry) error {
 func (m *GCPRemoteTFState) validateBucket(formats strfmt.Registry) error {
 
 	if err := validate.Required("bucket", "body", m.Bucket); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *GCPRemoteTFState) validateObject(formats strfmt.Registry) error {
-
-	if err := validate.Required("object", "body", m.Object); err != nil {
 		return err
 	}
 

@@ -27,8 +27,7 @@ type NewPipeline struct {
 	Environment *NewEnvironment `json:"environment"`
 
 	// passed config
-	// Required: true
-	PassedConfig *string `json:"passed_config"`
+	PassedConfig string `json:"passed_config,omitempty"`
 
 	// pipeline name
 	// Required: true
@@ -52,10 +51,6 @@ func (m *NewPipeline) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateEnvironment(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validatePassedConfig(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -86,15 +81,6 @@ func (m *NewPipeline) validateEnvironment(formats strfmt.Registry) error {
 			}
 			return err
 		}
-	}
-
-	return nil
-}
-
-func (m *NewPipeline) validatePassedConfig(formats strfmt.Registry) error {
-
-	if err := validate.Required("passed_config", "body", m.PassedConfig); err != nil {
-		return err
 	}
 
 	return nil

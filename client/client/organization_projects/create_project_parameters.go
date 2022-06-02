@@ -64,7 +64,9 @@ for the create project operation typically these are written to a http.Request
 type CreateProjectParams struct {
 
 	/*Body
-	  The information of the project to create.
+	  The information of the project to create and optionally its configuration inputs.
+	If the configuration inputs are not sent the project configuration is not generated and should be generated separately.
+
 
 	*/
 	Body *models.NewProject
