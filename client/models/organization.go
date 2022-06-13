@@ -35,9 +35,17 @@ type Organization struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
 
+	// ci port
+	// Required: true
+	CiPort *string `json:"ci_port"`
+
 	// ci team name
 	// Required: true
 	CiTeamName *string `json:"ci_team_name"`
+
+	// ci url
+	// Required: true
+	CiURL *string `json:"ci_url"`
 
 	// created at
 	// Required: true
@@ -83,7 +91,15 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCiPort(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCiTeamName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCiURL(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -172,9 +188,27 @@ func (m *Organization) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Organization) validateCiPort(formats strfmt.Registry) error {
+
+	if err := validate.Required("ci_port", "body", m.CiPort); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Organization) validateCiTeamName(formats strfmt.Registry) error {
 
 	if err := validate.Required("ci_team_name", "body", m.CiTeamName); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateCiURL(formats strfmt.Registry) error {
+
+	if err := validate.Required("ci_url", "body", m.CiURL); err != nil {
 		return err
 	}
 

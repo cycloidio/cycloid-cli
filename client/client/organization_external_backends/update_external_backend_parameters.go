@@ -68,7 +68,7 @@ type UpdateExternalBackendParams struct {
 	  The information of the external backend new data
 
 	*/
-	Body *models.NewExternalBackend
+	Body *models.UpdateExternalBackend
 	/*ExternalBackendID
 	  External Backend ID
 
@@ -119,13 +119,13 @@ func (o *UpdateExternalBackendParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the update external backend params
-func (o *UpdateExternalBackendParams) WithBody(body *models.NewExternalBackend) *UpdateExternalBackendParams {
+func (o *UpdateExternalBackendParams) WithBody(body *models.UpdateExternalBackend) *UpdateExternalBackendParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the update external backend params
-func (o *UpdateExternalBackendParams) SetBody(body *models.NewExternalBackend) {
+func (o *UpdateExternalBackendParams) SetBody(body *models.UpdateExternalBackend) {
 	o.Body = body
 }
 

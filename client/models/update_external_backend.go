@@ -18,11 +18,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewExternalBackend New External backend
+// UpdateExternalBackend Update External backend
 //
 // An external backend contains the configuration needed in order to be plugged into the Cycloid system. A backend is a general purpose concept, but Cycloid specifies which ones are supported and the list of those which are supported for every concrete feature.
-// swagger:model NewExternalBackend
-type NewExternalBackend struct {
+// swagger:model UpdateExternalBackend
+type UpdateExternalBackend struct {
 	configurationField ExternalBackendConfiguration
 
 	// The type of the credential must be one of: ["aws", "azure_storage", "elasticsearch", "gcp", "swift"]
@@ -41,6 +41,10 @@ type NewExternalBackend struct {
 	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
 	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
+	// id
+	// Minimum: 1
+	ID uint32 `json:"id,omitempty"`
+
 	// project canonical
 	// Max Length: 100
 	// Min Length: 3
@@ -54,17 +58,17 @@ type NewExternalBackend struct {
 }
 
 // Configuration gets the configuration of this base type
-func (m *NewExternalBackend) Configuration() ExternalBackendConfiguration {
+func (m *UpdateExternalBackend) Configuration() ExternalBackendConfiguration {
 	return m.configurationField
 }
 
 // SetConfiguration sets the configuration of this base type
-func (m *NewExternalBackend) SetConfiguration(val ExternalBackendConfiguration) {
+func (m *UpdateExternalBackend) SetConfiguration(val ExternalBackendConfiguration) {
 	m.configurationField = val
 }
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
-func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
+func (m *UpdateExternalBackend) UnmarshalJSON(raw []byte) error {
 	var data struct {
 		Configuration json.RawMessage `json:"configuration"`
 
@@ -73,6 +77,8 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 		Default bool `json:"default,omitempty"`
 
 		EnvironmentCanonical string `json:"environment_canonical,omitempty"`
+
+		ID uint32 `json:"id,omitempty"`
 
 		ProjectCanonical string `json:"project_canonical,omitempty"`
 
@@ -91,7 +97,7 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	var result NewExternalBackend
+	var result UpdateExternalBackend
 
 	// configuration
 	result.configurationField = propConfiguration
@@ -105,6 +111,9 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 	// environment_canonical
 	result.EnvironmentCanonical = data.EnvironmentCanonical
 
+	// id
+	result.ID = data.ID
+
 	// project_canonical
 	result.ProjectCanonical = data.ProjectCanonical
 
@@ -117,7 +126,7 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 }
 
 // MarshalJSON marshals this object with a polymorphic type to a JSON structure
-func (m NewExternalBackend) MarshalJSON() ([]byte, error) {
+func (m UpdateExternalBackend) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
@@ -126,6 +135,8 @@ func (m NewExternalBackend) MarshalJSON() ([]byte, error) {
 		Default bool `json:"default,omitempty"`
 
 		EnvironmentCanonical string `json:"environment_canonical,omitempty"`
+
+		ID uint32 `json:"id,omitempty"`
 
 		ProjectCanonical string `json:"project_canonical,omitempty"`
 
@@ -137,6 +148,8 @@ func (m NewExternalBackend) MarshalJSON() ([]byte, error) {
 		Default: m.Default,
 
 		EnvironmentCanonical: m.EnvironmentCanonical,
+
+		ID: m.ID,
 
 		ProjectCanonical: m.ProjectCanonical,
 
@@ -160,8 +173,8 @@ func (m NewExternalBackend) MarshalJSON() ([]byte, error) {
 	return swag.ConcatJSON(b1, b2, b3), nil
 }
 
-// Validate validates this new external backend
-func (m *NewExternalBackend) Validate(formats strfmt.Registry) error {
+// Validate validates this update external backend
+func (m *UpdateExternalBackend) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateConfiguration(formats); err != nil {
@@ -173,6 +186,10 @@ func (m *NewExternalBackend) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEnvironmentCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -190,7 +207,7 @@ func (m *NewExternalBackend) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewExternalBackend) validateConfiguration(formats strfmt.Registry) error {
+func (m *UpdateExternalBackend) validateConfiguration(formats strfmt.Registry) error {
 
 	if err := validate.Required("configuration", "body", m.Configuration()); err != nil {
 		return err
@@ -206,7 +223,7 @@ func (m *NewExternalBackend) validateConfiguration(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *NewExternalBackend) validateCredentialCanonical(formats strfmt.Registry) error {
+func (m *UpdateExternalBackend) validateCredentialCanonical(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
@@ -227,7 +244,7 @@ func (m *NewExternalBackend) validateCredentialCanonical(formats strfmt.Registry
 	return nil
 }
 
-func (m *NewExternalBackend) validateEnvironmentCanonical(formats strfmt.Registry) error {
+func (m *UpdateExternalBackend) validateEnvironmentCanonical(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.EnvironmentCanonical) { // not required
 		return nil
@@ -248,7 +265,20 @@ func (m *NewExternalBackend) validateEnvironmentCanonical(formats strfmt.Registr
 	return nil
 }
 
-func (m *NewExternalBackend) validateProjectCanonical(formats strfmt.Registry) error {
+func (m *UpdateExternalBackend) validateID(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ID) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("id", "body", int64(m.ID), 1, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UpdateExternalBackend) validateProjectCanonical(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.ProjectCanonical) { // not required
 		return nil
@@ -269,7 +299,7 @@ func (m *NewExternalBackend) validateProjectCanonical(formats strfmt.Registry) e
 	return nil
 }
 
-var newExternalBackendTypePurposePropEnum []interface{}
+var updateExternalBackendTypePurposePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -277,34 +307,34 @@ func init() {
 		panic(err)
 	}
 	for _, v := range res {
-		newExternalBackendTypePurposePropEnum = append(newExternalBackendTypePurposePropEnum, v)
+		updateExternalBackendTypePurposePropEnum = append(updateExternalBackendTypePurposePropEnum, v)
 	}
 }
 
 const (
 
-	// NewExternalBackendPurposeEvents captures enum value "events"
-	NewExternalBackendPurposeEvents string = "events"
+	// UpdateExternalBackendPurposeEvents captures enum value "events"
+	UpdateExternalBackendPurposeEvents string = "events"
 
-	// NewExternalBackendPurposeLogs captures enum value "logs"
-	NewExternalBackendPurposeLogs string = "logs"
+	// UpdateExternalBackendPurposeLogs captures enum value "logs"
+	UpdateExternalBackendPurposeLogs string = "logs"
 
-	// NewExternalBackendPurposeRemoteTfstate captures enum value "remote_tfstate"
-	NewExternalBackendPurposeRemoteTfstate string = "remote_tfstate"
+	// UpdateExternalBackendPurposeRemoteTfstate captures enum value "remote_tfstate"
+	UpdateExternalBackendPurposeRemoteTfstate string = "remote_tfstate"
 
-	// NewExternalBackendPurposeCostExplorer captures enum value "cost_explorer"
-	NewExternalBackendPurposeCostExplorer string = "cost_explorer"
+	// UpdateExternalBackendPurposeCostExplorer captures enum value "cost_explorer"
+	UpdateExternalBackendPurposeCostExplorer string = "cost_explorer"
 )
 
 // prop value enum
-func (m *NewExternalBackend) validatePurposeEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, newExternalBackendTypePurposePropEnum); err != nil {
+func (m *UpdateExternalBackend) validatePurposeEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, updateExternalBackendTypePurposePropEnum); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *NewExternalBackend) validatePurpose(formats strfmt.Registry) error {
+func (m *UpdateExternalBackend) validatePurpose(formats strfmt.Registry) error {
 
 	if err := validate.Required("purpose", "body", m.Purpose); err != nil {
 		return err
@@ -319,7 +349,7 @@ func (m *NewExternalBackend) validatePurpose(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *NewExternalBackend) MarshalBinary() ([]byte, error) {
+func (m *UpdateExternalBackend) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -327,8 +357,8 @@ func (m *NewExternalBackend) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *NewExternalBackend) UnmarshalBinary(b []byte) error {
-	var res NewExternalBackend
+func (m *UpdateExternalBackend) UnmarshalBinary(b []byte) error {
+	var res UpdateExternalBackend
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

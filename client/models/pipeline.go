@@ -59,6 +59,12 @@ type Pipeline struct {
 	// Required: true
 	Public *bool `json:"public"`
 
+	// started
+	Started bool `json:"started,omitempty"`
+
+	// status
+	Status string `json:"status,omitempty"`
+
 	// team name
 	// Required: true
 	TeamName *string `json:"team_name"`

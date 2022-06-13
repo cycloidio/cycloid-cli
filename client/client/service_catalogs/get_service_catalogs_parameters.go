@@ -104,7 +104,7 @@ type GetServiceCatalogsParams struct {
 	*/
 	ServiceCatalogOwn *bool
 	/*ServiceCatalogStatus
-	  The status of the catalogservice used for filtering.
+	  The status of the catalog service used for filtering.
 
 	*/
 	ServiceCatalogStatus *string
