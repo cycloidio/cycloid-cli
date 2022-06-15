@@ -158,7 +158,7 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, variables, usec
 		},
 		PipelineName: &pipelineName,
 		UseCase:      usecase,
-		PassedConfig: &pipeline,
+		PassedConfig: pipeline,
 		YamlVars:     vars,
 	}
 	err := body.Validate(strfmt.Default)
