@@ -31,6 +31,10 @@ type ExternalBackend struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	CredentialCanonical string `json:"credential_canonical,omitempty"`
 
+	// Will mark this EB as default for the specific purpose
+	// Required: true
+	Default *bool `json:"default"`
+
 	// environment canonical
 	// Max Length: 100
 	// Min Length: 1
@@ -40,6 +44,9 @@ type ExternalBackend struct {
 	// id
 	// Minimum: 1
 	ID uint32 `json:"id,omitempty"`
+
+	// JWT is a credential identifying this EB for a public interaction right now it's only filled when the Purpose == RemoteTFState as we'll use it for the Inventory.
+	Jwt string `json:"jwt,omitempty"`
 
 	// project canonical
 	// Max Length: 100
@@ -69,9 +76,13 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 
 		CredentialCanonical string `json:"credential_canonical,omitempty"`
 
+		Default *bool `json:"default"`
+
 		EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
 		ID uint32 `json:"id,omitempty"`
+
+		Jwt string `json:"jwt,omitempty"`
 
 		ProjectCanonical string `json:"project_canonical,omitempty"`
 
@@ -98,11 +109,17 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 	// credential_canonical
 	result.CredentialCanonical = data.CredentialCanonical
 
+	// default
+	result.Default = data.Default
+
 	// environment_canonical
 	result.EnvironmentCanonical = data.EnvironmentCanonical
 
 	// id
 	result.ID = data.ID
+
+	// jwt
+	result.Jwt = data.Jwt
 
 	// project_canonical
 	result.ProjectCanonical = data.ProjectCanonical
@@ -122,9 +139,13 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 	b1, err = json.Marshal(struct {
 		CredentialCanonical string `json:"credential_canonical,omitempty"`
 
+		Default *bool `json:"default"`
+
 		EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
 		ID uint32 `json:"id,omitempty"`
+
+		Jwt string `json:"jwt,omitempty"`
 
 		ProjectCanonical string `json:"project_canonical,omitempty"`
 
@@ -133,9 +154,13 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 
 		CredentialCanonical: m.CredentialCanonical,
 
+		Default: m.Default,
+
 		EnvironmentCanonical: m.EnvironmentCanonical,
 
 		ID: m.ID,
+
+		Jwt: m.Jwt,
 
 		ProjectCanonical: m.ProjectCanonical,
 
@@ -168,6 +193,10 @@ func (m *ExternalBackend) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCredentialCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDefault(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -224,6 +253,15 @@ func (m *ExternalBackend) validateCredentialCanonical(formats strfmt.Registry) e
 	}
 
 	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ExternalBackend) validateDefault(formats strfmt.Registry) error {
+
+	if err := validate.Required("default", "body", m.Default); err != nil {
 		return err
 	}
 

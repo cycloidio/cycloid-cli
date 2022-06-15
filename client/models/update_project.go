@@ -54,6 +54,11 @@ type UpdateProject struct {
 	// Min Items: 1
 	Environments []*NewEnvironment `json:"environments"`
 
+	// The variables set within a form with the corresponding environment
+	// canonical and use case
+	//
+	Inputs []*FormInput `json:"inputs"`
+
 	// name
 	// Required: true
 	// Min Length: 3
@@ -84,6 +89,10 @@ func (m *UpdateProject) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEnvironments(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInputs(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -195,6 +204,31 @@ func (m *UpdateProject) validateEnvironments(formats strfmt.Registry) error {
 			if err := m.Environments[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UpdateProject) validateInputs(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Inputs) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Inputs); i++ {
+		if swag.IsZero(m.Inputs[i]) { // not required
+			continue
+		}
+
+		if m.Inputs[i] != nil {
+			if err := m.Inputs[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

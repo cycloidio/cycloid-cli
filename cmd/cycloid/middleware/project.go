@@ -83,7 +83,7 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 		},
 		PipelineName: &pipelineName,
 		UseCase:      usecase,
-		PassedConfig: &pipelineTemplate,
+		PassedConfig: pipelineTemplate,
 		YamlVars:     vars,
 	}
 	err := pipeline.Validate(strfmt.Default)

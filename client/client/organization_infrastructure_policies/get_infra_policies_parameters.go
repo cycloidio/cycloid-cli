@@ -82,6 +82,11 @@ for the get infra policies operation typically these are written to a http.Reque
 */
 type GetInfraPoliciesParams struct {
 
+	/*InfraPolicyCanonical
+	  Search by infra policy canonical
+
+	*/
+	InfraPolicyCanonical *string
 	/*InfraPolicyCreatedAt
 	  Search by InfraPolicy's creation date
 
@@ -160,6 +165,17 @@ func (o *GetInfraPoliciesParams) WithHTTPClient(client *http.Client) *GetInfraPo
 // SetHTTPClient adds the HTTPClient to the get infra policies params
 func (o *GetInfraPoliciesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithInfraPolicyCanonical adds the infraPolicyCanonical to the get infra policies params
+func (o *GetInfraPoliciesParams) WithInfraPolicyCanonical(infraPolicyCanonical *string) *GetInfraPoliciesParams {
+	o.SetInfraPolicyCanonical(infraPolicyCanonical)
+	return o
+}
+
+// SetInfraPolicyCanonical adds the infraPolicyCanonical to the get infra policies params
+func (o *GetInfraPoliciesParams) SetInfraPolicyCanonical(infraPolicyCanonical *string) {
+	o.InfraPolicyCanonical = infraPolicyCanonical
 }
 
 // WithInfraPolicyCreatedAt adds the infraPolicyCreatedAt to the get infra policies params
@@ -257,6 +273,22 @@ func (o *GetInfraPoliciesParams) WriteToRequest(r runtime.ClientRequest, reg str
 		return err
 	}
 	var res []error
+
+	if o.InfraPolicyCanonical != nil {
+
+		// query param infra_policy_canonical
+		var qrInfraPolicyCanonical string
+		if o.InfraPolicyCanonical != nil {
+			qrInfraPolicyCanonical = *o.InfraPolicyCanonical
+		}
+		qInfraPolicyCanonical := qrInfraPolicyCanonical
+		if qInfraPolicyCanonical != "" {
+			if err := r.SetQueryParam("infra_policy_canonical", qInfraPolicyCanonical); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.InfraPolicyCreatedAt != nil {
 

@@ -40,6 +40,9 @@ type CredentialSimple struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
+	// in use
+	InUse *CredentialInUse `json:"in_use,omitempty"`
+
 	// List of all the keys available for the Credential
 	// Required: true
 	Keys []string `json:"keys"`
@@ -75,6 +78,10 @@ func (m *CredentialSimple) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInUse(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -146,6 +153,24 @@ func (m *CredentialSimple) validateID(formats strfmt.Registry) error {
 
 	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *CredentialSimple) validateInUse(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.InUse) { // not required
+		return nil
+	}
+
+	if m.InUse != nil {
+		if err := m.InUse.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("in_use")
+			}
+			return err
+		}
 	}
 
 	return nil

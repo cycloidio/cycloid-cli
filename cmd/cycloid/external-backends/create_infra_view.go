@@ -88,7 +88,7 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 			ebC = &models.AWSRemoteTFState{
 				Region:           &region,
 				Bucket:           &bucketName,
-				Key:              &bucketpath,
+				Key:              bucketpath,
 				Endpoint:         endpoint,
 				S3ForcePathStyle: forcePathStyle,
 				SkipVerifySsl:    skipSSL,
@@ -97,7 +97,7 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 			ebC = &models.AWSRemoteTFState{
 				Region: &region,
 				Bucket: &bucketName,
-				Key:    &bucketpath,
+				Key:    bucketpath,
 			}
 		}
 
@@ -105,7 +105,7 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 
 		ebC = &models.SwiftRemoteTFState{
 			Container:     &bucketName,
-			Object:        &bucketpath,
+			Object:        bucketpath,
 			SkipVerifySsl: skipSSL,
 			Region:        &region,
 		}
@@ -114,7 +114,7 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 
 		ebC = &models.GCPRemoteTFState{
 			Bucket: &bucketName,
-			Object: &bucketpath,
+			Object: bucketpath,
 		}
 	default:
 		return fmt.Errorf("Unexpected backend name")
