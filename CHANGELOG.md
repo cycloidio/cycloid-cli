@@ -1,3 +1,7 @@
+  ## [v1.0.97-6-g304dd4218] _2022-06-16_
+  - **CHANGED**
+    - Update client to version v1.0.97-6-g304dd4218
+    ([PR #139](https://github.com/cycloidio/cycloid-cli/pull/139))
   ## [v1.0.97] _2022-06-13_
   - **CHANGED**
     - Update client to version v1.0.97
