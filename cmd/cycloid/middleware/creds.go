@@ -84,10 +84,11 @@ func (m *middleware) ListCredentials(org, cType string) ([]*models.CredentialSim
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+    // TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/3777
+	//err = p.Validate(strfmt.Default)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	d := p.Data
 	return d, err

@@ -68,7 +68,7 @@ vercomp () {
 
 # Remove extra prefix and suffix from version to compare them
 format_version () {
-  echo $1 | sed 's/^v//;s/-rc.*$//'
+  echo $1 | sed 's/^v//;s/-.*$//'
   return
 }
 
@@ -111,6 +111,7 @@ get_binary () {
         return 0
     fi
 
+    CY_VERSION=$(format_version $CY_VERSION)
     # Download the exact CLI version
     CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/cy"
     wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"

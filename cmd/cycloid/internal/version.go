@@ -3,6 +3,7 @@ package internal
 import (
 	"fmt"
 	"io"
+	"regexp"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -25,7 +26,10 @@ func CheckAPIAndCLIVersion(cmd *cobra.Command, args []string) error {
 		warning(cmd.ErrOrStderr(), "Warning: Unable to get the API version\n")
 		return nil
 	}
-	apiVersion := fmt.Sprintf("v%s", *d.Version)
+
+	apiVersion := fmt.Sprintf("%s", *d.Version)
+	reg := regexp.MustCompile("^([^-]+)(-.*)$")
+	apiVersion = reg.ReplaceAllString(apiVersion, "${1}")
 
 	if cliVersion != apiVersion {
 		warning(cmd.ErrOrStderr(), fmt.Sprintf("Warning: CLI version %s does not match the API version. You should consider to download CLI version %s\n", cliVersion, apiVersion))
