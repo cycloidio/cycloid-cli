@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: Now using Changie for changelog file
+time: 2022-06-23T13:47:19.643011053+02:00
+custom:
+  TYPE: "CLI"
+  DETAILS: ""
+  PR: "142"
