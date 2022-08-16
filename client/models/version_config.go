@@ -13,7 +13,7 @@ import (
 
 // VersionConfig VersionConfig
 //
-// The entity which represents a vesion configuration in the application.
+// The entity which represents a version configuration in the application.
 // swagger:model VersionConfig
 type VersionConfig struct {
 

@@ -56,7 +56,7 @@ type NewProject struct {
 	Owner string `json:"owner,omitempty"`
 
 	// Each instance should include passed_config if no inputs are sent on
-	// project creation, otherwise it will be infered internally.
+	// project creation, otherwise it will be inferred internally.
 	//
 	// Required: true
 	// Min Items: 1

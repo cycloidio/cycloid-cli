@@ -41,7 +41,7 @@ type Event struct {
 	// Min Length: 1
 	Message *string `json:"message"`
 
-	// The serverity associated to the event.
+	// The severity associated to the event.
 	// Required: true
 	// Enum: [info warn err crit]
 	Severity *string `json:"severity"`
