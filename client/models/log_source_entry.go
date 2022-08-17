@@ -29,7 +29,7 @@ type LogSourceEntry struct {
 	// Min Length: 1
 	Message *string `json:"message"`
 
-	// The timestamp extracted from the orginal log entry in order to be homogeneous to all the different supported underlying log systems.
+	// The timestamp extracted from the original log entry in order to be homogeneous to all the different supported underlying log systems.
 	// Required: true
 	Timestamp *string `json:"timestamp"`
 }

@@ -24,7 +24,7 @@ type FormEntity struct {
 	// The current value that was previously configured for this variable upon creation or update. In case of shared variables having different values, it will be empty, and 'mismatch_values' will be filled instead.
 	Current interface{} `json:"current,omitempty"`
 
-	// The default to assign to the variable if nothing is returned and that the varialbe is required
+	// The default to assign to the variable if nothing is returned and that the variable is required
 	Default interface{} `json:"default,omitempty"`
 
 	// The description helping users understand the interest/impact of such variable/change
@@ -34,7 +34,7 @@ type FormEntity struct {
 	// Required: true
 	Key *string `json:"key"`
 
-	// This is filled only when a shared variable does not have the same values anymore. e.g. a variable 'foo' was shared between 'ansible' and 'pipeline', was set to 'bar', but now the value found for 'ansible' is 'bus', while it's still 'bar' for the pipeline. In such situation, the Forms don't know anymore which is the correct data and will return both, while unseting the 'Current' field.
+	// This is filled only when a shared variable does not have the same values anymore. e.g. a variable 'foo' was shared between 'ansible' and 'pipeline', was set to 'bar', but now the value found for 'ansible' is 'bus', while it's still 'bar' for the pipeline. In such situation, the Forms don't know anymore which is the correct data and will return both, while unsetting the 'Current' field.
 	MismatchValues []interface{} `json:"mismatch_values"`
 
 	// The name of the variable displayed to the user

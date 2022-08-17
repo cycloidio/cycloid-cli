@@ -17,7 +17,7 @@ import (
 
 // CostResultByTime CostResultByTime
 //
-// This object contains the items described in https://docs.aws.amazon.com/sdk-for-go/api/service/costexplorer/#ResultByTime It is basically containing information about the cost per group(s) and per granularity (daily/monthy) over the periode of time selected. The total and unit fields have bee modified to fit our requirements, while the groups hold the information about each iteration over the time range.
+// This object contains the items described in https://docs.aws.amazon.com/sdk-for-go/api/service/costexplorer/#ResultByTime It is basically containing information about the cost per group(s) and per granularity (daily/monthly) over the period of time selected. The total and unit fields have bee modified to fit our requirements, while the groups hold the information about each iteration over the time range.
 // swagger:model CostResultByTime
 type CostResultByTime struct {
 
@@ -31,7 +31,7 @@ type CostResultByTime struct {
 
 	// period
 	// Required: true
-	Period *CostTimePeriode `json:"period"`
+	Period *CostTimePeriod `json:"period"`
 
 	// total
 	// Required: true

@@ -13,8 +13,8 @@ import (
 
 // CloudCostManagementFilterValues CloudCostManagementFilterValues
 //
-// A collection of the values for whitch the cost can be filtered, i.e. all
-// the providers, services, reginos, etc... for one org.
+// A collection of the values for which the cost can be filtered, i.e. all
+// the providers, services, regions, etc... for one org.
 //
 // swagger:model CloudCostManagementFilterValues
 type CloudCostManagementFilterValues struct {
