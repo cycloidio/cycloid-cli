@@ -13,11 +13,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// CostTimePeriode CostTimePeriode
+// CostTimePeriod CostTimePeriod
 //
 // This object contains the items described in https://docs.aws.amazon.com/sdk-for-go/api/service/costexplorer/#DateInterval It defines the beginning and the end of the time frame for which, the API should gather costs.
-// swagger:model CostTimePeriode
-type CostTimePeriode struct {
+// swagger:model CostTimePeriod
+type CostTimePeriod struct {
 
 	// begin
 	// Required: true
@@ -34,8 +34,8 @@ type CostTimePeriode struct {
 	End *string `json:"end"`
 }
 
-// Validate validates this cost time periode
-func (m *CostTimePeriode) Validate(formats strfmt.Registry) error {
+// Validate validates this cost time period
+func (m *CostTimePeriod) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateBegin(formats); err != nil {
@@ -52,7 +52,7 @@ func (m *CostTimePeriode) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CostTimePeriode) validateBegin(formats strfmt.Registry) error {
+func (m *CostTimePeriod) validateBegin(formats strfmt.Registry) error {
 
 	if err := validate.Required("begin", "body", m.Begin); err != nil {
 		return err
@@ -73,7 +73,7 @@ func (m *CostTimePeriode) validateBegin(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *CostTimePeriode) validateEnd(formats strfmt.Registry) error {
+func (m *CostTimePeriod) validateEnd(formats strfmt.Registry) error {
 
 	if err := validate.Required("end", "body", m.End); err != nil {
 		return err
@@ -95,7 +95,7 @@ func (m *CostTimePeriode) validateEnd(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *CostTimePeriode) MarshalBinary() ([]byte, error) {
+func (m *CostTimePeriod) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -103,8 +103,8 @@ func (m *CostTimePeriode) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *CostTimePeriode) UnmarshalBinary(b []byte) error {
-	var res CostTimePeriode
+func (m *CostTimePeriod) UnmarshalBinary(b []byte) error {
+	var res CostTimePeriod
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

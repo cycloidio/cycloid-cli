@@ -51,7 +51,7 @@ type KPI struct {
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
-	// If an error occured in the last import, that field will be filled with the message of the error
+	// If an error occurred in the last import, that field will be filled with the message of the error
 	// Required: true
 	Error *string `json:"error"`
 

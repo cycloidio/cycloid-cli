@@ -22,8 +22,8 @@ type InUseEnvironment struct {
 	// canonical
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical *string `json:"canonical"`
 }
 
@@ -47,7 +47,7 @@ func (m *InUseEnvironment) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 1); err != nil {
 		return err
 	}
 
@@ -55,7 +55,7 @@ func (m *InUseEnvironment) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 

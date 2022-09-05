@@ -61,7 +61,7 @@ type UpdateProject struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 1
 	Name *string `json:"name"`
 
 	// User canonical that owns this project. Only the owner or an
@@ -245,7 +245,7 @@ func (m *UpdateProject) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 

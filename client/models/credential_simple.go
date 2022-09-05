@@ -51,6 +51,12 @@ type CredentialSimple struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// Organization member that owns this credential. When a user is the owner of a
+	// credential he has all the permissions on it.
+	// In the event where the user has been deleted that field might be empty.
+	//
+	Owner *User `json:"owner,omitempty"`
+
 	// path
 	// Required: true
 	Path *string `json:"path"`
@@ -90,6 +96,10 @@ func (m *CredentialSimple) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateOwner(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -189,6 +199,24 @@ func (m *CredentialSimple) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *CredentialSimple) validateOwner(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Owner) { // not required
+		return nil
+	}
+
+	if m.Owner != nil {
+		if err := m.Owner.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			}
+			return err
+		}
 	}
 
 	return nil

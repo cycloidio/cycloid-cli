@@ -77,8 +77,8 @@ type Pipeline struct {
 	// use case
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	UseCase *string `json:"use_case"`
 }
 
@@ -298,7 +298,7 @@ func (m *Pipeline) validateUseCase(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("use_case", "body", string(*m.UseCase), 3); err != nil {
+	if err := validate.MinLength("use_case", "body", string(*m.UseCase), 1); err != nil {
 		return err
 	}
 
@@ -306,7 +306,7 @@ func (m *Pipeline) validateUseCase(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("use_case", "body", string(*m.UseCase), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("use_case", "body", string(*m.UseCase), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
