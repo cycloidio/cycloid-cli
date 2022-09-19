@@ -111,7 +111,7 @@ type CreateKpiParams struct {
 	*/
 	Favorite *bool
 	/*FetchData
-	  Flag to retrieve KPIs' data upon retrieveing KPIs themselves
+	  Flag to retrieve KPIs' data upon retrieving KPIs themselves
 
 
 	*/

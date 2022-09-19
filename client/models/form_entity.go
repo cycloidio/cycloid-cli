@@ -24,7 +24,7 @@ type FormEntity struct {
 	// The current value that was previously configured for this variable upon creation or update. In case of shared variables having different values, it will be empty, and 'mismatch_values' will be filled instead.
 	Current interface{} `json:"current,omitempty"`
 
-	// The default to assign to the variable if nothing is returned and that the varialbe is required
+	// The default to assign to the variable if nothing is returned and that the variable is required
 	Default interface{} `json:"default,omitempty"`
 
 	// The description helping users understand the interest/impact of such variable/change
@@ -34,7 +34,7 @@ type FormEntity struct {
 	// Required: true
 	Key *string `json:"key"`
 
-	// This is filled only when a shared variable does not have the same values anymore. e.g. a variable 'foo' was shared between 'ansible' and 'pipeline', was set to 'bar', but now the value found for 'ansible' is 'bus', while it's still 'bar' for the pipeline. In such situation, the Forms don't know anymore which is the correct data and will return both, while unseting the 'Current' field.
+	// This is filled only when a shared variable does not have the same values anymore. e.g. a variable 'foo' was shared between 'ansible' and 'pipeline', was set to 'bar', but now the value found for 'ansible' is 'bus', while it's still 'bar' for the pipeline. In such situation, the Forms don't know anymore which is the correct data and will return both, while unsetting the 'Current' field.
 	MismatchValues []interface{} `json:"mismatch_values"`
 
 	// The name of the variable displayed to the user
@@ -62,6 +62,14 @@ type FormEntity struct {
 	// Required: true
 	// Enum: [auto_complete dropdown radios slider_list slider_range number simple_text switch text_area cy_cred cy_scs cy_crs cy_branch]
 	Widget *string `json:"widget"`
+
+	// Some specific configuration that could be applied to that widget. Currently only a few widgets can be configured:
+	//   * cy_cred
+	//     * 'cred_types' (list): reduce the types of credentials retrieved to that list. See supported types of credentials
+	//     * 'full_cred' (bool): to specify if the path + key have to be written or only the path
+	//   * radio
+	//     * orientation (string): whether you want to display it in an 'horizontal' or 'vertical' way
+	WidgetConfig interface{} `json:"widget_config,omitempty"`
 }
 
 // Validate validates this form entity
