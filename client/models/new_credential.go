@@ -51,7 +51,7 @@ type NewCredential struct {
 
 	// type
 	// Required: true
-	// Enum: [ssh aws custom azure azure_storage gcp basic_auth elasticsearch swift]
+	// Enum: [ssh aws custom azure azure_storage gcp basic_auth elasticsearch swift vmware]
 	Type *string `json:"type"`
 }
 
@@ -150,7 +150,7 @@ var newCredentialTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["ssh","aws","custom","azure","azure_storage","gcp","basic_auth","elasticsearch","swift"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ssh","aws","custom","azure","azure_storage","gcp","basic_auth","elasticsearch","swift","vmware"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -186,6 +186,9 @@ const (
 
 	// NewCredentialTypeSwift captures enum value "swift"
 	NewCredentialTypeSwift string = "swift"
+
+	// NewCredentialTypeVmware captures enum value "vmware"
+	NewCredentialTypeVmware string = "vmware"
 )
 
 // prop value enum

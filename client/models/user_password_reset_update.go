@@ -15,7 +15,7 @@ import (
 
 // UserPasswordResetUpdate User password reset update
 //
-// Reset the current user password to the one provided. The user must have a valid token for the reseting password action.
+// Reset the current user password to the one provided. The user must have a valid token for the resetting password action.
 // swagger:model UserPasswordResetUpdate
 type UserPasswordResetUpdate struct {
 

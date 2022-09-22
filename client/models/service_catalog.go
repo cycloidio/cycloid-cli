@@ -44,6 +44,14 @@ type ServiceCatalog struct {
 	// Required: true
 	Description *string `json:"description"`
 
+	// Directory where the ServiceCatalog configuration is found.
+	// Required: true
+	Directory *string `json:"directory"`
+
+	// Indicates if this stack can be configured with form's or not. Based on the presence or not of a valid .forms.yaml file since it's creation or last refresh.
+	// Required: true
+	FormEnabled *bool `json:"form_enabled"`
+
 	// id
 	// Required: true
 	// Minimum: 1
@@ -114,6 +122,14 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDirectory(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFormEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -234,6 +250,24 @@ func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
 func (m *ServiceCatalog) validateDescription(formats strfmt.Registry) error {
 
 	if err := validate.Required("description", "body", m.Description); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateDirectory(formats strfmt.Registry) error {
+
+	if err := validate.Required("directory", "body", m.Directory); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateFormEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("form_enabled", "body", m.FormEnabled); err != nil {
 		return err
 	}
 

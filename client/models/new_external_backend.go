@@ -25,7 +25,7 @@ import (
 type NewExternalBackend struct {
 	configurationField ExternalBackendConfiguration
 
-	// The type of the credential must be one of: ["aws", "azure_storage", "elasticsearch", "gcp", "swift"]
+	// The type of the credential must be one of: ["aws", "azure_storage", "elasticsearch", "gcp", "swift", "vmware"]
 	//
 	// Max Length: 100
 	// Min Length: 3

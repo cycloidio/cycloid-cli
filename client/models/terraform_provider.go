@@ -15,7 +15,7 @@ import (
 
 // TerraformProvider Provider
 //
-// Provider of infrastrucutre
+// Provider of infrastructure
 // swagger:model TerraformProvider
 type TerraformProvider struct {
 
