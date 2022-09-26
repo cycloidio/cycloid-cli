@@ -4,8 +4,8 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_children"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -103,12 +103,12 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 
 func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organization, error) {
 
-	params := organization_children.NewGetOrgChildrenParams()
+	params := organization_children.NewGetChildrenParams()
 	orderBy := "organization_canonical:asc"
 	params.SetOrderBy(&orderBy)
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationChildren.GetOrgChildren(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationChildren.GetChildren(params, common.ClientCredentials(&org))
 
 	if err != nil {
 		return nil, err
