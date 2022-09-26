@@ -18,34 +18,34 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// DeleteOrgRoleReader is a Reader for the DeleteOrgRole structure.
-type DeleteOrgRoleReader struct {
+// DeleteRoleReader is a Reader for the DeleteRole structure.
+type DeleteRoleReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *DeleteOrgRoleReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *DeleteRoleReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 204:
-		result := NewDeleteOrgRoleNoContent()
+		result := NewDeleteRoleNoContent()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 403:
-		result := NewDeleteOrgRoleForbidden()
+		result := NewDeleteRoleForbidden()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 404:
-		result := NewDeleteOrgRoleNotFound()
+		result := NewDeleteRoleNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	default:
-		result := NewDeleteOrgRoleDefault(response.Code())
+		result := NewDeleteRoleDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -56,37 +56,37 @@ func (o *DeleteOrgRoleReader) ReadResponse(response runtime.ClientResponse, cons
 	}
 }
 
-// NewDeleteOrgRoleNoContent creates a DeleteOrgRoleNoContent with default headers values
-func NewDeleteOrgRoleNoContent() *DeleteOrgRoleNoContent {
-	return &DeleteOrgRoleNoContent{}
+// NewDeleteRoleNoContent creates a DeleteRoleNoContent with default headers values
+func NewDeleteRoleNoContent() *DeleteRoleNoContent {
+	return &DeleteRoleNoContent{}
 }
 
-/*DeleteOrgRoleNoContent handles this case with default header values.
+/*DeleteRoleNoContent handles this case with default header values.
 
 Organization role has been deleted.
 */
-type DeleteOrgRoleNoContent struct {
+type DeleteRoleNoContent struct {
 }
 
-func (o *DeleteOrgRoleNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteOrgRoleNoContent ", 204)
+func (o *DeleteRoleNoContent) Error() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleNoContent ", 204)
 }
 
-func (o *DeleteOrgRoleNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *DeleteRoleNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	return nil
 }
 
-// NewDeleteOrgRoleForbidden creates a DeleteOrgRoleForbidden with default headers values
-func NewDeleteOrgRoleForbidden() *DeleteOrgRoleForbidden {
-	return &DeleteOrgRoleForbidden{}
+// NewDeleteRoleForbidden creates a DeleteRoleForbidden with default headers values
+func NewDeleteRoleForbidden() *DeleteRoleForbidden {
+	return &DeleteRoleForbidden{}
 }
 
-/*DeleteOrgRoleForbidden handles this case with default header values.
+/*DeleteRoleForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
-type DeleteOrgRoleForbidden struct {
+type DeleteRoleForbidden struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -94,15 +94,15 @@ type DeleteOrgRoleForbidden struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *DeleteOrgRoleForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteOrgRoleForbidden  %+v", 403, o.Payload)
+func (o *DeleteRoleForbidden) Error() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleForbidden  %+v", 403, o.Payload)
 }
 
-func (o *DeleteOrgRoleForbidden) GetPayload() *models.ErrorPayload {
+func (o *DeleteRoleForbidden) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *DeleteOrgRoleForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *DeleteRoleForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -121,16 +121,16 @@ func (o *DeleteOrgRoleForbidden) readResponse(response runtime.ClientResponse, c
 	return nil
 }
 
-// NewDeleteOrgRoleNotFound creates a DeleteOrgRoleNotFound with default headers values
-func NewDeleteOrgRoleNotFound() *DeleteOrgRoleNotFound {
-	return &DeleteOrgRoleNotFound{}
+// NewDeleteRoleNotFound creates a DeleteRoleNotFound with default headers values
+func NewDeleteRoleNotFound() *DeleteRoleNotFound {
+	return &DeleteRoleNotFound{}
 }
 
-/*DeleteOrgRoleNotFound handles this case with default header values.
+/*DeleteRoleNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
-type DeleteOrgRoleNotFound struct {
+type DeleteRoleNotFound struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -138,15 +138,15 @@ type DeleteOrgRoleNotFound struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *DeleteOrgRoleNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteOrgRoleNotFound  %+v", 404, o.Payload)
+func (o *DeleteRoleNotFound) Error() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleNotFound  %+v", 404, o.Payload)
 }
 
-func (o *DeleteOrgRoleNotFound) GetPayload() *models.ErrorPayload {
+func (o *DeleteRoleNotFound) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *DeleteOrgRoleNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *DeleteRoleNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -165,18 +165,18 @@ func (o *DeleteOrgRoleNotFound) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-// NewDeleteOrgRoleDefault creates a DeleteOrgRoleDefault with default headers values
-func NewDeleteOrgRoleDefault(code int) *DeleteOrgRoleDefault {
-	return &DeleteOrgRoleDefault{
+// NewDeleteRoleDefault creates a DeleteRoleDefault with default headers values
+func NewDeleteRoleDefault(code int) *DeleteRoleDefault {
+	return &DeleteRoleDefault{
 		_statusCode: code,
 	}
 }
 
-/*DeleteOrgRoleDefault handles this case with default header values.
+/*DeleteRoleDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
-type DeleteOrgRoleDefault struct {
+type DeleteRoleDefault struct {
 	_statusCode int
 
 	/*The length of the response body in octets (8-bit bytes).
@@ -186,20 +186,20 @@ type DeleteOrgRoleDefault struct {
 	Payload *models.ErrorPayload
 }
 
-// Code gets the status code for the delete org role default response
-func (o *DeleteOrgRoleDefault) Code() int {
+// Code gets the status code for the delete role default response
+func (o *DeleteRoleDefault) Code() int {
 	return o._statusCode
 }
 
-func (o *DeleteOrgRoleDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteOrgRole default  %+v", o._statusCode, o.Payload)
+func (o *DeleteRoleDefault) Error() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRole default  %+v", o._statusCode, o.Payload)
 }
 
-func (o *DeleteOrgRoleDefault) GetPayload() *models.ErrorPayload {
+func (o *DeleteRoleDefault) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *DeleteOrgRoleDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *DeleteRoleDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))

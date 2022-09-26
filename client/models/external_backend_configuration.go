@@ -173,6 +173,13 @@ func unmarshalExternalBackendConfiguration(data []byte, consumer runtime.Consume
 		}
 		return &result, nil
 
+	case "VMwareVsphere":
+		var result VMwareVsphere
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
 	}
 	return nil, errors.New(422, "invalid engine value: %q", getType.Engine)
 

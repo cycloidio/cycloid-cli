@@ -18,49 +18,49 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetOrgEventsParams creates a new GetOrgEventsParams object
+// NewGetEventsParams creates a new GetEventsParams object
 // with the default values initialized.
-func NewGetOrgEventsParams() *GetOrgEventsParams {
+func NewGetEventsParams() *GetEventsParams {
 	var ()
-	return &GetOrgEventsParams{
+	return &GetEventsParams{
 
 		timeout: cr.DefaultTimeout,
 	}
 }
 
-// NewGetOrgEventsParamsWithTimeout creates a new GetOrgEventsParams object
+// NewGetEventsParamsWithTimeout creates a new GetEventsParams object
 // with the default values initialized, and the ability to set a timeout on a request
-func NewGetOrgEventsParamsWithTimeout(timeout time.Duration) *GetOrgEventsParams {
+func NewGetEventsParamsWithTimeout(timeout time.Duration) *GetEventsParams {
 	var ()
-	return &GetOrgEventsParams{
+	return &GetEventsParams{
 
 		timeout: timeout,
 	}
 }
 
-// NewGetOrgEventsParamsWithContext creates a new GetOrgEventsParams object
+// NewGetEventsParamsWithContext creates a new GetEventsParams object
 // with the default values initialized, and the ability to set a context for a request
-func NewGetOrgEventsParamsWithContext(ctx context.Context) *GetOrgEventsParams {
+func NewGetEventsParamsWithContext(ctx context.Context) *GetEventsParams {
 	var ()
-	return &GetOrgEventsParams{
+	return &GetEventsParams{
 
 		Context: ctx,
 	}
 }
 
-// NewGetOrgEventsParamsWithHTTPClient creates a new GetOrgEventsParams object
+// NewGetEventsParamsWithHTTPClient creates a new GetEventsParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
-func NewGetOrgEventsParamsWithHTTPClient(client *http.Client) *GetOrgEventsParams {
+func NewGetEventsParamsWithHTTPClient(client *http.Client) *GetEventsParams {
 	var ()
-	return &GetOrgEventsParams{
+	return &GetEventsParams{
 		HTTPClient: client,
 	}
 }
 
-/*GetOrgEventsParams contains all the parameters to send to the API endpoint
-for the get org events operation typically these are written to a http.Request
+/*GetEventsParams contains all the parameters to send to the API endpoint
+for the get events operation typically these are written to a http.Request
 */
-type GetOrgEventsParams struct {
+type GetEventsParams struct {
 
 	/*Begin
 	  The unix timestamp in milliseconds, which indicate the start of the time range.
@@ -93,96 +93,96 @@ type GetOrgEventsParams struct {
 	HTTPClient *http.Client
 }
 
-// WithTimeout adds the timeout to the get org events params
-func (o *GetOrgEventsParams) WithTimeout(timeout time.Duration) *GetOrgEventsParams {
+// WithTimeout adds the timeout to the get events params
+func (o *GetEventsParams) WithTimeout(timeout time.Duration) *GetEventsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get org events params
-func (o *GetOrgEventsParams) SetTimeout(timeout time.Duration) {
+// SetTimeout adds the timeout to the get events params
+func (o *GetEventsParams) SetTimeout(timeout time.Duration) {
 	o.timeout = timeout
 }
 
-// WithContext adds the context to the get org events params
-func (o *GetOrgEventsParams) WithContext(ctx context.Context) *GetOrgEventsParams {
+// WithContext adds the context to the get events params
+func (o *GetEventsParams) WithContext(ctx context.Context) *GetEventsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get org events params
-func (o *GetOrgEventsParams) SetContext(ctx context.Context) {
+// SetContext adds the context to the get events params
+func (o *GetEventsParams) SetContext(ctx context.Context) {
 	o.Context = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get org events params
-func (o *GetOrgEventsParams) WithHTTPClient(client *http.Client) *GetOrgEventsParams {
+// WithHTTPClient adds the HTTPClient to the get events params
+func (o *GetEventsParams) WithHTTPClient(client *http.Client) *GetEventsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get org events params
-func (o *GetOrgEventsParams) SetHTTPClient(client *http.Client) {
+// SetHTTPClient adds the HTTPClient to the get events params
+func (o *GetEventsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithBegin adds the begin to the get org events params
-func (o *GetOrgEventsParams) WithBegin(begin *uint64) *GetOrgEventsParams {
+// WithBegin adds the begin to the get events params
+func (o *GetEventsParams) WithBegin(begin *uint64) *GetEventsParams {
 	o.SetBegin(begin)
 	return o
 }
 
-// SetBegin adds the begin to the get org events params
-func (o *GetOrgEventsParams) SetBegin(begin *uint64) {
+// SetBegin adds the begin to the get events params
+func (o *GetEventsParams) SetBegin(begin *uint64) {
 	o.Begin = begin
 }
 
-// WithEnd adds the end to the get org events params
-func (o *GetOrgEventsParams) WithEnd(end *uint64) *GetOrgEventsParams {
+// WithEnd adds the end to the get events params
+func (o *GetEventsParams) WithEnd(end *uint64) *GetEventsParams {
 	o.SetEnd(end)
 	return o
 }
 
-// SetEnd adds the end to the get org events params
-func (o *GetOrgEventsParams) SetEnd(end *uint64) {
+// SetEnd adds the end to the get events params
+func (o *GetEventsParams) SetEnd(end *uint64) {
 	o.End = end
 }
 
-// WithOrganizationCanonical adds the organizationCanonical to the get org events params
-func (o *GetOrgEventsParams) WithOrganizationCanonical(organizationCanonical string) *GetOrgEventsParams {
+// WithOrganizationCanonical adds the organizationCanonical to the get events params
+func (o *GetEventsParams) WithOrganizationCanonical(organizationCanonical string) *GetEventsParams {
 	o.SetOrganizationCanonical(organizationCanonical)
 	return o
 }
 
-// SetOrganizationCanonical adds the organizationCanonical to the get org events params
-func (o *GetOrgEventsParams) SetOrganizationCanonical(organizationCanonical string) {
+// SetOrganizationCanonical adds the organizationCanonical to the get events params
+func (o *GetEventsParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithSeverity adds the severity to the get org events params
-func (o *GetOrgEventsParams) WithSeverity(severity []string) *GetOrgEventsParams {
+// WithSeverity adds the severity to the get events params
+func (o *GetEventsParams) WithSeverity(severity []string) *GetEventsParams {
 	o.SetSeverity(severity)
 	return o
 }
 
-// SetSeverity adds the severity to the get org events params
-func (o *GetOrgEventsParams) SetSeverity(severity []string) {
+// SetSeverity adds the severity to the get events params
+func (o *GetEventsParams) SetSeverity(severity []string) {
 	o.Severity = severity
 }
 
-// WithType adds the typeVar to the get org events params
-func (o *GetOrgEventsParams) WithType(typeVar []string) *GetOrgEventsParams {
+// WithType adds the typeVar to the get events params
+func (o *GetEventsParams) WithType(typeVar []string) *GetEventsParams {
 	o.SetType(typeVar)
 	return o
 }
 
-// SetType adds the type to the get org events params
-func (o *GetOrgEventsParams) SetType(typeVar []string) {
+// SetType adds the type to the get events params
+func (o *GetEventsParams) SetType(typeVar []string) {
 	o.Type = typeVar
 }
 
 // WriteToRequest writes these params to a swagger request
-func (o *GetOrgEventsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
+func (o *GetEventsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
 	if err := r.SetTimeout(o.timeout); err != nil {
 		return err

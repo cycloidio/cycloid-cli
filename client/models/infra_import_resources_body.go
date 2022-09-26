@@ -20,7 +20,7 @@ import (
 
 // InfraImportResourcesBody Provider's Resources body
 //
-// Entry that represents all the data needed for fetching resourcess
+// Entry that represents all the data needed for fetching resources
 // swagger:model InfraImportResourcesBody
 type InfraImportResourcesBody struct {
 	configurationField CloudProviderConfiguration

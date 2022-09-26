@@ -19,34 +19,34 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// SendOrgEventReader is a Reader for the SendOrgEvent structure.
-type SendOrgEventReader struct {
+// SendEventReader is a Reader for the SendEvent structure.
+type SendEventReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *SendOrgEventReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *SendEventReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewSendOrgEventOK()
+		result := NewSendEventOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 403:
-		result := NewSendOrgEventForbidden()
+		result := NewSendEventForbidden()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 404:
-		result := NewSendOrgEventNotFound()
+		result := NewSendEventNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 422:
-		result := NewSendOrgEventUnprocessableEntity()
+		result := NewSendEventUnprocessableEntity()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -57,30 +57,30 @@ func (o *SendOrgEventReader) ReadResponse(response runtime.ClientResponse, consu
 	}
 }
 
-// NewSendOrgEventOK creates a SendOrgEventOK with default headers values
-func NewSendOrgEventOK() *SendOrgEventOK {
-	return &SendOrgEventOK{}
+// NewSendEventOK creates a SendEventOK with default headers values
+func NewSendEventOK() *SendEventOK {
+	return &SendEventOK{}
 }
 
-/*SendOrgEventOK handles this case with default header values.
+/*SendEventOK handles this case with default header values.
 
 Event has been registered
 */
-type SendOrgEventOK struct {
-	Payload *SendOrgEventOKBody
+type SendEventOK struct {
+	Payload *SendEventOKBody
 }
 
-func (o *SendOrgEventOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendOrgEventOK  %+v", 200, o.Payload)
+func (o *SendEventOK) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventOK  %+v", 200, o.Payload)
 }
 
-func (o *SendOrgEventOK) GetPayload() *SendOrgEventOKBody {
+func (o *SendEventOK) GetPayload() *SendEventOKBody {
 	return o.Payload
 }
 
-func (o *SendOrgEventOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *SendEventOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(SendOrgEventOKBody)
+	o.Payload = new(SendEventOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -90,16 +90,16 @@ func (o *SendOrgEventOK) readResponse(response runtime.ClientResponse, consumer 
 	return nil
 }
 
-// NewSendOrgEventForbidden creates a SendOrgEventForbidden with default headers values
-func NewSendOrgEventForbidden() *SendOrgEventForbidden {
-	return &SendOrgEventForbidden{}
+// NewSendEventForbidden creates a SendEventForbidden with default headers values
+func NewSendEventForbidden() *SendEventForbidden {
+	return &SendEventForbidden{}
 }
 
-/*SendOrgEventForbidden handles this case with default header values.
+/*SendEventForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
-type SendOrgEventForbidden struct {
+type SendEventForbidden struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -107,15 +107,15 @@ type SendOrgEventForbidden struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *SendOrgEventForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendOrgEventForbidden  %+v", 403, o.Payload)
+func (o *SendEventForbidden) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventForbidden  %+v", 403, o.Payload)
 }
 
-func (o *SendOrgEventForbidden) GetPayload() *models.ErrorPayload {
+func (o *SendEventForbidden) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *SendOrgEventForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *SendEventForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -134,16 +134,16 @@ func (o *SendOrgEventForbidden) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-// NewSendOrgEventNotFound creates a SendOrgEventNotFound with default headers values
-func NewSendOrgEventNotFound() *SendOrgEventNotFound {
-	return &SendOrgEventNotFound{}
+// NewSendEventNotFound creates a SendEventNotFound with default headers values
+func NewSendEventNotFound() *SendEventNotFound {
+	return &SendEventNotFound{}
 }
 
-/*SendOrgEventNotFound handles this case with default header values.
+/*SendEventNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
-type SendOrgEventNotFound struct {
+type SendEventNotFound struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -151,15 +151,15 @@ type SendOrgEventNotFound struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *SendOrgEventNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendOrgEventNotFound  %+v", 404, o.Payload)
+func (o *SendEventNotFound) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventNotFound  %+v", 404, o.Payload)
 }
 
-func (o *SendOrgEventNotFound) GetPayload() *models.ErrorPayload {
+func (o *SendEventNotFound) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *SendOrgEventNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *SendEventNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -178,16 +178,16 @@ func (o *SendOrgEventNotFound) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-// NewSendOrgEventUnprocessableEntity creates a SendOrgEventUnprocessableEntity with default headers values
-func NewSendOrgEventUnprocessableEntity() *SendOrgEventUnprocessableEntity {
-	return &SendOrgEventUnprocessableEntity{}
+// NewSendEventUnprocessableEntity creates a SendEventUnprocessableEntity with default headers values
+func NewSendEventUnprocessableEntity() *SendEventUnprocessableEntity {
+	return &SendEventUnprocessableEntity{}
 }
 
-/*SendOrgEventUnprocessableEntity handles this case with default header values.
+/*SendEventUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
-type SendOrgEventUnprocessableEntity struct {
+type SendEventUnprocessableEntity struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -195,15 +195,15 @@ type SendOrgEventUnprocessableEntity struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *SendOrgEventUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendOrgEventUnprocessableEntity  %+v", 422, o.Payload)
+func (o *SendEventUnprocessableEntity) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventUnprocessableEntity  %+v", 422, o.Payload)
 }
 
-func (o *SendOrgEventUnprocessableEntity) GetPayload() *models.ErrorPayload {
+func (o *SendEventUnprocessableEntity) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *SendOrgEventUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *SendEventUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -222,18 +222,18 @@ func (o *SendOrgEventUnprocessableEntity) readResponse(response runtime.ClientRe
 	return nil
 }
 
-/*SendOrgEventOKBody The newly created event
-swagger:model SendOrgEventOKBody
+/*SendEventOKBody The newly created event
+swagger:model SendEventOKBody
 */
-type SendOrgEventOKBody struct {
+type SendEventOKBody struct {
 
 	// data
 	// Required: true
 	Data *models.Event `json:"data"`
 }
 
-// Validate validates this send org event o k body
-func (o *SendOrgEventOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this send event o k body
+func (o *SendEventOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -246,16 +246,16 @@ func (o *SendOrgEventOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *SendOrgEventOKBody) validateData(formats strfmt.Registry) error {
+func (o *SendEventOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("sendOrgEventOK"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("sendEventOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("sendOrgEventOK" + "." + "data")
+				return ve.ValidateName("sendEventOK" + "." + "data")
 			}
 			return err
 		}
@@ -265,7 +265,7 @@ func (o *SendOrgEventOKBody) validateData(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (o *SendOrgEventOKBody) MarshalBinary() ([]byte, error) {
+func (o *SendEventOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -273,8 +273,8 @@ func (o *SendOrgEventOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *SendOrgEventOKBody) UnmarshalBinary(b []byte) error {
-	var res SendOrgEventOKBody
+func (o *SendEventOKBody) UnmarshalBinary(b []byte) error {
+	var res SendEventOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

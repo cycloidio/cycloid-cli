@@ -15,7 +15,7 @@ import (
 
 // TerraformProviderSimple TerraformProviderSimple
 //
-// Provider of infrastrucutre without the conifg
+// Provider of infrastructure without the config
 // swagger:model TerraformProviderSimple
 type TerraformProviderSimple struct {
 

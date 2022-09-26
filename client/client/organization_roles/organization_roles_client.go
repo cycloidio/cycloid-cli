@@ -25,23 +25,23 @@ type Client struct {
 }
 
 /*
-CreateOrgRole Create a new role available in the organization.
+CreateRole Create a new role available in the organization.
 */
-func (a *Client) CreateOrgRole(params *CreateOrgRoleParams, authInfo runtime.ClientAuthInfoWriter) (*CreateOrgRoleOK, error) {
+func (a *Client) CreateRole(params *CreateRoleParams, authInfo runtime.ClientAuthInfoWriter) (*CreateRoleOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewCreateOrgRoleParams()
+		params = NewCreateRoleParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "createOrgRole",
+		ID:                 "createRole",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/roles",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &CreateOrgRoleReader{formats: a.formats},
+		Reader:             &CreateRoleReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -49,33 +49,33 @@ func (a *Client) CreateOrgRole(params *CreateOrgRoleParams, authInfo runtime.Cli
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*CreateOrgRoleOK)
+	success, ok := result.(*CreateRoleOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*CreateOrgRoleDefault)
+	unexpectedSuccess := result.(*CreateRoleDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
-DeleteOrgRole Delete an existing role in the organization.
+DeleteRole Delete an existing role in the organization.
 */
-func (a *Client) DeleteOrgRole(params *DeleteOrgRoleParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteOrgRoleNoContent, error) {
+func (a *Client) DeleteRole(params *DeleteRoleParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteRoleNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewDeleteOrgRoleParams()
+		params = NewDeleteRoleParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "deleteOrgRole",
+		ID:                 "deleteRole",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &DeleteOrgRoleReader{formats: a.formats},
+		Reader:             &DeleteRoleReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -83,33 +83,33 @@ func (a *Client) DeleteOrgRole(params *DeleteOrgRoleParams, authInfo runtime.Cli
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*DeleteOrgRoleNoContent)
+	success, ok := result.(*DeleteRoleNoContent)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*DeleteOrgRoleDefault)
+	unexpectedSuccess := result.(*DeleteRoleDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
-GetOrgRole Get the role available in the organization with an canonical
+GetRole Get the role available in the organization with an canonical
 */
-func (a *Client) GetOrgRole(params *GetOrgRoleParams, authInfo runtime.ClientAuthInfoWriter) (*GetOrgRoleOK, error) {
+func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoWriter) (*GetRoleOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetOrgRoleParams()
+		params = NewGetRoleParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getOrgRole",
+		ID:                 "getRole",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetOrgRoleReader{formats: a.formats},
+		Reader:             &GetRoleReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -117,33 +117,33 @@ func (a *Client) GetOrgRole(params *GetOrgRoleParams, authInfo runtime.ClientAut
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetOrgRoleOK)
+	success, ok := result.(*GetRoleOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*GetOrgRoleDefault)
+	unexpectedSuccess := result.(*GetRoleDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
-GetOrgRoles Get the list of roles available in the organization.
+GetRoles Get the list of roles available in the organization.
 */
-func (a *Client) GetOrgRoles(params *GetOrgRolesParams, authInfo runtime.ClientAuthInfoWriter) (*GetOrgRolesOK, error) {
+func (a *Client) GetRoles(params *GetRolesParams, authInfo runtime.ClientAuthInfoWriter) (*GetRolesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetOrgRolesParams()
+		params = NewGetRolesParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getOrgRoles",
+		ID:                 "getRoles",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/roles",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetOrgRolesReader{formats: a.formats},
+		Reader:             &GetRolesReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -151,33 +151,33 @@ func (a *Client) GetOrgRoles(params *GetOrgRolesParams, authInfo runtime.ClientA
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetOrgRolesOK)
+	success, ok := result.(*GetRolesOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*GetOrgRolesDefault)
+	unexpectedSuccess := result.(*GetRolesDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
-UpdateOrgRole Update an existing role in the organization.
+UpdateRole Update an existing role in the organization.
 */
-func (a *Client) UpdateOrgRole(params *UpdateOrgRoleParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateOrgRoleOK, error) {
+func (a *Client) UpdateRole(params *UpdateRoleParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateRoleOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewUpdateOrgRoleParams()
+		params = NewUpdateRoleParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "updateOrgRole",
+		ID:                 "updateRole",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &UpdateOrgRoleReader{formats: a.formats},
+		Reader:             &UpdateRoleReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -185,12 +185,12 @@ func (a *Client) UpdateOrgRole(params *UpdateOrgRoleParams, authInfo runtime.Cli
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*UpdateOrgRoleOK)
+	success, ok := result.(*UpdateRoleOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*UpdateOrgRoleDefault)
+	unexpectedSuccess := result.(*UpdateRoleDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

@@ -19,28 +19,28 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// GetOrgSummaryReader is a Reader for the GetOrgSummary structure.
-type GetOrgSummaryReader struct {
+// GetSummaryReader is a Reader for the GetSummary structure.
+type GetSummaryReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetOrgSummaryReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetSummaryReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewGetOrgSummaryOK()
+		result := NewGetSummaryOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 403:
-		result := NewGetOrgSummaryForbidden()
+		result := NewGetSummaryForbidden()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 404:
-		result := NewGetOrgSummaryNotFound()
+		result := NewGetSummaryNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -51,30 +51,30 @@ func (o *GetOrgSummaryReader) ReadResponse(response runtime.ClientResponse, cons
 	}
 }
 
-// NewGetOrgSummaryOK creates a GetOrgSummaryOK with default headers values
-func NewGetOrgSummaryOK() *GetOrgSummaryOK {
-	return &GetOrgSummaryOK{}
+// NewGetSummaryOK creates a GetSummaryOK with default headers values
+func NewGetSummaryOK() *GetSummaryOK {
+	return &GetSummaryOK{}
 }
 
-/*GetOrgSummaryOK handles this case with default header values.
+/*GetSummaryOK handles this case with default header values.
 
 The summary object
 */
-type GetOrgSummaryOK struct {
-	Payload *GetOrgSummaryOKBody
+type GetSummaryOK struct {
+	Payload *GetSummaryOKBody
 }
 
-func (o *GetOrgSummaryOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/summary][%d] getOrgSummaryOK  %+v", 200, o.Payload)
+func (o *GetSummaryOK) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/summary][%d] getSummaryOK  %+v", 200, o.Payload)
 }
 
-func (o *GetOrgSummaryOK) GetPayload() *GetOrgSummaryOKBody {
+func (o *GetSummaryOK) GetPayload() *GetSummaryOKBody {
 	return o.Payload
 }
 
-func (o *GetOrgSummaryOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetSummaryOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(GetOrgSummaryOKBody)
+	o.Payload = new(GetSummaryOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -84,16 +84,16 @@ func (o *GetOrgSummaryOK) readResponse(response runtime.ClientResponse, consumer
 	return nil
 }
 
-// NewGetOrgSummaryForbidden creates a GetOrgSummaryForbidden with default headers values
-func NewGetOrgSummaryForbidden() *GetOrgSummaryForbidden {
-	return &GetOrgSummaryForbidden{}
+// NewGetSummaryForbidden creates a GetSummaryForbidden with default headers values
+func NewGetSummaryForbidden() *GetSummaryForbidden {
+	return &GetSummaryForbidden{}
 }
 
-/*GetOrgSummaryForbidden handles this case with default header values.
+/*GetSummaryForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
-type GetOrgSummaryForbidden struct {
+type GetSummaryForbidden struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -101,15 +101,15 @@ type GetOrgSummaryForbidden struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgSummaryForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/summary][%d] getOrgSummaryForbidden  %+v", 403, o.Payload)
+func (o *GetSummaryForbidden) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/summary][%d] getSummaryForbidden  %+v", 403, o.Payload)
 }
 
-func (o *GetOrgSummaryForbidden) GetPayload() *models.ErrorPayload {
+func (o *GetSummaryForbidden) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgSummaryForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetSummaryForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -128,16 +128,16 @@ func (o *GetOrgSummaryForbidden) readResponse(response runtime.ClientResponse, c
 	return nil
 }
 
-// NewGetOrgSummaryNotFound creates a GetOrgSummaryNotFound with default headers values
-func NewGetOrgSummaryNotFound() *GetOrgSummaryNotFound {
-	return &GetOrgSummaryNotFound{}
+// NewGetSummaryNotFound creates a GetSummaryNotFound with default headers values
+func NewGetSummaryNotFound() *GetSummaryNotFound {
+	return &GetSummaryNotFound{}
 }
 
-/*GetOrgSummaryNotFound handles this case with default header values.
+/*GetSummaryNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
-type GetOrgSummaryNotFound struct {
+type GetSummaryNotFound struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -145,15 +145,15 @@ type GetOrgSummaryNotFound struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgSummaryNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/summary][%d] getOrgSummaryNotFound  %+v", 404, o.Payload)
+func (o *GetSummaryNotFound) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/summary][%d] getSummaryNotFound  %+v", 404, o.Payload)
 }
 
-func (o *GetOrgSummaryNotFound) GetPayload() *models.ErrorPayload {
+func (o *GetSummaryNotFound) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgSummaryNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetSummaryNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -172,18 +172,18 @@ func (o *GetOrgSummaryNotFound) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-/*GetOrgSummaryOKBody get org summary o k body
-swagger:model GetOrgSummaryOKBody
+/*GetSummaryOKBody get summary o k body
+swagger:model GetSummaryOKBody
 */
-type GetOrgSummaryOKBody struct {
+type GetSummaryOKBody struct {
 
 	// summary
 	// Required: true
 	Summary *models.Summary `json:"summary"`
 }
 
-// Validate validates this get org summary o k body
-func (o *GetOrgSummaryOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this get summary o k body
+func (o *GetSummaryOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateSummary(formats); err != nil {
@@ -196,16 +196,16 @@ func (o *GetOrgSummaryOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetOrgSummaryOKBody) validateSummary(formats strfmt.Registry) error {
+func (o *GetSummaryOKBody) validateSummary(formats strfmt.Registry) error {
 
-	if err := validate.Required("getOrgSummaryOK"+"."+"summary", "body", o.Summary); err != nil {
+	if err := validate.Required("getSummaryOK"+"."+"summary", "body", o.Summary); err != nil {
 		return err
 	}
 
 	if o.Summary != nil {
 		if err := o.Summary.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getOrgSummaryOK" + "." + "summary")
+				return ve.ValidateName("getSummaryOK" + "." + "summary")
 			}
 			return err
 		}
@@ -215,7 +215,7 @@ func (o *GetOrgSummaryOKBody) validateSummary(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (o *GetOrgSummaryOKBody) MarshalBinary() ([]byte, error) {
+func (o *GetSummaryOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -223,8 +223,8 @@ func (o *GetOrgSummaryOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *GetOrgSummaryOKBody) UnmarshalBinary(b []byte) error {
-	var res GetOrgSummaryOKBody
+func (o *GetSummaryOKBody) UnmarshalBinary(b []byte) error {
+	var res GetSummaryOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
