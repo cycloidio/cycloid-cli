@@ -31,3 +31,15 @@ E2E tests tend to be idempotent as possible but we recommend to use it again a d
   * CY_TEST_EMAIL: the test email
   * CY_TEST_PASSWORD: the test password
   * CY_TEST_ORG: the test organization
+
+# Add changelog entry
+
+Currently we use `changie` to manage the changelog. Each PR merge will result in a file at changelog/unreleased/ with a certain format.
+
+To simplify the usage of `changie` there's a yaml file, which describes the different file's format, possibilities, etc. To create a new entry you just need to use the following makefile target:
+
+```
+make new-changelog-entry
+```
+
+For more details on `changie` at https://changie.dev/guide/quick-start/
