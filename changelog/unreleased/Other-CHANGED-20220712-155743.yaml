@@ -1,0 +1,7 @@
+component: CLI
+kind: CHANGED
+body: 'client: update Action references from new swagger spec'
+time: 2022-10-07T13:00:05.027432241Z
+custom:
+  PR: "155"
+  DETAILS: "client: update Action references from new swagger spec"
