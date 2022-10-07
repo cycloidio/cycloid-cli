@@ -4,8 +4,8 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_children"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
