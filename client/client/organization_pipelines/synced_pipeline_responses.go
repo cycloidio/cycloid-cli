@@ -315,7 +315,7 @@ type SyncedPipelineOKBody struct {
 
 	// data
 	// Required: true
-	Data *models.PipelineDiffs `json:"data"`
+	Data *models.PipelineStatus `json:"data"`
 }
 
 // Validate validates this synced pipeline o k body

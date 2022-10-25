@@ -23,8 +23,8 @@ type NewProject struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical string `json:"canonical,omitempty"`
 
 	// config repository canonical
@@ -46,7 +46,7 @@ type NewProject struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 1
 	Name *string `json:"name"`
 
 	// User canonical that owns this project. If omitted then the person
@@ -56,7 +56,7 @@ type NewProject struct {
 	Owner string `json:"owner,omitempty"`
 
 	// Each instance should include passed_config if no inputs are sent on
-	// project creation, otherwise it will be infered internally.
+	// project creation, otherwise it will be inferred internally.
 	//
 	// Required: true
 	// Min Items: 1
@@ -107,7 +107,7 @@ func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 1); err != nil {
 		return err
 	}
 
@@ -115,7 +115,7 @@ func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -174,7 +174,7 @@ func (m *NewProject) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 

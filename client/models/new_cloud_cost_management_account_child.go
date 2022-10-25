@@ -15,7 +15,7 @@ import (
 
 // NewCloudCostManagementAccountChild Create CloudCostManagementAccountChild
 //
-// Create a new Cloud Cost Management Child account. This ccount has no
+// Create a new Cloud Cost Management Child account. This count has no
 // ExternalBackend since it is not ingesting data.
 // If a canonical is missing, the one from credential will be applied
 //

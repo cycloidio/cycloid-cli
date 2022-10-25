@@ -161,7 +161,7 @@ func (a *Client) GetAPIKeys(params *GetAPIKeysParams, authInfo runtime.ClientAut
 }
 
 /*
-UpdateAPIkey Update the information of an API key of the organization. If the API key has some information on the fields which aren't required and they are not sent or set to their default vaules, which depend of their types, the information will be removed.
+UpdateAPIkey Update the information of an API key of the organization. If the API key has some information on the fields which aren't required and they are not sent or set to their default values, which depend of their types, the information will be removed.
 */
 func (a *Client) UpdateAPIkey(params *UpdateAPIkeyParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateAPIkeyOK, error) {
 	// TODO: Validate the params before sending

@@ -36,7 +36,7 @@ type APIKey struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
-	// The last seven characters of API key. Allows user to differentiante between keys.
+	// The last seven characters of API key. Allows user to differentiate between keys.
 	// Required: true
 	LastSeven *string `json:"last_seven"`
 

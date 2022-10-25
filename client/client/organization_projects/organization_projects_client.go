@@ -263,7 +263,7 @@ func (a *Client) GetProjects(params *GetProjectsParams, authInfo runtime.ClientA
 }
 
 /*
-UpdateProject Update the information of a project of the organization. If the project has some information on the fields which aren't required and they are not sent or set to their default vaules, which depend of their types, the information will be removed.
+UpdateProject Update the information of a project of the organization. If the project has some information on the fields which aren't required and they are not sent or set to their default values, which depend of their types, the information will be removed.
 */
 func (a *Client) UpdateProject(params *UpdateProjectParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateProjectOK, error) {
 	// TODO: Validate the params before sending

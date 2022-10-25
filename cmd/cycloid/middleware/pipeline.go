@@ -353,7 +353,7 @@ func (m *middleware) GetPipeline(org, project, env string) (*models.Pipeline, er
 	return d, err
 }
 
-func (m *middleware) SyncedPipeline(org, project, env string) (*models.PipelineDiffs, error) {
+func (m *middleware) SyncedPipeline(org, project, env string) (*models.PipelineStatus, error) {
 
 	pipelineName := common.GetPipelineName(project, env)
 
@@ -374,9 +374,9 @@ func (m *middleware) SyncedPipeline(org, project, env string) (*models.PipelineD
 	// }
 
 	d := p.Data
-	// In case of nil data, add an empty PipelineDiff model produce an homogen output
+	// In case of nil data, add an empty PipelineStatus model produce an homogen output
 	if d == nil {
-			d = &models.PipelineDiffs{}
+		d = &models.PipelineStatus{}
 	}
 	return d, err
 }

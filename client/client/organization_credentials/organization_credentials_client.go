@@ -34,6 +34,7 @@ CreateCredential Create a new Credential, based on the type you will have to pas
 * basic_auth: username, password
 * elasticsearch: username, password, ca_cert
 * swift: auth_url, username, password, domain_id, tenant_id
+* vmware: username, password
 */
 func (a *Client) CreateCredential(params *CreateCredentialParams, authInfo runtime.ClientAuthInfoWriter) (*CreateCredentialOK, error) {
 	// TODO: Validate the params before sending
@@ -212,6 +213,7 @@ UpdateCredential Update an existing Credential, based on the type you will have 
 * basic_auth: username, password
 * elasticsearch: username, password, ca_cert
 * swift: auth_url, username, password, domain_id, tenant_id
+* vmware: username, password
 */
 func (a *Client) UpdateCredential(params *UpdateCredentialParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateCredentialOK, error) {
 	// TODO: Validate the params before sending

@@ -25,7 +25,7 @@ type CloudCostManagementHistogram struct {
 	// Required: true
 	Buckets []*CloudCostManagementBucket `json:"buckets"`
 
-	// the totoal cost for the period
+	// the total cost for the period
 	// Required: true
 	Cost *float64 `json:"cost"`
 }

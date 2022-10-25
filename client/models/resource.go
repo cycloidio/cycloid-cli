@@ -13,7 +13,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Resource Resouce
+// Resource Resource
 //
 // The entity which represents a resource in the application.
 // swagger:model Resource

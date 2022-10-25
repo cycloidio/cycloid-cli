@@ -51,7 +51,7 @@ type UpdateCredential struct {
 
 	// type
 	// Required: true
-	// Enum: [ssh aws custom azure azure_storage gcp basic_auth elasticsearch]
+	// Enum: [ssh aws custom azure azure_storage gcp basic_auth elasticsearch vmware]
 	Type *string `json:"type"`
 }
 
@@ -150,7 +150,7 @@ var updateCredentialTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["ssh","aws","custom","azure","azure_storage","gcp","basic_auth","elasticsearch"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["ssh","aws","custom","azure","azure_storage","gcp","basic_auth","elasticsearch","vmware"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -183,6 +183,9 @@ const (
 
 	// UpdateCredentialTypeElasticsearch captures enum value "elasticsearch"
 	UpdateCredentialTypeElasticsearch string = "elasticsearch"
+
+	// UpdateCredentialTypeVmware captures enum value "vmware"
+	UpdateCredentialTypeVmware string = "vmware"
 )
 
 // prop value enum
