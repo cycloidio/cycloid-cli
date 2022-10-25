@@ -7,7 +7,6 @@ package models
 
 import (
 	"encoding/json"
-	"strconv"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -16,11 +15,11 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Project Project
+// ProjectSimple ProjectSimple
 //
-// The entity which represents the information of a project.
-// swagger:model Project
-type Project struct {
+// The entity which represents minimal information of a project.
+// swagger:model ProjectSimple
+type ProjectSimple struct {
 
 	// canonical
 	// Required: true
@@ -29,12 +28,6 @@ type Project struct {
 	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical *string `json:"canonical"`
 
-	// config repository canonical
-	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	ConfigRepositoryCanonical string `json:"config_repository_canonical,omitempty"`
-
 	// created at
 	// Required: true
 	// Minimum: 0
@@ -42,10 +35,6 @@ type Project struct {
 
 	// description
 	Description string `json:"description,omitempty"`
-
-	// environments
-	// Required: true
-	Environments []*Environment `json:"environments"`
 
 	// favorite
 	Favorite bool `json:"favorite,omitempty"`
@@ -70,35 +59,21 @@ type Project struct {
 	//
 	Owner *User `json:"owner,omitempty"`
 
-	// The Service Catalog that was used to create project.
-	ServiceCatalog *ServiceCatalog `json:"service_catalog,omitempty"`
-
-	// The Team that was used to create project.
-	Team *SimpleTeam `json:"team,omitempty"`
-
 	// updated at
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
 }
 
-// Validate validates this project
-func (m *Project) Validate(formats strfmt.Registry) error {
+// Validate validates this project simple
+func (m *ProjectSimple) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateConfigRepositoryCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateCreatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateEnvironments(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -118,14 +93,6 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalog(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTeam(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -136,7 +103,7 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateCanonical(formats strfmt.Registry) error {
+func (m *ProjectSimple) validateCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
 		return err
@@ -157,28 +124,7 @@ func (m *Project) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ConfigRepositoryCanonical) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 3); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Project) validateCreatedAt(formats strfmt.Registry) error {
+func (m *ProjectSimple) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
 		return err
@@ -191,32 +137,7 @@ func (m *Project) validateCreatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateEnvironments(formats strfmt.Registry) error {
-
-	if err := validate.Required("environments", "body", m.Environments); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(m.Environments); i++ {
-		if swag.IsZero(m.Environments[i]) { // not required
-			continue
-		}
-
-		if m.Environments[i] != nil {
-			if err := m.Environments[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *Project) validateID(formats strfmt.Registry) error {
+func (m *ProjectSimple) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
@@ -229,7 +150,7 @@ func (m *Project) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
-var projectTypeImportStatusPropEnum []interface{}
+var projectSimpleTypeImportStatusPropEnum []interface{}
 
 func init() {
 	var res []string
@@ -237,31 +158,31 @@ func init() {
 		panic(err)
 	}
 	for _, v := range res {
-		projectTypeImportStatusPropEnum = append(projectTypeImportStatusPropEnum, v)
+		projectSimpleTypeImportStatusPropEnum = append(projectSimpleTypeImportStatusPropEnum, v)
 	}
 }
 
 const (
 
-	// ProjectImportStatusSucceeded captures enum value "succeeded"
-	ProjectImportStatusSucceeded string = "succeeded"
+	// ProjectSimpleImportStatusSucceeded captures enum value "succeeded"
+	ProjectSimpleImportStatusSucceeded string = "succeeded"
 
-	// ProjectImportStatusFailed captures enum value "failed"
-	ProjectImportStatusFailed string = "failed"
+	// ProjectSimpleImportStatusFailed captures enum value "failed"
+	ProjectSimpleImportStatusFailed string = "failed"
 
-	// ProjectImportStatusImporting captures enum value "importing"
-	ProjectImportStatusImporting string = "importing"
+	// ProjectSimpleImportStatusImporting captures enum value "importing"
+	ProjectSimpleImportStatusImporting string = "importing"
 )
 
 // prop value enum
-func (m *Project) validateImportStatusEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, projectTypeImportStatusPropEnum); err != nil {
+func (m *ProjectSimple) validateImportStatusEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, projectSimpleTypeImportStatusPropEnum); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *Project) validateImportStatus(formats strfmt.Registry) error {
+func (m *ProjectSimple) validateImportStatus(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.ImportStatus) { // not required
 		return nil
@@ -275,7 +196,7 @@ func (m *Project) validateImportStatus(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateName(formats strfmt.Registry) error {
+func (m *ProjectSimple) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
@@ -288,7 +209,7 @@ func (m *Project) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateOwner(formats strfmt.Registry) error {
+func (m *ProjectSimple) validateOwner(formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Owner) { // not required
 		return nil
@@ -306,43 +227,7 @@ func (m *Project) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Project) validateServiceCatalog(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.ServiceCatalog) { // not required
-		return nil
-	}
-
-	if m.ServiceCatalog != nil {
-		if err := m.ServiceCatalog.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("service_catalog")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Project) validateTeam(formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Team) { // not required
-		return nil
-	}
-
-	if m.Team != nil {
-		if err := m.Team.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("team")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Project) validateUpdatedAt(formats strfmt.Registry) error {
+func (m *ProjectSimple) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
 		return err
@@ -356,7 +241,7 @@ func (m *Project) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *Project) MarshalBinary() ([]byte, error) {
+func (m *ProjectSimple) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -364,8 +249,8 @@ func (m *Project) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Project) UnmarshalBinary(b []byte) error {
-	var res Project
+func (m *ProjectSimple) UnmarshalBinary(b []byte) error {
+	var res ProjectSimple
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

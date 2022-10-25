@@ -19,16 +19,16 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// CreateOrgChildReader is a Reader for the CreateOrgChild structure.
-type CreateOrgChildReader struct {
+// CreateChildReader is a Reader for the CreateChild structure.
+type CreateChildReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *CreateOrgChildReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CreateChildReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewCreateOrgChildOK()
+		result := NewCreateChildOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -39,30 +39,30 @@ func (o *CreateOrgChildReader) ReadResponse(response runtime.ClientResponse, con
 	}
 }
 
-// NewCreateOrgChildOK creates a CreateOrgChildOK with default headers values
-func NewCreateOrgChildOK() *CreateOrgChildOK {
-	return &CreateOrgChildOK{}
+// NewCreateChildOK creates a CreateChildOK with default headers values
+func NewCreateChildOK() *CreateChildOK {
+	return &CreateChildOK{}
 }
 
-/*CreateOrgChildOK handles this case with default header values.
+/*CreateChildOK handles this case with default header values.
 
 Organization created. The body contains the information of the new created organization.
 */
-type CreateOrgChildOK struct {
-	Payload *CreateOrgChildOKBody
+type CreateChildOK struct {
+	Payload *CreateChildOKBody
 }
 
-func (o *CreateOrgChildOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/children][%d] createOrgChildOK  %+v", 200, o.Payload)
+func (o *CreateChildOK) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/children][%d] createChildOK  %+v", 200, o.Payload)
 }
 
-func (o *CreateOrgChildOK) GetPayload() *CreateOrgChildOKBody {
+func (o *CreateChildOK) GetPayload() *CreateChildOKBody {
 	return o.Payload
 }
 
-func (o *CreateOrgChildOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateChildOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(CreateOrgChildOKBody)
+	o.Payload = new(CreateChildOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -72,18 +72,18 @@ func (o *CreateOrgChildOK) readResponse(response runtime.ClientResponse, consume
 	return nil
 }
 
-/*CreateOrgChildOKBody create org child o k body
-swagger:model CreateOrgChildOKBody
+/*CreateChildOKBody create child o k body
+swagger:model CreateChildOKBody
 */
-type CreateOrgChildOKBody struct {
+type CreateChildOKBody struct {
 
 	// data
 	// Required: true
 	Data *models.Organization `json:"data"`
 }
 
-// Validate validates this create org child o k body
-func (o *CreateOrgChildOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this create child o k body
+func (o *CreateChildOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -96,16 +96,16 @@ func (o *CreateOrgChildOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *CreateOrgChildOKBody) validateData(formats strfmt.Registry) error {
+func (o *CreateChildOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("createOrgChildOK"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("createChildOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("createOrgChildOK" + "." + "data")
+				return ve.ValidateName("createChildOK" + "." + "data")
 			}
 			return err
 		}
@@ -115,7 +115,7 @@ func (o *CreateOrgChildOKBody) validateData(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (o *CreateOrgChildOKBody) MarshalBinary() ([]byte, error) {
+func (o *CreateChildOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -123,8 +123,8 @@ func (o *CreateOrgChildOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *CreateOrgChildOKBody) UnmarshalBinary(b []byte) error {
-	var res CreateOrgChildOKBody
+func (o *CreateChildOKBody) UnmarshalBinary(b []byte) error {
+	var res CreateChildOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

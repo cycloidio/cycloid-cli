@@ -65,6 +65,14 @@ type NewProject struct {
 	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
 	// Required: true
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
+
+	// Is only required when the using Quotas, it'll link the Project
+	// to the Team
+	//
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	TeamCanonical string `json:"team_canonical,omitempty"`
 }
 
 // Validate validates this new project
@@ -92,6 +100,10 @@ func (m *NewProject) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateServiceCatalogRef(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTeamCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -215,6 +227,27 @@ func (m *NewProject) validatePipelines(formats strfmt.Registry) error {
 func (m *NewProject) validateServiceCatalogRef(formats strfmt.Registry) error {
 
 	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewProject) validateTeamCanonical(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TeamCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("team_canonical", "body", string(m.TeamCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("team_canonical", "body", string(m.TeamCanonical), 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("team_canonical", "body", string(m.TeamCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

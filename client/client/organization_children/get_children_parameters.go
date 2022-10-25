@@ -18,14 +18,14 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetOrgChildrenParams creates a new GetOrgChildrenParams object
+// NewGetChildrenParams creates a new GetChildrenParams object
 // with the default values initialized.
-func NewGetOrgChildrenParams() *GetOrgChildrenParams {
+func NewGetChildrenParams() *GetChildrenParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetOrgChildrenParams{
+	return &GetChildrenParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -33,14 +33,14 @@ func NewGetOrgChildrenParams() *GetOrgChildrenParams {
 	}
 }
 
-// NewGetOrgChildrenParamsWithTimeout creates a new GetOrgChildrenParams object
+// NewGetChildrenParamsWithTimeout creates a new GetChildrenParams object
 // with the default values initialized, and the ability to set a timeout on a request
-func NewGetOrgChildrenParamsWithTimeout(timeout time.Duration) *GetOrgChildrenParams {
+func NewGetChildrenParamsWithTimeout(timeout time.Duration) *GetChildrenParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetOrgChildrenParams{
+	return &GetChildrenParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -48,14 +48,14 @@ func NewGetOrgChildrenParamsWithTimeout(timeout time.Duration) *GetOrgChildrenPa
 	}
 }
 
-// NewGetOrgChildrenParamsWithContext creates a new GetOrgChildrenParams object
+// NewGetChildrenParamsWithContext creates a new GetChildrenParams object
 // with the default values initialized, and the ability to set a context for a request
-func NewGetOrgChildrenParamsWithContext(ctx context.Context) *GetOrgChildrenParams {
+func NewGetChildrenParamsWithContext(ctx context.Context) *GetChildrenParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetOrgChildrenParams{
+	return &GetChildrenParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -63,24 +63,24 @@ func NewGetOrgChildrenParamsWithContext(ctx context.Context) *GetOrgChildrenPara
 	}
 }
 
-// NewGetOrgChildrenParamsWithHTTPClient creates a new GetOrgChildrenParams object
+// NewGetChildrenParamsWithHTTPClient creates a new GetChildrenParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
-func NewGetOrgChildrenParamsWithHTTPClient(client *http.Client) *GetOrgChildrenParams {
+func NewGetChildrenParamsWithHTTPClient(client *http.Client) *GetChildrenParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetOrgChildrenParams{
+	return &GetChildrenParams{
 		PageIndex:  &pageIndexDefault,
 		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*GetOrgChildrenParams contains all the parameters to send to the API endpoint
-for the get org children operation typically these are written to a http.Request
+/*GetChildrenParams contains all the parameters to send to the API endpoint
+for the get children operation typically these are written to a http.Request
 */
-type GetOrgChildrenParams struct {
+type GetChildrenParams struct {
 
 	/*OrderBy
 	  Allows to order the list of items. Example usage: field_name:asc
@@ -119,107 +119,107 @@ type GetOrgChildrenParams struct {
 	HTTPClient *http.Client
 }
 
-// WithTimeout adds the timeout to the get org children params
-func (o *GetOrgChildrenParams) WithTimeout(timeout time.Duration) *GetOrgChildrenParams {
+// WithTimeout adds the timeout to the get children params
+func (o *GetChildrenParams) WithTimeout(timeout time.Duration) *GetChildrenParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get org children params
-func (o *GetOrgChildrenParams) SetTimeout(timeout time.Duration) {
+// SetTimeout adds the timeout to the get children params
+func (o *GetChildrenParams) SetTimeout(timeout time.Duration) {
 	o.timeout = timeout
 }
 
-// WithContext adds the context to the get org children params
-func (o *GetOrgChildrenParams) WithContext(ctx context.Context) *GetOrgChildrenParams {
+// WithContext adds the context to the get children params
+func (o *GetChildrenParams) WithContext(ctx context.Context) *GetChildrenParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get org children params
-func (o *GetOrgChildrenParams) SetContext(ctx context.Context) {
+// SetContext adds the context to the get children params
+func (o *GetChildrenParams) SetContext(ctx context.Context) {
 	o.Context = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get org children params
-func (o *GetOrgChildrenParams) WithHTTPClient(client *http.Client) *GetOrgChildrenParams {
+// WithHTTPClient adds the HTTPClient to the get children params
+func (o *GetChildrenParams) WithHTTPClient(client *http.Client) *GetChildrenParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get org children params
-func (o *GetOrgChildrenParams) SetHTTPClient(client *http.Client) {
+// SetHTTPClient adds the HTTPClient to the get children params
+func (o *GetChildrenParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithOrderBy adds the orderBy to the get org children params
-func (o *GetOrgChildrenParams) WithOrderBy(orderBy *string) *GetOrgChildrenParams {
+// WithOrderBy adds the orderBy to the get children params
+func (o *GetChildrenParams) WithOrderBy(orderBy *string) *GetChildrenParams {
 	o.SetOrderBy(orderBy)
 	return o
 }
 
-// SetOrderBy adds the orderBy to the get org children params
-func (o *GetOrgChildrenParams) SetOrderBy(orderBy *string) {
+// SetOrderBy adds the orderBy to the get children params
+func (o *GetChildrenParams) SetOrderBy(orderBy *string) {
 	o.OrderBy = orderBy
 }
 
-// WithOrganizationCanonical adds the organizationCanonical to the get org children params
-func (o *GetOrgChildrenParams) WithOrganizationCanonical(organizationCanonical string) *GetOrgChildrenParams {
+// WithOrganizationCanonical adds the organizationCanonical to the get children params
+func (o *GetChildrenParams) WithOrganizationCanonical(organizationCanonical string) *GetChildrenParams {
 	o.SetOrganizationCanonical(organizationCanonical)
 	return o
 }
 
-// SetOrganizationCanonical adds the organizationCanonical to the get org children params
-func (o *GetOrgChildrenParams) SetOrganizationCanonical(organizationCanonical string) {
+// SetOrganizationCanonical adds the organizationCanonical to the get children params
+func (o *GetChildrenParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithOrganizationCreatedAt adds the organizationCreatedAt to the get org children params
-func (o *GetOrgChildrenParams) WithOrganizationCreatedAt(organizationCreatedAt *strfmt.DateTime) *GetOrgChildrenParams {
+// WithOrganizationCreatedAt adds the organizationCreatedAt to the get children params
+func (o *GetChildrenParams) WithOrganizationCreatedAt(organizationCreatedAt *strfmt.DateTime) *GetChildrenParams {
 	o.SetOrganizationCreatedAt(organizationCreatedAt)
 	return o
 }
 
-// SetOrganizationCreatedAt adds the organizationCreatedAt to the get org children params
-func (o *GetOrgChildrenParams) SetOrganizationCreatedAt(organizationCreatedAt *strfmt.DateTime) {
+// SetOrganizationCreatedAt adds the organizationCreatedAt to the get children params
+func (o *GetChildrenParams) SetOrganizationCreatedAt(organizationCreatedAt *strfmt.DateTime) {
 	o.OrganizationCreatedAt = organizationCreatedAt
 }
 
-// WithOrganizationName adds the organizationName to the get org children params
-func (o *GetOrgChildrenParams) WithOrganizationName(organizationName *string) *GetOrgChildrenParams {
+// WithOrganizationName adds the organizationName to the get children params
+func (o *GetChildrenParams) WithOrganizationName(organizationName *string) *GetChildrenParams {
 	o.SetOrganizationName(organizationName)
 	return o
 }
 
-// SetOrganizationName adds the organizationName to the get org children params
-func (o *GetOrgChildrenParams) SetOrganizationName(organizationName *string) {
+// SetOrganizationName adds the organizationName to the get children params
+func (o *GetChildrenParams) SetOrganizationName(organizationName *string) {
 	o.OrganizationName = organizationName
 }
 
-// WithPageIndex adds the pageIndex to the get org children params
-func (o *GetOrgChildrenParams) WithPageIndex(pageIndex *uint32) *GetOrgChildrenParams {
+// WithPageIndex adds the pageIndex to the get children params
+func (o *GetChildrenParams) WithPageIndex(pageIndex *uint32) *GetChildrenParams {
 	o.SetPageIndex(pageIndex)
 	return o
 }
 
-// SetPageIndex adds the pageIndex to the get org children params
-func (o *GetOrgChildrenParams) SetPageIndex(pageIndex *uint32) {
+// SetPageIndex adds the pageIndex to the get children params
+func (o *GetChildrenParams) SetPageIndex(pageIndex *uint32) {
 	o.PageIndex = pageIndex
 }
 
-// WithPageSize adds the pageSize to the get org children params
-func (o *GetOrgChildrenParams) WithPageSize(pageSize *uint32) *GetOrgChildrenParams {
+// WithPageSize adds the pageSize to the get children params
+func (o *GetChildrenParams) WithPageSize(pageSize *uint32) *GetChildrenParams {
 	o.SetPageSize(pageSize)
 	return o
 }
 
-// SetPageSize adds the pageSize to the get org children params
-func (o *GetOrgChildrenParams) SetPageSize(pageSize *uint32) {
+// SetPageSize adds the pageSize to the get children params
+func (o *GetChildrenParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
 // WriteToRequest writes these params to a swagger request
-func (o *GetOrgChildrenParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
+func (o *GetChildrenParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
 	if err := r.SetTimeout(o.timeout); err != nil {
 		return err

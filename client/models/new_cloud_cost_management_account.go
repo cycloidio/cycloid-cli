@@ -30,6 +30,9 @@ type NewCloudCostManagementAccount struct {
 	// external backend
 	// Required: true
 	ExternalBackend *NewExternalBackend `json:"external_backend"`
+
+	// A user-defined name for the account
+	Name string `json:"name,omitempty"`
 }
 
 // Validate validates this new cloud cost management account

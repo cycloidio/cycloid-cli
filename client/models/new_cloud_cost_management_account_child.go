@@ -32,6 +32,9 @@ type NewCloudCostManagementAccountChild struct {
 	// Required: true
 	CredentialCanonical *string `json:"credential_canonical"`
 
+	// A user-defined name for the account
+	Name string `json:"name,omitempty"`
+
 	// The ID of the parent account on the CP
 	// Required: true
 	ParentAccountID *string `json:"parent_account_id"`

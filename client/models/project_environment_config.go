@@ -26,6 +26,9 @@ type ProjectEnvironmentConfig struct {
 	// Required: true
 	Forms *FormsFileV2 `json:"forms"`
 
+	// The resource pool canonical, only require when using Quotas
+	ResourcePoolCanonical string `json:"resource_pool_canonical,omitempty"`
+
 	// The use case picked for that environment
 	// Required: true
 	UseCase *string `json:"use_case"`

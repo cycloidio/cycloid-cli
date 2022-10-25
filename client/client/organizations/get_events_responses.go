@@ -20,40 +20,40 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// GetOrgEventsReader is a Reader for the GetOrgEvents structure.
-type GetOrgEventsReader struct {
+// GetEventsReader is a Reader for the GetEvents structure.
+type GetEventsReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetOrgEventsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetEventsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewGetOrgEventsOK()
+		result := NewGetEventsOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 403:
-		result := NewGetOrgEventsForbidden()
+		result := NewGetEventsForbidden()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 404:
-		result := NewGetOrgEventsNotFound()
+		result := NewGetEventsNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 422:
-		result := NewGetOrgEventsUnprocessableEntity()
+		result := NewGetEventsUnprocessableEntity()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	default:
-		result := NewGetOrgEventsDefault(response.Code())
+		result := NewGetEventsDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -64,30 +64,30 @@ func (o *GetOrgEventsReader) ReadResponse(response runtime.ClientResponse, consu
 	}
 }
 
-// NewGetOrgEventsOK creates a GetOrgEventsOK with default headers values
-func NewGetOrgEventsOK() *GetOrgEventsOK {
-	return &GetOrgEventsOK{}
+// NewGetEventsOK creates a GetEventsOK with default headers values
+func NewGetEventsOK() *GetEventsOK {
+	return &GetEventsOK{}
 }
 
-/*GetOrgEventsOK handles this case with default header values.
+/*GetEventsOK handles this case with default header values.
 
 The list of events which fulfills the query parameters filter
 */
-type GetOrgEventsOK struct {
-	Payload *GetOrgEventsOKBody
+type GetEventsOK struct {
+	Payload *GetEventsOKBody
 }
 
-func (o *GetOrgEventsOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getOrgEventsOK  %+v", 200, o.Payload)
+func (o *GetEventsOK) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getEventsOK  %+v", 200, o.Payload)
 }
 
-func (o *GetOrgEventsOK) GetPayload() *GetOrgEventsOKBody {
+func (o *GetEventsOK) GetPayload() *GetEventsOKBody {
 	return o.Payload
 }
 
-func (o *GetOrgEventsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetEventsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(GetOrgEventsOKBody)
+	o.Payload = new(GetEventsOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -97,16 +97,16 @@ func (o *GetOrgEventsOK) readResponse(response runtime.ClientResponse, consumer 
 	return nil
 }
 
-// NewGetOrgEventsForbidden creates a GetOrgEventsForbidden with default headers values
-func NewGetOrgEventsForbidden() *GetOrgEventsForbidden {
-	return &GetOrgEventsForbidden{}
+// NewGetEventsForbidden creates a GetEventsForbidden with default headers values
+func NewGetEventsForbidden() *GetEventsForbidden {
+	return &GetEventsForbidden{}
 }
 
-/*GetOrgEventsForbidden handles this case with default header values.
+/*GetEventsForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
-type GetOrgEventsForbidden struct {
+type GetEventsForbidden struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -114,15 +114,15 @@ type GetOrgEventsForbidden struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgEventsForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getOrgEventsForbidden  %+v", 403, o.Payload)
+func (o *GetEventsForbidden) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getEventsForbidden  %+v", 403, o.Payload)
 }
 
-func (o *GetOrgEventsForbidden) GetPayload() *models.ErrorPayload {
+func (o *GetEventsForbidden) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgEventsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetEventsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -141,16 +141,16 @@ func (o *GetOrgEventsForbidden) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-// NewGetOrgEventsNotFound creates a GetOrgEventsNotFound with default headers values
-func NewGetOrgEventsNotFound() *GetOrgEventsNotFound {
-	return &GetOrgEventsNotFound{}
+// NewGetEventsNotFound creates a GetEventsNotFound with default headers values
+func NewGetEventsNotFound() *GetEventsNotFound {
+	return &GetEventsNotFound{}
 }
 
-/*GetOrgEventsNotFound handles this case with default header values.
+/*GetEventsNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
-type GetOrgEventsNotFound struct {
+type GetEventsNotFound struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -158,15 +158,15 @@ type GetOrgEventsNotFound struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgEventsNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getOrgEventsNotFound  %+v", 404, o.Payload)
+func (o *GetEventsNotFound) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getEventsNotFound  %+v", 404, o.Payload)
 }
 
-func (o *GetOrgEventsNotFound) GetPayload() *models.ErrorPayload {
+func (o *GetEventsNotFound) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgEventsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetEventsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -185,16 +185,16 @@ func (o *GetOrgEventsNotFound) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-// NewGetOrgEventsUnprocessableEntity creates a GetOrgEventsUnprocessableEntity with default headers values
-func NewGetOrgEventsUnprocessableEntity() *GetOrgEventsUnprocessableEntity {
-	return &GetOrgEventsUnprocessableEntity{}
+// NewGetEventsUnprocessableEntity creates a GetEventsUnprocessableEntity with default headers values
+func NewGetEventsUnprocessableEntity() *GetEventsUnprocessableEntity {
+	return &GetEventsUnprocessableEntity{}
 }
 
-/*GetOrgEventsUnprocessableEntity handles this case with default header values.
+/*GetEventsUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
-type GetOrgEventsUnprocessableEntity struct {
+type GetEventsUnprocessableEntity struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -202,15 +202,15 @@ type GetOrgEventsUnprocessableEntity struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgEventsUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getOrgEventsUnprocessableEntity  %+v", 422, o.Payload)
+func (o *GetEventsUnprocessableEntity) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getEventsUnprocessableEntity  %+v", 422, o.Payload)
 }
 
-func (o *GetOrgEventsUnprocessableEntity) GetPayload() *models.ErrorPayload {
+func (o *GetEventsUnprocessableEntity) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgEventsUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetEventsUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -229,18 +229,18 @@ func (o *GetOrgEventsUnprocessableEntity) readResponse(response runtime.ClientRe
 	return nil
 }
 
-// NewGetOrgEventsDefault creates a GetOrgEventsDefault with default headers values
-func NewGetOrgEventsDefault(code int) *GetOrgEventsDefault {
-	return &GetOrgEventsDefault{
+// NewGetEventsDefault creates a GetEventsDefault with default headers values
+func NewGetEventsDefault(code int) *GetEventsDefault {
+	return &GetEventsDefault{
 		_statusCode: code,
 	}
 }
 
-/*GetOrgEventsDefault handles this case with default header values.
+/*GetEventsDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
-type GetOrgEventsDefault struct {
+type GetEventsDefault struct {
 	_statusCode int
 
 	/*The length of the response body in octets (8-bit bytes).
@@ -250,20 +250,20 @@ type GetOrgEventsDefault struct {
 	Payload *models.ErrorPayload
 }
 
-// Code gets the status code for the get org events default response
-func (o *GetOrgEventsDefault) Code() int {
+// Code gets the status code for the get events default response
+func (o *GetEventsDefault) Code() int {
 	return o._statusCode
 }
 
-func (o *GetOrgEventsDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getOrgEvents default  %+v", o._statusCode, o.Payload)
+func (o *GetEventsDefault) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events][%d] getEvents default  %+v", o._statusCode, o.Payload)
 }
 
-func (o *GetOrgEventsDefault) GetPayload() *models.ErrorPayload {
+func (o *GetEventsDefault) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgEventsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetEventsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -282,18 +282,18 @@ func (o *GetOrgEventsDefault) readResponse(response runtime.ClientResponse, cons
 	return nil
 }
 
-/*GetOrgEventsOKBody The list of log lines
-swagger:model GetOrgEventsOKBody
+/*GetEventsOKBody The list of log lines
+swagger:model GetEventsOKBody
 */
-type GetOrgEventsOKBody struct {
+type GetEventsOKBody struct {
 
 	// data
 	// Required: true
 	Data []*models.Event `json:"data"`
 }
 
-// Validate validates this get org events o k body
-func (o *GetOrgEventsOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this get events o k body
+func (o *GetEventsOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -306,9 +306,9 @@ func (o *GetOrgEventsOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetOrgEventsOKBody) validateData(formats strfmt.Registry) error {
+func (o *GetEventsOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("getOrgEventsOK"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("getEventsOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
@@ -320,7 +320,7 @@ func (o *GetOrgEventsOKBody) validateData(formats strfmt.Registry) error {
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("getOrgEventsOK" + "." + "data" + "." + strconv.Itoa(i))
+					return ve.ValidateName("getEventsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -332,7 +332,7 @@ func (o *GetOrgEventsOKBody) validateData(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (o *GetOrgEventsOKBody) MarshalBinary() ([]byte, error) {
+func (o *GetEventsOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -340,8 +340,8 @@ func (o *GetOrgEventsOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *GetOrgEventsOKBody) UnmarshalBinary(b []byte) error {
-	var res GetOrgEventsOKBody
+func (o *GetEventsOKBody) UnmarshalBinary(b []byte) error {
+	var res GetEventsOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -13,24 +13,28 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// UpdateOrganization Update Organization
+// NewResourcePool New Resource Pool
 //
-// The entity which represents the information of an organization to be updated.
-// swagger:model UpdateOrganization
-type UpdateOrganization struct {
+// The Resource Pool defines the basic needs to create/update a resource pool
+// swagger:model NewResourcePool
+type NewResourcePool struct {
+
+	// label
+	// Required: true
+	Label *string `json:"label"`
 
 	// name
 	// Required: true
-	// Min Length: 3
 	Name *string `json:"name"`
-
-	// quotas
-	Quotas bool `json:"quotas,omitempty"`
 }
 
-// Validate validates this update organization
-func (m *UpdateOrganization) Validate(formats strfmt.Registry) error {
+// Validate validates this new resource pool
+func (m *NewResourcePool) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateLabel(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
@@ -42,13 +46,18 @@ func (m *UpdateOrganization) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateOrganization) validateName(formats strfmt.Registry) error {
+func (m *NewResourcePool) validateLabel(formats strfmt.Registry) error {
 
-	if err := validate.Required("name", "body", m.Name); err != nil {
+	if err := validate.Required("label", "body", m.Label); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	return nil
+}
+
+func (m *NewResourcePool) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
 	}
 
@@ -56,7 +65,7 @@ func (m *UpdateOrganization) validateName(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *UpdateOrganization) MarshalBinary() ([]byte, error) {
+func (m *NewResourcePool) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -64,8 +73,8 @@ func (m *UpdateOrganization) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *UpdateOrganization) UnmarshalBinary(b []byte) error {
-	var res UpdateOrganization
+func (m *NewResourcePool) UnmarshalBinary(b []byte) error {
+	var res NewResourcePool
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
