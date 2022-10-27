@@ -13,23 +13,20 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// UpdateOrganization Update Organization
+// UpdateCloudCostManagementLinkedAccount Update CloudCostManagementLinkedAccount
 //
-// The entity which represents the information of an organization to be updated.
-// swagger:model UpdateOrganization
-type UpdateOrganization struct {
+// Attributes of a CCM linked accout that can be updated by a user.
+//
+// swagger:model UpdateCloudCostManagementLinkedAccount
+type UpdateCloudCostManagementLinkedAccount struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
 	Name *string `json:"name"`
-
-	// quotas
-	Quotas bool `json:"quotas,omitempty"`
 }
 
-// Validate validates this update organization
-func (m *UpdateOrganization) Validate(formats strfmt.Registry) error {
+// Validate validates this update cloud cost management linked account
+func (m *UpdateCloudCostManagementLinkedAccount) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateName(formats); err != nil {
@@ -42,13 +39,9 @@ func (m *UpdateOrganization) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateOrganization) validateName(formats strfmt.Registry) error {
+func (m *UpdateCloudCostManagementLinkedAccount) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
 		return err
 	}
 
@@ -56,7 +49,7 @@ func (m *UpdateOrganization) validateName(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (m *UpdateOrganization) MarshalBinary() ([]byte, error) {
+func (m *UpdateCloudCostManagementLinkedAccount) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -64,8 +57,8 @@ func (m *UpdateOrganization) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *UpdateOrganization) UnmarshalBinary(b []byte) error {
-	var res UpdateOrganization
+func (m *UpdateCloudCostManagementLinkedAccount) UnmarshalBinary(b []byte) error {
+	var res UpdateCloudCostManagementLinkedAccount
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

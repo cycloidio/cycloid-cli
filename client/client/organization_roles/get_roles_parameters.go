@@ -18,14 +18,14 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetOrgRolesParams creates a new GetOrgRolesParams object
+// NewGetRolesParams creates a new GetRolesParams object
 // with the default values initialized.
-func NewGetOrgRolesParams() *GetOrgRolesParams {
+func NewGetRolesParams() *GetRolesParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetOrgRolesParams{
+	return &GetRolesParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -33,14 +33,14 @@ func NewGetOrgRolesParams() *GetOrgRolesParams {
 	}
 }
 
-// NewGetOrgRolesParamsWithTimeout creates a new GetOrgRolesParams object
+// NewGetRolesParamsWithTimeout creates a new GetRolesParams object
 // with the default values initialized, and the ability to set a timeout on a request
-func NewGetOrgRolesParamsWithTimeout(timeout time.Duration) *GetOrgRolesParams {
+func NewGetRolesParamsWithTimeout(timeout time.Duration) *GetRolesParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetOrgRolesParams{
+	return &GetRolesParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -48,14 +48,14 @@ func NewGetOrgRolesParamsWithTimeout(timeout time.Duration) *GetOrgRolesParams {
 	}
 }
 
-// NewGetOrgRolesParamsWithContext creates a new GetOrgRolesParams object
+// NewGetRolesParamsWithContext creates a new GetRolesParams object
 // with the default values initialized, and the ability to set a context for a request
-func NewGetOrgRolesParamsWithContext(ctx context.Context) *GetOrgRolesParams {
+func NewGetRolesParamsWithContext(ctx context.Context) *GetRolesParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetOrgRolesParams{
+	return &GetRolesParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -63,24 +63,24 @@ func NewGetOrgRolesParamsWithContext(ctx context.Context) *GetOrgRolesParams {
 	}
 }
 
-// NewGetOrgRolesParamsWithHTTPClient creates a new GetOrgRolesParams object
+// NewGetRolesParamsWithHTTPClient creates a new GetRolesParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
-func NewGetOrgRolesParamsWithHTTPClient(client *http.Client) *GetOrgRolesParams {
+func NewGetRolesParamsWithHTTPClient(client *http.Client) *GetRolesParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetOrgRolesParams{
+	return &GetRolesParams{
 		PageIndex:  &pageIndexDefault,
 		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*GetOrgRolesParams contains all the parameters to send to the API endpoint
-for the get org roles operation typically these are written to a http.Request
+/*GetRolesParams contains all the parameters to send to the API endpoint
+for the get roles operation typically these are written to a http.Request
 */
-type GetOrgRolesParams struct {
+type GetRolesParams struct {
 
 	/*OrganizationCanonical
 	  A canonical of an organization.
@@ -103,74 +103,74 @@ type GetOrgRolesParams struct {
 	HTTPClient *http.Client
 }
 
-// WithTimeout adds the timeout to the get org roles params
-func (o *GetOrgRolesParams) WithTimeout(timeout time.Duration) *GetOrgRolesParams {
+// WithTimeout adds the timeout to the get roles params
+func (o *GetRolesParams) WithTimeout(timeout time.Duration) *GetRolesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get org roles params
-func (o *GetOrgRolesParams) SetTimeout(timeout time.Duration) {
+// SetTimeout adds the timeout to the get roles params
+func (o *GetRolesParams) SetTimeout(timeout time.Duration) {
 	o.timeout = timeout
 }
 
-// WithContext adds the context to the get org roles params
-func (o *GetOrgRolesParams) WithContext(ctx context.Context) *GetOrgRolesParams {
+// WithContext adds the context to the get roles params
+func (o *GetRolesParams) WithContext(ctx context.Context) *GetRolesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get org roles params
-func (o *GetOrgRolesParams) SetContext(ctx context.Context) {
+// SetContext adds the context to the get roles params
+func (o *GetRolesParams) SetContext(ctx context.Context) {
 	o.Context = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get org roles params
-func (o *GetOrgRolesParams) WithHTTPClient(client *http.Client) *GetOrgRolesParams {
+// WithHTTPClient adds the HTTPClient to the get roles params
+func (o *GetRolesParams) WithHTTPClient(client *http.Client) *GetRolesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get org roles params
-func (o *GetOrgRolesParams) SetHTTPClient(client *http.Client) {
+// SetHTTPClient adds the HTTPClient to the get roles params
+func (o *GetRolesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithOrganizationCanonical adds the organizationCanonical to the get org roles params
-func (o *GetOrgRolesParams) WithOrganizationCanonical(organizationCanonical string) *GetOrgRolesParams {
+// WithOrganizationCanonical adds the organizationCanonical to the get roles params
+func (o *GetRolesParams) WithOrganizationCanonical(organizationCanonical string) *GetRolesParams {
 	o.SetOrganizationCanonical(organizationCanonical)
 	return o
 }
 
-// SetOrganizationCanonical adds the organizationCanonical to the get org roles params
-func (o *GetOrgRolesParams) SetOrganizationCanonical(organizationCanonical string) {
+// SetOrganizationCanonical adds the organizationCanonical to the get roles params
+func (o *GetRolesParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithPageIndex adds the pageIndex to the get org roles params
-func (o *GetOrgRolesParams) WithPageIndex(pageIndex *uint32) *GetOrgRolesParams {
+// WithPageIndex adds the pageIndex to the get roles params
+func (o *GetRolesParams) WithPageIndex(pageIndex *uint32) *GetRolesParams {
 	o.SetPageIndex(pageIndex)
 	return o
 }
 
-// SetPageIndex adds the pageIndex to the get org roles params
-func (o *GetOrgRolesParams) SetPageIndex(pageIndex *uint32) {
+// SetPageIndex adds the pageIndex to the get roles params
+func (o *GetRolesParams) SetPageIndex(pageIndex *uint32) {
 	o.PageIndex = pageIndex
 }
 
-// WithPageSize adds the pageSize to the get org roles params
-func (o *GetOrgRolesParams) WithPageSize(pageSize *uint32) *GetOrgRolesParams {
+// WithPageSize adds the pageSize to the get roles params
+func (o *GetRolesParams) WithPageSize(pageSize *uint32) *GetRolesParams {
 	o.SetPageSize(pageSize)
 	return o
 }
 
-// SetPageSize adds the pageSize to the get org roles params
-func (o *GetOrgRolesParams) SetPageSize(pageSize *uint32) {
+// SetPageSize adds the pageSize to the get roles params
+func (o *GetRolesParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
 // WriteToRequest writes these params to a swagger request
-func (o *GetOrgRolesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
+func (o *GetRolesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
 	if err := r.SetTimeout(o.timeout); err != nil {
 		return err

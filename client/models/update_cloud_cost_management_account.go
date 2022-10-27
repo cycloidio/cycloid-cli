@@ -26,6 +26,9 @@ type UpdateCloudCostManagementAccount struct {
 	// external backend
 	// Required: true
 	ExternalBackend *UpdateExternalBackend `json:"external_backend"`
+
+	// A user-defined name for the account
+	Name string `json:"name,omitempty"`
 }
 
 // Validate validates this update cloud cost management account

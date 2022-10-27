@@ -20,28 +20,28 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// GetOrgAncestorsReader is a Reader for the GetOrgAncestors structure.
-type GetOrgAncestorsReader struct {
+// GetAncestorsReader is a Reader for the GetAncestors structure.
+type GetAncestorsReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetOrgAncestorsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetAncestorsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewGetOrgAncestorsOK()
+		result := NewGetAncestorsOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 401:
-		result := NewGetOrgAncestorsUnauthorized()
+		result := NewGetAncestorsUnauthorized()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	default:
-		result := NewGetOrgAncestorsDefault(response.Code())
+		result := NewGetAncestorsDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -52,30 +52,30 @@ func (o *GetOrgAncestorsReader) ReadResponse(response runtime.ClientResponse, co
 	}
 }
 
-// NewGetOrgAncestorsOK creates a GetOrgAncestorsOK with default headers values
-func NewGetOrgAncestorsOK() *GetOrgAncestorsOK {
-	return &GetOrgAncestorsOK{}
+// NewGetAncestorsOK creates a GetAncestorsOK with default headers values
+func NewGetAncestorsOK() *GetAncestorsOK {
+	return &GetAncestorsOK{}
 }
 
-/*GetOrgAncestorsOK handles this case with default header values.
+/*GetAncestorsOK handles this case with default header values.
 
 Get all the ancestors between the Organization and the User with the shortest path. 0 index is the parent and n is the searched child
 */
-type GetOrgAncestorsOK struct {
-	Payload *GetOrgAncestorsOKBody
+type GetAncestorsOK struct {
+	Payload *GetAncestorsOKBody
 }
 
-func (o *GetOrgAncestorsOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getOrgAncestorsOK  %+v", 200, o.Payload)
+func (o *GetAncestorsOK) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestorsOK  %+v", 200, o.Payload)
 }
 
-func (o *GetOrgAncestorsOK) GetPayload() *GetOrgAncestorsOKBody {
+func (o *GetAncestorsOK) GetPayload() *GetAncestorsOKBody {
 	return o.Payload
 }
 
-func (o *GetOrgAncestorsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetAncestorsOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(GetOrgAncestorsOKBody)
+	o.Payload = new(GetAncestorsOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -85,16 +85,16 @@ func (o *GetOrgAncestorsOK) readResponse(response runtime.ClientResponse, consum
 	return nil
 }
 
-// NewGetOrgAncestorsUnauthorized creates a GetOrgAncestorsUnauthorized with default headers values
-func NewGetOrgAncestorsUnauthorized() *GetOrgAncestorsUnauthorized {
-	return &GetOrgAncestorsUnauthorized{}
+// NewGetAncestorsUnauthorized creates a GetAncestorsUnauthorized with default headers values
+func NewGetAncestorsUnauthorized() *GetAncestorsUnauthorized {
+	return &GetAncestorsUnauthorized{}
 }
 
-/*GetOrgAncestorsUnauthorized handles this case with default header values.
+/*GetAncestorsUnauthorized handles this case with default header values.
 
 The user cannot be authenticated with the credentials which she/he has used.
 */
-type GetOrgAncestorsUnauthorized struct {
+type GetAncestorsUnauthorized struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -102,15 +102,15 @@ type GetOrgAncestorsUnauthorized struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgAncestorsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getOrgAncestorsUnauthorized  %+v", 401, o.Payload)
+func (o *GetAncestorsUnauthorized) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestorsUnauthorized  %+v", 401, o.Payload)
 }
 
-func (o *GetOrgAncestorsUnauthorized) GetPayload() *models.ErrorPayload {
+func (o *GetAncestorsUnauthorized) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgAncestorsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetAncestorsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -129,18 +129,18 @@ func (o *GetOrgAncestorsUnauthorized) readResponse(response runtime.ClientRespon
 	return nil
 }
 
-// NewGetOrgAncestorsDefault creates a GetOrgAncestorsDefault with default headers values
-func NewGetOrgAncestorsDefault(code int) *GetOrgAncestorsDefault {
-	return &GetOrgAncestorsDefault{
+// NewGetAncestorsDefault creates a GetAncestorsDefault with default headers values
+func NewGetAncestorsDefault(code int) *GetAncestorsDefault {
+	return &GetAncestorsDefault{
 		_statusCode: code,
 	}
 }
 
-/*GetOrgAncestorsDefault handles this case with default header values.
+/*GetAncestorsDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
-type GetOrgAncestorsDefault struct {
+type GetAncestorsDefault struct {
 	_statusCode int
 
 	/*The length of the response body in octets (8-bit bytes).
@@ -150,20 +150,20 @@ type GetOrgAncestorsDefault struct {
 	Payload *models.ErrorPayload
 }
 
-// Code gets the status code for the get org ancestors default response
-func (o *GetOrgAncestorsDefault) Code() int {
+// Code gets the status code for the get ancestors default response
+func (o *GetAncestorsDefault) Code() int {
 	return o._statusCode
 }
 
-func (o *GetOrgAncestorsDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getOrgAncestors default  %+v", o._statusCode, o.Payload)
+func (o *GetAncestorsDefault) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestors default  %+v", o._statusCode, o.Payload)
 }
 
-func (o *GetOrgAncestorsDefault) GetPayload() *models.ErrorPayload {
+func (o *GetAncestorsDefault) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgAncestorsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetAncestorsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -182,10 +182,10 @@ func (o *GetOrgAncestorsDefault) readResponse(response runtime.ClientResponse, c
 	return nil
 }
 
-/*GetOrgAncestorsOKBody get org ancestors o k body
-swagger:model GetOrgAncestorsOKBody
+/*GetAncestorsOKBody get ancestors o k body
+swagger:model GetAncestorsOKBody
 */
-type GetOrgAncestorsOKBody struct {
+type GetAncestorsOKBody struct {
 
 	// data
 	// Required: true
@@ -196,8 +196,8 @@ type GetOrgAncestorsOKBody struct {
 	Pagination *models.Pagination `json:"pagination"`
 }
 
-// Validate validates this get org ancestors o k body
-func (o *GetOrgAncestorsOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this get ancestors o k body
+func (o *GetAncestorsOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -214,9 +214,9 @@ func (o *GetOrgAncestorsOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetOrgAncestorsOKBody) validateData(formats strfmt.Registry) error {
+func (o *GetAncestorsOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("getOrgAncestorsOK"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("getAncestorsOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
@@ -228,7 +228,7 @@ func (o *GetOrgAncestorsOKBody) validateData(formats strfmt.Registry) error {
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("getOrgAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
+					return ve.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -239,16 +239,16 @@ func (o *GetOrgAncestorsOKBody) validateData(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetOrgAncestorsOKBody) validatePagination(formats strfmt.Registry) error {
+func (o *GetAncestorsOKBody) validatePagination(formats strfmt.Registry) error {
 
-	if err := validate.Required("getOrgAncestorsOK"+"."+"pagination", "body", o.Pagination); err != nil {
+	if err := validate.Required("getAncestorsOK"+"."+"pagination", "body", o.Pagination); err != nil {
 		return err
 	}
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getOrgAncestorsOK" + "." + "pagination")
+				return ve.ValidateName("getAncestorsOK" + "." + "pagination")
 			}
 			return err
 		}
@@ -258,7 +258,7 @@ func (o *GetOrgAncestorsOKBody) validatePagination(formats strfmt.Registry) erro
 }
 
 // MarshalBinary interface implementation
-func (o *GetOrgAncestorsOKBody) MarshalBinary() ([]byte, error) {
+func (o *GetAncestorsOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -266,8 +266,8 @@ func (o *GetOrgAncestorsOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *GetOrgAncestorsOKBody) UnmarshalBinary(b []byte) error {
-	var res GetOrgAncestorsOKBody
+func (o *GetAncestorsOKBody) UnmarshalBinary(b []byte) error {
+	var res GetAncestorsOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

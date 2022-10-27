@@ -20,40 +20,40 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// GetOrgChildrenReader is a Reader for the GetOrgChildren structure.
-type GetOrgChildrenReader struct {
+// GetChildrenReader is a Reader for the GetChildren structure.
+type GetChildrenReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetOrgChildrenReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetChildrenReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewGetOrgChildrenOK()
+		result := NewGetChildrenOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 403:
-		result := NewGetOrgChildrenForbidden()
+		result := NewGetChildrenForbidden()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 404:
-		result := NewGetOrgChildrenNotFound()
+		result := NewGetChildrenNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 422:
-		result := NewGetOrgChildrenUnprocessableEntity()
+		result := NewGetChildrenUnprocessableEntity()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	default:
-		result := NewGetOrgChildrenDefault(response.Code())
+		result := NewGetChildrenDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -64,30 +64,30 @@ func (o *GetOrgChildrenReader) ReadResponse(response runtime.ClientResponse, con
 	}
 }
 
-// NewGetOrgChildrenOK creates a GetOrgChildrenOK with default headers values
-func NewGetOrgChildrenOK() *GetOrgChildrenOK {
-	return &GetOrgChildrenOK{}
+// NewGetChildrenOK creates a GetChildrenOK with default headers values
+func NewGetChildrenOK() *GetChildrenOK {
+	return &GetChildrenOK{}
 }
 
-/*GetOrgChildrenOK handles this case with default header values.
+/*GetChildrenOK handles this case with default header values.
 
 List of the children organizations which the authenticated user has access.
 */
-type GetOrgChildrenOK struct {
-	Payload *GetOrgChildrenOKBody
+type GetChildrenOK struct {
+	Payload *GetChildrenOKBody
 }
 
-func (o *GetOrgChildrenOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getOrgChildrenOK  %+v", 200, o.Payload)
+func (o *GetChildrenOK) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenOK  %+v", 200, o.Payload)
 }
 
-func (o *GetOrgChildrenOK) GetPayload() *GetOrgChildrenOKBody {
+func (o *GetChildrenOK) GetPayload() *GetChildrenOKBody {
 	return o.Payload
 }
 
-func (o *GetOrgChildrenOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetChildrenOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(GetOrgChildrenOKBody)
+	o.Payload = new(GetChildrenOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -97,16 +97,16 @@ func (o *GetOrgChildrenOK) readResponse(response runtime.ClientResponse, consume
 	return nil
 }
 
-// NewGetOrgChildrenForbidden creates a GetOrgChildrenForbidden with default headers values
-func NewGetOrgChildrenForbidden() *GetOrgChildrenForbidden {
-	return &GetOrgChildrenForbidden{}
+// NewGetChildrenForbidden creates a GetChildrenForbidden with default headers values
+func NewGetChildrenForbidden() *GetChildrenForbidden {
+	return &GetChildrenForbidden{}
 }
 
-/*GetOrgChildrenForbidden handles this case with default header values.
+/*GetChildrenForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
-type GetOrgChildrenForbidden struct {
+type GetChildrenForbidden struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -114,15 +114,15 @@ type GetOrgChildrenForbidden struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgChildrenForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getOrgChildrenForbidden  %+v", 403, o.Payload)
+func (o *GetChildrenForbidden) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenForbidden  %+v", 403, o.Payload)
 }
 
-func (o *GetOrgChildrenForbidden) GetPayload() *models.ErrorPayload {
+func (o *GetChildrenForbidden) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgChildrenForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetChildrenForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -141,16 +141,16 @@ func (o *GetOrgChildrenForbidden) readResponse(response runtime.ClientResponse, 
 	return nil
 }
 
-// NewGetOrgChildrenNotFound creates a GetOrgChildrenNotFound with default headers values
-func NewGetOrgChildrenNotFound() *GetOrgChildrenNotFound {
-	return &GetOrgChildrenNotFound{}
+// NewGetChildrenNotFound creates a GetChildrenNotFound with default headers values
+func NewGetChildrenNotFound() *GetChildrenNotFound {
+	return &GetChildrenNotFound{}
 }
 
-/*GetOrgChildrenNotFound handles this case with default header values.
+/*GetChildrenNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
-type GetOrgChildrenNotFound struct {
+type GetChildrenNotFound struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -158,15 +158,15 @@ type GetOrgChildrenNotFound struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgChildrenNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getOrgChildrenNotFound  %+v", 404, o.Payload)
+func (o *GetChildrenNotFound) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenNotFound  %+v", 404, o.Payload)
 }
 
-func (o *GetOrgChildrenNotFound) GetPayload() *models.ErrorPayload {
+func (o *GetChildrenNotFound) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgChildrenNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetChildrenNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -185,16 +185,16 @@ func (o *GetOrgChildrenNotFound) readResponse(response runtime.ClientResponse, c
 	return nil
 }
 
-// NewGetOrgChildrenUnprocessableEntity creates a GetOrgChildrenUnprocessableEntity with default headers values
-func NewGetOrgChildrenUnprocessableEntity() *GetOrgChildrenUnprocessableEntity {
-	return &GetOrgChildrenUnprocessableEntity{}
+// NewGetChildrenUnprocessableEntity creates a GetChildrenUnprocessableEntity with default headers values
+func NewGetChildrenUnprocessableEntity() *GetChildrenUnprocessableEntity {
+	return &GetChildrenUnprocessableEntity{}
 }
 
-/*GetOrgChildrenUnprocessableEntity handles this case with default header values.
+/*GetChildrenUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
-type GetOrgChildrenUnprocessableEntity struct {
+type GetChildrenUnprocessableEntity struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -202,15 +202,15 @@ type GetOrgChildrenUnprocessableEntity struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgChildrenUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getOrgChildrenUnprocessableEntity  %+v", 422, o.Payload)
+func (o *GetChildrenUnprocessableEntity) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenUnprocessableEntity  %+v", 422, o.Payload)
 }
 
-func (o *GetOrgChildrenUnprocessableEntity) GetPayload() *models.ErrorPayload {
+func (o *GetChildrenUnprocessableEntity) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgChildrenUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetChildrenUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -229,18 +229,18 @@ func (o *GetOrgChildrenUnprocessableEntity) readResponse(response runtime.Client
 	return nil
 }
 
-// NewGetOrgChildrenDefault creates a GetOrgChildrenDefault with default headers values
-func NewGetOrgChildrenDefault(code int) *GetOrgChildrenDefault {
-	return &GetOrgChildrenDefault{
+// NewGetChildrenDefault creates a GetChildrenDefault with default headers values
+func NewGetChildrenDefault(code int) *GetChildrenDefault {
+	return &GetChildrenDefault{
 		_statusCode: code,
 	}
 }
 
-/*GetOrgChildrenDefault handles this case with default header values.
+/*GetChildrenDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
-type GetOrgChildrenDefault struct {
+type GetChildrenDefault struct {
 	_statusCode int
 
 	/*The length of the response body in octets (8-bit bytes).
@@ -250,20 +250,20 @@ type GetOrgChildrenDefault struct {
 	Payload *models.ErrorPayload
 }
 
-// Code gets the status code for the get org children default response
-func (o *GetOrgChildrenDefault) Code() int {
+// Code gets the status code for the get children default response
+func (o *GetChildrenDefault) Code() int {
 	return o._statusCode
 }
 
-func (o *GetOrgChildrenDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getOrgChildren default  %+v", o._statusCode, o.Payload)
+func (o *GetChildrenDefault) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildren default  %+v", o._statusCode, o.Payload)
 }
 
-func (o *GetOrgChildrenDefault) GetPayload() *models.ErrorPayload {
+func (o *GetChildrenDefault) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgChildrenDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetChildrenDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -282,10 +282,10 @@ func (o *GetOrgChildrenDefault) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-/*GetOrgChildrenOKBody get org children o k body
-swagger:model GetOrgChildrenOKBody
+/*GetChildrenOKBody get children o k body
+swagger:model GetChildrenOKBody
 */
-type GetOrgChildrenOKBody struct {
+type GetChildrenOKBody struct {
 
 	// data
 	// Required: true
@@ -296,8 +296,8 @@ type GetOrgChildrenOKBody struct {
 	Pagination *models.Pagination `json:"pagination"`
 }
 
-// Validate validates this get org children o k body
-func (o *GetOrgChildrenOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this get children o k body
+func (o *GetChildrenOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -314,9 +314,9 @@ func (o *GetOrgChildrenOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetOrgChildrenOKBody) validateData(formats strfmt.Registry) error {
+func (o *GetChildrenOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("getOrgChildrenOK"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("getChildrenOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
@@ -328,7 +328,7 @@ func (o *GetOrgChildrenOKBody) validateData(formats strfmt.Registry) error {
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("getOrgChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
+					return ve.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -339,16 +339,16 @@ func (o *GetOrgChildrenOKBody) validateData(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetOrgChildrenOKBody) validatePagination(formats strfmt.Registry) error {
+func (o *GetChildrenOKBody) validatePagination(formats strfmt.Registry) error {
 
-	if err := validate.Required("getOrgChildrenOK"+"."+"pagination", "body", o.Pagination); err != nil {
+	if err := validate.Required("getChildrenOK"+"."+"pagination", "body", o.Pagination); err != nil {
 		return err
 	}
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getOrgChildrenOK" + "." + "pagination")
+				return ve.ValidateName("getChildrenOK" + "." + "pagination")
 			}
 			return err
 		}
@@ -358,7 +358,7 @@ func (o *GetOrgChildrenOKBody) validatePagination(formats strfmt.Registry) error
 }
 
 // MarshalBinary interface implementation
-func (o *GetOrgChildrenOKBody) MarshalBinary() ([]byte, error) {
+func (o *GetChildrenOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -366,8 +366,8 @@ func (o *GetOrgChildrenOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *GetOrgChildrenOKBody) UnmarshalBinary(b []byte) error {
-	var res GetOrgChildrenOKBody
+func (o *GetChildrenOKBody) UnmarshalBinary(b []byte) error {
+	var res GetChildrenOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

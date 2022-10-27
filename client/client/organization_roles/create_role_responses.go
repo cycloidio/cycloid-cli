@@ -19,40 +19,40 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// UpdateOrgRoleReader is a Reader for the UpdateOrgRole structure.
-type UpdateOrgRoleReader struct {
+// CreateRoleReader is a Reader for the CreateRole structure.
+type CreateRoleReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *UpdateOrgRoleReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CreateRoleReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewUpdateOrgRoleOK()
+		result := NewCreateRoleOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 403:
-		result := NewUpdateOrgRoleForbidden()
+		result := NewCreateRoleForbidden()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 404:
-		result := NewUpdateOrgRoleNotFound()
+		result := NewCreateRoleNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 422:
-		result := NewUpdateOrgRoleUnprocessableEntity()
+		result := NewCreateRoleUnprocessableEntity()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	default:
-		result := NewUpdateOrgRoleDefault(response.Code())
+		result := NewCreateRoleDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -63,30 +63,30 @@ func (o *UpdateOrgRoleReader) ReadResponse(response runtime.ClientResponse, cons
 	}
 }
 
-// NewUpdateOrgRoleOK creates a UpdateOrgRoleOK with default headers values
-func NewUpdateOrgRoleOK() *UpdateOrgRoleOK {
-	return &UpdateOrgRoleOK{}
+// NewCreateRoleOK creates a CreateRoleOK with default headers values
+func NewCreateRoleOK() *CreateRoleOK {
+	return &CreateRoleOK{}
 }
 
-/*UpdateOrgRoleOK handles this case with default header values.
+/*CreateRoleOK handles this case with default header values.
 
-Updated role belonging to the organization.
+New role created in the organization.
 */
-type UpdateOrgRoleOK struct {
-	Payload *UpdateOrgRoleOKBody
+type CreateRoleOK struct {
+	Payload *CreateRoleOKBody
 }
 
-func (o *UpdateOrgRoleOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRoleOK  %+v", 200, o.Payload)
+func (o *CreateRoleOK) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/roles][%d] createRoleOK  %+v", 200, o.Payload)
 }
 
-func (o *UpdateOrgRoleOK) GetPayload() *UpdateOrgRoleOKBody {
+func (o *CreateRoleOK) GetPayload() *CreateRoleOKBody {
 	return o.Payload
 }
 
-func (o *UpdateOrgRoleOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateRoleOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(UpdateOrgRoleOKBody)
+	o.Payload = new(CreateRoleOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -96,16 +96,16 @@ func (o *UpdateOrgRoleOK) readResponse(response runtime.ClientResponse, consumer
 	return nil
 }
 
-// NewUpdateOrgRoleForbidden creates a UpdateOrgRoleForbidden with default headers values
-func NewUpdateOrgRoleForbidden() *UpdateOrgRoleForbidden {
-	return &UpdateOrgRoleForbidden{}
+// NewCreateRoleForbidden creates a CreateRoleForbidden with default headers values
+func NewCreateRoleForbidden() *CreateRoleForbidden {
+	return &CreateRoleForbidden{}
 }
 
-/*UpdateOrgRoleForbidden handles this case with default header values.
+/*CreateRoleForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
-type UpdateOrgRoleForbidden struct {
+type CreateRoleForbidden struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -113,15 +113,15 @@ type UpdateOrgRoleForbidden struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *UpdateOrgRoleForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRoleForbidden  %+v", 403, o.Payload)
+func (o *CreateRoleForbidden) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/roles][%d] createRoleForbidden  %+v", 403, o.Payload)
 }
 
-func (o *UpdateOrgRoleForbidden) GetPayload() *models.ErrorPayload {
+func (o *CreateRoleForbidden) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *UpdateOrgRoleForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateRoleForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -140,16 +140,16 @@ func (o *UpdateOrgRoleForbidden) readResponse(response runtime.ClientResponse, c
 	return nil
 }
 
-// NewUpdateOrgRoleNotFound creates a UpdateOrgRoleNotFound with default headers values
-func NewUpdateOrgRoleNotFound() *UpdateOrgRoleNotFound {
-	return &UpdateOrgRoleNotFound{}
+// NewCreateRoleNotFound creates a CreateRoleNotFound with default headers values
+func NewCreateRoleNotFound() *CreateRoleNotFound {
+	return &CreateRoleNotFound{}
 }
 
-/*UpdateOrgRoleNotFound handles this case with default header values.
+/*CreateRoleNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
-type UpdateOrgRoleNotFound struct {
+type CreateRoleNotFound struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -157,15 +157,15 @@ type UpdateOrgRoleNotFound struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *UpdateOrgRoleNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRoleNotFound  %+v", 404, o.Payload)
+func (o *CreateRoleNotFound) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/roles][%d] createRoleNotFound  %+v", 404, o.Payload)
 }
 
-func (o *UpdateOrgRoleNotFound) GetPayload() *models.ErrorPayload {
+func (o *CreateRoleNotFound) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *UpdateOrgRoleNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateRoleNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -184,16 +184,16 @@ func (o *UpdateOrgRoleNotFound) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-// NewUpdateOrgRoleUnprocessableEntity creates a UpdateOrgRoleUnprocessableEntity with default headers values
-func NewUpdateOrgRoleUnprocessableEntity() *UpdateOrgRoleUnprocessableEntity {
-	return &UpdateOrgRoleUnprocessableEntity{}
+// NewCreateRoleUnprocessableEntity creates a CreateRoleUnprocessableEntity with default headers values
+func NewCreateRoleUnprocessableEntity() *CreateRoleUnprocessableEntity {
+	return &CreateRoleUnprocessableEntity{}
 }
 
-/*UpdateOrgRoleUnprocessableEntity handles this case with default header values.
+/*CreateRoleUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
-type UpdateOrgRoleUnprocessableEntity struct {
+type CreateRoleUnprocessableEntity struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -201,15 +201,15 @@ type UpdateOrgRoleUnprocessableEntity struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *UpdateOrgRoleUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRoleUnprocessableEntity  %+v", 422, o.Payload)
+func (o *CreateRoleUnprocessableEntity) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/roles][%d] createRoleUnprocessableEntity  %+v", 422, o.Payload)
 }
 
-func (o *UpdateOrgRoleUnprocessableEntity) GetPayload() *models.ErrorPayload {
+func (o *CreateRoleUnprocessableEntity) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *UpdateOrgRoleUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateRoleUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -228,18 +228,18 @@ func (o *UpdateOrgRoleUnprocessableEntity) readResponse(response runtime.ClientR
 	return nil
 }
 
-// NewUpdateOrgRoleDefault creates a UpdateOrgRoleDefault with default headers values
-func NewUpdateOrgRoleDefault(code int) *UpdateOrgRoleDefault {
-	return &UpdateOrgRoleDefault{
+// NewCreateRoleDefault creates a CreateRoleDefault with default headers values
+func NewCreateRoleDefault(code int) *CreateRoleDefault {
+	return &CreateRoleDefault{
 		_statusCode: code,
 	}
 }
 
-/*UpdateOrgRoleDefault handles this case with default header values.
+/*CreateRoleDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
-type UpdateOrgRoleDefault struct {
+type CreateRoleDefault struct {
 	_statusCode int
 
 	/*The length of the response body in octets (8-bit bytes).
@@ -249,20 +249,20 @@ type UpdateOrgRoleDefault struct {
 	Payload *models.ErrorPayload
 }
 
-// Code gets the status code for the update org role default response
-func (o *UpdateOrgRoleDefault) Code() int {
+// Code gets the status code for the create role default response
+func (o *CreateRoleDefault) Code() int {
 	return o._statusCode
 }
 
-func (o *UpdateOrgRoleDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/roles/{role_canonical}][%d] updateOrgRole default  %+v", o._statusCode, o.Payload)
+func (o *CreateRoleDefault) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/roles][%d] createRole default  %+v", o._statusCode, o.Payload)
 }
 
-func (o *UpdateOrgRoleDefault) GetPayload() *models.ErrorPayload {
+func (o *CreateRoleDefault) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *UpdateOrgRoleDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateRoleDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -281,18 +281,18 @@ func (o *UpdateOrgRoleDefault) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-/*UpdateOrgRoleOKBody update org role o k body
-swagger:model UpdateOrgRoleOKBody
+/*CreateRoleOKBody create role o k body
+swagger:model CreateRoleOKBody
 */
-type UpdateOrgRoleOKBody struct {
+type CreateRoleOKBody struct {
 
 	// data
 	// Required: true
-	Data *models.Role `json:"data"`
+	Data *models.NewRole `json:"data"`
 }
 
-// Validate validates this update org role o k body
-func (o *UpdateOrgRoleOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this create role o k body
+func (o *CreateRoleOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -305,16 +305,16 @@ func (o *UpdateOrgRoleOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *UpdateOrgRoleOKBody) validateData(formats strfmt.Registry) error {
+func (o *CreateRoleOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("updateOrgRoleOK"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("createRoleOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("updateOrgRoleOK" + "." + "data")
+				return ve.ValidateName("createRoleOK" + "." + "data")
 			}
 			return err
 		}
@@ -324,7 +324,7 @@ func (o *UpdateOrgRoleOKBody) validateData(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (o *UpdateOrgRoleOKBody) MarshalBinary() ([]byte, error) {
+func (o *CreateRoleOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -332,8 +332,8 @@ func (o *UpdateOrgRoleOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *UpdateOrgRoleOKBody) UnmarshalBinary(b []byte) error {
-	var res UpdateOrgRoleOKBody
+func (o *CreateRoleOKBody) UnmarshalBinary(b []byte) error {
+	var res CreateRoleOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -20,34 +20,34 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// GetOrgRolesReader is a Reader for the GetOrgRoles structure.
-type GetOrgRolesReader struct {
+// GetRolesReader is a Reader for the GetRoles structure.
+type GetRolesReader struct {
 	formats strfmt.Registry
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetOrgRolesReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetRolesReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
 	case 200:
-		result := NewGetOrgRolesOK()
+		result := NewGetRolesOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return result, nil
 	case 403:
-		result := NewGetOrgRolesForbidden()
+		result := NewGetRolesForbidden()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	case 404:
-		result := NewGetOrgRolesNotFound()
+		result := NewGetRolesNotFound()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
 		return nil, result
 	default:
-		result := NewGetOrgRolesDefault(response.Code())
+		result := NewGetRolesDefault(response.Code())
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -58,30 +58,30 @@ func (o *GetOrgRolesReader) ReadResponse(response runtime.ClientResponse, consum
 	}
 }
 
-// NewGetOrgRolesOK creates a GetOrgRolesOK with default headers values
-func NewGetOrgRolesOK() *GetOrgRolesOK {
-	return &GetOrgRolesOK{}
+// NewGetRolesOK creates a GetRolesOK with default headers values
+func NewGetRolesOK() *GetRolesOK {
+	return &GetRolesOK{}
 }
 
-/*GetOrgRolesOK handles this case with default header values.
+/*GetRolesOK handles this case with default header values.
 
 List of roles which are available in the organization.
 */
-type GetOrgRolesOK struct {
-	Payload *GetOrgRolesOKBody
+type GetRolesOK struct {
+	Payload *GetRolesOKBody
 }
 
-func (o *GetOrgRolesOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles][%d] getOrgRolesOK  %+v", 200, o.Payload)
+func (o *GetRolesOK) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles][%d] getRolesOK  %+v", 200, o.Payload)
 }
 
-func (o *GetOrgRolesOK) GetPayload() *GetOrgRolesOKBody {
+func (o *GetRolesOK) GetPayload() *GetRolesOKBody {
 	return o.Payload
 }
 
-func (o *GetOrgRolesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetRolesOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(GetOrgRolesOKBody)
+	o.Payload = new(GetRolesOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -91,16 +91,16 @@ func (o *GetOrgRolesOK) readResponse(response runtime.ClientResponse, consumer r
 	return nil
 }
 
-// NewGetOrgRolesForbidden creates a GetOrgRolesForbidden with default headers values
-func NewGetOrgRolesForbidden() *GetOrgRolesForbidden {
-	return &GetOrgRolesForbidden{}
+// NewGetRolesForbidden creates a GetRolesForbidden with default headers values
+func NewGetRolesForbidden() *GetRolesForbidden {
+	return &GetRolesForbidden{}
 }
 
-/*GetOrgRolesForbidden handles this case with default header values.
+/*GetRolesForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
-type GetOrgRolesForbidden struct {
+type GetRolesForbidden struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -108,15 +108,15 @@ type GetOrgRolesForbidden struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgRolesForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles][%d] getOrgRolesForbidden  %+v", 403, o.Payload)
+func (o *GetRolesForbidden) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles][%d] getRolesForbidden  %+v", 403, o.Payload)
 }
 
-func (o *GetOrgRolesForbidden) GetPayload() *models.ErrorPayload {
+func (o *GetRolesForbidden) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgRolesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetRolesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -135,16 +135,16 @@ func (o *GetOrgRolesForbidden) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-// NewGetOrgRolesNotFound creates a GetOrgRolesNotFound with default headers values
-func NewGetOrgRolesNotFound() *GetOrgRolesNotFound {
-	return &GetOrgRolesNotFound{}
+// NewGetRolesNotFound creates a GetRolesNotFound with default headers values
+func NewGetRolesNotFound() *GetRolesNotFound {
+	return &GetRolesNotFound{}
 }
 
-/*GetOrgRolesNotFound handles this case with default header values.
+/*GetRolesNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
-type GetOrgRolesNotFound struct {
+type GetRolesNotFound struct {
 	/*The length of the response body in octets (8-bit bytes).
 	 */
 	ContentLength uint64
@@ -152,15 +152,15 @@ type GetOrgRolesNotFound struct {
 	Payload *models.ErrorPayload
 }
 
-func (o *GetOrgRolesNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles][%d] getOrgRolesNotFound  %+v", 404, o.Payload)
+func (o *GetRolesNotFound) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles][%d] getRolesNotFound  %+v", 404, o.Payload)
 }
 
-func (o *GetOrgRolesNotFound) GetPayload() *models.ErrorPayload {
+func (o *GetRolesNotFound) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgRolesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetRolesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -179,18 +179,18 @@ func (o *GetOrgRolesNotFound) readResponse(response runtime.ClientResponse, cons
 	return nil
 }
 
-// NewGetOrgRolesDefault creates a GetOrgRolesDefault with default headers values
-func NewGetOrgRolesDefault(code int) *GetOrgRolesDefault {
-	return &GetOrgRolesDefault{
+// NewGetRolesDefault creates a GetRolesDefault with default headers values
+func NewGetRolesDefault(code int) *GetRolesDefault {
+	return &GetRolesDefault{
 		_statusCode: code,
 	}
 }
 
-/*GetOrgRolesDefault handles this case with default header values.
+/*GetRolesDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
-type GetOrgRolesDefault struct {
+type GetRolesDefault struct {
 	_statusCode int
 
 	/*The length of the response body in octets (8-bit bytes).
@@ -200,20 +200,20 @@ type GetOrgRolesDefault struct {
 	Payload *models.ErrorPayload
 }
 
-// Code gets the status code for the get org roles default response
-func (o *GetOrgRolesDefault) Code() int {
+// Code gets the status code for the get roles default response
+func (o *GetRolesDefault) Code() int {
 	return o._statusCode
 }
 
-func (o *GetOrgRolesDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles][%d] getOrgRoles default  %+v", o._statusCode, o.Payload)
+func (o *GetRolesDefault) Error() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles][%d] getRoles default  %+v", o._statusCode, o.Payload)
 }
 
-func (o *GetOrgRolesDefault) GetPayload() *models.ErrorPayload {
+func (o *GetRolesDefault) GetPayload() *models.ErrorPayload {
 	return o.Payload
 }
 
-func (o *GetOrgRolesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *GetRolesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response header Content-Length
 	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
@@ -232,10 +232,10 @@ func (o *GetOrgRolesDefault) readResponse(response runtime.ClientResponse, consu
 	return nil
 }
 
-/*GetOrgRolesOKBody get org roles o k body
-swagger:model GetOrgRolesOKBody
+/*GetRolesOKBody get roles o k body
+swagger:model GetRolesOKBody
 */
-type GetOrgRolesOKBody struct {
+type GetRolesOKBody struct {
 
 	// data
 	// Required: true
@@ -246,8 +246,8 @@ type GetOrgRolesOKBody struct {
 	Pagination *models.Pagination `json:"pagination"`
 }
 
-// Validate validates this get org roles o k body
-func (o *GetOrgRolesOKBody) Validate(formats strfmt.Registry) error {
+// Validate validates this get roles o k body
+func (o *GetRolesOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -264,9 +264,9 @@ func (o *GetOrgRolesOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetOrgRolesOKBody) validateData(formats strfmt.Registry) error {
+func (o *GetRolesOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("getOrgRolesOK"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("getRolesOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
@@ -278,7 +278,7 @@ func (o *GetOrgRolesOKBody) validateData(formats strfmt.Registry) error {
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("getOrgRolesOK" + "." + "data" + "." + strconv.Itoa(i))
+					return ve.ValidateName("getRolesOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -289,16 +289,16 @@ func (o *GetOrgRolesOKBody) validateData(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetOrgRolesOKBody) validatePagination(formats strfmt.Registry) error {
+func (o *GetRolesOKBody) validatePagination(formats strfmt.Registry) error {
 
-	if err := validate.Required("getOrgRolesOK"+"."+"pagination", "body", o.Pagination); err != nil {
+	if err := validate.Required("getRolesOK"+"."+"pagination", "body", o.Pagination); err != nil {
 		return err
 	}
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getOrgRolesOK" + "." + "pagination")
+				return ve.ValidateName("getRolesOK" + "." + "pagination")
 			}
 			return err
 		}
@@ -308,7 +308,7 @@ func (o *GetOrgRolesOKBody) validatePagination(formats strfmt.Registry) error {
 }
 
 // MarshalBinary interface implementation
-func (o *GetOrgRolesOKBody) MarshalBinary() ([]byte, error) {
+func (o *GetRolesOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -316,8 +316,8 @@ func (o *GetOrgRolesOKBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *GetOrgRolesOKBody) UnmarshalBinary(b []byte) error {
-	var res GetOrgRolesOKBody
+func (o *GetRolesOKBody) UnmarshalBinary(b []byte) error {
+	var res GetRolesOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
