@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: "Update client to version v3.2.43"
+time: 2022-11-09T09:02:09.682277925+00:00
+custom:
+  DETAILS: ""
+  PR: "161"
+  TYPE: CLI
