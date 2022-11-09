@@ -66,6 +66,10 @@ type Organization struct {
 	// Min Length: 3
 	Name *string `json:"name"`
 
+	// quotas
+	// Required: true
+	Quotas *bool `json:"quotas"`
+
 	// subscription
 	Subscription *Subscription `json:"subscription,omitempty"`
 
@@ -116,6 +120,10 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateQuotas(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -257,6 +265,15 @@ func (m *Organization) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateQuotas(formats strfmt.Registry) error {
+
+	if err := validate.Required("quotas", "body", m.Quotas); err != nil {
 		return err
 	}
 

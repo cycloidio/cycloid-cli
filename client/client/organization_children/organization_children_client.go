@@ -27,23 +27,23 @@ type Client struct {
 }
 
 /*
-CreateOrgChild Create a new organization child, making the authenticated user the owner of it.
+CreateChild Create a new organization child, making the authenticated user the owner of it.
 */
-func (a *Client) CreateOrgChild(params *CreateOrgChildParams, authInfo runtime.ClientAuthInfoWriter) (*CreateOrgChildOK, error) {
+func (a *Client) CreateChild(params *CreateChildParams, authInfo runtime.ClientAuthInfoWriter) (*CreateChildOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewCreateOrgChildParams()
+		params = NewCreateChildParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "createOrgChild",
+		ID:                 "createChild",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/children",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &CreateOrgChildReader{formats: a.formats},
+		Reader:             &CreateChildReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -51,34 +51,34 @@ func (a *Client) CreateOrgChild(params *CreateOrgChildParams, authInfo runtime.C
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*CreateOrgChildOK)
+	success, ok := result.(*CreateChildOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
-	msg := fmt.Sprintf("unexpected success response for createOrgChild: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	msg := fmt.Sprintf("unexpected success response for createChild: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
 
 /*
-GetOrgChildren Get the children organizations that the authenticated user has access.
+GetChildren Get the children organizations that the authenticated user has access.
 */
-func (a *Client) GetOrgChildren(params *GetOrgChildrenParams, authInfo runtime.ClientAuthInfoWriter) (*GetOrgChildrenOK, error) {
+func (a *Client) GetChildren(params *GetChildrenParams, authInfo runtime.ClientAuthInfoWriter) (*GetChildrenOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetOrgChildrenParams()
+		params = NewGetChildrenParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getOrgChildren",
+		ID:                 "getChildren",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/children",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetOrgChildrenReader{formats: a.formats},
+		Reader:             &GetChildrenReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -86,12 +86,12 @@ func (a *Client) GetOrgChildren(params *GetOrgChildrenParams, authInfo runtime.C
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetOrgChildrenOK)
+	success, ok := result.(*GetChildrenOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*GetOrgChildrenDefault)
+	unexpectedSuccess := result.(*GetChildrenDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

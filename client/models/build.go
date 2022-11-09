@@ -37,6 +37,9 @@ type Build struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// pipeline id
+	PipelineID uint64 `json:"pipeline_id,omitempty"`
+
 	// pipeline name
 	PipelineName string `json:"pipeline_name,omitempty"`
 

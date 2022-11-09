@@ -33,6 +33,9 @@ type Job struct {
 	// groups
 	Groups []string `json:"groups"`
 
+	// has new inputs
+	HasNewInputs bool `json:"has_new_inputs,omitempty"`
+
 	// id
 	// Required: true
 	ID *uint64 `json:"id"`
@@ -52,6 +55,15 @@ type Job struct {
 
 	// paused
 	Paused bool `json:"paused,omitempty"`
+
+	// pipeline id
+	PipelineID uint64 `json:"pipeline_id,omitempty"`
+
+	// pipeline name
+	PipelineName string `json:"pipeline_name,omitempty"`
+
+	// team name
+	TeamName string `json:"team_name,omitempty"`
 
 	// transition build
 	TransitionBuild *Build `json:"transition_build,omitempty"`

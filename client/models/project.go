@@ -73,6 +73,9 @@ type Project struct {
 	// The Service Catalog that was used to create project.
 	ServiceCatalog *ServiceCatalog `json:"service_catalog,omitempty"`
 
+	// The Team that was used to create project.
+	Team *SimpleTeam `json:"team,omitempty"`
+
 	// updated at
 	// Required: true
 	// Minimum: 0
@@ -116,6 +119,10 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateServiceCatalog(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTeam(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -309,6 +316,24 @@ func (m *Project) validateServiceCatalog(formats strfmt.Registry) error {
 		if err := m.ServiceCatalog.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("service_catalog")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Project) validateTeam(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Team) { // not required
+		return nil
+	}
+
+	if m.Team != nil {
+		if err := m.Team.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("team")
 			}
 			return err
 		}

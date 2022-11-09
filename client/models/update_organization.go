@@ -23,6 +23,9 @@ type UpdateOrganization struct {
 	// Required: true
 	// Min Length: 3
 	Name *string `json:"name"`
+
+	// quotas
+	Quotas bool `json:"quotas,omitempty"`
 }
 
 // Validate validates this update organization

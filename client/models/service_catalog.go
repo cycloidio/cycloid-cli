@@ -73,6 +73,10 @@ type ServiceCatalog struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// Indicates if this stack can be configured with form's and has a Quota configuration.
+	// Required: true
+	QuotaEnabled *bool `json:"quota_enabled"`
+
 	// Readme of the stack
 	Readme string `json:"readme,omitempty"`
 
@@ -150,6 +154,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateQuotaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -358,6 +366,15 @@ func (m *ServiceCatalog) validateKeywords(formats strfmt.Registry) error {
 func (m *ServiceCatalog) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateQuotaEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("quota_enabled", "body", m.QuotaEnabled); err != nil {
 		return err
 	}
 
