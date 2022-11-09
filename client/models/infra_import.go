@@ -32,8 +32,8 @@ type InfraImport struct {
 
 	// project canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	ProjectCanonical string `json:"project_canonical,omitempty"`
 
 	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
@@ -100,7 +100,7 @@ func (m *InfraImport) validateProjectCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 3); err != nil {
+	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 1); err != nil {
 		return err
 	}
 
@@ -108,7 +108,7 @@ func (m *InfraImport) validateProjectCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 

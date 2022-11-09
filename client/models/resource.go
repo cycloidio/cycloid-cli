@@ -19,14 +19,8 @@ import (
 // swagger:model Resource
 type Resource struct {
 
-	// check error
-	CheckError string `json:"check_error,omitempty"`
-
-	// check setup error
-	CheckSetupError string `json:"check_setup_error,omitempty"`
-
-	// failing to check
-	FailingToCheck bool `json:"failing_to_check,omitempty"`
+	// build
+	Build *BuildSummary `json:"build,omitempty"`
 
 	// icon
 	Icon string `json:"icon,omitempty"`
@@ -47,6 +41,15 @@ type Resource struct {
 	// pinned version
 	PinnedVersion map[string]string `json:"pinned_version,omitempty"`
 
+	// pipeline id
+	PipelineID uint64 `json:"pipeline_id,omitempty"`
+
+	// pipeline name
+	PipelineName string `json:"pipeline_name,omitempty"`
+
+	// team name
+	TeamName string `json:"team_name,omitempty"`
+
 	// type
 	// Required: true
 	Type *string `json:"type"`
@@ -55,6 +58,10 @@ type Resource struct {
 // Validate validates this resource
 func (m *Resource) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateBuild(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
@@ -67,6 +74,24 @@ func (m *Resource) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Resource) validateBuild(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Build) { // not required
+		return nil
+	}
+
+	if m.Build != nil {
+		if err := m.Build.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("build")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

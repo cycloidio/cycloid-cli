@@ -30,6 +30,9 @@ type FormEntity struct {
 	// The description helping users understand the interest/impact of such variable/change
 	Description string `json:"description,omitempty"`
 
+	// Whether or not the entity should be displayed to the user. This entity must be usable as such (not required, or with a default if required)
+	Folded bool `json:"folded,omitempty"`
+
 	// The key is the name of variables for the ansible/pipeline/terraform technologies. If this is a first level variable then: keyX. If you have multiple terraform modules then use: module.Y.keyX to help identify the unique variable.
 	// Required: true
 	Key *string `json:"key"`

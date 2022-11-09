@@ -22,6 +22,9 @@ import (
 // swagger:model Pipeline
 type Pipeline struct {
 
+	// archived
+	Archived bool `json:"archived,omitempty"`
+
 	// created at
 	// Required: true
 	// Minimum: 0

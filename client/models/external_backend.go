@@ -25,6 +25,10 @@ import (
 type ExternalBackend struct {
 	configurationField ExternalBackendConfiguration
 
+	// created at
+	// Minimum: 0
+	CreatedAt *uint64 `json:"created_at,omitempty"`
+
 	// credential canonical
 	// Max Length: 100
 	// Min Length: 3
@@ -50,13 +54,17 @@ type ExternalBackend struct {
 
 	// project canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	ProjectCanonical string `json:"project_canonical,omitempty"`
 
 	// purpose
 	// Required: true
 	Purpose *string `json:"purpose"`
+
+	// updated at
+	// Minimum: 0
+	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 }
 
 // Configuration gets the configuration of this base type
@@ -74,6 +82,8 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 	var data struct {
 		Configuration json.RawMessage `json:"configuration"`
 
+		CreatedAt *uint64 `json:"created_at,omitempty"`
+
 		CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 		Default *bool `json:"default"`
@@ -87,6 +97,8 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 		ProjectCanonical string `json:"project_canonical,omitempty"`
 
 		Purpose *string `json:"purpose"`
+
+		UpdatedAt *uint64 `json:"updated_at,omitempty"`
 	}
 	buf := bytes.NewBuffer(raw)
 	dec := json.NewDecoder(buf)
@@ -105,6 +117,9 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 
 	// configuration
 	result.configurationField = propConfiguration
+
+	// created_at
+	result.CreatedAt = data.CreatedAt
 
 	// credential_canonical
 	result.CredentialCanonical = data.CredentialCanonical
@@ -127,6 +142,9 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 	// purpose
 	result.Purpose = data.Purpose
 
+	// updated_at
+	result.UpdatedAt = data.UpdatedAt
+
 	*m = result
 
 	return nil
@@ -137,6 +155,8 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
+		CreatedAt *uint64 `json:"created_at,omitempty"`
+
 		CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 		Default *bool `json:"default"`
@@ -150,7 +170,11 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 		ProjectCanonical string `json:"project_canonical,omitempty"`
 
 		Purpose *string `json:"purpose"`
+
+		UpdatedAt *uint64 `json:"updated_at,omitempty"`
 	}{
+
+		CreatedAt: m.CreatedAt,
 
 		CredentialCanonical: m.CredentialCanonical,
 
@@ -165,6 +189,8 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 		ProjectCanonical: m.ProjectCanonical,
 
 		Purpose: m.Purpose,
+
+		UpdatedAt: m.UpdatedAt,
 	},
 	)
 	if err != nil {
@@ -192,6 +218,10 @@ func (m *ExternalBackend) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCredentialCanonical(formats); err != nil {
 		res = append(res, err)
 	}
@@ -216,6 +246,10 @@ func (m *ExternalBackend) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -232,6 +266,19 @@ func (m *ExternalBackend) validateConfiguration(formats strfmt.Registry) error {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
 		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *ExternalBackend) validateCreatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -308,7 +355,7 @@ func (m *ExternalBackend) validateProjectCanonical(formats strfmt.Registry) erro
 		return nil
 	}
 
-	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 3); err != nil {
+	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 1); err != nil {
 		return err
 	}
 
@@ -316,7 +363,7 @@ func (m *ExternalBackend) validateProjectCanonical(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -326,6 +373,19 @@ func (m *ExternalBackend) validateProjectCanonical(formats strfmt.Registry) erro
 func (m *ExternalBackend) validatePurpose(formats strfmt.Registry) error {
 
 	if err := validate.Required("purpose", "body", m.Purpose); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ExternalBackend) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
