@@ -25,6 +25,9 @@ type FormInput struct {
 	// Required: true
 	EnvironmentCanonical *string `json:"environment_canonical"`
 
+	// The resource pool canonical, only require when using Quotas
+	ResourcePoolCanonical string `json:"resource_pool_canonical,omitempty"`
+
 	// The use case to load
 	// Required: true
 	UseCase *string `json:"use_case"`

@@ -15,7 +15,7 @@ import (
 
 // NewCloudCostManagementAccountChild Create CloudCostManagementAccountChild
 //
-// Create a new Cloud Cost Management Child account. This ccount has no
+// Create a new Cloud Cost Management Child account. This count has no
 // ExternalBackend since it is not ingesting data.
 // If a canonical is missing, the one from credential will be applied
 //
@@ -31,6 +31,9 @@ type NewCloudCostManagementAccountChild struct {
 	// Canonical of  the credentials used
 	// Required: true
 	CredentialCanonical *string `json:"credential_canonical"`
+
+	// A user-defined name for the account
+	Name string `json:"name,omitempty"`
 
 	// The ID of the parent account on the CP
 	// Required: true

@@ -25,8 +25,8 @@ type Project struct {
 	// canonical
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical *string `json:"canonical"`
 
 	// config repository canonical
@@ -61,7 +61,7 @@ type Project struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 1
 	Name *string `json:"name"`
 
 	// Organization member that owns this project. When a user is the owner of a
@@ -72,6 +72,9 @@ type Project struct {
 
 	// The Service Catalog that was used to create project.
 	ServiceCatalog *ServiceCatalog `json:"service_catalog,omitempty"`
+
+	// The Team that was used to create project.
+	Team *SimpleTeam `json:"team,omitempty"`
 
 	// updated at
 	// Required: true
@@ -119,6 +122,10 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateTeam(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -135,7 +142,7 @@ func (m *Project) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 1); err != nil {
 		return err
 	}
 
@@ -143,7 +150,7 @@ func (m *Project) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -274,7 +281,7 @@ func (m *Project) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 
@@ -309,6 +316,24 @@ func (m *Project) validateServiceCatalog(formats strfmt.Registry) error {
 		if err := m.ServiceCatalog.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("service_catalog")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Project) validateTeam(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Team) { // not required
+		return nil
+	}
+
+	if m.Team != nil {
+		if err := m.Team.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("team")
 			}
 			return err
 		}

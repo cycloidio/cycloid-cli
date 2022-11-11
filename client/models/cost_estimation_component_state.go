@@ -27,7 +27,7 @@ type CostEstimationComponentState struct {
 	// Required: true
 	Details []string `json:"details"`
 
-	// Hourly cost of the component state in decimail form.
+	// Hourly cost of the component state in decimal form.
 	// Required: true
 	HourlyCost *string `json:"hourly_cost"`
 

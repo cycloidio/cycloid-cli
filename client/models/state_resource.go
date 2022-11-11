@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // StateResource State Resource
@@ -20,8 +21,21 @@ import (
 // swagger:model StateResource
 type StateResource struct {
 
+	// Category of the resource type
+	Category string `json:"category,omitempty"`
+
+	// Full description of the resource type documentation
+	Description string `json:"description,omitempty"`
+
+	// Image of the resource type
+	// Format: uri
+	Image strfmt.URI `json:"image,omitempty"`
+
 	// instances
 	Instances []*StateResourceInstances `json:"instances"`
+
+	// Set of keywords to categorize the resource type
+	Keywords []string `json:"keywords"`
 
 	// mode
 	Mode string `json:"mode,omitempty"`
@@ -32,8 +46,14 @@ type StateResource struct {
 	// name
 	Name string `json:"name,omitempty"`
 
+	// Project canonical in which this resource is used
+	ProjectCanonical string `json:"project_canonical,omitempty"`
+
 	// provider
 	Provider string `json:"provider,omitempty"`
+
+	// Short description of the resource type documentation
+	ShortDescription string `json:"short_description,omitempty"`
 
 	// type
 	Type string `json:"type,omitempty"`
@@ -43,6 +63,10 @@ type StateResource struct {
 func (m *StateResource) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateImage(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateInstances(formats); err != nil {
 		res = append(res, err)
 	}
@@ -50,6 +74,19 @@ func (m *StateResource) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *StateResource) validateImage(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Image) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {
+		return err
+	}
+
 	return nil
 }
 

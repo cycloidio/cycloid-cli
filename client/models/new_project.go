@@ -23,8 +23,8 @@ type NewProject struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical string `json:"canonical,omitempty"`
 
 	// config repository canonical
@@ -46,7 +46,7 @@ type NewProject struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 1
 	Name *string `json:"name"`
 
 	// User canonical that owns this project. If omitted then the person
@@ -56,7 +56,7 @@ type NewProject struct {
 	Owner string `json:"owner,omitempty"`
 
 	// Each instance should include passed_config if no inputs are sent on
-	// project creation, otherwise it will be infered internally.
+	// project creation, otherwise it will be inferred internally.
 	//
 	// Required: true
 	// Min Items: 1
@@ -65,6 +65,14 @@ type NewProject struct {
 	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
 	// Required: true
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
+
+	// Is only required when the using Quotas, it'll link the Project
+	// to the Team
+	//
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	TeamCanonical string `json:"team_canonical,omitempty"`
 }
 
 // Validate validates this new project
@@ -95,6 +103,10 @@ func (m *NewProject) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateTeamCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -107,7 +119,7 @@ func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 1); err != nil {
 		return err
 	}
 
@@ -115,7 +127,7 @@ func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -174,7 +186,7 @@ func (m *NewProject) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 
@@ -215,6 +227,27 @@ func (m *NewProject) validatePipelines(formats strfmt.Registry) error {
 func (m *NewProject) validateServiceCatalogRef(formats strfmt.Registry) error {
 
 	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewProject) validateTeamCanonical(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.TeamCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("team_canonical", "body", string(m.TeamCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("team_canonical", "body", string(m.TeamCanonical), 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("team_canonical", "body", string(m.TeamCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

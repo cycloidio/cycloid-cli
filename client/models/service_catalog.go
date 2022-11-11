@@ -44,6 +44,14 @@ type ServiceCatalog struct {
 	// Required: true
 	Description *string `json:"description"`
 
+	// Directory where the ServiceCatalog configuration is found.
+	// Required: true
+	Directory *string `json:"directory"`
+
+	// Indicates if this stack can be configured with form's or not. Based on the presence or not of a valid .forms.yaml file since it's creation or last refresh.
+	// Required: true
+	FormEnabled *bool `json:"form_enabled"`
+
 	// id
 	// Required: true
 	// Minimum: 1
@@ -64,6 +72,10 @@ type ServiceCatalog struct {
 	// name
 	// Required: true
 	Name *string `json:"name"`
+
+	// Indicates if this stack can be configured with form's and has a Quota configuration.
+	// Required: true
+	QuotaEnabled *bool `json:"quota_enabled"`
 
 	// Readme of the stack
 	Readme string `json:"readme,omitempty"`
@@ -117,6 +129,14 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDirectory(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateFormEnabled(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
@@ -134,6 +154,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateQuotaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -240,6 +264,24 @@ func (m *ServiceCatalog) validateDescription(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ServiceCatalog) validateDirectory(formats strfmt.Registry) error {
+
+	if err := validate.Required("directory", "body", m.Directory); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateFormEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("form_enabled", "body", m.FormEnabled); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ServiceCatalog) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
@@ -324,6 +366,15 @@ func (m *ServiceCatalog) validateKeywords(formats strfmt.Registry) error {
 func (m *ServiceCatalog) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateQuotaEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("quota_enabled", "body", m.QuotaEnabled); err != nil {
 		return err
 	}
 

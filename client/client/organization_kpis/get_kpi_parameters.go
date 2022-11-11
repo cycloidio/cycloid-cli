@@ -73,7 +73,7 @@ type GetKpiParams struct {
 	*/
 	End *uint64
 	/*FetchData
-	  Flag to retrieve KPIs' data upon retrieveing KPIs themselves
+	  Flag to retrieve KPIs' data upon retrieving KPIs themselves
 
 
 	*/

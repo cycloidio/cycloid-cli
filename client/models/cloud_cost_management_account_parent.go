@@ -61,6 +61,10 @@ type CloudCostManagementAccountParent struct {
 	// Minimum: 0
 	LastIngestionStartedAt *uint64 `json:"last_ingestion_started_at,omitempty"`
 
+	// A user-defined name for the account
+	// Required: true
+	Name *string `json:"name"`
+
 	// status
 	// Required: true
 	// Enum: [idle error import]
@@ -108,6 +112,10 @@ func (m *CloudCostManagementAccountParent) Validate(formats strfmt.Registry) err
 	}
 
 	if err := m.validateLastIngestionStartedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -228,6 +236,15 @@ func (m *CloudCostManagementAccountParent) validateLastIngestionStartedAt(format
 	}
 
 	if err := validate.MinimumInt("last_ingestion_started_at", "body", int64(*m.LastIngestionStartedAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CloudCostManagementAccountParent) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
 	}
 

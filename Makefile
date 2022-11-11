@@ -28,7 +28,7 @@ GO_LDFLAGS ?= -ldflags \
 	 -X $(REPO_PATH)/internal/version.BuildOrigin=$(BUILD_ORIGIN)\
 	 -X $(REPO_PATH)/internal/version.BuildDate=$(BUILD_DATE)"
 
-# SWAGGER 
+# SWAGGER
 SWAGGER_FILE ?= "swagger.yml"
 SWAGGER_GENERATE = swagger generate client \
 		--spec=$(SWAGGER_FILE) \
@@ -67,12 +67,12 @@ SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 CY_API_URL         ?= http://127.0.0.1:3001
 # Env list specified in file /e2e/e2e.go
 CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo.git
-	
+
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
-# AWS - ECR login 
-AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws) 
-AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws) 
+# AWS - ECR login
+AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws)
+AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
 AWS_DEFAULT_REGION    ?= eu-west-1
 AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
 # Local BE
@@ -104,7 +104,7 @@ reset-old-client: ## Resets old client folder
 generate-client: ## Generate client from file at SWAGGER_FILE path
 	echo "Creating swagger files"; \
 	rm -rf ./client; \
-	mkdir ./client;	
+	mkdir ./client;
 	$(SWAGGER_GENERATE) && rm swagger.yml
 
 .PHONY: generate-client-from-local
@@ -132,11 +132,12 @@ start-local-be: ## Starts local BE instance. Note! Only for cycloid developers
 	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
 	@echo "Starting Local BE..."
 	@echo "Generating fake data to be used in the tests..."
+	@cd $(LOCAL_BE_GIT_PATH) && sed -i '/cost-explorer-es/d' config.yml
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	docker-compose -f docker-compose.yml -f docker-compose.cli.yml up youdeploy-init > /dev/null 2>&1
+	docker-compose -f docker-compose.yml -f docker-compose.cli.yml up youdeploy-init
 	@echo "Running BE server with the fake data generated..."
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	docker-compose -f docker-compose.yml -f docker-compose.cli.yml up -d youdeploy-api > /dev/null 2>&1
+	docker-compose -f docker-compose.yml -f docker-compose.cli.yml up -d youdeploy-api
 
 .PHONY: local-e2e-test
 local-e2e-test: ## Launches local e2e tests. Note! Only for cycloid developers
@@ -150,3 +151,8 @@ delete-local-be: ## Creates local BE instance and starts e2e tests. Note! Only f
 	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
 	@echo "Deleting local BE instances !"
 	@cd $(LOCAL_BE_GIT_PATH) && docker-compose down -v --remove-orphans
+
+.PHONY: new-changelog-entry
+new-changelog-entry: ## Create a new entry for unreleased element
+	@echo ${PATH}
+	docker run -it -v $(CURDIR):/cycloid-cli -w /cycloid-cli cycloid/cycloid-toolkit changie new

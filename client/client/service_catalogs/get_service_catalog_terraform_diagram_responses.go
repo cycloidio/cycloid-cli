@@ -236,16 +236,32 @@ swagger:model GetServiceCatalogTerraformDiagramOKBody
 */
 type GetServiceCatalogTerraformDiagramOKBody struct {
 
+	// created at
+	// Minimum: 0
+	CreatedAt *uint64 `json:"created_at,omitempty"`
+
 	// data
 	// Required: true
 	Data models.TerraformJSONDiagram `json:"data"`
+
+	// updated at
+	// Minimum: 0
+	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 }
 
 // Validate validates this get service catalog terraform diagram o k body
 func (o *GetServiceCatalogTerraformDiagramOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := o.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := o.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -255,9 +271,35 @@ func (o *GetServiceCatalogTerraformDiagramOKBody) Validate(formats strfmt.Regist
 	return nil
 }
 
+func (o *GetServiceCatalogTerraformDiagramOKBody) validateCreatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.CreatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("getServiceCatalogTerraformDiagramOK"+"."+"created_at", "body", int64(*o.CreatedAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (o *GetServiceCatalogTerraformDiagramOKBody) validateData(formats strfmt.Registry) error {
 
 	if err := validate.Required("getServiceCatalogTerraformDiagramOK"+"."+"data", "body", o.Data); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *GetServiceCatalogTerraformDiagramOKBody) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if swag.IsZero(o.UpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("getServiceCatalogTerraformDiagramOK"+"."+"updated_at", "body", int64(*o.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 

@@ -51,7 +51,7 @@ type KPI struct {
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
-	// If an error occured in the last import, that field will be filled with the message of the error
+	// If an error occurred in the last import, that field will be filled with the message of the error
 	// Required: true
 	Error *string `json:"error"`
 
@@ -76,8 +76,8 @@ type KPI struct {
 
 	// project canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	ProjectCanonical string `json:"project_canonical,omitempty"`
 
 	// type
@@ -268,7 +268,7 @@ func (m *KPI) validateProjectCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 3); err != nil {
+	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 1); err != nil {
 		return err
 	}
 
@@ -276,7 +276,7 @@ func (m *KPI) validateProjectCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
