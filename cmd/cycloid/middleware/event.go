@@ -9,7 +9,7 @@ import (
 
 func (m *middleware) SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error {
 
-	params := organizations.NewSendOrgEventParams()
+	params := organizations.NewSendEventParams()
 	params.SetOrganizationCanonical(org)
 
 	var ts []*models.Tag
@@ -45,7 +45,7 @@ func (m *middleware) SendEvent(org, eventType, title, message, severity string, 
 		return err
 	}
 
-	_, err = m.api.Organizations.SendOrgEvent(params, common.ClientCredentials(&org))
+	_, err = m.api.Organizations.SendEvent(params, common.ClientCredentials(&org))
 
 	return err
 }
