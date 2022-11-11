@@ -127,40 +127,6 @@ func (a *Client) GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInf
 }
 
 /*
-GetBuildEvents Get the events of a build.
-*/
-func (a *Client) GetBuildEvents(params *GetBuildEventsParams, authInfo runtime.ClientAuthInfoWriter) (*GetBuildEventsOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetBuildEventsParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getBuildEvents",
-		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/events",
-		ProducesMediaTypes: []string{"application/json", "text/event-stream"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetBuildEventsReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetBuildEventsOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	unexpectedSuccess := result.(*GetBuildEventsDefault)
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
 GetBuildPlan Get the plan of the build.
 */
 func (a *Client) GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.ClientAuthInfoWriter) (*GetBuildPlanOK, error) {

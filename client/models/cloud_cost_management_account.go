@@ -64,6 +64,10 @@ type CloudCostManagementAccount struct {
 	// Minimum: 0
 	LastIngestionStartedAt *uint64 `json:"last_ingestion_started_at,omitempty"`
 
+	// A user-defined name for the account
+	// Required: true
+	Name *string `json:"name"`
+
 	// The ID of the parent account on the CP
 	ParentAccountID string `json:"parent_account_id,omitempty"`
 
@@ -129,6 +133,10 @@ func (m *CloudCostManagementAccount) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateLastIngestionStartedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -289,6 +297,15 @@ func (m *CloudCostManagementAccount) validateLastIngestionStartedAt(formats strf
 	}
 
 	if err := validate.MinimumInt("last_ingestion_started_at", "body", int64(*m.LastIngestionStartedAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CloudCostManagementAccount) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
 	}
 

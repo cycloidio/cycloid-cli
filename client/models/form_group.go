@@ -22,6 +22,9 @@ type FormGroup struct {
 	// Condition required to be respected to be able to configure that group.
 	Condition string `json:"condition,omitempty"`
 
+	// Whether or not the group should be displayed to the user. Variables within this group must be usable as such (not required, or with a default if required)
+	Folded bool `json:"folded,omitempty"`
+
 	// name
 	// Required: true
 	Name *string `json:"name"`

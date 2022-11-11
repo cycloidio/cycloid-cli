@@ -25,7 +25,7 @@ type Client struct {
 }
 
 /*
-CostEstimateForms Generate a set of configs based on the forms inputs
+CostEstimateForms Estimates the Cost from the Froms Inputs
 */
 func (a *Client) CostEstimateForms(params *CostEstimateFormsParams, authInfo runtime.ClientAuthInfoWriter) (*CostEstimateFormsOK, error) {
 	// TODO: Validate the params before sending
