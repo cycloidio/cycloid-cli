@@ -35,6 +35,10 @@ type InventoryResource struct {
 	// Full description of the resource type documentation
 	Description string `json:"description,omitempty"`
 
+	// Environment canonical in which this resource is used
+	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
+	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
+
 	// id
 	// Minimum: 1
 	ID uint32 `json:"id,omitempty"`
@@ -64,6 +68,7 @@ type InventoryResource struct {
 	Name *string `json:"name"`
 
 	// Project canonical in which this resource is used
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	ProjectCanonical string `json:"project_canonical,omitempty"`
 
 	// The provider of the created Resource
@@ -90,6 +95,10 @@ func (m *InventoryResource) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateEnvironmentCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
@@ -103,6 +112,10 @@ func (m *InventoryResource) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateProjectCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -131,6 +144,19 @@ func (m *InventoryResource) validateCPU(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("cpu", "body", int64(*m.CPU), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *InventoryResource) validateEnvironmentCanonical(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.EnvironmentCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.Pattern("environment_canonical", "body", string(m.EnvironmentCanonical), `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
 		return err
 	}
 
@@ -179,6 +205,19 @@ func (m *InventoryResource) validateMemory(formats strfmt.Registry) error {
 func (m *InventoryResource) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *InventoryResource) validateProjectCanonical(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.ProjectCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
