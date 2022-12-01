@@ -301,7 +301,9 @@ func (a *Client) GetOrgs(params *GetOrgsParams, authInfo runtime.ClientAuthInfoW
 }
 
 /*
-GetRepoBranches Return all the branches of repository
+GetRepoBranches Return all the branches of repository. If the repository is empty then an
+empty list will be returned.
+
 */
 func (a *Client) GetRepoBranches(params *GetRepoBranchesParams, authInfo runtime.ClientAuthInfoWriter) (*GetRepoBranchesOK, error) {
 	// TODO: Validate the params before sending
