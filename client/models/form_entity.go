@@ -24,7 +24,15 @@ type FormEntity struct {
 	// The current value that was previously configured for this variable upon creation or update. In case of shared variables having different values, it will be empty, and 'mismatch_values' will be filled instead.
 	Current interface{} `json:"current,omitempty"`
 
-	// The default to assign to the variable if nothing is returned and that the variable is required
+	// Default can take 2 kinds of definition.
+	// The first one is simply the variable to assign if nothing is given by the user and that the variable is required.
+	// The second one is dynamic default, meaning default that can vary based on conditions. The format is as follows:
+	//   options:
+	//     - name: "Name of set (can be omitted)"
+	//       condition: "$env == 'dev'"
+	//       default: t2.micro
+	//     - condition: "$env == 'prod'"
+	//       default: t2.large
 	Default interface{} `json:"default,omitempty"`
 
 	// The description helping users understand the interest/impact of such variable/change
@@ -58,8 +66,16 @@ type FormEntity struct {
 	// The unit to be displayed for the variable, helping to know what's being manipulated: amount of servers, Go, users, etc.
 	Unit string `json:"unit,omitempty"`
 
-	// Values allowed, e.g. [1, 10, 20, 50], this can be of any type but boolean. Note: In case of SliderRange only 2 values should be provided: [min, max], in case of providing them the other way around some validation test will fail.
-	Values []interface{} `json:"values"`
+	// Values can take 2 kinds of definition.
+	// First one is a list of object, such as list of integer, maps, etc. Values allowed, e.g. [1, 10, 20, 50]. Note: In case of SliderRange only 2 values should be provided: [min, max], in case of providing them the other way around some validation test will fail.
+	// Second one is dynamic values, meaning values that can vary based on conditions. The format is as follows:
+	//   options:
+	//     - name: "Name of set (can be omitted)"
+	//       condition: "$env == 'dev'"
+	//       values: [dev-ami1, dev-ami2, dev-ami3]
+	//     - condition: "$env == 'prod'"
+	//       values: [prod-ami1, prod-ami2, prod-ami3]
+	Values interface{} `json:"values,omitempty"`
 
 	// The widget used to display the data in the most suitable way
 	// Required: true
