@@ -19,6 +19,9 @@ import (
 // swagger:model UpdateOrganization
 type UpdateOrganization struct {
 
+	// can children create appearance
+	CanChildrenCreateAppearance bool `json:"can_children_create_appearance,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 3
