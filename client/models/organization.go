@@ -24,9 +24,20 @@ type Organization struct {
 	// admins
 	Admins []*MemberOrg `json:"admins"`
 
+	// appearance
+	Appearance *Appearance `json:"appearance,omitempty"`
+
 	// blocked
 	// Required: true
 	Blocked []string `json:"blocked"`
+
+	// can children create appearance
+	// Required: true
+	CanChildrenCreateAppearance *bool `json:"can_children_create_appearance"`
+
+	// can create appearance
+	// Required: true
+	CanCreateAppearance *bool `json:"can_create_appearance"`
 
 	// canonical
 	// Required: true
@@ -87,7 +98,19 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateAppearance(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateBlocked(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCanChildrenCreateAppearance(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCanCreateAppearance(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -166,9 +189,45 @@ func (m *Organization) validateAdmins(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Organization) validateAppearance(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Appearance) { // not required
+		return nil
+	}
+
+	if m.Appearance != nil {
+		if err := m.Appearance.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("appearance")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *Organization) validateBlocked(formats strfmt.Registry) error {
 
 	if err := validate.Required("blocked", "body", m.Blocked); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateCanChildrenCreateAppearance(formats strfmt.Registry) error {
+
+	if err := validate.Required("can_children_create_appearance", "body", m.CanChildrenCreateAppearance); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateCanCreateAppearance(formats strfmt.Registry) error {
+
+	if err := validate.Required("can_create_appearance", "body", m.CanCreateAppearance); err != nil {
 		return err
 	}
 
