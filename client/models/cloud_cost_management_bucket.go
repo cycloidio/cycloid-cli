@@ -30,9 +30,17 @@ type CloudCostManagementBucket struct {
 	// buckets
 	Buckets []*CloudCostManagementBucket `json:"buckets"`
 
+	// The total CO2e emissions for the aggregated usage, in metric tons.
+	// Required: true
+	Co2e *float64 `json:"co2e"`
+
 	// cost
 	// Required: true
 	Cost *float64 `json:"cost"`
+
+	// The total energy consumption for the aggregated usage, in kwh
+	// Required: true
+	Kwh *float64 `json:"kwh"`
 
 	// The value of the aggregation term, for example if we aggregate cost
 	// by region aggregate_value can be us-east-2, if we aggregate by project
@@ -50,7 +58,15 @@ func (m *CloudCostManagementBucket) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCo2e(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCost(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateKwh(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -89,9 +105,27 @@ func (m *CloudCostManagementBucket) validateBuckets(formats strfmt.Registry) err
 	return nil
 }
 
+func (m *CloudCostManagementBucket) validateCo2e(formats strfmt.Registry) error {
+
+	if err := validate.Required("co2e", "body", m.Co2e); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *CloudCostManagementBucket) validateCost(formats strfmt.Registry) error {
 
 	if err := validate.Required("cost", "body", m.Cost); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CloudCostManagementBucket) validateKwh(formats strfmt.Registry) error {
+
+	if err := validate.Required("kwh", "body", m.Kwh); err != nil {
 		return err
 	}
 

@@ -25,9 +25,17 @@ type CloudCostManagementHistogram struct {
 	// Required: true
 	Buckets []*CloudCostManagementBucket `json:"buckets"`
 
-	// the total cost for the period
+	// The total CO2e emissions for the period, in metric tons.
+	// Required: true
+	Co2e *float64 `json:"co2e"`
+
+	// The total cost for the period.
 	// Required: true
 	Cost *float64 `json:"cost"`
+
+	// The total energy consumption for the period, in kwh.
+	// Required: true
+	Kwh *float64 `json:"kwh"`
 }
 
 // Validate validates this cloud cost management histogram
@@ -38,7 +46,15 @@ func (m *CloudCostManagementHistogram) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCo2e(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCost(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateKwh(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -73,9 +89,27 @@ func (m *CloudCostManagementHistogram) validateBuckets(formats strfmt.Registry) 
 	return nil
 }
 
+func (m *CloudCostManagementHistogram) validateCo2e(formats strfmt.Registry) error {
+
+	if err := validate.Required("co2e", "body", m.Co2e); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *CloudCostManagementHistogram) validateCost(formats strfmt.Registry) error {
 
 	if err := validate.Required("cost", "body", m.Cost); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CloudCostManagementHistogram) validateKwh(formats strfmt.Registry) error {
+
+	if err := validate.Required("kwh", "body", m.Kwh); err != nil {
 		return err
 	}
 
