@@ -29,7 +29,8 @@ type CloudProviderAzureConfiguration struct {
 	// The Azure resource group name of the configuration
 	//
 	// Required: true
-	ResourceGroupName *string `json:"resource_group_name"`
+	// Min Items: 1
+	ResourceGroupNames []string `json:"resource_group_names"`
 }
 
 // Type gets the type of this subtype
@@ -44,7 +45,7 @@ func (m *CloudProviderAzureConfiguration) SetType(val string) {
 
 // Environment gets the environment of this subtype
 
-// ResourceGroupName gets the resource group name of this subtype
+// ResourceGroupNames gets the resource group names of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *CloudProviderAzureConfiguration) UnmarshalJSON(raw []byte) error {
@@ -58,7 +59,8 @@ func (m *CloudProviderAzureConfiguration) UnmarshalJSON(raw []byte) error {
 		// The Azure resource group name of the configuration
 		//
 		// Required: true
-		ResourceGroupName *string `json:"resource_group_name"`
+		// Min Items: 1
+		ResourceGroupNames []string `json:"resource_group_names"`
 	}
 	buf := bytes.NewBuffer(raw)
 	dec := json.NewDecoder(buf)
@@ -90,7 +92,7 @@ func (m *CloudProviderAzureConfiguration) UnmarshalJSON(raw []byte) error {
 
 	result.Environment = data.Environment
 
-	result.ResourceGroupName = data.ResourceGroupName
+	result.ResourceGroupNames = data.ResourceGroupNames
 
 	*m = result
 
@@ -111,12 +113,13 @@ func (m CloudProviderAzureConfiguration) MarshalJSON() ([]byte, error) {
 		// The Azure resource group name of the configuration
 		//
 		// Required: true
-		ResourceGroupName *string `json:"resource_group_name"`
+		// Min Items: 1
+		ResourceGroupNames []string `json:"resource_group_names"`
 	}{
 
 		Environment: m.Environment,
 
-		ResourceGroupName: m.ResourceGroupName,
+		ResourceGroupNames: m.ResourceGroupNames,
 	},
 	)
 	if err != nil {
@@ -144,7 +147,7 @@ func (m *CloudProviderAzureConfiguration) Validate(formats strfmt.Registry) erro
 		res = append(res, err)
 	}
 
-	if err := m.validateResourceGroupName(formats); err != nil {
+	if err := m.validateResourceGroupNames(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -163,9 +166,15 @@ func (m *CloudProviderAzureConfiguration) validateEnvironment(formats strfmt.Reg
 	return nil
 }
 
-func (m *CloudProviderAzureConfiguration) validateResourceGroupName(formats strfmt.Registry) error {
+func (m *CloudProviderAzureConfiguration) validateResourceGroupNames(formats strfmt.Registry) error {
 
-	if err := validate.Required("resource_group_name", "body", m.ResourceGroupName); err != nil {
+	if err := validate.Required("resource_group_names", "body", m.ResourceGroupNames); err != nil {
+		return err
+	}
+
+	iResourceGroupNamesSize := int64(len(m.ResourceGroupNames))
+
+	if err := validate.MinItems("resource_group_names", "body", iResourceGroupNamesSize, 1); err != nil {
 		return err
 	}
 

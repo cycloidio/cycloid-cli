@@ -20,9 +20,17 @@ import (
 // swagger:model CloudCostManagementProjectProviderResources
 type CloudCostManagementProjectProviderResources struct {
 
+	// CO2e emissions for the project and provider, in metric tons
+	// Required: true
+	Co2e *float64 `json:"co2e"`
+
 	// Cost of the project for the provider
 	// Required: true
 	Cost *float64 `json:"cost"`
+
+	// Energy consumption for the project and provider, in kwh
+	// Required: true
+	Kwh *float64 `json:"kwh"`
 
 	// new resources
 	// Required: true
@@ -41,7 +49,15 @@ type CloudCostManagementProjectProviderResources struct {
 func (m *CloudCostManagementProjectProviderResources) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCo2e(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCost(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateKwh(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -63,9 +79,27 @@ func (m *CloudCostManagementProjectProviderResources) Validate(formats strfmt.Re
 	return nil
 }
 
+func (m *CloudCostManagementProjectProviderResources) validateCo2e(formats strfmt.Registry) error {
+
+	if err := validate.Required("co2e", "body", m.Co2e); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *CloudCostManagementProjectProviderResources) validateCost(formats strfmt.Registry) error {
 
 	if err := validate.Required("cost", "body", m.Cost); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *CloudCostManagementProjectProviderResources) validateKwh(formats strfmt.Registry) error {
+
+	if err := validate.Required("kwh", "body", m.Kwh); err != nil {
 		return err
 	}
 
