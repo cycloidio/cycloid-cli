@@ -28,8 +28,10 @@ func entryFromStruct(obj reflect.Value, h []string) []string {
 		switch value.Kind() {
 		case reflect.String:
 			values = append(values, value.String())
-		case reflect.Uint32:
+		case reflect.Uint32, reflect.Uint64:
 			values = append(values, strconv.FormatInt(int64(value.Uint()), 10))
+		case reflect.Bool:
+			values = append(values, fmt.Sprintf("%t", value.Bool()))
 		case reflect.Slice:
 			// Render Slice of strings
 			typ := value.Type().Elem()
@@ -47,11 +49,13 @@ func entryFromStruct(obj reflect.Value, h []string) []string {
 			switch elt.Kind() {
 			case reflect.String:
 				values = append(values, elt.String())
-			case reflect.Uint32:
+			case reflect.Uint32, reflect.Uint64:
 				values = append(values, strconv.FormatInt(int64(elt.Uint()), 10))
 			case reflect.Int64:
 				t := time.Unix(elt.Int(), 0)
 				values = append(values, t.Format(time.RFC3339))
+			case reflect.Bool:
+				values = append(values, fmt.Sprintf("%t", elt.Bool()))
 			default:
 				// in the case we don't support the type, we print it
 				// for further integration
@@ -141,7 +145,6 @@ func generate(obj interface{}, opts printer.Options) ([]string, [][]string, erro
 }
 
 func (t Table) Print(obj interface{}, opts printer.Options, w io.Writer) error {
-
 	// TODO: init the array using the opts
 	// given by the user
 	table := tablewriter.NewWriter(w)

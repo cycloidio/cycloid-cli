@@ -45,8 +45,14 @@ type CloudCostManagementDashboard struct {
 	// Required: true
 	Providers *CloudCostManagementHistogram `json:"providers"`
 
+	// total co2e
+	TotalCo2e float64 `json:"total_co2e,omitempty"`
+
 	// total cost
 	TotalCost float64 `json:"total_cost,omitempty"`
+
+	// total kwh
+	TotalKwh float64 `json:"total_kwh,omitempty"`
 }
 
 // Validate validates this cloud cost management dashboard

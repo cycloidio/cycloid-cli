@@ -36,7 +36,7 @@ type NewAppearance struct {
 
 	// footer
 	// Required: true
-	// Max Length: 50
+	// Max Length: 1000
 	// Min Length: 0
 	Footer *string `json:"footer"`
 
@@ -50,6 +50,12 @@ type NewAppearance struct {
 	// Max Length: 50
 	// Min Length: 1
 	Name *string `json:"name"`
+
+	// tab title
+	// Required: true
+	// Max Length: 50
+	// Min Length: 1
+	TabTitle *string `json:"tab_title"`
 }
 
 // Validate validates this new appearance
@@ -77,6 +83,10 @@ func (m *NewAppearance) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTabTitle(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -144,7 +154,7 @@ func (m *NewAppearance) validateFooter(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("footer", "body", string(*m.Footer), 50); err != nil {
+	if err := validate.MaxLength("footer", "body", string(*m.Footer), 1000); err != nil {
 		return err
 	}
 
@@ -175,6 +185,23 @@ func (m *NewAppearance) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MaxLength("name", "body", string(*m.Name), 50); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewAppearance) validateTabTitle(formats strfmt.Registry) error {
+
+	if err := validate.Required("tab_title", "body", m.TabTitle); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("tab_title", "body", string(*m.TabTitle), 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("tab_title", "body", string(*m.TabTitle), 50); err != nil {
 		return err
 	}
 

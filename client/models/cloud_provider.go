@@ -31,7 +31,7 @@ type CloudProvider struct {
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	// Enum: [aws google azurerm flexibleengine openstack scaleway vmware ovh alibaba oracle]
+	// Enum: [aws google azurerm flexibleengine openstack scaleway vmware ovh alibaba oracle vsphere]
 	Canonical *string `json:"canonical"`
 
 	// created at
@@ -111,7 +111,7 @@ var cloudProviderTypeCanonicalPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["aws","google","azurerm","flexibleengine","openstack","scaleway","vmware","ovh","alibaba","oracle"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["aws","google","azurerm","flexibleengine","openstack","scaleway","vmware","ovh","alibaba","oracle","vsphere"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -150,6 +150,9 @@ const (
 
 	// CloudProviderCanonicalOracle captures enum value "oracle"
 	CloudProviderCanonicalOracle string = "oracle"
+
+	// CloudProviderCanonicalVsphere captures enum value "vsphere"
+	CloudProviderCanonicalVsphere string = "vsphere"
 )
 
 // prop value enum
