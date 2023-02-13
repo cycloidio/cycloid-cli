@@ -1,8 +1,0 @@
-component: CLI
-kind: CHANGED
-body: "Update client to version v4.0.17"
-time: 2023-02-09T11:54:54.326991620+00:00
-custom:
-  DETAILS: ""
-  PR: "178"
-  TYPE: CLI
