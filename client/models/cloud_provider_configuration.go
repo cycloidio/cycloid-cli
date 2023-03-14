@@ -117,6 +117,13 @@ func unmarshalCloudProviderConfiguration(data []byte, consumer runtime.Consumer)
 		}
 		return &result, nil
 
+	case "CloudProviderVMWareVSphereConfiguration":
+		var result CloudProviderVMWareVSphereConfiguration
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
 	}
 	return nil, errors.New(422, "invalid type value: %q", getType.Type)
 
