@@ -74,6 +74,14 @@ type UpdateProject struct {
 	// Required: true
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+:[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
+
+	// This will be used to assert that the Project is in it's last updated form
+	// because if not we could have inconsistencies with the environments. The
+	// format is in seconds, basically UNIX format.
+	//
+	// Required: true
+	// Minimum: 0
+	UpdatedAt *uint64 `json:"updated_at"`
 }
 
 // Validate validates this update project
@@ -101,6 +109,10 @@ func (m *UpdateProject) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateServiceCatalogRef(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -259,6 +271,19 @@ func (m *UpdateProject) validateServiceCatalogRef(formats strfmt.Registry) error
 	}
 
 	if err := validate.Pattern("service_catalog_ref", "body", string(*m.ServiceCatalogRef), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+:[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UpdateProject) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
