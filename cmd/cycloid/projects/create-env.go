@@ -123,7 +123,8 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		projectData.Description,
 		*projectData.ServiceCatalog.Ref,
 		*projectData.Owner.Username,
-		projectData.ConfigRepositoryCanonical)
+		projectData.ConfigRepositoryCanonical,
+		*projectData.UpdatedAt)
 
 	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
