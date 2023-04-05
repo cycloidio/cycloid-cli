@@ -266,23 +266,23 @@ func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraf
 }
 
 /*
-GetServiceCatalogs Return all the service catalogs
+ListServiceCatalogs Return all the service catalogs
 */
-func (a *Client) GetServiceCatalogs(params *GetServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogsOK, error) {
+func (a *Client) ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter) (*ListServiceCatalogsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetServiceCatalogsParams()
+		params = NewListServiceCatalogsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getServiceCatalogs",
+		ID:                 "listServiceCatalogs",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetServiceCatalogsReader{formats: a.formats},
+		Reader:             &ListServiceCatalogsReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -290,12 +290,12 @@ func (a *Client) GetServiceCatalogs(params *GetServiceCatalogsParams, authInfo r
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetServiceCatalogsOK)
+	success, ok := result.(*ListServiceCatalogsOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*GetServiceCatalogsDefault)
+	unexpectedSuccess := result.(*ListServiceCatalogsDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

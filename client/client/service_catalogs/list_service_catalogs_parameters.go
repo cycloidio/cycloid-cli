@@ -18,14 +18,14 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetServiceCatalogsParams creates a new GetServiceCatalogsParams object
+// NewListServiceCatalogsParams creates a new ListServiceCatalogsParams object
 // with the default values initialized.
-func NewGetServiceCatalogsParams() *GetServiceCatalogsParams {
+func NewListServiceCatalogsParams() *ListServiceCatalogsParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetServiceCatalogsParams{
+	return &ListServiceCatalogsParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -33,14 +33,14 @@ func NewGetServiceCatalogsParams() *GetServiceCatalogsParams {
 	}
 }
 
-// NewGetServiceCatalogsParamsWithTimeout creates a new GetServiceCatalogsParams object
+// NewListServiceCatalogsParamsWithTimeout creates a new ListServiceCatalogsParams object
 // with the default values initialized, and the ability to set a timeout on a request
-func NewGetServiceCatalogsParamsWithTimeout(timeout time.Duration) *GetServiceCatalogsParams {
+func NewListServiceCatalogsParamsWithTimeout(timeout time.Duration) *ListServiceCatalogsParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetServiceCatalogsParams{
+	return &ListServiceCatalogsParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -48,14 +48,14 @@ func NewGetServiceCatalogsParamsWithTimeout(timeout time.Duration) *GetServiceCa
 	}
 }
 
-// NewGetServiceCatalogsParamsWithContext creates a new GetServiceCatalogsParams object
+// NewListServiceCatalogsParamsWithContext creates a new ListServiceCatalogsParams object
 // with the default values initialized, and the ability to set a context for a request
-func NewGetServiceCatalogsParamsWithContext(ctx context.Context) *GetServiceCatalogsParams {
+func NewListServiceCatalogsParamsWithContext(ctx context.Context) *ListServiceCatalogsParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetServiceCatalogsParams{
+	return &ListServiceCatalogsParams{
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
 
@@ -63,24 +63,24 @@ func NewGetServiceCatalogsParamsWithContext(ctx context.Context) *GetServiceCata
 	}
 }
 
-// NewGetServiceCatalogsParamsWithHTTPClient creates a new GetServiceCatalogsParams object
+// NewListServiceCatalogsParamsWithHTTPClient creates a new ListServiceCatalogsParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
-func NewGetServiceCatalogsParamsWithHTTPClient(client *http.Client) *GetServiceCatalogsParams {
+func NewListServiceCatalogsParamsWithHTTPClient(client *http.Client) *ListServiceCatalogsParams {
 	var (
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetServiceCatalogsParams{
+	return &ListServiceCatalogsParams{
 		PageIndex:  &pageIndexDefault,
 		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*GetServiceCatalogsParams contains all the parameters to send to the API endpoint
-for the get service catalogs operation typically these are written to a http.Request
+/*ListServiceCatalogsParams contains all the parameters to send to the API endpoint
+for the list service catalogs operation typically these are written to a http.Request
 */
-type GetServiceCatalogsParams struct {
+type ListServiceCatalogsParams struct {
 
 	/*OrganizationCanonical
 	  A canonical of an organization.
@@ -120,107 +120,107 @@ type GetServiceCatalogsParams struct {
 	HTTPClient *http.Client
 }
 
-// WithTimeout adds the timeout to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithTimeout(timeout time.Duration) *GetServiceCatalogsParams {
+// WithTimeout adds the timeout to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithTimeout(timeout time.Duration) *ListServiceCatalogsParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetTimeout(timeout time.Duration) {
+// SetTimeout adds the timeout to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetTimeout(timeout time.Duration) {
 	o.timeout = timeout
 }
 
-// WithContext adds the context to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithContext(ctx context.Context) *GetServiceCatalogsParams {
+// WithContext adds the context to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithContext(ctx context.Context) *ListServiceCatalogsParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetContext(ctx context.Context) {
+// SetContext adds the context to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetContext(ctx context.Context) {
 	o.Context = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithHTTPClient(client *http.Client) *GetServiceCatalogsParams {
+// WithHTTPClient adds the HTTPClient to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithHTTPClient(client *http.Client) *ListServiceCatalogsParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetHTTPClient(client *http.Client) {
+// SetHTTPClient adds the HTTPClient to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithOrganizationCanonical adds the organizationCanonical to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithOrganizationCanonical(organizationCanonical string) *GetServiceCatalogsParams {
+// WithOrganizationCanonical adds the organizationCanonical to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithOrganizationCanonical(organizationCanonical string) *ListServiceCatalogsParams {
 	o.SetOrganizationCanonical(organizationCanonical)
 	return o
 }
 
-// SetOrganizationCanonical adds the organizationCanonical to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetOrganizationCanonical(organizationCanonical string) {
+// SetOrganizationCanonical adds the organizationCanonical to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithPageIndex adds the pageIndex to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithPageIndex(pageIndex *uint32) *GetServiceCatalogsParams {
+// WithPageIndex adds the pageIndex to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithPageIndex(pageIndex *uint32) *ListServiceCatalogsParams {
 	o.SetPageIndex(pageIndex)
 	return o
 }
 
-// SetPageIndex adds the pageIndex to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetPageIndex(pageIndex *uint32) {
+// SetPageIndex adds the pageIndex to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetPageIndex(pageIndex *uint32) {
 	o.PageIndex = pageIndex
 }
 
-// WithPageSize adds the pageSize to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithPageSize(pageSize *uint32) *GetServiceCatalogsParams {
+// WithPageSize adds the pageSize to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithPageSize(pageSize *uint32) *ListServiceCatalogsParams {
 	o.SetPageSize(pageSize)
 	return o
 }
 
-// SetPageSize adds the pageSize to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetPageSize(pageSize *uint32) {
+// SetPageSize adds the pageSize to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
-// WithServiceCatalogOwn adds the serviceCatalogOwn to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithServiceCatalogOwn(serviceCatalogOwn *bool) *GetServiceCatalogsParams {
+// WithServiceCatalogOwn adds the serviceCatalogOwn to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithServiceCatalogOwn(serviceCatalogOwn *bool) *ListServiceCatalogsParams {
 	o.SetServiceCatalogOwn(serviceCatalogOwn)
 	return o
 }
 
-// SetServiceCatalogOwn adds the serviceCatalogOwn to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetServiceCatalogOwn(serviceCatalogOwn *bool) {
+// SetServiceCatalogOwn adds the serviceCatalogOwn to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetServiceCatalogOwn(serviceCatalogOwn *bool) {
 	o.ServiceCatalogOwn = serviceCatalogOwn
 }
 
-// WithServiceCatalogStatus adds the serviceCatalogStatus to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithServiceCatalogStatus(serviceCatalogStatus *string) *GetServiceCatalogsParams {
+// WithServiceCatalogStatus adds the serviceCatalogStatus to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithServiceCatalogStatus(serviceCatalogStatus *string) *ListServiceCatalogsParams {
 	o.SetServiceCatalogStatus(serviceCatalogStatus)
 	return o
 }
 
-// SetServiceCatalogStatus adds the serviceCatalogStatus to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetServiceCatalogStatus(serviceCatalogStatus *string) {
+// SetServiceCatalogStatus adds the serviceCatalogStatus to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetServiceCatalogStatus(serviceCatalogStatus *string) {
 	o.ServiceCatalogStatus = serviceCatalogStatus
 }
 
-// WithServiceCatalogTrusted adds the serviceCatalogTrusted to the get service catalogs params
-func (o *GetServiceCatalogsParams) WithServiceCatalogTrusted(serviceCatalogTrusted *bool) *GetServiceCatalogsParams {
+// WithServiceCatalogTrusted adds the serviceCatalogTrusted to the list service catalogs params
+func (o *ListServiceCatalogsParams) WithServiceCatalogTrusted(serviceCatalogTrusted *bool) *ListServiceCatalogsParams {
 	o.SetServiceCatalogTrusted(serviceCatalogTrusted)
 	return o
 }
 
-// SetServiceCatalogTrusted adds the serviceCatalogTrusted to the get service catalogs params
-func (o *GetServiceCatalogsParams) SetServiceCatalogTrusted(serviceCatalogTrusted *bool) {
+// SetServiceCatalogTrusted adds the serviceCatalogTrusted to the list service catalogs params
+func (o *ListServiceCatalogsParams) SetServiceCatalogTrusted(serviceCatalogTrusted *bool) {
 	o.ServiceCatalogTrusted = serviceCatalogTrusted
 }
 
 // WriteToRequest writes these params to a swagger request
-func (o *GetServiceCatalogsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
+func (o *ListServiceCatalogsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
 	if err := r.SetTimeout(o.timeout); err != nil {
 		return err
