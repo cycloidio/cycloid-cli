@@ -46,6 +46,12 @@ type Environment struct {
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
+
+	// use case
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	UseCase string `json:"use_case,omitempty"`
 }
 
 // Validate validates this environment
@@ -69,6 +75,10 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateUseCase(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -150,6 +160,27 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Environment) validateUseCase(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.UseCase) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("use_case", "body", string(m.UseCase), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("use_case", "body", string(m.UseCase), 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("use_case", "body", string(m.UseCase), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
