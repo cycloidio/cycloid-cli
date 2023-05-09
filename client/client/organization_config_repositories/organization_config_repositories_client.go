@@ -127,40 +127,6 @@ func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, au
 }
 
 /*
-GetConfigRepositories Return all the config repositories
-*/
-func (a *Client) GetConfigRepositories(params *GetConfigRepositoriesParams, authInfo runtime.ClientAuthInfoWriter) (*GetConfigRepositoriesOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetConfigRepositoriesParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getConfigRepositories",
-		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/config_repositories",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetConfigRepositoriesReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetConfigRepositoriesOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	unexpectedSuccess := result.(*GetConfigRepositoriesDefault)
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
 GetConfigRepository Return the Config Repository
 */
 func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter) (*GetConfigRepositoryOK, error) {
@@ -191,6 +157,40 @@ func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetConfigRepositoryDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ListConfigRepositories Return all the config repositories
+*/
+func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, authInfo runtime.ClientAuthInfoWriter) (*ListConfigRepositoriesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewListConfigRepositoriesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "listConfigRepositories",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/config_repositories",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ListConfigRepositoriesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ListConfigRepositoriesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ListConfigRepositoriesDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
