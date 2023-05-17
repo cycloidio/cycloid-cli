@@ -159,6 +159,20 @@ func unmarshalExternalBackendConfiguration(data []byte, consumer runtime.Consume
 		}
 		return &result, nil
 
+	case "GitLabHTTPStorage":
+		var result GitLabHTTPStorage
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
+	case "HTTPStorage":
+		var result HTTPStorage
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
 	case "SwiftRemoteTFState":
 		var result SwiftRemoteTFState
 		if err := consumer.Consume(buf2, &result); err != nil {

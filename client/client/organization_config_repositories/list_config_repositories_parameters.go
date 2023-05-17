@@ -18,15 +18,15 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetConfigRepositoriesParams creates a new GetConfigRepositoriesParams object
+// NewListConfigRepositoriesParams creates a new ListConfigRepositoriesParams object
 // with the default values initialized.
-func NewGetConfigRepositoriesParams() *GetConfigRepositoriesParams {
+func NewListConfigRepositoriesParams() *ListConfigRepositoriesParams {
 	var (
 		defaultVarDefault = bool(false)
 		pageIndexDefault  = uint32(1)
 		pageSizeDefault   = uint32(1000)
 	)
-	return &GetConfigRepositoriesParams{
+	return &ListConfigRepositoriesParams{
 		Default:   &defaultVarDefault,
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
@@ -35,15 +35,15 @@ func NewGetConfigRepositoriesParams() *GetConfigRepositoriesParams {
 	}
 }
 
-// NewGetConfigRepositoriesParamsWithTimeout creates a new GetConfigRepositoriesParams object
+// NewListConfigRepositoriesParamsWithTimeout creates a new ListConfigRepositoriesParams object
 // with the default values initialized, and the ability to set a timeout on a request
-func NewGetConfigRepositoriesParamsWithTimeout(timeout time.Duration) *GetConfigRepositoriesParams {
+func NewListConfigRepositoriesParamsWithTimeout(timeout time.Duration) *ListConfigRepositoriesParams {
 	var (
 		defaultVarDefault = bool(false)
 		pageIndexDefault  = uint32(1)
 		pageSizeDefault   = uint32(1000)
 	)
-	return &GetConfigRepositoriesParams{
+	return &ListConfigRepositoriesParams{
 		Default:   &defaultVarDefault,
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
@@ -52,15 +52,15 @@ func NewGetConfigRepositoriesParamsWithTimeout(timeout time.Duration) *GetConfig
 	}
 }
 
-// NewGetConfigRepositoriesParamsWithContext creates a new GetConfigRepositoriesParams object
+// NewListConfigRepositoriesParamsWithContext creates a new ListConfigRepositoriesParams object
 // with the default values initialized, and the ability to set a context for a request
-func NewGetConfigRepositoriesParamsWithContext(ctx context.Context) *GetConfigRepositoriesParams {
+func NewListConfigRepositoriesParamsWithContext(ctx context.Context) *ListConfigRepositoriesParams {
 	var (
 		defaultDefault   = bool(false)
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetConfigRepositoriesParams{
+	return &ListConfigRepositoriesParams{
 		Default:   &defaultDefault,
 		PageIndex: &pageIndexDefault,
 		PageSize:  &pageSizeDefault,
@@ -69,15 +69,15 @@ func NewGetConfigRepositoriesParamsWithContext(ctx context.Context) *GetConfigRe
 	}
 }
 
-// NewGetConfigRepositoriesParamsWithHTTPClient creates a new GetConfigRepositoriesParams object
+// NewListConfigRepositoriesParamsWithHTTPClient creates a new ListConfigRepositoriesParams object
 // with the default values initialized, and the ability to set a custom HTTPClient for a request
-func NewGetConfigRepositoriesParamsWithHTTPClient(client *http.Client) *GetConfigRepositoriesParams {
+func NewListConfigRepositoriesParamsWithHTTPClient(client *http.Client) *ListConfigRepositoriesParams {
 	var (
 		defaultDefault   = bool(false)
 		pageIndexDefault = uint32(1)
 		pageSizeDefault  = uint32(1000)
 	)
-	return &GetConfigRepositoriesParams{
+	return &ListConfigRepositoriesParams{
 		Default:    &defaultDefault,
 		PageIndex:  &pageIndexDefault,
 		PageSize:   &pageSizeDefault,
@@ -85,10 +85,10 @@ func NewGetConfigRepositoriesParamsWithHTTPClient(client *http.Client) *GetConfi
 	}
 }
 
-/*GetConfigRepositoriesParams contains all the parameters to send to the API endpoint
-for the get config repositories operation typically these are written to a http.Request
+/*ListConfigRepositoriesParams contains all the parameters to send to the API endpoint
+for the list config repositories operation typically these are written to a http.Request
 */
-type GetConfigRepositoriesParams struct {
+type ListConfigRepositoriesParams struct {
 
 	/*Default
 	  Value describing whether to return default
@@ -116,85 +116,85 @@ type GetConfigRepositoriesParams struct {
 	HTTPClient *http.Client
 }
 
-// WithTimeout adds the timeout to the get config repositories params
-func (o *GetConfigRepositoriesParams) WithTimeout(timeout time.Duration) *GetConfigRepositoriesParams {
+// WithTimeout adds the timeout to the list config repositories params
+func (o *ListConfigRepositoriesParams) WithTimeout(timeout time.Duration) *ListConfigRepositoriesParams {
 	o.SetTimeout(timeout)
 	return o
 }
 
-// SetTimeout adds the timeout to the get config repositories params
-func (o *GetConfigRepositoriesParams) SetTimeout(timeout time.Duration) {
+// SetTimeout adds the timeout to the list config repositories params
+func (o *ListConfigRepositoriesParams) SetTimeout(timeout time.Duration) {
 	o.timeout = timeout
 }
 
-// WithContext adds the context to the get config repositories params
-func (o *GetConfigRepositoriesParams) WithContext(ctx context.Context) *GetConfigRepositoriesParams {
+// WithContext adds the context to the list config repositories params
+func (o *ListConfigRepositoriesParams) WithContext(ctx context.Context) *ListConfigRepositoriesParams {
 	o.SetContext(ctx)
 	return o
 }
 
-// SetContext adds the context to the get config repositories params
-func (o *GetConfigRepositoriesParams) SetContext(ctx context.Context) {
+// SetContext adds the context to the list config repositories params
+func (o *ListConfigRepositoriesParams) SetContext(ctx context.Context) {
 	o.Context = ctx
 }
 
-// WithHTTPClient adds the HTTPClient to the get config repositories params
-func (o *GetConfigRepositoriesParams) WithHTTPClient(client *http.Client) *GetConfigRepositoriesParams {
+// WithHTTPClient adds the HTTPClient to the list config repositories params
+func (o *ListConfigRepositoriesParams) WithHTTPClient(client *http.Client) *ListConfigRepositoriesParams {
 	o.SetHTTPClient(client)
 	return o
 }
 
-// SetHTTPClient adds the HTTPClient to the get config repositories params
-func (o *GetConfigRepositoriesParams) SetHTTPClient(client *http.Client) {
+// SetHTTPClient adds the HTTPClient to the list config repositories params
+func (o *ListConfigRepositoriesParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithDefault adds the defaultVar to the get config repositories params
-func (o *GetConfigRepositoriesParams) WithDefault(defaultVar *bool) *GetConfigRepositoriesParams {
+// WithDefault adds the defaultVar to the list config repositories params
+func (o *ListConfigRepositoriesParams) WithDefault(defaultVar *bool) *ListConfigRepositoriesParams {
 	o.SetDefault(defaultVar)
 	return o
 }
 
-// SetDefault adds the default to the get config repositories params
-func (o *GetConfigRepositoriesParams) SetDefault(defaultVar *bool) {
+// SetDefault adds the default to the list config repositories params
+func (o *ListConfigRepositoriesParams) SetDefault(defaultVar *bool) {
 	o.Default = defaultVar
 }
 
-// WithOrganizationCanonical adds the organizationCanonical to the get config repositories params
-func (o *GetConfigRepositoriesParams) WithOrganizationCanonical(organizationCanonical string) *GetConfigRepositoriesParams {
+// WithOrganizationCanonical adds the organizationCanonical to the list config repositories params
+func (o *ListConfigRepositoriesParams) WithOrganizationCanonical(organizationCanonical string) *ListConfigRepositoriesParams {
 	o.SetOrganizationCanonical(organizationCanonical)
 	return o
 }
 
-// SetOrganizationCanonical adds the organizationCanonical to the get config repositories params
-func (o *GetConfigRepositoriesParams) SetOrganizationCanonical(organizationCanonical string) {
+// SetOrganizationCanonical adds the organizationCanonical to the list config repositories params
+func (o *ListConfigRepositoriesParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithPageIndex adds the pageIndex to the get config repositories params
-func (o *GetConfigRepositoriesParams) WithPageIndex(pageIndex *uint32) *GetConfigRepositoriesParams {
+// WithPageIndex adds the pageIndex to the list config repositories params
+func (o *ListConfigRepositoriesParams) WithPageIndex(pageIndex *uint32) *ListConfigRepositoriesParams {
 	o.SetPageIndex(pageIndex)
 	return o
 }
 
-// SetPageIndex adds the pageIndex to the get config repositories params
-func (o *GetConfigRepositoriesParams) SetPageIndex(pageIndex *uint32) {
+// SetPageIndex adds the pageIndex to the list config repositories params
+func (o *ListConfigRepositoriesParams) SetPageIndex(pageIndex *uint32) {
 	o.PageIndex = pageIndex
 }
 
-// WithPageSize adds the pageSize to the get config repositories params
-func (o *GetConfigRepositoriesParams) WithPageSize(pageSize *uint32) *GetConfigRepositoriesParams {
+// WithPageSize adds the pageSize to the list config repositories params
+func (o *ListConfigRepositoriesParams) WithPageSize(pageSize *uint32) *ListConfigRepositoriesParams {
 	o.SetPageSize(pageSize)
 	return o
 }
 
-// SetPageSize adds the pageSize to the get config repositories params
-func (o *GetConfigRepositoriesParams) SetPageSize(pageSize *uint32) {
+// SetPageSize adds the pageSize to the list config repositories params
+func (o *ListConfigRepositoriesParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
 // WriteToRequest writes these params to a swagger request
-func (o *GetConfigRepositoriesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
+func (o *ListConfigRepositoriesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
 	if err := r.SetTimeout(o.timeout); err != nil {
 		return err
