@@ -38,7 +38,7 @@ func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, au
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &CreateConfigRepositoryReader{formats: a.formats},
@@ -72,7 +72,7 @@ func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConf
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &CreateConfigRepositoryConfigReader{formats: a.formats},
@@ -106,7 +106,7 @@ func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, au
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &DeleteConfigRepositoryReader{formats: a.formats},
@@ -127,40 +127,6 @@ func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, au
 }
 
 /*
-GetConfigRepositories Return all the config repositories
-*/
-func (a *Client) GetConfigRepositories(params *GetConfigRepositoriesParams, authInfo runtime.ClientAuthInfoWriter) (*GetConfigRepositoriesOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetConfigRepositoriesParams()
-	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getConfigRepositories",
-		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/config_repositories",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetConfigRepositoriesReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	})
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetConfigRepositoriesOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	unexpectedSuccess := result.(*GetConfigRepositoriesDefault)
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
 GetConfigRepository Return the Config Repository
 */
 func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter) (*GetConfigRepositoryOK, error) {
@@ -174,7 +140,7 @@ func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetConfigRepositoryReader{formats: a.formats},
@@ -195,6 +161,40 @@ func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo
 }
 
 /*
+ListConfigRepositories Return all the config repositories
+*/
+func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, authInfo runtime.ClientAuthInfoWriter) (*ListConfigRepositoriesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewListConfigRepositoriesParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "listConfigRepositories",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/config_repositories",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ListConfigRepositoriesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ListConfigRepositoriesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ListConfigRepositoriesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 UpdateConfigRepository Update a config repository
 */
 func (a *Client) UpdateConfigRepository(params *UpdateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateConfigRepositoryOK, error) {
@@ -208,7 +208,7 @@ func (a *Client) UpdateConfigRepository(params *UpdateConfigRepositoryParams, au
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &UpdateConfigRepositoryReader{formats: a.formats},
