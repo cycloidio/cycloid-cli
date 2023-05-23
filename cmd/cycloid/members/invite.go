@@ -15,7 +15,7 @@ func NewInviteCommand() *cobra.Command {
 	var (
 		example = `
 	# Invite a member within my-org organization
-	cy --org my-org members invite --email user@email.com
+	cy --org my-org members invite --role organization-member --email user@email.com
 	`
 		short = "Invite the organization member"
 		long  = short

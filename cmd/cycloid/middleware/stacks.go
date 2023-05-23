@@ -12,10 +12,10 @@ import (
 
 func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 
-	params := service_catalogs.NewGetServiceCatalogsParams()
+	params := service_catalogs.NewListServiceCatalogsParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalogs(params, common.ClientCredentials(&org))
+	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}

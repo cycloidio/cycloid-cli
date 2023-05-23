@@ -38,7 +38,7 @@ func (a *Client) GetWorkers(params *GetWorkersParams, authInfo runtime.ClientAut
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/workers",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetWorkersReader{formats: a.formats},
