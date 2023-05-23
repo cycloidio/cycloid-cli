@@ -38,7 +38,7 @@ func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams) (*CreateOAuthUse
 		Method:             "POST",
 		PathPattern:        "/user/{social_type}/oauth",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &CreateOAuthUserReader{formats: a.formats},
@@ -71,7 +71,7 @@ func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo run
 		Method:             "DELETE",
 		PathPattern:        "/user",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &DeleteUserAccountReader{formats: a.formats},
@@ -105,7 +105,7 @@ func (a *Client) EmailVerification(params *EmailVerificationParams) (*EmailVerif
 		Method:             "PUT",
 		PathPattern:        "/user/email/verification/{verification_token}",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &EmailVerificationReader{formats: a.formats},
@@ -138,7 +138,7 @@ func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams) 
 		Method:             "POST",
 		PathPattern:        "/user/email/verification",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &EmailVerificationResendReader{formats: a.formats},
@@ -171,7 +171,7 @@ func (a *Client) GetOAuthUser(params *GetOAuthUserParams) (*GetOAuthUserOK, erro
 		Method:             "GET",
 		PathPattern:        "/user/{social_type}/oauth",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetOAuthUserReader{formats: a.formats},
@@ -204,7 +204,7 @@ func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.C
 		Method:             "GET",
 		PathPattern:        "/user",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetUserAccountReader{formats: a.formats},
@@ -225,6 +225,36 @@ func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.C
 }
 
 /*
+HandleAWSMarketplaceUserEntitlement This endpoint handles redirections from AWS Marketplace to our system.
+If user doesn't exist, he'll be redirected to registration page.
+If user exist, he'll be redirected to login page.
+
+*/
+func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplaceUserEntitlementParams) error {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewHandleAWSMarketplaceUserEntitlementParams()
+	}
+
+	_, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "handleAWSMarketplaceUserEntitlement",
+		Method:             "POST",
+		PathPattern:        "/api/user/aws_marketplace/entitlement",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &HandleAWSMarketplaceUserEntitlementReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+/*
 Login Authenticate a user and return a new JWT token.
 */
 func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
@@ -238,7 +268,7 @@ func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
 		Method:             "POST",
 		PathPattern:        "/user/login",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &LoginReader{formats: a.formats},
@@ -271,7 +301,7 @@ func (a *Client) PasswordResetReq(params *PasswordResetReqParams) (*PasswordRese
 		Method:             "POST",
 		PathPattern:        "/user/reset_password",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &PasswordResetReqReader{formats: a.formats},
@@ -304,7 +334,7 @@ func (a *Client) PasswordResetUpdate(params *PasswordResetUpdateParams) (*Passwo
 		Method:             "PUT",
 		PathPattern:        "/user/reset_password",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &PasswordResetUpdateReader{formats: a.formats},
@@ -337,7 +367,7 @@ func (a *Client) RefreshToken(params *RefreshTokenParams, authInfo runtime.Clien
 		Method:             "GET",
 		PathPattern:        "/user/refresh_token",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &RefreshTokenReader{formats: a.formats},
@@ -371,7 +401,7 @@ func (a *Client) SignUp(params *SignUpParams) (*SignUpNoContent, error) {
 		Method:             "POST",
 		PathPattern:        "/user",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &SignUpReader{formats: a.formats},
@@ -391,6 +421,39 @@ func (a *Client) SignUp(params *SignUpParams) (*SignUpNoContent, error) {
 }
 
 /*
+SignUpAWSMarketplace Create a new AWS Marketplace User.
+*/
+func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams) (*SignUpAWSMarketplaceNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewSignUpAWSMarketplaceParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "signUpAWSMarketplace",
+		Method:             "POST",
+		PathPattern:        "/user/aws_marketplace",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &SignUpAWSMarketplaceReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*SignUpAWSMarketplaceNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*SignUpAWSMarketplaceDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 UpdateUserAccount Update the information of the account of the authenticated user.
 */
 func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateUserAccountOK, error) {
@@ -404,7 +467,7 @@ func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo run
 		Method:             "PUT",
 		PathPattern:        "/user",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &UpdateUserAccountReader{formats: a.formats},
@@ -438,7 +501,7 @@ func (a *Client) UpdateUserGuide(params *UpdateUserGuideParams) (*UpdateUserGuid
 		Method:             "PUT",
 		PathPattern:        "/user/guide",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &UpdateUserGuideReader{formats: a.formats},

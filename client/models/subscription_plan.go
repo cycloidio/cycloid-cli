@@ -26,11 +26,6 @@ type SubscriptionPlan struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
 
-	// id
-	// Required: true
-	// Minimum: 1
-	ID *uint32 `json:"id"`
-
 	// name
 	// Required: true
 	// Min Length: 3
@@ -42,10 +37,6 @@ func (m *SubscriptionPlan) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -74,19 +65,6 @@ func (m *SubscriptionPlan) validateCanonical(formats strfmt.Registry) error {
 	}
 
 	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *SubscriptionPlan) validateID(formats strfmt.Registry) error {
-
-	if err := validate.Required("id", "body", m.ID); err != nil {
-		return err
-	}
-
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 

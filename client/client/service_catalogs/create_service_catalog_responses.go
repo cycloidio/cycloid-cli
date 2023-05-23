@@ -27,8 +27,8 @@ type CreateServiceCatalogReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *CreateServiceCatalogReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 202:
-		result := NewCreateServiceCatalogAccepted()
+	case 200:
+		result := NewCreateServiceCatalogOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -63,30 +63,30 @@ func (o *CreateServiceCatalogReader) ReadResponse(response runtime.ClientRespons
 	}
 }
 
-// NewCreateServiceCatalogAccepted creates a CreateServiceCatalogAccepted with default headers values
-func NewCreateServiceCatalogAccepted() *CreateServiceCatalogAccepted {
-	return &CreateServiceCatalogAccepted{}
+// NewCreateServiceCatalogOK creates a CreateServiceCatalogOK with default headers values
+func NewCreateServiceCatalogOK() *CreateServiceCatalogOK {
+	return &CreateServiceCatalogOK{}
 }
 
-/*CreateServiceCatalogAccepted handles this case with default header values.
+/*CreateServiceCatalogOK handles this case with default header values.
 
 The information of the service catalog.
 */
-type CreateServiceCatalogAccepted struct {
-	Payload *CreateServiceCatalogAcceptedBody
+type CreateServiceCatalogOK struct {
+	Payload *CreateServiceCatalogOKBody
 }
 
-func (o *CreateServiceCatalogAccepted) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalogs][%d] createServiceCatalogAccepted  %+v", 202, o.Payload)
+func (o *CreateServiceCatalogOK) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalogs][%d] createServiceCatalogOK  %+v", 200, o.Payload)
 }
 
-func (o *CreateServiceCatalogAccepted) GetPayload() *CreateServiceCatalogAcceptedBody {
+func (o *CreateServiceCatalogOK) GetPayload() *CreateServiceCatalogOKBody {
 	return o.Payload
 }
 
-func (o *CreateServiceCatalogAccepted) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *CreateServiceCatalogOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(CreateServiceCatalogAcceptedBody)
+	o.Payload = new(CreateServiceCatalogOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -281,18 +281,18 @@ func (o *CreateServiceCatalogDefault) readResponse(response runtime.ClientRespon
 	return nil
 }
 
-/*CreateServiceCatalogAcceptedBody create service catalog accepted body
-swagger:model CreateServiceCatalogAcceptedBody
+/*CreateServiceCatalogOKBody create service catalog o k body
+swagger:model CreateServiceCatalogOKBody
 */
-type CreateServiceCatalogAcceptedBody struct {
+type CreateServiceCatalogOKBody struct {
 
 	// data
 	// Required: true
 	Data *models.ServiceCatalog `json:"data"`
 }
 
-// Validate validates this create service catalog accepted body
-func (o *CreateServiceCatalogAcceptedBody) Validate(formats strfmt.Registry) error {
+// Validate validates this create service catalog o k body
+func (o *CreateServiceCatalogOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
@@ -305,16 +305,16 @@ func (o *CreateServiceCatalogAcceptedBody) Validate(formats strfmt.Registry) err
 	return nil
 }
 
-func (o *CreateServiceCatalogAcceptedBody) validateData(formats strfmt.Registry) error {
+func (o *CreateServiceCatalogOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("createServiceCatalogAccepted"+"."+"data", "body", o.Data); err != nil {
+	if err := validate.Required("createServiceCatalogOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("createServiceCatalogAccepted" + "." + "data")
+				return ve.ValidateName("createServiceCatalogOK" + "." + "data")
 			}
 			return err
 		}
@@ -324,7 +324,7 @@ func (o *CreateServiceCatalogAcceptedBody) validateData(formats strfmt.Registry)
 }
 
 // MarshalBinary interface implementation
-func (o *CreateServiceCatalogAcceptedBody) MarshalBinary() ([]byte, error) {
+func (o *CreateServiceCatalogOKBody) MarshalBinary() ([]byte, error) {
 	if o == nil {
 		return nil, nil
 	}
@@ -332,8 +332,8 @@ func (o *CreateServiceCatalogAcceptedBody) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (o *CreateServiceCatalogAcceptedBody) UnmarshalBinary(b []byte) error {
-	var res CreateServiceCatalogAcceptedBody
+func (o *CreateServiceCatalogOKBody) UnmarshalBinary(b []byte) error {
+	var res CreateServiceCatalogOKBody
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

@@ -29,7 +29,7 @@ type Client struct {
 /*
 CreateServiceCatalog Create a new Service Catalog
 */
-func (a *Client) CreateServiceCatalog(params *CreateServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter) (*CreateServiceCatalogAccepted, error) {
+func (a *Client) CreateServiceCatalog(params *CreateServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter) (*CreateServiceCatalogOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateServiceCatalogParams()
@@ -40,7 +40,7 @@ func (a *Client) CreateServiceCatalog(params *CreateServiceCatalogParams, authIn
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &CreateServiceCatalogReader{formats: a.formats},
@@ -51,12 +51,47 @@ func (a *Client) CreateServiceCatalog(params *CreateServiceCatalogParams, authIn
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*CreateServiceCatalogAccepted)
+	success, ok := result.(*CreateServiceCatalogOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*CreateServiceCatalogDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+CreateServiceCatalogFromTemplate Create a new Service Catalog using the ref and use case passed as template
+
+*/
+func (a *Client) CreateServiceCatalogFromTemplate(params *CreateServiceCatalogFromTemplateParams, authInfo runtime.ClientAuthInfoWriter) (*CreateServiceCatalogFromTemplateOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateServiceCatalogFromTemplateParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "createServiceCatalogFromTemplate",
+		Method:             "POST",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/template",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CreateServiceCatalogFromTemplateReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CreateServiceCatalogFromTemplateOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*CreateServiceCatalogFromTemplateDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -74,7 +109,7 @@ func (a *Client) DeleteServiceCatalog(params *DeleteServiceCatalogParams, authIn
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &DeleteServiceCatalogReader{formats: a.formats},
@@ -109,7 +144,7 @@ func (a *Client) GetServiceCatalog(params *GetServiceCatalogParams, authInfo run
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetServiceCatalogReader{formats: a.formats},
@@ -143,7 +178,7 @@ func (a *Client) GetServiceCatalogConfig(params *GetServiceCatalogConfigParams, 
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/config",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetServiceCatalogConfigReader{formats: a.formats},
@@ -177,7 +212,7 @@ func (a *Client) GetServiceCatalogTerraform(params *GetServiceCatalogTerraformPa
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetServiceCatalogTerraformReader{formats: a.formats},
@@ -211,7 +246,7 @@ func (a *Client) GetServiceCatalogTerraformDiagram(params *GetServiceCatalogTerr
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetServiceCatalogTerraformDiagramReader{formats: a.formats},
@@ -245,7 +280,7 @@ func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraf
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &GetServiceCatalogTerraformImageReader{formats: a.formats},
@@ -266,23 +301,23 @@ func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraf
 }
 
 /*
-GetServiceCatalogs Return all the service catalogs
+ListServiceCatalogs Return all the service catalogs
 */
-func (a *Client) GetServiceCatalogs(params *GetServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogsOK, error) {
+func (a *Client) ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter) (*ListServiceCatalogsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetServiceCatalogsParams()
+		params = NewListServiceCatalogsParams()
 	}
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
-		ID:                 "getServiceCatalogs",
+		ID:                 "listServiceCatalogs",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetServiceCatalogsReader{formats: a.formats},
+		Reader:             &ListServiceCatalogsReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -290,12 +325,12 @@ func (a *Client) GetServiceCatalogs(params *GetServiceCatalogsParams, authInfo r
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetServiceCatalogsOK)
+	success, ok := result.(*ListServiceCatalogsOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*GetServiceCatalogsDefault)
+	unexpectedSuccess := result.(*ListServiceCatalogsDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -313,7 +348,7 @@ func (a *Client) UpdateServiceCatalog(params *UpdateServiceCatalogParams, authIn
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &UpdateServiceCatalogReader{formats: a.formats},
@@ -347,7 +382,7 @@ func (a *Client) UpdateServiceCatalogTerraform(params *UpdateServiceCatalogTerra
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &UpdateServiceCatalogTerraformReader{formats: a.formats},
@@ -381,7 +416,7 @@ func (a *Client) UpdateServiceCatalogTerraformDiagram(params *UpdateServiceCatal
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &UpdateServiceCatalogTerraformDiagramReader{formats: a.formats},
@@ -415,7 +450,7 @@ func (a *Client) UpdateServiceCatalogTerraformImage(params *UpdateServiceCatalog
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &UpdateServiceCatalogTerraformImageReader{formats: a.formats},
@@ -449,7 +484,7 @@ func (a *Client) ValidateServiceCatalogDependencies(params *ValidateServiceCatal
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/dependencies/validate",
 		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
 		Reader:             &ValidateServiceCatalogDependenciesReader{formats: a.formats},
