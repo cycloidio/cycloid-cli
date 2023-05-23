@@ -64,10 +64,10 @@ func (m *middleware) PushConfig(org string, project string, env string, configs 
 
 func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigRepository, error) {
 
-	params := organization_config_repositories.NewGetConfigRepositoriesParams()
+	params := organization_config_repositories.NewListConfigRepositoriesParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepositories(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationConfigRepositories.ListConfigRepositories(params, common.ClientCredentials(&org))
 	if err != nil {
 		return nil, err
 	}
