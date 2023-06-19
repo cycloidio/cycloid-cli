@@ -35,6 +35,9 @@ type CostEstimationComponent struct {
 
 	// Unit of estimation.
 	Unit string `json:"unit,omitempty"`
+
+	// If the price is from usage or configuration
+	Usage bool `json:"usage,omitempty"`
 }
 
 // Validate validates this cost estimation component
