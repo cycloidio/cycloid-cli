@@ -239,7 +239,7 @@ func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplac
 	_, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "handleAWSMarketplaceUserEntitlement",
 		Method:             "POST",
-		PathPattern:        "/api/user/aws_marketplace/entitlement",
+		PathPattern:        "/user/aws_marketplace/entitlement",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
