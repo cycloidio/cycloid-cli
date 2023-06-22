@@ -58,7 +58,7 @@ type HandleAWSMarketplaceUserEntitlementMovedPermanently struct {
 }
 
 func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) Error() string {
-	return fmt.Sprintf("[POST /api/user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlementMovedPermanently ", 301)
+	return fmt.Sprintf("[POST /user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlementMovedPermanently ", 301)
 }
 
 func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -96,7 +96,7 @@ func (o *HandleAWSMarketplaceUserEntitlementDefault) Code() int {
 }
 
 func (o *HandleAWSMarketplaceUserEntitlementDefault) Error() string {
-	return fmt.Sprintf("[POST /api/user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlement default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[POST /user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlement default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *HandleAWSMarketplaceUserEntitlementDefault) GetPayload() *models.ErrorPayload {

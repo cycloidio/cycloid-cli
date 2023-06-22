@@ -29,6 +29,10 @@ type CostEstimationResourceEstimate struct {
 	// Required: true
 	Components []*CostEstimationComponent `json:"components"`
 
+	// Path to the image of the resource
+	// Format: uri
+	Image strfmt.URI `json:"image,omitempty"`
+
 	// Planned monthly cost of the resource estimate in decimal form.
 	PlannedCost string `json:"planned_cost,omitempty"`
 
@@ -59,6 +63,10 @@ func (m *CostEstimationResourceEstimate) Validate(formats strfmt.Registry) error
 	}
 
 	if err := m.validateComponents(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateImage(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -105,6 +113,19 @@ func (m *CostEstimationResourceEstimate) validateComponents(formats strfmt.Regis
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *CostEstimationResourceEstimate) validateImage(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Image) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {
+		return err
 	}
 
 	return nil
