@@ -21,6 +21,10 @@ import (
 // swagger:model Subscription
 type Subscription struct {
 
+	// current members
+	// Minimum: 0
+	CurrentMembers *uint64 `json:"current_members,omitempty"`
+
 	// expires at
 	// Required: true
 	// Minimum: 0
@@ -39,6 +43,10 @@ type Subscription struct {
 func (m *Subscription) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateCurrentMembers(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateExpiresAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -54,6 +62,19 @@ func (m *Subscription) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Subscription) validateCurrentMembers(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.CurrentMembers) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumInt("current_members", "body", int64(*m.CurrentMembers), 0, false); err != nil {
+		return err
+	}
+
 	return nil
 }
 
