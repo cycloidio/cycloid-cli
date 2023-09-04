@@ -79,7 +79,7 @@ type FormEntity struct {
 
 	// The widget used to display the data in the most suitable way
 	// Required: true
-	// Enum: [auto_complete dropdown radios slider_list slider_range number simple_text switch text_area cy_cred cy_scs cy_crs cy_branch]
+	// Enum: [auto_complete dropdown radios slider_list slider_range number simple_text switch text_area cy_cred cy_scs cy_crs cy_branch cy_inventory_resource]
 	Widget *string `json:"widget"`
 
 	// Some specific configuration that could be applied to that widget. Currently only a few widgets can be configured:
@@ -87,7 +87,16 @@ type FormEntity struct {
 	//     * 'cred_types' (list): reduce the types of credentials retrieved to that list. See supported types of credentials
 	//     * 'display_keys' (bool): to specify if the path + key have to be written or only the path
 	//   * radio
-	//     * orientation (string): whether you want to display it in an 'horizontal' or 'vertical' way
+	//     * 'orientation' (string): whether you want to display it in an 'horizontal' or 'vertical' way
+	//   * cy_inventory_resource
+	//     * 'provider' (string): The provider like '"provider[\"registry.terraform.io/hashicorp/aws\"]"'
+	//     * 'type'  (string): The type of the resource like 'aws_vpc'
+	//     * 'name' (string): The name of the resource like 'front'
+	//     * 'module' (string): The module name like 'module.lemp'
+	//     * 'label' (string): The label of the resource, this only applies for resources created directly from the API/FE
+	//     * 'attributes' (string): The query string to filter the attributes like 'ingress[0].protocol[eq]=tcp'
+	//     * 'custom_attributes' (string): The query string to filter the custom_attributes like 'ingress[0].protocol[eq]=tcp'
+	//     * 'attribute' (string): The path to the attribute to actually use as value
 	WidgetConfig interface{} `json:"widget_config,omitempty"`
 }
 
@@ -194,7 +203,7 @@ var formEntityTypeWidgetPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -242,6 +251,9 @@ const (
 
 	// FormEntityWidgetCyBranch captures enum value "cy_branch"
 	FormEntityWidgetCyBranch string = "cy_branch"
+
+	// FormEntityWidgetCyInventoryResource captures enum value "cy_inventory_resource"
+	FormEntityWidgetCyInventoryResource string = "cy_inventory_resource"
 )
 
 // prop value enum
