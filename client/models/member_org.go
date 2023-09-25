@@ -62,6 +62,10 @@ type MemberOrg struct {
 	// Enum: [en fr es]
 	Locale *string `json:"locale"`
 
+	// mfa enabled
+	// Required: true
+	MfaEnabled *bool `json:"mfa_enabled"`
+
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
@@ -119,6 +123,10 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateLocale(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMfaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -293,6 +301,15 @@ func (m *MemberOrg) validateLocale(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validateLocaleEnum("locale", "body", *m.Locale); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MemberOrg) validateMfaEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("mfa_enabled", "body", m.MfaEnabled); err != nil {
 		return err
 	}
 

@@ -22,6 +22,9 @@ type UpdateOrganization struct {
 	// can children create appearance
 	CanChildrenCreateAppearance bool `json:"can_children_create_appearance,omitempty"`
 
+	// mfa enabled
+	MfaEnabled bool `json:"mfa_enabled,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 3
