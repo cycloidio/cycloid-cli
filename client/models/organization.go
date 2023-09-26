@@ -72,6 +72,10 @@ type Organization struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
+	// mfa enabled
+	// Required: true
+	MfaEnabled *bool `json:"mfa_enabled"`
+
 	// name
 	// Required: true
 	// Min Length: 3
@@ -139,6 +143,10 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMfaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -311,6 +319,15 @@ func (m *Organization) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateMfaEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("mfa_enabled", "body", m.MfaEnabled); err != nil {
 		return err
 	}
 

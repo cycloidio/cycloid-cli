@@ -58,6 +58,10 @@ type User struct {
 	// Pattern: ^[a-z]{2}(?:-[a-z][a-z])?$
 	Locale *string `json:"locale"`
 
+	// mfa enabled
+	// Required: true
+	MfaEnabled *bool `json:"mfa_enabled"`
+
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
@@ -107,6 +111,10 @@ func (m *User) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateLocale(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMfaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -226,6 +234,15 @@ func (m *User) validateLocale(formats strfmt.Registry) error {
 	}
 
 	if err := validate.Pattern("locale", "body", string(*m.Locale), `^[a-z]{2}(?:-[a-z][a-z])?$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *User) validateMfaEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("mfa_enabled", "body", m.MfaEnabled); err != nil {
 		return err
 	}
 
