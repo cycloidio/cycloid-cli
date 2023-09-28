@@ -92,6 +92,39 @@ func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo run
 }
 
 /*
+EmailAuthenticationVerification Verify that the email address is own by the user.
+*/
+func (a *Client) EmailAuthenticationVerification(params *EmailAuthenticationVerificationParams) (*EmailAuthenticationVerificationOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewEmailAuthenticationVerificationParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "emailAuthenticationVerification",
+		Method:             "PUT",
+		PathPattern:        "/user/email/authentication/{authentication_token}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &EmailAuthenticationVerificationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*EmailAuthenticationVerificationOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*EmailAuthenticationVerificationDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 EmailVerification Verify that the email address is own by the user.
 */
 func (a *Client) EmailVerification(params *EmailVerificationParams) (*EmailVerificationNoContent, error) {

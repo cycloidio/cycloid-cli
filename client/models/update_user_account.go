@@ -45,6 +45,10 @@ type UpdateUserAccount struct {
 	// Enum: [en fr es]
 	Locale *string `json:"locale"`
 
+	// mfa enabled
+	// Required: true
+	MfaEnabled *bool `json:"mfa_enabled"`
+
 	// password update
 	PasswordUpdate *UpdateUserAccountPasswordUpdate `json:"password_update,omitempty"`
 
@@ -81,6 +85,10 @@ func (m *UpdateUserAccount) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateLocale(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMfaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -212,6 +220,15 @@ func (m *UpdateUserAccount) validateLocale(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validateLocaleEnum("locale", "body", *m.Locale); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UpdateUserAccount) validateMfaEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("mfa_enabled", "body", m.MfaEnabled); err != nil {
 		return err
 	}
 
