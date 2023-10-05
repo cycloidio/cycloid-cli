@@ -51,6 +51,10 @@ type MemberTeam struct {
 	// Minimum: 0
 	LastLoginAt *uint64 `json:"last_login_at,omitempty"`
 
+	// mfa enabled
+	// Required: true
+	MfaEnabled *bool `json:"mfa_enabled"`
+
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
@@ -96,6 +100,10 @@ func (m *MemberTeam) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateLastLoginAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateMfaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -207,6 +215,15 @@ func (m *MemberTeam) validateLastLoginAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumInt("last_login_at", "body", int64(*m.LastLoginAt), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MemberTeam) validateMfaEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("mfa_enabled", "body", m.MfaEnabled); err != nil {
 		return err
 	}
 
