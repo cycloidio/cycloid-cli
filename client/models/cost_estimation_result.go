@@ -24,6 +24,9 @@ type CostEstimationResult struct {
 	// Extra details regarding estimation - usually related to no known resources, unknown providers, etc.
 	Info string `json:"info,omitempty"`
 
+	// Name of the current estimation
+	Name string `json:"name,omitempty"`
+
 	// Planned monthly cost of the plan in decimal form.
 	PlannedCost string `json:"planned_cost,omitempty"`
 
