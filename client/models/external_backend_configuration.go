@@ -110,6 +110,13 @@ func unmarshalExternalBackendConfiguration(data []byte, consumer runtime.Consume
 		}
 		return &result, nil
 
+	case "AzureCostExport":
+		var result AzureCostExport
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
+
 	case "AzureRemoteTFState":
 		var result AzureRemoteTFState
 		if err := consumer.Consume(buf2, &result); err != nil {

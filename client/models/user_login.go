@@ -23,6 +23,12 @@ type UserLogin struct {
 	// Format: email
 	Email strfmt.Email `json:"email,omitempty"`
 
+	// organization canonical
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	OrganizationCanonical string `json:"organization_canonical,omitempty"`
+
 	// password
 	// Required: true
 	// Min Length: 8
@@ -41,6 +47,10 @@ func (m *UserLogin) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateEmail(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateOrganizationCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -65,6 +75,27 @@ func (m *UserLogin) validateEmail(formats strfmt.Registry) error {
 	}
 
 	if err := validate.FormatOf("email", "body", "email", m.Email.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UserLogin) validateOrganizationCanonical(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.OrganizationCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("organization_canonical", "body", string(m.OrganizationCanonical), 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("organization_canonical", "body", string(m.OrganizationCanonical), 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("organization_canonical", "body", string(m.OrganizationCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
