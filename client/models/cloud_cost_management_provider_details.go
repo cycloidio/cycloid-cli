@@ -25,8 +25,7 @@ type CloudCostManagementProviderDetails struct {
 	CostHistogram *CloudCostManagementHistogram `json:"cost_histogram"`
 
 	// filter values
-	// Required: true
-	FilterValues *CloudCostManagementFilterValues `json:"filter_values"`
+	FilterValues *CloudCostManagementFilterValues `json:"filter_values,omitempty"`
 }
 
 // Validate validates this cloud cost management provider details
@@ -67,8 +66,8 @@ func (m *CloudCostManagementProviderDetails) validateCostHistogram(formats strfm
 
 func (m *CloudCostManagementProviderDetails) validateFilterValues(formats strfmt.Registry) error {
 
-	if err := validate.Required("filter_values", "body", m.FilterValues); err != nil {
-		return err
+	if swag.IsZero(m.FilterValues) { // not required
+		return nil
 	}
 
 	if m.FilterValues != nil {
