@@ -88,7 +88,7 @@ type FormEntity struct {
 
 	// The widget used to display the data in the most suitable way
 	// Required: true
-	// Enum: [auto_complete dropdown radios slider_list slider_range number simple_text switch text_area cy_cred cy_scs cy_crs cy_branch cy_inventory_resource]
+	// Enum: [auto_complete dropdown radios slider_list slider_range number simple_text switch text_area cy_cred cy_scs cy_crs cy_branch cy_inventory_resource hidden]
 	Widget *string `json:"widget"`
 
 	// Some specific configuration that could be applied to that widget. Currently only a few widgets can be configured:
@@ -212,7 +212,7 @@ var formEntityTypeWidgetPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","hidden"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -263,6 +263,9 @@ const (
 
 	// FormEntityWidgetCyInventoryResource captures enum value "cy_inventory_resource"
 	FormEntityWidgetCyInventoryResource string = "cy_inventory_resource"
+
+	// FormEntityWidgetHidden captures enum value "hidden"
+	FormEntityWidgetHidden string = "hidden"
 )
 
 // prop value enum
