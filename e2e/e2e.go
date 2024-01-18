@@ -1,6 +1,9 @@
 package e2e
 
-import "os"
+import (
+	"math/rand"
+	"os"
+)
 
 var (
 	CY_TEST_ROOT_API_KEY = "my secret api key"
@@ -30,4 +33,14 @@ func init() {
 	if len(gitBranch) > 0 {
 		CY_TEST_GIT_CR_BRANCH = gitBranch
 	}
+}
+
+const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
+func RandStringBytes(n int) string {
+	b := make([]byte, n)
+	for i := range b {
+		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+	return string(b)
 }

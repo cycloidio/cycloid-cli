@@ -20,6 +20,7 @@ func NewCommands() *cobra.Command {
 		NewListWorkersCommand(),
 		NewDeleteCommand(),
 		NewListChildrensCommand(),
+		NewCreateChildCommand(),
 		NewGetCommand())
 	return cmd
 }

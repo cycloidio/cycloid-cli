@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"github.com/davecgh/go-spew/spew"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
@@ -103,6 +104,34 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 	params.SetOrganizationCanonical(org)
 
 	resp, err := m.api.OrganizationChildren.GetChildren(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	p := resp.GetPayload()
+
+	d := p.Data
+	return d, nil
+}
+
+func (m *middleware) CreateOrganizationChild(org, porg string) (*models.Organization, error) {
+
+	params := organization_children.NewCreateChildParams()
+	//params.SetOrganizationCanonical(porg)
+
+	body := &models.NewOrganization{
+		Name: &org,
+	}
+
+	params.SetBody(body)
+	params.OrganizationCanonical = porg
+	err := body.Validate(strfmt.Default)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to validate request body")
+	}
+
+	resp, err := m.api.OrganizationChildren.CreateChild(params, common.ClientCredentials(&porg))
+	spew.Dump(err)
 	if err != nil {
 		return nil, NewApiError(err)
 	}
