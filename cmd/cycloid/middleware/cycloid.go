@@ -14,14 +14,14 @@ func (m *middleware) GetAppVersion() (*models.AppVersion, error) {
 
 	resp, err := m.api.Cycloid.GetAppVersion(params)
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 // GetStatus returns the status of the various Cycloid services
@@ -33,5 +33,5 @@ func (m *middleware) GetStatus() (*models.GeneralStatus, error) {
 
 	p := resp.GetPayload()
 
-	return p.Data, err
+	return p.Data, NewApiError(err)
 }

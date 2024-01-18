@@ -20,15 +20,7 @@ func (m *middleware) CostEstimation(org string, plan []byte) (*models.CostEstima
 
 	res, err := m.api.CostEstimation.CostEstimateTfPlan(params, common.ClientCredentials(&org))
 	if err != nil {
-		if _, ok := err.(*cost_estimation.CostEstimateTfPlanDefault); ok {
-			errors := err.(*cost_estimation.CostEstimateTfPlanDefault).GetPayload().Errors
-			e := make([]string, len(errors))
-			for _, er := range errors {
-				e = append(e, *er.Message)
-			}
-			return nil, fmt.Errorf("unable to estimate cost insfrastructure: %v", e)
-		}
-		return nil, fmt.Errorf("unable to estimate cost insfrastructure: %w", err)
+		return nil, fmt.Errorf("unable to estimate cost insfrastructure: %w", NewApiError(err))
 	}
 
 	return res.GetPayload().Data, nil

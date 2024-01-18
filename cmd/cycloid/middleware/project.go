@@ -17,19 +17,18 @@ func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
 
 	resp, err := m.api.OrganizationProjects.GetProjects(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetProject(org, project string) (*models.Project, error) {
@@ -40,19 +39,18 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 
 	resp, err := m.api.OrganizationProjects.GetProject(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error) {
@@ -109,17 +107,15 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 
 	params.SetBody(body)
 	resp, err := m.api.OrganizationProjects.CreateProject(params, common.ClientCredentials(&org))
-	// TODO create a error handeling function to format our error with a better display
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 	return d, err
@@ -149,15 +145,14 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 	params.SetBody(body)
 	resp, err := m.api.OrganizationProjects.UpdateProject(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 	return d, err
@@ -171,8 +166,10 @@ func (m *middleware) DeleteProjectEnv(org, project, env string) error {
 	params.SetEnvironmentCanonical(env)
 
 	_, err := m.api.OrganizationProjects.DeleteProjectEnvironment(params, common.ClientCredentials(&org))
-
-	return err
+	if err != nil {
+		return NewApiError(err)
+	}
+	return nil
 }
 
 func (m *middleware) DeleteProject(org, project string) error {
@@ -182,6 +179,8 @@ func (m *middleware) DeleteProject(org, project string) error {
 	params.SetProjectCanonical(project)
 
 	_, err := m.api.OrganizationProjects.DeleteProject(params, common.ClientCredentials(&org))
-
-	return err
+	if err != nil {
+		return NewApiError(err)
+	}
+	return nil
 }

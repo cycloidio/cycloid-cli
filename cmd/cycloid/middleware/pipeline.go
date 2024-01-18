@@ -19,8 +19,11 @@ func (m *middleware) PausePipeline(org, project, env string) error {
 	params.SetInpathPipelineName(pipelineName)
 
 	_, err := m.api.OrganizationPipelines.PausePipeline(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) ClearTaskCachePipeline(org, project, env, job, task string) error {
@@ -36,10 +39,10 @@ func (m *middleware) ClearTaskCachePipeline(org, project, env, job, task string)
 
 	_, err := m.api.OrganizationPipelinesJobs.ClearTaskCache(params, common.ClientCredentials(&org))
 	if err != nil {
-		return err
+		return NewApiError(err)
 	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) UnpausePipeline(org, project, env string) error {
@@ -52,11 +55,11 @@ func (m *middleware) UnpausePipeline(org, project, env string) error {
 	params.SetInpathPipelineName(pipelineName)
 
 	_, err := m.api.OrganizationPipelines.UnpausePipeline(params, common.ClientCredentials(&org))
-	// if err != nil {
-	// 	return nil, err
-	// }
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) UpdatePipeline(org, project, env, pipeline, variables string) (*models.Pipeline, error) {
@@ -89,13 +92,13 @@ func (m *middleware) UpdatePipeline(org, project, env, pipeline, variables strin
 
 	resp, err := m.api.OrganizationPipelines.UpdatePipeline(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) DiffPipeline(org, project, env, pipeline, variables string) (*models.PipelineDiffs, error) {
@@ -123,15 +126,14 @@ func (m *middleware) DiffPipeline(org, project, env, pipeline, variables string)
 
 	resp, err := m.api.OrganizationPipelines.DiffPipeline(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 	return d, err
@@ -168,20 +170,18 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, variables, usec
 
 	params.SetBody(body)
 	resp, err := m.api.OrganizationPipelines.CreatePipeline(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
 
+	p := resp.GetPayload()
+	err = p.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetPipelineJob(org, project, env, job string) (*models.Job, error) {
@@ -195,20 +195,18 @@ func (m *middleware) GetPipelineJob(org, project, env, job string) (*models.Job,
 	params.SetJobName(job)
 
 	resp, err := m.api.OrganizationPipelinesJobs.GetJob(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
 
+	p := resp.GetPayload()
+	err = p.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) ListPipelineJobsBuilds(org, project, env, job string) ([]*models.Build, error) {
@@ -223,18 +221,17 @@ func (m *middleware) ListPipelineJobsBuilds(org, project, env, job string) ([]*m
 
 	resp, err := m.api.OrganizationPipelinesJobsBuild.GetBuilds(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	//err = p.Validate(strfmt.Default)
+	//if err != nil {
+	//return nil, err
+	//}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) ListPipelineJobs(org, project, env string) ([]*models.Job, error) {
@@ -248,18 +245,17 @@ func (m *middleware) ListPipelineJobs(org, project, env string) ([]*models.Job, 
 
 	resp, err := m.api.OrganizationPipelinesJobs.GetJobs(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) PausePipelineJob(org, project, env, job string) error {
@@ -273,8 +269,11 @@ func (m *middleware) PausePipelineJob(org, project, env, job string) error {
 	params.SetJobName(job)
 
 	_, err := m.api.OrganizationPipelinesJobs.PauseJob(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) UnpausePipelineJob(org, project, env, job string) error {
@@ -288,8 +287,11 @@ func (m *middleware) UnpausePipelineJob(org, project, env, job string) error {
 	params.SetJobName(job)
 
 	_, err := m.api.OrganizationPipelinesJobs.UnpauseJob(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) TriggerPipelineBuild(org, project, env, job string) error {
@@ -303,8 +305,11 @@ func (m *middleware) TriggerPipelineBuild(org, project, env, job string) error {
 	params.SetJobName(job)
 
 	_, err := m.api.OrganizationPipelinesJobsBuild.CreateBuild(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) ListPipelines(org string) ([]*models.Pipeline, error) {
@@ -314,18 +319,17 @@ func (m *middleware) ListPipelines(org string) ([]*models.Pipeline, error) {
 
 	resp, err := m.api.OrganizationPipelines.GetPipelines(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetPipeline(org, project, env string) (*models.Pipeline, error) {
@@ -339,18 +343,17 @@ func (m *middleware) GetPipeline(org, project, env string) (*models.Pipeline, er
 
 	resp, err := m.api.OrganizationPipelines.GetPipeline(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) SyncedPipeline(org, project, env string) (*models.PipelineStatus, error) {
@@ -363,20 +366,19 @@ func (m *middleware) SyncedPipeline(org, project, env string) (*models.PipelineS
 
 	resp, err := m.api.OrganizationPipelines.SyncedPipeline(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 	// In case of nil data, add an empty PipelineStatus model produce an homogen output
 	if d == nil {
 		d = &models.PipelineStatus{}
 	}
-	return d, err
+	return d, nil
 }

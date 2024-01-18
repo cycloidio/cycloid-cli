@@ -17,19 +17,18 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 
 	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
@@ -40,19 +39,18 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 
 	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
@@ -63,19 +61,18 @@ func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
 
 	resp, err := m.api.ServiceCatalogs.GetServiceCatalogConfig(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 // from https://github.com/cycloidio/youdeploy-http-api/blob/develop/services/youdeploy/svccat/form/file.go#L12
@@ -141,16 +138,15 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	params.SetBody(body)
 	resp, err := m.api.OrganizationForms.ValidateFormsFile(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }

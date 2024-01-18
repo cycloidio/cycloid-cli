@@ -25,23 +25,17 @@ func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte
 
 	resp, err := m.api.OrganizationInfrastructurePolicies.ValidateProjectInfraPolicies(params, common.ClientCredentials(&org))
 	if err != nil {
-		errors := err.(*organization_infrastructure_policies.ValidateProjectInfraPoliciesDefault).GetPayload().Errors
-		e := make([]string, len(errors))
-		for _, er := range errors {
-			e = append(e, *er.Message)
-		}
-		return nil, fmt.Errorf("unable to validate project infra policies: %v", e)
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 // CreateInfraPoliciy will create a new infraPolicy
@@ -78,18 +72,17 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 	params.SetBody(body)
 	resp, err := m.api.OrganizationInfrastructurePolicies.CreateInfraPolicy(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 // DeleteInfraPolicy will delete a infraPolicy
@@ -99,7 +92,10 @@ func (m *middleware) DeleteInfraPolicy(org, policyCannonical string) error {
 	params.SetInfraPolicyCanonical(policyCannonical)
 
 	_, err := m.api.OrganizationInfrastructurePolicies.DeleteInfraPolicy(params, common.ClientCredentials(&org))
-	return err
+	if err != nil {
+		return NewApiError(err)
+	}
+	return nil
 }
 
 // ListInfraPolicies will list all infraPolicies in an organisation
@@ -114,15 +110,14 @@ func (m *middleware) ListInfraPolicies(org string) ([]*models.InfraPolicy, error
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 // GetInfraPolicy will list all infraPolicies in an organisation
@@ -134,19 +129,18 @@ func (m *middleware) GetInfraPolicy(org, infraPolicy string) (*models.InfraPolic
 
 	resp, err := m.api.OrganizationInfrastructurePolicies.GetInfraPolicy(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 // UpdateInfraPolicy will update an existing infrapolicy with the given params
@@ -180,16 +174,15 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 	params.SetBody(body)
 	resp, err := m.api.OrganizationInfrastructurePolicies.UpdateInfraPolicy(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }

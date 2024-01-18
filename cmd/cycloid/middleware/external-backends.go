@@ -14,7 +14,7 @@ func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend
 
 	resp, err := m.api.OrganizationExternalBackends.GetExternalBackends(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
@@ -25,7 +25,7 @@ func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) error {
@@ -35,8 +35,11 @@ func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) e
 	params.SetExternalBackendID(externalBackend)
 
 	_, err := m.api.OrganizationExternalBackends.DeleteExternalBackend(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) CreateExternalBackends(org, project, env, purpose, cred string, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
@@ -77,9 +80,8 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose, cred str
 	}
 
 	resp, err := m.api.OrganizationExternalBackends.CreateExternalBackend(params, common.ClientCredentials(&org))
-
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
@@ -90,5 +92,5 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose, cred str
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
