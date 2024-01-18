@@ -4,8 +4,8 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_children"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -26,15 +26,14 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 	}
 
 	resp, err := m.api.Organizations.CreateOrg(params, common.ClientCredentials(nil))
-
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
@@ -43,20 +42,18 @@ func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
 	params.SetOrganizationCanonical(org)
 
 	resp, err := m.api.Organizations.GetOrg(params, common.ClientCredentials(&org))
-
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	//err = p.Validate(strfmt.Default)
+	//if err != nil {
+	//return nil, err
+	//}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, error) {
@@ -65,20 +62,18 @@ func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, erro
 	params.SetOrganizationCanonical(org)
 
 	resp, err := m.api.OrganizationWorkers.GetWorkers(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
 
+	p := resp.GetPayload()
+	err = p.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
@@ -87,18 +82,17 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 
 	resp, err := m.api.Organizations.GetOrgs(params, common.ClientCredentials(nil))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organization, error) {
@@ -109,15 +103,14 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 	params.SetOrganizationCanonical(org)
 
 	resp, err := m.api.OrganizationChildren.GetChildren(params, common.ClientCredentials(&org))
-
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) DeleteOrganization(org string) error {
@@ -125,5 +118,8 @@ func (m *middleware) DeleteOrganization(org string) error {
 	params.SetOrganizationCanonical(org)
 
 	_, err := m.api.Organizations.DeleteOrg(params, common.ClientCredentials(&org))
-	return err
+	if err != nil {
+		return NewApiError(err)
+	}
+	return nil
 }

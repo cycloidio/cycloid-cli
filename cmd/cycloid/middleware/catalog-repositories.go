@@ -14,19 +14,18 @@ func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatal
 
 	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSources(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error) {
@@ -37,19 +36,18 @@ func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.Serv
 
 	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSource(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) error {
@@ -58,7 +56,10 @@ func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) error {
 	params.SetServiceCatalogSourceCanonical(catalogRepo)
 
 	_, err := m.api.OrganizationServiceCatalogSources.DeleteServiceCatalogSource(params, common.ClientCredentials(&org))
-	return err
+	if err != nil {
+		return NewApiError(err)
+	}
+	return nil
 }
 
 func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string) (*models.ServiceCatalogSource, error) {
@@ -91,20 +92,19 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string
 
 	resp, err := m.api.OrganizationServiceCatalogSources.CreateServiceCatalogSource(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string) (*models.ServiceCatalogSource, error) {
@@ -128,19 +128,18 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 
 	resp, err := m.api.OrganizationServiceCatalogSources.UpdateServiceCatalogSource(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error) {
@@ -151,17 +150,16 @@ func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.
 
 	resp, err := m.api.OrganizationServiceCatalogSources.RefreshServiceCatalogSource(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }

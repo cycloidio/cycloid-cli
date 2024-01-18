@@ -37,8 +37,11 @@ func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.C
 	}
 
 	_, err = m.api.OrganizationCredentials.CreateCredential(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) GetCredential(org, cred string) (*models.Credential, error) {
@@ -49,13 +52,13 @@ func (m *middleware) GetCredential(org, cred string) (*models.Credential, error)
 
 	resp, err := m.api.OrganizationCredentials.GetCredential(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
 	d := p.Data
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) DeleteCredential(org, cred string) error {
@@ -65,8 +68,11 @@ func (m *middleware) DeleteCredential(org, cred string) error {
 	params.SetCredentialCanonical(cred)
 
 	_, err := m.api.OrganizationCredentials.DeleteCredential(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) ListCredentials(org, cType string) ([]*models.CredentialSimple, error) {
@@ -80,16 +86,15 @@ func (m *middleware) ListCredentials(org, cType string) ([]*models.CredentialSim
 
 	resp, err := m.api.OrganizationCredentials.ListCredentials(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-    // TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/3777
-	//err = p.Validate(strfmt.Default)
-	//if err != nil {
-	//	return nil, err
-	//}
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
-	return d, err
+	return d, nil
 }

@@ -15,7 +15,7 @@ func (m *middleware) ListAPIKey(org string) ([]*models.APIKey, error) {
 
 	res, err := m.api.OrganizationAPIKeys.GetAPIKeys(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, fmt.Errorf("unable to list API keys: %w", err)
+		return nil, fmt.Errorf("unable to list API keys: %w", NewApiError(err))
 	}
 
 	return res.GetPayload().Data, nil
@@ -29,7 +29,7 @@ func (m *middleware) GetAPIKey(org, canonical string) (*models.APIKey, error) {
 
 	res, err := m.api.OrganizationAPIKeys.GetAPIKey(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, fmt.Errorf("unable to get API key: %w", err)
+		return nil, fmt.Errorf("unable to get API key: %w", NewApiError(err))
 	}
 
 	return res.GetPayload().Data, nil
@@ -42,7 +42,7 @@ func (m *middleware) DeleteAPIKey(org, canonical string) error {
 	params.SetAPIKeyCanonical(canonical)
 
 	if _, err := m.api.OrganizationAPIKeys.DeleteAPIKey(params, common.ClientCredentials(&org)); err != nil {
-		return fmt.Errorf("unable to delete API key: %w", err)
+		return fmt.Errorf("unable to delete API key: %w", NewApiError(err))
 	}
 	return nil
 }
