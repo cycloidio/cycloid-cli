@@ -71,14 +71,14 @@ CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
 # AWS - ECR login
-AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws)
-AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
+export AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws)
+export AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
 AWS_DEFAULT_REGION    ?= eu-west-1
 AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
 # Local BE
 LOCAL_BE_GIT_PATH ?= ../youdeploy-http-api
 YD_API_TAG        ?= staging
-API_LICENCE_KEY   ?= (api-e2e-lincese-key)
+API_LICENCE_KEY   ?= eyJhbGciOiJSUzUxMiIsInR5cCI6IkpXVCJ9.eyJjb21wYW55X25hbWUiOiJjeWNsb2lkIiwiZW1haWxfYWRkcmVzcyI6ImFkbWluK3lkc3RhZ2luZ0BjeWNsb2lkLmlvIiwibWVtYmVyc19jb3VudCI6OTk5OTk5OTk5LCJleHBpcmVzX2F0IjoiMjAzNy0xMi0zMVQwMDowMDowMFoiLCJ2ZXJzaW9uIjoiMSIsIm9uX3ByZW0iOmZhbHNlLCJhdWQiOiJjeWNsb2lkIiwianRpIjoiODA0NTYxOWQtOGE3NC00N2YwLWE3ZWEtYmZlODdiMWFmNDYwIiwiaWF0IjoxNjE5NDQyNjA1LCJpc3MiOiJodHRwczovL2N5Y2xvaWQuaW8iLCJuYmYiOjE2MTk0NDI2MDUsInN1YiI6Imh0dHBzOi8vY3ljbG9pZC5pbyJ9.J-DoC8A_GFIm-fWITW3rx6dDITfYy6mDPnfhNehG5s90RZlnbieHyq2YosA4vEyzDGpbrGcHmGydCffZjQZyUxRAfvOITlbZJ6H_QtqAmnlfeVEgYAIKLyHW_iVynKS735ErfZ2KSBswolRtGewe5lAG9mBdUnsoGiAcCPch9OmzRiMLYIRpTYaHYIyRQDLFZ6TTc6YqHPa_UhKZsfyqENRmNexZPeL9s3IBtda82Dl3uJ9l3tLW3KA9cprBriBhTv3ydqdgqcZ-CuDAOMwIAIXhroAPjxGM6P9WyS193vRgGmdlMxyo0MyUSYUEG4XYqoXiGpEI3nD1ldZKNTmyUh04VNOhOGw6sIi_5G6IXa3fVpjSwpwcK0IP_KfxXBT-LjsGXVpOA9CN_jav0fVj67KenPQQRl5ZMvNfw4ML59eAwCWRitOrJI7G36NKGmb16wMU9Iqb8RLhX91676H58aq_YTUnAtiLTCOZ2_T8VHe_8MUe0mbzpwjvxUgYoy-0Wrktx5m2OcAQld3G-RWFtDks51W8GyfxjFO2Ey4SjTm1-88zet5sYkiUOWpLzbm-WUgF59QphwgXuyhZedWcYGbYA-9w3Y2AR7G3ZUovSOebDMpjKQvy1b968gCKiqh_-iZ5B1ETwmnSnWS1Rl5okYCulYOBOgXrrmyfY1VTfgk
 
 .PHONY: help
 help: ## Show this help
