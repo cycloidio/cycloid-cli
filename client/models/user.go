@@ -20,9 +20,8 @@ import (
 type User struct {
 
 	// Code of a country the user is from
-	// Required: true
 	// Pattern: ^[A-Z]{2}$
-	CountryCode *string `json:"country_code"`
+	CountryCode string `json:"country_code,omitempty"`
 
 	// When the user became a member.
 	// Required: true
@@ -138,11 +137,11 @@ func (m *User) Validate(formats strfmt.Registry) error {
 
 func (m *User) validateCountryCode(formats strfmt.Registry) error {
 
-	if err := validate.Required("country_code", "body", m.CountryCode); err != nil {
-		return err
+	if swag.IsZero(m.CountryCode) { // not required
+		return nil
 	}
 
-	if err := validate.Pattern("country_code", "body", string(*m.CountryCode), `^[A-Z]{2}$`); err != nil {
+	if err := validate.Pattern("country_code", "body", string(m.CountryCode), `^[A-Z]{2}$`); err != nil {
 		return err
 	}
 
