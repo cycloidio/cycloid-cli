@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -47,7 +48,7 @@ func TestStacks(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"stack-magento")
+		assert.Contains(t, cmdOut, "canonical\":\"stack-dummy")
 	})
 	t.Run("SuccessStacksGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
@@ -55,11 +56,11 @@ func TestStacks(t *testing.T) {
 			"--org", CY_TEST_ROOT_ORG,
 			"stacks",
 			"get",
-			"--ref", fmt.Sprintf("%s:stack-magento",  CY_TEST_ROOT_ORG),
+			"--ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"stack-magento")
+		assert.Contains(t, cmdOut, "canonical\":\"stack-dummy")
 	})
 
 	t.Run("SuccessStacksValidateForm", func(t *testing.T) {

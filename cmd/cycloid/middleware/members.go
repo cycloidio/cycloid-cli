@@ -1,8 +1,9 @@
 package middleware
 
 import (
+	"strconv"
+
 	strfmt "github.com/go-openapi/strfmt"
-  "strconv"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_invitations"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
@@ -16,20 +17,19 @@ func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
 
 	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) ListInvites(org string) ([]*models.Invitation, error) {
@@ -38,14 +38,14 @@ func (m *middleware) ListInvites(org string) ([]*models.Invitation, error) {
 
 	resp, err := m.api.OrganizationInvitations.GetInvitations(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetMember(org string, name string) (*models.MemberOrg, error) {
@@ -55,20 +55,19 @@ func (m *middleware) GetMember(org string, name string) (*models.MemberOrg, erro
 
 	resp, err := m.api.OrganizationMembers.GetOrgMember(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) DeleteMember(org string, name string) error {
@@ -77,8 +76,11 @@ func (m *middleware) DeleteMember(org string, name string) error {
 	params.SetUsername(name)
 
 	_, err := m.api.OrganizationMembers.RemoveOrgMember(params, common.ClientCredentials(&org))
+	if err != nil {
+		return err
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) UpdateMembers(org, name, role string) (*models.MemberOrg, error) {
@@ -99,7 +101,7 @@ func (m *middleware) UpdateMembers(org, name, role string) (*models.MemberOrg, e
 
 	resp, err := m.api.OrganizationMembers.UpdateOrgMember(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	//TODO verify why getpayload no defined ?
@@ -112,7 +114,7 @@ func (m *middleware) UpdateMembers(org, name, role string) (*models.MemberOrg, e
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) InviteMember(org, email, role string) error {
@@ -132,8 +134,11 @@ func (m *middleware) InviteMember(org, email, role string) error {
 	}
 
 	_, err = m.api.OrganizationMembers.InviteUserToOrgMember(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }
 
 func (m *middleware) DeleteInvite(org string, invite string) error {
@@ -147,6 +152,9 @@ func (m *middleware) DeleteInvite(org string, invite string) error {
 	params.SetInvitationID(uint32(i64))
 
 	_, err = m.api.OrganizationInvitations.DeleteInvitation(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }

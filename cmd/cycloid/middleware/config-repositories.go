@@ -17,7 +17,7 @@ func (m *middleware) PushConfig(org string, project string, env string, configs 
 
 	projectData, err := m.GetProject(org, project)
 	if err != nil {
-		return err
+		return NewApiError(err)
 	}
 
 	params := organization_config_repositories.NewCreateConfigRepositoryConfigParams()
@@ -56,7 +56,7 @@ func (m *middleware) PushConfig(org string, project string, env string, configs 
 	params.SetBody(body)
 	_, err = m.api.OrganizationConfigRepositories.CreateConfigRepositoryConfig(params, common.ClientCredentials(&org))
 	if err != nil {
-		return err
+		return NewApiError(err)
 	}
 
 	return nil
@@ -69,19 +69,18 @@ func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigReposit
 
 	resp, err := m.api.OrganizationConfigRepositories.ListConfigRepositories(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) GetConfigRepository(org, configRepo string) (*models.ConfigRepository, error) {
@@ -93,19 +92,18 @@ func (m *middleware) GetConfigRepository(org, configRepo string) (*models.Config
 	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepository(params, common.ClientCredentials(&org))
 
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) DeleteConfigRepository(org, configRepo string) error {
@@ -114,7 +112,10 @@ func (m *middleware) DeleteConfigRepository(org, configRepo string) error {
 	params.SetConfigRepositoryCanonical(configRepo)
 
 	_, err := m.api.OrganizationConfigRepositories.DeleteConfigRepository(params, common.ClientCredentials(&org))
-	return err
+	if err != nil {
+		return NewApiError(err)
+	}
+	return nil
 }
 
 func (m *middleware) CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error) {
@@ -137,21 +138,19 @@ func (m *middleware) CreateConfigRepository(org, name, url, branch, cred string,
 	}
 
 	resp, err := m.api.OrganizationConfigRepositories.CreateConfigRepository(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
 
+	p := resp.GetPayload()
+	err = p.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
-
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, error) {
@@ -177,17 +176,16 @@ func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, br
 	resp, err := m.api.OrganizationConfigRepositories.UpdateConfigRepository(params, common.ClientCredentials(&org))
 
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }

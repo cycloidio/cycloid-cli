@@ -52,6 +52,7 @@ type Middleware interface {
 	ListOrganizations() ([]*models.Organization, error)
 	ListOrganizationWorkers(org string) ([]*models.Worker, error)
 	ListOrganizationChildrens(org string) ([]*models.Organization, error)
+	CreateOrganizationChild(org, porg string) (*models.Organization, error)
 
 	ClearTaskCachePipeline(org, project, env, job, task string) error
 	CreatePipeline(org, project, env, pipeline, variables, usecase string) (*models.Pipeline, error)

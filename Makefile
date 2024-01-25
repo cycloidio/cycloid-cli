@@ -71,8 +71,8 @@ CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
 # AWS - ECR login
-AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws)
-AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
+export AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws)
+export AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
 AWS_DEFAULT_REGION    ?= eu-west-1
 AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
 # Local BE

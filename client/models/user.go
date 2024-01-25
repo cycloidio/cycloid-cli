@@ -20,9 +20,8 @@ import (
 type User struct {
 
 	// Code of a country the user is from
-	// Required: true
 	// Pattern: ^[A-Z]{2}$
-	CountryCode *string `json:"country_code"`
+	CountryCode string `json:"country_code,omitempty"`
 
 	// When the user became a member.
 	// Required: true
@@ -57,6 +56,10 @@ type User struct {
 	// Required: true
 	// Pattern: ^[a-z]{2}(?:-[a-z][a-z])?$
 	Locale *string `json:"locale"`
+
+	// mfa enabled
+	// Required: true
+	MfaEnabled *bool `json:"mfa_enabled"`
 
 	// picture url
 	// Format: uri
@@ -110,6 +113,10 @@ func (m *User) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateMfaEnabled(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validatePictureURL(formats); err != nil {
 		res = append(res, err)
 	}
@@ -130,11 +137,11 @@ func (m *User) Validate(formats strfmt.Registry) error {
 
 func (m *User) validateCountryCode(formats strfmt.Registry) error {
 
-	if err := validate.Required("country_code", "body", m.CountryCode); err != nil {
-		return err
+	if swag.IsZero(m.CountryCode) { // not required
+		return nil
 	}
 
-	if err := validate.Pattern("country_code", "body", string(*m.CountryCode), `^[A-Z]{2}$`); err != nil {
+	if err := validate.Pattern("country_code", "body", string(m.CountryCode), `^[A-Z]{2}$`); err != nil {
 		return err
 	}
 
@@ -226,6 +233,15 @@ func (m *User) validateLocale(formats strfmt.Registry) error {
 	}
 
 	if err := validate.Pattern("locale", "body", string(*m.Locale), `^[a-z]{2}(?:-[a-z][a-z])?$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *User) validateMfaEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("mfa_enabled", "body", m.MfaEnabled); err != nil {
 		return err
 	}
 

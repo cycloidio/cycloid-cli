@@ -4,6 +4,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_roles"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) ListRoles(org string) ([]*models.Role, error) {
@@ -12,16 +13,15 @@ func (m *middleware) ListRoles(org string) ([]*models.Role, error) {
 
 	resp, err := m.api.OrganizationRoles.GetRoles(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
@@ -35,20 +35,19 @@ func (m *middleware) GetRole(org, role string) (*models.Role, error) {
 
 	resp, err := m.api.OrganizationRoles.GetRole(params, common.ClientCredentials(&org))
 	if err != nil {
-		return nil, err
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()
 
-	// TODO this validate have been removed https://github.com/cycloidio/youdeploy-http-api/issues/2262
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return err
-	// }
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
 
 	d := p.Data
 
-	return d, err
+	return d, nil
 }
 
 func (m *middleware) DeleteRole(org, role string) error {
@@ -57,6 +56,9 @@ func (m *middleware) DeleteRole(org, role string) error {
 	params.SetRoleCanonical(role)
 
 	_, err := m.api.OrganizationRoles.DeleteRole(params, common.ClientCredentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
 
-	return err
+	return nil
 }

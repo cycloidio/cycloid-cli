@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -21,7 +22,6 @@ func TestCatalogRepositories(t *testing.T) {
 			"delete",
 			"--canonical", "step-by-step",
 		})
-
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
