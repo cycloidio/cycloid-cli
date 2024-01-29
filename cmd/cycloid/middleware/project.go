@@ -15,7 +15,7 @@ func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
 	params := organization_projects.NewGetProjectsParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationProjects.GetProjects(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationProjects.GetProjects(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -37,7 +37,7 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
 
-	resp, err := m.api.OrganizationProjects.GetProject(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationProjects.GetProject(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -106,7 +106,7 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.CreateProject(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -143,7 +143,7 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.UpdateProject(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationProjects.UpdateProject(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -165,7 +165,7 @@ func (m *middleware) DeleteProjectEnv(org, project, env string) error {
 	params.SetProjectCanonical(project)
 	params.SetEnvironmentCanonical(env)
 
-	_, err := m.api.OrganizationProjects.DeleteProjectEnvironment(params, common.ClientCredentials(&org))
+	_, err := m.api.OrganizationProjects.DeleteProjectEnvironment(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}
@@ -178,7 +178,7 @@ func (m *middleware) DeleteProject(org, project string) error {
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
 
-	_, err := m.api.OrganizationProjects.DeleteProject(params, common.ClientCredentials(&org))
+	_, err := m.api.OrganizationProjects.DeleteProject(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}
