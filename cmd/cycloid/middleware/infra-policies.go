@@ -23,7 +23,7 @@ func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte
 		Tfplan: &tfplan,
 	})
 
-	resp, err := m.api.OrganizationInfrastructurePolicies.ValidateProjectInfraPolicies(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationInfrastructurePolicies.ValidateProjectInfraPolicies(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -70,7 +70,7 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationInfrastructurePolicies.CreateInfraPolicy(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationInfrastructurePolicies.CreateInfraPolicy(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -91,7 +91,7 @@ func (m *middleware) DeleteInfraPolicy(org, policyCannonical string) error {
 	params.SetOrganizationCanonical(org)
 	params.SetInfraPolicyCanonical(policyCannonical)
 
-	_, err := m.api.OrganizationInfrastructurePolicies.DeleteInfraPolicy(params, common.ClientCredentials(&org))
+	_, err := m.api.OrganizationInfrastructurePolicies.DeleteInfraPolicy(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}
@@ -104,7 +104,7 @@ func (m *middleware) ListInfraPolicies(org string) ([]*models.InfraPolicy, error
 	params := organization_infrastructure_policies.NewGetInfraPoliciesParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationInfrastructurePolicies.GetInfraPolicies(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationInfrastructurePolicies.GetInfraPolicies(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, err
 	}
@@ -127,7 +127,7 @@ func (m *middleware) GetInfraPolicy(org, infraPolicy string) (*models.InfraPolic
 	params.SetOrganizationCanonical(org)
 	params.SetInfraPolicyCanonical(infraPolicy)
 
-	resp, err := m.api.OrganizationInfrastructurePolicies.GetInfraPolicy(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationInfrastructurePolicies.GetInfraPolicy(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -172,7 +172,7 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationInfrastructurePolicies.UpdateInfraPolicy(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationInfrastructurePolicies.UpdateInfraPolicy(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}

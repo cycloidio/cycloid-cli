@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"github.com/davecgh/go-spew/spew"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
@@ -9,7 +8,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 func (m *middleware) CreateOrganization(name string) (*models.Organization, error) {
@@ -26,7 +24,7 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 		return nil, errors.Wrap(err, "unable to validate request body")
 	}
 
-	resp, err := m.api.Organizations.CreateOrg(params, common.ClientCredentials(nil))
+	resp, err := m.api.Organizations.CreateOrg(params, m.api.Credentials(nil))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -42,7 +40,7 @@ func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
 	params := organizations.NewGetOrgParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.Organizations.GetOrg(params, common.ClientCredentials(&org))
+	resp, err := m.api.Organizations.GetOrg(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -62,7 +60,7 @@ func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, erro
 	params := organization_workers.NewGetWorkersParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationWorkers.GetWorkers(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationWorkers.GetWorkers(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -81,7 +79,7 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 
 	params := organizations.NewGetOrgsParams()
 
-	resp, err := m.api.Organizations.GetOrgs(params, common.ClientCredentials(nil))
+	resp, err := m.api.Organizations.GetOrgs(params, m.api.Credentials(nil))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -103,7 +101,7 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 	params.SetOrderBy(&orderBy)
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationChildren.GetChildren(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationChildren.GetChildren(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -130,8 +128,7 @@ func (m *middleware) CreateOrganizationChild(org, porg string) (*models.Organiza
 		return nil, errors.Wrap(err, "unable to validate request body")
 	}
 
-	resp, err := m.api.OrganizationChildren.CreateChild(params, common.ClientCredentials(&porg))
-	spew.Dump(err)
+	resp, err := m.api.OrganizationChildren.CreateChild(params, m.api.Credentials(&porg))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -146,7 +143,7 @@ func (m *middleware) DeleteOrganization(org string) error {
 	params := organizations.NewDeleteOrgParams()
 	params.SetOrganizationCanonical(org)
 
-	_, err := m.api.Organizations.DeleteOrg(params, common.ClientCredentials(&org))
+	_, err := m.api.Organizations.DeleteOrg(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}

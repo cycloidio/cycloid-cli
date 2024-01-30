@@ -52,7 +52,7 @@ func (m *middleware) CreateKpi(name, kpiType, widget, org, project, job, env, co
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationKpis.CreateKpi(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationKpis.CreateKpi(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -73,7 +73,7 @@ func (m *middleware) ListKpi(org, project, env string) ([]*models.KPI, error) {
 		params.SetEnvironment(&env)
 	}
 
-	resp, err := m.api.OrganizationKpis.GetKpis(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationKpis.GetKpis(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -89,7 +89,7 @@ func (m *middleware) DeleteKpi(org, kpi string) error {
 	params.SetOrganizationCanonical(org)
 	params.SetKpiCanonical(kpi)
 
-	_, err := m.api.OrganizationKpis.DeleteKpi(params, common.ClientCredentials(&org))
+	_, err := m.api.OrganizationKpis.DeleteKpi(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}

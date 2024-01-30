@@ -76,13 +76,52 @@ func GetPipelineName(project, env string) string {
 	return fmt.Sprintf("%s-%s", project, env)
 }
 
-func NewAPI() *client.APIClient {
+type APIConfig struct {
+	URL      string
+	Insecure bool
+	Token    string
+}
+
+type APIOptions func(acfg *APIConfig)
+
+func WithURL(u string) APIOptions {
+	return func(acfg *APIConfig) {
+		acfg.URL = u
+	}
+}
+
+func WithInsecure(i bool) APIOptions {
+	return func(acfg *APIConfig) {
+		acfg.Insecure = i
+	}
+}
+
+func WithToken(t string) APIOptions {
+	return func(acfg *APIConfig) {
+		acfg.Token = t
+	}
+}
+
+type APIClient struct {
+	*client.APIClient
+
+	Config APIConfig
+}
+
+func NewAPI(opts ...APIOptions) *APIClient {
 	cfg := client.DefaultTransportConfig()
 
-	rawApiUrl := viper.GetString("api-url")
-	insecure := viper.GetBool("insecure")
+	acfg := APIConfig{
+		URL:      viper.GetString("api-url"),
+		Insecure: viper.GetBool("insecure"),
+		Token:    "",
+	}
 
-	apiUrl, err := url.Parse(rawApiUrl)
+	for _, o := range opts {
+		o(&acfg)
+	}
+
+	apiUrl, err := url.Parse(acfg.URL)
 	if err == nil && apiUrl.Host != "" {
 		cfg = cfg.WithHost(apiUrl.Host)
 		cfg = cfg.WithSchemes([]string{apiUrl.Scheme})
@@ -91,7 +130,7 @@ func NewAPI() *client.APIClient {
 
 	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
 
-	rt, err := httptransport.TLSTransport(httptransport.TLSClientOptions{InsecureSkipVerify: insecure})
+	rt, err := httptransport.TLSTransport(httptransport.TLSClientOptions{InsecureSkipVerify: acfg.Insecure})
 	if err != nil {
 		// TODO: error handling ...
 		fmt.Printf("unable to create round tripper: %v", err)
@@ -105,13 +144,19 @@ func NewAPI() *client.APIClient {
 	tr.Transport = rt
 	// tr.DefaultAuthentication = httptransport.BearerToken("token")
 	// api.SetTransport(tr)
-	return api
+	return &APIClient{
+		APIClient: api,
+
+		Config: acfg,
+	}
 }
 
-func ClientCredentials(org *string) runtime.ClientAuthInfoWriter {
-	var token string
-	// we first try to get the token from the env variable
-	token = os.Getenv("TOKEN")
+func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
+	var token = a.Config.Token
+	if token == "" {
+		// we first try to get the token from the env variable
+		token = os.Getenv("TOKEN")
+	}
 	// if the token is not set with env variable we try to fetch
 	// him from the config (if the user is logged)
 	if len(token) == 0 {

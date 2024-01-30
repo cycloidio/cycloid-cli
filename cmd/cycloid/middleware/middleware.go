@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client"
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 )
 
@@ -112,9 +112,9 @@ type Middleware interface {
 }
 
 type middleware struct {
-	api *client.APIClient
+	api *common.APIClient
 }
 
-func NewMiddleware(api *client.APIClient) Middleware {
+func NewMiddleware(api *common.APIClient) Middleware {
 	return &middleware{api: api}
 }

@@ -3,7 +3,6 @@ package middleware
 import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_roles"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 )
 
@@ -11,7 +10,7 @@ func (m *middleware) ListRoles(org string) ([]*models.Role, error) {
 	params := organization_roles.NewGetRolesParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationRoles.GetRoles(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationRoles.GetRoles(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -33,7 +32,7 @@ func (m *middleware) GetRole(org, role string) (*models.Role, error) {
 	params.SetOrganizationCanonical(org)
 	params.SetRoleCanonical(role)
 
-	resp, err := m.api.OrganizationRoles.GetRole(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationRoles.GetRole(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -55,7 +54,7 @@ func (m *middleware) DeleteRole(org, role string) error {
 	params.SetOrganizationCanonical(org)
 	params.SetRoleCanonical(role)
 
-	_, err := m.api.OrganizationRoles.DeleteRole(params, common.ClientCredentials(&org))
+	_, err := m.api.OrganizationRoles.DeleteRole(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}

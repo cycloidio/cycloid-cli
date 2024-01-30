@@ -5,7 +5,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
 	"gopkg.in/yaml.v3"
 )
@@ -15,7 +14,7 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	params := service_catalogs.NewListServiceCatalogsParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, common.ClientCredentials(&org))
+	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -37,7 +36,7 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogRef(ref)
 
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, common.ClientCredentials(&org))
+	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -59,7 +58,7 @@ func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogRef(ref)
 
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalogConfig(params, common.ClientCredentials(&org))
+	resp, err := m.api.ServiceCatalogs.GetServiceCatalogConfig(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -136,7 +135,7 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationForms.ValidateFormsFile(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationForms.ValidateFormsFile(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
