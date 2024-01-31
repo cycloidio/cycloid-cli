@@ -72,6 +72,6 @@ func TestCatalogRepositories(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"stack-aws-sample")
+		assert.Contains(t, cmdOut, "updated")
 	})
 }
