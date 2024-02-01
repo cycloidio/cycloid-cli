@@ -27,8 +27,7 @@ type InUseExternalBackend struct {
 	Environment *InUseEnvironment `json:"environment,omitempty"`
 
 	// project
-	// Required: true
-	Project *InUseProject `json:"project"`
+	Project *InUseProject `json:"project,omitempty"`
 
 	// purpose
 	// Required: true
@@ -90,8 +89,8 @@ func (m *InUseExternalBackend) validateEnvironment(formats strfmt.Registry) erro
 
 func (m *InUseExternalBackend) validateProject(formats strfmt.Registry) error {
 
-	if err := validate.Required("project", "body", m.Project); err != nil {
-		return err
+	if swag.IsZero(m.Project) { // not required
+		return nil
 	}
 
 	if m.Project != nil {
