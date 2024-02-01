@@ -8,14 +8,13 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_invitations"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
 	params := organization_members.NewGetOrgMembersParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -36,7 +35,7 @@ func (m *middleware) ListInvites(org string) ([]*models.Invitation, error) {
 	params := organization_invitations.NewGetInvitationsParams()
 	params.SetOrganizationCanonical(org)
 
-	resp, err := m.api.OrganizationInvitations.GetInvitations(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationInvitations.GetInvitations(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -53,7 +52,7 @@ func (m *middleware) GetMember(org string, name string) (*models.MemberOrg, erro
 	params.SetOrganizationCanonical(org)
 	params.SetUsername(name)
 
-	resp, err := m.api.OrganizationMembers.GetOrgMember(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationMembers.GetOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -75,7 +74,7 @@ func (m *middleware) DeleteMember(org string, name string) error {
 	params.SetOrganizationCanonical(org)
 	params.SetUsername(name)
 
-	_, err := m.api.OrganizationMembers.RemoveOrgMember(params, common.ClientCredentials(&org))
+	_, err := m.api.OrganizationMembers.RemoveOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
 		return err
 	}
@@ -99,7 +98,7 @@ func (m *middleware) UpdateMembers(org, name, role string) (*models.MemberOrg, e
 		return nil, err
 	}
 
-	resp, err := m.api.OrganizationMembers.UpdateOrgMember(params, common.ClientCredentials(&org))
+	resp, err := m.api.OrganizationMembers.UpdateOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -133,7 +132,7 @@ func (m *middleware) InviteMember(org, email, role string) error {
 		return err
 	}
 
-	_, err = m.api.OrganizationMembers.InviteUserToOrgMember(params, common.ClientCredentials(&org))
+	_, err = m.api.OrganizationMembers.InviteUserToOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}
@@ -151,7 +150,7 @@ func (m *middleware) DeleteInvite(org string, invite string) error {
 	}
 	params.SetInvitationID(uint32(i64))
 
-	_, err = m.api.OrganizationInvitations.DeleteInvitation(params, common.ClientCredentials(&org))
+	_, err = m.api.OrganizationInvitations.DeleteInvitation(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}
