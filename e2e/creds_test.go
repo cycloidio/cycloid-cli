@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -60,6 +61,35 @@ func TestCreds(t *testing.T) {
 
 		assert.Nil(t, cmdErr)
 		require.Equal(t, "", cmdOut)
+
+		t.Run("Update", func(t *testing.T) {
+			cmdOut, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"--org", CY_TEST_ROOT_ORG,
+				"creds",
+				"update",
+				"custom",
+				"--canonical", "cli-custom",
+				"--name", "cli-custom",
+				"--field", "foo=bar",
+				"--field", "int=1",
+				"--field", "new=field",
+			})
+
+			assert.Nil(t, cmdErr)
+			require.Equal(t, "", cmdOut)
+
+			cmdOut, cmdErr = executeCommand([]string{
+				"--output", "json",
+				"--org", CY_TEST_ROOT_ORG,
+				"creds",
+				"get",
+				"--canonical", "cli-custom",
+			})
+
+			assert.Nil(t, cmdErr)
+			require.Contains(t, cmdOut, "new\":\"field")
+		})
 	})
 	t.Run("SuccessCredsCreateCustomWithFile", func(t *testing.T) {
 		// Cleanup just in case
@@ -110,4 +140,5 @@ func TestCreds(t *testing.T) {
 		assert.Nil(t, cmdErr)
 		require.Equal(t, "", cmdOut)
 	})
+
 }

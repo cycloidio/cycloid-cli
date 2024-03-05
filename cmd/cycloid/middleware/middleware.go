@@ -26,6 +26,7 @@ type Middleware interface {
 	UpdateConfigRepository(org, configRepo, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
 
 	CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error)
+	UpdateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error)
 	DeleteCredential(org, cred string) error
 	GetCredential(org, cred string) (*models.Credential, error)
 	ListCredentials(org, cType string) ([]*models.CredentialSimple, error)
