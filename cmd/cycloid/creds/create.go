@@ -394,6 +394,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	err = m.CreateCredential(org, name, credT, rawCred, path, can, description)
+	_, err = m.CreateCredential(org, name, credT, rawCred, path, can, description)
 	return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStdout())
 }
