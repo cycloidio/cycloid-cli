@@ -46,6 +46,44 @@ func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.C
 	return d, nil
 }
 
+func (m *middleware) UpdateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error) {
+
+	params := organization_credentials.NewUpdateCredentialParams()
+	params.SetOrganizationCanonical(org)
+	params.SetCredentialCanonical(can)
+
+	if path == "" {
+		re := regexp.MustCompile(`[^a-zA-z0-9_\-./]`)
+		safePath := re.ReplaceAllString(name, "-")
+		path = fmt.Sprintf("%s_%s", cType, safePath)
+	}
+
+	body := &models.UpdateCredential{
+		Description: description,
+		Name:        &name,
+		Path:        &path,
+		Raw:         rawCred,
+		Type:        &cType,
+		Canonical:   &can,
+	}
+
+	params.SetBody(body)
+	err := body.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := m.api.OrganizationCredentials.UpdateCredential(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	p := resp.GetPayload()
+
+	d := p.Data
+	return d, nil
+}
+
 func (m *middleware) GetCredential(org, cred string) (*models.Credential, error) {
 
 	params := organization_credentials.NewGetCredentialParams()
