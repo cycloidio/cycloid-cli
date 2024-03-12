@@ -6,9 +6,13 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
+
 	strfmt "github.com/go-openapi/strfmt"
 
+	"github.com/go-openapi/errors"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // CredentialRaw Credential Raw
@@ -38,6 +42,10 @@ type CredentialRaw struct {
 	// domain id
 	DomainID string `json:"domain_id,omitempty"`
 
+	// environment
+	// Enum: [public usgovernment china german]
+	Environment string `json:"environment,omitempty"`
+
 	// json key
 	JSONKey string `json:"json_key,omitempty"`
 
@@ -65,6 +73,64 @@ type CredentialRaw struct {
 
 // Validate validates this credential raw
 func (m *CredentialRaw) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.validateEnvironment(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+var credentialRawTypeEnvironmentPropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["public","usgovernment","china","german"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		credentialRawTypeEnvironmentPropEnum = append(credentialRawTypeEnvironmentPropEnum, v)
+	}
+}
+
+const (
+
+	// CredentialRawEnvironmentPublic captures enum value "public"
+	CredentialRawEnvironmentPublic string = "public"
+
+	// CredentialRawEnvironmentUsgovernment captures enum value "usgovernment"
+	CredentialRawEnvironmentUsgovernment string = "usgovernment"
+
+	// CredentialRawEnvironmentChina captures enum value "china"
+	CredentialRawEnvironmentChina string = "china"
+
+	// CredentialRawEnvironmentGerman captures enum value "german"
+	CredentialRawEnvironmentGerman string = "german"
+)
+
+// prop value enum
+func (m *CredentialRaw) validateEnvironmentEnum(path, location string, value string) error {
+	if err := validate.Enum(path, location, value, credentialRawTypeEnvironmentPropEnum); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *CredentialRaw) validateEnvironment(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Environment) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateEnvironmentEnum("environment", "body", m.Environment); err != nil {
+		return err
+	}
+
 	return nil
 }
 

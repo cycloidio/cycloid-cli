@@ -82,12 +82,22 @@ for the get projects operation typically these are written to a http.Request
 */
 type GetProjectsParams struct {
 
+	/*EnvironmentCanonical
+	  A list of environments' canonical to filter from
+
+	*/
+	EnvironmentCanonical []string
 	/*Favorite
 	  Flag to retrieve favorite data from the members favorite list.
 
 
 	*/
 	Favorite *bool
+	/*MemberID
+	  Search by entity's owner
+
+	*/
+	MemberID *uint32
 	/*OrderBy
 	  Allows to order the list of items. Example usage: field_name:asc
 
@@ -134,11 +144,6 @@ type GetProjectsParams struct {
 
 	*/
 	ServiceCatalogSourceCanonical *string
-	/*UserID
-	  Search by entity's owner
-
-	*/
-	UserID *uint32
 
 	timeout    time.Duration
 	Context    context.Context
@@ -178,6 +183,17 @@ func (o *GetProjectsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithEnvironmentCanonical adds the environmentCanonical to the get projects params
+func (o *GetProjectsParams) WithEnvironmentCanonical(environmentCanonical []string) *GetProjectsParams {
+	o.SetEnvironmentCanonical(environmentCanonical)
+	return o
+}
+
+// SetEnvironmentCanonical adds the environmentCanonical to the get projects params
+func (o *GetProjectsParams) SetEnvironmentCanonical(environmentCanonical []string) {
+	o.EnvironmentCanonical = environmentCanonical
+}
+
 // WithFavorite adds the favorite to the get projects params
 func (o *GetProjectsParams) WithFavorite(favorite *bool) *GetProjectsParams {
 	o.SetFavorite(favorite)
@@ -187,6 +203,17 @@ func (o *GetProjectsParams) WithFavorite(favorite *bool) *GetProjectsParams {
 // SetFavorite adds the favorite to the get projects params
 func (o *GetProjectsParams) SetFavorite(favorite *bool) {
 	o.Favorite = favorite
+}
+
+// WithMemberID adds the memberID to the get projects params
+func (o *GetProjectsParams) WithMemberID(memberID *uint32) *GetProjectsParams {
+	o.SetMemberID(memberID)
+	return o
+}
+
+// SetMemberID adds the memberId to the get projects params
+func (o *GetProjectsParams) SetMemberID(memberID *uint32) {
+	o.MemberID = memberID
 }
 
 // WithOrderBy adds the orderBy to the get projects params
@@ -288,17 +315,6 @@ func (o *GetProjectsParams) SetServiceCatalogSourceCanonical(serviceCatalogSourc
 	o.ServiceCatalogSourceCanonical = serviceCatalogSourceCanonical
 }
 
-// WithUserID adds the userID to the get projects params
-func (o *GetProjectsParams) WithUserID(userID *uint32) *GetProjectsParams {
-	o.SetUserID(userID)
-	return o
-}
-
-// SetUserID adds the userId to the get projects params
-func (o *GetProjectsParams) SetUserID(userID *uint32) {
-	o.UserID = userID
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -306,6 +322,14 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		return err
 	}
 	var res []error
+
+	valuesEnvironmentCanonical := o.EnvironmentCanonical
+
+	joinedEnvironmentCanonical := swag.JoinByFormat(valuesEnvironmentCanonical, "")
+	// query array param environment_canonical
+	if err := r.SetQueryParam("environment_canonical", joinedEnvironmentCanonical...); err != nil {
+		return err
+	}
 
 	if o.Favorite != nil {
 
@@ -317,6 +341,22 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		qFavorite := swag.FormatBool(qrFavorite)
 		if qFavorite != "" {
 			if err := r.SetQueryParam("favorite", qFavorite); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.MemberID != nil {
+
+		// query param member_id
+		var qrMemberID uint32
+		if o.MemberID != nil {
+			qrMemberID = *o.MemberID
+		}
+		qMemberID := swag.FormatUint32(qrMemberID)
+		if qMemberID != "" {
+			if err := r.SetQueryParam("member_id", qMemberID); err != nil {
 				return err
 			}
 		}
@@ -450,22 +490,6 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		qServiceCatalogSourceCanonical := qrServiceCatalogSourceCanonical
 		if qServiceCatalogSourceCanonical != "" {
 			if err := r.SetQueryParam("service_catalog_source_canonical", qServiceCatalogSourceCanonical); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.UserID != nil {
-
-		// query param user_id
-		var qrUserID uint32
-		if o.UserID != nil {
-			qrUserID = *o.UserID
-		}
-		qUserID := swag.FormatUint32(qrUserID)
-		if qUserID != "" {
-			if err := r.SetQueryParam("user_id", qUserID); err != nil {
 				return err
 			}
 		}
