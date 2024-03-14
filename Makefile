@@ -78,11 +78,11 @@ AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws
 # Local BE
 LOCAL_BE_GIT_PATH ?= ../youdeploy-http-api
 YD_API_TAG        ?= staging
-API_LICENCE_KEY   ?= (api-e2e-lincese-key)
+API_LICENCE_KEY   ?= 
 
 .PHONY: help
 help: ## Show this help
-	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
+	@grep -F -h "##" $(MAKEFILE_LIST) | grep -F -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
 
 .PHONY: build
 build: ## Builds the binary
@@ -130,6 +130,7 @@ ecr-connect: ## Login to ecr, requires aws cli installed
 .PHONY: start-local-be
 start-local-be: ## Starts local BE instance. Note! Only for cycloid developers
 	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
+	@if [ -z "$$API_LICENCE_KEY" ]; then echo "API_LICENCE_KEY is not set"; exit 1; fi; \
 	@echo "Starting Local BE..."
 	@echo "Generating fake data to be used in the tests..."
 	@cd $(LOCAL_BE_GIT_PATH) && sed -i '/cost-explorer-es/d' config.yml

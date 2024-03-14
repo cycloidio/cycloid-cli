@@ -35,6 +35,32 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 	return d, nil
 }
 
+func (m *middleware) UpdateOrganization(can, name string) (*models.Organization, error) {
+
+	params := organizations.NewUpdateOrgParams()
+	params.SetOrganizationCanonical(can)
+
+	body := &models.UpdateOrganization{
+		Name: &name,
+	}
+
+	params.SetBody(body)
+	err := body.Validate(strfmt.Default)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to validate request body")
+	}
+
+	resp, err := m.api.Organizations.UpdateOrg(params, m.api.Credentials(&can))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	p := resp.GetPayload()
+
+	d := p.Data
+	return d, nil
+}
+
 func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
 
 	params := organizations.NewGetOrgParams()

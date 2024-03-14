@@ -16,6 +16,7 @@ func NewCommands() *cobra.Command {
 	}
 	cmd.AddCommand(
 		NewCreateCommand(),
+		NewUpdateCommand(),
 		NewListCommand(),
 		NewListWorkersCommand(),
 		NewDeleteCommand(),
