@@ -48,6 +48,7 @@ type Middleware interface {
 	UpdateMembers(org, name, role string) (*models.MemberOrg, error)
 
 	CreateOrganization(name string) (*models.Organization, error)
+	UpdateOrganization(org, name string) (*models.Organization, error)
 	DeleteOrganization(org string) error
 	GetOrganization(org string) (*models.Organization, error)
 	ListOrganizations() ([]*models.Organization, error)
