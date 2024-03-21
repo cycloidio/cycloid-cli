@@ -16,6 +16,7 @@ type Middleware interface {
 	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
 	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error)
 	UpdateCatalogRepository(org, name, url, branch, catalogRepo, cred string) (*models.ServiceCatalogSource, error)
+	NewServiceCatalogFromTemplate(org string, serviceCatalog string, name string, canonical string, author string, serviceCatalogSourceCanonincal string, useCase string, createdAt uint64, updatedAt uint64) (*models.ServiceCatalog, error)
 	GetStackConfig(org, ref string) (interface{}, error)
 
 	CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
