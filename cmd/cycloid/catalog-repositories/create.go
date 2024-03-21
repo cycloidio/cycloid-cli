@@ -19,8 +19,7 @@ func NewCreateCommand() *cobra.Command {
 	cy --org my-org catalog-repo create --branch stacks --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name
 
 	# create a catalog repository using public git repository
-	cy --org my-org catalog-repo create --branch stacks --url "https://github.com:my/repo.git" --name my-catalog-name
-`,
+	cy --org my-org catalog-repo create --branch stacks --url "https://github.com:my/repo.git" --name my-catalog-name `,
 		RunE: createCatalogRepository,
 	}
 

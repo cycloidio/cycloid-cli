@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
+	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
@@ -164,4 +165,31 @@ func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.
 	d := p.Data
 
 	return d, err
+}
+
+func (m *middleware) NewServiceCatalogFromTemplate(org string, serviceCatalog string, name string, canonical string, author string, serviceCatalogSourceCanonincal string, useCase string, createdAt uint64, updatedAt uint64) (*models.ServiceCatalog, error) {
+	params := service_catalogs.NewCreateServiceCatalogFromTemplateParams()
+	params.SetOrganizationCanonical(org)
+	params.SetServiceCatalogRef(serviceCatalog)
+	params.Body = &models.NewServiceCatalogFromTemplate{
+		Name:                          &name,
+		Canonical:                     &canonical,
+		Author:                        author,
+		ServiceCatalogSourceCanonical: &serviceCatalogSourceCanonincal,
+		UseCase:                       &useCase,
+		CreatedAt:                     &createdAt,
+		UpdatedAt:                     &updatedAt,
+	}
+	resp, err := m.api.ServiceCatalogs.CreateServiceCatalogFromTemplate(params, common.ClientCredentials(&org))
+	if err != nil {
+		return nil, err
+	}
+	p := resp.GetPayload()
+	err = p.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
+
+	d := p.Data
+	return d, nil
 }
