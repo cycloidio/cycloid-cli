@@ -14,6 +14,7 @@ var (
 	prefilters          map[string]string
 	skipVerifySSL       bool
 	awsS3ForcePathStyle bool
+	def                 bool
 )
 
 func WithFlagAwsRegion(cmd *cobra.Command) string {
@@ -52,6 +53,11 @@ func WithFlagS3ForcePathStyle(cmd *cobra.Command) string {
 func WithFlagSkipVerifySSL(cmd *cobra.Command) string {
 	flagName := "skip-verify-ssl"
 	cmd.Flags().BoolVar(&skipVerifySSL, flagName, false, "")
+	return flagName
+}
+func WithFlagDefault(cmd *cobra.Command) string {
+	flagName := "default"
+	cmd.Flags().BoolVar(&def, flagName, false, "")
 	return flagName
 }
 

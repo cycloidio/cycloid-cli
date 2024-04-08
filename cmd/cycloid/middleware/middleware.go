@@ -34,7 +34,7 @@ type Middleware interface {
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error
 
 	DeleteExternalBackend(org string, externalBackend uint32) error
-	CreateExternalBackends(org, project, env, purpose, cred string, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
+	CreateExternalBackends(org, project, env, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 	ListExternalBackends(org string) ([]*models.ExternalBackend, error)
 
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
