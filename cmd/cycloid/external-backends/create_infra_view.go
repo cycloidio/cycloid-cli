@@ -23,6 +23,7 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		org, project, env string
 		ebC               models.ExternalBackendConfiguration
 		engine            = cmd.CalledAs()
+		defaultEB         bool
 	)
 
 	output, err := cmd.Flags().GetString("output")
@@ -38,6 +39,10 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	env, err = cmd.Flags().GetString("env")
+	if err != nil {
+		return err
+	}
+	defaultEB, err = cmd.Flags().GetBool("default")
 	if err != nil {
 		return err
 	}
@@ -126,6 +131,6 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, ebC)
+	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, defaultEB, ebC)
 	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, cmd.OutOrStdout())
 }
