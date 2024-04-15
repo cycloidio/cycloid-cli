@@ -23,7 +23,7 @@ type Middleware interface {
 	GetConfigRepository(org, configRepo string) (*models.ConfigRepository, error)
 	ListConfigRepositories(org string) ([]*models.ConfigRepository, error)
 	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
-	UpdateConfigRepository(org, configRepo, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
+	UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, error)
 
 	CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error)
 	UpdateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error)
