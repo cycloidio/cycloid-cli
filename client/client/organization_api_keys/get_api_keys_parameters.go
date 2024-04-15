@@ -82,6 +82,11 @@ for the get API keys operation typically these are written to a http.Request
 */
 type GetAPIKeysParams struct {
 
+	/*MemberID
+	  Search by entity's owner
+
+	*/
+	MemberID *uint32
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -97,11 +102,6 @@ type GetAPIKeysParams struct {
 
 	*/
 	PageSize *uint32
-	/*UserID
-	  Search by entity's owner
-
-	*/
-	UserID *uint32
 
 	timeout    time.Duration
 	Context    context.Context
@@ -141,6 +141,17 @@ func (o *GetAPIKeysParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithMemberID adds the memberID to the get API keys params
+func (o *GetAPIKeysParams) WithMemberID(memberID *uint32) *GetAPIKeysParams {
+	o.SetMemberID(memberID)
+	return o
+}
+
+// SetMemberID adds the memberId to the get API keys params
+func (o *GetAPIKeysParams) SetMemberID(memberID *uint32) {
+	o.MemberID = memberID
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the get API keys params
 func (o *GetAPIKeysParams) WithOrganizationCanonical(organizationCanonical string) *GetAPIKeysParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -174,17 +185,6 @@ func (o *GetAPIKeysParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
-// WithUserID adds the userID to the get API keys params
-func (o *GetAPIKeysParams) WithUserID(userID *uint32) *GetAPIKeysParams {
-	o.SetUserID(userID)
-	return o
-}
-
-// SetUserID adds the userId to the get API keys params
-func (o *GetAPIKeysParams) SetUserID(userID *uint32) {
-	o.UserID = userID
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *GetAPIKeysParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -192,6 +192,22 @@ func (o *GetAPIKeysParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		return err
 	}
 	var res []error
+
+	if o.MemberID != nil {
+
+		// query param member_id
+		var qrMemberID uint32
+		if o.MemberID != nil {
+			qrMemberID = *o.MemberID
+		}
+		qMemberID := swag.FormatUint32(qrMemberID)
+		if qMemberID != "" {
+			if err := r.SetQueryParam("member_id", qMemberID); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	// path param organization_canonical
 	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
@@ -224,22 +240,6 @@ func (o *GetAPIKeysParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Re
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
-				return err
-			}
-		}
-
-	}
-
-	if o.UserID != nil {
-
-		// query param user_id
-		var qrUserID uint32
-		if o.UserID != nil {
-			qrUserID = *o.UserID
-		}
-		qUserID := swag.FormatUint32(qrUserID)
-		if qUserID != "" {
-			if err := r.SetQueryParam("user_id", qUserID); err != nil {
 				return err
 			}
 		}
