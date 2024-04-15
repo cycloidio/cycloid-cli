@@ -13,6 +13,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -66,6 +67,11 @@ type GetExternalBackendsParams struct {
 
 	*/
 	Environment *string
+	/*ExternalBackendDefault
+	  Filter for default Terraform External Backend
+
+	*/
+	ExternalBackendDefault *bool
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -126,6 +132,17 @@ func (o *GetExternalBackendsParams) SetEnvironment(environment *string) {
 	o.Environment = environment
 }
 
+// WithExternalBackendDefault adds the externalBackendDefault to the get external backends params
+func (o *GetExternalBackendsParams) WithExternalBackendDefault(externalBackendDefault *bool) *GetExternalBackendsParams {
+	o.SetExternalBackendDefault(externalBackendDefault)
+	return o
+}
+
+// SetExternalBackendDefault adds the externalBackendDefault to the get external backends params
+func (o *GetExternalBackendsParams) SetExternalBackendDefault(externalBackendDefault *bool) {
+	o.ExternalBackendDefault = externalBackendDefault
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the get external backends params
 func (o *GetExternalBackendsParams) WithOrganizationCanonical(organizationCanonical string) *GetExternalBackendsParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -166,6 +183,22 @@ func (o *GetExternalBackendsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		qEnvironment := qrEnvironment
 		if qEnvironment != "" {
 			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
+				return err
+			}
+		}
+
+	}
+
+	if o.ExternalBackendDefault != nil {
+
+		// query param external_backend_default
+		var qrExternalBackendDefault bool
+		if o.ExternalBackendDefault != nil {
+			qrExternalBackendDefault = *o.ExternalBackendDefault
+		}
+		qExternalBackendDefault := swag.FormatBool(qrExternalBackendDefault)
+		if qExternalBackendDefault != "" {
+			if err := r.SetQueryParam("external_backend_default", qExternalBackendDefault); err != nil {
 				return err
 			}
 		}
