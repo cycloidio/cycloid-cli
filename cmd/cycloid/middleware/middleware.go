@@ -36,6 +36,9 @@ type Middleware interface {
 	DeleteExternalBackend(org string, externalBackend uint32) error
 	CreateExternalBackends(org, project, env, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 	ListExternalBackends(org string) ([]*models.ExternalBackend, error)
+	GetExternalBackend(org string, externalBackend uint32) (*models.ExternalBackend, error)
+	GetRemoteTFExternalBackend(org string) (*models.ExternalBackend, error)
+	UpdateExternalBackend(org string, externalBackendID uint32, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
 
@@ -102,7 +105,7 @@ type Middleware interface {
 
 	// ValidateInfraPolicies will validate the TF plan against OPA policies defined on the Cycloid server
 	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error)
-	// CreateInfraPoliciy will create a new infraPolicy with the rego file suplied
+	// CreateInfraPolicy will create a new infraPolicy with the rego file suplied
 	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
 	DeleteInfraPolicy(org, policyCannonical string) error
 	ListInfraPolicies(org string) ([]*models.InfraPolicy, error)
