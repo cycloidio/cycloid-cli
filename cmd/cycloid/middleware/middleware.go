@@ -105,7 +105,7 @@ type Middleware interface {
 
 	// ValidateInfraPolicies will validate the TF plan against OPA policies defined on the Cycloid server
 	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error)
-	// CreateInfraPolicy will create a new infraPolicy with the rego file suplied
+	// CreateInfraPolicy will create a new infraPolicy with the repo file supplied
 	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
 	DeleteInfraPolicy(org, policyCannonical string) error
 	ListInfraPolicies(org string) ([]*models.InfraPolicy, error)
