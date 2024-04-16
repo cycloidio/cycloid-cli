@@ -1,8 +1,0 @@
-component: Other
-kind: ADDED
-body: Added more middleware methods for external backends
-time: 2024-04-15T14:15:51.958629544Z
-custom:
-  DETAILS: ""
-  PR: "254"
-  TYPE: CLI
