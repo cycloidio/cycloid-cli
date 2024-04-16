@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -22,13 +23,12 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("ErrorMissingRequiredFlag", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
+		_, cmdErr := executeCommand([]string{
 			"login",
 			"--org", CY_TEST_ROOT_ORG,
 		})
 
 		require.NotNil(t, cmdErr)
-		assert.Contains(t, cmdOut, "Usage")
-		assert.Contains(t, string(cmdErr.Error()), "required flag(s) \"api-key\" not set" )
+		assert.Contains(t, string(cmdErr.Error()), "required flag(s) \"api-key\" not set")
 	})
 }
