@@ -22,7 +22,7 @@ func TestOrganizations(t *testing.T) {
 			"get",
 		})
 
-		require.Nil(t, cmdErr)
+		require.NoError(t, cmdErr)
 		assert.Contains(t, cmdOut, fmt.Sprintf("canonical\":\"%s", CY_TEST_ROOT_ORG))
 	})
 
@@ -30,13 +30,13 @@ func TestOrganizations(t *testing.T) {
 	t.Run("SuccessOrganizationsCreateChild", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"--parent-org", childOrg,
+			"--org", childOrg,
+			"--parent-org", CY_TEST_ROOT_ORG,
 			"organization",
 			"create-child",
 		})
 
-		require.Nil(t, cmdErr)
+		require.NoError(t, cmdErr)
 		assert.Contains(t, cmdOut, "[]")
 	})
 
@@ -48,7 +48,7 @@ func TestOrganizations(t *testing.T) {
 			"list-childrens",
 		})
 
-		require.Nil(t, cmdErr)
+		require.NoError(t, cmdErr)
 		assert.Contains(t, cmdOut, childOrg)
 	})
 
@@ -60,7 +60,7 @@ func TestOrganizations(t *testing.T) {
 			"list-workers",
 		})
 
-		require.Nil(t, cmdErr)
+		require.NoError(t, cmdErr)
 		assert.Contains(t, cmdOut, "[]")
 	})
 }

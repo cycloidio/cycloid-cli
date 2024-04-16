@@ -6,6 +6,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const noDefault = false
+
 var hostMapping, messageMapping, timestampMapping, esIndex string
 
 func NewCreateCommand() *cobra.Command {
@@ -51,6 +53,7 @@ func newInfraViewCommand() *cobra.Command {
 	WithFlagS3BucketEndpoint(aWSRemoteTFState)
 	WithFlagS3ForcePathStyle(aWSRemoteTFState)
 	WithFlagSkipVerifySSL(aWSRemoteTFState)
+	WithFlagDefault(aWSRemoteTFState)
 
 	var gCPRemoteTFState = &cobra.Command{
 		Use:     "GCPRemoteTFState",
@@ -60,6 +63,7 @@ func newInfraViewCommand() *cobra.Command {
 	common.RequiredFlag(common.WithFlagCred, gCPRemoteTFState)
 	WithFlagBucketName(gCPRemoteTFState)
 	WithFlagBucketPath(gCPRemoteTFState)
+	WithFlagDefault(gCPRemoteTFState)
 
 	var swiftRemoteTFState = &cobra.Command{
 		Use:     "SwiftRemoteTFState",
@@ -71,16 +75,19 @@ func newInfraViewCommand() *cobra.Command {
 	WithFlagBucketPath(swiftRemoteTFState)
 	common.RequiredFlag(WithFlagRegion, swiftRemoteTFState)
 	WithFlagSkipVerifySSL(swiftRemoteTFState)
+	WithFlagDefault(swiftRemoteTFState)
 
-	infraViewCmd.AddCommand(aWSRemoteTFState,
+	infraViewCmd.AddCommand(
+		aWSRemoteTFState,
 		gCPRemoteTFState,
-		swiftRemoteTFState)
+		swiftRemoteTFState,
+	)
 	return infraViewCmd
 }
 
 func newEventsCommand() *cobra.Command {
 	var eventCmd = &cobra.Command{
-		Use: "events [backend]",
+		Use:    "events [backend]",
 		Hidden: true,
 	}
 

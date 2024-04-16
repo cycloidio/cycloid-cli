@@ -63,6 +63,9 @@ func NewRootCommand() *cobra.Command {
 	rootCmd.PersistentFlags().Bool("insecure", false, "Decide to skip or not TLS verification")
 	viper.BindPFlag("insecure", rootCmd.PersistentFlags().Lookup("insecure"))
 
+	// Remove usage on error, this is annoying in scripting
+	rootCmd.SilenceUsage = true
+
 	AttachCommands(rootCmd)
 
 	return rootCmd

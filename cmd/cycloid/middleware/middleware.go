@@ -23,9 +23,10 @@ type Middleware interface {
 	GetConfigRepository(org, configRepo string) (*models.ConfigRepository, error)
 	ListConfigRepositories(org string) ([]*models.ConfigRepository, error)
 	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
-	UpdateConfigRepository(org, configRepo, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
+	UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, error)
 
-	CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) error
+	CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error)
+	UpdateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error)
 	DeleteCredential(org, cred string) error
 	GetCredential(org, cred string) (*models.Credential, error)
 	ListCredentials(org, cType string) ([]*models.CredentialSimple, error)
@@ -33,8 +34,11 @@ type Middleware interface {
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error
 
 	DeleteExternalBackend(org string, externalBackend uint32) error
-	CreateExternalBackends(org, project, env, purpose, cred string, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
+	CreateExternalBackends(org, project, env, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 	ListExternalBackends(org string) ([]*models.ExternalBackend, error)
+	GetExternalBackend(org string, externalBackend uint32) (*models.ExternalBackend, error)
+	GetRemoteTFExternalBackend(org string) (*models.ExternalBackend, error)
+	UpdateExternalBackend(org string, externalBackendID uint32, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
 
@@ -47,6 +51,7 @@ type Middleware interface {
 	UpdateMembers(org, name, role string) (*models.MemberOrg, error)
 
 	CreateOrganization(name string) (*models.Organization, error)
+	UpdateOrganization(org, name string) (*models.Organization, error)
 	DeleteOrganization(org string) error
 	GetOrganization(org string) (*models.Organization, error)
 	ListOrganizations() ([]*models.Organization, error)
@@ -100,7 +105,7 @@ type Middleware interface {
 
 	// ValidateInfraPolicies will validate the TF plan against OPA policies defined on the Cycloid server
 	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error)
-	// CreateInfraPoliciy will create a new infraPolicy with the rego file suplied
+	// CreateInfraPolicy will create a new infraPolicy with the repo file supplied
 	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
 	DeleteInfraPolicy(org, policyCannonical string) error
 	ListInfraPolicies(org string) ([]*models.InfraPolicy, error)

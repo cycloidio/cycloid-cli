@@ -9,10 +9,20 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/version"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 func warning(out io.Writer, msg string) {
-	fmt.Fprintf(out, "\033[1;35m%s\033[0m\n", msg)
+	switch viper.GetString("verbosity") {
+	case "info", "debug", "warning":
+		// This is still dirty, we should detect if the current
+		// terminal is able to support colors
+		// But that would be for another PR.
+		fmt.Fprintf(out, "\033[1;35m%s\033[0m\n", msg)
+		break
+	default:
+		break
+	}
 }
 
 func CheckAPIAndCLIVersion(cmd *cobra.Command, args []string) error {

@@ -57,12 +57,13 @@ func Read() (*Config, error) {
 // path location
 func Write(c *Config) error {
 	content, err := yaml.Marshal(c)
+	if err != nil {
+		return errors.Wrap(err, "unable to marshal config structure")
+	}
 	configFilePath, err := xdg.ConfigFile(fmt.Sprintf("%s/%s", appName, path))
 	if err != nil {
 		return errors.Wrap(err, "unable to find XDG config path")
 	}
-	if err != nil {
-		return errors.Wrap(err, "unable to marshal config structure")
-	}
+
 	return ioutil.WriteFile(configFilePath, content, 0644)
 }

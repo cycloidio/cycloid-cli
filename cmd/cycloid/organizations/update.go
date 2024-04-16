@@ -11,31 +11,40 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewCreateChildCommand() *cobra.Command {
+// This command have been Hidden because it is not compatible with API key login.
+// Advanced user still can use it passing a user token in CY_TOKEN env var during a login.
+func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "create-child",
-		Short:   "create a child organization",
-		RunE:    createChild,
+		Use:   "update",
+		Short: "update an organization",
+		Example: `
+	# update an organization foo
+	cy organization update --org org --name foo
+`,
+		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
+
 	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
-	common.RequiredPersistentFlag(WithFlagParentOrganization, cmd)
+	common.RequiredFlag(WithFlagName, cmd)
 
 	return cmd
 }
 
-func createChild(cmd *cobra.Command, args []string) error {
+func update(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		return err
+	}
+
 	org, err := cmd.Flags().GetString("org")
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable get org flag")
 	}
-	porg, err := cmd.Flags().GetString("parent-org")
-	if err != nil {
-		return err
-	}
+
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
@@ -47,6 +56,6 @@ func createChild(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	oc, err := m.CreateOrganizationChild(org, porg)
-	return printer.SmartPrint(p, oc, err, "unable to create a child organization", printer.Options{}, cmd.OutOrStdout())
+	o, err := m.UpdateOrganization(org, name)
+	return printer.SmartPrint(p, o, err, "unable to update organization", printer.Options{}, cmd.OutOrStdout())
 }
