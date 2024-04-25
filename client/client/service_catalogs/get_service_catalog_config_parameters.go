@@ -61,16 +61,31 @@ for the get service catalog config operation typically these are written to a ht
 */
 type GetServiceCatalogConfigParams struct {
 
+	/*Environment
+	  The environment canonical to use a query filter
+
+	*/
+	Environment *string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
 	*/
 	OrganizationCanonical string
+	/*Project
+	  A canonical of a project used for filtering.
+
+	*/
+	Project *string
 	/*ServiceCatalogRef
 	  A Service Catalog name
 
 	*/
 	ServiceCatalogRef string
+	/*UseCase
+	  A use case of a stack to be selectd from the stack config
+
+	*/
+	UseCase *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -110,6 +125,17 @@ func (o *GetServiceCatalogConfigParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithEnvironment adds the environment to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) WithEnvironment(environment *string) *GetServiceCatalogConfigParams {
+	o.SetEnvironment(environment)
+	return o
+}
+
+// SetEnvironment adds the environment to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) SetEnvironment(environment *string) {
+	o.Environment = environment
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the get service catalog config params
 func (o *GetServiceCatalogConfigParams) WithOrganizationCanonical(organizationCanonical string) *GetServiceCatalogConfigParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -119,6 +145,17 @@ func (o *GetServiceCatalogConfigParams) WithOrganizationCanonical(organizationCa
 // SetOrganizationCanonical adds the organizationCanonical to the get service catalog config params
 func (o *GetServiceCatalogConfigParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
+}
+
+// WithProject adds the project to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) WithProject(project *string) *GetServiceCatalogConfigParams {
+	o.SetProject(project)
+	return o
+}
+
+// SetProject adds the project to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) SetProject(project *string) {
+	o.Project = project
 }
 
 // WithServiceCatalogRef adds the serviceCatalogRef to the get service catalog config params
@@ -132,6 +169,17 @@ func (o *GetServiceCatalogConfigParams) SetServiceCatalogRef(serviceCatalogRef s
 	o.ServiceCatalogRef = serviceCatalogRef
 }
 
+// WithUseCase adds the useCase to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) WithUseCase(useCase *string) *GetServiceCatalogConfigParams {
+	o.SetUseCase(useCase)
+	return o
+}
+
+// SetUseCase adds the useCase to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) SetUseCase(useCase *string) {
+	o.UseCase = useCase
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetServiceCatalogConfigParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -140,14 +188,62 @@ func (o *GetServiceCatalogConfigParams) WriteToRequest(r runtime.ClientRequest, 
 	}
 	var res []error
 
+	if o.Environment != nil {
+
+		// query param environment
+		var qrEnvironment string
+		if o.Environment != nil {
+			qrEnvironment = *o.Environment
+		}
+		qEnvironment := qrEnvironment
+		if qEnvironment != "" {
+			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// path param organization_canonical
 	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
 		return err
 	}
 
+	if o.Project != nil {
+
+		// query param project
+		var qrProject string
+		if o.Project != nil {
+			qrProject = *o.Project
+		}
+		qProject := qrProject
+		if qProject != "" {
+			if err := r.SetQueryParam("project", qProject); err != nil {
+				return err
+			}
+		}
+
+	}
+
 	// path param service_catalog_ref
 	if err := r.SetPathParam("service_catalog_ref", o.ServiceCatalogRef); err != nil {
 		return err
+	}
+
+	if o.UseCase != nil {
+
+		// query param use_case
+		var qrUseCase string
+		if o.UseCase != nil {
+			qrUseCase = *o.UseCase
+		}
+		qUseCase := qrUseCase
+		if qUseCase != "" {
+			if err := r.SetQueryParam("use_case", qUseCase); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if len(res) > 0 {
