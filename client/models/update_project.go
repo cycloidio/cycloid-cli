@@ -51,7 +51,7 @@ type UpdateProject struct {
 	Description string `json:"description,omitempty"`
 
 	// environments
-	// Min Items: 1
+	// Min Items: 0
 	Environments []*NewEnvironment `json:"environments"`
 
 	// The variables set within a form with the corresponding environment
@@ -203,7 +203,7 @@ func (m *UpdateProject) validateEnvironments(formats strfmt.Registry) error {
 
 	iEnvironmentsSize := int64(len(m.Environments))
 
-	if err := validate.MinItems("environments", "body", iEnvironmentsSize, 1); err != nil {
+	if err := validate.MinItems("environments", "body", iEnvironmentsSize, 0); err != nil {
 		return err
 	}
 
