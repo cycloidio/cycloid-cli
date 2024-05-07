@@ -32,8 +32,7 @@ type Pipeline struct {
 
 	// environment
 	// Required: true
-	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
-	Environment *string `json:"environment"`
+	Environment *Environment `json:"environment"`
 
 	// groups
 	Groups []*GroupConfig `json:"groups"`
@@ -162,8 +161,13 @@ func (m *Pipeline) validateEnvironment(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("environment", "body", string(*m.Environment), `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
-		return err
+	if m.Environment != nil {
+		if err := m.Environment.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("environment")
+			}
+			return err
+		}
 	}
 
 	return nil
