@@ -21,10 +21,10 @@ func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 

@@ -35,6 +35,9 @@ type FormEntity struct {
 	//       default: t2.large
 	Default interface{} `json:"default,omitempty"`
 
+	// List of keys that are required to use this entity
+	DependsOn []string `json:"depends_on"`
+
 	// The description helping users understand the interest/impact of such variable/change
 	Description string `json:"description,omitempty"`
 
@@ -85,6 +88,9 @@ type FormEntity struct {
 	//     - condition: "$env == 'prod'"
 	//       values: [prod-ami1, prod-ami2, prod-ami3]
 	Values interface{} `json:"values,omitempty"`
+
+	// It's a URL in which the values have to be fetched from
+	ValuesRef string `json:"values_ref,omitempty"`
 
 	// The widget used to display the data in the most suitable way
 	// Required: true
