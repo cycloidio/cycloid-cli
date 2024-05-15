@@ -35,6 +35,9 @@ type FormEntity struct {
 	//       default: t2.large
 	Default interface{} `json:"default,omitempty"`
 
+	// List of keys that are required to use this entity
+	DependsOn []string `json:"depends_on"`
+
 	// The description helping users understand the interest/impact of such variable/change
 	Description string `json:"description,omitempty"`
 
