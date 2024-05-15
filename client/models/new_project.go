@@ -58,7 +58,6 @@ type NewProject struct {
 	// Each instance should include passed_config if no inputs are sent on
 	// project creation, otherwise it will be inferred internally.
 	//
-	// Required: true
 	// Min Items: 1
 	Pipelines []*NewPipeline `json:"pipelines"`
 
@@ -195,8 +194,8 @@ func (m *NewProject) validateName(formats strfmt.Registry) error {
 
 func (m *NewProject) validatePipelines(formats strfmt.Registry) error {
 
-	if err := validate.Required("pipelines", "body", m.Pipelines); err != nil {
-		return err
+	if swag.IsZero(m.Pipelines) { // not required
+		return nil
 	}
 
 	iPipelinesSize := int64(len(m.Pipelines))
