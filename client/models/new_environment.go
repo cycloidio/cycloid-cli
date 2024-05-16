@@ -31,6 +31,14 @@ type NewEnvironment struct {
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	CloudProviderCanonical string `json:"cloud_provider_canonical,omitempty"`
+
+	// color
+	// Max Length: 64
+	Color string `json:"color,omitempty"`
+
+	// icon
+	// Max Length: 64
+	Icon string `json:"icon,omitempty"`
 }
 
 // Validate validates this new environment
@@ -42,6 +50,14 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCloudProviderCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateColor(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIcon(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -87,6 +103,32 @@ func (m *NewEnvironment) validateCloudProviderCanonical(formats strfmt.Registry)
 	}
 
 	if err := validate.Pattern("cloud_provider_canonical", "body", string(m.CloudProviderCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewEnvironment) validateColor(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Color) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("color", "body", string(m.Color), 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewEnvironment) validateIcon(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Icon) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("icon", "body", string(m.Icon), 64); err != nil {
 		return err
 	}
 

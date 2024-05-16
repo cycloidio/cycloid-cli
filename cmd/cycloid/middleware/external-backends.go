@@ -1,11 +1,11 @@
 package middleware
 
 import (
+	"errors"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"errors"
 )
 
 const (
@@ -15,7 +15,7 @@ const (
 func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBackend, error) {
 	params := organization_external_backends.NewGetExternalBackendsParams()
 	params.SetOrganizationCanonical(org)
-	params.SetExternalBackendDefault(ptr.Ptr(defaultEB))
+	// params.SetExternalBackendDefault(ptr.Ptr(defaultEB))
 
 	resp, err := m.api.OrganizationExternalBackends.GetExternalBackends(params, m.api.Credentials(&org))
 	if err != nil {
@@ -39,7 +39,6 @@ func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBac
 func (m *middleware) GetExternalBackend(org string, externalBackend uint32) (*models.ExternalBackend, error) {
 	params := organization_external_backends.NewGetExternalBackendParams()
 	params.SetOrganizationCanonical(org)
-	params.SetExternalBackendID(externalBackend)
 
 	resp, err := m.api.OrganizationExternalBackends.GetExternalBackend(params, m.api.Credentials(&org))
 	if err != nil {
