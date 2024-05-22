@@ -28,7 +28,7 @@ export CY_WAIT_NETWORK="${CY_WAIT_NETWORK:-false}"
 export CY_DOWNLOAD_RETRIES="${CY_DOWNLOAD_RETRIES:-1}"
 export CY_RELEASES_URL="${CY_RELEASES_URL:-https://cli-release.owl.cycloid.io/releases}"
 
-# Compating version, this is used when there is no CLI matching your API version.
+# Comparing version, this is used when there is no CLI matching your API version.
 # We compare your version and the one released to find the closest n-1 version
 vercomp () {
     # Src https://stackoverflow.com/questions/4023830/how-to-compare-two-strings-in-dot-separated-version-format-in-bash
@@ -92,10 +92,11 @@ find_version_below () {
     fi
 
 
-    # Take the first CLI version lower than the API version
+    # Take the first CLI version superior or equal than the API version
     # ret 1 means >
     vercomp $api_version $cli_version
-    if [ $? -eq 1 ]; then
+    code=$?
+    if [ $code -eq 0 ] || [ $code -eq 2 ]; then
       echo $cli_release
       return 0
     fi
@@ -103,7 +104,7 @@ find_version_below () {
   return 2
 }
 
-# Look if the binary is present locally or try to download it 
+# Look if the binary is present locally or try to download it
 get_binary () {
     # Download the binary if not present
     export CY_BINARY="${CY_BINARY:-"${CY_BINARIES_PATH}/cy-${CY_VERSION}"}"
@@ -119,7 +120,7 @@ get_binary () {
     if [ $STATUS != 0 ]; then
       rm -f "${CY_BINARY}"
     fi
-    
+
     # In case of error, download RC CLI version
     if [ $STATUS != 0 ]; then
       echo "Warning: Unable to download CLI version ${CY_VERSION}. Fallback to RC version" >&2
