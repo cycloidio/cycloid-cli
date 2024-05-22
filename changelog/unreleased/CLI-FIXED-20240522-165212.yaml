@@ -1,0 +1,9 @@
+component: CLI
+kind: FIXED
+body: Fixed cy wrapper to settle for equal or superior CLI version compared to API
+  version
+time: 2024-05-22T16:52:12.039021393Z
+custom:
+  DETAILS: Fix cy CLI wrapper for cycloid-toolkit.
+  PR: "266"
+  TYPE: CLI
