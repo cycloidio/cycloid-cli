@@ -2,7 +2,7 @@ package projects
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
@@ -135,13 +135,13 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	// CREATE PIPELINE
 	//
 
-	rawPipeline, err := ioutil.ReadFile(pipelinePath)
+	rawPipeline, err := os.ReadFile(pipelinePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read pipeline file")
 	}
 	pipelineTemplate := string(rawPipeline)
 
-	rawVars, err := ioutil.ReadFile(varsPath)
+	rawVars, err := os.ReadFile(varsPath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read variables file")
 	}
@@ -170,7 +170,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 		for fp, dest := range configs {
 			var c strfmt.Base64
-			c, err = ioutil.ReadFile(fp)
+			c, err = os.ReadFile(fp)
 			if err != nil {
 				return errors.Wrap(err, "unable to read config file")
 			}
