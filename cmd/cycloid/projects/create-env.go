@@ -1,10 +1,14 @@
 package projects
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"maps"
 	"os"
+	"time"
 
-	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -70,35 +74,104 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err
 	}
+
 	env, err := cmd.Flags().GetString("env")
 	if err != nil {
 		return err
 	}
+
 	usecase, err := cmd.Flags().GetString("usecase")
 	if err != nil {
 		return err
 	}
-	varsPath, err := cmd.Flags().GetString("vars")
+
+	varsFiles, err := cmd.Flags().GetStringArray("var-file")
 	if err != nil {
 		return err
 	}
-	pipelinePath, err := cmd.Flags().GetString("pipeline")
+
+	// init the final variable map
+	// TODO: We need to implement a recursive merge function
+	// To be able to merge submaps
+	var vars = make(map[string]interface{})
+
+	// Fetch vars from files and stdin
+	for _, varFile := range varsFiles {
+		internal.Debug("found var file", varFile)
+		var decoder *json.Decoder
+		if varFile == "-" {
+			decoder = json.NewDecoder(os.Stdin)
+		} else {
+			reader, err := os.Open(varFile)
+			if err != nil {
+				return fmt.Errorf("failed to read input vars from stdin: %v", err)
+			}
+			defer reader.Close()
+			decoder = json.NewDecoder(reader)
+		}
+
+		// Files can contain one or more object, so we scan for all with a decoder
+		for {
+			var extractedVars = make(map[string]interface{})
+			err := decoder.Decode(&extractedVars)
+			if err == io.EOF {
+				internal.Debug("finished reading input vars from", varFile)
+				break
+			}
+			if err != nil {
+				log.Fatalf("failed to read input vars from "+varFile+": %v", err)
+				break
+			}
+			maps.Copy(vars, extractedVars)
+		}
+	}
+
+	internal.Debug("found theses vars via files:", vars)
+
+	// Get vars via the CY_CREATE_ENV_VARS env var
+	envConfig, exists := os.LookupEnv("CY_CREATE_ENV_VARS")
+	if exists {
+		internal.Debug("found config via env var", envConfig)
+		var envVars = make(map[string]interface{})
+		err := json.Unmarshal([]byte(envConfig), &envVars)
+
+		// TODO: does this should error if parsing fail, of should we just put a warning ?
+		if err != nil {
+			return fmt.Errorf("failed to parse env var config '"+envConfig+"' as JSON: %s", err)
+		}
+
+		maps.Copy(vars, envVars)
+	}
+
+	// Get variables via CLI arguments
+	cliVars, err := cmd.Flags().GetStringArray("vars")
 	if err != nil {
 		return err
 	}
-	configs, err := cmd.Flags().GetStringToString("config")
-	if err != nil {
-		return err
+
+	for _, varInput := range cliVars {
+		internal.Debug("found var input", varInput)
+		var extractedVars = make(map[string]interface{})
+		err = json.Unmarshal([]byte(varInput), &extractedVars)
+		if err != nil {
+			return fmt.Errorf("failed to parse var input '"+varInput+"' as JSON: %s", err)
+		}
+
+		maps.Copy(vars, extractedVars)
 	}
+
+	internal.Debug("vars after CLI merge:", vars)
 
 	projectData, err := m.GetProject(org, project)
 	if err != nil {
 		return err
 	}
+
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
@@ -129,10 +202,22 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		Canonical: &env,
 	})
 
+	inputs := models.FormInputs{
+		Inputs: []models.FormInput{
+			{
+				EnvironmentCanonical: &env,
+				UseCase:              &usecase,
+				Vars:                 vars,
+			},
+		},
+		ServiceCatalogRef: &projectData.ServiceCatalog.Ref,
+	}
 	//
 	// UPDATE PROJECT
 	//
-	resp, err := m.UpdateProject(org,
+	// TODO: Add support for resource pool canonical in case of resource quotas
+	timestamp := time.Now()
+	_, err = m.UpdateProject(org,
 		*projectData.Name,
 		project,
 		envs,
@@ -140,74 +225,25 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		*projectData.ServiceCatalog.Ref,
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryCanonical,
-		*projectData.UpdatedAt)
+		inputs,
+		timestamp,
+	)
 
 	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, cmd.OutOrStdout())
 	if err != nil {
 		return err
 	}
 
+	return nil
+
+	// //
+	// // PIPELINE UNPAUSE
+	// //
+	// err = m.UnpausePipeline(org, project, env)
+	// err = printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, cmd.OutOrStdout())
+	// if err != nil {
+	// 	return err
+	// }
 	//
-	// CREATE PIPELINE
-	//
-
-	rawPipeline, err := os.ReadFile(pipelinePath)
-	if err != nil {
-		return errors.Wrap(err, "unable to read pipeline file")
-	}
-	pipelineTemplate := string(rawPipeline)
-
-	rawVars, err := os.ReadFile(varsPath)
-	if err != nil {
-		return errors.Wrap(err, "unable to read variables file")
-	}
-
-	variables := string(rawVars)
-
-	newPP, err := m.CreatePipeline(org, project, env, pipelineTemplate, variables, usecase)
-	err = printer.SmartPrint(p, nil, err, "unable to create pipeline", printer.Options{}, cmd.OutOrStdout())
-	if err != nil {
-		return err
-	}
-
-	//
-	// PUSH CONFIG If project creation succeeded we push the config files
-	//
-	// Pipeline vars file
-	crVarsPath, err := pipelines.GetPipelineVarsPath(m, org, project, *newPP.UseCase)
-	if err != nil {
-		printer.SmartPrint(p, nil, err, "unable to get pipeline variables destination path", printer.Options{}, cmd.OutOrStdout())
-	}
-	cfs := make(map[string]strfmt.Base64)
-	cfs[crVarsPath] = rawVars
-
-	// Additionals config files
-	if len(configs) > 0 {
-
-		for fp, dest := range configs {
-			var c strfmt.Base64
-			c, err = os.ReadFile(fp)
-			if err != nil {
-				return errors.Wrap(err, "unable to read config file")
-			}
-			cfs[dest] = c
-		}
-	}
-
-	err = m.PushConfig(org, project, env, cfs)
-	err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
-	if err != nil {
-		return err
-	}
-
-	//
-	// PIPELINE UNPAUSE
-	//
-	err = m.UnpausePipeline(org, project, env)
-	err = printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, cmd.OutOrStdout())
-	if err != nil {
-		return err
-	}
-
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	// return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
 }
