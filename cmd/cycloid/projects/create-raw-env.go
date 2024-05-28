@@ -131,6 +131,7 @@ func createRawEnv(cmd *cobra.Command, args []string) error {
 		*projectData.ServiceCatalog.Ref,
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryCanonical,
+		nil,
 		*projectData.UpdatedAt)
 
 	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, cmd.OutOrStdout())
