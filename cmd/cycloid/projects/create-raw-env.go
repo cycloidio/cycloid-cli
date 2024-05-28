@@ -12,55 +12,46 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewCreateEnvCommand() *cobra.Command {
+func NewCreateRawEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create-stackforms-env",
-		Short: "create an environment within a project using StackForms.",
-		Long: `
-You can provide stackforms variables via files, env var and the --vars flag
-The precedence order for variable provisioning is as follows:
-- --var-file flag
-- env vars  
-- --vars flag
-
---vars accept json encoded values.
-
-You can provide values fron stdin using the '--var-file -' flag.
-`,
+		Use:     "create-raw-env",
+		Short:   "create an environment within a project with the old configuration format.",
+		Aliases: []string{"create-env"},
 		Example: `
-# create 'prod' environment in 'my-project'
- cy --org my-org project create-raw-env \
-  --project my-project \
-  --env prod \
-  --usecase usecase-1 \
-  --var-file vars.yml \
-  --vars '{"myRaw": "vars"}'
+	# create 'prod' environment in 'my-project'
+	cy --org my-org project create-raw-env \
+		--project my-project \
+		--env prod \
+		--usecase usecase-1 \
+		--pipeline /my/pipeline.yml \
+		--vars /my/pipeline/vars.yml \
+		--config /path/to/config=/path/in/config_repo
 `,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			internal.Warning(cmd.ErrOrStderr(),
-				"This command will replace `cy project create-env` soon.\n"+
+				"This command will be changed to use stackforms in the future.\n"+
+					"If your still want to use this command as is, use `cy project create-raw-env` instead.\n"+
 					"Please see https://github.com/cycloidio/cycloid-cli/issues/268 for more information.\n")
 			return internal.CheckAPIAndCLIVersion(cmd, args)
 		},
-
-		RunE: createEnv,
+		RunE: createRawEnv,
 	}
-
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
+	common.RequiredFlag(WithFlagPipeline, cmd)
+	common.RequiredFlag(WithFlagVars, cmd)
 	WithFlagConfig(cmd)
 	WithFlagUsecase(cmd)
-	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin")
-	cmd.PersistentFlags().StringArray("vars", nil, "JSON string containing variables")
 
 	return cmd
 }
 
-func createEnv(cmd *cobra.Command, args []string) error {
+func createRawEnv(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
