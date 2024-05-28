@@ -7,7 +7,6 @@ import (
 	"log"
 	"maps"
 	"os"
-	"time"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -57,7 +56,7 @@ You can provide values fron stdin using the '--var-file -' flag.
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
 	WithFlagConfig(cmd)
-	WithFlagUsecase(cmd)
+	cmd.PersistentFlags().String("use-case", "", "the selected use case of the stack")
 	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin")
 	cmd.PersistentFlags().StringArray("vars", nil, "JSON string containing variables")
 
@@ -85,9 +84,11 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	usecase, err := cmd.Flags().GetString("usecase")
+	usecase, err := cmd.Flags().GetString("use-case")
 	if err != nil {
 		return err
+	} else if usecase == "" {
+		return errors.New("--use-case flag is required")
 	}
 
 	varsFiles, err := cmd.Flags().GetStringArray("var-file")
@@ -202,21 +203,19 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		Canonical: &env,
 	})
 
-	inputs := models.FormInputs{
-		Inputs: []models.FormInput{
-			{
-				EnvironmentCanonical: &env,
-				UseCase:              &usecase,
-				Vars:                 vars,
-			},
+	inputs := []*models.FormInput{
+		{
+			EnvironmentCanonical: &env,
+			UseCase:              &usecase,
+			Vars:                 vars,
 		},
-		ServiceCatalogRef: &projectData.ServiceCatalog.Ref,
 	}
+
 	//
 	// UPDATE PROJECT
 	//
 	// TODO: Add support for resource pool canonical in case of resource quotas
-	timestamp := time.Now()
+	// timestamp := time.Now().Unix()
 	_, err = m.UpdateProject(org,
 		*projectData.Name,
 		project,
@@ -226,7 +225,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		*projectData.Owner.Username,
 		projectData.ConfigRepositoryCanonical,
 		inputs,
-		timestamp,
+		*projectData.UpdatedAt,
 	)
 
 	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, cmd.OutOrStdout())
