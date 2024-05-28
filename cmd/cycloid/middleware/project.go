@@ -121,8 +121,7 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 	return d, err
 }
 
-func (m *middleware) UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, updatedAt uint64) (*models.Project, error) {
-
+func (m *middleware) UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error) {
 	params := organization_projects.NewUpdateProjectParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(projectCanonical)
@@ -134,6 +133,7 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 		ConfigRepositoryCanonical: configRepo,
 		Environments:              envs,
 		Owner:                     owner,
+		Inputs:                    inputs,
 		UpdatedAt:                 &updatedAt,
 	}
 
