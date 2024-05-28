@@ -80,7 +80,7 @@ type Middleware interface {
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	ListProjects(org string) ([]*models.Project, error)
-	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, updatedAt uint64) (*models.Project, error)
+	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error)
 
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)

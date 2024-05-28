@@ -21,6 +21,7 @@ func NewCommands() *cobra.Command {
 		NewListCommand(),
 		NewDeleteEnvCommand(),
 		NewCreateEnvCommand(),
+		NewCreateRawEnvCommand(),
 		NewGetCommand())
 
 	return cmd
