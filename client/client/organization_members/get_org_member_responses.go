@@ -104,12 +104,12 @@ func (o *GetOrgMemberOK) Code() int {
 
 func (o *GetOrgMemberOK) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberOK %s", 200, payload)
 }
 
 func (o *GetOrgMemberOK) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberOK %s", 200, payload)
 }
 
 func (o *GetOrgMemberOK) GetPayload() *GetOrgMemberOKBody {
@@ -181,12 +181,12 @@ func (o *GetOrgMemberForbidden) Code() int {
 
 func (o *GetOrgMemberForbidden) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberForbidden %s", 403, payload)
 }
 
 func (o *GetOrgMemberForbidden) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberForbidden %s", 403, payload)
 }
 
 func (o *GetOrgMemberForbidden) GetPayload() *models.ErrorPayload {
@@ -269,12 +269,12 @@ func (o *GetOrgMemberNotFound) Code() int {
 
 func (o *GetOrgMemberNotFound) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberNotFound %s", 404, payload)
 }
 
 func (o *GetOrgMemberNotFound) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberNotFound %s", 404, payload)
 }
 
 func (o *GetOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -360,12 +360,12 @@ func (o *GetOrgMemberDefault) Code() int {
 
 func (o *GetOrgMemberDefault) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMember default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMember default %s", o._statusCode, payload)
 }
 
 func (o *GetOrgMemberDefault) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMember default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMember default %s", o._statusCode, payload)
 }
 
 func (o *GetOrgMemberDefault) GetPayload() *models.ErrorPayload {

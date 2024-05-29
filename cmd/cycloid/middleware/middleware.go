@@ -44,13 +44,12 @@ type Middleware interface {
 	CreateFormsConfig(org string, project string, serviceCatalogRef string, inputs []*models.FormInput) (map[string]any, error)
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
 
-	DeleteMember(org string, name string) error
-	GetMember(org string, name string) (*models.MemberOrg, error)
-	InviteMember(org, email, role string) error
-	DeleteInvite(org string, invite string) error
+	DeleteMember(org string, id uint32) error
+	GetMember(org string, id uint32) (*models.MemberOrg, error)
+	InviteMember(org, email, role string) (*models.MemberOrg, error)
 	ListMembers(org string) ([]*models.MemberOrg, error)
-	ListInvites(org string) ([]*models.Invitation, error)
-	UpdateMembers(org, name, role string) (*models.MemberOrg, error)
+	ListInvites(org string) ([]*models.MemberOrg, error)
+	UpdateMember(org string, id uint32, role string) (*models.MemberOrg, error)
 
 	CreateOrganization(name string) (*models.Organization, error)
 	UpdateOrganization(org, name string) (*models.Organization, error)
@@ -97,7 +96,6 @@ type Middleware interface {
 	DeleteKpi(org, kpi string) error
 	ListKpi(org, project, env string) ([]*models.KPI, error)
 
-	// API keys method
 	// ListAPIKey will request API to list generated API keys
 	ListAPIKey(org string) ([]*models.APIKey, error)
 
