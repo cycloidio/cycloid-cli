@@ -1,13 +1,11 @@
 package middleware
 
 import (
-	"strconv"
-
 	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_invitations"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
@@ -31,11 +29,12 @@ func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
 	return d, nil
 }
 
-func (m *middleware) ListInvites(org string) ([]*models.Invitation, error) {
-	params := organization_invitations.NewGetInvitationsParams()
+func (m *middleware) ListInvites(org string) ([]*models.MemberOrg, error) {
+	params := organization_members.NewGetOrgMembersParams()
 	params.SetOrganizationCanonical(org)
+	params.SetInvitationState(ptr.Ptr("pending"))
 
-	resp, err := m.api.OrganizationInvitations.GetInvitations(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -47,10 +46,10 @@ func (m *middleware) ListInvites(org string) ([]*models.Invitation, error) {
 	return d, nil
 }
 
-func (m *middleware) GetMember(org string, name string) (*models.MemberOrg, error) {
+func (m *middleware) GetMember(org string, id uint32) (*models.MemberOrg, error) {
 	params := organization_members.NewGetOrgMemberParams()
 	params.SetOrganizationCanonical(org)
-	params.SetUsername(name)
+	params.SetMemberID(id)
 
 	resp, err := m.api.OrganizationMembers.GetOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
@@ -69,10 +68,10 @@ func (m *middleware) GetMember(org string, name string) (*models.MemberOrg, erro
 	return d, nil
 }
 
-func (m *middleware) DeleteMember(org string, name string) error {
+func (m *middleware) DeleteMember(org string, id uint32) error {
 	params := organization_members.NewRemoveOrgMemberParams()
 	params.SetOrganizationCanonical(org)
-	params.SetUsername(name)
+	params.SetMemberID(id)
 
 	_, err := m.api.OrganizationMembers.RemoveOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
@@ -82,11 +81,11 @@ func (m *middleware) DeleteMember(org string, name string) error {
 	return nil
 }
 
-func (m *middleware) UpdateMembers(org, name, role string) (*models.MemberOrg, error) {
+func (m *middleware) UpdateMember(org string, id uint32, role string) (*models.MemberOrg, error) {
 	params := organization_members.NewUpdateOrgMemberParams()
 
 	params.SetOrganizationCanonical(org)
-	params.SetUsername(name)
+	params.SetMemberID(id)
 
 	body := &models.MemberAssignation{
 		RoleCanonical: &role,
@@ -116,7 +115,7 @@ func (m *middleware) UpdateMembers(org, name, role string) (*models.MemberOrg, e
 	return d, nil
 }
 
-func (m *middleware) InviteMember(org, email, role string) error {
+func (m *middleware) InviteMember(org, email, role string) (*models.MemberOrg, error) {
 	params := organization_members.NewInviteUserToOrgMemberParams()
 	params.SetOrganizationCanonical(org)
 
@@ -129,31 +128,22 @@ func (m *middleware) InviteMember(org, email, role string) error {
 	params.SetBody(body)
 	err := body.Validate(strfmt.Default)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	_, err = m.api.OrganizationMembers.InviteUserToOrgMember(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationMembers.InviteUserToOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return nil, NewApiError(err)
 	}
 
-	return nil
-}
+	p := resp.GetPayload()
 
-func (m *middleware) DeleteInvite(org string, invite string) error {
-	params := organization_invitations.NewDeleteInvitationParams()
-	params.SetOrganizationCanonical(org)
-
-	i64, err := strconv.ParseInt(invite, 10, 32)
+	err = p.Validate(strfmt.Default)
 	if err != nil {
-		return err
-	}
-	params.SetInvitationID(uint32(i64))
-
-	_, err = m.api.OrganizationInvitations.DeleteInvitation(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewApiError(err)
+		return nil, err
 	}
 
-	return nil
+	d := p.Data
+
+	return d, nil
 }

@@ -15,7 +15,7 @@ func NewUpdateCommand() *cobra.Command {
 	var (
 		example = `
 	# Update a member within my-org organization
-	cy --org my-org members update --name my_user --role my-role
+	cy --org my-org members update --id 50 --role my-role
 	`
 		short = "Update a member"
 		long  = short
@@ -30,7 +30,7 @@ func NewUpdateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(WithFlagName, cmd)
+	common.RequiredFlag(WithFlagID, cmd)
 	common.RequiredFlag(WithFlagRoleCanonical, cmd)
 
 	//TODO : dont Required flags and if not set, use value from the getConfigRepository
@@ -52,7 +52,7 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cmd.Flags().GetString("name")
+	id, err := cmd.Flags().GetUint32("id")
 	if err != nil {
 		return err
 	}
@@ -68,6 +68,6 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	mb, err := m.UpdateMembers(org, name, role)
+	mb, err := m.UpdateMember(org, id, role)
 	return printer.SmartPrint(p, mb, err, "unable to update member", printer.Options{}, cmd.OutOrStdout())
 }

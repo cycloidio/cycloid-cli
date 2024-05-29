@@ -71,7 +71,7 @@ type GetOrgMemberOK struct {
 }
 
 func (o *GetOrgMemberOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberOK  %+v", 200, o.Payload)
 }
 
 func (o *GetOrgMemberOK) GetPayload() *GetOrgMemberOKBody {
@@ -108,7 +108,7 @@ type GetOrgMemberForbidden struct {
 }
 
 func (o *GetOrgMemberForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetOrgMemberForbidden) GetPayload() *models.ErrorPayload {
@@ -152,7 +152,7 @@ type GetOrgMemberNotFound struct {
 }
 
 func (o *GetOrgMemberNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMemberNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMemberNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -205,7 +205,7 @@ func (o *GetOrgMemberDefault) Code() int {
 }
 
 func (o *GetOrgMemberDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{username}][%d] getOrgMember default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members/{member_id}][%d] getOrgMember default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetOrgMemberDefault) GetPayload() *models.ErrorPayload {

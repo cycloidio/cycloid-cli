@@ -20,7 +20,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
-	"github.com/cycloidio/cycloid-cli/client/client/organization_invitations"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_kpis"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
@@ -95,8 +94,6 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient 
 	cli.OrganizationForms = organization_forms.New(transport, formats)
 
 	cli.OrganizationInfrastructurePolicies = organization_infrastructure_policies.New(transport, formats)
-
-	cli.OrganizationInvitations = organization_invitations.New(transport, formats)
 
 	cli.OrganizationKpis = organization_kpis.New(transport, formats)
 
@@ -184,8 +181,6 @@ type APIClient struct {
 
 	OrganizationInfrastructurePolicies *organization_infrastructure_policies.Client
 
-	OrganizationInvitations *organization_invitations.Client
-
 	OrganizationKpis *organization_kpis.Client
 
 	OrganizationMembers *organization_members.Client
@@ -234,8 +229,6 @@ func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.OrganizationForms.SetTransport(transport)
 
 	c.OrganizationInfrastructurePolicies.SetTransport(transport)
-
-	c.OrganizationInvitations.SetTransport(transport)
 
 	c.OrganizationKpis.SetTransport(transport)
 

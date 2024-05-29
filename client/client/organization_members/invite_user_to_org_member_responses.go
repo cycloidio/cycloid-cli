@@ -12,6 +12,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -26,8 +27,8 @@ type InviteUserToOrgMemberReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *InviteUserToOrgMemberReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 204:
-		result := NewInviteUserToOrgMemberNoContent()
+	case 200:
+		result := NewInviteUserToOrgMemberOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -62,23 +63,35 @@ func (o *InviteUserToOrgMemberReader) ReadResponse(response runtime.ClientRespon
 	}
 }
 
-// NewInviteUserToOrgMemberNoContent creates a InviteUserToOrgMemberNoContent with default headers values
-func NewInviteUserToOrgMemberNoContent() *InviteUserToOrgMemberNoContent {
-	return &InviteUserToOrgMemberNoContent{}
+// NewInviteUserToOrgMemberOK creates a InviteUserToOrgMemberOK with default headers values
+func NewInviteUserToOrgMemberOK() *InviteUserToOrgMemberOK {
+	return &InviteUserToOrgMemberOK{}
 }
 
-/*InviteUserToOrgMemberNoContent handles this case with default header values.
+/*InviteUserToOrgMemberOK handles this case with default header values.
 
-The user has been invited to be a member of the organization. The verification is pending.
+The information of the member of the organization.
 */
-type InviteUserToOrgMemberNoContent struct {
+type InviteUserToOrgMemberOK struct {
+	Payload *InviteUserToOrgMemberOKBody
 }
 
-func (o *InviteUserToOrgMemberNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNoContent ", 204)
+func (o *InviteUserToOrgMemberOK) Error() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberOK  %+v", 200, o.Payload)
 }
 
-func (o *InviteUserToOrgMemberNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *InviteUserToOrgMemberOK) GetPayload() *InviteUserToOrgMemberOKBody {
+	return o.Payload
+}
+
+func (o *InviteUserToOrgMemberOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(InviteUserToOrgMemberOKBody)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
 
 	return nil
 }
@@ -101,7 +114,7 @@ type InviteUserToOrgMemberNotFound struct {
 }
 
 func (o *InviteUserToOrgMemberNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberNotFound  %+v", 404, o.Payload)
 }
 
 func (o *InviteUserToOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -140,7 +153,7 @@ type InviteUserToOrgMemberLengthRequired struct {
 }
 
 func (o *InviteUserToOrgMemberLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberLengthRequired ", 411)
 }
 
 func (o *InviteUserToOrgMemberLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -166,7 +179,7 @@ type InviteUserToOrgMemberUnprocessableEntity struct {
 }
 
 func (o *InviteUserToOrgMemberUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *InviteUserToOrgMemberUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -219,7 +232,7 @@ func (o *InviteUserToOrgMemberDefault) Code() int {
 }
 
 func (o *InviteUserToOrgMemberDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMember default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMember default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *InviteUserToOrgMemberDefault) GetPayload() *models.ErrorPayload {
@@ -242,5 +255,65 @@ func (o *InviteUserToOrgMemberDefault) readResponse(response runtime.ClientRespo
 		return err
 	}
 
+	return nil
+}
+
+/*InviteUserToOrgMemberOKBody invite user to org member o k body
+swagger:model InviteUserToOrgMemberOKBody
+*/
+type InviteUserToOrgMemberOKBody struct {
+
+	// data
+	// Required: true
+	Data *models.MemberOrg `json:"data"`
+}
+
+// Validate validates this invite user to org member o k body
+func (o *InviteUserToOrgMemberOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *InviteUserToOrgMemberOKBody) validateData(formats strfmt.Registry) error {
+
+	if err := validate.Required("inviteUserToOrgMemberOK"+"."+"data", "body", o.Data); err != nil {
+		return err
+	}
+
+	if o.Data != nil {
+		if err := o.Data.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("inviteUserToOrgMemberOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *InviteUserToOrgMemberOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *InviteUserToOrgMemberOKBody) UnmarshalBinary(b []byte) error {
+	var res InviteUserToOrgMemberOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }
