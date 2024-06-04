@@ -32,6 +32,9 @@ func NewCreateRawEnvCommand() *cobra.Command {
 		--vars /my/pipeline/vars.yml \
 		--config /path/to/config=/path/in/config_repo
 `,
+		Deprecated: "This command will be changed to use stackforms in the future.\n" +
+			"If your still want to use this command as is, use `cy project create-env` instead.\n" +
+			"Please see https://github.com/cycloidio/cycloid-cli/issues/268 for more information.",
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			internal.Warning(cmd.ErrOrStderr(),
 				"This command will be changed to use stackforms in the future.\n"+
