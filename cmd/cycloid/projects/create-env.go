@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"io"
 	"log"
-	"maps"
 	"os"
+	"reflect"
+	"strings"
 
+	"dario.cat/mergo"
 	"github.com/pkg/errors"
+	"github.com/sanity-io/litter"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -27,7 +30,7 @@ func NewCreateEnvCommand() *cobra.Command {
 You can provide stackforms variables via files, env var and the --vars flag
 The precedence order for variable provisioning is as follows:
 - --var-file flag
-- env vars  
+- env vars CY_STACKFORMS_VAR
 - --vars flag
 
 --vars accept json encoded values.
@@ -39,7 +42,7 @@ You can provide values fron stdin using the '--var-file -' flag.
  cy --org my-org project create-raw-env \
   --project my-project \
   --env prod \
-  --usecase usecase-1 \
+  --use-case usecase-1 \
   --var-file vars.yml \
   --vars '{"myRaw": "vars"}'
 `,
@@ -59,6 +62,8 @@ You can provide values fron stdin using the '--var-file -' flag.
 	cmd.PersistentFlags().String("use-case", "", "the selected use case of the stack")
 	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin")
 	cmd.PersistentFlags().StringArray("vars", nil, "JSON string containing variables")
+	cmd.PersistentFlags().BoolP("update", "u", false, "if true, existing environment will be updated, default: false")
+	cmd.PersistentFlags().StringToStringP("extra-var", "e", nil, "extra variable to be added to the environment in the -e key=value,key=value format")
 
 	return cmd
 }
@@ -91,14 +96,27 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return errors.New("--use-case flag is required")
 	}
 
+	update, err := cmd.Flags().GetBool("update")
+	if err != nil {
+		return err
+	}
+
 	varsFiles, err := cmd.Flags().GetStringArray("var-file")
 	if err != nil {
 		return err
 	}
 
-	// init the final variable map
-	// TODO: We need to implement a recursive merge function
-	// To be able to merge submaps
+	extraVar, err := cmd.Flags().GetStringToString("extra-var")
+	if err != nil {
+		return err
+	}
+
+	internal.Debug("extraVar:", extraVar)
+
+	//
+	// Variable merge
+	//
+
 	var vars = make(map[string]interface{})
 
 	// Fetch vars from files and stdin
@@ -128,14 +146,17 @@ func createEnv(cmd *cobra.Command, args []string) error {
 				log.Fatalf("failed to read input vars from "+varFile+": %v", err)
 				break
 			}
-			maps.Copy(vars, extractedVars)
+
+			if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
+				log.Fatalf("failed to merge input vars from "+varFile+": %v", err)
+			}
 		}
 	}
 
 	internal.Debug("found theses vars via files:", vars)
 
-	// Get vars via the CY_CREATE_ENV_VARS env var
-	envConfig, exists := os.LookupEnv("CY_CREATE_ENV_VARS")
+	// Get vars via the CY_STACKFORMS_VARS env var
+	envConfig, exists := os.LookupEnv("CY_STACKFORMS_VARS")
 	if exists {
 		internal.Debug("found config via env var", envConfig)
 		var envVars = make(map[string]interface{})
@@ -146,10 +167,12 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("failed to parse env var config '"+envConfig+"' as JSON: %s", err)
 		}
 
-		maps.Copy(vars, envVars)
+		if err := mergo.Merge(&vars, envVars, mergo.WithOverride); err != nil {
+			log.Fatalf("failed to merge input vars from environment: %v", err)
+		}
 	}
 
-	// Get variables via CLI arguments
+	// Get variables via CLI arguments --vars
 	cliVars, err := cmd.Flags().GetStringArray("vars")
 	if err != nil {
 		return err
@@ -163,7 +186,14 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			return fmt.Errorf("failed to parse var input '"+varInput+"' as JSON: %s", err)
 		}
 
-		maps.Copy(vars, extractedVars)
+		if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
+			log.Fatalf("failed to merge input vars from environment: %v", err)
+		}
+	}
+
+	// Merge key/val from extraVar
+	for k, v := range extraVar {
+		updateMapField(k, v, vars)
 	}
 
 	internal.Debug("vars after CLI merge:", vars)
@@ -188,19 +218,69 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	// by the API
 	envs := make([]*models.NewEnvironment, len(projectData.Environments))
 
+	litter.Dump(projectData.Environments)
+
 	for i, e := range projectData.Environments {
-		if *e.Canonical == env {
-			return fmt.Errorf("environment %s exists already in %s", env, project)
+		if *e.Canonical == env && !update {
+			return fmt.Errorf("environment %s exists already in %s\nIf you want to update it, add the --update flag.", env, project)
 		}
+
+		if e.Canonical == nil {
+			return fmt.Errorf("missing canonical for environment %v", e)
+		}
+
+		cloudProviderCanonical := ""
+		if e.CloudProvider != nil {
+			cloudProviderCanonical = *e.CloudProvider.Canonical
+		}
+
+		color := "default"
+		if e.Color != nil {
+			color = *e.Color
+		}
+
+		icon := "extension"
+		if e.Icon != nil {
+			icon = *e.Icon
+		}
+
 		envs[i] = &models.NewEnvironment{
-			Canonical: e.Canonical,
+			Canonical:              e.Canonical,
+			CloudProviderCanonical: cloudProviderCanonical,
+			Color:                  color,
+			Icon:                   icon,
 		}
+	}
+
+	litter.Dump(envs)
+
+	var cloudProviderCanonical, icon, color string
+	switch strings.ToLower(usecase) {
+	case "aws":
+		cloudProviderCanonical = "aws"
+		icon = "mdi-aws"
+		color = "staging"
+	case "azure":
+		cloudProviderCanonical = "azure"
+		icon = "mdi-azure"
+		color = "prod"
+	case "gcp":
+		cloudProviderCanonical = "google"
+		icon = "mdi-google-cloud"
+		color = "dev"
+	default:
+		cloudProviderCanonical = ""
+		icon = "extension"
+		color = "default"
 	}
 
 	// finally add the new environment
 	envs = append(envs, &models.NewEnvironment{
 		// TODO: https://github.com/cycloidio/cycloid-cli/issues/67
-		Canonical: &env,
+		Canonical:              &env,
+		CloudProviderCanonical: cloudProviderCanonical,
+		Color:                  color,
+		Icon:                   icon,
 	})
 
 	inputs := []*models.FormInput{
@@ -211,12 +291,9 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		},
 	}
 
-	//
-	// UPDATE PROJECT
-	//
+	// Send the updateProject call
 	// TODO: Add support for resource pool canonical in case of resource quotas
-	// timestamp := time.Now().Unix()
-	_, err = m.UpdateProject(org,
+	resp, err := m.UpdateProject(org,
 		*projectData.Name,
 		project,
 		envs,
@@ -228,21 +305,41 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		*projectData.UpdatedAt,
 	)
 
-	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+}
+
+// Update map 'm' with field 'field' to 'value'
+// the field must be in dot notation
+// e.g. field='one.nested.key' value='myValue'
+// If the map is nil, it will be created
+func updateMapField(field string, value any, m map[string]any) error {
+	keys := strings.Split(field, ".")
+
+	if m == nil {
+		m = make(map[string]any)
+	}
+
+	if len(keys) == 1 {
+		m[keys[0]] = value
+		return nil
+	}
+
+	child, exists := m[keys[0]]
+	if exists && reflect.ValueOf(child).Kind() == reflect.Map {
+		childMap, ok := child.(map[string]any)
+		if !ok {
+			return fmt.Errorf("failed to parse nested map: %v\n%v", child, childMap)
+		}
+		return updateMapField(strings.Join(keys[1:], "."), value, childMap)
+	}
+
+	child = make(map[string]any)
+	err := updateMapField(strings.Join(keys[1:], "."), value, child.(map[string]any))
 	if err != nil {
 		return err
 	}
 
-	return nil
+	m[keys[0]] = child
 
-	// //
-	// // PIPELINE UNPAUSE
-	// //
-	// err = m.UnpausePipeline(org, project, env)
-	// err = printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, cmd.OutOrStdout())
-	// if err != nil {
-	// 	return err
-	// }
-	//
-	// return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	return nil
 }
