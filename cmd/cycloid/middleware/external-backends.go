@@ -39,6 +39,7 @@ func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBac
 func (m *middleware) GetExternalBackend(org string, externalBackend uint32) (*models.ExternalBackend, error) {
 	params := organization_external_backends.NewGetExternalBackendParams()
 	params.SetOrganizationCanonical(org)
+	params.SetExternalBackendID(externalBackend)
 
 	resp, err := m.api.OrganizationExternalBackends.GetExternalBackend(params, m.api.Credentials(&org))
 	if err != nil {

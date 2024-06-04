@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -54,7 +55,7 @@ func TestMembers(t *testing.T) {
 			"--org", CY_TEST_ROOT_ORG,
 			"members",
 			"get",
-			"--name", "cycloidio",
+			"--id", "1",
 		})
 
 		require.Nil(t, cmdErr)

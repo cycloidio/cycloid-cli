@@ -77,7 +77,7 @@ type UpdateOrgMemberOK struct {
 }
 
 func (o *UpdateOrgMemberOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{username}][%d] updateOrgMemberOK  %+v", 200, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{member_id}][%d] updateOrgMemberOK  %+v", 200, o.Payload)
 }
 
 func (o *UpdateOrgMemberOK) GetPayload() *UpdateOrgMemberOKBody {
@@ -114,7 +114,7 @@ type UpdateOrgMemberForbidden struct {
 }
 
 func (o *UpdateOrgMemberForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{username}][%d] updateOrgMemberForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{member_id}][%d] updateOrgMemberForbidden  %+v", 403, o.Payload)
 }
 
 func (o *UpdateOrgMemberForbidden) GetPayload() *models.ErrorPayload {
@@ -158,7 +158,7 @@ type UpdateOrgMemberNotFound struct {
 }
 
 func (o *UpdateOrgMemberNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{username}][%d] updateOrgMemberNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{member_id}][%d] updateOrgMemberNotFound  %+v", 404, o.Payload)
 }
 
 func (o *UpdateOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -202,7 +202,7 @@ type UpdateOrgMemberUnprocessableEntity struct {
 }
 
 func (o *UpdateOrgMemberUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{username}][%d] updateOrgMemberUnprocessableEntity  %+v", 422, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{member_id}][%d] updateOrgMemberUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *UpdateOrgMemberUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -255,7 +255,7 @@ func (o *UpdateOrgMemberDefault) Code() int {
 }
 
 func (o *UpdateOrgMemberDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{username}][%d] updateOrgMember default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members/{member_id}][%d] updateOrgMember default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *UpdateOrgMemberDefault) GetPayload() *models.ErrorPayload {

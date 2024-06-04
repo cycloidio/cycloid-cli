@@ -15,7 +15,7 @@ func NewGetCommand() *cobra.Command {
 	var (
 		example = `
 	# Get a member within my-org organization
-	cy --org my-org members get --name my-username
+	cy --org my-org members get --id 50
 	`
 		short = "Get the organization member"
 		long  = short
@@ -30,7 +30,7 @@ func NewGetCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(WithFlagName, cmd)
+	common.RequiredFlag(WithFlagID, cmd)
 
 	return cmd
 }
@@ -49,7 +49,7 @@ func getMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cmd.Flags().GetString("name")
+	id, err := cmd.Flags().GetUint32("id")
 	if err != nil {
 		return err
 	}
@@ -60,6 +60,6 @@ func getMember(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	mb, err := m.GetMember(org, name)
+	mb, err := m.GetMember(org, id)
 	return printer.SmartPrint(p, mb, err, "unable to get members", printer.Options{}, cmd.OutOrStdout())
 }

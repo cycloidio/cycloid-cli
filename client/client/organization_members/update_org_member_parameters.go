@@ -13,6 +13,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 
@@ -68,16 +69,16 @@ type UpdateOrgMemberParams struct {
 
 	*/
 	Body *models.MemberAssignation
+	/*MemberID
+	  A member id
+
+	*/
+	MemberID uint32
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
 	*/
 	OrganizationCanonical string
-	/*Username
-	  A username
-
-	*/
-	Username string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -128,6 +129,17 @@ func (o *UpdateOrgMemberParams) SetBody(body *models.MemberAssignation) {
 	o.Body = body
 }
 
+// WithMemberID adds the memberID to the update org member params
+func (o *UpdateOrgMemberParams) WithMemberID(memberID uint32) *UpdateOrgMemberParams {
+	o.SetMemberID(memberID)
+	return o
+}
+
+// SetMemberID adds the memberId to the update org member params
+func (o *UpdateOrgMemberParams) SetMemberID(memberID uint32) {
+	o.MemberID = memberID
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the update org member params
 func (o *UpdateOrgMemberParams) WithOrganizationCanonical(organizationCanonical string) *UpdateOrgMemberParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -137,17 +149,6 @@ func (o *UpdateOrgMemberParams) WithOrganizationCanonical(organizationCanonical 
 // SetOrganizationCanonical adds the organizationCanonical to the update org member params
 func (o *UpdateOrgMemberParams) SetOrganizationCanonical(organizationCanonical string) {
 	o.OrganizationCanonical = organizationCanonical
-}
-
-// WithUsername adds the username to the update org member params
-func (o *UpdateOrgMemberParams) WithUsername(username string) *UpdateOrgMemberParams {
-	o.SetUsername(username)
-	return o
-}
-
-// SetUsername adds the username to the update org member params
-func (o *UpdateOrgMemberParams) SetUsername(username string) {
-	o.Username = username
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -164,13 +165,13 @@ func (o *UpdateOrgMemberParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		}
 	}
 
-	// path param organization_canonical
-	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
+	// path param member_id
+	if err := r.SetPathParam("member_id", swag.FormatUint32(o.MemberID)); err != nil {
 		return err
 	}
 
-	// path param username
-	if err := r.SetPathParam("username", o.Username); err != nil {
+	// path param organization_canonical
+	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
 		return err
 	}
 

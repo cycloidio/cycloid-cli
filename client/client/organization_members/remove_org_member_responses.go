@@ -69,7 +69,7 @@ type RemoveOrgMemberNoContent struct {
 }
 
 func (o *RemoveOrgMemberNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberNoContent ", 204)
 }
 
 func (o *RemoveOrgMemberNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -95,7 +95,7 @@ type RemoveOrgMemberForbidden struct {
 }
 
 func (o *RemoveOrgMemberForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberForbidden  %+v", 403, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberForbidden  %+v", 403, o.Payload)
 }
 
 func (o *RemoveOrgMemberForbidden) GetPayload() *models.ErrorPayload {
@@ -139,7 +139,7 @@ type RemoveOrgMemberNotFound struct {
 }
 
 func (o *RemoveOrgMemberNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNotFound  %+v", 404, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberNotFound  %+v", 404, o.Payload)
 }
 
 func (o *RemoveOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -192,7 +192,7 @@ func (o *RemoveOrgMemberDefault) Code() int {
 }
 
 func (o *RemoveOrgMemberDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMember default  %+v", o._statusCode, o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMember default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *RemoveOrgMemberDefault) GetPayload() *models.ErrorPayload {

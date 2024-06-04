@@ -82,6 +82,11 @@ for the get org members operation typically these are written to a http.Request
 */
 type GetOrgMembersParams struct {
 
+	/*InvitationState
+	  Search by Invitation's state
+
+	*/
+	InvitationState *string
 	/*MemberCreatedAt
 	  Search by member joining date
 
@@ -170,6 +175,17 @@ func (o *GetOrgMembersParams) WithHTTPClient(client *http.Client) *GetOrgMembers
 // SetHTTPClient adds the HTTPClient to the get org members params
 func (o *GetOrgMembersParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
+}
+
+// WithInvitationState adds the invitationState to the get org members params
+func (o *GetOrgMembersParams) WithInvitationState(invitationState *string) *GetOrgMembersParams {
+	o.SetInvitationState(invitationState)
+	return o
+}
+
+// SetInvitationState adds the invitationState to the get org members params
+func (o *GetOrgMembersParams) SetInvitationState(invitationState *string) {
+	o.InvitationState = invitationState
 }
 
 // WithMemberCreatedAt adds the memberCreatedAt to the get org members params
@@ -289,6 +305,22 @@ func (o *GetOrgMembersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		return err
 	}
 	var res []error
+
+	if o.InvitationState != nil {
+
+		// query param invitation_state
+		var qrInvitationState string
+		if o.InvitationState != nil {
+			qrInvitationState = *o.InvitationState
+		}
+		qInvitationState := qrInvitationState
+		if qInvitationState != "" {
+			if err := r.SetQueryParam("invitation_state", qInvitationState); err != nil {
+				return err
+			}
+		}
+
+	}
 
 	if o.MemberCreatedAt != nil {
 

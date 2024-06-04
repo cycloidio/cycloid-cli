@@ -66,6 +66,6 @@ func inviteMember(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.InviteMember(org, email, role)
+	_, err = m.InviteMember(org, email, role)
 	return printer.SmartPrint(p, nil, err, "unable to invite member", printer.Options{}, cmd.OutOrStdout())
 }

@@ -13,6 +13,7 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/swag"
 
 	strfmt "github.com/go-openapi/strfmt"
 )
@@ -61,16 +62,16 @@ for the get org member operation typically these are written to a http.Request
 */
 type GetOrgMemberParams struct {
 
+	/*MemberID
+	  A member id
+
+	*/
+	MemberID uint32
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
 	*/
 	OrganizationCanonical string
-	/*Username
-	  A username
-
-	*/
-	Username string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -110,6 +111,17 @@ func (o *GetOrgMemberParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithMemberID adds the memberID to the get org member params
+func (o *GetOrgMemberParams) WithMemberID(memberID uint32) *GetOrgMemberParams {
+	o.SetMemberID(memberID)
+	return o
+}
+
+// SetMemberID adds the memberId to the get org member params
+func (o *GetOrgMemberParams) SetMemberID(memberID uint32) {
+	o.MemberID = memberID
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the get org member params
 func (o *GetOrgMemberParams) WithOrganizationCanonical(organizationCanonical string) *GetOrgMemberParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -121,17 +133,6 @@ func (o *GetOrgMemberParams) SetOrganizationCanonical(organizationCanonical stri
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithUsername adds the username to the get org member params
-func (o *GetOrgMemberParams) WithUsername(username string) *GetOrgMemberParams {
-	o.SetUsername(username)
-	return o
-}
-
-// SetUsername adds the username to the get org member params
-func (o *GetOrgMemberParams) SetUsername(username string) {
-	o.Username = username
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *GetOrgMemberParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -140,13 +141,13 @@ func (o *GetOrgMemberParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	}
 	var res []error
 
-	// path param organization_canonical
-	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
+	// path param member_id
+	if err := r.SetPathParam("member_id", swag.FormatUint32(o.MemberID)); err != nil {
 		return err
 	}
 
-	// path param username
-	if err := r.SetPathParam("username", o.Username); err != nil {
+	// path param organization_canonical
+	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
 		return err
 	}
 

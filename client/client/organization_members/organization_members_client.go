@@ -36,7 +36,7 @@ func (a *Client) GetOrgMember(params *GetOrgMemberParams, authInfo runtime.Clien
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getOrgMember",
 		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/members/{username}",
+		PathPattern:        "/organizations/{organization_canonical}/members/{member_id}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
@@ -93,9 +93,42 @@ func (a *Client) GetOrgMembers(params *GetOrgMembersParams, authInfo runtime.Cli
 }
 
 /*
+GetPendingMemberInvitation Get the email address used for the pending member invitation
+*/
+func (a *Client) GetPendingMemberInvitation(params *GetPendingMemberInvitationParams) (*GetPendingMemberInvitationOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetPendingMemberInvitationParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "getPendingMemberInvitation",
+		Method:             "GET",
+		PathPattern:        "/members/verify/{verification_token}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetPendingMemberInvitationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetPendingMemberInvitationOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetPendingMemberInvitationDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 InviteUserToOrgMember Invite a user to be a member of the organization.
 */
-func (a *Client) InviteUserToOrgMember(params *InviteUserToOrgMemberParams, authInfo runtime.ClientAuthInfoWriter) (*InviteUserToOrgMemberNoContent, error) {
+func (a *Client) InviteUserToOrgMember(params *InviteUserToOrgMemberParams, authInfo runtime.ClientAuthInfoWriter) (*InviteUserToOrgMemberOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewInviteUserToOrgMemberParams()
@@ -103,8 +136,8 @@ func (a *Client) InviteUserToOrgMember(params *InviteUserToOrgMemberParams, auth
 
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "inviteUserToOrgMember",
-		Method:             "PUT",
-		PathPattern:        "/organizations/{organization_canonical}/members-invitations",
+		Method:             "POST",
+		PathPattern:        "/organizations/{organization_canonical}/members",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
@@ -117,7 +150,7 @@ func (a *Client) InviteUserToOrgMember(params *InviteUserToOrgMemberParams, auth
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*InviteUserToOrgMemberNoContent)
+	success, ok := result.(*InviteUserToOrgMemberOK)
 	if ok {
 		return success, nil
 	}
@@ -138,7 +171,7 @@ func (a *Client) RemoveOrgMember(params *RemoveOrgMemberParams, authInfo runtime
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "removeOrgMember",
 		Method:             "DELETE",
-		PathPattern:        "/organizations/{organization_canonical}/members/{username}",
+		PathPattern:        "/organizations/{organization_canonical}/members/{member_id}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
@@ -161,6 +194,39 @@ func (a *Client) RemoveOrgMember(params *RemoveOrgMemberParams, authInfo runtime
 }
 
 /*
+ResendMemberInvitation Resend the email containing the verification token to accept the member Invitation.
+*/
+func (a *Client) ResendMemberInvitation(params *ResendMemberInvitationParams) (*ResendMemberInvitationNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewResendMemberInvitationParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "resendMemberInvitation",
+		Method:             "PUT",
+		PathPattern:        "/organizations/{organization_canonical}/members/{member_id}/resend",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ResendMemberInvitationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ResendMemberInvitationNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ResendMemberInvitationDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 UpdateOrgMember Update member of the organization.
 */
 func (a *Client) UpdateOrgMember(params *UpdateOrgMemberParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateOrgMemberOK, error) {
@@ -172,7 +238,7 @@ func (a *Client) UpdateOrgMember(params *UpdateOrgMemberParams, authInfo runtime
 	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateOrgMember",
 		Method:             "PUT",
-		PathPattern:        "/organizations/{organization_canonical}/members/{username}",
+		PathPattern:        "/organizations/{organization_canonical}/members/{member_id}",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
