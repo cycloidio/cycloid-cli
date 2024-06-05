@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"ioutil"
+	"os"
 	"regexp"
 	"time"
 
@@ -102,7 +103,7 @@ func AddNowTimestamp(txt string) string {
 }
 
 func WriteFile(path string, data []byte) {
-	err := ioutil.WriteFile(path, data, 0644)
+	err := os.WriteFile(path, data, 0644)
 	if err != nil {
 		panic(fmt.Sprintf("Test setup, unable to write file %s : %s", path, err.Error()))
 	}
