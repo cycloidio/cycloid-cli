@@ -46,6 +46,7 @@ SWAGGER_GENERATE = swagger generate client \
 		--tags="Organization pipelines jobs" \
 		--tags="Organization pipelines jobs build" \
 		--tags="Organization projects" \
+		--tags="Organization Projects" \
 		--tags="Organization Roles" \
 		--tags="Organization Service Catalog Sources" \
 		--tags="Organization workers" \
