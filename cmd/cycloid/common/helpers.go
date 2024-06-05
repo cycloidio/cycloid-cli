@@ -3,15 +3,18 @@ package common
 import (
 	"fmt"
 	"os"
+	"reflect"
 	"regexp"
 	"strings"
 
 	"net/url"
 
 	"github.com/cycloidio/cycloid-cli/client/client"
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/config"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
@@ -193,4 +196,195 @@ func GenerateCanonical(name string) string {
 	canonical = spaces.ReplaceAllString(canonical, "-")
 
 	return strings.ToLower(canonical)
+}
+
+// From a *models.FormEntity, retrieve a value associated with its type
+// if getCurrent is true, we return the current value in priority
+// otherwise, we get the default value
+// if no default is set, we get a zeroed value of the correct type
+// Return nil if the type is invalid.
+// TODO: Could this be better with generics ?
+func EntityGetValue(entity *models.FormEntity, getCurrent bool) any {
+	switch *entity.Type {
+	case "string":
+		if getCurrent { // Try to get current value if asked.
+			value, ok := entity.Current.(string)
+			if ok {
+				return value
+			}
+		}
+
+		// Try to get the default value
+		value, ok := entity.Default.(string)
+		if ok {
+			return value
+		}
+
+		// Else return a valid typed zeroed value
+		return ""
+	case "integer":
+		if getCurrent { // Try to get current value if asked.
+			value, ok := entity.Current.(int64)
+			if ok {
+				return value
+			}
+		}
+
+		// Try to get the default value
+		value, ok := entity.Default.(int64)
+		if ok {
+			return value
+		}
+
+		// Else return a valid typed zeroed value
+		return 0
+	case "float":
+		if getCurrent { // Try to get current value if asked.
+			value, ok := entity.Current.(float64)
+			if ok {
+				return value
+			}
+		}
+
+		// Try to get the default value
+		value, ok := entity.Default.(float64)
+		if ok {
+			return value
+		}
+
+		// Else return a valid typed zeroed value
+		return 0
+	case "boolean":
+		if getCurrent { // Try to get current value if asked.
+			value, ok := entity.Current.(bool)
+			if ok {
+				return value
+			}
+		}
+
+		// Try to get the default value
+		value, ok := entity.Default.(bool)
+		if ok {
+			return value
+		}
+
+		// Else return a valid typed zeroed value
+		return false
+	case "array":
+		if getCurrent { // Try to get current value if asked.
+			value, ok := entity.Current.([]any)
+			if ok {
+				return value
+			}
+		}
+
+		// Try to get the default value
+		value, ok := entity.Default.([]any)
+		if ok {
+			return value
+		}
+
+		// Else return a valid typed zeroed value
+		return []any{}
+	case "map":
+		if getCurrent { // Try to get current value if asked.
+			value, ok := entity.Current.(map[string]any)
+			if ok {
+				return value
+			}
+		}
+
+		// Try to get the default value
+		value, ok := entity.Default.(map[string]any)
+		if ok {
+			return value
+		}
+
+		// Else return a valid typed zeroed value
+		return make(map[string]any)
+	default:
+		return nil
+	}
+}
+
+func ParseFormsConfig(conf *models.ProjectEnvironmentConfig, useCase string, getCurrent bool) (vars map[string]map[string]map[string]any, err error) {
+	form, err := GetFormsUseCase(conf.Forms.UseCases, useCase)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to extract forms data from project config.")
+	}
+
+	vars = make(map[string]map[string]map[string]any)
+	for _, section := range form.Sections {
+		if section == nil {
+			continue
+		}
+
+		var groups = make(map[string]map[string]any)
+		for _, group := range section.Groups {
+			vars := make(map[string]any)
+
+			for _, varEntity := range group.Vars {
+				value := EntityGetValue(varEntity, getCurrent)
+				// We have to strings.ToLower() the keys otherwise, it will not be
+				// recognized as input for a create-env
+				vars[strings.ToLower(*varEntity.Name)] = value
+			}
+
+			groups[strings.ToLower(*group.Name)] = vars
+		}
+
+		vars[strings.ToLower(*section.Name)] = groups
+	}
+
+	return vars, nil
+}
+
+func GetFormsUseCase(formsUseCases []*models.FormUseCase, useCase string) (*models.FormUseCase, error) {
+	if formsUseCases == nil {
+		return nil, fmt.Errorf("got empty forms use case")
+	}
+
+	for _, form := range formsUseCases {
+		if *form.Name == useCase {
+			return form, nil
+		}
+	}
+
+	return nil, errors.New(fmt.Sprint("failed to find usecase:", useCase, "in form input:", formsUseCases))
+}
+
+// Update map 'm' with field 'field' to 'value'
+// the field must be in dot notation
+// e.g. field='one.nested.key' value='myValue'
+// If the map is nil, it will be created
+func UpdateMapField(field string, value any, m map[string]any) error {
+	keys := strings.Split(field, ".")
+
+	if m == nil {
+		m = make(map[string]any)
+	}
+
+	if len(keys) == 1 {
+		m[keys[0]] = value
+		return nil
+	}
+
+	child, exists := m[keys[0]]
+	if exists && reflect.ValueOf(child).Kind() == reflect.Map {
+		childMap, ok := child.(map[string]any)
+		if !ok {
+			return fmt.Errorf("failed to parse nested map: %v\n%v", child, childMap)
+		}
+		return UpdateMapField(strings.Join(keys[1:], "."), value, childMap)
+	}
+
+	child = make(map[string]any)
+	err := UpdateMapField(strings.Join(keys[1:], "."), value, child.(map[string]any))
+	if err != nil {
+		return err
+	}
+
+	m[keys[0]] = child
+
+	return nil
 }
