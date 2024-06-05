@@ -40,6 +40,8 @@ type Middleware interface {
 	GetRemoteTFExternalBackend(org string) (*models.ExternalBackend, error)
 	UpdateExternalBackend(org string, externalBackendID uint32, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 
+	// Organization Forms
+	CreateFormsConfig(org string, project string, serviceCatalogRef string, inputs []*models.FormInput) (map[string]any, error)
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
 
 	DeleteMember(org string, name string) error
@@ -79,6 +81,7 @@ type Middleware interface {
 	DeleteProjectEnv(org, project, env string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
+	GetProjectConfig(org string, project string, environment string) (*models.ProjectEnvironmentConfig, error)
 	ListProjects(org string) ([]*models.Project, error)
 	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error)
 

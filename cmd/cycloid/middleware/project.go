@@ -32,7 +32,6 @@ func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
 }
 
 func (m *middleware) GetProject(org, project string) (*models.Project, error) {
-
 	params := organization_projects.NewGetProjectParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
@@ -51,6 +50,27 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 	d := p.Data
 
 	return d, nil
+}
+
+func (m *middleware) GetProjectConfig(org string, project string, env string) (*models.ProjectEnvironmentConfig, error) {
+	params := organization_projects.NewGetProjectConfigParams()
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(project)
+	params.WithEnvironmentCanonical(env)
+	params.SetContext(nil)
+
+	resp, err := m.api.OrganizationProjects.GetProjectConfig(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return nil, err
+	}
+
+	return payload.Data, nil
 }
 
 func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error) {
@@ -159,7 +179,6 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 }
 
 func (m *middleware) DeleteProjectEnv(org, project, env string) error {
-
 	params := organization_projects.NewDeleteProjectEnvironmentParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
@@ -173,7 +192,6 @@ func (m *middleware) DeleteProjectEnv(org, project, env string) error {
 }
 
 func (m *middleware) DeleteProject(org, project string) error {
-
 	params := organization_projects.NewDeleteProjectParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
