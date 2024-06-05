@@ -6,12 +6,10 @@ import (
 	"io"
 	"log"
 	"os"
-	"reflect"
 	"strings"
 
 	"dario.cat/mergo"
 	"github.com/pkg/errors"
-	"github.com/sanity-io/litter"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -32,10 +30,13 @@ The precedence order for variable provisioning is as follows:
 - --var-file flag
 - env vars CY_STACKFORMS_VAR
 - --vars flag
+- --extra-var (-e) flag
 
 --vars accept json encoded values.
 
 You can provide values fron stdin using the '--var-file -' flag.
+
+The output will be the generated configuration of the project.
 `,
 		Example: `
 # create 'prod' environment in 'my-project'
@@ -111,8 +112,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	internal.Debug("extraVar:", extraVar)
-
 	//
 	// Variable merge
 	//
@@ -153,8 +152,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	internal.Debug("found theses vars via files:", vars)
-
 	// Get vars via the CY_STACKFORMS_VARS env var
 	envConfig, exists := os.LookupEnv("CY_STACKFORMS_VARS")
 	if exists {
@@ -193,10 +190,8 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 	// Merge key/val from extraVar
 	for k, v := range extraVar {
-		updateMapField(k, v, vars)
+		common.UpdateMapField(k, v, vars)
 	}
-
-	internal.Debug("vars after CLI merge:", vars)
 
 	projectData, err := m.GetProject(org, project)
 	if err != nil {
@@ -217,8 +212,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	// need to conver the environment to "new environment" as required
 	// by the API
 	envs := make([]*models.NewEnvironment, len(projectData.Environments))
-
-	litter.Dump(projectData.Environments)
 
 	for i, e := range projectData.Environments {
 		if *e.Canonical == env && !update {
@@ -251,8 +244,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			Icon:                   icon,
 		}
 	}
-
-	litter.Dump(envs)
 
 	var cloudProviderCanonical, icon, color string
 	switch strings.ToLower(usecase) {
@@ -291,6 +282,8 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		},
 	}
 
+	_, _ = m.CreateFormsConfig(org, project, *projectData.ServiceCatalog.Ref, inputs)
+
 	// Send the updateProject call
 	// TODO: Add support for resource pool canonical in case of resource quotas
 	resp, err := m.UpdateProject(org,
@@ -306,40 +299,4 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	)
 
 	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
-}
-
-// Update map 'm' with field 'field' to 'value'
-// the field must be in dot notation
-// e.g. field='one.nested.key' value='myValue'
-// If the map is nil, it will be created
-func updateMapField(field string, value any, m map[string]any) error {
-	keys := strings.Split(field, ".")
-
-	if m == nil {
-		m = make(map[string]any)
-	}
-
-	if len(keys) == 1 {
-		m[keys[0]] = value
-		return nil
-	}
-
-	child, exists := m[keys[0]]
-	if exists && reflect.ValueOf(child).Kind() == reflect.Map {
-		childMap, ok := child.(map[string]any)
-		if !ok {
-			return fmt.Errorf("failed to parse nested map: %v\n%v", child, childMap)
-		}
-		return updateMapField(strings.Join(keys[1:], "."), value, childMap)
-	}
-
-	child = make(map[string]any)
-	err := updateMapField(strings.Join(keys[1:], "."), value, child.(map[string]any))
-	if err != nil {
-		return err
-	}
-
-	m[keys[0]] = child
-
-	return nil
 }
