@@ -229,6 +229,40 @@ func (a *Client) GetProject(params *GetProjectParams, authInfo runtime.ClientAut
 }
 
 /*
+GetProjectConfig Fetch the current project's environment's configuration.
+*/
+func (a *Client) GetProjectConfig(params *GetProjectConfigParams, authInfo runtime.ClientAuthInfoWriter) (*GetProjectConfigOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetProjectConfigParams()
+	}
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
+		ID:                 "getProjectConfig",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environment/{environment_canonical}/config",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetProjectConfigReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	})
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetProjectConfigOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetProjectConfigDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 GetProjects Get list of projects of the organization.
 */
 func (a *Client) GetProjects(params *GetProjectsParams, authInfo runtime.ClientAuthInfoWriter) (*GetProjectsOK, error) {
