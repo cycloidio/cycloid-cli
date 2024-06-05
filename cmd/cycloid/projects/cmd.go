@@ -22,7 +22,11 @@ func NewCommands() *cobra.Command {
 		NewDeleteEnvCommand(),
 		NewCreateEnvCommand(),
 		NewCreateRawEnvCommand(),
-		NewGetCommand())
+		NewGetCommand(),
+		NewGetEnvCommand(),
+		//NewGetStackformsConfigCommand(), // needs implementation
+		NewGetStackformsConfigFromEnvCommand(),
+	)
 
 	return cmd
 }
