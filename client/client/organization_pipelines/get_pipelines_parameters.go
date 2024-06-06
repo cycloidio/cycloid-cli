@@ -91,7 +91,7 @@ type GetPipelinesParams struct {
 	  A list of environments' canonical to filter from
 
 	*/
-	EnvironmentCanonical []string
+	EnvironmentCanonical *string
 	/*OrganizationCanonical
 	  A canonical of an organization.
 
@@ -111,7 +111,7 @@ type GetPipelinesParams struct {
 	  A list of projects' canonical to filter from
 
 	*/
-	ProjectCanonical []string
+	ProjectCanonical *string
 	/*Statuses
 	  List of statuses that you want to filter a pipeline/job with. Pipeline can be either paused or unpaused, but jobs can be started, pending, succeeded, failed, errored, aborted. So if any of a pipeline's job has one of the given status, the associated pipeline will be included in the response.
 
@@ -168,13 +168,13 @@ func (o *GetPipelinesParams) SetConcoursePipelineName(concoursePipelineName *str
 }
 
 // WithEnvironmentCanonical adds the environmentCanonical to the get pipelines params
-func (o *GetPipelinesParams) WithEnvironmentCanonical(environmentCanonical []string) *GetPipelinesParams {
+func (o *GetPipelinesParams) WithEnvironmentCanonical(environmentCanonical *string) *GetPipelinesParams {
 	o.SetEnvironmentCanonical(environmentCanonical)
 	return o
 }
 
 // SetEnvironmentCanonical adds the environmentCanonical to the get pipelines params
-func (o *GetPipelinesParams) SetEnvironmentCanonical(environmentCanonical []string) {
+func (o *GetPipelinesParams) SetEnvironmentCanonical(environmentCanonical *string) {
 	o.EnvironmentCanonical = environmentCanonical
 }
 
@@ -212,13 +212,13 @@ func (o *GetPipelinesParams) SetPageSize(pageSize *uint32) {
 }
 
 // WithProjectCanonical adds the projectCanonical to the get pipelines params
-func (o *GetPipelinesParams) WithProjectCanonical(projectCanonical []string) *GetPipelinesParams {
+func (o *GetPipelinesParams) WithProjectCanonical(projectCanonical *string) *GetPipelinesParams {
 	o.SetProjectCanonical(projectCanonical)
 	return o
 }
 
 // SetProjectCanonical adds the projectCanonical to the get pipelines params
-func (o *GetPipelinesParams) SetProjectCanonical(projectCanonical []string) {
+func (o *GetPipelinesParams) SetProjectCanonical(projectCanonical *string) {
 	o.ProjectCanonical = projectCanonical
 }
 
@@ -257,12 +257,20 @@ func (o *GetPipelinesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
-	valuesEnvironmentCanonical := o.EnvironmentCanonical
+	if o.EnvironmentCanonical != nil {
 
-	joinedEnvironmentCanonical := swag.JoinByFormat(valuesEnvironmentCanonical, "")
-	// query array param environment_canonical
-	if err := r.SetQueryParam("environment_canonical", joinedEnvironmentCanonical...); err != nil {
-		return err
+		// query param environment_canonical
+		var qrEnvironmentCanonical string
+		if o.EnvironmentCanonical != nil {
+			qrEnvironmentCanonical = *o.EnvironmentCanonical
+		}
+		qEnvironmentCanonical := qrEnvironmentCanonical
+		if qEnvironmentCanonical != "" {
+			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	// path param organization_canonical
@@ -302,12 +310,20 @@ func (o *GetPipelinesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 	}
 
-	valuesProjectCanonical := o.ProjectCanonical
+	if o.ProjectCanonical != nil {
 
-	joinedProjectCanonical := swag.JoinByFormat(valuesProjectCanonical, "")
-	// query array param project_canonical
-	if err := r.SetQueryParam("project_canonical", joinedProjectCanonical...); err != nil {
-		return err
+		// query param project_canonical
+		var qrProjectCanonical string
+		if o.ProjectCanonical != nil {
+			qrProjectCanonical = *o.ProjectCanonical
+		}
+		qProjectCanonical := qrProjectCanonical
+		if qProjectCanonical != "" {
+			if err := r.SetQueryParam("project_canonical", qProjectCanonical); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	valuesStatuses := o.Statuses

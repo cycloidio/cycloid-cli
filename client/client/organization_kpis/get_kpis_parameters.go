@@ -92,11 +92,11 @@ type GetKpisParams struct {
 
 	*/
 	End *uint64
-	/*Environment
-	  The environment canonical to use a query filter
+	/*EnvironmentCanonical
+	  A list of environments' canonical to filter from
 
 	*/
-	Environment *string
+	EnvironmentCanonical *string
 	/*Favorite
 	  Flag to retrieve favorite data from the members favorite list.
 
@@ -124,11 +124,11 @@ type GetKpisParams struct {
 
 	*/
 	PageSize *uint32
-	/*Project
-	  A canonical of a project used for filtering.
+	/*ProjectCanonical
+	  A list of projects' canonical to filter from
 
 	*/
-	Project *string
+	ProjectCanonical *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -190,15 +190,15 @@ func (o *GetKpisParams) SetEnd(end *uint64) {
 	o.End = end
 }
 
-// WithEnvironment adds the environment to the get kpis params
-func (o *GetKpisParams) WithEnvironment(environment *string) *GetKpisParams {
-	o.SetEnvironment(environment)
+// WithEnvironmentCanonical adds the environmentCanonical to the get kpis params
+func (o *GetKpisParams) WithEnvironmentCanonical(environmentCanonical *string) *GetKpisParams {
+	o.SetEnvironmentCanonical(environmentCanonical)
 	return o
 }
 
-// SetEnvironment adds the environment to the get kpis params
-func (o *GetKpisParams) SetEnvironment(environment *string) {
-	o.Environment = environment
+// SetEnvironmentCanonical adds the environmentCanonical to the get kpis params
+func (o *GetKpisParams) SetEnvironmentCanonical(environmentCanonical *string) {
+	o.EnvironmentCanonical = environmentCanonical
 }
 
 // WithFavorite adds the favorite to the get kpis params
@@ -256,15 +256,15 @@ func (o *GetKpisParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
-// WithProject adds the project to the get kpis params
-func (o *GetKpisParams) WithProject(project *string) *GetKpisParams {
-	o.SetProject(project)
+// WithProjectCanonical adds the projectCanonical to the get kpis params
+func (o *GetKpisParams) WithProjectCanonical(projectCanonical *string) *GetKpisParams {
+	o.SetProjectCanonical(projectCanonical)
 	return o
 }
 
-// SetProject adds the project to the get kpis params
-func (o *GetKpisParams) SetProject(project *string) {
-	o.Project = project
+// SetProjectCanonical adds the projectCanonical to the get kpis params
+func (o *GetKpisParams) SetProjectCanonical(projectCanonical *string) {
+	o.ProjectCanonical = projectCanonical
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -307,16 +307,16 @@ func (o *GetKpisParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 
 	}
 
-	if o.Environment != nil {
+	if o.EnvironmentCanonical != nil {
 
-		// query param environment
-		var qrEnvironment string
-		if o.Environment != nil {
-			qrEnvironment = *o.Environment
+		// query param environment_canonical
+		var qrEnvironmentCanonical string
+		if o.EnvironmentCanonical != nil {
+			qrEnvironmentCanonical = *o.EnvironmentCanonical
 		}
-		qEnvironment := qrEnvironment
-		if qEnvironment != "" {
-			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
+		qEnvironmentCanonical := qrEnvironmentCanonical
+		if qEnvironmentCanonical != "" {
+			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
 				return err
 			}
 		}
@@ -392,16 +392,16 @@ func (o *GetKpisParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 
 	}
 
-	if o.Project != nil {
+	if o.ProjectCanonical != nil {
 
-		// query param project
-		var qrProject string
-		if o.Project != nil {
-			qrProject = *o.Project
+		// query param project_canonical
+		var qrProjectCanonical string
+		if o.ProjectCanonical != nil {
+			qrProjectCanonical = *o.ProjectCanonical
 		}
-		qProject := qrProject
-		if qProject != "" {
-			if err := r.SetQueryParam("project", qProject); err != nil {
+		qProjectCanonical := qrProjectCanonical
+		if qProjectCanonical != "" {
+			if err := r.SetQueryParam("project_canonical", qProjectCanonical); err != nil {
 				return err
 			}
 		}

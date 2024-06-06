@@ -69,11 +69,11 @@ type CreateExternalBackendParams struct {
 
 	*/
 	Body *models.NewExternalBackend
-	/*Environment
-	  The environment canonical to use a query filter
+	/*EnvironmentCanonical
+	  A list of environments' canonical to filter from
 
 	*/
-	Environment *string
+	EnvironmentCanonical *string
 	/*ExternalBackendDefault
 	  Filter for default Terraform External Backend
 
@@ -84,11 +84,11 @@ type CreateExternalBackendParams struct {
 
 	*/
 	OrganizationCanonical string
-	/*Project
-	  A canonical of a project used for filtering.
+	/*ProjectCanonical
+	  A list of projects' canonical to filter from
 
 	*/
-	Project *string
+	ProjectCanonical *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -139,15 +139,15 @@ func (o *CreateExternalBackendParams) SetBody(body *models.NewExternalBackend) {
 	o.Body = body
 }
 
-// WithEnvironment adds the environment to the create external backend params
-func (o *CreateExternalBackendParams) WithEnvironment(environment *string) *CreateExternalBackendParams {
-	o.SetEnvironment(environment)
+// WithEnvironmentCanonical adds the environmentCanonical to the create external backend params
+func (o *CreateExternalBackendParams) WithEnvironmentCanonical(environmentCanonical *string) *CreateExternalBackendParams {
+	o.SetEnvironmentCanonical(environmentCanonical)
 	return o
 }
 
-// SetEnvironment adds the environment to the create external backend params
-func (o *CreateExternalBackendParams) SetEnvironment(environment *string) {
-	o.Environment = environment
+// SetEnvironmentCanonical adds the environmentCanonical to the create external backend params
+func (o *CreateExternalBackendParams) SetEnvironmentCanonical(environmentCanonical *string) {
+	o.EnvironmentCanonical = environmentCanonical
 }
 
 // WithExternalBackendDefault adds the externalBackendDefault to the create external backend params
@@ -172,15 +172,15 @@ func (o *CreateExternalBackendParams) SetOrganizationCanonical(organizationCanon
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithProject adds the project to the create external backend params
-func (o *CreateExternalBackendParams) WithProject(project *string) *CreateExternalBackendParams {
-	o.SetProject(project)
+// WithProjectCanonical adds the projectCanonical to the create external backend params
+func (o *CreateExternalBackendParams) WithProjectCanonical(projectCanonical *string) *CreateExternalBackendParams {
+	o.SetProjectCanonical(projectCanonical)
 	return o
 }
 
-// SetProject adds the project to the create external backend params
-func (o *CreateExternalBackendParams) SetProject(project *string) {
-	o.Project = project
+// SetProjectCanonical adds the projectCanonical to the create external backend params
+func (o *CreateExternalBackendParams) SetProjectCanonical(projectCanonical *string) {
+	o.ProjectCanonical = projectCanonical
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -197,16 +197,16 @@ func (o *CreateExternalBackendParams) WriteToRequest(r runtime.ClientRequest, re
 		}
 	}
 
-	if o.Environment != nil {
+	if o.EnvironmentCanonical != nil {
 
-		// query param environment
-		var qrEnvironment string
-		if o.Environment != nil {
-			qrEnvironment = *o.Environment
+		// query param environment_canonical
+		var qrEnvironmentCanonical string
+		if o.EnvironmentCanonical != nil {
+			qrEnvironmentCanonical = *o.EnvironmentCanonical
 		}
-		qEnvironment := qrEnvironment
-		if qEnvironment != "" {
-			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
+		qEnvironmentCanonical := qrEnvironmentCanonical
+		if qEnvironmentCanonical != "" {
+			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
 				return err
 			}
 		}
@@ -234,16 +234,16 @@ func (o *CreateExternalBackendParams) WriteToRequest(r runtime.ClientRequest, re
 		return err
 	}
 
-	if o.Project != nil {
+	if o.ProjectCanonical != nil {
 
-		// query param project
-		var qrProject string
-		if o.Project != nil {
-			qrProject = *o.Project
+		// query param project_canonical
+		var qrProjectCanonical string
+		if o.ProjectCanonical != nil {
+			qrProjectCanonical = *o.ProjectCanonical
 		}
-		qProject := qrProject
-		if qProject != "" {
-			if err := r.SetQueryParam("project", qProject); err != nil {
+		qProjectCanonical := qrProjectCanonical
+		if qProjectCanonical != "" {
+			if err := r.SetQueryParam("project_canonical", qProjectCanonical); err != nil {
 				return err
 			}
 		}

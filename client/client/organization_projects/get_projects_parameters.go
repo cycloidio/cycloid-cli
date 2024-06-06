@@ -86,7 +86,7 @@ type GetProjectsParams struct {
 	  A list of environments' canonical to filter from
 
 	*/
-	EnvironmentCanonical []string
+	EnvironmentCanonical *string
 	/*Favorite
 	  Flag to retrieve favorite data from the members favorite list.
 
@@ -184,13 +184,13 @@ func (o *GetProjectsParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithEnvironmentCanonical adds the environmentCanonical to the get projects params
-func (o *GetProjectsParams) WithEnvironmentCanonical(environmentCanonical []string) *GetProjectsParams {
+func (o *GetProjectsParams) WithEnvironmentCanonical(environmentCanonical *string) *GetProjectsParams {
 	o.SetEnvironmentCanonical(environmentCanonical)
 	return o
 }
 
 // SetEnvironmentCanonical adds the environmentCanonical to the get projects params
-func (o *GetProjectsParams) SetEnvironmentCanonical(environmentCanonical []string) {
+func (o *GetProjectsParams) SetEnvironmentCanonical(environmentCanonical *string) {
 	o.EnvironmentCanonical = environmentCanonical
 }
 
@@ -323,12 +323,20 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 	}
 	var res []error
 
-	valuesEnvironmentCanonical := o.EnvironmentCanonical
+	if o.EnvironmentCanonical != nil {
 
-	joinedEnvironmentCanonical := swag.JoinByFormat(valuesEnvironmentCanonical, "")
-	// query array param environment_canonical
-	if err := r.SetQueryParam("environment_canonical", joinedEnvironmentCanonical...); err != nil {
-		return err
+		// query param environment_canonical
+		var qrEnvironmentCanonical string
+		if o.EnvironmentCanonical != nil {
+			qrEnvironmentCanonical = *o.EnvironmentCanonical
+		}
+		qEnvironmentCanonical := qrEnvironmentCanonical
+		if qEnvironmentCanonical != "" {
+			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	if o.Favorite != nil {
