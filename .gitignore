@@ -23,3 +23,7 @@ pkged.go
 # Intellij
 .idea/
 gst
+
+# direnv
+.direnv
+
