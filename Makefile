@@ -18,6 +18,7 @@ REVISION     ?= $(shell git rev-parse --short HEAD 2> /dev/null  || echo 'unknow
 BRANCH       ?= $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null  || echo 'unknown')
 BUILD_ORIGIN ?= $(USER)@$(shell hostname -f)
 BUILD_DATE   ?= $(shell date --utc -Iseconds)
+DOCKER_COMPOSE ?= $(shell docker compose --help >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose")
 
 # GO
 # Setup the -ldflags build option for go here, interpolate the variable values
@@ -62,7 +63,7 @@ SWAGGER_GENERATE = swagger generate client \
 
 SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 	mkdir ./client; \
-	docker-compose run $(SWAGGER_COMMAND)
+	$(DOCKER_COMPOSE) run $(SWAGGER_COMMAND)
 
 # E2E tests
 CY_API_URL         ?= http://127.0.0.1:3001
@@ -79,7 +80,7 @@ AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws
 # Local BE
 LOCAL_BE_GIT_PATH ?= ../youdeploy-http-api
 YD_API_TAG        ?= staging
-API_LICENCE_KEY   ?= 
+API_LICENCE_KEY   ?=
 
 .PHONY: help
 help: ## Show this help
@@ -110,7 +111,7 @@ generate-client: ## Generate client from file at SWAGGER_FILE path
 
 .PHONY: generate-client-from-local
 generate-client-from-local: reset-old-client ## Generates client using docker and local swagger (version -> v0.0-dev)
-	docker-compose run $(SWAGGER_GENERATE)
+	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE)
 	echo 'v0.0-dev' > client/version
 
 .PHONY: generate-client-from-docs
@@ -118,7 +119,7 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	@wget https://docs.cycloid.io/api/swagger.yml
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
-	docker-compose run $(SWAGGER_GENERATE) && \
+	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE) && \
 	echo $$SWAGGER_VERSION > client/version; \
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
@@ -136,10 +137,10 @@ start-local-be: ## Starts local BE instance. Note! Only for cycloid developers
 	@echo "Generating fake data to be used in the tests..."
 	@cd $(LOCAL_BE_GIT_PATH) && sed -i '/cost-explorer-es/d' config.yml
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	docker-compose -f docker-compose.yml -f docker-compose.cli.yml up youdeploy-init
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE).yml -f $(DOCKER_COMPOSE).cli.yml up youdeploy-init
 	@echo "Running BE server with the fake data generated..."
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	docker-compose -f docker-compose.yml -f docker-compose.cli.yml up -d youdeploy-api
+	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE).yml -f $(DOCKER_COMPOSE).cli.yml up -d youdeploy-api
 
 .PHONY: local-e2e-test
 local-e2e-test: ## Launches local e2e tests. Note! Only for cycloid developers
@@ -152,7 +153,7 @@ local-e2e-test: ## Launches local e2e tests. Note! Only for cycloid developers
 delete-local-be: ## Creates local BE instance and starts e2e tests. Note! Only for cycloid developers
 	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
 	@echo "Deleting local BE instances !"
-	@cd $(LOCAL_BE_GIT_PATH) && docker-compose down -v --remove-orphans
+	@cd $(LOCAL_BE_GIT_PATH) && $(DOCKER_COMPOSE) down -v --remove-orphans
 
 .PHONY: new-changelog-entry
 new-changelog-entry: ## Create a new entry for unreleased element
