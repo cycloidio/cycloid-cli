@@ -1,0 +1,8 @@
+component: CLI
+kind: INTERNAL
+body: Update go version to 1.21
+time: 2024-06-06T14:27:03.879461344Z
+custom:
+  DETAILS: ""
+  PR: "272"
+  TYPE: CLI
