@@ -136,10 +136,10 @@ start-local-be: ## Starts local BE instance. Note! Only for cycloid developers
 	@echo "Generating fake data to be used in the tests..."
 	@cd $(LOCAL_BE_GIT_PATH) && sed -i '/cost-explorer-es/d' config.yml
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE).yml -f $(DOCKER_COMPOSE).cli.yml up youdeploy-init
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.cli.yml up youdeploy-init
 	@echo "Running BE server with the fake data generated..."
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE).yml -f $(DOCKER_COMPOSE).cli.yml up -d youdeploy-api
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.cli.yml up -d youdeploy-api
 
 .PHONY: local-e2e-test
 local-e2e-test: ## Launches local e2e tests. Note! Only for cycloid developers
