@@ -1,8 +1,8 @@
 {
-  description = "A basic dev shell for nix users";
+  description = "A basic dev shell for nix/nixos users";
 
   inputs = {
-    nixpkgs = { url = "https://github.com/NixOS/nixpkgs/archive/9957cd48326fe8dbd52fdc50dd2502307f188b0d.tar.gz"; };
+    nixpkgs = { url = "github:NixOs/nixpkgs/nixos-unstable"; };
     flake-utils = { url = "github:numtide/flake-utils"; };
   };
 
@@ -23,7 +23,9 @@
             gnumake
 
             # Prod is built using go 1.18 rn
-            go_1_18
+            go_1_21
+
+            go-swagger
           ]);
         };
       });
