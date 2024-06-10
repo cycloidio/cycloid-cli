@@ -321,9 +321,17 @@ func ParseFormsConfig(conf *models.ProjectEnvironmentConfig, useCase string, get
 
 		var groups = make(map[string]map[string]any)
 		for _, group := range section.Groups {
+			if group == nil {
+				continue
+			}
+
 			vars := make(map[string]any)
 
 			for _, varEntity := range group.Vars {
+				if varEntity == nil {
+					continue
+				}
+
 				value := EntityGetValue(varEntity, getCurrent)
 				// We have to strings.ToLower() the keys otherwise, it will not be
 				// recognized as input for a create-env
