@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // UpdateInfraPolicy Update InfraPolicy
 //
 // Update a policy to control operations across infrastructure.
+//
 // swagger:model UpdateInfraPolicy
 type UpdateInfraPolicy struct {
 
@@ -49,7 +50,7 @@ type UpdateInfraPolicy struct {
 
 	// severity
 	// Required: true
-	// Enum: [critical warning advisory]
+	// Enum: ["critical","warning","advisory"]
 	Severity *string `json:"severity"`
 }
 
@@ -120,7 +121,7 @@ func (m *UpdateInfraPolicy) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
 		return err
 	}
 
@@ -133,7 +134,7 @@ func (m *UpdateInfraPolicy) validateOwner(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("owner", "body", string(*m.Owner), 100); err != nil {
+	if err := validate.MaxLength("owner", "body", *m.Owner, 100); err != nil {
 		return err
 	}
 
@@ -166,7 +167,7 @@ const (
 
 // prop value enum
 func (m *UpdateInfraPolicy) validateSeverityEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, updateInfraPolicyTypeSeverityPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, updateInfraPolicyTypeSeverityPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -183,6 +184,11 @@ func (m *UpdateInfraPolicy) validateSeverity(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this update infra policy based on context it is used
+func (m *UpdateInfraPolicy) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

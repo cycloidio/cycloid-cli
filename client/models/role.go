@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // Role Role access control
 //
 // Role represents the authorization level that an user has to access to a specific entity of the system. A role contains a list of rules to define the access control. Note not all the entities supports roles access control; see the API endpoints to know which entities support them.
+//
 // swagger:model Role
 type Role struct {
 
@@ -108,15 +109,15 @@ func (m *Role) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -124,12 +125,11 @@ func (m *Role) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *Role) validateCreatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -160,7 +160,7 @@ func (m *Role) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -173,11 +173,11 @@ func (m *Role) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("name", "body", string(*m.Name), 100); err != nil {
+	if err := validate.MaxLength("name", "body", *m.Name, 100); err != nil {
 		return err
 	}
 
@@ -199,6 +199,8 @@ func (m *Role) validateRules(formats strfmt.Registry) error {
 			if err := m.Rules[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("rules" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -210,13 +212,51 @@ func (m *Role) validateRules(formats strfmt.Registry) error {
 }
 
 func (m *Role) validateUpdatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this role based on the context it is used
+func (m *Role) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateRules(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Role) contextValidateRules(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Rules); i++ {
+
+		if m.Rules[i] != nil {
+
+			if swag.IsZero(m.Rules[i]) { // not required
+				return nil
+			}
+
+			if err := m.Rules[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("rules" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

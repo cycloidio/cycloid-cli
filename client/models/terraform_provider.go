@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // TerraformProvider Provider
 //
-// Provider of infrastructure
+// # Provider of infrastructure
+//
 // swagger:model TerraformProvider
 type TerraformProvider struct {
 
@@ -87,11 +89,11 @@ func (m *TerraformProvider) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -118,10 +120,15 @@ func (m *TerraformProvider) validateName(formats strfmt.Registry) error {
 
 func (m *TerraformProvider) validateSchema(formats strfmt.Registry) error {
 
-	if err := validate.Required("schema", "body", m.Schema); err != nil {
-		return err
+	if m.Schema == nil {
+		return errors.Required("schema", "body", nil)
 	}
 
+	return nil
+}
+
+// ContextValidate validates this terraform provider based on context it is used
+func (m *TerraformProvider) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

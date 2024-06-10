@@ -6,17 +6,18 @@ package organization_service_catalog_sources
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // RefreshServiceCatalogSourceReader is a Reader for the RefreshServiceCatalogSource structure.
@@ -68,7 +69,8 @@ func NewRefreshServiceCatalogSourceOK() *RefreshServiceCatalogSourceOK {
 	return &RefreshServiceCatalogSourceOK{}
 }
 
-/*RefreshServiceCatalogSourceOK handles this case with default header values.
+/*
+RefreshServiceCatalogSourceOK describes a response with status code 200, with default header values.
 
 Success refresh
 */
@@ -76,8 +78,44 @@ type RefreshServiceCatalogSourceOK struct {
 	Payload *RefreshServiceCatalogSourceOKBody
 }
 
+// IsSuccess returns true when this refresh service catalog source o k response has a 2xx status code
+func (o *RefreshServiceCatalogSourceOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this refresh service catalog source o k response has a 3xx status code
+func (o *RefreshServiceCatalogSourceOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this refresh service catalog source o k response has a 4xx status code
+func (o *RefreshServiceCatalogSourceOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this refresh service catalog source o k response has a 5xx status code
+func (o *RefreshServiceCatalogSourceOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this refresh service catalog source o k response a status code equal to that given
+func (o *RefreshServiceCatalogSourceOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the refresh service catalog source o k response
+func (o *RefreshServiceCatalogSourceOK) Code() int {
+	return 200
+}
+
 func (o *RefreshServiceCatalogSourceOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceOK %s", 200, payload)
+}
+
+func (o *RefreshServiceCatalogSourceOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceOK %s", 200, payload)
 }
 
 func (o *RefreshServiceCatalogSourceOK) GetPayload() *RefreshServiceCatalogSourceOKBody {
@@ -101,20 +139,60 @@ func NewRefreshServiceCatalogSourceNotFound() *RefreshServiceCatalogSourceNotFou
 	return &RefreshServiceCatalogSourceNotFound{}
 }
 
-/*RefreshServiceCatalogSourceNotFound handles this case with default header values.
+/*
+RefreshServiceCatalogSourceNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type RefreshServiceCatalogSourceNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this refresh service catalog source not found response has a 2xx status code
+func (o *RefreshServiceCatalogSourceNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this refresh service catalog source not found response has a 3xx status code
+func (o *RefreshServiceCatalogSourceNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this refresh service catalog source not found response has a 4xx status code
+func (o *RefreshServiceCatalogSourceNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this refresh service catalog source not found response has a 5xx status code
+func (o *RefreshServiceCatalogSourceNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this refresh service catalog source not found response a status code equal to that given
+func (o *RefreshServiceCatalogSourceNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the refresh service catalog source not found response
+func (o *RefreshServiceCatalogSourceNotFound) Code() int {
+	return 404
+}
+
 func (o *RefreshServiceCatalogSourceNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceNotFound %s", 404, payload)
+}
+
+func (o *RefreshServiceCatalogSourceNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceNotFound %s", 404, payload)
 }
 
 func (o *RefreshServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload {
@@ -123,12 +201,16 @@ func (o *RefreshServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload 
 
 func (o *RefreshServiceCatalogSourceNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -145,15 +227,50 @@ func NewRefreshServiceCatalogSourceLengthRequired() *RefreshServiceCatalogSource
 	return &RefreshServiceCatalogSourceLengthRequired{}
 }
 
-/*RefreshServiceCatalogSourceLengthRequired handles this case with default header values.
+/*
+RefreshServiceCatalogSourceLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type RefreshServiceCatalogSourceLengthRequired struct {
 }
 
+// IsSuccess returns true when this refresh service catalog source length required response has a 2xx status code
+func (o *RefreshServiceCatalogSourceLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this refresh service catalog source length required response has a 3xx status code
+func (o *RefreshServiceCatalogSourceLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this refresh service catalog source length required response has a 4xx status code
+func (o *RefreshServiceCatalogSourceLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this refresh service catalog source length required response has a 5xx status code
+func (o *RefreshServiceCatalogSourceLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this refresh service catalog source length required response a status code equal to that given
+func (o *RefreshServiceCatalogSourceLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the refresh service catalog source length required response
+func (o *RefreshServiceCatalogSourceLengthRequired) Code() int {
+	return 411
+}
+
 func (o *RefreshServiceCatalogSourceLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceLengthRequired", 411)
+}
+
+func (o *RefreshServiceCatalogSourceLengthRequired) String() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceLengthRequired", 411)
 }
 
 func (o *RefreshServiceCatalogSourceLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -166,20 +283,60 @@ func NewRefreshServiceCatalogSourceUnprocessableEntity() *RefreshServiceCatalogS
 	return &RefreshServiceCatalogSourceUnprocessableEntity{}
 }
 
-/*RefreshServiceCatalogSourceUnprocessableEntity handles this case with default header values.
+/*
+RefreshServiceCatalogSourceUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type RefreshServiceCatalogSourceUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this refresh service catalog source unprocessable entity response has a 2xx status code
+func (o *RefreshServiceCatalogSourceUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this refresh service catalog source unprocessable entity response has a 3xx status code
+func (o *RefreshServiceCatalogSourceUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this refresh service catalog source unprocessable entity response has a 4xx status code
+func (o *RefreshServiceCatalogSourceUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this refresh service catalog source unprocessable entity response has a 5xx status code
+func (o *RefreshServiceCatalogSourceUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this refresh service catalog source unprocessable entity response a status code equal to that given
+func (o *RefreshServiceCatalogSourceUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the refresh service catalog source unprocessable entity response
+func (o *RefreshServiceCatalogSourceUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *RefreshServiceCatalogSourceUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceUnprocessableEntity %s", 422, payload)
+}
+
+func (o *RefreshServiceCatalogSourceUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSourceUnprocessableEntity %s", 422, payload)
 }
 
 func (o *RefreshServiceCatalogSourceUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -188,12 +345,16 @@ func (o *RefreshServiceCatalogSourceUnprocessableEntity) GetPayload() *models.Er
 
 func (o *RefreshServiceCatalogSourceUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -212,18 +373,46 @@ func NewRefreshServiceCatalogSourceDefault(code int) *RefreshServiceCatalogSourc
 	}
 }
 
-/*RefreshServiceCatalogSourceDefault handles this case with default header values.
+/*
+RefreshServiceCatalogSourceDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type RefreshServiceCatalogSourceDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this refresh service catalog source default response has a 2xx status code
+func (o *RefreshServiceCatalogSourceDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this refresh service catalog source default response has a 3xx status code
+func (o *RefreshServiceCatalogSourceDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this refresh service catalog source default response has a 4xx status code
+func (o *RefreshServiceCatalogSourceDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this refresh service catalog source default response has a 5xx status code
+func (o *RefreshServiceCatalogSourceDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this refresh service catalog source default response a status code equal to that given
+func (o *RefreshServiceCatalogSourceDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the refresh service catalog source default response
@@ -232,7 +421,13 @@ func (o *RefreshServiceCatalogSourceDefault) Code() int {
 }
 
 func (o *RefreshServiceCatalogSourceDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSource default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSource default %s", o._statusCode, payload)
+}
+
+func (o *RefreshServiceCatalogSourceDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh][%d] refreshServiceCatalogSource default %s", o._statusCode, payload)
 }
 
 func (o *RefreshServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {
@@ -241,12 +436,16 @@ func (o *RefreshServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {
 
 func (o *RefreshServiceCatalogSourceDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -258,7 +457,8 @@ func (o *RefreshServiceCatalogSourceDefault) readResponse(response runtime.Clien
 	return nil
 }
 
-/*RefreshServiceCatalogSourceOKBody refresh service catalog source o k body
+/*
+RefreshServiceCatalogSourceOKBody refresh service catalog source o k body
 swagger:model RefreshServiceCatalogSourceOKBody
 */
 type RefreshServiceCatalogSourceOKBody struct {
@@ -292,6 +492,39 @@ func (o *RefreshServiceCatalogSourceOKBody) validateData(formats strfmt.Registry
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("refreshServiceCatalogSourceOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("refreshServiceCatalogSourceOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this refresh service catalog source o k body based on the context it is used
+func (o *RefreshServiceCatalogSourceOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *RefreshServiceCatalogSourceOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("refreshServiceCatalogSourceOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("refreshServiceCatalogSourceOK" + "." + "data")
 			}
 			return err
 		}

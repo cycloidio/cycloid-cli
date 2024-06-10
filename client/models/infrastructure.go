@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Infrastructure Infrastructure
 //
-// Holds all the Infrastructure of the project in an environment
+// # Holds all the Infrastructure of the project in an environment
+//
 // swagger:model Infrastructure
 type Infrastructure struct {
 
@@ -48,8 +50,8 @@ func (m *Infrastructure) Validate(formats strfmt.Registry) error {
 
 func (m *Infrastructure) validateConfig(formats strfmt.Registry) error {
 
-	if err := validate.Required("config", "body", m.Config); err != nil {
-		return err
+	if m.Config == nil {
+		return errors.Required("config", "body", nil)
 	}
 
 	return nil
@@ -65,6 +67,39 @@ func (m *Infrastructure) validateGraph(formats strfmt.Registry) error {
 		if err := m.Graph.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("graph")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("graph")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this infrastructure based on the context it is used
+func (m *Infrastructure) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateGraph(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *Infrastructure) contextValidateGraph(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Graph != nil {
+
+		if err := m.Graph.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("graph")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("graph")
 			}
 			return err
 		}

@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // VersionedResourceType VersionedResourceType
 //
 // The versioned resources type.
+//
 // swagger:model VersionedResourceType
 type VersionedResourceType struct {
 
@@ -115,11 +117,11 @@ func (m *VersionedResourceType) validatePrivileged(formats strfmt.Registry) erro
 
 func (m *VersionedResourceType) validateSource(formats strfmt.Registry) error {
 
-	for k := range m.Source {
+	if err := validate.Required("source", "body", m.Source); err != nil {
+		return err
+	}
 
-		if err := validate.Required("source"+"."+k, "body", m.Source[k]); err != nil {
-			return err
-		}
+	for k := range m.Source {
 
 		if err := validate.Required("source"+"."+k, "body", m.Source[k]); err != nil {
 			return err
@@ -131,6 +133,10 @@ func (m *VersionedResourceType) validateSource(formats strfmt.Registry) error {
 }
 
 func (m *VersionedResourceType) validateTags(formats strfmt.Registry) error {
+
+	if err := validate.Required("tags", "body", m.Tags); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -146,6 +152,15 @@ func (m *VersionedResourceType) validateType(formats strfmt.Registry) error {
 
 func (m *VersionedResourceType) validateVersion(formats strfmt.Registry) error {
 
+	if err := validate.Required("version", "body", m.Version); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this versioned resource type based on context it is used
+func (m *VersionedResourceType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

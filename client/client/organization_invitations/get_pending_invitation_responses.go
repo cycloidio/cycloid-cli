@@ -6,17 +6,18 @@ package organization_invitations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetPendingInvitationReader is a Reader for the GetPendingInvitation structure.
@@ -56,7 +57,8 @@ func NewGetPendingInvitationOK() *GetPendingInvitationOK {
 	return &GetPendingInvitationOK{}
 }
 
-/*GetPendingInvitationOK handles this case with default header values.
+/*
+GetPendingInvitationOK describes a response with status code 200, with default header values.
 
 The email address used for the pending invitation
 */
@@ -64,8 +66,44 @@ type GetPendingInvitationOK struct {
 	Payload *GetPendingInvitationOKBody
 }
 
+// IsSuccess returns true when this get pending invitation o k response has a 2xx status code
+func (o *GetPendingInvitationOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get pending invitation o k response has a 3xx status code
+func (o *GetPendingInvitationOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get pending invitation o k response has a 4xx status code
+func (o *GetPendingInvitationOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get pending invitation o k response has a 5xx status code
+func (o *GetPendingInvitationOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get pending invitation o k response a status code equal to that given
+func (o *GetPendingInvitationOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get pending invitation o k response
+func (o *GetPendingInvitationOK) Code() int {
+	return 200
+}
+
 func (o *GetPendingInvitationOK) Error() string {
-	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitationOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitationOK %s", 200, payload)
+}
+
+func (o *GetPendingInvitationOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitationOK %s", 200, payload)
 }
 
 func (o *GetPendingInvitationOK) GetPayload() *GetPendingInvitationOKBody {
@@ -89,20 +127,60 @@ func NewGetPendingInvitationNotFound() *GetPendingInvitationNotFound {
 	return &GetPendingInvitationNotFound{}
 }
 
-/*GetPendingInvitationNotFound handles this case with default header values.
+/*
+GetPendingInvitationNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetPendingInvitationNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get pending invitation not found response has a 2xx status code
+func (o *GetPendingInvitationNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get pending invitation not found response has a 3xx status code
+func (o *GetPendingInvitationNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get pending invitation not found response has a 4xx status code
+func (o *GetPendingInvitationNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get pending invitation not found response has a 5xx status code
+func (o *GetPendingInvitationNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get pending invitation not found response a status code equal to that given
+func (o *GetPendingInvitationNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get pending invitation not found response
+func (o *GetPendingInvitationNotFound) Code() int {
+	return 404
+}
+
 func (o *GetPendingInvitationNotFound) Error() string {
-	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitationNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitationNotFound %s", 404, payload)
+}
+
+func (o *GetPendingInvitationNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitationNotFound %s", 404, payload)
 }
 
 func (o *GetPendingInvitationNotFound) GetPayload() *models.ErrorPayload {
@@ -111,12 +189,16 @@ func (o *GetPendingInvitationNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetPendingInvitationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -135,18 +217,46 @@ func NewGetPendingInvitationDefault(code int) *GetPendingInvitationDefault {
 	}
 }
 
-/*GetPendingInvitationDefault handles this case with default header values.
+/*
+GetPendingInvitationDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetPendingInvitationDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get pending invitation default response has a 2xx status code
+func (o *GetPendingInvitationDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get pending invitation default response has a 3xx status code
+func (o *GetPendingInvitationDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get pending invitation default response has a 4xx status code
+func (o *GetPendingInvitationDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get pending invitation default response has a 5xx status code
+func (o *GetPendingInvitationDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get pending invitation default response a status code equal to that given
+func (o *GetPendingInvitationDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get pending invitation default response
@@ -155,7 +265,13 @@ func (o *GetPendingInvitationDefault) Code() int {
 }
 
 func (o *GetPendingInvitationDefault) Error() string {
-	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitation default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitation default %s", o._statusCode, payload)
+}
+
+func (o *GetPendingInvitationDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /invitations/{verification_token}][%d] getPendingInvitation default %s", o._statusCode, payload)
 }
 
 func (o *GetPendingInvitationDefault) GetPayload() *models.ErrorPayload {
@@ -164,12 +280,16 @@ func (o *GetPendingInvitationDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetPendingInvitationDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -181,7 +301,8 @@ func (o *GetPendingInvitationDefault) readResponse(response runtime.ClientRespon
 	return nil
 }
 
-/*GetPendingInvitationOKBody get pending invitation o k body
+/*
+GetPendingInvitationOKBody get pending invitation o k body
 swagger:model GetPendingInvitationOKBody
 */
 type GetPendingInvitationOKBody struct {
@@ -215,6 +336,39 @@ func (o *GetPendingInvitationOKBody) validateData(formats strfmt.Registry) error
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getPendingInvitationOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getPendingInvitationOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get pending invitation o k body based on the context it is used
+func (o *GetPendingInvitationOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetPendingInvitationOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getPendingInvitationOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getPendingInvitationOK" + "." + "data")
 			}
 			return err
 		}

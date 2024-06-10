@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // InfrastructureGraphEdge Infrastructure
 //
-// Holds the information of an Edge of the Graph
+// # Holds the information of an Edge of the Graph
+//
 // swagger:model InfrastructureGraphEdge
 type InfrastructureGraphEdge struct {
 
@@ -95,6 +97,11 @@ func (m *InfrastructureGraphEdge) validateTarget(formats strfmt.Registry) error 
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this infrastructure graph edge based on context it is used
+func (m *InfrastructureGraphEdge) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

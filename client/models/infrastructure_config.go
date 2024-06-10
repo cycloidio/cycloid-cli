@@ -7,6 +7,7 @@ package models
 
 // InfrastructureConfig InfrastructureConfig
 //
-// Holds all the Infrastructure config of the TFState
+// # Holds all the Infrastructure config of the TFState
+//
 // swagger:model InfrastructureConfig
 type InfrastructureConfig interface{}

@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // MemberTeam Member of a team
 //
 // Member is a user who is associated to a team.
+//
 // swagger:model MemberTeam
 type MemberTeam struct {
 
@@ -131,7 +133,7 @@ func (m *MemberTeam) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -157,7 +159,7 @@ func (m *MemberTeam) validateFamilyName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("family_name", "body", string(*m.FamilyName), 2); err != nil {
+	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
 		return err
 	}
 
@@ -170,7 +172,7 @@ func (m *MemberTeam) validateGivenName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("given_name", "body", string(*m.GivenName), 2); err != nil {
+	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
 		return err
 	}
 
@@ -183,7 +185,7 @@ func (m *MemberTeam) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -191,7 +193,6 @@ func (m *MemberTeam) validateID(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.InvitedBy) { // not required
 		return nil
 	}
@@ -200,6 +201,8 @@ func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
 		if err := m.InvitedBy.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("invited_by")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("invited_by")
 			}
 			return err
 		}
@@ -209,12 +212,11 @@ func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateLastLoginAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LastLoginAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("last_login_at", "body", int64(*m.LastLoginAt), 0, false); err != nil {
+	if err := validate.MinimumUint("last_login_at", "body", *m.LastLoginAt, 0, false); err != nil {
 		return err
 	}
 
@@ -231,7 +233,6 @@ func (m *MemberTeam) validateMfaEnabled(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validatePictureURL(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PictureURL) { // not required
 		return nil
 	}
@@ -244,12 +245,11 @@ func (m *MemberTeam) validatePictureURL(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateUpdatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -262,16 +262,51 @@ func (m *MemberTeam) validateUsername(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("username", "body", string(*m.Username), 3); err != nil {
+	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", string(*m.Username), 100); err != nil {
+	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", string(*m.Username), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this member team based on the context it is used
+func (m *MemberTeam) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateInvitedBy(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MemberTeam) contextValidateInvitedBy(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.InvitedBy != nil {
+
+		if swag.IsZero(m.InvitedBy) { // not required
+			return nil
+		}
+
+		if err := m.InvitedBy.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("invited_by")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("invited_by")
+			}
+			return err
+		}
 	}
 
 	return nil

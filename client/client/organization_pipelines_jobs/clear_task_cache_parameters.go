@@ -13,100 +13,119 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewClearTaskCacheParams creates a new ClearTaskCacheParams object
-// with the default values initialized.
+// NewClearTaskCacheParams creates a new ClearTaskCacheParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewClearTaskCacheParams() *ClearTaskCacheParams {
-	var (
-		cachePathDefault = string("")
-	)
 	return &ClearTaskCacheParams{
-		CachePath: &cachePathDefault,
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewClearTaskCacheParamsWithTimeout creates a new ClearTaskCacheParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewClearTaskCacheParamsWithTimeout(timeout time.Duration) *ClearTaskCacheParams {
-	var (
-		cachePathDefault = string("")
-	)
 	return &ClearTaskCacheParams{
-		CachePath: &cachePathDefault,
-
 		timeout: timeout,
 	}
 }
 
 // NewClearTaskCacheParamsWithContext creates a new ClearTaskCacheParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewClearTaskCacheParamsWithContext(ctx context.Context) *ClearTaskCacheParams {
-	var (
-		cachePathDefault = string("")
-	)
 	return &ClearTaskCacheParams{
-		CachePath: &cachePathDefault,
-
 		Context: ctx,
 	}
 }
 
 // NewClearTaskCacheParamsWithHTTPClient creates a new ClearTaskCacheParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewClearTaskCacheParamsWithHTTPClient(client *http.Client) *ClearTaskCacheParams {
-	var (
-		cachePathDefault = string("")
-	)
 	return &ClearTaskCacheParams{
-		CachePath:  &cachePathDefault,
 		HTTPClient: client,
 	}
 }
 
-/*ClearTaskCacheParams contains all the parameters to send to the API endpoint
-for the clear task cache operation typically these are written to a http.Request
+/*
+ClearTaskCacheParams contains all the parameters to send to the API endpoint
+
+	for the clear task cache operation.
+
+	Typically these are written to a http.Request.
 */
 type ClearTaskCacheParams struct {
 
-	/*CachePath
-	  The cache path to use as part of a clearTaskCache request
+	/* CachePath.
 
+	   The cache path to use as part of a clearTaskCache request
 	*/
 	CachePath *string
-	/*InpathPipelineName
-	  A pipeline name
 
+	/* InpathPipelineName.
+
+	   A pipeline name
 	*/
 	InpathPipelineName string
-	/*JobName
-	  A job name
 
+	/* JobName.
+
+	   A job name
 	*/
 	JobName string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*ProjectCanonical
-	  A canonical of a project.
 
+	/* ProjectCanonical.
+
+	   A canonical of a project.
 	*/
 	ProjectCanonical string
-	/*StepName
-	  A step name from a job task
 
+	/* StepName.
+
+	   A step name from a job task
 	*/
 	StepName string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the clear task cache params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ClearTaskCacheParams) WithDefaults() *ClearTaskCacheParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the clear task cache params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ClearTaskCacheParams) SetDefaults() {
+	var (
+		cachePathDefault = string("")
+	)
+
+	val := ClearTaskCacheParams{
+		CachePath: &cachePathDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the clear task cache params
@@ -220,16 +239,17 @@ func (o *ClearTaskCacheParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 
 		// query param cache_path
 		var qrCachePath string
+
 		if o.CachePath != nil {
 			qrCachePath = *o.CachePath
 		}
 		qCachePath := qrCachePath
 		if qCachePath != "" {
+
 			if err := r.SetQueryParam("cache_path", qCachePath); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// path param inpath_pipeline_name

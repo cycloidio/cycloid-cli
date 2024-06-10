@@ -6,16 +6,16 @@ package organization_external_backends
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteExternalBackendReader is a Reader for the DeleteExternalBackend structure.
@@ -67,15 +67,50 @@ func NewDeleteExternalBackendNoContent() *DeleteExternalBackendNoContent {
 	return &DeleteExternalBackendNoContent{}
 }
 
-/*DeleteExternalBackendNoContent handles this case with default header values.
+/*
+DeleteExternalBackendNoContent describes a response with status code 204, with default header values.
 
 Organization Service Catalog Sources has been deleted
 */
 type DeleteExternalBackendNoContent struct {
 }
 
+// IsSuccess returns true when this delete external backend no content response has a 2xx status code
+func (o *DeleteExternalBackendNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this delete external backend no content response has a 3xx status code
+func (o *DeleteExternalBackendNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete external backend no content response has a 4xx status code
+func (o *DeleteExternalBackendNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete external backend no content response has a 5xx status code
+func (o *DeleteExternalBackendNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete external backend no content response a status code equal to that given
+func (o *DeleteExternalBackendNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the delete external backend no content response
+func (o *DeleteExternalBackendNoContent) Code() int {
+	return 204
+}
+
 func (o *DeleteExternalBackendNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendNoContent", 204)
+}
+
+func (o *DeleteExternalBackendNoContent) String() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendNoContent", 204)
 }
 
 func (o *DeleteExternalBackendNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -88,20 +123,60 @@ func NewDeleteExternalBackendForbidden() *DeleteExternalBackendForbidden {
 	return &DeleteExternalBackendForbidden{}
 }
 
-/*DeleteExternalBackendForbidden handles this case with default header values.
+/*
+DeleteExternalBackendForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteExternalBackendForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete external backend forbidden response has a 2xx status code
+func (o *DeleteExternalBackendForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete external backend forbidden response has a 3xx status code
+func (o *DeleteExternalBackendForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete external backend forbidden response has a 4xx status code
+func (o *DeleteExternalBackendForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete external backend forbidden response has a 5xx status code
+func (o *DeleteExternalBackendForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete external backend forbidden response a status code equal to that given
+func (o *DeleteExternalBackendForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the delete external backend forbidden response
+func (o *DeleteExternalBackendForbidden) Code() int {
+	return 403
+}
+
 func (o *DeleteExternalBackendForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendForbidden %s", 403, payload)
+}
+
+func (o *DeleteExternalBackendForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendForbidden %s", 403, payload)
 }
 
 func (o *DeleteExternalBackendForbidden) GetPayload() *models.ErrorPayload {
@@ -110,12 +185,16 @@ func (o *DeleteExternalBackendForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteExternalBackendForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -132,20 +211,60 @@ func NewDeleteExternalBackendNotFound() *DeleteExternalBackendNotFound {
 	return &DeleteExternalBackendNotFound{}
 }
 
-/*DeleteExternalBackendNotFound handles this case with default header values.
+/*
+DeleteExternalBackendNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteExternalBackendNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete external backend not found response has a 2xx status code
+func (o *DeleteExternalBackendNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete external backend not found response has a 3xx status code
+func (o *DeleteExternalBackendNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete external backend not found response has a 4xx status code
+func (o *DeleteExternalBackendNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete external backend not found response has a 5xx status code
+func (o *DeleteExternalBackendNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete external backend not found response a status code equal to that given
+func (o *DeleteExternalBackendNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the delete external backend not found response
+func (o *DeleteExternalBackendNotFound) Code() int {
+	return 404
+}
+
 func (o *DeleteExternalBackendNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendNotFound %s", 404, payload)
+}
+
+func (o *DeleteExternalBackendNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendNotFound %s", 404, payload)
 }
 
 func (o *DeleteExternalBackendNotFound) GetPayload() *models.ErrorPayload {
@@ -154,12 +273,16 @@ func (o *DeleteExternalBackendNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteExternalBackendNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -176,20 +299,60 @@ func NewDeleteExternalBackendUnprocessableEntity() *DeleteExternalBackendUnproce
 	return &DeleteExternalBackendUnprocessableEntity{}
 }
 
-/*DeleteExternalBackendUnprocessableEntity handles this case with default header values.
+/*
+DeleteExternalBackendUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type DeleteExternalBackendUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete external backend unprocessable entity response has a 2xx status code
+func (o *DeleteExternalBackendUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete external backend unprocessable entity response has a 3xx status code
+func (o *DeleteExternalBackendUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete external backend unprocessable entity response has a 4xx status code
+func (o *DeleteExternalBackendUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete external backend unprocessable entity response has a 5xx status code
+func (o *DeleteExternalBackendUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete external backend unprocessable entity response a status code equal to that given
+func (o *DeleteExternalBackendUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the delete external backend unprocessable entity response
+func (o *DeleteExternalBackendUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *DeleteExternalBackendUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendUnprocessableEntity %s", 422, payload)
+}
+
+func (o *DeleteExternalBackendUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackendUnprocessableEntity %s", 422, payload)
 }
 
 func (o *DeleteExternalBackendUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -198,12 +361,16 @@ func (o *DeleteExternalBackendUnprocessableEntity) GetPayload() *models.ErrorPay
 
 func (o *DeleteExternalBackendUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -222,18 +389,46 @@ func NewDeleteExternalBackendDefault(code int) *DeleteExternalBackendDefault {
 	}
 }
 
-/*DeleteExternalBackendDefault handles this case with default header values.
+/*
+DeleteExternalBackendDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteExternalBackendDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this delete external backend default response has a 2xx status code
+func (o *DeleteExternalBackendDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this delete external backend default response has a 3xx status code
+func (o *DeleteExternalBackendDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this delete external backend default response has a 4xx status code
+func (o *DeleteExternalBackendDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this delete external backend default response has a 5xx status code
+func (o *DeleteExternalBackendDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this delete external backend default response a status code equal to that given
+func (o *DeleteExternalBackendDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the delete external backend default response
@@ -242,7 +437,13 @@ func (o *DeleteExternalBackendDefault) Code() int {
 }
 
 func (o *DeleteExternalBackendDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackend default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackend default %s", o._statusCode, payload)
+}
+
+func (o *DeleteExternalBackendDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] deleteExternalBackend default %s", o._statusCode, payload)
 }
 
 func (o *DeleteExternalBackendDefault) GetPayload() *models.ErrorPayload {
@@ -251,12 +452,16 @@ func (o *DeleteExternalBackendDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteExternalBackendDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

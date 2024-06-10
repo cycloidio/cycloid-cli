@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // PipelineStatus PipelineStatus
 //
 // Pipeline status returned upon pipelines comparison between the one locally stored in the database and its counter part on git.
+//
 // swagger:model PipelineStatus
 type PipelineStatus struct {
 
@@ -33,7 +34,7 @@ type PipelineStatus struct {
 	//   - out_of_sync: database & git pipelines have some differences
 	//   - errored: both pipelines got retrieved but the comparison triggered an error
 	// Required: true
-	// Enum: [unknown synced out_of_sync errored]
+	// Enum: ["unknown","synced","out_of_sync","errored"]
 	Synced *string `json:"synced"`
 }
 
@@ -56,7 +57,6 @@ func (m *PipelineStatus) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PipelineStatus) validateDiffs(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Diffs) { // not required
 		return nil
 	}
@@ -65,6 +65,8 @@ func (m *PipelineStatus) validateDiffs(formats strfmt.Registry) error {
 		if err := m.Diffs.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("diffs")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("diffs")
 			}
 			return err
 		}
@@ -102,7 +104,7 @@ const (
 
 // prop value enum
 func (m *PipelineStatus) validateSyncedEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, pipelineStatusTypeSyncedPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, pipelineStatusTypeSyncedPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -117,6 +119,41 @@ func (m *PipelineStatus) validateSynced(formats strfmt.Registry) error {
 	// value enum
 	if err := m.validateSyncedEnum("synced", "body", *m.Synced); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pipeline status based on the context it is used
+func (m *PipelineStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateDiffs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PipelineStatus) contextValidateDiffs(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Diffs != nil {
+
+		if swag.IsZero(m.Diffs) { // not required
+			return nil
+		}
+
+		if err := m.Diffs.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("diffs")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("diffs")
+			}
+			return err
+		}
 	}
 
 	return nil

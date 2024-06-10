@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -67,7 +67,7 @@ type CloudCostManagementAccountParent struct {
 
 	// status
 	// Required: true
-	// Enum: [idle error import]
+	// Enum: ["idle","error","import"]
 	Status *string `json:"status"`
 
 	// status message
@@ -148,15 +148,15 @@ func (m *CloudCostManagementAccountParent) validateCanonical(formats strfmt.Regi
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -173,6 +173,8 @@ func (m *CloudCostManagementAccountParent) validateCloudProvider(formats strfmt.
 		if err := m.CloudProvider.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cloud_provider")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cloud_provider")
 			}
 			return err
 		}
@@ -187,7 +189,7 @@ func (m *CloudCostManagementAccountParent) validateCreatedAt(formats strfmt.Regi
 		return err
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -209,7 +211,7 @@ func (m *CloudCostManagementAccountParent) validateID(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -217,12 +219,11 @@ func (m *CloudCostManagementAccountParent) validateID(formats strfmt.Registry) e
 }
 
 func (m *CloudCostManagementAccountParent) validateLastIngestionEndedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LastIngestionEndedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("last_ingestion_ended_at", "body", int64(*m.LastIngestionEndedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("last_ingestion_ended_at", "body", *m.LastIngestionEndedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -230,12 +231,11 @@ func (m *CloudCostManagementAccountParent) validateLastIngestionEndedAt(formats 
 }
 
 func (m *CloudCostManagementAccountParent) validateLastIngestionStartedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LastIngestionStartedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("last_ingestion_started_at", "body", int64(*m.LastIngestionStartedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("last_ingestion_started_at", "body", *m.LastIngestionStartedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -277,7 +277,7 @@ const (
 
 // prop value enum
 func (m *CloudCostManagementAccountParent) validateStatusEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, cloudCostManagementAccountParentTypeStatusPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, cloudCostManagementAccountParentTypeStatusPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -303,8 +303,39 @@ func (m *CloudCostManagementAccountParent) validateUpdatedAt(formats strfmt.Regi
 		return err
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this cloud cost management account parent based on the context it is used
+func (m *CloudCostManagementAccountParent) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCloudProvider(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CloudCostManagementAccountParent) contextValidateCloudProvider(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.CloudProvider != nil {
+
+		if err := m.CloudProvider.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cloud_provider")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cloud_provider")
+			}
+			return err
+		}
 	}
 
 	return nil

@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // TimeoutPlan EnsurePlan
 //
 // The plan to ensure to be run.
+//
 // swagger:model TimeoutPlan
 type TimeoutPlan struct {
 
@@ -56,6 +58,8 @@ func (m *TimeoutPlan) validateNext(formats strfmt.Registry) error {
 		if err := m.Next.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("next")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("next")
 			}
 			return err
 		}
@@ -74,6 +78,60 @@ func (m *TimeoutPlan) validateStep(formats strfmt.Registry) error {
 		if err := m.Step.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("step")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("step")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this timeout plan based on the context it is used
+func (m *TimeoutPlan) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNext(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateStep(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *TimeoutPlan) contextValidateNext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Next != nil {
+
+		if err := m.Next.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("next")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("next")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *TimeoutPlan) contextValidateStep(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Step != nil {
+
+		if err := m.Step.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("step")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("step")
 			}
 			return err
 		}

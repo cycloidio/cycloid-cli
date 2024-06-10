@@ -6,18 +6,19 @@ package organization_service_catalog_sources
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetServiceCatalogSourcesReader is a Reader for the GetServiceCatalogSources structure.
@@ -63,7 +64,8 @@ func NewGetServiceCatalogSourcesOK() *GetServiceCatalogSourcesOK {
 	return &GetServiceCatalogSourcesOK{}
 }
 
-/*GetServiceCatalogSourcesOK handles this case with default header values.
+/*
+GetServiceCatalogSourcesOK describes a response with status code 200, with default header values.
 
 List of the private service catalogs.
 */
@@ -71,8 +73,44 @@ type GetServiceCatalogSourcesOK struct {
 	Payload *GetServiceCatalogSourcesOKBody
 }
 
+// IsSuccess returns true when this get service catalog sources o k response has a 2xx status code
+func (o *GetServiceCatalogSourcesOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get service catalog sources o k response has a 3xx status code
+func (o *GetServiceCatalogSourcesOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get service catalog sources o k response has a 4xx status code
+func (o *GetServiceCatalogSourcesOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get service catalog sources o k response has a 5xx status code
+func (o *GetServiceCatalogSourcesOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get service catalog sources o k response a status code equal to that given
+func (o *GetServiceCatalogSourcesOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get service catalog sources o k response
+func (o *GetServiceCatalogSourcesOK) Code() int {
+	return 200
+}
+
 func (o *GetServiceCatalogSourcesOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesOK %s", 200, payload)
+}
+
+func (o *GetServiceCatalogSourcesOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesOK %s", 200, payload)
 }
 
 func (o *GetServiceCatalogSourcesOK) GetPayload() *GetServiceCatalogSourcesOKBody {
@@ -96,20 +134,60 @@ func NewGetServiceCatalogSourcesForbidden() *GetServiceCatalogSourcesForbidden {
 	return &GetServiceCatalogSourcesForbidden{}
 }
 
-/*GetServiceCatalogSourcesForbidden handles this case with default header values.
+/*
+GetServiceCatalogSourcesForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetServiceCatalogSourcesForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get service catalog sources forbidden response has a 2xx status code
+func (o *GetServiceCatalogSourcesForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get service catalog sources forbidden response has a 3xx status code
+func (o *GetServiceCatalogSourcesForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get service catalog sources forbidden response has a 4xx status code
+func (o *GetServiceCatalogSourcesForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get service catalog sources forbidden response has a 5xx status code
+func (o *GetServiceCatalogSourcesForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get service catalog sources forbidden response a status code equal to that given
+func (o *GetServiceCatalogSourcesForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get service catalog sources forbidden response
+func (o *GetServiceCatalogSourcesForbidden) Code() int {
+	return 403
+}
+
 func (o *GetServiceCatalogSourcesForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesForbidden %s", 403, payload)
+}
+
+func (o *GetServiceCatalogSourcesForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesForbidden %s", 403, payload)
 }
 
 func (o *GetServiceCatalogSourcesForbidden) GetPayload() *models.ErrorPayload {
@@ -118,12 +196,16 @@ func (o *GetServiceCatalogSourcesForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetServiceCatalogSourcesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -140,20 +222,60 @@ func NewGetServiceCatalogSourcesUnprocessableEntity() *GetServiceCatalogSourcesU
 	return &GetServiceCatalogSourcesUnprocessableEntity{}
 }
 
-/*GetServiceCatalogSourcesUnprocessableEntity handles this case with default header values.
+/*
+GetServiceCatalogSourcesUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetServiceCatalogSourcesUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get service catalog sources unprocessable entity response has a 2xx status code
+func (o *GetServiceCatalogSourcesUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get service catalog sources unprocessable entity response has a 3xx status code
+func (o *GetServiceCatalogSourcesUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get service catalog sources unprocessable entity response has a 4xx status code
+func (o *GetServiceCatalogSourcesUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get service catalog sources unprocessable entity response has a 5xx status code
+func (o *GetServiceCatalogSourcesUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get service catalog sources unprocessable entity response a status code equal to that given
+func (o *GetServiceCatalogSourcesUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the get service catalog sources unprocessable entity response
+func (o *GetServiceCatalogSourcesUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *GetServiceCatalogSourcesUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesUnprocessableEntity %s", 422, payload)
+}
+
+func (o *GetServiceCatalogSourcesUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSourcesUnprocessableEntity %s", 422, payload)
 }
 
 func (o *GetServiceCatalogSourcesUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -162,12 +284,16 @@ func (o *GetServiceCatalogSourcesUnprocessableEntity) GetPayload() *models.Error
 
 func (o *GetServiceCatalogSourcesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -186,18 +312,46 @@ func NewGetServiceCatalogSourcesDefault(code int) *GetServiceCatalogSourcesDefau
 	}
 }
 
-/*GetServiceCatalogSourcesDefault handles this case with default header values.
+/*
+GetServiceCatalogSourcesDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetServiceCatalogSourcesDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get service catalog sources default response has a 2xx status code
+func (o *GetServiceCatalogSourcesDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get service catalog sources default response has a 3xx status code
+func (o *GetServiceCatalogSourcesDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get service catalog sources default response has a 4xx status code
+func (o *GetServiceCatalogSourcesDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get service catalog sources default response has a 5xx status code
+func (o *GetServiceCatalogSourcesDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get service catalog sources default response a status code equal to that given
+func (o *GetServiceCatalogSourcesDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get service catalog sources default response
@@ -206,7 +360,13 @@ func (o *GetServiceCatalogSourcesDefault) Code() int {
 }
 
 func (o *GetServiceCatalogSourcesDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSources default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSources default %s", o._statusCode, payload)
+}
+
+func (o *GetServiceCatalogSourcesDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalog_sources][%d] getServiceCatalogSources default %s", o._statusCode, payload)
 }
 
 func (o *GetServiceCatalogSourcesDefault) GetPayload() *models.ErrorPayload {
@@ -215,12 +375,16 @@ func (o *GetServiceCatalogSourcesDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetServiceCatalogSourcesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -232,7 +396,8 @@ func (o *GetServiceCatalogSourcesDefault) readResponse(response runtime.ClientRe
 	return nil
 }
 
-/*GetServiceCatalogSourcesOKBody get service catalog sources o k body
+/*
+GetServiceCatalogSourcesOKBody get service catalog sources o k body
 swagger:model GetServiceCatalogSourcesOKBody
 */
 type GetServiceCatalogSourcesOKBody struct {
@@ -271,6 +436,47 @@ func (o *GetServiceCatalogSourcesOKBody) validateData(formats strfmt.Registry) e
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("getServiceCatalogSourcesOK" + "." + "data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("getServiceCatalogSourcesOK" + "." + "data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get service catalog sources o k body based on the context it is used
+func (o *GetServiceCatalogSourcesOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetServiceCatalogSourcesOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Data); i++ {
+
+		if o.Data[i] != nil {
+
+			if swag.IsZero(o.Data[i]) { // not required
+				return nil
+			}
+
+			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getServiceCatalogSourcesOK" + "." + "data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("getServiceCatalogSourcesOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

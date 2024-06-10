@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // Policy Policy
 //
 // Policy represents a permission or constraint to access to an entity of the system. A policy is aggregated into roles in order to be applied.
+//
 // swagger:model Policy
 type Policy struct {
 
@@ -83,15 +85,15 @@ func (m *Policy) validateCode(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("code", "body", string(*m.Code), 5); err != nil {
+	if err := validate.MinLength("code", "body", *m.Code, 5); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("code", "body", string(*m.Code), 60); err != nil {
+	if err := validate.MaxLength("code", "body", *m.Code, 60); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("code", "body", string(*m.Code), `(?:[a-z]+_)*[a-z]+(?::(?:[a-z]+_)*[a-z]+)*$`); err != nil {
+	if err := validate.Pattern("code", "body", *m.Code, `(?:[a-z]+_)*[a-z]+(?::(?:[a-z]+_)*[a-z]+)*$`); err != nil {
 		return err
 	}
 
@@ -99,12 +101,11 @@ func (m *Policy) validateCode(formats strfmt.Registry) error {
 }
 
 func (m *Policy) validateCreatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -126,7 +127,7 @@ func (m *Policy) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -134,15 +135,19 @@ func (m *Policy) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Policy) validateUpdatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this policy based on context it is used
+func (m *Policy) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

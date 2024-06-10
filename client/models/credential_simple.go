@@ -6,18 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // CredentialSimple Credential Simple
 //
-// Represents the Credential without the raw and owner
+// # Represents the Credential without the raw and owner
+//
 // swagger:model CredentialSimple
 type CredentialSimple struct {
 
@@ -63,7 +64,7 @@ type CredentialSimple struct {
 
 	// type
 	// Required: true
-	// Enum: [ssh aws custom azure azure_storage gcp basic_auth elasticsearch swift vmware]
+	// Enum: ["ssh","aws","custom","azure","azure_storage","gcp","basic_auth","elasticsearch","swift","vmware"]
 	Type *string `json:"type"`
 
 	// updated at
@@ -127,15 +128,15 @@ func (m *CredentialSimple) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -143,12 +144,11 @@ func (m *CredentialSimple) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *CredentialSimple) validateCreatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -161,7 +161,7 @@ func (m *CredentialSimple) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -169,7 +169,6 @@ func (m *CredentialSimple) validateID(formats strfmt.Registry) error {
 }
 
 func (m *CredentialSimple) validateInUse(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.InUse) { // not required
 		return nil
 	}
@@ -178,6 +177,8 @@ func (m *CredentialSimple) validateInUse(formats strfmt.Registry) error {
 		if err := m.InUse.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("in_use")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("in_use")
 			}
 			return err
 		}
@@ -205,7 +206,6 @@ func (m *CredentialSimple) validateName(formats strfmt.Registry) error {
 }
 
 func (m *CredentialSimple) validateOwner(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -214,6 +214,8 @@ func (m *CredentialSimple) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -278,7 +280,7 @@ const (
 
 // prop value enum
 func (m *CredentialSimple) validateTypeEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, credentialSimpleTypeTypePropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, credentialSimpleTypeTypePropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -299,13 +301,72 @@ func (m *CredentialSimple) validateType(formats strfmt.Registry) error {
 }
 
 func (m *CredentialSimple) validateUpdatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this credential simple based on the context it is used
+func (m *CredentialSimple) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateInUse(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CredentialSimple) contextValidateInUse(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.InUse != nil {
+
+		if swag.IsZero(m.InUse) { // not required
+			return nil
+		}
+
+		if err := m.InUse.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("in_use")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("in_use")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *CredentialSimple) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("owner")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("owner")
+			}
+			return err
+		}
 	}
 
 	return nil

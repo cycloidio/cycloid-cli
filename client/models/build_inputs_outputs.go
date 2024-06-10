@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // BuildInputsOutputs BuildInputsOutputs
 //
 // Represent the resources input/output related to a build
+//
 // swagger:model BuildInputsOutputs
 type BuildInputsOutputs struct {
 
@@ -63,6 +64,8 @@ func (m *BuildInputsOutputs) validateInputs(formats strfmt.Registry) error {
 			if err := m.Inputs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -88,6 +91,76 @@ func (m *BuildInputsOutputs) validateOutputs(formats strfmt.Registry) error {
 			if err := m.Outputs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("outputs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("outputs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this build inputs outputs based on the context it is used
+func (m *BuildInputsOutputs) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateInputs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOutputs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *BuildInputsOutputs) contextValidateInputs(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Inputs); i++ {
+
+		if m.Inputs[i] != nil {
+
+			if swag.IsZero(m.Inputs[i]) { // not required
+				return nil
+			}
+
+			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *BuildInputsOutputs) contextValidateOutputs(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Outputs); i++ {
+
+		if m.Outputs[i] != nil {
+
+			if swag.IsZero(m.Outputs[i]) { // not required
+				return nil
+			}
+
+			if err := m.Outputs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("outputs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("outputs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

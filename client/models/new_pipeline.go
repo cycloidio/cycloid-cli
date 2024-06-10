@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // NewPipeline Create Pipeline
 //
 // The entity which represents a new pipeline to create in the application.
+//
 // swagger:model NewPipeline
 type NewPipeline struct {
 
@@ -78,6 +80,8 @@ func (m *NewPipeline) validateEnvironment(formats strfmt.Registry) error {
 		if err := m.Environment.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("environment")
 			}
 			return err
 		}
@@ -92,15 +96,15 @@ func (m *NewPipeline) validatePipelineName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("pipeline_name", "body", string(*m.PipelineName), 3); err != nil {
+	if err := validate.MinLength("pipeline_name", "body", *m.PipelineName, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("pipeline_name", "body", string(*m.PipelineName), 50); err != nil {
+	if err := validate.MaxLength("pipeline_name", "body", *m.PipelineName, 50); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("pipeline_name", "body", string(*m.PipelineName), `^[a-z0-9]+[a-z0-9\-._]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("pipeline_name", "body", *m.PipelineName, `^[a-z0-9]+[a-z0-9\-._]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -108,21 +112,51 @@ func (m *NewPipeline) validatePipelineName(formats strfmt.Registry) error {
 }
 
 func (m *NewPipeline) validateUseCase(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.UseCase) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("use_case", "body", string(m.UseCase), 3); err != nil {
+	if err := validate.MinLength("use_case", "body", m.UseCase, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("use_case", "body", string(m.UseCase), 100); err != nil {
+	if err := validate.MaxLength("use_case", "body", m.UseCase, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("use_case", "body", string(m.UseCase), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("use_case", "body", m.UseCase, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this new pipeline based on the context it is used
+func (m *NewPipeline) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NewPipeline) contextValidateEnvironment(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Environment != nil {
+
+		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("environment")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("environment")
+			}
+			return err
+		}
 	}
 
 	return nil

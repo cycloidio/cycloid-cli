@@ -6,17 +6,18 @@ package organization_infrastructure_policies
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateInfraPolicyReader is a Reader for the CreateInfraPolicy structure.
@@ -62,7 +63,8 @@ func NewCreateInfraPolicyOK() *CreateInfraPolicyOK {
 	return &CreateInfraPolicyOK{}
 }
 
-/*CreateInfraPolicyOK handles this case with default header values.
+/*
+CreateInfraPolicyOK describes a response with status code 200, with default header values.
 
 The new InfraPolicy created.
 */
@@ -70,8 +72,44 @@ type CreateInfraPolicyOK struct {
 	Payload *CreateInfraPolicyOKBody
 }
 
+// IsSuccess returns true when this create infra policy o k response has a 2xx status code
+func (o *CreateInfraPolicyOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create infra policy o k response has a 3xx status code
+func (o *CreateInfraPolicyOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create infra policy o k response has a 4xx status code
+func (o *CreateInfraPolicyOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create infra policy o k response has a 5xx status code
+func (o *CreateInfraPolicyOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create infra policy o k response a status code equal to that given
+func (o *CreateInfraPolicyOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the create infra policy o k response
+func (o *CreateInfraPolicyOK) Code() int {
+	return 200
+}
+
 func (o *CreateInfraPolicyOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyOK %s", 200, payload)
+}
+
+func (o *CreateInfraPolicyOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyOK %s", 200, payload)
 }
 
 func (o *CreateInfraPolicyOK) GetPayload() *CreateInfraPolicyOKBody {
@@ -95,15 +133,50 @@ func NewCreateInfraPolicyLengthRequired() *CreateInfraPolicyLengthRequired {
 	return &CreateInfraPolicyLengthRequired{}
 }
 
-/*CreateInfraPolicyLengthRequired handles this case with default header values.
+/*
+CreateInfraPolicyLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type CreateInfraPolicyLengthRequired struct {
 }
 
+// IsSuccess returns true when this create infra policy length required response has a 2xx status code
+func (o *CreateInfraPolicyLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create infra policy length required response has a 3xx status code
+func (o *CreateInfraPolicyLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create infra policy length required response has a 4xx status code
+func (o *CreateInfraPolicyLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create infra policy length required response has a 5xx status code
+func (o *CreateInfraPolicyLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create infra policy length required response a status code equal to that given
+func (o *CreateInfraPolicyLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the create infra policy length required response
+func (o *CreateInfraPolicyLengthRequired) Code() int {
+	return 411
+}
+
 func (o *CreateInfraPolicyLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyLengthRequired", 411)
+}
+
+func (o *CreateInfraPolicyLengthRequired) String() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyLengthRequired", 411)
 }
 
 func (o *CreateInfraPolicyLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -116,20 +189,60 @@ func NewCreateInfraPolicyUnprocessableEntity() *CreateInfraPolicyUnprocessableEn
 	return &CreateInfraPolicyUnprocessableEntity{}
 }
 
-/*CreateInfraPolicyUnprocessableEntity handles this case with default header values.
+/*
+CreateInfraPolicyUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateInfraPolicyUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create infra policy unprocessable entity response has a 2xx status code
+func (o *CreateInfraPolicyUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create infra policy unprocessable entity response has a 3xx status code
+func (o *CreateInfraPolicyUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create infra policy unprocessable entity response has a 4xx status code
+func (o *CreateInfraPolicyUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create infra policy unprocessable entity response has a 5xx status code
+func (o *CreateInfraPolicyUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create infra policy unprocessable entity response a status code equal to that given
+func (o *CreateInfraPolicyUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the create infra policy unprocessable entity response
+func (o *CreateInfraPolicyUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *CreateInfraPolicyUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyUnprocessableEntity %s", 422, payload)
+}
+
+func (o *CreateInfraPolicyUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicyUnprocessableEntity %s", 422, payload)
 }
 
 func (o *CreateInfraPolicyUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -138,12 +251,16 @@ func (o *CreateInfraPolicyUnprocessableEntity) GetPayload() *models.ErrorPayload
 
 func (o *CreateInfraPolicyUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -162,18 +279,46 @@ func NewCreateInfraPolicyDefault(code int) *CreateInfraPolicyDefault {
 	}
 }
 
-/*CreateInfraPolicyDefault handles this case with default header values.
+/*
+CreateInfraPolicyDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateInfraPolicyDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this create infra policy default response has a 2xx status code
+func (o *CreateInfraPolicyDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this create infra policy default response has a 3xx status code
+func (o *CreateInfraPolicyDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this create infra policy default response has a 4xx status code
+func (o *CreateInfraPolicyDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this create infra policy default response has a 5xx status code
+func (o *CreateInfraPolicyDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this create infra policy default response a status code equal to that given
+func (o *CreateInfraPolicyDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the create infra policy default response
@@ -182,7 +327,13 @@ func (o *CreateInfraPolicyDefault) Code() int {
 }
 
 func (o *CreateInfraPolicyDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicy default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicy default %s", o._statusCode, payload)
+}
+
+func (o *CreateInfraPolicyDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/infra_policies][%d] createInfraPolicy default %s", o._statusCode, payload)
 }
 
 func (o *CreateInfraPolicyDefault) GetPayload() *models.ErrorPayload {
@@ -191,12 +342,16 @@ func (o *CreateInfraPolicyDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateInfraPolicyDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -208,7 +363,8 @@ func (o *CreateInfraPolicyDefault) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
-/*CreateInfraPolicyOKBody create infra policy o k body
+/*
+CreateInfraPolicyOKBody create infra policy o k body
 swagger:model CreateInfraPolicyOKBody
 */
 type CreateInfraPolicyOKBody struct {
@@ -242,6 +398,39 @@ func (o *CreateInfraPolicyOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createInfraPolicyOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createInfraPolicyOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create infra policy o k body based on the context it is used
+func (o *CreateInfraPolicyOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateInfraPolicyOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createInfraPolicyOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createInfraPolicyOK" + "." + "data")
 			}
 			return err
 		}

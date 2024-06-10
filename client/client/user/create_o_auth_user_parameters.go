@@ -13,70 +13,86 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewCreateOAuthUserParams creates a new CreateOAuthUserParams object
-// with the default values initialized.
+// NewCreateOAuthUserParams creates a new CreateOAuthUserParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewCreateOAuthUserParams() *CreateOAuthUserParams {
-	var ()
 	return &CreateOAuthUserParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewCreateOAuthUserParamsWithTimeout creates a new CreateOAuthUserParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewCreateOAuthUserParamsWithTimeout(timeout time.Duration) *CreateOAuthUserParams {
-	var ()
 	return &CreateOAuthUserParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewCreateOAuthUserParamsWithContext creates a new CreateOAuthUserParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewCreateOAuthUserParamsWithContext(ctx context.Context) *CreateOAuthUserParams {
-	var ()
 	return &CreateOAuthUserParams{
-
 		Context: ctx,
 	}
 }
 
 // NewCreateOAuthUserParamsWithHTTPClient creates a new CreateOAuthUserParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewCreateOAuthUserParamsWithHTTPClient(client *http.Client) *CreateOAuthUserParams {
-	var ()
 	return &CreateOAuthUserParams{
 		HTTPClient: client,
 	}
 }
 
-/*CreateOAuthUserParams contains all the parameters to send to the API endpoint
-for the create o auth user operation typically these are written to a http.Request
+/*
+CreateOAuthUserParams contains all the parameters to send to the API endpoint
+
+	for the create o auth user operation.
+
+	Typically these are written to a http.Request.
 */
 type CreateOAuthUserParams struct {
 
-	/*Body
-	  The user content
+	/* Body.
 
+	   The user content
 	*/
 	Body *models.NewOAuthUser
-	/*SocialType
-	  The OAuth Social type
 
+	/* SocialType.
+
+	   The OAuth Social type
 	*/
 	SocialType string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the create o auth user params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *CreateOAuthUserParams) WithDefaults() *CreateOAuthUserParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the create o auth user params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *CreateOAuthUserParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the create o auth user params
@@ -141,7 +157,6 @@ func (o *CreateOAuthUserParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

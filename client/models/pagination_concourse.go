@@ -6,14 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // PaginationConcourse PaginationConcourse
+//
 // swagger:model PaginationConcourse
 type PaginationConcourse struct {
 
@@ -54,6 +56,8 @@ func (m *PaginationConcourse) validateNext(formats strfmt.Registry) error {
 		if err := m.Next.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("next")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("next")
 			}
 			return err
 		}
@@ -72,6 +76,60 @@ func (m *PaginationConcourse) validatePrevious(formats strfmt.Registry) error {
 		if err := m.Previous.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("previous")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("previous")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pagination concourse based on the context it is used
+func (m *PaginationConcourse) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateNext(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePrevious(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PaginationConcourse) contextValidateNext(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Next != nil {
+
+		if err := m.Next.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("next")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("next")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *PaginationConcourse) contextValidatePrevious(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Previous != nil {
+
+		if err := m.Previous.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("previous")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("previous")
 			}
 			return err
 		}

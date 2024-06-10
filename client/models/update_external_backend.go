@@ -7,13 +7,13 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -21,6 +21,7 @@ import (
 // UpdateExternalBackend Update External backend
 //
 // An external backend contains the configuration needed in order to be plugged into the Cycloid system. A backend is a general purpose concept, but Cycloid specifies which ones are supported and the list of those which are supported for every concrete feature.
+//
 // swagger:model UpdateExternalBackend
 type UpdateExternalBackend struct {
 	configurationField ExternalBackendConfiguration
@@ -53,7 +54,7 @@ type UpdateExternalBackend struct {
 
 	// purpose
 	// Required: true
-	// Enum: [events logs remote_tfstate cost_explorer]
+	// Enum: ["events","logs","remote_tfstate","cost_explorer"]
 	Purpose *string `json:"purpose"`
 }
 
@@ -154,8 +155,7 @@ func (m UpdateExternalBackend) MarshalJSON() ([]byte, error) {
 		ProjectCanonical: m.ProjectCanonical,
 
 		Purpose: m.Purpose,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -164,8 +164,7 @@ func (m UpdateExternalBackend) MarshalJSON() ([]byte, error) {
 	}{
 
 		Configuration: m.configurationField,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -216,6 +215,8 @@ func (m *UpdateExternalBackend) validateConfiguration(formats strfmt.Registry) e
 	if err := m.Configuration().Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("configuration")
 		}
 		return err
 	}
@@ -224,20 +225,19 @@ func (m *UpdateExternalBackend) validateConfiguration(formats strfmt.Registry) e
 }
 
 func (m *UpdateExternalBackend) validateCredentialCanonical(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", string(m.CredentialCanonical), 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", m.CredentialCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -245,20 +245,19 @@ func (m *UpdateExternalBackend) validateCredentialCanonical(formats strfmt.Regis
 }
 
 func (m *UpdateExternalBackend) validateEnvironmentCanonical(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.EnvironmentCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("environment_canonical", "body", string(m.EnvironmentCanonical), 1); err != nil {
+	if err := validate.MinLength("environment_canonical", "body", m.EnvironmentCanonical, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("environment_canonical", "body", string(m.EnvironmentCanonical), 100); err != nil {
+	if err := validate.MaxLength("environment_canonical", "body", m.EnvironmentCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("environment_canonical", "body", string(m.EnvironmentCanonical), `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
+	if err := validate.Pattern("environment_canonical", "body", m.EnvironmentCanonical, `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
 		return err
 	}
 
@@ -266,12 +265,11 @@ func (m *UpdateExternalBackend) validateEnvironmentCanonical(formats strfmt.Regi
 }
 
 func (m *UpdateExternalBackend) validateID(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ID) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -279,20 +277,19 @@ func (m *UpdateExternalBackend) validateID(formats strfmt.Registry) error {
 }
 
 func (m *UpdateExternalBackend) validateProjectCanonical(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ProjectCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 1); err != nil {
+	if err := validate.MinLength("project_canonical", "body", m.ProjectCanonical, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("project_canonical", "body", string(m.ProjectCanonical), 100); err != nil {
+	if err := validate.MaxLength("project_canonical", "body", m.ProjectCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -328,7 +325,7 @@ const (
 
 // prop value enum
 func (m *UpdateExternalBackend) validatePurposeEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, updateExternalBackendTypePurposePropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, updateExternalBackendTypePurposePropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -342,6 +339,34 @@ func (m *UpdateExternalBackend) validatePurpose(formats strfmt.Registry) error {
 
 	// value enum
 	if err := m.validatePurposeEnum("purpose", "body", *m.Purpose); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update external backend based on the context it is used
+func (m *UpdateExternalBackend) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateConfiguration(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UpdateExternalBackend) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("configuration")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("configuration")
+		}
 		return err
 	}
 

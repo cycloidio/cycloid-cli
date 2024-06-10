@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // PublicBuildOutput PublicBuildOutput
 //
-// Represents the information of a build output
+// # Represents the information of a build output
+//
 // swagger:model PublicBuildOutput
 type PublicBuildOutput struct {
 
@@ -57,6 +59,15 @@ func (m *PublicBuildOutput) validateName(formats strfmt.Registry) error {
 
 func (m *PublicBuildOutput) validateVersion(formats strfmt.Registry) error {
 
+	if err := validate.Required("version", "body", m.Version); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validates this public build output based on context it is used
+func (m *PublicBuildOutput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

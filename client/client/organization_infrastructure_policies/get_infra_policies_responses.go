@@ -6,18 +6,19 @@ package organization_infrastructure_policies
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetInfraPoliciesReader is a Reader for the GetInfraPolicies structure.
@@ -69,7 +70,8 @@ func NewGetInfraPoliciesOK() *GetInfraPoliciesOK {
 	return &GetInfraPoliciesOK{}
 }
 
-/*GetInfraPoliciesOK handles this case with default header values.
+/*
+GetInfraPoliciesOK describes a response with status code 200, with default header values.
 
 List of infrastructure policies.
 */
@@ -77,8 +79,44 @@ type GetInfraPoliciesOK struct {
 	Payload *GetInfraPoliciesOKBody
 }
 
+// IsSuccess returns true when this get infra policies o k response has a 2xx status code
+func (o *GetInfraPoliciesOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get infra policies o k response has a 3xx status code
+func (o *GetInfraPoliciesOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get infra policies o k response has a 4xx status code
+func (o *GetInfraPoliciesOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get infra policies o k response has a 5xx status code
+func (o *GetInfraPoliciesOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get infra policies o k response a status code equal to that given
+func (o *GetInfraPoliciesOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get infra policies o k response
+func (o *GetInfraPoliciesOK) Code() int {
+	return 200
+}
+
 func (o *GetInfraPoliciesOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesOK %s", 200, payload)
+}
+
+func (o *GetInfraPoliciesOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesOK %s", 200, payload)
 }
 
 func (o *GetInfraPoliciesOK) GetPayload() *GetInfraPoliciesOKBody {
@@ -102,20 +140,60 @@ func NewGetInfraPoliciesForbidden() *GetInfraPoliciesForbidden {
 	return &GetInfraPoliciesForbidden{}
 }
 
-/*GetInfraPoliciesForbidden handles this case with default header values.
+/*
+GetInfraPoliciesForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetInfraPoliciesForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get infra policies forbidden response has a 2xx status code
+func (o *GetInfraPoliciesForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get infra policies forbidden response has a 3xx status code
+func (o *GetInfraPoliciesForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get infra policies forbidden response has a 4xx status code
+func (o *GetInfraPoliciesForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get infra policies forbidden response has a 5xx status code
+func (o *GetInfraPoliciesForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get infra policies forbidden response a status code equal to that given
+func (o *GetInfraPoliciesForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get infra policies forbidden response
+func (o *GetInfraPoliciesForbidden) Code() int {
+	return 403
+}
+
 func (o *GetInfraPoliciesForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesForbidden %s", 403, payload)
+}
+
+func (o *GetInfraPoliciesForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesForbidden %s", 403, payload)
 }
 
 func (o *GetInfraPoliciesForbidden) GetPayload() *models.ErrorPayload {
@@ -124,12 +202,16 @@ func (o *GetInfraPoliciesForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetInfraPoliciesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -146,20 +228,60 @@ func NewGetInfraPoliciesNotFound() *GetInfraPoliciesNotFound {
 	return &GetInfraPoliciesNotFound{}
 }
 
-/*GetInfraPoliciesNotFound handles this case with default header values.
+/*
+GetInfraPoliciesNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetInfraPoliciesNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get infra policies not found response has a 2xx status code
+func (o *GetInfraPoliciesNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get infra policies not found response has a 3xx status code
+func (o *GetInfraPoliciesNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get infra policies not found response has a 4xx status code
+func (o *GetInfraPoliciesNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get infra policies not found response has a 5xx status code
+func (o *GetInfraPoliciesNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get infra policies not found response a status code equal to that given
+func (o *GetInfraPoliciesNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get infra policies not found response
+func (o *GetInfraPoliciesNotFound) Code() int {
+	return 404
+}
+
 func (o *GetInfraPoliciesNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesNotFound %s", 404, payload)
+}
+
+func (o *GetInfraPoliciesNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesNotFound %s", 404, payload)
 }
 
 func (o *GetInfraPoliciesNotFound) GetPayload() *models.ErrorPayload {
@@ -168,12 +290,16 @@ func (o *GetInfraPoliciesNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetInfraPoliciesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -190,20 +316,60 @@ func NewGetInfraPoliciesUnprocessableEntity() *GetInfraPoliciesUnprocessableEnti
 	return &GetInfraPoliciesUnprocessableEntity{}
 }
 
-/*GetInfraPoliciesUnprocessableEntity handles this case with default header values.
+/*
+GetInfraPoliciesUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetInfraPoliciesUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get infra policies unprocessable entity response has a 2xx status code
+func (o *GetInfraPoliciesUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get infra policies unprocessable entity response has a 3xx status code
+func (o *GetInfraPoliciesUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get infra policies unprocessable entity response has a 4xx status code
+func (o *GetInfraPoliciesUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get infra policies unprocessable entity response has a 5xx status code
+func (o *GetInfraPoliciesUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get infra policies unprocessable entity response a status code equal to that given
+func (o *GetInfraPoliciesUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the get infra policies unprocessable entity response
+func (o *GetInfraPoliciesUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *GetInfraPoliciesUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesUnprocessableEntity %s", 422, payload)
+}
+
+func (o *GetInfraPoliciesUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPoliciesUnprocessableEntity %s", 422, payload)
 }
 
 func (o *GetInfraPoliciesUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -212,12 +378,16 @@ func (o *GetInfraPoliciesUnprocessableEntity) GetPayload() *models.ErrorPayload 
 
 func (o *GetInfraPoliciesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -236,18 +406,46 @@ func NewGetInfraPoliciesDefault(code int) *GetInfraPoliciesDefault {
 	}
 }
 
-/*GetInfraPoliciesDefault handles this case with default header values.
+/*
+GetInfraPoliciesDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetInfraPoliciesDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get infra policies default response has a 2xx status code
+func (o *GetInfraPoliciesDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get infra policies default response has a 3xx status code
+func (o *GetInfraPoliciesDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get infra policies default response has a 4xx status code
+func (o *GetInfraPoliciesDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get infra policies default response has a 5xx status code
+func (o *GetInfraPoliciesDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get infra policies default response a status code equal to that given
+func (o *GetInfraPoliciesDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get infra policies default response
@@ -256,7 +454,13 @@ func (o *GetInfraPoliciesDefault) Code() int {
 }
 
 func (o *GetInfraPoliciesDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPolicies default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPolicies default %s", o._statusCode, payload)
+}
+
+func (o *GetInfraPoliciesDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/infra_policies][%d] getInfraPolicies default %s", o._statusCode, payload)
 }
 
 func (o *GetInfraPoliciesDefault) GetPayload() *models.ErrorPayload {
@@ -265,12 +469,16 @@ func (o *GetInfraPoliciesDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetInfraPoliciesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -282,7 +490,8 @@ func (o *GetInfraPoliciesDefault) readResponse(response runtime.ClientResponse, 
 	return nil
 }
 
-/*GetInfraPoliciesOKBody get infra policies o k body
+/*
+GetInfraPoliciesOKBody get infra policies o k body
 swagger:model GetInfraPoliciesOKBody
 */
 type GetInfraPoliciesOKBody struct {
@@ -328,6 +537,8 @@ func (o *GetInfraPoliciesOKBody) validateData(formats strfmt.Registry) error {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("getInfraPoliciesOK" + "." + "data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("getInfraPoliciesOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -339,7 +550,6 @@ func (o *GetInfraPoliciesOKBody) validateData(formats strfmt.Registry) error {
 }
 
 func (o *GetInfraPoliciesOKBody) validatePagination(formats strfmt.Registry) error {
-
 	if swag.IsZero(o.Pagination) { // not required
 		return nil
 	}
@@ -348,6 +558,72 @@ func (o *GetInfraPoliciesOKBody) validatePagination(formats strfmt.Registry) err
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getInfraPoliciesOK" + "." + "pagination")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getInfraPoliciesOK" + "." + "pagination")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get infra policies o k body based on the context it is used
+func (o *GetInfraPoliciesOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidatePagination(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetInfraPoliciesOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Data); i++ {
+
+		if o.Data[i] != nil {
+
+			if swag.IsZero(o.Data[i]) { // not required
+				return nil
+			}
+
+			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getInfraPoliciesOK" + "." + "data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("getInfraPoliciesOK" + "." + "data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetInfraPoliciesOKBody) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Pagination != nil {
+
+		if swag.IsZero(o.Pagination) { // not required
+			return nil
+		}
+
+		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getInfraPoliciesOK" + "." + "pagination")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getInfraPoliciesOK" + "." + "pagination")
 			}
 			return err
 		}

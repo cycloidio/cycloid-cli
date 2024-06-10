@@ -6,17 +6,18 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetOAuthUserReader is a Reader for the GetOAuthUser structure.
@@ -56,7 +57,8 @@ func NewGetOAuthUserOK() *GetOAuthUserOK {
 	return &GetOAuthUserOK{}
 }
 
-/*GetOAuthUserOK handles this case with default header values.
+/*
+GetOAuthUserOK describes a response with status code 200, with default header values.
 
 Used to know if a user from the platform exists on that 'social_type'.
 */
@@ -64,8 +66,44 @@ type GetOAuthUserOK struct {
 	Payload *GetOAuthUserOKBody
 }
 
+// IsSuccess returns true when this get o auth user o k response has a 2xx status code
+func (o *GetOAuthUserOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get o auth user o k response has a 3xx status code
+func (o *GetOAuthUserOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get o auth user o k response has a 4xx status code
+func (o *GetOAuthUserOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get o auth user o k response has a 5xx status code
+func (o *GetOAuthUserOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get o auth user o k response a status code equal to that given
+func (o *GetOAuthUserOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get o auth user o k response
+func (o *GetOAuthUserOK) Code() int {
+	return 200
+}
+
 func (o *GetOAuthUserOK) Error() string {
-	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUserOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUserOK %s", 200, payload)
+}
+
+func (o *GetOAuthUserOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUserOK %s", 200, payload)
 }
 
 func (o *GetOAuthUserOK) GetPayload() *GetOAuthUserOKBody {
@@ -89,20 +127,60 @@ func NewGetOAuthUserUnauthorized() *GetOAuthUserUnauthorized {
 	return &GetOAuthUserUnauthorized{}
 }
 
-/*GetOAuthUserUnauthorized handles this case with default header values.
+/*
+GetOAuthUserUnauthorized describes a response with status code 401, with default header values.
 
 The user cannot be authenticated with the credentials which she/he has used.
 */
 type GetOAuthUserUnauthorized struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get o auth user unauthorized response has a 2xx status code
+func (o *GetOAuthUserUnauthorized) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get o auth user unauthorized response has a 3xx status code
+func (o *GetOAuthUserUnauthorized) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get o auth user unauthorized response has a 4xx status code
+func (o *GetOAuthUserUnauthorized) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get o auth user unauthorized response has a 5xx status code
+func (o *GetOAuthUserUnauthorized) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get o auth user unauthorized response a status code equal to that given
+func (o *GetOAuthUserUnauthorized) IsCode(code int) bool {
+	return code == 401
+}
+
+// Code gets the status code for the get o auth user unauthorized response
+func (o *GetOAuthUserUnauthorized) Code() int {
+	return 401
+}
+
 func (o *GetOAuthUserUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUserUnauthorized  %+v", 401, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUserUnauthorized %s", 401, payload)
+}
+
+func (o *GetOAuthUserUnauthorized) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUserUnauthorized %s", 401, payload)
 }
 
 func (o *GetOAuthUserUnauthorized) GetPayload() *models.ErrorPayload {
@@ -111,12 +189,16 @@ func (o *GetOAuthUserUnauthorized) GetPayload() *models.ErrorPayload {
 
 func (o *GetOAuthUserUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -135,18 +217,46 @@ func NewGetOAuthUserDefault(code int) *GetOAuthUserDefault {
 	}
 }
 
-/*GetOAuthUserDefault handles this case with default header values.
+/*
+GetOAuthUserDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetOAuthUserDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get o auth user default response has a 2xx status code
+func (o *GetOAuthUserDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get o auth user default response has a 3xx status code
+func (o *GetOAuthUserDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get o auth user default response has a 4xx status code
+func (o *GetOAuthUserDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get o auth user default response has a 5xx status code
+func (o *GetOAuthUserDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get o auth user default response a status code equal to that given
+func (o *GetOAuthUserDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get o auth user default response
@@ -155,7 +265,13 @@ func (o *GetOAuthUserDefault) Code() int {
 }
 
 func (o *GetOAuthUserDefault) Error() string {
-	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUser default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUser default %s", o._statusCode, payload)
+}
+
+func (o *GetOAuthUserDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/{social_type}/oauth][%d] getOAuthUser default %s", o._statusCode, payload)
 }
 
 func (o *GetOAuthUserDefault) GetPayload() *models.ErrorPayload {
@@ -164,12 +280,16 @@ func (o *GetOAuthUserDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetOAuthUserDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -181,7 +301,8 @@ func (o *GetOAuthUserDefault) readResponse(response runtime.ClientResponse, cons
 	return nil
 }
 
-/*GetOAuthUserOKBody get o auth user o k body
+/*
+GetOAuthUserOKBody get o auth user o k body
 swagger:model GetOAuthUserOKBody
 */
 type GetOAuthUserOKBody struct {
@@ -215,6 +336,39 @@ func (o *GetOAuthUserOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getOAuthUserOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getOAuthUserOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get o auth user o k body based on the context it is used
+func (o *GetOAuthUserOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetOAuthUserOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getOAuthUserOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getOAuthUserOK" + "." + "data")
 			}
 			return err
 		}

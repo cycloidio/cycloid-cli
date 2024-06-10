@@ -6,18 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // CredentialRaw Credential Raw
 //
-// All the possible fields inside it
+// # All the possible fields inside it
+//
 // swagger:model CredentialRaw
 type CredentialRaw struct {
 
@@ -43,7 +44,7 @@ type CredentialRaw struct {
 	DomainID string `json:"domain_id,omitempty"`
 
 	// environment
-	// Enum: [public usgovernment china german]
+	// Enum: ["public","usgovernment","china","german"]
 	Environment string `json:"environment,omitempty"`
 
 	// json key
@@ -114,14 +115,13 @@ const (
 
 // prop value enum
 func (m *CredentialRaw) validateEnvironmentEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, credentialRawTypeEnvironmentPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, credentialRawTypeEnvironmentPropEnum, true); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (m *CredentialRaw) validateEnvironment(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Environment) { // not required
 		return nil
 	}
@@ -131,6 +131,11 @@ func (m *CredentialRaw) validateEnvironment(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this credential raw based on context it is used
+func (m *CredentialRaw) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

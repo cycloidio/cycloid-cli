@@ -6,16 +6,16 @@ package organization_kpis
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateKPIFavoriteReader is a Reader for the CreateKPIFavorite structure.
@@ -67,15 +67,50 @@ func NewCreateKPIFavoriteNoContent() *CreateKPIFavoriteNoContent {
 	return &CreateKPIFavoriteNoContent{}
 }
 
-/*CreateKPIFavoriteNoContent handles this case with default header values.
+/*
+CreateKPIFavoriteNoContent describes a response with status code 204, with default header values.
 
 The kpi has been added to user favorites list.
 */
 type CreateKPIFavoriteNoContent struct {
 }
 
+// IsSuccess returns true when this create k p i favorite no content response has a 2xx status code
+func (o *CreateKPIFavoriteNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create k p i favorite no content response has a 3xx status code
+func (o *CreateKPIFavoriteNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create k p i favorite no content response has a 4xx status code
+func (o *CreateKPIFavoriteNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create k p i favorite no content response has a 5xx status code
+func (o *CreateKPIFavoriteNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create k p i favorite no content response a status code equal to that given
+func (o *CreateKPIFavoriteNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the create k p i favorite no content response
+func (o *CreateKPIFavoriteNoContent) Code() int {
+	return 204
+}
+
 func (o *CreateKPIFavoriteNoContent) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteNoContent ", 204)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteNoContent", 204)
+}
+
+func (o *CreateKPIFavoriteNoContent) String() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteNoContent", 204)
 }
 
 func (o *CreateKPIFavoriteNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -88,20 +123,60 @@ func NewCreateKPIFavoriteForbidden() *CreateKPIFavoriteForbidden {
 	return &CreateKPIFavoriteForbidden{}
 }
 
-/*CreateKPIFavoriteForbidden handles this case with default header values.
+/*
+CreateKPIFavoriteForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type CreateKPIFavoriteForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create k p i favorite forbidden response has a 2xx status code
+func (o *CreateKPIFavoriteForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create k p i favorite forbidden response has a 3xx status code
+func (o *CreateKPIFavoriteForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create k p i favorite forbidden response has a 4xx status code
+func (o *CreateKPIFavoriteForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create k p i favorite forbidden response has a 5xx status code
+func (o *CreateKPIFavoriteForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create k p i favorite forbidden response a status code equal to that given
+func (o *CreateKPIFavoriteForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the create k p i favorite forbidden response
+func (o *CreateKPIFavoriteForbidden) Code() int {
+	return 403
+}
+
 func (o *CreateKPIFavoriteForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteForbidden %s", 403, payload)
+}
+
+func (o *CreateKPIFavoriteForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteForbidden %s", 403, payload)
 }
 
 func (o *CreateKPIFavoriteForbidden) GetPayload() *models.ErrorPayload {
@@ -110,12 +185,16 @@ func (o *CreateKPIFavoriteForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *CreateKPIFavoriteForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -132,20 +211,60 @@ func NewCreateKPIFavoriteNotFound() *CreateKPIFavoriteNotFound {
 	return &CreateKPIFavoriteNotFound{}
 }
 
-/*CreateKPIFavoriteNotFound handles this case with default header values.
+/*
+CreateKPIFavoriteNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type CreateKPIFavoriteNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create k p i favorite not found response has a 2xx status code
+func (o *CreateKPIFavoriteNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create k p i favorite not found response has a 3xx status code
+func (o *CreateKPIFavoriteNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create k p i favorite not found response has a 4xx status code
+func (o *CreateKPIFavoriteNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create k p i favorite not found response has a 5xx status code
+func (o *CreateKPIFavoriteNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create k p i favorite not found response a status code equal to that given
+func (o *CreateKPIFavoriteNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the create k p i favorite not found response
+func (o *CreateKPIFavoriteNotFound) Code() int {
+	return 404
+}
+
 func (o *CreateKPIFavoriteNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteNotFound %s", 404, payload)
+}
+
+func (o *CreateKPIFavoriteNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteNotFound %s", 404, payload)
 }
 
 func (o *CreateKPIFavoriteNotFound) GetPayload() *models.ErrorPayload {
@@ -154,12 +273,16 @@ func (o *CreateKPIFavoriteNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *CreateKPIFavoriteNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -176,20 +299,60 @@ func NewCreateKPIFavoriteUnprocessableEntity() *CreateKPIFavoriteUnprocessableEn
 	return &CreateKPIFavoriteUnprocessableEntity{}
 }
 
-/*CreateKPIFavoriteUnprocessableEntity handles this case with default header values.
+/*
+CreateKPIFavoriteUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateKPIFavoriteUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create k p i favorite unprocessable entity response has a 2xx status code
+func (o *CreateKPIFavoriteUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create k p i favorite unprocessable entity response has a 3xx status code
+func (o *CreateKPIFavoriteUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create k p i favorite unprocessable entity response has a 4xx status code
+func (o *CreateKPIFavoriteUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create k p i favorite unprocessable entity response has a 5xx status code
+func (o *CreateKPIFavoriteUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create k p i favorite unprocessable entity response a status code equal to that given
+func (o *CreateKPIFavoriteUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the create k p i favorite unprocessable entity response
+func (o *CreateKPIFavoriteUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *CreateKPIFavoriteUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteUnprocessableEntity %s", 422, payload)
+}
+
+func (o *CreateKPIFavoriteUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavoriteUnprocessableEntity %s", 422, payload)
 }
 
 func (o *CreateKPIFavoriteUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -198,12 +361,16 @@ func (o *CreateKPIFavoriteUnprocessableEntity) GetPayload() *models.ErrorPayload
 
 func (o *CreateKPIFavoriteUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -222,18 +389,46 @@ func NewCreateKPIFavoriteDefault(code int) *CreateKPIFavoriteDefault {
 	}
 }
 
-/*CreateKPIFavoriteDefault handles this case with default header values.
+/*
+CreateKPIFavoriteDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateKPIFavoriteDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this create k p i favorite default response has a 2xx status code
+func (o *CreateKPIFavoriteDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this create k p i favorite default response has a 3xx status code
+func (o *CreateKPIFavoriteDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this create k p i favorite default response has a 4xx status code
+func (o *CreateKPIFavoriteDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this create k p i favorite default response has a 5xx status code
+func (o *CreateKPIFavoriteDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this create k p i favorite default response a status code equal to that given
+func (o *CreateKPIFavoriteDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the create k p i favorite default response
@@ -242,7 +437,13 @@ func (o *CreateKPIFavoriteDefault) Code() int {
 }
 
 func (o *CreateKPIFavoriteDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavorite default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavorite default %s", o._statusCode, payload)
+}
+
+func (o *CreateKPIFavoriteDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] createKPIFavorite default %s", o._statusCode, payload)
 }
 
 func (o *CreateKPIFavoriteDefault) GetPayload() *models.ErrorPayload {
@@ -251,12 +452,16 @@ func (o *CreateKPIFavoriteDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateKPIFavoriteDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

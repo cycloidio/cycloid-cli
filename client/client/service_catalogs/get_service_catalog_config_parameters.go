@@ -13,83 +13,102 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewGetServiceCatalogConfigParams creates a new GetServiceCatalogConfigParams object
-// with the default values initialized.
+// NewGetServiceCatalogConfigParams creates a new GetServiceCatalogConfigParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetServiceCatalogConfigParams() *GetServiceCatalogConfigParams {
-	var ()
 	return &GetServiceCatalogConfigParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetServiceCatalogConfigParamsWithTimeout creates a new GetServiceCatalogConfigParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetServiceCatalogConfigParamsWithTimeout(timeout time.Duration) *GetServiceCatalogConfigParams {
-	var ()
 	return &GetServiceCatalogConfigParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewGetServiceCatalogConfigParamsWithContext creates a new GetServiceCatalogConfigParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetServiceCatalogConfigParamsWithContext(ctx context.Context) *GetServiceCatalogConfigParams {
-	var ()
 	return &GetServiceCatalogConfigParams{
-
 		Context: ctx,
 	}
 }
 
 // NewGetServiceCatalogConfigParamsWithHTTPClient creates a new GetServiceCatalogConfigParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetServiceCatalogConfigParamsWithHTTPClient(client *http.Client) *GetServiceCatalogConfigParams {
-	var ()
 	return &GetServiceCatalogConfigParams{
 		HTTPClient: client,
 	}
 }
 
-/*GetServiceCatalogConfigParams contains all the parameters to send to the API endpoint
-for the get service catalog config operation typically these are written to a http.Request
+/*
+GetServiceCatalogConfigParams contains all the parameters to send to the API endpoint
+
+	for the get service catalog config operation.
+
+	Typically these are written to a http.Request.
 */
 type GetServiceCatalogConfigParams struct {
 
-	/*Environment
-	  The environment canonical to use a query filter
+	/* EnvironmentCanonical.
 
+	   A list of environments' canonical to filter from
 	*/
-	Environment *string
-	/*OrganizationCanonical
-	  A canonical of an organization.
+	EnvironmentCanonical *string
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*Project
-	  A canonical of a project used for filtering.
 
+	/* ProjectCanonical.
+
+	   A list of projects' canonical to filter from
 	*/
-	Project *string
-	/*ServiceCatalogRef
-	  A Service Catalog name
+	ProjectCanonical *string
 
+	/* ServiceCatalogRef.
+
+	   A Service Catalog name
 	*/
 	ServiceCatalogRef string
-	/*UseCase
-	  A use case of a stack to be selectd from the stack config
 
+	/* UseCase.
+
+	   A use case of a stack to be selectd from the stack config
 	*/
 	UseCase *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get service catalog config params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetServiceCatalogConfigParams) WithDefaults() *GetServiceCatalogConfigParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get service catalog config params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetServiceCatalogConfigParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get service catalog config params
@@ -125,15 +144,15 @@ func (o *GetServiceCatalogConfigParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
-// WithEnvironment adds the environment to the get service catalog config params
-func (o *GetServiceCatalogConfigParams) WithEnvironment(environment *string) *GetServiceCatalogConfigParams {
-	o.SetEnvironment(environment)
+// WithEnvironmentCanonical adds the environmentCanonical to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) WithEnvironmentCanonical(environmentCanonical *string) *GetServiceCatalogConfigParams {
+	o.SetEnvironmentCanonical(environmentCanonical)
 	return o
 }
 
-// SetEnvironment adds the environment to the get service catalog config params
-func (o *GetServiceCatalogConfigParams) SetEnvironment(environment *string) {
-	o.Environment = environment
+// SetEnvironmentCanonical adds the environmentCanonical to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) SetEnvironmentCanonical(environmentCanonical *string) {
+	o.EnvironmentCanonical = environmentCanonical
 }
 
 // WithOrganizationCanonical adds the organizationCanonical to the get service catalog config params
@@ -147,15 +166,15 @@ func (o *GetServiceCatalogConfigParams) SetOrganizationCanonical(organizationCan
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithProject adds the project to the get service catalog config params
-func (o *GetServiceCatalogConfigParams) WithProject(project *string) *GetServiceCatalogConfigParams {
-	o.SetProject(project)
+// WithProjectCanonical adds the projectCanonical to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) WithProjectCanonical(projectCanonical *string) *GetServiceCatalogConfigParams {
+	o.SetProjectCanonical(projectCanonical)
 	return o
 }
 
-// SetProject adds the project to the get service catalog config params
-func (o *GetServiceCatalogConfigParams) SetProject(project *string) {
-	o.Project = project
+// SetProjectCanonical adds the projectCanonical to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) SetProjectCanonical(projectCanonical *string) {
+	o.ProjectCanonical = projectCanonical
 }
 
 // WithServiceCatalogRef adds the serviceCatalogRef to the get service catalog config params
@@ -188,20 +207,21 @@ func (o *GetServiceCatalogConfigParams) WriteToRequest(r runtime.ClientRequest, 
 	}
 	var res []error
 
-	if o.Environment != nil {
+	if o.EnvironmentCanonical != nil {
 
-		// query param environment
-		var qrEnvironment string
-		if o.Environment != nil {
-			qrEnvironment = *o.Environment
+		// query param environment_canonical
+		var qrEnvironmentCanonical string
+
+		if o.EnvironmentCanonical != nil {
+			qrEnvironmentCanonical = *o.EnvironmentCanonical
 		}
-		qEnvironment := qrEnvironment
-		if qEnvironment != "" {
-			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
+		qEnvironmentCanonical := qrEnvironmentCanonical
+		if qEnvironmentCanonical != "" {
+
+			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// path param organization_canonical
@@ -209,20 +229,21 @@ func (o *GetServiceCatalogConfigParams) WriteToRequest(r runtime.ClientRequest, 
 		return err
 	}
 
-	if o.Project != nil {
+	if o.ProjectCanonical != nil {
 
-		// query param project
-		var qrProject string
-		if o.Project != nil {
-			qrProject = *o.Project
+		// query param project_canonical
+		var qrProjectCanonical string
+
+		if o.ProjectCanonical != nil {
+			qrProjectCanonical = *o.ProjectCanonical
 		}
-		qProject := qrProject
-		if qProject != "" {
-			if err := r.SetQueryParam("project", qProject); err != nil {
+		qProjectCanonical := qrProjectCanonical
+		if qProjectCanonical != "" {
+
+			if err := r.SetQueryParam("project_canonical", qProjectCanonical); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// path param service_catalog_ref
@@ -234,16 +255,17 @@ func (o *GetServiceCatalogConfigParams) WriteToRequest(r runtime.ClientRequest, 
 
 		// query param use_case
 		var qrUseCase string
+
 		if o.UseCase != nil {
 			qrUseCase = *o.UseCase
 		}
 		qUseCase := qrUseCase
 		if qUseCase != "" {
+
 			if err := r.SetQueryParam("use_case", qUseCase); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {

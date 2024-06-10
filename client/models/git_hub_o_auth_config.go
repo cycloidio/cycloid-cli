@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -19,6 +19,7 @@ import (
 // GitHubOAuthConfig AppConfigGitHubOAuth
 //
 // GitHub OAuth configuration.
+//
 // swagger:model GitHubOAuthConfig
 type GitHubOAuthConfig struct {
 	clientIdField *string
@@ -60,10 +61,7 @@ func (m *GitHubOAuthConfig) Type() string {
 
 // SetType sets the type of this subtype
 func (m *GitHubOAuthConfig) SetType(val string) {
-
 }
-
-// HostAddress gets the host address of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *GitHubOAuthConfig) UnmarshalJSON(raw []byte) error {
@@ -134,8 +132,7 @@ func (m GitHubOAuthConfig) MarshalJSON() ([]byte, error) {
 	}{
 
 		HostAddress: m.HostAddress,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -152,8 +149,7 @@ func (m GitHubOAuthConfig) MarshalJSON() ([]byte, error) {
 		Provider: m.Provider(),
 
 		Type: m.Type(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -207,6 +203,16 @@ func (m *GitHubOAuthConfig) validateHostAddress(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this git hub o auth config based on the context it is used
+func (m *GitHubOAuthConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

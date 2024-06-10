@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // MemberAssignation Member assignation
 //
 // Member is a user who is associated to an entity of the system. The user is newly assigned or reassigned for updating is data.
+//
 // swagger:model MemberAssignation
 type MemberAssignation struct {
 
@@ -47,18 +49,23 @@ func (m *MemberAssignation) validateRoleCanonical(formats strfmt.Registry) error
 		return err
 	}
 
-	if err := validate.MinLength("role_canonical", "body", string(*m.RoleCanonical), 3); err != nil {
+	if err := validate.MinLength("role_canonical", "body", *m.RoleCanonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("role_canonical", "body", string(*m.RoleCanonical), 100); err != nil {
+	if err := validate.MaxLength("role_canonical", "body", *m.RoleCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("role_canonical", "body", string(*m.RoleCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("role_canonical", "body", *m.RoleCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this member assignation based on context it is used
+func (m *MemberAssignation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

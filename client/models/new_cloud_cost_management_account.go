@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -54,20 +55,19 @@ func (m *NewCloudCostManagementAccount) Validate(formats strfmt.Registry) error 
 }
 
 func (m *NewCloudCostManagementAccount) validateCanonical(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -84,6 +84,39 @@ func (m *NewCloudCostManagementAccount) validateExternalBackend(formats strfmt.R
 		if err := m.ExternalBackend.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("external_backend")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("external_backend")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this new cloud cost management account based on the context it is used
+func (m *NewCloudCostManagementAccount) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateExternalBackend(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NewCloudCostManagementAccount) contextValidateExternalBackend(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ExternalBackend != nil {
+
+		if err := m.ExternalBackend.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("external_backend")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("external_backend")
 			}
 			return err
 		}

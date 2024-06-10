@@ -6,17 +6,18 @@ package organization_projects
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateProjectReader is a Reader for the CreateProject structure.
@@ -68,7 +69,8 @@ func NewCreateProjectOK() *CreateProjectOK {
 	return &CreateProjectOK{}
 }
 
-/*CreateProjectOK handles this case with default header values.
+/*
+CreateProjectOK describes a response with status code 200, with default header values.
 
 Project created. The body contains the information of the new project of the organization.
 */
@@ -76,8 +78,44 @@ type CreateProjectOK struct {
 	Payload *CreateProjectOKBody
 }
 
+// IsSuccess returns true when this create project o k response has a 2xx status code
+func (o *CreateProjectOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create project o k response has a 3xx status code
+func (o *CreateProjectOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create project o k response has a 4xx status code
+func (o *CreateProjectOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create project o k response has a 5xx status code
+func (o *CreateProjectOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create project o k response a status code equal to that given
+func (o *CreateProjectOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the create project o k response
+func (o *CreateProjectOK) Code() int {
+	return 200
+}
+
 func (o *CreateProjectOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectOK %s", 200, payload)
+}
+
+func (o *CreateProjectOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectOK %s", 200, payload)
 }
 
 func (o *CreateProjectOK) GetPayload() *CreateProjectOKBody {
@@ -101,20 +139,60 @@ func NewCreateProjectNotFound() *CreateProjectNotFound {
 	return &CreateProjectNotFound{}
 }
 
-/*CreateProjectNotFound handles this case with default header values.
+/*
+CreateProjectNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type CreateProjectNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create project not found response has a 2xx status code
+func (o *CreateProjectNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create project not found response has a 3xx status code
+func (o *CreateProjectNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create project not found response has a 4xx status code
+func (o *CreateProjectNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create project not found response has a 5xx status code
+func (o *CreateProjectNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create project not found response a status code equal to that given
+func (o *CreateProjectNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the create project not found response
+func (o *CreateProjectNotFound) Code() int {
+	return 404
+}
+
 func (o *CreateProjectNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectNotFound %s", 404, payload)
+}
+
+func (o *CreateProjectNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectNotFound %s", 404, payload)
 }
 
 func (o *CreateProjectNotFound) GetPayload() *models.ErrorPayload {
@@ -123,12 +201,16 @@ func (o *CreateProjectNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *CreateProjectNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -145,15 +227,50 @@ func NewCreateProjectLengthRequired() *CreateProjectLengthRequired {
 	return &CreateProjectLengthRequired{}
 }
 
-/*CreateProjectLengthRequired handles this case with default header values.
+/*
+CreateProjectLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type CreateProjectLengthRequired struct {
 }
 
+// IsSuccess returns true when this create project length required response has a 2xx status code
+func (o *CreateProjectLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create project length required response has a 3xx status code
+func (o *CreateProjectLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create project length required response has a 4xx status code
+func (o *CreateProjectLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create project length required response has a 5xx status code
+func (o *CreateProjectLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create project length required response a status code equal to that given
+func (o *CreateProjectLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the create project length required response
+func (o *CreateProjectLengthRequired) Code() int {
+	return 411
+}
+
 func (o *CreateProjectLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectLengthRequired", 411)
+}
+
+func (o *CreateProjectLengthRequired) String() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectLengthRequired", 411)
 }
 
 func (o *CreateProjectLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -166,20 +283,60 @@ func NewCreateProjectUnprocessableEntity() *CreateProjectUnprocessableEntity {
 	return &CreateProjectUnprocessableEntity{}
 }
 
-/*CreateProjectUnprocessableEntity handles this case with default header values.
+/*
+CreateProjectUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateProjectUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create project unprocessable entity response has a 2xx status code
+func (o *CreateProjectUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create project unprocessable entity response has a 3xx status code
+func (o *CreateProjectUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create project unprocessable entity response has a 4xx status code
+func (o *CreateProjectUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create project unprocessable entity response has a 5xx status code
+func (o *CreateProjectUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create project unprocessable entity response a status code equal to that given
+func (o *CreateProjectUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the create project unprocessable entity response
+func (o *CreateProjectUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *CreateProjectUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectUnprocessableEntity %s", 422, payload)
+}
+
+func (o *CreateProjectUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProjectUnprocessableEntity %s", 422, payload)
 }
 
 func (o *CreateProjectUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -188,12 +345,16 @@ func (o *CreateProjectUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *CreateProjectUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -212,18 +373,46 @@ func NewCreateProjectDefault(code int) *CreateProjectDefault {
 	}
 }
 
-/*CreateProjectDefault handles this case with default header values.
+/*
+CreateProjectDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateProjectDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this create project default response has a 2xx status code
+func (o *CreateProjectDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this create project default response has a 3xx status code
+func (o *CreateProjectDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this create project default response has a 4xx status code
+func (o *CreateProjectDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this create project default response has a 5xx status code
+func (o *CreateProjectDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this create project default response a status code equal to that given
+func (o *CreateProjectDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the create project default response
@@ -232,7 +421,13 @@ func (o *CreateProjectDefault) Code() int {
 }
 
 func (o *CreateProjectDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProject default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProject default %s", o._statusCode, payload)
+}
+
+func (o *CreateProjectDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects][%d] createProject default %s", o._statusCode, payload)
 }
 
 func (o *CreateProjectDefault) GetPayload() *models.ErrorPayload {
@@ -241,12 +436,16 @@ func (o *CreateProjectDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateProjectDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -258,7 +457,8 @@ func (o *CreateProjectDefault) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-/*CreateProjectOKBody create project o k body
+/*
+CreateProjectOKBody create project o k body
 swagger:model CreateProjectOKBody
 */
 type CreateProjectOKBody struct {
@@ -292,6 +492,39 @@ func (o *CreateProjectOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createProjectOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createProjectOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create project o k body based on the context it is used
+func (o *CreateProjectOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateProjectOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createProjectOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createProjectOK" + "." + "data")
 			}
 			return err
 		}

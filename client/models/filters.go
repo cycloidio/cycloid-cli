@@ -7,6 +7,7 @@ package models
 
 // Filters Filters
 //
-// Filters is the possible values the filters can have on list requests
+// # Filters is the possible values the filters can have on list requests
+//
 // swagger:model Filters
 type Filters interface{}

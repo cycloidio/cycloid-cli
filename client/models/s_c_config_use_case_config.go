@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // SCConfigUseCaseConfig Use Case Configuration
 //
-// Represents the Service Catalog Configuration for a given Use Case
+// # Represents the Service Catalog Configuration for a given Use Case
+//
 // swagger:model SCConfigUseCaseConfig
 type SCConfigUseCaseConfig struct {
 
@@ -84,16 +86,19 @@ func (m *SCConfigUseCaseConfig) Validate(formats strfmt.Registry) error {
 }
 
 func (m *SCConfigUseCaseConfig) validateAnsible(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Ansible) { // not required
 		return nil
 	}
 
-	if err := m.Ansible.Validate(formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("ansible")
+	if m.Ansible != nil {
+		if err := m.Ansible.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("ansible")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("ansible")
+			}
+			return err
 		}
-		return err
 	}
 
 	return nil
@@ -118,7 +123,6 @@ func (m *SCConfigUseCaseConfig) validateDescription(formats strfmt.Registry) err
 }
 
 func (m *SCConfigUseCaseConfig) validateForms(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Forms) { // not required
 		return nil
 	}
@@ -127,6 +131,8 @@ func (m *SCConfigUseCaseConfig) validateForms(formats strfmt.Registry) error {
 		if err := m.Forms.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("forms")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("forms")
 			}
 			return err
 		}
@@ -154,6 +160,8 @@ func (m *SCConfigUseCaseConfig) validatePipeline(formats strfmt.Registry) error 
 		if err := m.Pipeline.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("pipeline")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("pipeline")
 			}
 			return err
 		}
@@ -163,14 +171,117 @@ func (m *SCConfigUseCaseConfig) validatePipeline(formats strfmt.Registry) error 
 }
 
 func (m *SCConfigUseCaseConfig) validateTerraform(formats strfmt.Registry) error {
+	if swag.IsZero(m.Terraform) { // not required
+		return nil
+	}
+
+	if m.Terraform != nil {
+		if err := m.Terraform.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("terraform")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("terraform")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this s c config use case config based on the context it is used
+func (m *SCConfigUseCaseConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAnsible(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateForms(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePipeline(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTerraform(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SCConfigUseCaseConfig) contextValidateAnsible(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Ansible) { // not required
+		return nil
+	}
+
+	if err := m.Ansible.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("ansible")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("ansible")
+		}
+		return err
+	}
+
+	return nil
+}
+
+func (m *SCConfigUseCaseConfig) contextValidateForms(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Forms != nil {
+
+		if swag.IsZero(m.Forms) { // not required
+			return nil
+		}
+
+		if err := m.Forms.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("forms")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("forms")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SCConfigUseCaseConfig) contextValidatePipeline(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Pipeline != nil {
+
+		if err := m.Pipeline.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("pipeline")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("pipeline")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SCConfigUseCaseConfig) contextValidateTerraform(ctx context.Context, formats strfmt.Registry) error {
 
 	if swag.IsZero(m.Terraform) { // not required
 		return nil
 	}
 
-	if err := m.Terraform.Validate(formats); err != nil {
+	if err := m.Terraform.ContextValidate(ctx, formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("terraform")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("terraform")
 		}
 		return err
 	}

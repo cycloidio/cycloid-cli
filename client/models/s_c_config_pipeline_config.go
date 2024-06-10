@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // SCConfigPipelineConfig Pipeline Configuration
 //
-// Represents the Service Catalog Configuration for a Pipeline of a given Use Case
+// # Represents the Service Catalog Configuration for a Pipeline of a given Use Case
+//
 // swagger:model SCConfigPipelineConfig
 type SCConfigPipelineConfig struct {
 
@@ -56,6 +58,8 @@ func (m *SCConfigPipelineConfig) validatePipeline(formats strfmt.Registry) error
 		if err := m.Pipeline.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("pipeline")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("pipeline")
 			}
 			return err
 		}
@@ -74,6 +78,60 @@ func (m *SCConfigPipelineConfig) validateVariables(formats strfmt.Registry) erro
 		if err := m.Variables.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("variables")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("variables")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this s c config pipeline config based on the context it is used
+func (m *SCConfigPipelineConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePipeline(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVariables(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *SCConfigPipelineConfig) contextValidatePipeline(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Pipeline != nil {
+
+		if err := m.Pipeline.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("pipeline")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("pipeline")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *SCConfigPipelineConfig) contextValidateVariables(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Variables != nil {
+
+		if err := m.Variables.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("variables")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("variables")
 			}
 			return err
 		}

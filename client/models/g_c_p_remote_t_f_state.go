@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -40,12 +40,7 @@ func (m *GCPRemoteTFState) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *GCPRemoteTFState) SetEngine(val string) {
-
 }
-
-// Bucket gets the bucket of this subtype
-
-// Object gets the object of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *GCPRemoteTFState) UnmarshalJSON(raw []byte) error {
@@ -89,7 +84,6 @@ func (m *GCPRemoteTFState) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.Bucket = data.Bucket
-
 	result.Object = data.Object
 
 	*m = result
@@ -116,8 +110,7 @@ func (m GCPRemoteTFState) MarshalJSON() ([]byte, error) {
 		Bucket: m.Bucket,
 
 		Object: m.Object,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -126,8 +119,7 @@ func (m GCPRemoteTFState) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -155,6 +147,16 @@ func (m *GCPRemoteTFState) validateBucket(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this g c p remote t f state based on the context it is used
+func (m *GCPRemoteTFState) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

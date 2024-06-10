@@ -13,68 +13,84 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewRefreshTokenParams creates a new RefreshTokenParams object
-// with the default values initialized.
+// NewRefreshTokenParams creates a new RefreshTokenParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewRefreshTokenParams() *RefreshTokenParams {
-	var ()
 	return &RefreshTokenParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewRefreshTokenParamsWithTimeout creates a new RefreshTokenParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewRefreshTokenParamsWithTimeout(timeout time.Duration) *RefreshTokenParams {
-	var ()
 	return &RefreshTokenParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewRefreshTokenParamsWithContext creates a new RefreshTokenParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewRefreshTokenParamsWithContext(ctx context.Context) *RefreshTokenParams {
-	var ()
 	return &RefreshTokenParams{
-
 		Context: ctx,
 	}
 }
 
 // NewRefreshTokenParamsWithHTTPClient creates a new RefreshTokenParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewRefreshTokenParamsWithHTTPClient(client *http.Client) *RefreshTokenParams {
-	var ()
 	return &RefreshTokenParams{
 		HTTPClient: client,
 	}
 }
 
-/*RefreshTokenParams contains all the parameters to send to the API endpoint
-for the refresh token operation typically these are written to a http.Request
+/*
+RefreshTokenParams contains all the parameters to send to the API endpoint
+
+	for the refresh token operation.
+
+	Typically these are written to a http.Request.
 */
 type RefreshTokenParams struct {
 
-	/*ChildCanonical
-	  A canonical of a child organization used for filtering.
+	/* ChildCanonical.
 
+	   A canonical of a child organization used for filtering.
 	*/
 	ChildCanonical *string
-	/*OrganizationCanonical
-	  A canonical of a organization used for filtering.
 
+	/* OrganizationCanonical.
+
+	   A canonical of a organization used for filtering.
 	*/
 	OrganizationCanonical *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the refresh token params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *RefreshTokenParams) WithDefaults() *RefreshTokenParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the refresh token params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *RefreshTokenParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the refresh token params
@@ -144,32 +160,34 @@ func (o *RefreshTokenParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 		// query param child_canonical
 		var qrChildCanonical string
+
 		if o.ChildCanonical != nil {
 			qrChildCanonical = *o.ChildCanonical
 		}
 		qChildCanonical := qrChildCanonical
 		if qChildCanonical != "" {
+
 			if err := r.SetQueryParam("child_canonical", qChildCanonical); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.OrganizationCanonical != nil {
 
 		// query param organization_canonical
 		var qrOrganizationCanonical string
+
 		if o.OrganizationCanonical != nil {
 			qrOrganizationCanonical = *o.OrganizationCanonical
 		}
 		qOrganizationCanonical := qrOrganizationCanonical
 		if qOrganizationCanonical != "" {
+
 			if err := r.SetQueryParam("organization_canonical", qOrganizationCanonical); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {

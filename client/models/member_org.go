@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // MemberOrg Member of an organization
 //
 // Member is a user who is associated to an organization.
+//
 // swagger:model MemberOrg
 type MemberOrg struct {
 
@@ -59,7 +60,7 @@ type MemberOrg struct {
 
 	// User's preferred language
 	// Required: true
-	// Enum: [en fr es]
+	// Enum: ["en","fr","es"]
 	Locale *string `json:"locale"`
 
 	// mfa enabled
@@ -158,7 +159,7 @@ func (m *MemberOrg) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -184,7 +185,7 @@ func (m *MemberOrg) validateFamilyName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("family_name", "body", string(*m.FamilyName), 2); err != nil {
+	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
 		return err
 	}
 
@@ -197,7 +198,7 @@ func (m *MemberOrg) validateGivenName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("given_name", "body", string(*m.GivenName), 2); err != nil {
+	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
 		return err
 	}
 
@@ -210,7 +211,7 @@ func (m *MemberOrg) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -218,12 +219,11 @@ func (m *MemberOrg) validateID(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateInvitedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.InvitedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("invited_at", "body", int64(*m.InvitedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("invited_at", "body", *m.InvitedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -231,7 +231,6 @@ func (m *MemberOrg) validateInvitedAt(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateInvitedBy(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.InvitedBy) { // not required
 		return nil
 	}
@@ -240,6 +239,8 @@ func (m *MemberOrg) validateInvitedBy(formats strfmt.Registry) error {
 		if err := m.InvitedBy.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("invited_by")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("invited_by")
 			}
 			return err
 		}
@@ -249,12 +250,11 @@ func (m *MemberOrg) validateInvitedBy(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateLastLoginAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LastLoginAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("last_login_at", "body", int64(*m.LastLoginAt), 0, false); err != nil {
+	if err := validate.MinimumUint("last_login_at", "body", *m.LastLoginAt, 0, false); err != nil {
 		return err
 	}
 
@@ -287,7 +287,7 @@ const (
 
 // prop value enum
 func (m *MemberOrg) validateLocaleEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, memberOrgTypeLocalePropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, memberOrgTypeLocalePropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -317,7 +317,6 @@ func (m *MemberOrg) validateMfaEnabled(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validatePictureURL(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PictureURL) { // not required
 		return nil
 	}
@@ -339,6 +338,8 @@ func (m *MemberOrg) validateRole(formats strfmt.Registry) error {
 		if err := m.Role.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("role")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("role")
 			}
 			return err
 		}
@@ -348,12 +349,11 @@ func (m *MemberOrg) validateRole(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -366,16 +366,72 @@ func (m *MemberOrg) validateUsername(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("username", "body", string(*m.Username), 3); err != nil {
+	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", string(*m.Username), 100); err != nil {
+	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", string(*m.Username), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this member org based on the context it is used
+func (m *MemberOrg) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateInvitedBy(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateRole(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *MemberOrg) contextValidateInvitedBy(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.InvitedBy != nil {
+
+		if swag.IsZero(m.InvitedBy) { // not required
+			return nil
+		}
+
+		if err := m.InvitedBy.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("invited_by")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("invited_by")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *MemberOrg) contextValidateRole(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Role != nil {
+
+		if err := m.Role.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("role")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("role")
+			}
+			return err
+		}
 	}
 
 	return nil

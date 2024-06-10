@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // InUseServiceCatalogSource InUseServiceCatalogSource
 //
-// Represents a Service catalog source that's using credential
+// # Represents a Service catalog source that's using credential
+//
 // swagger:model InUseServiceCatalogSource
 type InUseServiceCatalogSource struct {
 
@@ -55,15 +57,15 @@ func (m *InUseServiceCatalogSource) validateCanonical(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -76,6 +78,11 @@ func (m *InUseServiceCatalogSource) validateName(formats strfmt.Registry) error 
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this in use service catalog source based on context it is used
+func (m *InUseServiceCatalogSource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
