@@ -17,10 +17,10 @@ func (m *middleware) CreateKpi(name, kpiType, widget, org, project, job, env, co
 	params.SetOrganizationCanonical(org)
 	pipeline := ""
 	if project != "" {
-		params.SetProject(&project)
+		params.WithProjectCanonical(&project)
 	}
 	if env != "" {
-		params.SetEnvironment(&env)
+		params.WithEnvironmentCanonical(&env)
 	}
 
 	if project != "" && env != "" {
@@ -67,10 +67,10 @@ func (m *middleware) ListKpi(org, project, env string) ([]*models.KPI, error) {
 	params := organization_kpis.NewGetKpisParams()
 	params.SetOrganizationCanonical(org)
 	if project != "" {
-		params.SetProject(&project)
+		params.WithProjectCanonical(&project)
 	}
 	if env != "" {
-		params.SetEnvironment(&env)
+		params.WithEnvironmentCanonical(&env)
 	}
 
 	resp, err := m.api.OrganizationKpis.GetKpis(params, m.api.Credentials(&org))
