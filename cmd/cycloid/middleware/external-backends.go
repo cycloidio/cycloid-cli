@@ -123,7 +123,7 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose, cred str
 	body.SetConfiguration(ebConfig)
 	params.SetBody(body)
 	if project != "" {
-		params.SetProject(&project)
+		params.WithProjectCanonical(&project)
 	}
 	err = body.Validate(strfmt.Default)
 	if err != nil {
