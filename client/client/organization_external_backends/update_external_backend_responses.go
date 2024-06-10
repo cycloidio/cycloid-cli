@@ -6,17 +6,18 @@ package organization_external_backends
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UpdateExternalBackendReader is a Reader for the UpdateExternalBackend structure.
@@ -68,7 +69,8 @@ func NewUpdateExternalBackendOK() *UpdateExternalBackendOK {
 	return &UpdateExternalBackendOK{}
 }
 
-/*UpdateExternalBackendOK handles this case with default header values.
+/*
+UpdateExternalBackendOK describes a response with status code 200, with default header values.
 
 Success update
 */
@@ -76,8 +78,44 @@ type UpdateExternalBackendOK struct {
 	Payload *UpdateExternalBackendOKBody
 }
 
+// IsSuccess returns true when this update external backend o k response has a 2xx status code
+func (o *UpdateExternalBackendOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this update external backend o k response has a 3xx status code
+func (o *UpdateExternalBackendOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update external backend o k response has a 4xx status code
+func (o *UpdateExternalBackendOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this update external backend o k response has a 5xx status code
+func (o *UpdateExternalBackendOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update external backend o k response a status code equal to that given
+func (o *UpdateExternalBackendOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the update external backend o k response
+func (o *UpdateExternalBackendOK) Code() int {
+	return 200
+}
+
 func (o *UpdateExternalBackendOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendOK %s", 200, payload)
+}
+
+func (o *UpdateExternalBackendOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendOK %s", 200, payload)
 }
 
 func (o *UpdateExternalBackendOK) GetPayload() *UpdateExternalBackendOKBody {
@@ -101,20 +139,60 @@ func NewUpdateExternalBackendForbidden() *UpdateExternalBackendForbidden {
 	return &UpdateExternalBackendForbidden{}
 }
 
-/*UpdateExternalBackendForbidden handles this case with default header values.
+/*
+UpdateExternalBackendForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UpdateExternalBackendForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update external backend forbidden response has a 2xx status code
+func (o *UpdateExternalBackendForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update external backend forbidden response has a 3xx status code
+func (o *UpdateExternalBackendForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update external backend forbidden response has a 4xx status code
+func (o *UpdateExternalBackendForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update external backend forbidden response has a 5xx status code
+func (o *UpdateExternalBackendForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update external backend forbidden response a status code equal to that given
+func (o *UpdateExternalBackendForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the update external backend forbidden response
+func (o *UpdateExternalBackendForbidden) Code() int {
+	return 403
+}
+
 func (o *UpdateExternalBackendForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendForbidden %s", 403, payload)
+}
+
+func (o *UpdateExternalBackendForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendForbidden %s", 403, payload)
 }
 
 func (o *UpdateExternalBackendForbidden) GetPayload() *models.ErrorPayload {
@@ -123,12 +201,16 @@ func (o *UpdateExternalBackendForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateExternalBackendForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -145,15 +227,50 @@ func NewUpdateExternalBackendLengthRequired() *UpdateExternalBackendLengthRequir
 	return &UpdateExternalBackendLengthRequired{}
 }
 
-/*UpdateExternalBackendLengthRequired handles this case with default header values.
+/*
+UpdateExternalBackendLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type UpdateExternalBackendLengthRequired struct {
 }
 
+// IsSuccess returns true when this update external backend length required response has a 2xx status code
+func (o *UpdateExternalBackendLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update external backend length required response has a 3xx status code
+func (o *UpdateExternalBackendLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update external backend length required response has a 4xx status code
+func (o *UpdateExternalBackendLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update external backend length required response has a 5xx status code
+func (o *UpdateExternalBackendLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update external backend length required response a status code equal to that given
+func (o *UpdateExternalBackendLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the update external backend length required response
+func (o *UpdateExternalBackendLengthRequired) Code() int {
+	return 411
+}
+
 func (o *UpdateExternalBackendLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendLengthRequired ", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendLengthRequired", 411)
+}
+
+func (o *UpdateExternalBackendLengthRequired) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendLengthRequired", 411)
 }
 
 func (o *UpdateExternalBackendLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -166,20 +283,60 @@ func NewUpdateExternalBackendUnprocessableEntity() *UpdateExternalBackendUnproce
 	return &UpdateExternalBackendUnprocessableEntity{}
 }
 
-/*UpdateExternalBackendUnprocessableEntity handles this case with default header values.
+/*
+UpdateExternalBackendUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateExternalBackendUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update external backend unprocessable entity response has a 2xx status code
+func (o *UpdateExternalBackendUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update external backend unprocessable entity response has a 3xx status code
+func (o *UpdateExternalBackendUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update external backend unprocessable entity response has a 4xx status code
+func (o *UpdateExternalBackendUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update external backend unprocessable entity response has a 5xx status code
+func (o *UpdateExternalBackendUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update external backend unprocessable entity response a status code equal to that given
+func (o *UpdateExternalBackendUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the update external backend unprocessable entity response
+func (o *UpdateExternalBackendUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *UpdateExternalBackendUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendUnprocessableEntity %s", 422, payload)
+}
+
+func (o *UpdateExternalBackendUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackendUnprocessableEntity %s", 422, payload)
 }
 
 func (o *UpdateExternalBackendUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -188,12 +345,16 @@ func (o *UpdateExternalBackendUnprocessableEntity) GetPayload() *models.ErrorPay
 
 func (o *UpdateExternalBackendUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -212,18 +373,46 @@ func NewUpdateExternalBackendDefault(code int) *UpdateExternalBackendDefault {
 	}
 }
 
-/*UpdateExternalBackendDefault handles this case with default header values.
+/*
+UpdateExternalBackendDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UpdateExternalBackendDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this update external backend default response has a 2xx status code
+func (o *UpdateExternalBackendDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this update external backend default response has a 3xx status code
+func (o *UpdateExternalBackendDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this update external backend default response has a 4xx status code
+func (o *UpdateExternalBackendDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this update external backend default response has a 5xx status code
+func (o *UpdateExternalBackendDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this update external backend default response a status code equal to that given
+func (o *UpdateExternalBackendDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the update external backend default response
@@ -232,7 +421,13 @@ func (o *UpdateExternalBackendDefault) Code() int {
 }
 
 func (o *UpdateExternalBackendDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackend default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackend default %s", o._statusCode, payload)
+}
+
+func (o *UpdateExternalBackendDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/external_backends/{external_backend_id}][%d] updateExternalBackend default %s", o._statusCode, payload)
 }
 
 func (o *UpdateExternalBackendDefault) GetPayload() *models.ErrorPayload {
@@ -241,12 +436,16 @@ func (o *UpdateExternalBackendDefault) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateExternalBackendDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -258,7 +457,8 @@ func (o *UpdateExternalBackendDefault) readResponse(response runtime.ClientRespo
 	return nil
 }
 
-/*UpdateExternalBackendOKBody update external backend o k body
+/*
+UpdateExternalBackendOKBody update external backend o k body
 swagger:model UpdateExternalBackendOKBody
 */
 type UpdateExternalBackendOKBody struct {
@@ -292,6 +492,39 @@ func (o *UpdateExternalBackendOKBody) validateData(formats strfmt.Registry) erro
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updateExternalBackendOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updateExternalBackendOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update external backend o k body based on the context it is used
+func (o *UpdateExternalBackendOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdateExternalBackendOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateExternalBackendOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updateExternalBackendOK" + "." + "data")
 			}
 			return err
 		}

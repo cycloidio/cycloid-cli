@@ -7,13 +7,38 @@ package organization_credentials
 
 import (
 	"github.com/go-openapi/runtime"
-
-	strfmt "github.com/go-openapi/strfmt"
+	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization credentials API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new organization credentials API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new organization credentials API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -24,8 +49,78 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
+// This client is generated with a few options you might find useful for your swagger spec.
+//
+// Feel free to add you own set of options.
+
+// WithContentType allows the client to force the Content-Type header
+// to negotiate a specific Consumer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithContentType(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ConsumesMediaTypes = []string{mime}
+	}
+}
+
+// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
+func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/json"}
+}
+
+// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
+func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
+func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
+}
+
+// WithAccept allows the client to force the Accept header
+// to negotiate a specific Producer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithAccept(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ProducesMediaTypes = []string{mime}
+	}
+}
+
+// WithAcceptApplicationJSON sets the Accept header to "application/json".
+func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/json"}
+}
+
+// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
+func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// ClientService is the interface for Client methods
+type ClientService interface {
+	CreateCredential(params *CreateCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateCredentialOK, error)
+
+	DeleteCredential(params *DeleteCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteCredentialNoContent, error)
+
+	GetCredential(params *GetCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCredentialOK, error)
+
+	GetCredentialOptions(params *GetCredentialOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCredentialOptionsOK, error)
+
+	ListCredentials(params *ListCredentialsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListCredentialsOK, error)
+
+	UpdateCredential(params *UpdateCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateCredentialOK, error)
+
+	SetTransport(transport runtime.ClientTransport)
+}
+
 /*
-CreateCredential Create a new Credential, based on the type you will have to pass different parameters within the body:
+	CreateCredential Create a new Credential, based on the type you will have to pass different parameters within the body:
+
 * ssh: ssh_key
 * aws: access_key, secret_key
 * gcp: json_key
@@ -36,13 +131,12 @@ CreateCredential Create a new Credential, based on the type you will have to pas
 * swift: auth_url, username, password, domain_id, tenant_id
 * vmware: username, password
 */
-func (a *Client) CreateCredential(params *CreateCredentialParams, authInfo runtime.ClientAuthInfoWriter) (*CreateCredentialOK, error) {
+func (a *Client) CreateCredential(params *CreateCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateCredentialOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateCredentialParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "createCredential",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/credentials",
@@ -54,7 +148,12 @@ func (a *Client) CreateCredential(params *CreateCredentialParams, authInfo runti
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -70,13 +169,12 @@ func (a *Client) CreateCredential(params *CreateCredentialParams, authInfo runti
 /*
 DeleteCredential Delete the Credential.
 */
-func (a *Client) DeleteCredential(params *DeleteCredentialParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteCredentialNoContent, error) {
+func (a *Client) DeleteCredential(params *DeleteCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteCredentialNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteCredentialParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "deleteCredential",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_canonical}",
@@ -88,7 +186,12 @@ func (a *Client) DeleteCredential(params *DeleteCredentialParams, authInfo runti
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -104,13 +207,12 @@ func (a *Client) DeleteCredential(params *DeleteCredentialParams, authInfo runti
 /*
 GetCredential Get the information of the Credential.
 */
-func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.ClientAuthInfoWriter) (*GetCredentialOK, error) {
+func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCredentialOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetCredentialParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getCredential",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_canonical}",
@@ -122,7 +224,12 @@ func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.Cli
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -138,13 +245,12 @@ func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.Cli
 /*
 GetCredentialOptions Get options of the Credential.
 */
-func (a *Client) GetCredentialOptions(params *GetCredentialOptionsParams, authInfo runtime.ClientAuthInfoWriter) (*GetCredentialOptionsOK, error) {
+func (a *Client) GetCredentialOptions(params *GetCredentialOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCredentialOptionsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetCredentialOptionsParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getCredentialOptions",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_canonical}/options",
@@ -156,7 +262,12 @@ func (a *Client) GetCredentialOptions(params *GetCredentialOptionsParams, authIn
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -172,13 +283,12 @@ func (a *Client) GetCredentialOptions(params *GetCredentialOptionsParams, authIn
 /*
 ListCredentials Return all the Credentials, depending on the caller permissions it'll return the Raw data or not. If the caller has List and not Get it'll not return the Raw, if it has List and Read it'll return the Raw.
 */
-func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime.ClientAuthInfoWriter) (*ListCredentialsOK, error) {
+func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListCredentialsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewListCredentialsParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "listCredentials",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/credentials",
@@ -190,7 +300,12 @@ func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -204,7 +319,8 @@ func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime
 }
 
 /*
-UpdateCredential Update an existing Credential, based on the type you will have to pass different parameters within the body:
+	UpdateCredential Update an existing Credential, based on the type you will have to pass different parameters within the body:
+
 * ssh: ssh_key
 * aws: access_key, secret_key
 * gcp: json_key
@@ -215,13 +331,12 @@ UpdateCredential Update an existing Credential, based on the type you will have 
 * swift: auth_url, username, password, domain_id, tenant_id
 * vmware: username, password
 */
-func (a *Client) UpdateCredential(params *UpdateCredentialParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateCredentialOK, error) {
+func (a *Client) UpdateCredential(params *UpdateCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateCredentialOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateCredentialParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "updateCredential",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/credentials/{credential_canonical}",
@@ -233,7 +348,12 @@ func (a *Client) UpdateCredential(params *UpdateCredentialParams, authInfo runti
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

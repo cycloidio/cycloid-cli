@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -56,20 +56,7 @@ func (m *AWSStorage) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *AWSStorage) SetEngine(val string) {
-
 }
-
-// Bucket gets the bucket of this subtype
-
-// Endpoint gets the endpoint of this subtype
-
-// Key gets the key of this subtype
-
-// Region gets the region of this subtype
-
-// S3ForcePathStyle gets the s3 force path style of this subtype
-
-// SkipVerifySsl gets the skip verify ssl of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *AWSStorage) UnmarshalJSON(raw []byte) error {
@@ -130,15 +117,10 @@ func (m *AWSStorage) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.Bucket = data.Bucket
-
 	result.Endpoint = data.Endpoint
-
 	result.Key = data.Key
-
 	result.Region = data.Region
-
 	result.S3ForcePathStyle = data.S3ForcePathStyle
-
 	result.SkipVerifySsl = data.SkipVerifySsl
 
 	*m = result
@@ -190,8 +172,7 @@ func (m AWSStorage) MarshalJSON() ([]byte, error) {
 		S3ForcePathStyle: m.S3ForcePathStyle,
 
 		SkipVerifySsl: m.SkipVerifySsl,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -200,8 +181,7 @@ func (m AWSStorage) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -242,6 +222,16 @@ func (m *AWSStorage) validateRegion(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this a w s storage based on the context it is used
+func (m *AWSStorage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

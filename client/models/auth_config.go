@@ -7,19 +7,20 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // AuthConfig AuthConfig
+//
 // swagger:model AuthConfig
 type AuthConfig struct {
 
@@ -95,8 +96,7 @@ func (m AuthConfig) MarshalJSON() ([]byte, error) {
 		Local: m.Local,
 
 		Saml2: m.Saml2,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -105,8 +105,7 @@ func (m AuthConfig) MarshalJSON() ([]byte, error) {
 	}{
 
 		Oauth: m.oauthField,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -146,6 +145,8 @@ func (m *AuthConfig) validateLocal(formats strfmt.Registry) error {
 		if err := m.Local.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("local")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("local")
 			}
 			return err
 		}
@@ -165,6 +166,8 @@ func (m *AuthConfig) validateOauth(formats strfmt.Registry) error {
 		if err := m.oauthField[i].Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("oauth" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("oauth" + "." + strconv.Itoa(i))
 			}
 			return err
 		}
@@ -189,6 +192,94 @@ func (m *AuthConfig) validateSaml2(formats strfmt.Registry) error {
 			if err := m.Saml2[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("saml2" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("saml2" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this auth config based on the context it is used
+func (m *AuthConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLocal(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOauth(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSaml2(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *AuthConfig) contextValidateLocal(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Local != nil {
+
+		if err := m.Local.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("local")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("local")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AuthConfig) contextValidateOauth(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Oauth()); i++ {
+
+		if swag.IsZero(m.oauthField[i]) { // not required
+			return nil
+		}
+
+		if err := m.oauthField[i].ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("oauth" + "." + strconv.Itoa(i))
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("oauth" + "." + strconv.Itoa(i))
+			}
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (m *AuthConfig) contextValidateSaml2(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Saml2); i++ {
+
+		if m.Saml2[i] != nil {
+
+			if swag.IsZero(m.Saml2[i]) { // not required
+				return nil
+			}
+
+			if err := m.Saml2[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("saml2" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("saml2" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

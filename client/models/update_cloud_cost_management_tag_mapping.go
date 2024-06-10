@@ -6,14 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // UpdateCloudCostManagementTagMapping Create or Update CloudCostManagementTagMapping
 //
-// Create or Update a Cloud Cost Management tag mapping for projects and environments
+// # Create or Update a Cloud Cost Management tag mapping for projects and environments
+//
 // swagger:model UpdateCloudCostManagementTagMapping
 type UpdateCloudCostManagementTagMapping struct {
 
@@ -32,6 +34,11 @@ type UpdateCloudCostManagementTagMapping struct {
 
 // Validate validates this update cloud cost management tag mapping
 func (m *UpdateCloudCostManagementTagMapping) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this update cloud cost management tag mapping based on context it is used
+func (m *UpdateCloudCostManagementTagMapping) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

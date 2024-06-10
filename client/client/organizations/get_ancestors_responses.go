@@ -6,18 +6,19 @@ package organizations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetAncestorsReader is a Reader for the GetAncestors structure.
@@ -57,7 +58,8 @@ func NewGetAncestorsOK() *GetAncestorsOK {
 	return &GetAncestorsOK{}
 }
 
-/*GetAncestorsOK handles this case with default header values.
+/*
+GetAncestorsOK describes a response with status code 200, with default header values.
 
 Get all the ancestors between the Organization and the User with the shortest path. 0 index is the parent and n is the searched child
 */
@@ -65,8 +67,44 @@ type GetAncestorsOK struct {
 	Payload *GetAncestorsOKBody
 }
 
+// IsSuccess returns true when this get ancestors o k response has a 2xx status code
+func (o *GetAncestorsOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get ancestors o k response has a 3xx status code
+func (o *GetAncestorsOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get ancestors o k response has a 4xx status code
+func (o *GetAncestorsOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get ancestors o k response has a 5xx status code
+func (o *GetAncestorsOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get ancestors o k response a status code equal to that given
+func (o *GetAncestorsOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get ancestors o k response
+func (o *GetAncestorsOK) Code() int {
+	return 200
+}
+
 func (o *GetAncestorsOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestorsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestorsOK %s", 200, payload)
+}
+
+func (o *GetAncestorsOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestorsOK %s", 200, payload)
 }
 
 func (o *GetAncestorsOK) GetPayload() *GetAncestorsOKBody {
@@ -90,20 +128,60 @@ func NewGetAncestorsUnauthorized() *GetAncestorsUnauthorized {
 	return &GetAncestorsUnauthorized{}
 }
 
-/*GetAncestorsUnauthorized handles this case with default header values.
+/*
+GetAncestorsUnauthorized describes a response with status code 401, with default header values.
 
 The user cannot be authenticated with the credentials which she/he has used.
 */
 type GetAncestorsUnauthorized struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get ancestors unauthorized response has a 2xx status code
+func (o *GetAncestorsUnauthorized) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get ancestors unauthorized response has a 3xx status code
+func (o *GetAncestorsUnauthorized) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get ancestors unauthorized response has a 4xx status code
+func (o *GetAncestorsUnauthorized) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get ancestors unauthorized response has a 5xx status code
+func (o *GetAncestorsUnauthorized) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get ancestors unauthorized response a status code equal to that given
+func (o *GetAncestorsUnauthorized) IsCode(code int) bool {
+	return code == 401
+}
+
+// Code gets the status code for the get ancestors unauthorized response
+func (o *GetAncestorsUnauthorized) Code() int {
+	return 401
+}
+
 func (o *GetAncestorsUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestorsUnauthorized  %+v", 401, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestorsUnauthorized %s", 401, payload)
+}
+
+func (o *GetAncestorsUnauthorized) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestorsUnauthorized %s", 401, payload)
 }
 
 func (o *GetAncestorsUnauthorized) GetPayload() *models.ErrorPayload {
@@ -112,12 +190,16 @@ func (o *GetAncestorsUnauthorized) GetPayload() *models.ErrorPayload {
 
 func (o *GetAncestorsUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -136,18 +218,46 @@ func NewGetAncestorsDefault(code int) *GetAncestorsDefault {
 	}
 }
 
-/*GetAncestorsDefault handles this case with default header values.
+/*
+GetAncestorsDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetAncestorsDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get ancestors default response has a 2xx status code
+func (o *GetAncestorsDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get ancestors default response has a 3xx status code
+func (o *GetAncestorsDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get ancestors default response has a 4xx status code
+func (o *GetAncestorsDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get ancestors default response has a 5xx status code
+func (o *GetAncestorsDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get ancestors default response a status code equal to that given
+func (o *GetAncestorsDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get ancestors default response
@@ -156,7 +266,13 @@ func (o *GetAncestorsDefault) Code() int {
 }
 
 func (o *GetAncestorsDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestors default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestors default %s", o._statusCode, payload)
+}
+
+func (o *GetAncestorsDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/ancestors][%d] getAncestors default %s", o._statusCode, payload)
 }
 
 func (o *GetAncestorsDefault) GetPayload() *models.ErrorPayload {
@@ -165,12 +281,16 @@ func (o *GetAncestorsDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetAncestorsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -182,7 +302,8 @@ func (o *GetAncestorsDefault) readResponse(response runtime.ClientResponse, cons
 	return nil
 }
 
-/*GetAncestorsOKBody get ancestors o k body
+/*
+GetAncestorsOKBody get ancestors o k body
 swagger:model GetAncestorsOKBody
 */
 type GetAncestorsOKBody struct {
@@ -229,6 +350,8 @@ func (o *GetAncestorsOKBody) validateData(formats strfmt.Registry) error {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -249,6 +372,68 @@ func (o *GetAncestorsOKBody) validatePagination(formats strfmt.Registry) error {
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getAncestorsOK" + "." + "pagination")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getAncestorsOK" + "." + "pagination")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get ancestors o k body based on the context it is used
+func (o *GetAncestorsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidatePagination(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetAncestorsOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Data); i++ {
+
+		if o.Data[i] != nil {
+
+			if swag.IsZero(o.Data[i]) { // not required
+				return nil
+			}
+
+			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetAncestorsOKBody) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Pagination != nil {
+
+		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getAncestorsOK" + "." + "pagination")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getAncestorsOK" + "." + "pagination")
 			}
 			return err
 		}

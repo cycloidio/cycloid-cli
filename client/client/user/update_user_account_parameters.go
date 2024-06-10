@@ -13,65 +13,80 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateUserAccountParams creates a new UpdateUserAccountParams object
-// with the default values initialized.
+// NewUpdateUserAccountParams creates a new UpdateUserAccountParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUpdateUserAccountParams() *UpdateUserAccountParams {
-	var ()
 	return &UpdateUserAccountParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateUserAccountParamsWithTimeout creates a new UpdateUserAccountParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUpdateUserAccountParamsWithTimeout(timeout time.Duration) *UpdateUserAccountParams {
-	var ()
 	return &UpdateUserAccountParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUpdateUserAccountParamsWithContext creates a new UpdateUserAccountParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUpdateUserAccountParamsWithContext(ctx context.Context) *UpdateUserAccountParams {
-	var ()
 	return &UpdateUserAccountParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUpdateUserAccountParamsWithHTTPClient creates a new UpdateUserAccountParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUpdateUserAccountParamsWithHTTPClient(client *http.Client) *UpdateUserAccountParams {
-	var ()
 	return &UpdateUserAccountParams{
 		HTTPClient: client,
 	}
 }
 
-/*UpdateUserAccountParams contains all the parameters to send to the API endpoint
-for the update user account operation typically these are written to a http.Request
+/*
+UpdateUserAccountParams contains all the parameters to send to the API endpoint
+
+	for the update user account operation.
+
+	Typically these are written to a http.Request.
 */
 type UpdateUserAccountParams struct {
 
-	/*Body
-	  The user content
+	/* Body.
 
+	   The user content
 	*/
 	Body *models.UpdateUserAccount
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the update user account params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateUserAccountParams) WithDefaults() *UpdateUserAccountParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the update user account params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateUserAccountParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update user account params
@@ -125,7 +140,6 @@ func (o *UpdateUserAccountParams) WriteToRequest(r runtime.ClientRequest, reg st
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

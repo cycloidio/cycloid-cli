@@ -6,12 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -19,6 +19,7 @@ import (
 // UserAccount User's account
 //
 // The user's account contains information related with the authenticated user.
+//
 // swagger:model UserAccount
 type UserAccount struct {
 
@@ -55,7 +56,7 @@ type UserAccount struct {
 
 	// User's preferred language
 	// Required: true
-	// Enum: [en fr es]
+	// Enum: ["en","fr","es"]
 	Locale *string `json:"locale"`
 
 	// mfa enabled
@@ -134,7 +135,6 @@ func (m *UserAccount) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UserAccount) validateCountry(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Country) { // not required
 		return nil
 	}
@@ -143,6 +143,8 @@ func (m *UserAccount) validateCountry(formats strfmt.Registry) error {
 		if err := m.Country.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("country")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("country")
 			}
 			return err
 		}
@@ -157,7 +159,7 @@ func (m *UserAccount) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -185,6 +187,8 @@ func (m *UserAccount) validateEmails(formats strfmt.Registry) error {
 			if err := m.Emails[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("emails" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("emails" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -201,7 +205,7 @@ func (m *UserAccount) validateFamilyName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("family_name", "body", string(*m.FamilyName), 2); err != nil {
+	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
 		return err
 	}
 
@@ -214,7 +218,7 @@ func (m *UserAccount) validateGivenName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("given_name", "body", string(*m.GivenName), 2); err != nil {
+	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
 		return err
 	}
 
@@ -227,7 +231,7 @@ func (m *UserAccount) validateLastLogin(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("last_login", "body", int64(*m.LastLogin), 0, false); err != nil {
+	if err := validate.MinimumUint("last_login", "body", *m.LastLogin, 0, false); err != nil {
 		return err
 	}
 
@@ -260,7 +264,7 @@ const (
 
 // prop value enum
 func (m *UserAccount) validateLocaleEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, userAccountTypeLocalePropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, userAccountTypeLocalePropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -290,7 +294,6 @@ func (m *UserAccount) validateMfaEnabled(formats strfmt.Registry) error {
 }
 
 func (m *UserAccount) validatePictureURL(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PictureURL) { // not required
 		return nil
 	}
@@ -308,7 +311,7 @@ func (m *UserAccount) validateUpdatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -321,16 +324,80 @@ func (m *UserAccount) validateUsername(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("username", "body", string(*m.Username), 3); err != nil {
+	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", string(*m.Username), 100); err != nil {
+	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", string(*m.Username), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this user account based on the context it is used
+func (m *UserAccount) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateCountry(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateEmails(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UserAccount) contextValidateCountry(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Country != nil {
+
+		if swag.IsZero(m.Country) { // not required
+			return nil
+		}
+
+		if err := m.Country.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("country")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("country")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *UserAccount) contextValidateEmails(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Emails); i++ {
+
+		if m.Emails[i] != nil {
+
+			if swag.IsZero(m.Emails[i]) { // not required
+				return nil
+			}
+
+			if err := m.Emails[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("emails" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("emails" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

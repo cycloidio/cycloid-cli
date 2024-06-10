@@ -6,17 +6,18 @@ package cycloid
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetServiceStatusReader is a Reader for the GetServiceStatus structure.
@@ -39,9 +40,8 @@ func (o *GetServiceStatusReader) ReadResponse(response runtime.ClientResponse, c
 			return nil, err
 		}
 		return nil, result
-
 	default:
-		return nil, runtime.NewAPIError("unknown error", response, response.Code())
+		return nil, runtime.NewAPIError("[GET /status/{service_status_canonical}] getServiceStatus", response, response.Code())
 	}
 }
 
@@ -50,7 +50,8 @@ func NewGetServiceStatusOK() *GetServiceStatusOK {
 	return &GetServiceStatusOK{}
 }
 
-/*GetServiceStatusOK handles this case with default header values.
+/*
+GetServiceStatusOK describes a response with status code 200, with default header values.
 
 General application status and services statuses.
 */
@@ -58,8 +59,44 @@ type GetServiceStatusOK struct {
 	Payload *GetServiceStatusOKBody
 }
 
+// IsSuccess returns true when this get service status o k response has a 2xx status code
+func (o *GetServiceStatusOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get service status o k response has a 3xx status code
+func (o *GetServiceStatusOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get service status o k response has a 4xx status code
+func (o *GetServiceStatusOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get service status o k response has a 5xx status code
+func (o *GetServiceStatusOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get service status o k response a status code equal to that given
+func (o *GetServiceStatusOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get service status o k response
+func (o *GetServiceStatusOK) Code() int {
+	return 200
+}
+
 func (o *GetServiceStatusOK) Error() string {
-	return fmt.Sprintf("[GET /status/{service_status_canonical}][%d] getServiceStatusOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /status/{service_status_canonical}][%d] getServiceStatusOK %s", 200, payload)
+}
+
+func (o *GetServiceStatusOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /status/{service_status_canonical}][%d] getServiceStatusOK %s", 200, payload)
 }
 
 func (o *GetServiceStatusOK) GetPayload() *GetServiceStatusOKBody {
@@ -83,20 +120,60 @@ func NewGetServiceStatusInternalServerError() *GetServiceStatusInternalServerErr
 	return &GetServiceStatusInternalServerError{}
 }
 
-/*GetServiceStatusInternalServerError handles this case with default header values.
+/*
+GetServiceStatusInternalServerError describes a response with status code 500, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetServiceStatusInternalServerError struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get service status internal server error response has a 2xx status code
+func (o *GetServiceStatusInternalServerError) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get service status internal server error response has a 3xx status code
+func (o *GetServiceStatusInternalServerError) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get service status internal server error response has a 4xx status code
+func (o *GetServiceStatusInternalServerError) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get service status internal server error response has a 5xx status code
+func (o *GetServiceStatusInternalServerError) IsServerError() bool {
+	return true
+}
+
+// IsCode returns true when this get service status internal server error response a status code equal to that given
+func (o *GetServiceStatusInternalServerError) IsCode(code int) bool {
+	return code == 500
+}
+
+// Code gets the status code for the get service status internal server error response
+func (o *GetServiceStatusInternalServerError) Code() int {
+	return 500
+}
+
 func (o *GetServiceStatusInternalServerError) Error() string {
-	return fmt.Sprintf("[GET /status/{service_status_canonical}][%d] getServiceStatusInternalServerError  %+v", 500, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /status/{service_status_canonical}][%d] getServiceStatusInternalServerError %s", 500, payload)
+}
+
+func (o *GetServiceStatusInternalServerError) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /status/{service_status_canonical}][%d] getServiceStatusInternalServerError %s", 500, payload)
 }
 
 func (o *GetServiceStatusInternalServerError) GetPayload() *models.ErrorPayload {
@@ -105,12 +182,16 @@ func (o *GetServiceStatusInternalServerError) GetPayload() *models.ErrorPayload 
 
 func (o *GetServiceStatusInternalServerError) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -122,7 +203,8 @@ func (o *GetServiceStatusInternalServerError) readResponse(response runtime.Clie
 	return nil
 }
 
-/*GetServiceStatusOKBody get service status o k body
+/*
+GetServiceStatusOKBody get service status o k body
 swagger:model GetServiceStatusOKBody
 */
 type GetServiceStatusOKBody struct {
@@ -156,6 +238,39 @@ func (o *GetServiceStatusOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getServiceStatusOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getServiceStatusOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get service status o k body based on the context it is used
+func (o *GetServiceStatusOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetServiceStatusOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getServiceStatusOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getServiceStatusOK" + "." + "data")
 			}
 			return err
 		}

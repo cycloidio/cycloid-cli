@@ -6,17 +6,18 @@ package organization_pipelines_jobs_build
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetBuildPreparationReader is a Reader for the GetBuildPreparation structure.
@@ -62,7 +63,8 @@ func NewGetBuildPreparationOK() *GetBuildPreparationOK {
 	return &GetBuildPreparationOK{}
 }
 
-/*GetBuildPreparationOK handles this case with default header values.
+/*
+GetBuildPreparationOK describes a response with status code 200, with default header values.
 
 Return the Preparation
 */
@@ -70,8 +72,44 @@ type GetBuildPreparationOK struct {
 	Payload *GetBuildPreparationOKBody
 }
 
+// IsSuccess returns true when this get build preparation o k response has a 2xx status code
+func (o *GetBuildPreparationOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get build preparation o k response has a 3xx status code
+func (o *GetBuildPreparationOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get build preparation o k response has a 4xx status code
+func (o *GetBuildPreparationOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get build preparation o k response has a 5xx status code
+func (o *GetBuildPreparationOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get build preparation o k response a status code equal to that given
+func (o *GetBuildPreparationOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get build preparation o k response
+func (o *GetBuildPreparationOK) Code() int {
+	return 200
+}
+
 func (o *GetBuildPreparationOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationOK %s", 200, payload)
+}
+
+func (o *GetBuildPreparationOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationOK %s", 200, payload)
 }
 
 func (o *GetBuildPreparationOK) GetPayload() *GetBuildPreparationOKBody {
@@ -95,20 +133,60 @@ func NewGetBuildPreparationForbidden() *GetBuildPreparationForbidden {
 	return &GetBuildPreparationForbidden{}
 }
 
-/*GetBuildPreparationForbidden handles this case with default header values.
+/*
+GetBuildPreparationForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetBuildPreparationForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get build preparation forbidden response has a 2xx status code
+func (o *GetBuildPreparationForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get build preparation forbidden response has a 3xx status code
+func (o *GetBuildPreparationForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get build preparation forbidden response has a 4xx status code
+func (o *GetBuildPreparationForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get build preparation forbidden response has a 5xx status code
+func (o *GetBuildPreparationForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get build preparation forbidden response a status code equal to that given
+func (o *GetBuildPreparationForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get build preparation forbidden response
+func (o *GetBuildPreparationForbidden) Code() int {
+	return 403
+}
+
 func (o *GetBuildPreparationForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationForbidden %s", 403, payload)
+}
+
+func (o *GetBuildPreparationForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationForbidden %s", 403, payload)
 }
 
 func (o *GetBuildPreparationForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *GetBuildPreparationForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetBuildPreparationForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +221,60 @@ func NewGetBuildPreparationNotFound() *GetBuildPreparationNotFound {
 	return &GetBuildPreparationNotFound{}
 }
 
-/*GetBuildPreparationNotFound handles this case with default header values.
+/*
+GetBuildPreparationNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetBuildPreparationNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get build preparation not found response has a 2xx status code
+func (o *GetBuildPreparationNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get build preparation not found response has a 3xx status code
+func (o *GetBuildPreparationNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get build preparation not found response has a 4xx status code
+func (o *GetBuildPreparationNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get build preparation not found response has a 5xx status code
+func (o *GetBuildPreparationNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get build preparation not found response a status code equal to that given
+func (o *GetBuildPreparationNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get build preparation not found response
+func (o *GetBuildPreparationNotFound) Code() int {
+	return 404
+}
+
 func (o *GetBuildPreparationNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationNotFound %s", 404, payload)
+}
+
+func (o *GetBuildPreparationNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparationNotFound %s", 404, payload)
 }
 
 func (o *GetBuildPreparationNotFound) GetPayload() *models.ErrorPayload {
@@ -161,12 +283,16 @@ func (o *GetBuildPreparationNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetBuildPreparationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +311,46 @@ func NewGetBuildPreparationDefault(code int) *GetBuildPreparationDefault {
 	}
 }
 
-/*GetBuildPreparationDefault handles this case with default header values.
+/*
+GetBuildPreparationDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetBuildPreparationDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get build preparation default response has a 2xx status code
+func (o *GetBuildPreparationDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get build preparation default response has a 3xx status code
+func (o *GetBuildPreparationDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get build preparation default response has a 4xx status code
+func (o *GetBuildPreparationDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get build preparation default response has a 5xx status code
+func (o *GetBuildPreparationDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get build preparation default response a status code equal to that given
+func (o *GetBuildPreparationDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get build preparation default response
@@ -205,7 +359,13 @@ func (o *GetBuildPreparationDefault) Code() int {
 }
 
 func (o *GetBuildPreparationDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparation default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparation default %s", o._statusCode, payload)
+}
+
+func (o *GetBuildPreparationDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation][%d] getBuildPreparation default %s", o._statusCode, payload)
 }
 
 func (o *GetBuildPreparationDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +374,16 @@ func (o *GetBuildPreparationDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetBuildPreparationDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +395,8 @@ func (o *GetBuildPreparationDefault) readResponse(response runtime.ClientRespons
 	return nil
 }
 
-/*GetBuildPreparationOKBody get build preparation o k body
+/*
+GetBuildPreparationOKBody get build preparation o k body
 swagger:model GetBuildPreparationOKBody
 */
 type GetBuildPreparationOKBody struct {
@@ -265,6 +430,39 @@ func (o *GetBuildPreparationOKBody) validateData(formats strfmt.Registry) error 
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getBuildPreparationOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getBuildPreparationOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get build preparation o k body based on the context it is used
+func (o *GetBuildPreparationOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetBuildPreparationOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getBuildPreparationOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getBuildPreparationOK" + "." + "data")
 			}
 			return err
 		}

@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // CloudCostManagementHistogram CloudCostManagementHistogram
 //
 // The histogram of the costs for a period composed of buckets that aggregate the costs.
+//
 // swagger:model CloudCostManagementHistogram
 type CloudCostManagementHistogram struct {
 
@@ -79,6 +80,8 @@ func (m *CloudCostManagementHistogram) validateBuckets(formats strfmt.Registry) 
 			if err := m.Buckets[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("buckets" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("buckets" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -111,6 +114,45 @@ func (m *CloudCostManagementHistogram) validateKwh(formats strfmt.Registry) erro
 
 	if err := validate.Required("kwh", "body", m.Kwh); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this cloud cost management histogram based on the context it is used
+func (m *CloudCostManagementHistogram) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBuckets(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CloudCostManagementHistogram) contextValidateBuckets(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Buckets); i++ {
+
+		if m.Buckets[i] != nil {
+
+			if swag.IsZero(m.Buckets[i]) { // not required
+				return nil
+			}
+
+			if err := m.Buckets[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("buckets" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("buckets" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

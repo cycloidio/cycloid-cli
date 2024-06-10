@@ -6,14 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewServiceCatalogSource NewServiceCatalogSource
+//
 // swagger:model NewServiceCatalogSource
 type NewServiceCatalogSource struct {
 
@@ -89,20 +91,19 @@ func (m *NewServiceCatalogSource) validateBranch(formats strfmt.Registry) error 
 }
 
 func (m *NewServiceCatalogSource) validateCanonical(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -110,20 +111,19 @@ func (m *NewServiceCatalogSource) validateCanonical(formats strfmt.Registry) err
 }
 
 func (m *NewServiceCatalogSource) validateCredentialCanonical(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", string(m.CredentialCanonical), 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", m.CredentialCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -145,10 +145,15 @@ func (m *NewServiceCatalogSource) validateURL(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("url", "body", string(*m.URL), `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
+	if err := validate.Pattern("url", "body", *m.URL, `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this new service catalog source based on context it is used
+func (m *NewServiceCatalogSource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,16 +6,16 @@ package organization_pipelines
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeletePipelineReader is a Reader for the DeletePipeline structure.
@@ -61,15 +61,50 @@ func NewDeletePipelineNoContent() *DeletePipelineNoContent {
 	return &DeletePipelineNoContent{}
 }
 
-/*DeletePipelineNoContent handles this case with default header values.
+/*
+DeletePipelineNoContent describes a response with status code 204, with default header values.
 
 Pipeline has been deleted.
 */
 type DeletePipelineNoContent struct {
 }
 
+// IsSuccess returns true when this delete pipeline no content response has a 2xx status code
+func (o *DeletePipelineNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this delete pipeline no content response has a 3xx status code
+func (o *DeletePipelineNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete pipeline no content response has a 4xx status code
+func (o *DeletePipelineNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete pipeline no content response has a 5xx status code
+func (o *DeletePipelineNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete pipeline no content response a status code equal to that given
+func (o *DeletePipelineNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the delete pipeline no content response
+func (o *DeletePipelineNoContent) Code() int {
+	return 204
+}
+
 func (o *DeletePipelineNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineNoContent", 204)
+}
+
+func (o *DeletePipelineNoContent) String() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineNoContent", 204)
 }
 
 func (o *DeletePipelineNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -82,20 +117,60 @@ func NewDeletePipelineForbidden() *DeletePipelineForbidden {
 	return &DeletePipelineForbidden{}
 }
 
-/*DeletePipelineForbidden handles this case with default header values.
+/*
+DeletePipelineForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeletePipelineForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete pipeline forbidden response has a 2xx status code
+func (o *DeletePipelineForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete pipeline forbidden response has a 3xx status code
+func (o *DeletePipelineForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete pipeline forbidden response has a 4xx status code
+func (o *DeletePipelineForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete pipeline forbidden response has a 5xx status code
+func (o *DeletePipelineForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete pipeline forbidden response a status code equal to that given
+func (o *DeletePipelineForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the delete pipeline forbidden response
+func (o *DeletePipelineForbidden) Code() int {
+	return 403
+}
+
 func (o *DeletePipelineForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineForbidden %s", 403, payload)
+}
+
+func (o *DeletePipelineForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineForbidden %s", 403, payload)
 }
 
 func (o *DeletePipelineForbidden) GetPayload() *models.ErrorPayload {
@@ -104,12 +179,16 @@ func (o *DeletePipelineForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeletePipelineForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -126,20 +205,60 @@ func NewDeletePipelineNotFound() *DeletePipelineNotFound {
 	return &DeletePipelineNotFound{}
 }
 
-/*DeletePipelineNotFound handles this case with default header values.
+/*
+DeletePipelineNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeletePipelineNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete pipeline not found response has a 2xx status code
+func (o *DeletePipelineNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete pipeline not found response has a 3xx status code
+func (o *DeletePipelineNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete pipeline not found response has a 4xx status code
+func (o *DeletePipelineNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete pipeline not found response has a 5xx status code
+func (o *DeletePipelineNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete pipeline not found response a status code equal to that given
+func (o *DeletePipelineNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the delete pipeline not found response
+func (o *DeletePipelineNotFound) Code() int {
+	return 404
+}
+
 func (o *DeletePipelineNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineNotFound %s", 404, payload)
+}
+
+func (o *DeletePipelineNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipelineNotFound %s", 404, payload)
 }
 
 func (o *DeletePipelineNotFound) GetPayload() *models.ErrorPayload {
@@ -148,12 +267,16 @@ func (o *DeletePipelineNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeletePipelineNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,18 +295,46 @@ func NewDeletePipelineDefault(code int) *DeletePipelineDefault {
 	}
 }
 
-/*DeletePipelineDefault handles this case with default header values.
+/*
+DeletePipelineDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeletePipelineDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this delete pipeline default response has a 2xx status code
+func (o *DeletePipelineDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this delete pipeline default response has a 3xx status code
+func (o *DeletePipelineDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this delete pipeline default response has a 4xx status code
+func (o *DeletePipelineDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this delete pipeline default response has a 5xx status code
+func (o *DeletePipelineDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this delete pipeline default response a status code equal to that given
+func (o *DeletePipelineDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the delete pipeline default response
@@ -192,7 +343,13 @@ func (o *DeletePipelineDefault) Code() int {
 }
 
 func (o *DeletePipelineDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipeline default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipeline default %s", o._statusCode, payload)
+}
+
+func (o *DeletePipelineDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] deletePipeline default %s", o._statusCode, payload)
 }
 
 func (o *DeletePipelineDefault) GetPayload() *models.ErrorPayload {
@@ -201,12 +358,16 @@ func (o *DeletePipelineDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeletePipelineDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

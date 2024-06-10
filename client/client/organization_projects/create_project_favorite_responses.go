@@ -6,16 +6,16 @@ package organization_projects
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateProjectFavoriteReader is a Reader for the CreateProjectFavorite structure.
@@ -67,15 +67,50 @@ func NewCreateProjectFavoriteNoContent() *CreateProjectFavoriteNoContent {
 	return &CreateProjectFavoriteNoContent{}
 }
 
-/*CreateProjectFavoriteNoContent handles this case with default header values.
+/*
+CreateProjectFavoriteNoContent describes a response with status code 204, with default header values.
 
 The project has been added to user favorites list.
 */
 type CreateProjectFavoriteNoContent struct {
 }
 
+// IsSuccess returns true when this create project favorite no content response has a 2xx status code
+func (o *CreateProjectFavoriteNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create project favorite no content response has a 3xx status code
+func (o *CreateProjectFavoriteNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create project favorite no content response has a 4xx status code
+func (o *CreateProjectFavoriteNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create project favorite no content response has a 5xx status code
+func (o *CreateProjectFavoriteNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create project favorite no content response a status code equal to that given
+func (o *CreateProjectFavoriteNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the create project favorite no content response
+func (o *CreateProjectFavoriteNoContent) Code() int {
+	return 204
+}
+
 func (o *CreateProjectFavoriteNoContent) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteNoContent ", 204)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteNoContent", 204)
+}
+
+func (o *CreateProjectFavoriteNoContent) String() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteNoContent", 204)
 }
 
 func (o *CreateProjectFavoriteNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -88,20 +123,60 @@ func NewCreateProjectFavoriteForbidden() *CreateProjectFavoriteForbidden {
 	return &CreateProjectFavoriteForbidden{}
 }
 
-/*CreateProjectFavoriteForbidden handles this case with default header values.
+/*
+CreateProjectFavoriteForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type CreateProjectFavoriteForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create project favorite forbidden response has a 2xx status code
+func (o *CreateProjectFavoriteForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create project favorite forbidden response has a 3xx status code
+func (o *CreateProjectFavoriteForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create project favorite forbidden response has a 4xx status code
+func (o *CreateProjectFavoriteForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create project favorite forbidden response has a 5xx status code
+func (o *CreateProjectFavoriteForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create project favorite forbidden response a status code equal to that given
+func (o *CreateProjectFavoriteForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the create project favorite forbidden response
+func (o *CreateProjectFavoriteForbidden) Code() int {
+	return 403
+}
+
 func (o *CreateProjectFavoriteForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteForbidden %s", 403, payload)
+}
+
+func (o *CreateProjectFavoriteForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteForbidden %s", 403, payload)
 }
 
 func (o *CreateProjectFavoriteForbidden) GetPayload() *models.ErrorPayload {
@@ -110,12 +185,16 @@ func (o *CreateProjectFavoriteForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *CreateProjectFavoriteForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -132,20 +211,60 @@ func NewCreateProjectFavoriteNotFound() *CreateProjectFavoriteNotFound {
 	return &CreateProjectFavoriteNotFound{}
 }
 
-/*CreateProjectFavoriteNotFound handles this case with default header values.
+/*
+CreateProjectFavoriteNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type CreateProjectFavoriteNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create project favorite not found response has a 2xx status code
+func (o *CreateProjectFavoriteNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create project favorite not found response has a 3xx status code
+func (o *CreateProjectFavoriteNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create project favorite not found response has a 4xx status code
+func (o *CreateProjectFavoriteNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create project favorite not found response has a 5xx status code
+func (o *CreateProjectFavoriteNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create project favorite not found response a status code equal to that given
+func (o *CreateProjectFavoriteNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the create project favorite not found response
+func (o *CreateProjectFavoriteNotFound) Code() int {
+	return 404
+}
+
 func (o *CreateProjectFavoriteNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteNotFound %s", 404, payload)
+}
+
+func (o *CreateProjectFavoriteNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteNotFound %s", 404, payload)
 }
 
 func (o *CreateProjectFavoriteNotFound) GetPayload() *models.ErrorPayload {
@@ -154,12 +273,16 @@ func (o *CreateProjectFavoriteNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *CreateProjectFavoriteNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -176,20 +299,60 @@ func NewCreateProjectFavoriteUnprocessableEntity() *CreateProjectFavoriteUnproce
 	return &CreateProjectFavoriteUnprocessableEntity{}
 }
 
-/*CreateProjectFavoriteUnprocessableEntity handles this case with default header values.
+/*
+CreateProjectFavoriteUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateProjectFavoriteUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create project favorite unprocessable entity response has a 2xx status code
+func (o *CreateProjectFavoriteUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create project favorite unprocessable entity response has a 3xx status code
+func (o *CreateProjectFavoriteUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create project favorite unprocessable entity response has a 4xx status code
+func (o *CreateProjectFavoriteUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create project favorite unprocessable entity response has a 5xx status code
+func (o *CreateProjectFavoriteUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create project favorite unprocessable entity response a status code equal to that given
+func (o *CreateProjectFavoriteUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the create project favorite unprocessable entity response
+func (o *CreateProjectFavoriteUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *CreateProjectFavoriteUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteUnprocessableEntity %s", 422, payload)
+}
+
+func (o *CreateProjectFavoriteUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavoriteUnprocessableEntity %s", 422, payload)
 }
 
 func (o *CreateProjectFavoriteUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -198,12 +361,16 @@ func (o *CreateProjectFavoriteUnprocessableEntity) GetPayload() *models.ErrorPay
 
 func (o *CreateProjectFavoriteUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -222,18 +389,46 @@ func NewCreateProjectFavoriteDefault(code int) *CreateProjectFavoriteDefault {
 	}
 }
 
-/*CreateProjectFavoriteDefault handles this case with default header values.
+/*
+CreateProjectFavoriteDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateProjectFavoriteDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this create project favorite default response has a 2xx status code
+func (o *CreateProjectFavoriteDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this create project favorite default response has a 3xx status code
+func (o *CreateProjectFavoriteDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this create project favorite default response has a 4xx status code
+func (o *CreateProjectFavoriteDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this create project favorite default response has a 5xx status code
+func (o *CreateProjectFavoriteDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this create project favorite default response a status code equal to that given
+func (o *CreateProjectFavoriteDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the create project favorite default response
@@ -242,7 +437,13 @@ func (o *CreateProjectFavoriteDefault) Code() int {
 }
 
 func (o *CreateProjectFavoriteDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavorite default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavorite default %s", o._statusCode, payload)
+}
+
+func (o *CreateProjectFavoriteDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] createProjectFavorite default %s", o._statusCode, payload)
 }
 
 func (o *CreateProjectFavoriteDefault) GetPayload() *models.ErrorPayload {
@@ -251,12 +452,16 @@ func (o *CreateProjectFavoriteDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateProjectFavoriteDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

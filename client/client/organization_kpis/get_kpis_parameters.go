@@ -13,126 +13,153 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetKpisParams creates a new GetKpisParams object
-// with the default values initialized.
+// NewGetKpisParams creates a new GetKpisParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetKpisParams() *GetKpisParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetKpisParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetKpisParamsWithTimeout creates a new GetKpisParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetKpisParamsWithTimeout(timeout time.Duration) *GetKpisParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetKpisParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		timeout: timeout,
 	}
 }
 
 // NewGetKpisParamsWithContext creates a new GetKpisParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetKpisParamsWithContext(ctx context.Context) *GetKpisParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetKpisParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		Context: ctx,
 	}
 }
 
 // NewGetKpisParamsWithHTTPClient creates a new GetKpisParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetKpisParamsWithHTTPClient(client *http.Client) *GetKpisParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetKpisParams{
-		PageIndex:  &pageIndexDefault,
-		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*GetKpisParams contains all the parameters to send to the API endpoint
-for the get kpis operation typically these are written to a http.Request
+/*
+GetKpisParams contains all the parameters to send to the API endpoint
+
+	for the get kpis operation.
+
+	Typically these are written to a http.Request.
 */
 type GetKpisParams struct {
 
-	/*Begin
-	  The unix timestamp in seconds, which indicate the start of the time range.
+	/* Begin.
 
+	   The unix timestamp in seconds, which indicate the start of the time range.
+
+	   Format: uint64
 	*/
 	Begin *uint64
-	/*End
-	  The unix timestamp in seconds, which indicate the end of the time range.
 
+	/* End.
+
+	   The unix timestamp in seconds, which indicate the end of the time range.
+
+	   Format: uint64
 	*/
 	End *uint64
-	/*Environment
-	  The environment canonical to use a query filter
 
+	/* EnvironmentCanonical.
+
+	   A list of environments' canonical to filter from
 	*/
-	Environment *string
-	/*Favorite
-	  Flag to retrieve favorite data from the members favorite list.
+	EnvironmentCanonical *string
 
+	/* Favorite.
+
+	   Flag to retrieve favorite data from the members favorite list.
 
 	*/
 	Favorite *bool
-	/*FetchData
-	  Flag to retrieve KPIs' data upon retrieving KPIs themselves
 
+	/* FetchData.
+
+	   Flag to retrieve KPIs' data upon retrieving KPIs themselves
 
 	*/
 	FetchData *bool
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*PageIndex
-	  The page number to request. The first page is 1.
 
+	/* PageIndex.
+
+	   The page number to request. The first page is 1.
+
+	   Format: uint32
+	   Default: 1
 	*/
 	PageIndex *uint32
-	/*PageSize
-	  The number of items at most which the response can have.
 
+	/* PageSize.
+
+	   The number of items at most which the response can have.
+
+	   Format: uint32
+	   Default: 1000
 	*/
 	PageSize *uint32
-	/*Project
-	  A canonical of a project used for filtering.
 
+	/* ProjectCanonical.
+
+	   A list of projects' canonical to filter from
 	*/
-	Project *string
+	ProjectCanonical *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get kpis params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetKpisParams) WithDefaults() *GetKpisParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get kpis params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetKpisParams) SetDefaults() {
+	var (
+		pageIndexDefault = uint32(1)
+
+		pageSizeDefault = uint32(1000)
+	)
+
+	val := GetKpisParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get kpis params
@@ -190,15 +217,15 @@ func (o *GetKpisParams) SetEnd(end *uint64) {
 	o.End = end
 }
 
-// WithEnvironment adds the environment to the get kpis params
-func (o *GetKpisParams) WithEnvironment(environment *string) *GetKpisParams {
-	o.SetEnvironment(environment)
+// WithEnvironmentCanonical adds the environmentCanonical to the get kpis params
+func (o *GetKpisParams) WithEnvironmentCanonical(environmentCanonical *string) *GetKpisParams {
+	o.SetEnvironmentCanonical(environmentCanonical)
 	return o
 }
 
-// SetEnvironment adds the environment to the get kpis params
-func (o *GetKpisParams) SetEnvironment(environment *string) {
-	o.Environment = environment
+// SetEnvironmentCanonical adds the environmentCanonical to the get kpis params
+func (o *GetKpisParams) SetEnvironmentCanonical(environmentCanonical *string) {
+	o.EnvironmentCanonical = environmentCanonical
 }
 
 // WithFavorite adds the favorite to the get kpis params
@@ -256,15 +283,15 @@ func (o *GetKpisParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
-// WithProject adds the project to the get kpis params
-func (o *GetKpisParams) WithProject(project *string) *GetKpisParams {
-	o.SetProject(project)
+// WithProjectCanonical adds the projectCanonical to the get kpis params
+func (o *GetKpisParams) WithProjectCanonical(projectCanonical *string) *GetKpisParams {
+	o.SetProjectCanonical(projectCanonical)
 	return o
 }
 
-// SetProject adds the project to the get kpis params
-func (o *GetKpisParams) SetProject(project *string) {
-	o.Project = project
+// SetProjectCanonical adds the projectCanonical to the get kpis params
+func (o *GetKpisParams) SetProjectCanonical(projectCanonical *string) {
+	o.ProjectCanonical = projectCanonical
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -279,80 +306,85 @@ func (o *GetKpisParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 
 		// query param begin
 		var qrBegin uint64
+
 		if o.Begin != nil {
 			qrBegin = *o.Begin
 		}
 		qBegin := swag.FormatUint64(qrBegin)
 		if qBegin != "" {
+
 			if err := r.SetQueryParam("begin", qBegin); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.End != nil {
 
 		// query param end
 		var qrEnd uint64
+
 		if o.End != nil {
 			qrEnd = *o.End
 		}
 		qEnd := swag.FormatUint64(qrEnd)
 		if qEnd != "" {
+
 			if err := r.SetQueryParam("end", qEnd); err != nil {
 				return err
 			}
 		}
-
 	}
 
-	if o.Environment != nil {
+	if o.EnvironmentCanonical != nil {
 
-		// query param environment
-		var qrEnvironment string
-		if o.Environment != nil {
-			qrEnvironment = *o.Environment
+		// query param environment_canonical
+		var qrEnvironmentCanonical string
+
+		if o.EnvironmentCanonical != nil {
+			qrEnvironmentCanonical = *o.EnvironmentCanonical
 		}
-		qEnvironment := qrEnvironment
-		if qEnvironment != "" {
-			if err := r.SetQueryParam("environment", qEnvironment); err != nil {
+		qEnvironmentCanonical := qrEnvironmentCanonical
+		if qEnvironmentCanonical != "" {
+
+			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.Favorite != nil {
 
 		// query param favorite
 		var qrFavorite bool
+
 		if o.Favorite != nil {
 			qrFavorite = *o.Favorite
 		}
 		qFavorite := swag.FormatBool(qrFavorite)
 		if qFavorite != "" {
+
 			if err := r.SetQueryParam("favorite", qFavorite); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.FetchData != nil {
 
 		// query param fetch_data
 		var qrFetchData bool
+
 		if o.FetchData != nil {
 			qrFetchData = *o.FetchData
 		}
 		qFetchData := swag.FormatBool(qrFetchData)
 		if qFetchData != "" {
+
 			if err := r.SetQueryParam("fetch_data", qFetchData); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// path param organization_canonical
@@ -364,48 +396,51 @@ func (o *GetKpisParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 
 		// query param page_index
 		var qrPageIndex uint32
+
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
+
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
+
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
+
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
-
 	}
 
-	if o.Project != nil {
+	if o.ProjectCanonical != nil {
 
-		// query param project
-		var qrProject string
-		if o.Project != nil {
-			qrProject = *o.Project
+		// query param project_canonical
+		var qrProjectCanonical string
+
+		if o.ProjectCanonical != nil {
+			qrProjectCanonical = *o.ProjectCanonical
 		}
-		qProject := qrProject
-		if qProject != "" {
-			if err := r.SetQueryParam("project", qProject); err != nil {
+		qProjectCanonical := qrProjectCanonical
+		if qProjectCanonical != "" {
+
+			if err := r.SetQueryParam("project_canonical", qProjectCanonical); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {

@@ -6,17 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // PlanConfig PlanConfig
 //
 // The plan configuration when creating new build.
+//
 // swagger:model PlanConfig
 type PlanConfig struct {
 
@@ -86,7 +87,6 @@ func (m *PlanConfig) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PlanConfig) validateAggregate(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Aggregate) { // not required
 		return nil
 	}
@@ -100,6 +100,8 @@ func (m *PlanConfig) validateAggregate(formats strfmt.Registry) error {
 			if err := m.Aggregate[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("aggregate" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("aggregate" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -111,7 +113,6 @@ func (m *PlanConfig) validateAggregate(formats strfmt.Registry) error {
 }
 
 func (m *PlanConfig) validateDo(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Do) { // not required
 		return nil
 	}
@@ -125,6 +126,8 @@ func (m *PlanConfig) validateDo(formats strfmt.Registry) error {
 			if err := m.Do[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("do" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("do" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -136,7 +139,6 @@ func (m *PlanConfig) validateDo(formats strfmt.Registry) error {
 }
 
 func (m *PlanConfig) validateTaskConfig(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.TaskConfig) { // not required
 		return nil
 	}
@@ -145,6 +147,101 @@ func (m *PlanConfig) validateTaskConfig(formats strfmt.Registry) error {
 		if err := m.TaskConfig.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("taskConfig")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("taskConfig")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this plan config based on the context it is used
+func (m *PlanConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateAggregate(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDo(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTaskConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PlanConfig) contextValidateAggregate(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Aggregate); i++ {
+
+		if m.Aggregate[i] != nil {
+
+			if swag.IsZero(m.Aggregate[i]) { // not required
+				return nil
+			}
+
+			if err := m.Aggregate[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("aggregate" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("aggregate" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PlanConfig) contextValidateDo(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Do); i++ {
+
+		if m.Do[i] != nil {
+
+			if swag.IsZero(m.Do[i]) { // not required
+				return nil
+			}
+
+			if err := m.Do[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("do" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("do" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *PlanConfig) contextValidateTaskConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.TaskConfig != nil {
+
+		if swag.IsZero(m.TaskConfig) { // not required
+			return nil
+		}
+
+		if err := m.TaskConfig.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("taskConfig")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("taskConfig")
 			}
 			return err
 		}

@@ -6,17 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // GeneralStatus GeneralStatus
+//
 // swagger:model GeneralStatus
 type GeneralStatus struct {
 
@@ -31,7 +32,7 @@ type GeneralStatus struct {
 
 	// The overall status for the application.
 	// Required: true
-	// Enum: [Unknown Success Error]
+	// Enum: ["Unknown","Success","Error"]
 	Status *string `json:"status"`
 }
 
@@ -72,6 +73,8 @@ func (m *GeneralStatus) validateChecks(formats strfmt.Registry) error {
 			if err := m.Checks[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("checks" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("checks" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -88,7 +91,7 @@ func (m *GeneralStatus) validateMessage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("message", "body", string(*m.Message), 1); err != nil {
+	if err := validate.MinLength("message", "body", *m.Message, 1); err != nil {
 		return err
 	}
 
@@ -121,7 +124,7 @@ const (
 
 // prop value enum
 func (m *GeneralStatus) validateStatusEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, generalStatusTypeStatusPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, generalStatusTypeStatusPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -136,6 +139,45 @@ func (m *GeneralStatus) validateStatus(formats strfmt.Registry) error {
 	// value enum
 	if err := m.validateStatusEnum("status", "body", *m.Status); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this general status based on the context it is used
+func (m *GeneralStatus) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateChecks(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *GeneralStatus) contextValidateChecks(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Checks); i++ {
+
+		if m.Checks[i] != nil {
+
+			if swag.IsZero(m.Checks[i]) { // not required
+				return nil
+			}
+
+			if err := m.Checks[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("checks" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("checks" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

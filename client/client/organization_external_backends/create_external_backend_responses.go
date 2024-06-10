@@ -6,17 +6,18 @@ package organization_external_backends
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateExternalBackendReader is a Reader for the CreateExternalBackend structure.
@@ -33,9 +34,8 @@ func (o *CreateExternalBackendReader) ReadResponse(response runtime.ClientRespon
 			return nil, err
 		}
 		return result, nil
-
 	default:
-		return nil, runtime.NewAPIError("unknown error", response, response.Code())
+		return nil, runtime.NewAPIError("[POST /organizations/{organization_canonical}/external_backends] createExternalBackend", response, response.Code())
 	}
 }
 
@@ -44,7 +44,8 @@ func NewCreateExternalBackendOK() *CreateExternalBackendOK {
 	return &CreateExternalBackendOK{}
 }
 
-/*CreateExternalBackendOK handles this case with default header values.
+/*
+CreateExternalBackendOK describes a response with status code 200, with default header values.
 
 external backend has been registered
 */
@@ -52,8 +53,44 @@ type CreateExternalBackendOK struct {
 	Payload *CreateExternalBackendOKBody
 }
 
+// IsSuccess returns true when this create external backend o k response has a 2xx status code
+func (o *CreateExternalBackendOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create external backend o k response has a 3xx status code
+func (o *CreateExternalBackendOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create external backend o k response has a 4xx status code
+func (o *CreateExternalBackendOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create external backend o k response has a 5xx status code
+func (o *CreateExternalBackendOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create external backend o k response a status code equal to that given
+func (o *CreateExternalBackendOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the create external backend o k response
+func (o *CreateExternalBackendOK) Code() int {
+	return 200
+}
+
 func (o *CreateExternalBackendOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/external_backends][%d] createExternalBackendOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/external_backends][%d] createExternalBackendOK %s", 200, payload)
+}
+
+func (o *CreateExternalBackendOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/external_backends][%d] createExternalBackendOK %s", 200, payload)
 }
 
 func (o *CreateExternalBackendOK) GetPayload() *CreateExternalBackendOKBody {
@@ -72,7 +109,8 @@ func (o *CreateExternalBackendOK) readResponse(response runtime.ClientResponse, 
 	return nil
 }
 
-/*CreateExternalBackendOKBody create external backend o k body
+/*
+CreateExternalBackendOKBody create external backend o k body
 swagger:model CreateExternalBackendOKBody
 */
 type CreateExternalBackendOKBody struct {
@@ -106,6 +144,39 @@ func (o *CreateExternalBackendOKBody) validateData(formats strfmt.Registry) erro
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createExternalBackendOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createExternalBackendOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create external backend o k body based on the context it is used
+func (o *CreateExternalBackendOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateExternalBackendOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createExternalBackendOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createExternalBackendOK" + "." + "data")
 			}
 			return err
 		}

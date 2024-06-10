@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
@@ -38,14 +38,7 @@ func (m *AzureCostExport) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *AzureCostExport) SetEngine(val string) {
-
 }
-
-// BlobServiceURL gets the blob service url of this subtype
-
-// Name gets the name of this subtype
-
-// Scope gets the scope of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *AzureCostExport) UnmarshalJSON(raw []byte) error {
@@ -89,9 +82,7 @@ func (m *AzureCostExport) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.BlobServiceURL = data.BlobServiceURL
-
 	result.Name = data.Name
-
 	result.Scope = data.Scope
 
 	*m = result
@@ -120,8 +111,7 @@ func (m AzureCostExport) MarshalJSON() ([]byte, error) {
 		Name: m.Name,
 
 		Scope: m.Scope,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -130,8 +120,7 @@ func (m AzureCostExport) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -141,6 +130,16 @@ func (m AzureCostExport) MarshalJSON() ([]byte, error) {
 
 // Validate validates this azure cost export
 func (m *AzureCostExport) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validate this azure cost export based on the context it is used
+func (m *AzureCostExport) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {

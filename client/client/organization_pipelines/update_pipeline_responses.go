@@ -6,17 +6,18 @@ package organization_pipelines
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UpdatePipelineReader is a Reader for the UpdatePipeline structure.
@@ -74,7 +75,8 @@ func NewUpdatePipelineOK() *UpdatePipelineOK {
 	return &UpdatePipelineOK{}
 }
 
-/*UpdatePipelineOK handles this case with default header values.
+/*
+UpdatePipelineOK describes a response with status code 200, with default header values.
 
 The information of the pipeline which has been updated.
 */
@@ -82,8 +84,44 @@ type UpdatePipelineOK struct {
 	Payload *UpdatePipelineOKBody
 }
 
+// IsSuccess returns true when this update pipeline o k response has a 2xx status code
+func (o *UpdatePipelineOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this update pipeline o k response has a 3xx status code
+func (o *UpdatePipelineOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update pipeline o k response has a 4xx status code
+func (o *UpdatePipelineOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this update pipeline o k response has a 5xx status code
+func (o *UpdatePipelineOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update pipeline o k response a status code equal to that given
+func (o *UpdatePipelineOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the update pipeline o k response
+func (o *UpdatePipelineOK) Code() int {
+	return 200
+}
+
 func (o *UpdatePipelineOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineOK %s", 200, payload)
+}
+
+func (o *UpdatePipelineOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineOK %s", 200, payload)
 }
 
 func (o *UpdatePipelineOK) GetPayload() *UpdatePipelineOKBody {
@@ -107,20 +145,60 @@ func NewUpdatePipelineForbidden() *UpdatePipelineForbidden {
 	return &UpdatePipelineForbidden{}
 }
 
-/*UpdatePipelineForbidden handles this case with default header values.
+/*
+UpdatePipelineForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UpdatePipelineForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update pipeline forbidden response has a 2xx status code
+func (o *UpdatePipelineForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update pipeline forbidden response has a 3xx status code
+func (o *UpdatePipelineForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update pipeline forbidden response has a 4xx status code
+func (o *UpdatePipelineForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update pipeline forbidden response has a 5xx status code
+func (o *UpdatePipelineForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update pipeline forbidden response a status code equal to that given
+func (o *UpdatePipelineForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the update pipeline forbidden response
+func (o *UpdatePipelineForbidden) Code() int {
+	return 403
+}
+
 func (o *UpdatePipelineForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineForbidden %s", 403, payload)
+}
+
+func (o *UpdatePipelineForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineForbidden %s", 403, payload)
 }
 
 func (o *UpdatePipelineForbidden) GetPayload() *models.ErrorPayload {
@@ -129,12 +207,16 @@ func (o *UpdatePipelineForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *UpdatePipelineForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -151,20 +233,60 @@ func NewUpdatePipelineNotFound() *UpdatePipelineNotFound {
 	return &UpdatePipelineNotFound{}
 }
 
-/*UpdatePipelineNotFound handles this case with default header values.
+/*
+UpdatePipelineNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type UpdatePipelineNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update pipeline not found response has a 2xx status code
+func (o *UpdatePipelineNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update pipeline not found response has a 3xx status code
+func (o *UpdatePipelineNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update pipeline not found response has a 4xx status code
+func (o *UpdatePipelineNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update pipeline not found response has a 5xx status code
+func (o *UpdatePipelineNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update pipeline not found response a status code equal to that given
+func (o *UpdatePipelineNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the update pipeline not found response
+func (o *UpdatePipelineNotFound) Code() int {
+	return 404
+}
+
 func (o *UpdatePipelineNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineNotFound %s", 404, payload)
+}
+
+func (o *UpdatePipelineNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineNotFound %s", 404, payload)
 }
 
 func (o *UpdatePipelineNotFound) GetPayload() *models.ErrorPayload {
@@ -173,12 +295,16 @@ func (o *UpdatePipelineNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *UpdatePipelineNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -195,15 +321,50 @@ func NewUpdatePipelineLengthRequired() *UpdatePipelineLengthRequired {
 	return &UpdatePipelineLengthRequired{}
 }
 
-/*UpdatePipelineLengthRequired handles this case with default header values.
+/*
+UpdatePipelineLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type UpdatePipelineLengthRequired struct {
 }
 
+// IsSuccess returns true when this update pipeline length required response has a 2xx status code
+func (o *UpdatePipelineLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update pipeline length required response has a 3xx status code
+func (o *UpdatePipelineLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update pipeline length required response has a 4xx status code
+func (o *UpdatePipelineLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update pipeline length required response has a 5xx status code
+func (o *UpdatePipelineLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update pipeline length required response a status code equal to that given
+func (o *UpdatePipelineLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the update pipeline length required response
+func (o *UpdatePipelineLengthRequired) Code() int {
+	return 411
+}
+
 func (o *UpdatePipelineLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineLengthRequired ", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineLengthRequired", 411)
+}
+
+func (o *UpdatePipelineLengthRequired) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineLengthRequired", 411)
 }
 
 func (o *UpdatePipelineLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -216,20 +377,60 @@ func NewUpdatePipelineUnprocessableEntity() *UpdatePipelineUnprocessableEntity {
 	return &UpdatePipelineUnprocessableEntity{}
 }
 
-/*UpdatePipelineUnprocessableEntity handles this case with default header values.
+/*
+UpdatePipelineUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type UpdatePipelineUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update pipeline unprocessable entity response has a 2xx status code
+func (o *UpdatePipelineUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update pipeline unprocessable entity response has a 3xx status code
+func (o *UpdatePipelineUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update pipeline unprocessable entity response has a 4xx status code
+func (o *UpdatePipelineUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update pipeline unprocessable entity response has a 5xx status code
+func (o *UpdatePipelineUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update pipeline unprocessable entity response a status code equal to that given
+func (o *UpdatePipelineUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the update pipeline unprocessable entity response
+func (o *UpdatePipelineUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *UpdatePipelineUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineUnprocessableEntity %s", 422, payload)
+}
+
+func (o *UpdatePipelineUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipelineUnprocessableEntity %s", 422, payload)
 }
 
 func (o *UpdatePipelineUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -238,12 +439,16 @@ func (o *UpdatePipelineUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *UpdatePipelineUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -262,18 +467,46 @@ func NewUpdatePipelineDefault(code int) *UpdatePipelineDefault {
 	}
 }
 
-/*UpdatePipelineDefault handles this case with default header values.
+/*
+UpdatePipelineDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UpdatePipelineDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this update pipeline default response has a 2xx status code
+func (o *UpdatePipelineDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this update pipeline default response has a 3xx status code
+func (o *UpdatePipelineDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this update pipeline default response has a 4xx status code
+func (o *UpdatePipelineDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this update pipeline default response has a 5xx status code
+func (o *UpdatePipelineDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this update pipeline default response a status code equal to that given
+func (o *UpdatePipelineDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the update pipeline default response
@@ -282,7 +515,13 @@ func (o *UpdatePipelineDefault) Code() int {
 }
 
 func (o *UpdatePipelineDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipeline default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipeline default %s", o._statusCode, payload)
+}
+
+func (o *UpdatePipelineDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}][%d] updatePipeline default %s", o._statusCode, payload)
 }
 
 func (o *UpdatePipelineDefault) GetPayload() *models.ErrorPayload {
@@ -291,12 +530,16 @@ func (o *UpdatePipelineDefault) GetPayload() *models.ErrorPayload {
 
 func (o *UpdatePipelineDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -308,7 +551,8 @@ func (o *UpdatePipelineDefault) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-/*UpdatePipelineOKBody update pipeline o k body
+/*
+UpdatePipelineOKBody update pipeline o k body
 swagger:model UpdatePipelineOKBody
 */
 type UpdatePipelineOKBody struct {
@@ -342,6 +586,39 @@ func (o *UpdatePipelineOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updatePipelineOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updatePipelineOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update pipeline o k body based on the context it is used
+func (o *UpdatePipelineOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdatePipelineOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updatePipelineOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updatePipelineOK" + "." + "data")
 			}
 			return err
 		}

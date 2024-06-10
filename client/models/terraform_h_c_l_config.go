@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // TerraformHCLConfig TerraformHCLConfig
 //
-// The HCL config for Terraform
+// # The HCL config for Terraform
+//
 // swagger:model TerraformHCLConfig
 type TerraformHCLConfig struct {
 
@@ -44,6 +46,11 @@ func (m *TerraformHCLConfig) validateConfig(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this terraform h c l config based on context it is used
+func (m *TerraformHCLConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

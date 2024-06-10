@@ -13,76 +13,95 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateExternalBackendParams creates a new UpdateExternalBackendParams object
-// with the default values initialized.
+// NewUpdateExternalBackendParams creates a new UpdateExternalBackendParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUpdateExternalBackendParams() *UpdateExternalBackendParams {
-	var ()
 	return &UpdateExternalBackendParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateExternalBackendParamsWithTimeout creates a new UpdateExternalBackendParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUpdateExternalBackendParamsWithTimeout(timeout time.Duration) *UpdateExternalBackendParams {
-	var ()
 	return &UpdateExternalBackendParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUpdateExternalBackendParamsWithContext creates a new UpdateExternalBackendParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUpdateExternalBackendParamsWithContext(ctx context.Context) *UpdateExternalBackendParams {
-	var ()
 	return &UpdateExternalBackendParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUpdateExternalBackendParamsWithHTTPClient creates a new UpdateExternalBackendParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUpdateExternalBackendParamsWithHTTPClient(client *http.Client) *UpdateExternalBackendParams {
-	var ()
 	return &UpdateExternalBackendParams{
 		HTTPClient: client,
 	}
 }
 
-/*UpdateExternalBackendParams contains all the parameters to send to the API endpoint
-for the update external backend operation typically these are written to a http.Request
+/*
+UpdateExternalBackendParams contains all the parameters to send to the API endpoint
+
+	for the update external backend operation.
+
+	Typically these are written to a http.Request.
 */
 type UpdateExternalBackendParams struct {
 
-	/*Body
-	  The information of the external backend new data
+	/* Body.
 
+	   The information of the external backend new data
 	*/
 	Body *models.UpdateExternalBackend
-	/*ExternalBackendID
-	  External Backend ID
 
+	/* ExternalBackendID.
+
+	   External Backend ID
+
+	   Format: uint32
 	*/
 	ExternalBackendID uint32
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the update external backend params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateExternalBackendParams) WithDefaults() *UpdateExternalBackendParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the update external backend params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateExternalBackendParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update external backend params
@@ -158,7 +177,6 @@ func (o *UpdateExternalBackendParams) WriteToRequest(r runtime.ClientRequest, re
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

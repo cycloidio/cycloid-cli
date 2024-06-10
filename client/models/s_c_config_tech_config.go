@@ -6,15 +6,17 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
 // SCConfigTechConfig Tech Configuration
 //
-// Represents the Service Catalog Configuration for a Technology of a given Use Case
+// # Represents the Service Catalog Configuration for a Technology of a given Use Case
+//
 // swagger:model SCConfigTechConfig
 type SCConfigTechConfig map[string]SCConfigPathDestConfig
 
@@ -29,6 +31,31 @@ func (m SCConfigTechConfig) Validate(formats strfmt.Registry) error {
 		}
 		if val, ok := m[k]; ok {
 			if err := val.Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName(k)
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName(k)
+				}
+				return err
+			}
+		}
+
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validate this s c config tech config based on the context it is used
+func (m SCConfigTechConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	for k := range m {
+
+		if val, ok := m[k]; ok {
+			if err := val.ContextValidate(ctx, formats); err != nil {
 				return err
 			}
 		}

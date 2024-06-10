@@ -6,16 +6,16 @@ package organization_projects
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteProjectFavoriteReader is a Reader for the DeleteProjectFavorite structure.
@@ -61,15 +61,50 @@ func NewDeleteProjectFavoriteNoContent() *DeleteProjectFavoriteNoContent {
 	return &DeleteProjectFavoriteNoContent{}
 }
 
-/*DeleteProjectFavoriteNoContent handles this case with default header values.
+/*
+DeleteProjectFavoriteNoContent describes a response with status code 204, with default header values.
 
 The project has been removed from user favorites list.
 */
 type DeleteProjectFavoriteNoContent struct {
 }
 
+// IsSuccess returns true when this delete project favorite no content response has a 2xx status code
+func (o *DeleteProjectFavoriteNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this delete project favorite no content response has a 3xx status code
+func (o *DeleteProjectFavoriteNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete project favorite no content response has a 4xx status code
+func (o *DeleteProjectFavoriteNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete project favorite no content response has a 5xx status code
+func (o *DeleteProjectFavoriteNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete project favorite no content response a status code equal to that given
+func (o *DeleteProjectFavoriteNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the delete project favorite no content response
+func (o *DeleteProjectFavoriteNoContent) Code() int {
+	return 204
+}
+
 func (o *DeleteProjectFavoriteNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteNoContent", 204)
+}
+
+func (o *DeleteProjectFavoriteNoContent) String() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteNoContent", 204)
 }
 
 func (o *DeleteProjectFavoriteNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -82,20 +117,60 @@ func NewDeleteProjectFavoriteForbidden() *DeleteProjectFavoriteForbidden {
 	return &DeleteProjectFavoriteForbidden{}
 }
 
-/*DeleteProjectFavoriteForbidden handles this case with default header values.
+/*
+DeleteProjectFavoriteForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteProjectFavoriteForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete project favorite forbidden response has a 2xx status code
+func (o *DeleteProjectFavoriteForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete project favorite forbidden response has a 3xx status code
+func (o *DeleteProjectFavoriteForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete project favorite forbidden response has a 4xx status code
+func (o *DeleteProjectFavoriteForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete project favorite forbidden response has a 5xx status code
+func (o *DeleteProjectFavoriteForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete project favorite forbidden response a status code equal to that given
+func (o *DeleteProjectFavoriteForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the delete project favorite forbidden response
+func (o *DeleteProjectFavoriteForbidden) Code() int {
+	return 403
+}
+
 func (o *DeleteProjectFavoriteForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteForbidden %s", 403, payload)
+}
+
+func (o *DeleteProjectFavoriteForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteForbidden %s", 403, payload)
 }
 
 func (o *DeleteProjectFavoriteForbidden) GetPayload() *models.ErrorPayload {
@@ -104,12 +179,16 @@ func (o *DeleteProjectFavoriteForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteProjectFavoriteForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -126,20 +205,60 @@ func NewDeleteProjectFavoriteNotFound() *DeleteProjectFavoriteNotFound {
 	return &DeleteProjectFavoriteNotFound{}
 }
 
-/*DeleteProjectFavoriteNotFound handles this case with default header values.
+/*
+DeleteProjectFavoriteNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteProjectFavoriteNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete project favorite not found response has a 2xx status code
+func (o *DeleteProjectFavoriteNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete project favorite not found response has a 3xx status code
+func (o *DeleteProjectFavoriteNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete project favorite not found response has a 4xx status code
+func (o *DeleteProjectFavoriteNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete project favorite not found response has a 5xx status code
+func (o *DeleteProjectFavoriteNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete project favorite not found response a status code equal to that given
+func (o *DeleteProjectFavoriteNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the delete project favorite not found response
+func (o *DeleteProjectFavoriteNotFound) Code() int {
+	return 404
+}
+
 func (o *DeleteProjectFavoriteNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteNotFound %s", 404, payload)
+}
+
+func (o *DeleteProjectFavoriteNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavoriteNotFound %s", 404, payload)
 }
 
 func (o *DeleteProjectFavoriteNotFound) GetPayload() *models.ErrorPayload {
@@ -148,12 +267,16 @@ func (o *DeleteProjectFavoriteNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteProjectFavoriteNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,18 +295,46 @@ func NewDeleteProjectFavoriteDefault(code int) *DeleteProjectFavoriteDefault {
 	}
 }
 
-/*DeleteProjectFavoriteDefault handles this case with default header values.
+/*
+DeleteProjectFavoriteDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteProjectFavoriteDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this delete project favorite default response has a 2xx status code
+func (o *DeleteProjectFavoriteDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this delete project favorite default response has a 3xx status code
+func (o *DeleteProjectFavoriteDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this delete project favorite default response has a 4xx status code
+func (o *DeleteProjectFavoriteDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this delete project favorite default response has a 5xx status code
+func (o *DeleteProjectFavoriteDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this delete project favorite default response a status code equal to that given
+func (o *DeleteProjectFavoriteDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the delete project favorite default response
@@ -192,7 +343,13 @@ func (o *DeleteProjectFavoriteDefault) Code() int {
 }
 
 func (o *DeleteProjectFavoriteDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavorite default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavorite default %s", o._statusCode, payload)
+}
+
+func (o *DeleteProjectFavoriteDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/favorites][%d] deleteProjectFavorite default %s", o._statusCode, payload)
 }
 
 func (o *DeleteProjectFavoriteDefault) GetPayload() *models.ErrorPayload {
@@ -201,12 +358,16 @@ func (o *DeleteProjectFavoriteDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteProjectFavoriteDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

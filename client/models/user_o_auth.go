@@ -6,15 +6,17 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // UserOAuth User's OAuth information
 //
 // The User OAuth information, if it's on the platform it'll return the 'token' to login, if not the 'user' to show to the user
+//
 // swagger:model UserOAuth
 type UserOAuth struct {
 
@@ -40,7 +42,6 @@ func (m *UserOAuth) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UserOAuth) validateUser(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.User) { // not required
 		return nil
 	}
@@ -49,6 +50,43 @@ func (m *UserOAuth) validateUser(formats strfmt.Registry) error {
 		if err := m.User.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("user")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("user")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this user o auth based on the context it is used
+func (m *UserOAuth) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateUser(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UserOAuth) contextValidateUser(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.User != nil {
+
+		if swag.IsZero(m.User) { // not required
+			return nil
+		}
+
+		if err := m.User.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("user")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("user")
 			}
 			return err
 		}

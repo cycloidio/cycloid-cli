@@ -13,83 +13,102 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewGetBuildPlanParams creates a new GetBuildPlanParams object
-// with the default values initialized.
+// NewGetBuildPlanParams creates a new GetBuildPlanParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetBuildPlanParams() *GetBuildPlanParams {
-	var ()
 	return &GetBuildPlanParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetBuildPlanParamsWithTimeout creates a new GetBuildPlanParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetBuildPlanParamsWithTimeout(timeout time.Duration) *GetBuildPlanParams {
-	var ()
 	return &GetBuildPlanParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewGetBuildPlanParamsWithContext creates a new GetBuildPlanParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetBuildPlanParamsWithContext(ctx context.Context) *GetBuildPlanParams {
-	var ()
 	return &GetBuildPlanParams{
-
 		Context: ctx,
 	}
 }
 
 // NewGetBuildPlanParamsWithHTTPClient creates a new GetBuildPlanParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetBuildPlanParamsWithHTTPClient(client *http.Client) *GetBuildPlanParams {
-	var ()
 	return &GetBuildPlanParams{
 		HTTPClient: client,
 	}
 }
 
-/*GetBuildPlanParams contains all the parameters to send to the API endpoint
-for the get build plan operation typically these are written to a http.Request
+/*
+GetBuildPlanParams contains all the parameters to send to the API endpoint
+
+	for the get build plan operation.
+
+	Typically these are written to a http.Request.
 */
 type GetBuildPlanParams struct {
 
-	/*BuildID
-	  A build id
+	/* BuildID.
 
+	   A build id
 	*/
 	BuildID string
-	/*InpathPipelineName
-	  A pipeline name
 
+	/* InpathPipelineName.
+
+	   A pipeline name
 	*/
 	InpathPipelineName string
-	/*JobName
-	  A job name
 
+	/* JobName.
+
+	   A job name
 	*/
 	JobName string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*ProjectCanonical
-	  A canonical of a project.
 
+	/* ProjectCanonical.
+
+	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get build plan params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetBuildPlanParams) WithDefaults() *GetBuildPlanParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get build plan params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetBuildPlanParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get build plan params

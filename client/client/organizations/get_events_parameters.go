@@ -13,84 +13,107 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetEventsParams creates a new GetEventsParams object
-// with the default values initialized.
+// NewGetEventsParams creates a new GetEventsParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetEventsParams() *GetEventsParams {
-	var ()
 	return &GetEventsParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetEventsParamsWithTimeout creates a new GetEventsParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetEventsParamsWithTimeout(timeout time.Duration) *GetEventsParams {
-	var ()
 	return &GetEventsParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewGetEventsParamsWithContext creates a new GetEventsParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetEventsParamsWithContext(ctx context.Context) *GetEventsParams {
-	var ()
 	return &GetEventsParams{
-
 		Context: ctx,
 	}
 }
 
 // NewGetEventsParamsWithHTTPClient creates a new GetEventsParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetEventsParamsWithHTTPClient(client *http.Client) *GetEventsParams {
-	var ()
 	return &GetEventsParams{
 		HTTPClient: client,
 	}
 }
 
-/*GetEventsParams contains all the parameters to send to the API endpoint
-for the get events operation typically these are written to a http.Request
+/*
+GetEventsParams contains all the parameters to send to the API endpoint
+
+	for the get events operation.
+
+	Typically these are written to a http.Request.
 */
 type GetEventsParams struct {
 
-	/*Begin
-	  The unix timestamp in milliseconds, which indicate the start of the time range.
+	/* Begin.
 
+	   The unix timestamp in milliseconds, which indicate the start of the time range.
+
+	   Format: uint64
 	*/
 	Begin *uint64
-	/*End
-	  The unix timestamp in milliseconds, which indicate the end of the time range.
 
+	/* End.
+
+	   The unix timestamp in milliseconds, which indicate the end of the time range.
+
+	   Format: uint64
 	*/
 	End *uint64
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*Severity
-	  Specify the severities of the events to be requested. The returned events must have one of the specified severities.
 
+	/* Severity.
+
+	   Specify the severities of the events to be requested. The returned events must have one of the specified severities.
 	*/
 	Severity []string
-	/*Type
-	  Specify the types of the events to be requested. The returned events must have one of the specified types.
 
+	/* Type.
+
+	   Specify the types of the events to be requested. The returned events must have one of the specified types.
 	*/
 	Type []string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get events params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetEventsParams) WithDefaults() *GetEventsParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get events params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetEventsParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get events params
@@ -193,32 +216,34 @@ func (o *GetEventsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 
 		// query param begin
 		var qrBegin uint64
+
 		if o.Begin != nil {
 			qrBegin = *o.Begin
 		}
 		qBegin := swag.FormatUint64(qrBegin)
 		if qBegin != "" {
+
 			if err := r.SetQueryParam("begin", qBegin); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.End != nil {
 
 		// query param end
 		var qrEnd uint64
+
 		if o.End != nil {
 			qrEnd = *o.End
 		}
 		qEnd := swag.FormatUint64(qrEnd)
 		if qEnd != "" {
+
 			if err := r.SetQueryParam("end", qEnd); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// path param organization_canonical
@@ -226,24 +251,64 @@ func (o *GetEventsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 		return err
 	}
 
-	valuesSeverity := o.Severity
+	if o.Severity != nil {
 
-	joinedSeverity := swag.JoinByFormat(valuesSeverity, "multi")
-	// query array param severity
-	if err := r.SetQueryParam("severity", joinedSeverity...); err != nil {
-		return err
+		// binding items for severity
+		joinedSeverity := o.bindParamSeverity(reg)
+
+		// query array param severity
+		if err := r.SetQueryParam("severity", joinedSeverity...); err != nil {
+			return err
+		}
 	}
 
-	valuesType := o.Type
+	if o.Type != nil {
 
-	joinedType := swag.JoinByFormat(valuesType, "multi")
-	// query array param type
-	if err := r.SetQueryParam("type", joinedType...); err != nil {
-		return err
+		// binding items for type
+		joinedType := o.bindParamType(reg)
+
+		// query array param type
+		if err := r.SetQueryParam("type", joinedType...); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamGetEvents binds the parameter severity
+func (o *GetEventsParams) bindParamSeverity(formats strfmt.Registry) []string {
+	severityIR := o.Severity
+
+	var severityIC []string
+	for _, severityIIR := range severityIR { // explode []string
+
+		severityIIV := severityIIR // string as string
+		severityIC = append(severityIC, severityIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	severityIS := swag.JoinByFormat(severityIC, "multi")
+
+	return severityIS
+}
+
+// bindParamGetEvents binds the parameter type
+func (o *GetEventsParams) bindParamType(formats strfmt.Registry) []string {
+	typeIR := o.Type
+
+	var typeIC []string
+	for _, typeIIR := range typeIR { // explode []string
+
+		typeIIV := typeIIR // string as string
+		typeIC = append(typeIC, typeIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	typeIS := swag.JoinByFormat(typeIC, "multi")
+
+	return typeIS
 }

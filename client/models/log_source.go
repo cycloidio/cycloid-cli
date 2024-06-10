@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // LogSource A log source
 //
 // The data associated to a log's source. Each log source is the context of a list of entries which are registered through the time.
+//
 // swagger:model LogSource
 type LogSource struct {
 
@@ -45,10 +47,15 @@ func (m *LogSource) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("id", "body", string(*m.ID), 1); err != nil {
+	if err := validate.MinLength("id", "body", *m.ID, 1); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this log source based on context it is used
+func (m *LogSource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,17 +6,18 @@ package organization_projects
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UpdateProjectReader is a Reader for the UpdateProject structure.
@@ -74,7 +75,8 @@ func NewUpdateProjectOK() *UpdateProjectOK {
 	return &UpdateProjectOK{}
 }
 
-/*UpdateProjectOK handles this case with default header values.
+/*
+UpdateProjectOK describes a response with status code 200, with default header values.
 
 Project updated. The body contains information of the updated project.
 */
@@ -82,8 +84,44 @@ type UpdateProjectOK struct {
 	Payload *UpdateProjectOKBody
 }
 
+// IsSuccess returns true when this update project o k response has a 2xx status code
+func (o *UpdateProjectOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this update project o k response has a 3xx status code
+func (o *UpdateProjectOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update project o k response has a 4xx status code
+func (o *UpdateProjectOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this update project o k response has a 5xx status code
+func (o *UpdateProjectOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update project o k response a status code equal to that given
+func (o *UpdateProjectOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the update project o k response
+func (o *UpdateProjectOK) Code() int {
+	return 200
+}
+
 func (o *UpdateProjectOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectOK %s", 200, payload)
+}
+
+func (o *UpdateProjectOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectOK %s", 200, payload)
 }
 
 func (o *UpdateProjectOK) GetPayload() *UpdateProjectOKBody {
@@ -107,20 +145,60 @@ func NewUpdateProjectForbidden() *UpdateProjectForbidden {
 	return &UpdateProjectForbidden{}
 }
 
-/*UpdateProjectForbidden handles this case with default header values.
+/*
+UpdateProjectForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UpdateProjectForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update project forbidden response has a 2xx status code
+func (o *UpdateProjectForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update project forbidden response has a 3xx status code
+func (o *UpdateProjectForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update project forbidden response has a 4xx status code
+func (o *UpdateProjectForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update project forbidden response has a 5xx status code
+func (o *UpdateProjectForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update project forbidden response a status code equal to that given
+func (o *UpdateProjectForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the update project forbidden response
+func (o *UpdateProjectForbidden) Code() int {
+	return 403
+}
+
 func (o *UpdateProjectForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectForbidden %s", 403, payload)
+}
+
+func (o *UpdateProjectForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectForbidden %s", 403, payload)
 }
 
 func (o *UpdateProjectForbidden) GetPayload() *models.ErrorPayload {
@@ -129,12 +207,16 @@ func (o *UpdateProjectForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateProjectForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -151,20 +233,60 @@ func NewUpdateProjectNotFound() *UpdateProjectNotFound {
 	return &UpdateProjectNotFound{}
 }
 
-/*UpdateProjectNotFound handles this case with default header values.
+/*
+UpdateProjectNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type UpdateProjectNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update project not found response has a 2xx status code
+func (o *UpdateProjectNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update project not found response has a 3xx status code
+func (o *UpdateProjectNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update project not found response has a 4xx status code
+func (o *UpdateProjectNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update project not found response has a 5xx status code
+func (o *UpdateProjectNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update project not found response a status code equal to that given
+func (o *UpdateProjectNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the update project not found response
+func (o *UpdateProjectNotFound) Code() int {
+	return 404
+}
+
 func (o *UpdateProjectNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectNotFound %s", 404, payload)
+}
+
+func (o *UpdateProjectNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectNotFound %s", 404, payload)
 }
 
 func (o *UpdateProjectNotFound) GetPayload() *models.ErrorPayload {
@@ -173,12 +295,16 @@ func (o *UpdateProjectNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateProjectNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -195,15 +321,50 @@ func NewUpdateProjectLengthRequired() *UpdateProjectLengthRequired {
 	return &UpdateProjectLengthRequired{}
 }
 
-/*UpdateProjectLengthRequired handles this case with default header values.
+/*
+UpdateProjectLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type UpdateProjectLengthRequired struct {
 }
 
+// IsSuccess returns true when this update project length required response has a 2xx status code
+func (o *UpdateProjectLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update project length required response has a 3xx status code
+func (o *UpdateProjectLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update project length required response has a 4xx status code
+func (o *UpdateProjectLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update project length required response has a 5xx status code
+func (o *UpdateProjectLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update project length required response a status code equal to that given
+func (o *UpdateProjectLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the update project length required response
+func (o *UpdateProjectLengthRequired) Code() int {
+	return 411
+}
+
 func (o *UpdateProjectLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectLengthRequired ", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectLengthRequired", 411)
+}
+
+func (o *UpdateProjectLengthRequired) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectLengthRequired", 411)
 }
 
 func (o *UpdateProjectLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -216,20 +377,60 @@ func NewUpdateProjectUnprocessableEntity() *UpdateProjectUnprocessableEntity {
 	return &UpdateProjectUnprocessableEntity{}
 }
 
-/*UpdateProjectUnprocessableEntity handles this case with default header values.
+/*
+UpdateProjectUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateProjectUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update project unprocessable entity response has a 2xx status code
+func (o *UpdateProjectUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update project unprocessable entity response has a 3xx status code
+func (o *UpdateProjectUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update project unprocessable entity response has a 4xx status code
+func (o *UpdateProjectUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update project unprocessable entity response has a 5xx status code
+func (o *UpdateProjectUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update project unprocessable entity response a status code equal to that given
+func (o *UpdateProjectUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the update project unprocessable entity response
+func (o *UpdateProjectUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *UpdateProjectUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectUnprocessableEntity %s", 422, payload)
+}
+
+func (o *UpdateProjectUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProjectUnprocessableEntity %s", 422, payload)
 }
 
 func (o *UpdateProjectUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -238,12 +439,16 @@ func (o *UpdateProjectUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateProjectUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -262,18 +467,46 @@ func NewUpdateProjectDefault(code int) *UpdateProjectDefault {
 	}
 }
 
-/*UpdateProjectDefault handles this case with default header values.
+/*
+UpdateProjectDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UpdateProjectDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this update project default response has a 2xx status code
+func (o *UpdateProjectDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this update project default response has a 3xx status code
+func (o *UpdateProjectDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this update project default response has a 4xx status code
+func (o *UpdateProjectDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this update project default response has a 5xx status code
+func (o *UpdateProjectDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this update project default response a status code equal to that given
+func (o *UpdateProjectDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the update project default response
@@ -282,7 +515,13 @@ func (o *UpdateProjectDefault) Code() int {
 }
 
 func (o *UpdateProjectDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProject default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProject default %s", o._statusCode, payload)
+}
+
+func (o *UpdateProjectDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}][%d] updateProject default %s", o._statusCode, payload)
 }
 
 func (o *UpdateProjectDefault) GetPayload() *models.ErrorPayload {
@@ -291,12 +530,16 @@ func (o *UpdateProjectDefault) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateProjectDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -308,7 +551,8 @@ func (o *UpdateProjectDefault) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-/*UpdateProjectOKBody update project o k body
+/*
+UpdateProjectOKBody update project o k body
 swagger:model UpdateProjectOKBody
 */
 type UpdateProjectOKBody struct {
@@ -342,6 +586,39 @@ func (o *UpdateProjectOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updateProjectOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updateProjectOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update project o k body based on the context it is used
+func (o *UpdateProjectOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdateProjectOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateProjectOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updateProjectOK" + "." + "data")
 			}
 			return err
 		}

@@ -6,16 +6,16 @@ package organization_pipelines
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UnpausePipelineReader is a Reader for the UnpausePipeline structure.
@@ -61,15 +61,50 @@ func NewUnpausePipelineNoContent() *UnpausePipelineNoContent {
 	return &UnpausePipelineNoContent{}
 }
 
-/*UnpausePipelineNoContent handles this case with default header values.
+/*
+UnpausePipelineNoContent describes a response with status code 204, with default header values.
 
 Pipeline has been unpaused.
 */
 type UnpausePipelineNoContent struct {
 }
 
+// IsSuccess returns true when this unpause pipeline no content response has a 2xx status code
+func (o *UnpausePipelineNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this unpause pipeline no content response has a 3xx status code
+func (o *UnpausePipelineNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this unpause pipeline no content response has a 4xx status code
+func (o *UnpausePipelineNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this unpause pipeline no content response has a 5xx status code
+func (o *UnpausePipelineNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this unpause pipeline no content response a status code equal to that given
+func (o *UnpausePipelineNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the unpause pipeline no content response
+func (o *UnpausePipelineNoContent) Code() int {
+	return 204
+}
+
 func (o *UnpausePipelineNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineNoContent ", 204)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineNoContent", 204)
+}
+
+func (o *UnpausePipelineNoContent) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineNoContent", 204)
 }
 
 func (o *UnpausePipelineNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -82,20 +117,60 @@ func NewUnpausePipelineForbidden() *UnpausePipelineForbidden {
 	return &UnpausePipelineForbidden{}
 }
 
-/*UnpausePipelineForbidden handles this case with default header values.
+/*
+UnpausePipelineForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UnpausePipelineForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this unpause pipeline forbidden response has a 2xx status code
+func (o *UnpausePipelineForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this unpause pipeline forbidden response has a 3xx status code
+func (o *UnpausePipelineForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this unpause pipeline forbidden response has a 4xx status code
+func (o *UnpausePipelineForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this unpause pipeline forbidden response has a 5xx status code
+func (o *UnpausePipelineForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this unpause pipeline forbidden response a status code equal to that given
+func (o *UnpausePipelineForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the unpause pipeline forbidden response
+func (o *UnpausePipelineForbidden) Code() int {
+	return 403
+}
+
 func (o *UnpausePipelineForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineForbidden %s", 403, payload)
+}
+
+func (o *UnpausePipelineForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineForbidden %s", 403, payload)
 }
 
 func (o *UnpausePipelineForbidden) GetPayload() *models.ErrorPayload {
@@ -104,12 +179,16 @@ func (o *UnpausePipelineForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *UnpausePipelineForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -126,20 +205,60 @@ func NewUnpausePipelineNotFound() *UnpausePipelineNotFound {
 	return &UnpausePipelineNotFound{}
 }
 
-/*UnpausePipelineNotFound handles this case with default header values.
+/*
+UnpausePipelineNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type UnpausePipelineNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this unpause pipeline not found response has a 2xx status code
+func (o *UnpausePipelineNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this unpause pipeline not found response has a 3xx status code
+func (o *UnpausePipelineNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this unpause pipeline not found response has a 4xx status code
+func (o *UnpausePipelineNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this unpause pipeline not found response has a 5xx status code
+func (o *UnpausePipelineNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this unpause pipeline not found response a status code equal to that given
+func (o *UnpausePipelineNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the unpause pipeline not found response
+func (o *UnpausePipelineNotFound) Code() int {
+	return 404
+}
+
 func (o *UnpausePipelineNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineNotFound %s", 404, payload)
+}
+
+func (o *UnpausePipelineNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipelineNotFound %s", 404, payload)
 }
 
 func (o *UnpausePipelineNotFound) GetPayload() *models.ErrorPayload {
@@ -148,12 +267,16 @@ func (o *UnpausePipelineNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *UnpausePipelineNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,18 +295,46 @@ func NewUnpausePipelineDefault(code int) *UnpausePipelineDefault {
 	}
 }
 
-/*UnpausePipelineDefault handles this case with default header values.
+/*
+UnpausePipelineDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UnpausePipelineDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this unpause pipeline default response has a 2xx status code
+func (o *UnpausePipelineDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this unpause pipeline default response has a 3xx status code
+func (o *UnpausePipelineDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this unpause pipeline default response has a 4xx status code
+func (o *UnpausePipelineDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this unpause pipeline default response has a 5xx status code
+func (o *UnpausePipelineDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this unpause pipeline default response a status code equal to that given
+func (o *UnpausePipelineDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the unpause pipeline default response
@@ -192,7 +343,13 @@ func (o *UnpausePipelineDefault) Code() int {
 }
 
 func (o *UnpausePipelineDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipeline default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipeline default %s", o._statusCode, payload)
+}
+
+func (o *UnpausePipelineDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause][%d] unpausePipeline default %s", o._statusCode, payload)
 }
 
 func (o *UnpausePipelineDefault) GetPayload() *models.ErrorPayload {
@@ -201,12 +358,16 @@ func (o *UnpausePipelineDefault) GetPayload() *models.ErrorPayload {
 
 func (o *UnpausePipelineDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

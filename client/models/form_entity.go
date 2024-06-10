@@ -6,18 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // FormEntity Forms file's Entity
 //
-// This describes all the attributes possible to configure a form's variable
+// # This describes all the attributes possible to configure a form's variable
+//
 // swagger:model FormEntity
 type FormEntity struct {
 
@@ -63,7 +64,7 @@ type FormEntity struct {
 
 	// The type of data handled - used to manipulate/validate the input, and also validate default/values
 	// Required: true
-	// Enum: [integer float string array boolean map]
+	// Enum: ["integer","float","string","array","boolean","map"]
 	Type *string `json:"type"`
 
 	// The unit to be displayed for the variable, helping to know what's being manipulated: amount of servers, Go, users, etc.
@@ -94,7 +95,7 @@ type FormEntity struct {
 
 	// The widget used to display the data in the most suitable way
 	// Required: true
-	// Enum: [auto_complete dropdown radios slider_list slider_range number simple_text switch text_area cy_cred cy_scs cy_crs cy_branch cy_inventory_resource hidden]
+	// Enum: ["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","hidden"]
 	Widget *string `json:"widget"`
 
 	// Some specific configuration that could be applied to that widget. Currently only a few widgets can be configured:
@@ -194,7 +195,7 @@ const (
 
 // prop value enum
 func (m *FormEntity) validateTypeEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, formEntityTypeTypePropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, formEntityTypeTypePropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -276,7 +277,7 @@ const (
 
 // prop value enum
 func (m *FormEntity) validateWidgetEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, formEntityTypeWidgetPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, formEntityTypeWidgetPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -293,6 +294,11 @@ func (m *FormEntity) validateWidget(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this form entity based on context it is used
+func (m *FormEntity) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -13,73 +13,90 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewUnpausePipelineParams creates a new UnpausePipelineParams object
-// with the default values initialized.
+// NewUnpausePipelineParams creates a new UnpausePipelineParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUnpausePipelineParams() *UnpausePipelineParams {
-	var ()
 	return &UnpausePipelineParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUnpausePipelineParamsWithTimeout creates a new UnpausePipelineParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUnpausePipelineParamsWithTimeout(timeout time.Duration) *UnpausePipelineParams {
-	var ()
 	return &UnpausePipelineParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUnpausePipelineParamsWithContext creates a new UnpausePipelineParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUnpausePipelineParamsWithContext(ctx context.Context) *UnpausePipelineParams {
-	var ()
 	return &UnpausePipelineParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUnpausePipelineParamsWithHTTPClient creates a new UnpausePipelineParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUnpausePipelineParamsWithHTTPClient(client *http.Client) *UnpausePipelineParams {
-	var ()
 	return &UnpausePipelineParams{
 		HTTPClient: client,
 	}
 }
 
-/*UnpausePipelineParams contains all the parameters to send to the API endpoint
-for the unpause pipeline operation typically these are written to a http.Request
+/*
+UnpausePipelineParams contains all the parameters to send to the API endpoint
+
+	for the unpause pipeline operation.
+
+	Typically these are written to a http.Request.
 */
 type UnpausePipelineParams struct {
 
-	/*InpathPipelineName
-	  A pipeline name
+	/* InpathPipelineName.
 
+	   A pipeline name
 	*/
 	InpathPipelineName string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*ProjectCanonical
-	  A canonical of a project.
 
+	/* ProjectCanonical.
+
+	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the unpause pipeline params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UnpausePipelineParams) WithDefaults() *UnpausePipelineParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the unpause pipeline params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UnpausePipelineParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the unpause pipeline params

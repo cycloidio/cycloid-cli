@@ -7,13 +7,38 @@ package organization_pipelines_jobs_build
 
 import (
 	"github.com/go-openapi/runtime"
-
-	strfmt "github.com/go-openapi/strfmt"
+	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization pipelines jobs build API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new organization pipelines jobs build API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new organization pipelines jobs build API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -24,16 +49,88 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
+// This client is generated with a few options you might find useful for your swagger spec.
+//
+// Feel free to add you own set of options.
+
+// WithContentType allows the client to force the Content-Type header
+// to negotiate a specific Consumer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithContentType(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ConsumesMediaTypes = []string{mime}
+	}
+}
+
+// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
+func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/json"}
+}
+
+// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
+func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
+func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
+}
+
+// WithAccept allows the client to force the Accept header
+// to negotiate a specific Producer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithAccept(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ProducesMediaTypes = []string{mime}
+	}
+}
+
+// WithAcceptApplicationJSON sets the Accept header to "application/json".
+func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/json"}
+}
+
+// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
+func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// ClientService is the interface for Client methods
+type ClientService interface {
+	AbortBuild(params *AbortBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*AbortBuildNoContent, error)
+
+	CreateBuild(params *CreateBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateBuildOK, error)
+
+	GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildOK, error)
+
+	GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildPlanOK, error)
+
+	GetBuildPreparation(params *GetBuildPreparationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildPreparationOK, error)
+
+	GetBuildResources(params *GetBuildResourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildResourcesOK, error)
+
+	GetBuilds(params *GetBuildsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildsOK, error)
+
+	RerunBuild(params *RerunBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RerunBuildOK, error)
+
+	SetTransport(transport runtime.ClientTransport)
+}
+
 /*
 AbortBuild Abort a specific build.
 */
-func (a *Client) AbortBuild(params *AbortBuildParams, authInfo runtime.ClientAuthInfoWriter) (*AbortBuildNoContent, error) {
+func (a *Client) AbortBuild(params *AbortBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*AbortBuildNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewAbortBuildParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "abortBuild",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/abort",
@@ -45,7 +142,12 @@ func (a *Client) AbortBuild(params *AbortBuildParams, authInfo runtime.ClientAut
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -61,13 +163,12 @@ func (a *Client) AbortBuild(params *AbortBuildParams, authInfo runtime.ClientAut
 /*
 CreateBuild Create a new build for the job
 */
-func (a *Client) CreateBuild(params *CreateBuildParams, authInfo runtime.ClientAuthInfoWriter) (*CreateBuildOK, error) {
+func (a *Client) CreateBuild(params *CreateBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateBuildOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateBuildParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "createBuild",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds",
@@ -79,7 +180,12 @@ func (a *Client) CreateBuild(params *CreateBuildParams, authInfo runtime.ClientA
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -95,13 +201,12 @@ func (a *Client) CreateBuild(params *CreateBuildParams, authInfo runtime.ClientA
 /*
 GetBuild Get the information of the build.
 */
-func (a *Client) GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInfoWriter) (*GetBuildOK, error) {
+func (a *Client) GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetBuildParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getBuild",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}",
@@ -113,7 +218,12 @@ func (a *Client) GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInf
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -129,13 +239,12 @@ func (a *Client) GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInf
 /*
 GetBuildPlan Get the plan of the build.
 */
-func (a *Client) GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.ClientAuthInfoWriter) (*GetBuildPlanOK, error) {
+func (a *Client) GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildPlanOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetBuildPlanParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getBuildPlan",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/plan",
@@ -147,7 +256,12 @@ func (a *Client) GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.Clien
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -163,13 +277,12 @@ func (a *Client) GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.Clien
 /*
 GetBuildPreparation Get the preparation of the Build.
 */
-func (a *Client) GetBuildPreparation(params *GetBuildPreparationParams, authInfo runtime.ClientAuthInfoWriter) (*GetBuildPreparationOK, error) {
+func (a *Client) GetBuildPreparation(params *GetBuildPreparationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildPreparationOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetBuildPreparationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getBuildPreparation",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/preparation",
@@ -181,7 +294,12 @@ func (a *Client) GetBuildPreparation(params *GetBuildPreparationParams, authInfo
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -197,13 +315,12 @@ func (a *Client) GetBuildPreparation(params *GetBuildPreparationParams, authInfo
 /*
 GetBuildResources Get the resources of the build.
 */
-func (a *Client) GetBuildResources(params *GetBuildResourcesParams, authInfo runtime.ClientAuthInfoWriter) (*GetBuildResourcesOK, error) {
+func (a *Client) GetBuildResources(params *GetBuildResourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildResourcesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetBuildResourcesParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getBuildResources",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources",
@@ -215,7 +332,12 @@ func (a *Client) GetBuildResources(params *GetBuildResourcesParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -231,13 +353,12 @@ func (a *Client) GetBuildResources(params *GetBuildResourcesParams, authInfo run
 /*
 GetBuilds Get the pipeline job's builds that the authenticated user has access to.
 */
-func (a *Client) GetBuilds(params *GetBuildsParams, authInfo runtime.ClientAuthInfoWriter) (*GetBuildsOK, error) {
+func (a *Client) GetBuilds(params *GetBuildsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetBuildsParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getBuilds",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds",
@@ -249,7 +370,12 @@ func (a *Client) GetBuilds(params *GetBuildsParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -265,13 +391,12 @@ func (a *Client) GetBuilds(params *GetBuildsParams, authInfo runtime.ClientAuthI
 /*
 RerunBuild Reruns a specific build.
 */
-func (a *Client) RerunBuild(params *RerunBuildParams, authInfo runtime.ClientAuthInfoWriter) (*RerunBuildOK, error) {
+func (a *Client) RerunBuild(params *RerunBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RerunBuildOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRerunBuildParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "rerunBuild",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}",
@@ -283,7 +408,12 @@ func (a *Client) RerunBuild(params *RerunBuildParams, authInfo runtime.ClientAut
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

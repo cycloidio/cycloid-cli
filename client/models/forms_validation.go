@@ -6,16 +6,17 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // FormsValidation Forms validation
 //
-// Validates a given Form's file
+// # Validates a given Form's file
+//
 // swagger:model FormsValidation
 type FormsValidation struct {
 
@@ -40,10 +41,15 @@ func (m *FormsValidation) Validate(formats strfmt.Registry) error {
 
 func (m *FormsValidation) validateFormFile(formats strfmt.Registry) error {
 
-	if err := validate.Required("form_file", "body", m.FormFile); err != nil {
-		return err
+	if m.FormFile == nil {
+		return errors.Required("form_file", "body", nil)
 	}
 
+	return nil
+}
+
+// ContextValidate validates this forms validation based on context it is used
+func (m *FormsValidation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

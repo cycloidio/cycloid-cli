@@ -6,16 +6,16 @@ package organization_service_catalog_sources
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteServiceCatalogSourceReader is a Reader for the DeleteServiceCatalogSource structure.
@@ -49,15 +49,50 @@ func NewDeleteServiceCatalogSourceNoContent() *DeleteServiceCatalogSourceNoConte
 	return &DeleteServiceCatalogSourceNoContent{}
 }
 
-/*DeleteServiceCatalogSourceNoContent handles this case with default header values.
+/*
+DeleteServiceCatalogSourceNoContent describes a response with status code 204, with default header values.
 
 Organization Service Catalog Sources has been deleted
 */
 type DeleteServiceCatalogSourceNoContent struct {
 }
 
+// IsSuccess returns true when this delete service catalog source no content response has a 2xx status code
+func (o *DeleteServiceCatalogSourceNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this delete service catalog source no content response has a 3xx status code
+func (o *DeleteServiceCatalogSourceNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete service catalog source no content response has a 4xx status code
+func (o *DeleteServiceCatalogSourceNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete service catalog source no content response has a 5xx status code
+func (o *DeleteServiceCatalogSourceNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete service catalog source no content response a status code equal to that given
+func (o *DeleteServiceCatalogSourceNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the delete service catalog source no content response
+func (o *DeleteServiceCatalogSourceNoContent) Code() int {
+	return 204
+}
+
 func (o *DeleteServiceCatalogSourceNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] deleteServiceCatalogSourceNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] deleteServiceCatalogSourceNoContent", 204)
+}
+
+func (o *DeleteServiceCatalogSourceNoContent) String() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] deleteServiceCatalogSourceNoContent", 204)
 }
 
 func (o *DeleteServiceCatalogSourceNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -72,18 +107,46 @@ func NewDeleteServiceCatalogSourceDefault(code int) *DeleteServiceCatalogSourceD
 	}
 }
 
-/*DeleteServiceCatalogSourceDefault handles this case with default header values.
+/*
+DeleteServiceCatalogSourceDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteServiceCatalogSourceDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this delete service catalog source default response has a 2xx status code
+func (o *DeleteServiceCatalogSourceDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this delete service catalog source default response has a 3xx status code
+func (o *DeleteServiceCatalogSourceDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this delete service catalog source default response has a 4xx status code
+func (o *DeleteServiceCatalogSourceDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this delete service catalog source default response has a 5xx status code
+func (o *DeleteServiceCatalogSourceDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this delete service catalog source default response a status code equal to that given
+func (o *DeleteServiceCatalogSourceDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the delete service catalog source default response
@@ -92,7 +155,13 @@ func (o *DeleteServiceCatalogSourceDefault) Code() int {
 }
 
 func (o *DeleteServiceCatalogSourceDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] deleteServiceCatalogSource default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] deleteServiceCatalogSource default %s", o._statusCode, payload)
+}
+
+func (o *DeleteServiceCatalogSourceDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}][%d] deleteServiceCatalogSource default %s", o._statusCode, payload)
 }
 
 func (o *DeleteServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {
@@ -101,12 +170,16 @@ func (o *DeleteServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteServiceCatalogSourceDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

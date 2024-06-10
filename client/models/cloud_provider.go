@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // CloudProvider Cloud Provider
 //
 // CloudProvider represents a cloud provider. Those cloud providers are used to identify the scope of projects and/or stacks.
+//
 // swagger:model CloudProvider
 type CloudProvider struct {
 
@@ -31,7 +32,7 @@ type CloudProvider struct {
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	// Enum: [aws google azurerm flexibleengine openstack scaleway vmware ovh alibaba oracle vsphere kubernetes]
+	// Enum: ["aws","google","azurerm","flexibleengine","openstack","scaleway","vmware","ovh","alibaba","oracle","vsphere","kubernetes"]
 	Canonical *string `json:"canonical"`
 
 	// created at
@@ -91,16 +92,15 @@ func (m *CloudProvider) Validate(formats strfmt.Registry) error {
 }
 
 func (m *CloudProvider) validateAbbreviation(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Abbreviation) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("abbreviation", "body", string(m.Abbreviation), 2); err != nil {
+	if err := validate.MinLength("abbreviation", "body", m.Abbreviation, 2); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("abbreviation", "body", string(m.Abbreviation), 60); err != nil {
+	if err := validate.MaxLength("abbreviation", "body", m.Abbreviation, 60); err != nil {
 		return err
 	}
 
@@ -160,7 +160,7 @@ const (
 
 // prop value enum
 func (m *CloudProvider) validateCanonicalEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, cloudProviderTypeCanonicalPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, cloudProviderTypeCanonicalPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -172,15 +172,15 @@ func (m *CloudProvider) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -193,12 +193,11 @@ func (m *CloudProvider) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *CloudProvider) validateCreatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -206,12 +205,11 @@ func (m *CloudProvider) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *CloudProvider) validateID(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.ID) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -224,11 +222,11 @@ func (m *CloudProvider) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 2); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 2); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("name", "body", string(*m.Name), 60); err != nil {
+	if err := validate.MaxLength("name", "body", *m.Name, 60); err != nil {
 		return err
 	}
 
@@ -236,15 +234,19 @@ func (m *CloudProvider) validateName(formats strfmt.Registry) error {
 }
 
 func (m *CloudProvider) validateUpdatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this cloud provider based on context it is used
+func (m *CloudProvider) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

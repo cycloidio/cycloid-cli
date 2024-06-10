@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // TerraformValidationResult TerraformValidationResult
 //
-// The result of the validation, if errors is empty means that is correct
+// # The result of the validation, if errors is empty means that is correct
+//
 // swagger:model TerraformValidationResult
 type TerraformValidationResult struct {
 
@@ -44,6 +46,11 @@ func (m *TerraformValidationResult) validateErrors(formats strfmt.Registry) erro
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this terraform validation result based on context it is used
+func (m *TerraformValidationResult) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,17 +6,18 @@ package organization_pipelines_jobs_build
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetBuildResourcesReader is a Reader for the GetBuildResources structure.
@@ -62,7 +63,8 @@ func NewGetBuildResourcesOK() *GetBuildResourcesOK {
 	return &GetBuildResourcesOK{}
 }
 
-/*GetBuildResourcesOK handles this case with default header values.
+/*
+GetBuildResourcesOK describes a response with status code 200, with default header values.
 
 The resources of the build's which has the specified id.
 */
@@ -70,8 +72,44 @@ type GetBuildResourcesOK struct {
 	Payload *GetBuildResourcesOKBody
 }
 
+// IsSuccess returns true when this get build resources o k response has a 2xx status code
+func (o *GetBuildResourcesOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get build resources o k response has a 3xx status code
+func (o *GetBuildResourcesOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get build resources o k response has a 4xx status code
+func (o *GetBuildResourcesOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get build resources o k response has a 5xx status code
+func (o *GetBuildResourcesOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get build resources o k response a status code equal to that given
+func (o *GetBuildResourcesOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get build resources o k response
+func (o *GetBuildResourcesOK) Code() int {
+	return 200
+}
+
 func (o *GetBuildResourcesOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesOK %s", 200, payload)
+}
+
+func (o *GetBuildResourcesOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesOK %s", 200, payload)
 }
 
 func (o *GetBuildResourcesOK) GetPayload() *GetBuildResourcesOKBody {
@@ -95,20 +133,60 @@ func NewGetBuildResourcesForbidden() *GetBuildResourcesForbidden {
 	return &GetBuildResourcesForbidden{}
 }
 
-/*GetBuildResourcesForbidden handles this case with default header values.
+/*
+GetBuildResourcesForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetBuildResourcesForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get build resources forbidden response has a 2xx status code
+func (o *GetBuildResourcesForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get build resources forbidden response has a 3xx status code
+func (o *GetBuildResourcesForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get build resources forbidden response has a 4xx status code
+func (o *GetBuildResourcesForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get build resources forbidden response has a 5xx status code
+func (o *GetBuildResourcesForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get build resources forbidden response a status code equal to that given
+func (o *GetBuildResourcesForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get build resources forbidden response
+func (o *GetBuildResourcesForbidden) Code() int {
+	return 403
+}
+
 func (o *GetBuildResourcesForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesForbidden %s", 403, payload)
+}
+
+func (o *GetBuildResourcesForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesForbidden %s", 403, payload)
 }
 
 func (o *GetBuildResourcesForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *GetBuildResourcesForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetBuildResourcesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +221,60 @@ func NewGetBuildResourcesNotFound() *GetBuildResourcesNotFound {
 	return &GetBuildResourcesNotFound{}
 }
 
-/*GetBuildResourcesNotFound handles this case with default header values.
+/*
+GetBuildResourcesNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetBuildResourcesNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get build resources not found response has a 2xx status code
+func (o *GetBuildResourcesNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get build resources not found response has a 3xx status code
+func (o *GetBuildResourcesNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get build resources not found response has a 4xx status code
+func (o *GetBuildResourcesNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get build resources not found response has a 5xx status code
+func (o *GetBuildResourcesNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get build resources not found response a status code equal to that given
+func (o *GetBuildResourcesNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get build resources not found response
+func (o *GetBuildResourcesNotFound) Code() int {
+	return 404
+}
+
 func (o *GetBuildResourcesNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesNotFound %s", 404, payload)
+}
+
+func (o *GetBuildResourcesNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResourcesNotFound %s", 404, payload)
 }
 
 func (o *GetBuildResourcesNotFound) GetPayload() *models.ErrorPayload {
@@ -161,12 +283,16 @@ func (o *GetBuildResourcesNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetBuildResourcesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +311,46 @@ func NewGetBuildResourcesDefault(code int) *GetBuildResourcesDefault {
 	}
 }
 
-/*GetBuildResourcesDefault handles this case with default header values.
+/*
+GetBuildResourcesDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetBuildResourcesDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get build resources default response has a 2xx status code
+func (o *GetBuildResourcesDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get build resources default response has a 3xx status code
+func (o *GetBuildResourcesDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get build resources default response has a 4xx status code
+func (o *GetBuildResourcesDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get build resources default response has a 5xx status code
+func (o *GetBuildResourcesDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get build resources default response a status code equal to that given
+func (o *GetBuildResourcesDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get build resources default response
@@ -205,7 +359,13 @@ func (o *GetBuildResourcesDefault) Code() int {
 }
 
 func (o *GetBuildResourcesDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResources default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResources default %s", o._statusCode, payload)
+}
+
+func (o *GetBuildResourcesDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds/{build_id}/resources][%d] getBuildResources default %s", o._statusCode, payload)
 }
 
 func (o *GetBuildResourcesDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +374,16 @@ func (o *GetBuildResourcesDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetBuildResourcesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +395,8 @@ func (o *GetBuildResourcesDefault) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
-/*GetBuildResourcesOKBody get build resources o k body
+/*
+GetBuildResourcesOKBody get build resources o k body
 swagger:model GetBuildResourcesOKBody
 */
 type GetBuildResourcesOKBody struct {
@@ -265,6 +430,39 @@ func (o *GetBuildResourcesOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getBuildResourcesOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getBuildResourcesOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get build resources o k body based on the context it is used
+func (o *GetBuildResourcesOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetBuildResourcesOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getBuildResourcesOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getBuildResourcesOK" + "." + "data")
 			}
 			return err
 		}

@@ -6,16 +6,16 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // EmailVerificationResendReader is a Reader for the EmailVerificationResend structure.
@@ -55,15 +55,50 @@ func NewEmailVerificationResendNoContent() *EmailVerificationResendNoContent {
 	return &EmailVerificationResendNoContent{}
 }
 
-/*EmailVerificationResendNoContent handles this case with default header values.
+/*
+EmailVerificationResendNoContent describes a response with status code 204, with default header values.
 
 The email verification has been re-sent.
 */
 type EmailVerificationResendNoContent struct {
 }
 
+// IsSuccess returns true when this email verification resend no content response has a 2xx status code
+func (o *EmailVerificationResendNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this email verification resend no content response has a 3xx status code
+func (o *EmailVerificationResendNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this email verification resend no content response has a 4xx status code
+func (o *EmailVerificationResendNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this email verification resend no content response has a 5xx status code
+func (o *EmailVerificationResendNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this email verification resend no content response a status code equal to that given
+func (o *EmailVerificationResendNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the email verification resend no content response
+func (o *EmailVerificationResendNoContent) Code() int {
+	return 204
+}
+
 func (o *EmailVerificationResendNoContent) Error() string {
-	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResendNoContent ", 204)
+	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResendNoContent", 204)
+}
+
+func (o *EmailVerificationResendNoContent) String() string {
+	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResendNoContent", 204)
 }
 
 func (o *EmailVerificationResendNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -76,20 +111,60 @@ func NewEmailVerificationResendUnprocessableEntity() *EmailVerificationResendUnp
 	return &EmailVerificationResendUnprocessableEntity{}
 }
 
-/*EmailVerificationResendUnprocessableEntity handles this case with default header values.
+/*
+EmailVerificationResendUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type EmailVerificationResendUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this email verification resend unprocessable entity response has a 2xx status code
+func (o *EmailVerificationResendUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this email verification resend unprocessable entity response has a 3xx status code
+func (o *EmailVerificationResendUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this email verification resend unprocessable entity response has a 4xx status code
+func (o *EmailVerificationResendUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this email verification resend unprocessable entity response has a 5xx status code
+func (o *EmailVerificationResendUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this email verification resend unprocessable entity response a status code equal to that given
+func (o *EmailVerificationResendUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the email verification resend unprocessable entity response
+func (o *EmailVerificationResendUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *EmailVerificationResendUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResendUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResendUnprocessableEntity %s", 422, payload)
+}
+
+func (o *EmailVerificationResendUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResendUnprocessableEntity %s", 422, payload)
 }
 
 func (o *EmailVerificationResendUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -98,12 +173,16 @@ func (o *EmailVerificationResendUnprocessableEntity) GetPayload() *models.ErrorP
 
 func (o *EmailVerificationResendUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -122,18 +201,46 @@ func NewEmailVerificationResendDefault(code int) *EmailVerificationResendDefault
 	}
 }
 
-/*EmailVerificationResendDefault handles this case with default header values.
+/*
+EmailVerificationResendDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type EmailVerificationResendDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this email verification resend default response has a 2xx status code
+func (o *EmailVerificationResendDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this email verification resend default response has a 3xx status code
+func (o *EmailVerificationResendDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this email verification resend default response has a 4xx status code
+func (o *EmailVerificationResendDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this email verification resend default response has a 5xx status code
+func (o *EmailVerificationResendDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this email verification resend default response a status code equal to that given
+func (o *EmailVerificationResendDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the email verification resend default response
@@ -142,7 +249,13 @@ func (o *EmailVerificationResendDefault) Code() int {
 }
 
 func (o *EmailVerificationResendDefault) Error() string {
-	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResend default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResend default %s", o._statusCode, payload)
+}
+
+func (o *EmailVerificationResendDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user/email/verification][%d] emailVerificationResend default %s", o._statusCode, payload)
 }
 
 func (o *EmailVerificationResendDefault) GetPayload() *models.ErrorPayload {
@@ -151,12 +264,16 @@ func (o *EmailVerificationResendDefault) GetPayload() *models.ErrorPayload {
 
 func (o *EmailVerificationResendDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

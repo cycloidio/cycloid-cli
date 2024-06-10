@@ -6,16 +6,16 @@ package organization_config_repositories
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteConfigRepositoryReader is a Reader for the DeleteConfigRepository structure.
@@ -49,15 +49,50 @@ func NewDeleteConfigRepositoryNoContent() *DeleteConfigRepositoryNoContent {
 	return &DeleteConfigRepositoryNoContent{}
 }
 
-/*DeleteConfigRepositoryNoContent handles this case with default header values.
+/*
+DeleteConfigRepositoryNoContent describes a response with status code 204, with default header values.
 
 Organization Config repository has been deleted
 */
 type DeleteConfigRepositoryNoContent struct {
 }
 
+// IsSuccess returns true when this delete config repository no content response has a 2xx status code
+func (o *DeleteConfigRepositoryNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this delete config repository no content response has a 3xx status code
+func (o *DeleteConfigRepositoryNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete config repository no content response has a 4xx status code
+func (o *DeleteConfigRepositoryNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete config repository no content response has a 5xx status code
+func (o *DeleteConfigRepositoryNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete config repository no content response a status code equal to that given
+func (o *DeleteConfigRepositoryNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the delete config repository no content response
+func (o *DeleteConfigRepositoryNoContent) Code() int {
+	return 204
+}
+
 func (o *DeleteConfigRepositoryNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] deleteConfigRepositoryNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] deleteConfigRepositoryNoContent", 204)
+}
+
+func (o *DeleteConfigRepositoryNoContent) String() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] deleteConfigRepositoryNoContent", 204)
 }
 
 func (o *DeleteConfigRepositoryNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -72,18 +107,46 @@ func NewDeleteConfigRepositoryDefault(code int) *DeleteConfigRepositoryDefault {
 	}
 }
 
-/*DeleteConfigRepositoryDefault handles this case with default header values.
+/*
+DeleteConfigRepositoryDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteConfigRepositoryDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this delete config repository default response has a 2xx status code
+func (o *DeleteConfigRepositoryDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this delete config repository default response has a 3xx status code
+func (o *DeleteConfigRepositoryDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this delete config repository default response has a 4xx status code
+func (o *DeleteConfigRepositoryDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this delete config repository default response has a 5xx status code
+func (o *DeleteConfigRepositoryDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this delete config repository default response a status code equal to that given
+func (o *DeleteConfigRepositoryDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the delete config repository default response
@@ -92,7 +155,13 @@ func (o *DeleteConfigRepositoryDefault) Code() int {
 }
 
 func (o *DeleteConfigRepositoryDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] deleteConfigRepository default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] deleteConfigRepository default %s", o._statusCode, payload)
+}
+
+func (o *DeleteConfigRepositoryDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] deleteConfigRepository default %s", o._statusCode, payload)
 }
 
 func (o *DeleteConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
@@ -101,12 +170,16 @@ func (o *DeleteConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteConfigRepositoryDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

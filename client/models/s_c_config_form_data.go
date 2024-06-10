@@ -6,17 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // SCConfigFormData Form Data
 //
-// Represents the Data related to Forms that is stored in a SC Configuration for a given Use Case
+// # Represents the Data related to Forms that is stored in a SC Configuration for a given Use Case
+//
 // swagger:model SCConfigFormData
 type SCConfigFormData map[string]map[string][]FormEntity
 
@@ -37,6 +39,43 @@ func (m SCConfigFormData) Validate(formats strfmt.Registry) error {
 				if err := m[k][kk][i].Validate(formats); err != nil {
 					if ve, ok := err.(*errors.Validation); ok {
 						return ve.ValidateName(k + "." + kk + "." + strconv.Itoa(i))
+					} else if ce, ok := err.(*errors.CompositeError); ok {
+						return ce.ValidateName(k + "." + kk + "." + strconv.Itoa(i))
+					}
+					return err
+				}
+
+			}
+
+		}
+
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validate this s c config form data based on the context it is used
+func (m SCConfigFormData) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	for k := range m {
+
+		for kk := range m[k] {
+
+			for i := 0; i < len(m[k][kk]); i++ {
+
+				if swag.IsZero(m[k][kk][i]) { // not required
+					return nil
+				}
+
+				if err := m[k][kk][i].ContextValidate(ctx, formats); err != nil {
+					if ve, ok := err.(*errors.Validation); ok {
+						return ve.ValidateName(k + "." + kk + "." + strconv.Itoa(i))
+					} else if ce, ok := err.(*errors.CompositeError); ok {
+						return ce.ValidateName(k + "." + kk + "." + strconv.Itoa(i))
 					}
 					return err
 				}

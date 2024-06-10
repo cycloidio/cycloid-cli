@@ -6,16 +6,16 @@ package organization_invitations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // ResendInvitationReader is a Reader for the ResendInvitation structure.
@@ -61,15 +61,50 @@ func NewResendInvitationNoContent() *ResendInvitationNoContent {
 	return &ResendInvitationNoContent{}
 }
 
-/*ResendInvitationNoContent handles this case with default header values.
+/*
+ResendInvitationNoContent describes a response with status code 204, with default header values.
 
 The Invitation has been resent.
 */
 type ResendInvitationNoContent struct {
 }
 
+// IsSuccess returns true when this resend invitation no content response has a 2xx status code
+func (o *ResendInvitationNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this resend invitation no content response has a 3xx status code
+func (o *ResendInvitationNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this resend invitation no content response has a 4xx status code
+func (o *ResendInvitationNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this resend invitation no content response has a 5xx status code
+func (o *ResendInvitationNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this resend invitation no content response a status code equal to that given
+func (o *ResendInvitationNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the resend invitation no content response
+func (o *ResendInvitationNoContent) Code() int {
+	return 204
+}
+
 func (o *ResendInvitationNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationNoContent ", 204)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationNoContent", 204)
+}
+
+func (o *ResendInvitationNoContent) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationNoContent", 204)
 }
 
 func (o *ResendInvitationNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -82,20 +117,60 @@ func NewResendInvitationForbidden() *ResendInvitationForbidden {
 	return &ResendInvitationForbidden{}
 }
 
-/*ResendInvitationForbidden handles this case with default header values.
+/*
+ResendInvitationForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ResendInvitationForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this resend invitation forbidden response has a 2xx status code
+func (o *ResendInvitationForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this resend invitation forbidden response has a 3xx status code
+func (o *ResendInvitationForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this resend invitation forbidden response has a 4xx status code
+func (o *ResendInvitationForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this resend invitation forbidden response has a 5xx status code
+func (o *ResendInvitationForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this resend invitation forbidden response a status code equal to that given
+func (o *ResendInvitationForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the resend invitation forbidden response
+func (o *ResendInvitationForbidden) Code() int {
+	return 403
+}
+
 func (o *ResendInvitationForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationForbidden %s", 403, payload)
+}
+
+func (o *ResendInvitationForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationForbidden %s", 403, payload)
 }
 
 func (o *ResendInvitationForbidden) GetPayload() *models.ErrorPayload {
@@ -104,12 +179,16 @@ func (o *ResendInvitationForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *ResendInvitationForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -126,20 +205,60 @@ func NewResendInvitationNotFound() *ResendInvitationNotFound {
 	return &ResendInvitationNotFound{}
 }
 
-/*ResendInvitationNotFound handles this case with default header values.
+/*
+ResendInvitationNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type ResendInvitationNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this resend invitation not found response has a 2xx status code
+func (o *ResendInvitationNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this resend invitation not found response has a 3xx status code
+func (o *ResendInvitationNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this resend invitation not found response has a 4xx status code
+func (o *ResendInvitationNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this resend invitation not found response has a 5xx status code
+func (o *ResendInvitationNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this resend invitation not found response a status code equal to that given
+func (o *ResendInvitationNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the resend invitation not found response
+func (o *ResendInvitationNotFound) Code() int {
+	return 404
+}
+
 func (o *ResendInvitationNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationNotFound %s", 404, payload)
+}
+
+func (o *ResendInvitationNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitationNotFound %s", 404, payload)
 }
 
 func (o *ResendInvitationNotFound) GetPayload() *models.ErrorPayload {
@@ -148,12 +267,16 @@ func (o *ResendInvitationNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *ResendInvitationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,18 +295,46 @@ func NewResendInvitationDefault(code int) *ResendInvitationDefault {
 	}
 }
 
-/*ResendInvitationDefault handles this case with default header values.
+/*
+ResendInvitationDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type ResendInvitationDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this resend invitation default response has a 2xx status code
+func (o *ResendInvitationDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this resend invitation default response has a 3xx status code
+func (o *ResendInvitationDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this resend invitation default response has a 4xx status code
+func (o *ResendInvitationDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this resend invitation default response has a 5xx status code
+func (o *ResendInvitationDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this resend invitation default response a status code equal to that given
+func (o *ResendInvitationDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the resend invitation default response
@@ -192,7 +343,13 @@ func (o *ResendInvitationDefault) Code() int {
 }
 
 func (o *ResendInvitationDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitation default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitation default %s", o._statusCode, payload)
+}
+
+func (o *ResendInvitationDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/invitations/{invitation_id}/resend][%d] resendInvitation default %s", o._statusCode, payload)
 }
 
 func (o *ResendInvitationDefault) GetPayload() *models.ErrorPayload {
@@ -201,12 +358,16 @@ func (o *ResendInvitationDefault) GetPayload() *models.ErrorPayload {
 
 func (o *ResendInvitationDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

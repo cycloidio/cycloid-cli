@@ -6,18 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewOAuthUser User's OAuth information
 //
-// The User OAuth information
+// # The User OAuth information
+//
 // swagger:model NewOAuthUser
 type NewOAuthUser struct {
 
@@ -42,7 +43,7 @@ type NewOAuthUser struct {
 	InvitationToken string `json:"invitation_token,omitempty"`
 
 	// User's preferred language
-	// Enum: [en fr es]
+	// Enum: ["en","fr","es"]
 	Locale string `json:"locale,omitempty"`
 
 	// picture url
@@ -104,12 +105,11 @@ func (m *NewOAuthUser) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewOAuthUser) validateCountryCode(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CountryCode) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("country_code", "body", string(m.CountryCode), `^[A-Z]{2}$`); err != nil {
+	if err := validate.Pattern("country_code", "body", m.CountryCode, `^[A-Z]{2}$`); err != nil {
 		return err
 	}
 
@@ -139,12 +139,11 @@ func (m *NewOAuthUser) validateGivenName(formats strfmt.Registry) error {
 }
 
 func (m *NewOAuthUser) validateInvitationToken(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.InvitationToken) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("invitation_token", "body", string(m.InvitationToken), 5); err != nil {
+	if err := validate.MinLength("invitation_token", "body", m.InvitationToken, 5); err != nil {
 		return err
 	}
 
@@ -177,14 +176,13 @@ const (
 
 // prop value enum
 func (m *NewOAuthUser) validateLocaleEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, newOAuthUserTypeLocalePropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, newOAuthUserTypeLocalePropEnum, true); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (m *NewOAuthUser) validateLocale(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Locale) { // not required
 		return nil
 	}
@@ -198,7 +196,6 @@ func (m *NewOAuthUser) validateLocale(formats strfmt.Registry) error {
 }
 
 func (m *NewOAuthUser) validatePictureURL(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.PictureURL) { // not required
 		return nil
 	}
@@ -225,18 +222,23 @@ func (m *NewOAuthUser) validateUsername(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("username", "body", string(*m.Username), 3); err != nil {
+	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", string(*m.Username), 100); err != nil {
+	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", string(*m.Username), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this new o auth user based on context it is used
+func (m *NewOAuthUser) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

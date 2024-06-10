@@ -6,18 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewCredential Credential
 //
-// Represents the Credential
+// # Represents the Credential
+//
 // swagger:model NewCredential
 type NewCredential struct {
 
@@ -51,7 +52,7 @@ type NewCredential struct {
 
 	// type
 	// Required: true
-	// Enum: [ssh aws custom azure azure_storage gcp basic_auth elasticsearch swift vmware]
+	// Enum: ["ssh","aws","custom","azure","azure_storage","gcp","basic_auth","elasticsearch","swift","vmware"]
 	Type *string `json:"type"`
 }
 
@@ -86,20 +87,19 @@ func (m *NewCredential) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewCredential) validateCanonical(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -121,7 +121,7 @@ func (m *NewCredential) validatePath(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("path", "body", string(*m.Path), `[a-zA-z0-9_\-./]`); err != nil {
+	if err := validate.Pattern("path", "body", *m.Path, `[a-zA-z0-9_\-./]`); err != nil {
 		return err
 	}
 
@@ -138,6 +138,8 @@ func (m *NewCredential) validateRaw(formats strfmt.Registry) error {
 		if err := m.Raw.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("raw")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("raw")
 			}
 			return err
 		}
@@ -193,7 +195,7 @@ const (
 
 // prop value enum
 func (m *NewCredential) validateTypeEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, newCredentialTypeTypePropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, newCredentialTypeTypePropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -208,6 +210,37 @@ func (m *NewCredential) validateType(formats strfmt.Registry) error {
 	// value enum
 	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this new credential based on the context it is used
+func (m *NewCredential) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateRaw(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NewCredential) contextValidateRaw(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Raw != nil {
+
+		if err := m.Raw.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("raw")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("raw")
+			}
+			return err
+		}
 	}
 
 	return nil

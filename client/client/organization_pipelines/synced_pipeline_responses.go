@@ -6,17 +6,18 @@ package organization_pipelines
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // SyncedPipelineReader is a Reader for the SyncedPipeline structure.
@@ -74,7 +75,8 @@ func NewSyncedPipelineOK() *SyncedPipelineOK {
 	return &SyncedPipelineOK{}
 }
 
-/*SyncedPipelineOK handles this case with default header values.
+/*
+SyncedPipelineOK describes a response with status code 200, with default header values.
 
 The diff between the stack's pipeline and the existing pipeline if any exists.
 */
@@ -82,8 +84,44 @@ type SyncedPipelineOK struct {
 	Payload *SyncedPipelineOKBody
 }
 
+// IsSuccess returns true when this synced pipeline o k response has a 2xx status code
+func (o *SyncedPipelineOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this synced pipeline o k response has a 3xx status code
+func (o *SyncedPipelineOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this synced pipeline o k response has a 4xx status code
+func (o *SyncedPipelineOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this synced pipeline o k response has a 5xx status code
+func (o *SyncedPipelineOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this synced pipeline o k response a status code equal to that given
+func (o *SyncedPipelineOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the synced pipeline o k response
+func (o *SyncedPipelineOK) Code() int {
+	return 200
+}
+
 func (o *SyncedPipelineOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineOK %s", 200, payload)
+}
+
+func (o *SyncedPipelineOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineOK %s", 200, payload)
 }
 
 func (o *SyncedPipelineOK) GetPayload() *SyncedPipelineOKBody {
@@ -107,20 +145,60 @@ func NewSyncedPipelineForbidden() *SyncedPipelineForbidden {
 	return &SyncedPipelineForbidden{}
 }
 
-/*SyncedPipelineForbidden handles this case with default header values.
+/*
+SyncedPipelineForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type SyncedPipelineForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this synced pipeline forbidden response has a 2xx status code
+func (o *SyncedPipelineForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this synced pipeline forbidden response has a 3xx status code
+func (o *SyncedPipelineForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this synced pipeline forbidden response has a 4xx status code
+func (o *SyncedPipelineForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this synced pipeline forbidden response has a 5xx status code
+func (o *SyncedPipelineForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this synced pipeline forbidden response a status code equal to that given
+func (o *SyncedPipelineForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the synced pipeline forbidden response
+func (o *SyncedPipelineForbidden) Code() int {
+	return 403
+}
+
 func (o *SyncedPipelineForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineForbidden %s", 403, payload)
+}
+
+func (o *SyncedPipelineForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineForbidden %s", 403, payload)
 }
 
 func (o *SyncedPipelineForbidden) GetPayload() *models.ErrorPayload {
@@ -129,12 +207,16 @@ func (o *SyncedPipelineForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *SyncedPipelineForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -151,20 +233,60 @@ func NewSyncedPipelineNotFound() *SyncedPipelineNotFound {
 	return &SyncedPipelineNotFound{}
 }
 
-/*SyncedPipelineNotFound handles this case with default header values.
+/*
+SyncedPipelineNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type SyncedPipelineNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this synced pipeline not found response has a 2xx status code
+func (o *SyncedPipelineNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this synced pipeline not found response has a 3xx status code
+func (o *SyncedPipelineNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this synced pipeline not found response has a 4xx status code
+func (o *SyncedPipelineNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this synced pipeline not found response has a 5xx status code
+func (o *SyncedPipelineNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this synced pipeline not found response a status code equal to that given
+func (o *SyncedPipelineNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the synced pipeline not found response
+func (o *SyncedPipelineNotFound) Code() int {
+	return 404
+}
+
 func (o *SyncedPipelineNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineNotFound %s", 404, payload)
+}
+
+func (o *SyncedPipelineNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineNotFound %s", 404, payload)
 }
 
 func (o *SyncedPipelineNotFound) GetPayload() *models.ErrorPayload {
@@ -173,12 +295,16 @@ func (o *SyncedPipelineNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *SyncedPipelineNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -195,15 +321,50 @@ func NewSyncedPipelineLengthRequired() *SyncedPipelineLengthRequired {
 	return &SyncedPipelineLengthRequired{}
 }
 
-/*SyncedPipelineLengthRequired handles this case with default header values.
+/*
+SyncedPipelineLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type SyncedPipelineLengthRequired struct {
 }
 
+// IsSuccess returns true when this synced pipeline length required response has a 2xx status code
+func (o *SyncedPipelineLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this synced pipeline length required response has a 3xx status code
+func (o *SyncedPipelineLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this synced pipeline length required response has a 4xx status code
+func (o *SyncedPipelineLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this synced pipeline length required response has a 5xx status code
+func (o *SyncedPipelineLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this synced pipeline length required response a status code equal to that given
+func (o *SyncedPipelineLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the synced pipeline length required response
+func (o *SyncedPipelineLengthRequired) Code() int {
+	return 411
+}
+
 func (o *SyncedPipelineLengthRequired) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineLengthRequired ", 411)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineLengthRequired", 411)
+}
+
+func (o *SyncedPipelineLengthRequired) String() string {
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineLengthRequired", 411)
 }
 
 func (o *SyncedPipelineLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -216,20 +377,60 @@ func NewSyncedPipelineUnprocessableEntity() *SyncedPipelineUnprocessableEntity {
 	return &SyncedPipelineUnprocessableEntity{}
 }
 
-/*SyncedPipelineUnprocessableEntity handles this case with default header values.
+/*
+SyncedPipelineUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type SyncedPipelineUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this synced pipeline unprocessable entity response has a 2xx status code
+func (o *SyncedPipelineUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this synced pipeline unprocessable entity response has a 3xx status code
+func (o *SyncedPipelineUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this synced pipeline unprocessable entity response has a 4xx status code
+func (o *SyncedPipelineUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this synced pipeline unprocessable entity response has a 5xx status code
+func (o *SyncedPipelineUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this synced pipeline unprocessable entity response a status code equal to that given
+func (o *SyncedPipelineUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the synced pipeline unprocessable entity response
+func (o *SyncedPipelineUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *SyncedPipelineUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineUnprocessableEntity %s", 422, payload)
+}
+
+func (o *SyncedPipelineUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipelineUnprocessableEntity %s", 422, payload)
 }
 
 func (o *SyncedPipelineUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -238,12 +439,16 @@ func (o *SyncedPipelineUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *SyncedPipelineUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -262,18 +467,46 @@ func NewSyncedPipelineDefault(code int) *SyncedPipelineDefault {
 	}
 }
 
-/*SyncedPipelineDefault handles this case with default header values.
+/*
+SyncedPipelineDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type SyncedPipelineDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this synced pipeline default response has a 2xx status code
+func (o *SyncedPipelineDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this synced pipeline default response has a 3xx status code
+func (o *SyncedPipelineDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this synced pipeline default response has a 4xx status code
+func (o *SyncedPipelineDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this synced pipeline default response has a 5xx status code
+func (o *SyncedPipelineDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this synced pipeline default response a status code equal to that given
+func (o *SyncedPipelineDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the synced pipeline default response
@@ -282,7 +515,13 @@ func (o *SyncedPipelineDefault) Code() int {
 }
 
 func (o *SyncedPipelineDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipeline default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipeline default %s", o._statusCode, payload)
+}
+
+func (o *SyncedPipelineDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced][%d] syncedPipeline default %s", o._statusCode, payload)
 }
 
 func (o *SyncedPipelineDefault) GetPayload() *models.ErrorPayload {
@@ -291,12 +530,16 @@ func (o *SyncedPipelineDefault) GetPayload() *models.ErrorPayload {
 
 func (o *SyncedPipelineDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -308,7 +551,8 @@ func (o *SyncedPipelineDefault) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-/*SyncedPipelineOKBody synced pipeline o k body
+/*
+SyncedPipelineOKBody synced pipeline o k body
 swagger:model SyncedPipelineOKBody
 */
 type SyncedPipelineOKBody struct {
@@ -342,6 +586,39 @@ func (o *SyncedPipelineOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("syncedPipelineOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("syncedPipelineOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this synced pipeline o k body based on the context it is used
+func (o *SyncedPipelineOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *SyncedPipelineOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("syncedPipelineOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("syncedPipelineOK" + "." + "data")
 			}
 			return err
 		}

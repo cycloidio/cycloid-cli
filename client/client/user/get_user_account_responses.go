@@ -6,17 +6,18 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetUserAccountReader is a Reader for the GetUserAccount structure.
@@ -50,7 +51,8 @@ func NewGetUserAccountOK() *GetUserAccountOK {
 	return &GetUserAccountOK{}
 }
 
-/*GetUserAccountOK handles this case with default header values.
+/*
+GetUserAccountOK describes a response with status code 200, with default header values.
 
 The user account information.
 */
@@ -58,8 +60,44 @@ type GetUserAccountOK struct {
 	Payload *GetUserAccountOKBody
 }
 
+// IsSuccess returns true when this get user account o k response has a 2xx status code
+func (o *GetUserAccountOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get user account o k response has a 3xx status code
+func (o *GetUserAccountOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get user account o k response has a 4xx status code
+func (o *GetUserAccountOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get user account o k response has a 5xx status code
+func (o *GetUserAccountOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get user account o k response a status code equal to that given
+func (o *GetUserAccountOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get user account o k response
+func (o *GetUserAccountOK) Code() int {
+	return 200
+}
+
 func (o *GetUserAccountOK) Error() string {
-	return fmt.Sprintf("[GET /user][%d] getUserAccountOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user][%d] getUserAccountOK %s", 200, payload)
+}
+
+func (o *GetUserAccountOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user][%d] getUserAccountOK %s", 200, payload)
 }
 
 func (o *GetUserAccountOK) GetPayload() *GetUserAccountOKBody {
@@ -85,18 +123,46 @@ func NewGetUserAccountDefault(code int) *GetUserAccountDefault {
 	}
 }
 
-/*GetUserAccountDefault handles this case with default header values.
+/*
+GetUserAccountDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetUserAccountDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get user account default response has a 2xx status code
+func (o *GetUserAccountDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get user account default response has a 3xx status code
+func (o *GetUserAccountDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get user account default response has a 4xx status code
+func (o *GetUserAccountDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get user account default response has a 5xx status code
+func (o *GetUserAccountDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get user account default response a status code equal to that given
+func (o *GetUserAccountDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get user account default response
@@ -105,7 +171,13 @@ func (o *GetUserAccountDefault) Code() int {
 }
 
 func (o *GetUserAccountDefault) Error() string {
-	return fmt.Sprintf("[GET /user][%d] getUserAccount default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user][%d] getUserAccount default %s", o._statusCode, payload)
+}
+
+func (o *GetUserAccountDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user][%d] getUserAccount default %s", o._statusCode, payload)
 }
 
 func (o *GetUserAccountDefault) GetPayload() *models.ErrorPayload {
@@ -114,12 +186,16 @@ func (o *GetUserAccountDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetUserAccountDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -131,7 +207,8 @@ func (o *GetUserAccountDefault) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-/*GetUserAccountOKBody get user account o k body
+/*
+GetUserAccountOKBody get user account o k body
 swagger:model GetUserAccountOKBody
 */
 type GetUserAccountOKBody struct {
@@ -165,6 +242,39 @@ func (o *GetUserAccountOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getUserAccountOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getUserAccountOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get user account o k body based on the context it is used
+func (o *GetUserAccountOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetUserAccountOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getUserAccountOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getUserAccountOK" + "." + "data")
 			}
 			return err
 		}

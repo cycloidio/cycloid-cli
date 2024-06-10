@@ -13,75 +13,92 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateAPIkeyParams creates a new UpdateAPIkeyParams object
-// with the default values initialized.
+// NewUpdateAPIkeyParams creates a new UpdateAPIkeyParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUpdateAPIkeyParams() *UpdateAPIkeyParams {
-	var ()
 	return &UpdateAPIkeyParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateAPIkeyParamsWithTimeout creates a new UpdateAPIkeyParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUpdateAPIkeyParamsWithTimeout(timeout time.Duration) *UpdateAPIkeyParams {
-	var ()
 	return &UpdateAPIkeyParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUpdateAPIkeyParamsWithContext creates a new UpdateAPIkeyParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUpdateAPIkeyParamsWithContext(ctx context.Context) *UpdateAPIkeyParams {
-	var ()
 	return &UpdateAPIkeyParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUpdateAPIkeyParamsWithHTTPClient creates a new UpdateAPIkeyParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUpdateAPIkeyParamsWithHTTPClient(client *http.Client) *UpdateAPIkeyParams {
-	var ()
 	return &UpdateAPIkeyParams{
 		HTTPClient: client,
 	}
 }
 
-/*UpdateAPIkeyParams contains all the parameters to send to the API endpoint
-for the update a p ikey operation typically these are written to a http.Request
+/*
+UpdateAPIkeyParams contains all the parameters to send to the API endpoint
+
+	for the update a p ikey operation.
+
+	Typically these are written to a http.Request.
 */
 type UpdateAPIkeyParams struct {
 
-	/*APIKeyCanonical
-	  A canonical of an API key.
+	/* APIKeyCanonical.
 
+	   A canonical of an API key.
 	*/
 	APIKeyCanonical string
-	/*Body
-	  The information of the API key to update.
 
+	/* Body.
+
+	   The information of the API key to update.
 	*/
 	Body *models.UpdateAPIKey
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the update a p ikey params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateAPIkeyParams) WithDefaults() *UpdateAPIkeyParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the update a p ikey params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateAPIkeyParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update a p ikey params
@@ -162,7 +179,6 @@ func (o *UpdateAPIkeyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 	if err := r.SetPathParam("api_key_canonical", o.APIKeyCanonical); err != nil {
 		return err
 	}
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

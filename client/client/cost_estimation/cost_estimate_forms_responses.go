@@ -6,17 +6,17 @@ package cost_estimation
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CostEstimateFormsReader is a Reader for the CostEstimateForms structure.
@@ -62,7 +62,8 @@ func NewCostEstimateFormsOK() *CostEstimateFormsOK {
 	return &CostEstimateFormsOK{}
 }
 
-/*CostEstimateFormsOK handles this case with default header values.
+/*
+CostEstimateFormsOK describes a response with status code 200, with default header values.
 
 The result of estimating the costs of a stack.
 */
@@ -70,8 +71,44 @@ type CostEstimateFormsOK struct {
 	Payload *CostEstimateFormsOKBody
 }
 
+// IsSuccess returns true when this cost estimate forms o k response has a 2xx status code
+func (o *CostEstimateFormsOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this cost estimate forms o k response has a 3xx status code
+func (o *CostEstimateFormsOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this cost estimate forms o k response has a 4xx status code
+func (o *CostEstimateFormsOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this cost estimate forms o k response has a 5xx status code
+func (o *CostEstimateFormsOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this cost estimate forms o k response a status code equal to that given
+func (o *CostEstimateFormsOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the cost estimate forms o k response
+func (o *CostEstimateFormsOK) Code() int {
+	return 200
+}
+
 func (o *CostEstimateFormsOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsOK %s", 200, payload)
+}
+
+func (o *CostEstimateFormsOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsOK %s", 200, payload)
 }
 
 func (o *CostEstimateFormsOK) GetPayload() *CostEstimateFormsOKBody {
@@ -95,20 +132,60 @@ func NewCostEstimateFormsForbidden() *CostEstimateFormsForbidden {
 	return &CostEstimateFormsForbidden{}
 }
 
-/*CostEstimateFormsForbidden handles this case with default header values.
+/*
+CostEstimateFormsForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type CostEstimateFormsForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this cost estimate forms forbidden response has a 2xx status code
+func (o *CostEstimateFormsForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this cost estimate forms forbidden response has a 3xx status code
+func (o *CostEstimateFormsForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this cost estimate forms forbidden response has a 4xx status code
+func (o *CostEstimateFormsForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this cost estimate forms forbidden response has a 5xx status code
+func (o *CostEstimateFormsForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this cost estimate forms forbidden response a status code equal to that given
+func (o *CostEstimateFormsForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the cost estimate forms forbidden response
+func (o *CostEstimateFormsForbidden) Code() int {
+	return 403
+}
+
 func (o *CostEstimateFormsForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsForbidden %s", 403, payload)
+}
+
+func (o *CostEstimateFormsForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsForbidden %s", 403, payload)
 }
 
 func (o *CostEstimateFormsForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +194,16 @@ func (o *CostEstimateFormsForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *CostEstimateFormsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +220,60 @@ func NewCostEstimateFormsUnprocessableEntity() *CostEstimateFormsUnprocessableEn
 	return &CostEstimateFormsUnprocessableEntity{}
 }
 
-/*CostEstimateFormsUnprocessableEntity handles this case with default header values.
+/*
+CostEstimateFormsUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CostEstimateFormsUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this cost estimate forms unprocessable entity response has a 2xx status code
+func (o *CostEstimateFormsUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this cost estimate forms unprocessable entity response has a 3xx status code
+func (o *CostEstimateFormsUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this cost estimate forms unprocessable entity response has a 4xx status code
+func (o *CostEstimateFormsUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this cost estimate forms unprocessable entity response has a 5xx status code
+func (o *CostEstimateFormsUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this cost estimate forms unprocessable entity response a status code equal to that given
+func (o *CostEstimateFormsUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the cost estimate forms unprocessable entity response
+func (o *CostEstimateFormsUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *CostEstimateFormsUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsUnprocessableEntity %s", 422, payload)
+}
+
+func (o *CostEstimateFormsUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateFormsUnprocessableEntity %s", 422, payload)
 }
 
 func (o *CostEstimateFormsUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -161,12 +282,16 @@ func (o *CostEstimateFormsUnprocessableEntity) GetPayload() *models.ErrorPayload
 
 func (o *CostEstimateFormsUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +310,46 @@ func NewCostEstimateFormsDefault(code int) *CostEstimateFormsDefault {
 	}
 }
 
-/*CostEstimateFormsDefault handles this case with default header values.
+/*
+CostEstimateFormsDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CostEstimateFormsDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this cost estimate forms default response has a 2xx status code
+func (o *CostEstimateFormsDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this cost estimate forms default response has a 3xx status code
+func (o *CostEstimateFormsDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this cost estimate forms default response has a 4xx status code
+func (o *CostEstimateFormsDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this cost estimate forms default response has a 5xx status code
+func (o *CostEstimateFormsDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this cost estimate forms default response a status code equal to that given
+func (o *CostEstimateFormsDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the cost estimate forms default response
@@ -205,7 +358,13 @@ func (o *CostEstimateFormsDefault) Code() int {
 }
 
 func (o *CostEstimateFormsDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateForms default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateForms default %s", o._statusCode, payload)
+}
+
+func (o *CostEstimateFormsDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate][%d] costEstimateForms default %s", o._statusCode, payload)
 }
 
 func (o *CostEstimateFormsDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +373,16 @@ func (o *CostEstimateFormsDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CostEstimateFormsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +394,8 @@ func (o *CostEstimateFormsDefault) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
-/*CostEstimateFormsOKBody cost estimate forms o k body
+/*
+CostEstimateFormsOKBody cost estimate forms o k body
 swagger:model CostEstimateFormsOKBody
 */
 type CostEstimateFormsOKBody struct {
@@ -257,10 +421,15 @@ func (o *CostEstimateFormsOKBody) Validate(formats strfmt.Registry) error {
 
 func (o *CostEstimateFormsOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("costEstimateFormsOK"+"."+"data", "body", o.Data); err != nil {
-		return err
+	if o.Data == nil {
+		return errors.Required("costEstimateFormsOK"+"."+"data", "body", nil)
 	}
 
+	return nil
+}
+
+// ContextValidate validates this cost estimate forms o k body based on context it is used
+func (o *CostEstimateFormsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

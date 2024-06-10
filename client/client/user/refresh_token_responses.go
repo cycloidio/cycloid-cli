@@ -6,17 +6,18 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // RefreshTokenReader is a Reader for the RefreshToken structure.
@@ -56,7 +57,8 @@ func NewRefreshTokenOK() *RefreshTokenOK {
 	return &RefreshTokenOK{}
 }
 
-/*RefreshTokenOK handles this case with default header values.
+/*
+RefreshTokenOK describes a response with status code 200, with default header values.
 
 The token which represents the session of the user.
 */
@@ -64,8 +66,44 @@ type RefreshTokenOK struct {
 	Payload *RefreshTokenOKBody
 }
 
+// IsSuccess returns true when this refresh token o k response has a 2xx status code
+func (o *RefreshTokenOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this refresh token o k response has a 3xx status code
+func (o *RefreshTokenOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this refresh token o k response has a 4xx status code
+func (o *RefreshTokenOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this refresh token o k response has a 5xx status code
+func (o *RefreshTokenOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this refresh token o k response a status code equal to that given
+func (o *RefreshTokenOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the refresh token o k response
+func (o *RefreshTokenOK) Code() int {
+	return 200
+}
+
 func (o *RefreshTokenOK) Error() string {
-	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshTokenOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshTokenOK %s", 200, payload)
+}
+
+func (o *RefreshTokenOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshTokenOK %s", 200, payload)
 }
 
 func (o *RefreshTokenOK) GetPayload() *RefreshTokenOKBody {
@@ -89,20 +127,60 @@ func NewRefreshTokenUnauthorized() *RefreshTokenUnauthorized {
 	return &RefreshTokenUnauthorized{}
 }
 
-/*RefreshTokenUnauthorized handles this case with default header values.
+/*
+RefreshTokenUnauthorized describes a response with status code 401, with default header values.
 
 The user cannot be authenticated with the credentials which she/he has used.
 */
 type RefreshTokenUnauthorized struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this refresh token unauthorized response has a 2xx status code
+func (o *RefreshTokenUnauthorized) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this refresh token unauthorized response has a 3xx status code
+func (o *RefreshTokenUnauthorized) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this refresh token unauthorized response has a 4xx status code
+func (o *RefreshTokenUnauthorized) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this refresh token unauthorized response has a 5xx status code
+func (o *RefreshTokenUnauthorized) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this refresh token unauthorized response a status code equal to that given
+func (o *RefreshTokenUnauthorized) IsCode(code int) bool {
+	return code == 401
+}
+
+// Code gets the status code for the refresh token unauthorized response
+func (o *RefreshTokenUnauthorized) Code() int {
+	return 401
+}
+
 func (o *RefreshTokenUnauthorized) Error() string {
-	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshTokenUnauthorized  %+v", 401, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshTokenUnauthorized %s", 401, payload)
+}
+
+func (o *RefreshTokenUnauthorized) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshTokenUnauthorized %s", 401, payload)
 }
 
 func (o *RefreshTokenUnauthorized) GetPayload() *models.ErrorPayload {
@@ -111,12 +189,16 @@ func (o *RefreshTokenUnauthorized) GetPayload() *models.ErrorPayload {
 
 func (o *RefreshTokenUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -135,18 +217,46 @@ func NewRefreshTokenDefault(code int) *RefreshTokenDefault {
 	}
 }
 
-/*RefreshTokenDefault handles this case with default header values.
+/*
+RefreshTokenDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type RefreshTokenDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this refresh token default response has a 2xx status code
+func (o *RefreshTokenDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this refresh token default response has a 3xx status code
+func (o *RefreshTokenDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this refresh token default response has a 4xx status code
+func (o *RefreshTokenDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this refresh token default response has a 5xx status code
+func (o *RefreshTokenDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this refresh token default response a status code equal to that given
+func (o *RefreshTokenDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the refresh token default response
@@ -155,7 +265,13 @@ func (o *RefreshTokenDefault) Code() int {
 }
 
 func (o *RefreshTokenDefault) Error() string {
-	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshToken default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshToken default %s", o._statusCode, payload)
+}
+
+func (o *RefreshTokenDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /user/refresh_token][%d] refreshToken default %s", o._statusCode, payload)
 }
 
 func (o *RefreshTokenDefault) GetPayload() *models.ErrorPayload {
@@ -164,12 +280,16 @@ func (o *RefreshTokenDefault) GetPayload() *models.ErrorPayload {
 
 func (o *RefreshTokenDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -181,7 +301,8 @@ func (o *RefreshTokenDefault) readResponse(response runtime.ClientResponse, cons
 	return nil
 }
 
-/*RefreshTokenOKBody refresh token o k body
+/*
+RefreshTokenOKBody refresh token o k body
 swagger:model RefreshTokenOKBody
 */
 type RefreshTokenOKBody struct {
@@ -215,6 +336,39 @@ func (o *RefreshTokenOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("refreshTokenOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("refreshTokenOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this refresh token o k body based on the context it is used
+func (o *RefreshTokenOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *RefreshTokenOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("refreshTokenOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("refreshTokenOK" + "." + "data")
 			}
 			return err
 		}
