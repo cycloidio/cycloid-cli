@@ -40,7 +40,7 @@ The output will be the generated configuration of the project.
 `,
 		Example: `
 # create 'prod' environment in 'my-project'
- cy --org my-org project create-raw-env \
+ cy --org my-org project create-stackforms-env \
   --project my-project \
   --env prod \
   --use-case usecase-1 \
@@ -61,10 +61,11 @@ The output will be the generated configuration of the project.
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
 	WithFlagConfig(cmd)
 	cmd.PersistentFlags().String("use-case", "", "the selected use case of the stack")
+	cmd.MarkFlagRequired("use-case")
 	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin")
 	cmd.PersistentFlags().StringArray("vars", nil, "JSON string containing variables")
 	cmd.PersistentFlags().BoolP("update", "u", false, "if true, existing environment will be updated, default: false")
-	cmd.PersistentFlags().StringToStringP("extra-var", "e", nil, "extra variable to be added to the environment in the -e key=value,key=value format")
+	cmd.PersistentFlags().StringToStringP("extra-var", "e", nil, "extra variable to be added to the environment in the -e key=value -e key=value format")
 
 	return cmd
 }
@@ -93,8 +94,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	usecase, err := cmd.Flags().GetString("use-case")
 	if err != nil {
 		return err
-	} else if usecase == "" {
-		return errors.New("--use-case flag is required")
 	}
 
 	update, err := cmd.Flags().GetBool("update")
@@ -141,9 +140,12 @@ func createEnv(cmd *cobra.Command, args []string) error {
 				internal.Debug("finished reading input vars from", varFile)
 				break
 			}
+
 			if err != nil {
-				log.Fatalf("failed to read input vars from "+varFile+": %v", err)
-				break
+				if varFile == "-" {
+					varFile = "stdin"
+				}
+				return fmt.Errorf("failed to read input vars from "+varFile+": %v", err)
 			}
 
 			if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
