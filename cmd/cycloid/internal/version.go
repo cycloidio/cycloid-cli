@@ -20,9 +20,7 @@ func Warning(out io.Writer, msg string) {
 		// terminal is able to support colors
 		// But that would be for another PR.
 		fmt.Fprintf(out, "\033[1;35mwarning:\033[0m %s", msg)
-		break
 	default:
-		break
 	}
 }
 
@@ -34,9 +32,7 @@ func Debug(msg ...any) {
 		// But that would be for another PR.
 		fmt.Fprintf(os.Stderr, "\033[1;34mdebug:\033[0m ")
 		fmt.Fprintln(os.Stderr, msg...)
-		break
 	default:
-		break
 	}
 }
 

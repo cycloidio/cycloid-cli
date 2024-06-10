@@ -96,7 +96,7 @@ func getStackFormsConfigFromEnv(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// output as yaml by default
+	// output as json by default
 	if output == "table" {
 		output = "json"
 	}
