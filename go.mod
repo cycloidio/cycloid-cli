@@ -1,6 +1,6 @@
 module github.com/cycloidio/cycloid-cli
 
-go 1.18
+go 1.22
 
 require (
 	dario.cat/mergo v1.0.0
