@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -46,7 +47,7 @@ func TestConfigRepositories(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"default-config")
+		require.Contains(t, cmdOut, "canonical\": \"default-config")
 	})
 
 	t.Run("SuccessConfigRepositoriesList", func(t *testing.T) {
@@ -58,7 +59,7 @@ func TestConfigRepositories(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"default-config")
+		require.Contains(t, cmdOut, "canonical\": \"default-config")
 	})
 
 	t.Run("SuccessConfigRepositoriesGet", func(t *testing.T) {
@@ -71,7 +72,7 @@ func TestConfigRepositories(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"default-config")
+		require.Contains(t, cmdOut, "canonical\": \"default-config")
 	})
 
 	t.Run("SuccessConfigRepositoriesDelete", func(t *testing.T) {

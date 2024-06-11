@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -45,7 +46,7 @@ func TestMembers(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "email\":\"cycloidio@cycloid.io")
+		assert.Contains(t, cmdOut, "email\": \"cycloidio@cycloid.io")
 	})
 
 	t.Run("SuccessMembersGet", func(t *testing.T) {
@@ -58,7 +59,7 @@ func TestMembers(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "email\":\"cycloidio@cycloid.io")
+		assert.Contains(t, cmdOut, "email\": \"cycloidio@cycloid.io")
 	})
 
 	t.Run("SuccessMembersInvite", func(t *testing.T) {
@@ -84,6 +85,6 @@ func TestMembers(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "email\":\"foo@bli.fr")
+		assert.Contains(t, cmdOut, "email\": \"foo@bli.fr")
 	})
 }

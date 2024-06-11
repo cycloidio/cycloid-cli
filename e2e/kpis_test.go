@@ -1,11 +1,12 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
 import (
-	"testing"
 	"fmt"
 	"regexp"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -85,7 +86,7 @@ func TestKpis(t *testing.T) {
 			"create",
 			"--name", "kpi-test",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy",  CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
 			"--config-repo", "project-config",
 			"--env", "test",
 			"--usecase", "default",
@@ -104,7 +105,7 @@ func TestKpis(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"kpi-test")
+		require.Contains(t, cmdOut, "canonical\": \"kpi-test")
 	})
 
 	t.Run("SuccessKpisCreate", func(t *testing.T) {
@@ -122,7 +123,7 @@ func TestKpis(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"test-")
+		require.Contains(t, cmdOut, "canonical\": \"test-")
 	})
 
 	t.Run("SuccessKpisList", func(t *testing.T) {
@@ -134,9 +135,9 @@ func TestKpis(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"test-")
+		require.Contains(t, cmdOut, "canonical\": \"test-")
 
-		re := regexp.MustCompile(`canonical":"(test-[^"]+)"`)
+		re := regexp.MustCompile(`canonical": "(test-[^"]+)"`)
 		createdKpi = re.FindAllStringSubmatch(cmdOut, 1)[0][1]
 	})
 

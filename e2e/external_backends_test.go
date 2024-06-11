@@ -1,10 +1,11 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
 import (
-	"testing"
 	"fmt"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -93,7 +94,7 @@ func TestExternalBackends(t *testing.T) {
 			"create",
 			"--name", "eb-test",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy",  CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
 			"--config-repo", "project-config",
 			"--env", "test",
 			"--usecase", "default",
@@ -112,7 +113,7 @@ func TestExternalBackends(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"eb-test")
+		require.Contains(t, cmdOut, "canonical\": \"eb-test")
 	})
 
 	t.Run("SuccessExternalBackendsCreateAWSRemoteTFState", func(t *testing.T) {
@@ -131,7 +132,7 @@ func TestExternalBackends(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "purpose\":\"remote_tfstate")
+		require.Contains(t, cmdOut, "purpose\": \"remote_tfstate")
 	})
 
 	t.Run("SuccessExternalBackendsCreateAWSCloudWatchLogs", func(t *testing.T) {
@@ -148,9 +149,8 @@ func TestExternalBackends(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "purpose\":\"logs")
+		require.Contains(t, cmdOut, "purpose\": \"logs")
 	})
-
 
 	t.Run("SuccessExternalBackendsList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
@@ -161,6 +161,6 @@ func TestExternalBackends(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "purpose\":\"remote_tfstate")
+		require.Contains(t, cmdOut, "purpose\": \"remote_tfstate")
 	})
 }

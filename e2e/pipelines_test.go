@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -79,7 +80,7 @@ func TestPipelines(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"pipeline-test")
+		require.Contains(t, cmdOut, "canonical\": \"pipeline-test")
 	})
 
 	t.Run("SuccessPipelinesUpdate", func(t *testing.T) {
@@ -98,7 +99,7 @@ func TestPipelines(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"pipeline-test")
+		require.Contains(t, cmdOut, "canonical\": \"pipeline-test")
 	})
 
 	t.Run("SuccessPipelinesPause", func(t *testing.T) {
@@ -138,7 +139,7 @@ func TestPipelines(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "name\":\"pipeline-test-test")
+		require.Contains(t, cmdOut, "name\": \"pipeline-test-test")
 	})
 
 	t.Run("SuccessPipelinesGet", func(t *testing.T) {
@@ -152,7 +153,7 @@ func TestPipelines(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "name\":\"pipeline-test-test")
+		require.Contains(t, cmdOut, "name\": \"pipeline-test-test")
 	})
 
 	t.Run("SuccessPipelinesListJobs", func(t *testing.T) {
@@ -166,7 +167,7 @@ func TestPipelines(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "name\":\"job-hello-world")
+		require.Contains(t, cmdOut, "name\": \"job-hello-world")
 	})
 
 	t.Run("SuccessPipelinesGetJob", func(t *testing.T) {
@@ -181,7 +182,7 @@ func TestPipelines(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "name\":\"job-hello-world")
+		require.Contains(t, cmdOut, "name\": \"job-hello-world")
 	})
 
 	t.Run("SuccessPipelinesPauseJob", func(t *testing.T) {
@@ -240,8 +241,9 @@ func TestPipelines(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "job_name\":\"job-hello-world")
+		require.Contains(t, cmdOut, "job_name\": \"job-hello-world")
 	})
+
 	t.Run("SuccessPipelinesClearTaskCache", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
@@ -272,6 +274,6 @@ func TestPipelines(t *testing.T) {
 		// Note: we expect no diff because the pipeline from helpers.go is the same as the dummy-stack.
 		// This mean if someone change the code from the dummy stack, this test could fail because the helper
 		// pipeline will differ from the one in the dummy stack
-		require.Contains(t, cmdOut, "jobs\":null")
+		require.Contains(t, cmdOut, "jobs\": null")
 	})
 }
