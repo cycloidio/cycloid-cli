@@ -46,9 +46,16 @@ func NewCommands() *cobra.Command {
 }
 
 func login(org, key string) error {
+	conf, err := config.Read()
+	if err != nil {
+		return errors.Wrap(err, "unable to read config")
+	}
 
-	// we save the new token and remove the previous one
-	conf, _ := config.Read()
+	// Check for a nil map.
+	// This can be the case if the config file is empty
+	if conf.Organizations == nil {
+		conf.Organizations = make(map[string]config.Organization)
+	}
 
 	conf.Organizations[org] = config.Organization{
 		Token: key,
