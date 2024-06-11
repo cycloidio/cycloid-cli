@@ -7,7 +7,7 @@ services:
   ############
   yd-go:
     container_name: yd-go
-    image: cycloid/golang:1.14.4-r2
+    image: cycloid/golang:1.22.4
     volumes:
       - .:/go/src/github.com/cycloidio/cycloid-cli
       - $GOPATH/pkg/mod:/go/pkg/mod

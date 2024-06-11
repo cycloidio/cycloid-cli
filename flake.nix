@@ -22,9 +22,7 @@
             # You packages here
             gnumake
 
-            # Prod is built using go 1.18 rn
-            go_1_21
-
+            go_1_22
             go-swagger
           ]);
         };
