@@ -6,17 +6,18 @@ package organization_api_keys
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateAPIKeyReader is a Reader for the CreateAPIKey structure.
@@ -68,7 +69,8 @@ func NewCreateAPIKeyOK() *CreateAPIKeyOK {
 	return &CreateAPIKeyOK{}
 }
 
-/*CreateAPIKeyOK handles this case with default header values.
+/*
+CreateAPIKeyOK describes a response with status code 200, with default header values.
 
 API key created. The body contains the information of the new API key of the organization.
 */
@@ -76,8 +78,44 @@ type CreateAPIKeyOK struct {
 	Payload *CreateAPIKeyOKBody
 }
 
+// IsSuccess returns true when this create Api key o k response has a 2xx status code
+func (o *CreateAPIKeyOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create Api key o k response has a 3xx status code
+func (o *CreateAPIKeyOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create Api key o k response has a 4xx status code
+func (o *CreateAPIKeyOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create Api key o k response has a 5xx status code
+func (o *CreateAPIKeyOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create Api key o k response a status code equal to that given
+func (o *CreateAPIKeyOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the create Api key o k response
+func (o *CreateAPIKeyOK) Code() int {
+	return 200
+}
+
 func (o *CreateAPIKeyOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyOK %s", 200, payload)
+}
+
+func (o *CreateAPIKeyOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyOK %s", 200, payload)
 }
 
 func (o *CreateAPIKeyOK) GetPayload() *CreateAPIKeyOKBody {
@@ -101,20 +139,60 @@ func NewCreateAPIKeyNotFound() *CreateAPIKeyNotFound {
 	return &CreateAPIKeyNotFound{}
 }
 
-/*CreateAPIKeyNotFound handles this case with default header values.
+/*
+CreateAPIKeyNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type CreateAPIKeyNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create Api key not found response has a 2xx status code
+func (o *CreateAPIKeyNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create Api key not found response has a 3xx status code
+func (o *CreateAPIKeyNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create Api key not found response has a 4xx status code
+func (o *CreateAPIKeyNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create Api key not found response has a 5xx status code
+func (o *CreateAPIKeyNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create Api key not found response a status code equal to that given
+func (o *CreateAPIKeyNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the create Api key not found response
+func (o *CreateAPIKeyNotFound) Code() int {
+	return 404
+}
+
 func (o *CreateAPIKeyNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyNotFound %s", 404, payload)
+}
+
+func (o *CreateAPIKeyNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyNotFound %s", 404, payload)
 }
 
 func (o *CreateAPIKeyNotFound) GetPayload() *models.ErrorPayload {
@@ -123,12 +201,16 @@ func (o *CreateAPIKeyNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *CreateAPIKeyNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -145,15 +227,50 @@ func NewCreateAPIKeyLengthRequired() *CreateAPIKeyLengthRequired {
 	return &CreateAPIKeyLengthRequired{}
 }
 
-/*CreateAPIKeyLengthRequired handles this case with default header values.
+/*
+CreateAPIKeyLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type CreateAPIKeyLengthRequired struct {
 }
 
+// IsSuccess returns true when this create Api key length required response has a 2xx status code
+func (o *CreateAPIKeyLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create Api key length required response has a 3xx status code
+func (o *CreateAPIKeyLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create Api key length required response has a 4xx status code
+func (o *CreateAPIKeyLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create Api key length required response has a 5xx status code
+func (o *CreateAPIKeyLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create Api key length required response a status code equal to that given
+func (o *CreateAPIKeyLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the create Api key length required response
+func (o *CreateAPIKeyLengthRequired) Code() int {
+	return 411
+}
+
 func (o *CreateAPIKeyLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyLengthRequired", 411)
+}
+
+func (o *CreateAPIKeyLengthRequired) String() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyLengthRequired", 411)
 }
 
 func (o *CreateAPIKeyLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -166,20 +283,60 @@ func NewCreateAPIKeyUnprocessableEntity() *CreateAPIKeyUnprocessableEntity {
 	return &CreateAPIKeyUnprocessableEntity{}
 }
 
-/*CreateAPIKeyUnprocessableEntity handles this case with default header values.
+/*
+CreateAPIKeyUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateAPIKeyUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create Api key unprocessable entity response has a 2xx status code
+func (o *CreateAPIKeyUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create Api key unprocessable entity response has a 3xx status code
+func (o *CreateAPIKeyUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create Api key unprocessable entity response has a 4xx status code
+func (o *CreateAPIKeyUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create Api key unprocessable entity response has a 5xx status code
+func (o *CreateAPIKeyUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create Api key unprocessable entity response a status code equal to that given
+func (o *CreateAPIKeyUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the create Api key unprocessable entity response
+func (o *CreateAPIKeyUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *CreateAPIKeyUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyUnprocessableEntity %s", 422, payload)
+}
+
+func (o *CreateAPIKeyUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createApiKeyUnprocessableEntity %s", 422, payload)
 }
 
 func (o *CreateAPIKeyUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -188,12 +345,16 @@ func (o *CreateAPIKeyUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *CreateAPIKeyUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -212,18 +373,46 @@ func NewCreateAPIKeyDefault(code int) *CreateAPIKeyDefault {
 	}
 }
 
-/*CreateAPIKeyDefault handles this case with default header values.
+/*
+CreateAPIKeyDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateAPIKeyDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this create API key default response has a 2xx status code
+func (o *CreateAPIKeyDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this create API key default response has a 3xx status code
+func (o *CreateAPIKeyDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this create API key default response has a 4xx status code
+func (o *CreateAPIKeyDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this create API key default response has a 5xx status code
+func (o *CreateAPIKeyDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this create API key default response a status code equal to that given
+func (o *CreateAPIKeyDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the create API key default response
@@ -232,7 +421,13 @@ func (o *CreateAPIKeyDefault) Code() int {
 }
 
 func (o *CreateAPIKeyDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createAPIKey default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createAPIKey default %s", o._statusCode, payload)
+}
+
+func (o *CreateAPIKeyDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/api_keys][%d] createAPIKey default %s", o._statusCode, payload)
 }
 
 func (o *CreateAPIKeyDefault) GetPayload() *models.ErrorPayload {
@@ -241,12 +436,16 @@ func (o *CreateAPIKeyDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateAPIKeyDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -258,7 +457,8 @@ func (o *CreateAPIKeyDefault) readResponse(response runtime.ClientResponse, cons
 	return nil
 }
 
-/*CreateAPIKeyOKBody create API key o k body
+/*
+CreateAPIKeyOKBody create API key o k body
 swagger:model CreateAPIKeyOKBody
 */
 type CreateAPIKeyOKBody struct {
@@ -292,6 +492,39 @@ func (o *CreateAPIKeyOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createApiKeyOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createApiKeyOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create API key o k body based on the context it is used
+func (o *CreateAPIKeyOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateAPIKeyOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createApiKeyOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createApiKeyOK" + "." + "data")
 			}
 			return err
 		}

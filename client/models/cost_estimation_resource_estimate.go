@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // CostEstimationResourceEstimate CostEstimationResourceEstimate
 //
 // Estimate for a single cloud resource.
+//
 // swagger:model CostEstimationResourceEstimate
 type CostEstimationResourceEstimate struct {
 
@@ -108,6 +109,8 @@ func (m *CostEstimationResourceEstimate) validateComponents(formats strfmt.Regis
 			if err := m.Components[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -119,7 +122,6 @@ func (m *CostEstimationResourceEstimate) validateComponents(formats strfmt.Regis
 }
 
 func (m *CostEstimationResourceEstimate) validateImage(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Image) { // not required
 		return nil
 	}
@@ -144,6 +146,45 @@ func (m *CostEstimationResourceEstimate) validateType(formats strfmt.Registry) e
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this cost estimation resource estimate based on the context it is used
+func (m *CostEstimationResourceEstimate) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateComponents(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *CostEstimationResourceEstimate) contextValidateComponents(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Components); i++ {
+
+		if m.Components[i] != nil {
+
+			if swag.IsZero(m.Components[i]) { // not required
+				return nil
+			}
+
+			if err := m.Components[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("components" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("components" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil

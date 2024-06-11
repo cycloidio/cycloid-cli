@@ -6,17 +6,18 @@ package organization_credentials
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateCredentialReader is a Reader for the CreateCredential structure.
@@ -62,7 +63,8 @@ func NewCreateCredentialOK() *CreateCredentialOK {
 	return &CreateCredentialOK{}
 }
 
-/*CreateCredentialOK handles this case with default header values.
+/*
+CreateCredentialOK describes a response with status code 200, with default header values.
 
 Credential created. The body contains the information of the new created Credential.
 */
@@ -70,8 +72,44 @@ type CreateCredentialOK struct {
 	Payload *CreateCredentialOKBody
 }
 
+// IsSuccess returns true when this create credential o k response has a 2xx status code
+func (o *CreateCredentialOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create credential o k response has a 3xx status code
+func (o *CreateCredentialOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create credential o k response has a 4xx status code
+func (o *CreateCredentialOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create credential o k response has a 5xx status code
+func (o *CreateCredentialOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create credential o k response a status code equal to that given
+func (o *CreateCredentialOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the create credential o k response
+func (o *CreateCredentialOK) Code() int {
+	return 200
+}
+
 func (o *CreateCredentialOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialOK %s", 200, payload)
+}
+
+func (o *CreateCredentialOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialOK %s", 200, payload)
 }
 
 func (o *CreateCredentialOK) GetPayload() *CreateCredentialOKBody {
@@ -95,15 +133,50 @@ func NewCreateCredentialLengthRequired() *CreateCredentialLengthRequired {
 	return &CreateCredentialLengthRequired{}
 }
 
-/*CreateCredentialLengthRequired handles this case with default header values.
+/*
+CreateCredentialLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type CreateCredentialLengthRequired struct {
 }
 
+// IsSuccess returns true when this create credential length required response has a 2xx status code
+func (o *CreateCredentialLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create credential length required response has a 3xx status code
+func (o *CreateCredentialLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create credential length required response has a 4xx status code
+func (o *CreateCredentialLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create credential length required response has a 5xx status code
+func (o *CreateCredentialLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create credential length required response a status code equal to that given
+func (o *CreateCredentialLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the create credential length required response
+func (o *CreateCredentialLengthRequired) Code() int {
+	return 411
+}
+
 func (o *CreateCredentialLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialLengthRequired ", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialLengthRequired", 411)
+}
+
+func (o *CreateCredentialLengthRequired) String() string {
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialLengthRequired", 411)
 }
 
 func (o *CreateCredentialLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -116,20 +189,60 @@ func NewCreateCredentialUnprocessableEntity() *CreateCredentialUnprocessableEnti
 	return &CreateCredentialUnprocessableEntity{}
 }
 
-/*CreateCredentialUnprocessableEntity handles this case with default header values.
+/*
+CreateCredentialUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateCredentialUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create credential unprocessable entity response has a 2xx status code
+func (o *CreateCredentialUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create credential unprocessable entity response has a 3xx status code
+func (o *CreateCredentialUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create credential unprocessable entity response has a 4xx status code
+func (o *CreateCredentialUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create credential unprocessable entity response has a 5xx status code
+func (o *CreateCredentialUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create credential unprocessable entity response a status code equal to that given
+func (o *CreateCredentialUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the create credential unprocessable entity response
+func (o *CreateCredentialUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *CreateCredentialUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialUnprocessableEntity %s", 422, payload)
+}
+
+func (o *CreateCredentialUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredentialUnprocessableEntity %s", 422, payload)
 }
 
 func (o *CreateCredentialUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -138,12 +251,16 @@ func (o *CreateCredentialUnprocessableEntity) GetPayload() *models.ErrorPayload 
 
 func (o *CreateCredentialUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -162,18 +279,46 @@ func NewCreateCredentialDefault(code int) *CreateCredentialDefault {
 	}
 }
 
-/*CreateCredentialDefault handles this case with default header values.
+/*
+CreateCredentialDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateCredentialDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this create credential default response has a 2xx status code
+func (o *CreateCredentialDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this create credential default response has a 3xx status code
+func (o *CreateCredentialDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this create credential default response has a 4xx status code
+func (o *CreateCredentialDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this create credential default response has a 5xx status code
+func (o *CreateCredentialDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this create credential default response a status code equal to that given
+func (o *CreateCredentialDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the create credential default response
@@ -182,7 +327,13 @@ func (o *CreateCredentialDefault) Code() int {
 }
 
 func (o *CreateCredentialDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredential default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredential default %s", o._statusCode, payload)
+}
+
+func (o *CreateCredentialDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/credentials][%d] createCredential default %s", o._statusCode, payload)
 }
 
 func (o *CreateCredentialDefault) GetPayload() *models.ErrorPayload {
@@ -191,12 +342,16 @@ func (o *CreateCredentialDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateCredentialDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -208,7 +363,8 @@ func (o *CreateCredentialDefault) readResponse(response runtime.ClientResponse, 
 	return nil
 }
 
-/*CreateCredentialOKBody create credential o k body
+/*
+CreateCredentialOKBody create credential o k body
 swagger:model CreateCredentialOKBody
 */
 type CreateCredentialOKBody struct {
@@ -242,6 +398,39 @@ func (o *CreateCredentialOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createCredentialOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createCredentialOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create credential o k body based on the context it is used
+func (o *CreateCredentialOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateCredentialOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createCredentialOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createCredentialOK" + "." + "data")
 			}
 			return err
 		}

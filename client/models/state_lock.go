@@ -6,14 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // StateLock State Lock
 //
-// The Lock management of a State in the Inventory of the Project's environment
+// # The Lock management of a State in the Inventory of the Project's environment
+//
 // swagger:model StateLock
 type StateLock struct {
 
@@ -38,6 +40,11 @@ type StateLock struct {
 
 // Validate validates this state lock
 func (m *StateLock) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this state lock based on context it is used
+func (m *StateLock) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -13,65 +13,80 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateUserGuideParams creates a new UpdateUserGuideParams object
-// with the default values initialized.
+// NewUpdateUserGuideParams creates a new UpdateUserGuideParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUpdateUserGuideParams() *UpdateUserGuideParams {
-	var ()
 	return &UpdateUserGuideParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateUserGuideParamsWithTimeout creates a new UpdateUserGuideParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUpdateUserGuideParamsWithTimeout(timeout time.Duration) *UpdateUserGuideParams {
-	var ()
 	return &UpdateUserGuideParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUpdateUserGuideParamsWithContext creates a new UpdateUserGuideParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUpdateUserGuideParamsWithContext(ctx context.Context) *UpdateUserGuideParams {
-	var ()
 	return &UpdateUserGuideParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUpdateUserGuideParamsWithHTTPClient creates a new UpdateUserGuideParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUpdateUserGuideParamsWithHTTPClient(client *http.Client) *UpdateUserGuideParams {
-	var ()
 	return &UpdateUserGuideParams{
 		HTTPClient: client,
 	}
 }
 
-/*UpdateUserGuideParams contains all the parameters to send to the API endpoint
-for the update user guide operation typically these are written to a http.Request
+/*
+UpdateUserGuideParams contains all the parameters to send to the API endpoint
+
+	for the update user guide operation.
+
+	Typically these are written to a http.Request.
 */
 type UpdateUserGuideParams struct {
 
-	/*Body
-	  The guide's progress JSON schema
+	/* Body.
 
+	   The guide's progress JSON schema
 	*/
 	Body models.UserGuide
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the update user guide params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateUserGuideParams) WithDefaults() *UpdateUserGuideParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the update user guide params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateUserGuideParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update user guide params
@@ -125,7 +140,6 @@ func (o *UpdateUserGuideParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

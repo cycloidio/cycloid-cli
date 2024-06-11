@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // ErrorDetailsItem Error details item
 //
 // Represents an item of the list of details of an error.
+//
 // swagger:model ErrorDetailsItem
 type ErrorDetailsItem struct {
 
@@ -64,6 +66,11 @@ func (m *ErrorDetailsItem) validateMessage(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this error details item based on context it is used
+func (m *ErrorDetailsItem) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

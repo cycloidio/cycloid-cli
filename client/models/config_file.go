@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // ConfigFile SC config file
 //
-// This object contains SC config file name and its content
+// # This object contains SC config file name and its content
+//
 // swagger:model ConfigFile
 type ConfigFile struct {
 
@@ -53,8 +55,6 @@ func (m *ConfigFile) validateContent(formats strfmt.Registry) error {
 		return err
 	}
 
-	// Format "byte" (base64 string) is already validated when unmarshalled
-
 	return nil
 }
 
@@ -64,6 +64,11 @@ func (m *ConfigFile) validatePath(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this config file based on context it is used
+func (m *ConfigFile) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

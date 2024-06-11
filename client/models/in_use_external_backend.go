@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // InUseExternalBackend InUseExternalBackend
 //
-// Represents a external backend that's using credential
+// # Represents a external backend that's using credential
+//
 // swagger:model InUseExternalBackend
 type InUseExternalBackend struct {
 
@@ -70,7 +72,6 @@ func (m *InUseExternalBackend) validateEngine(formats strfmt.Registry) error {
 }
 
 func (m *InUseExternalBackend) validateEnvironment(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Environment) { // not required
 		return nil
 	}
@@ -79,6 +80,8 @@ func (m *InUseExternalBackend) validateEnvironment(formats strfmt.Registry) erro
 		if err := m.Environment.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("environment")
 			}
 			return err
 		}
@@ -88,7 +91,6 @@ func (m *InUseExternalBackend) validateEnvironment(formats strfmt.Registry) erro
 }
 
 func (m *InUseExternalBackend) validateProject(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Project) { // not required
 		return nil
 	}
@@ -97,6 +99,8 @@ func (m *InUseExternalBackend) validateProject(formats strfmt.Registry) error {
 		if err := m.Project.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("project")
 			}
 			return err
 		}
@@ -109,6 +113,66 @@ func (m *InUseExternalBackend) validatePurpose(formats strfmt.Registry) error {
 
 	if err := validate.Required("purpose", "body", m.Purpose); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this in use external backend based on the context it is used
+func (m *InUseExternalBackend) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateProject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *InUseExternalBackend) contextValidateEnvironment(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Environment != nil {
+
+		if swag.IsZero(m.Environment) { // not required
+			return nil
+		}
+
+		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("environment")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("environment")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *InUseExternalBackend) contextValidateProject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Project != nil {
+
+		if swag.IsZero(m.Project) { // not required
+			return nil
+		}
+
+		if err := m.Project.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("project")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("project")
+			}
+			return err
+		}
 	}
 
 	return nil

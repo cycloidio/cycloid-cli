@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewTeamMemberAssignation Assign user
 //
-// Member is a user assigned to a Team
+// # Member is a user assigned to a Team
+//
 // swagger:model NewTeamMemberAssignation
 type NewTeamMemberAssignation struct {
 
@@ -44,6 +46,11 @@ func (m *NewTeamMemberAssignation) validateUsername(formats strfmt.Registry) err
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this new team member assignation based on context it is used
+func (m *NewTeamMemberAssignation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Country Country
 //
-// Single country Representation
+// # Single country Representation
+//
 // swagger:model Country
 type Country struct {
 
@@ -53,7 +55,7 @@ func (m *Country) validateCode(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("code", "body", string(*m.Code), `^[A-Z]{2}$`); err != nil {
+	if err := validate.Pattern("code", "body", *m.Code, `^[A-Z]{2}$`); err != nil {
 		return err
 	}
 
@@ -66,6 +68,11 @@ func (m *Country) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this country based on context it is used
+func (m *Country) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

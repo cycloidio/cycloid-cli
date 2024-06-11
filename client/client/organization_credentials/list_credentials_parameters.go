@@ -13,106 +13,125 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewListCredentialsParams creates a new ListCredentialsParams object
-// with the default values initialized.
+// NewListCredentialsParams creates a new ListCredentialsParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewListCredentialsParams() *ListCredentialsParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &ListCredentialsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewListCredentialsParamsWithTimeout creates a new ListCredentialsParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewListCredentialsParamsWithTimeout(timeout time.Duration) *ListCredentialsParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &ListCredentialsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		timeout: timeout,
 	}
 }
 
 // NewListCredentialsParamsWithContext creates a new ListCredentialsParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewListCredentialsParamsWithContext(ctx context.Context) *ListCredentialsParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &ListCredentialsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		Context: ctx,
 	}
 }
 
 // NewListCredentialsParamsWithHTTPClient creates a new ListCredentialsParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewListCredentialsParamsWithHTTPClient(client *http.Client) *ListCredentialsParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &ListCredentialsParams{
-		PageIndex:  &pageIndexDefault,
-		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*ListCredentialsParams contains all the parameters to send to the API endpoint
-for the list credentials operation typically these are written to a http.Request
+/*
+ListCredentialsParams contains all the parameters to send to the API endpoint
+
+	for the list credentials operation.
+
+	Typically these are written to a http.Request.
 */
 type ListCredentialsParams struct {
 
-	/*CredentialType
-	  Deprecated. Please use credential_types.
-	A Credential type
+	/* CredentialType.
 
+	     Deprecated. Please use credential_types.
+	A Credential type
 
 	*/
 	CredentialType *string
-	/*CredentialTypes
-	  Multiple Credential types
 
+	/* CredentialTypes.
+
+	   Multiple Credential types
 	*/
 	CredentialTypes []string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*PageIndex
-	  The page number to request. The first page is 1.
 
+	/* PageIndex.
+
+	   The page number to request. The first page is 1.
+
+	   Format: uint32
+	   Default: 1
 	*/
 	PageIndex *uint32
-	/*PageSize
-	  The number of items at most which the response can have.
 
+	/* PageSize.
+
+	   The number of items at most which the response can have.
+
+	   Format: uint32
+	   Default: 1000
 	*/
 	PageSize *uint32
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the list credentials params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ListCredentialsParams) WithDefaults() *ListCredentialsParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the list credentials params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *ListCredentialsParams) SetDefaults() {
+	var (
+		pageIndexDefault = uint32(1)
+
+		pageSizeDefault = uint32(1000)
+	)
+
+	val := ListCredentialsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the list credentials params
@@ -215,24 +234,28 @@ func (o *ListCredentialsParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 		// query param credential_type
 		var qrCredentialType string
+
 		if o.CredentialType != nil {
 			qrCredentialType = *o.CredentialType
 		}
 		qCredentialType := qrCredentialType
 		if qCredentialType != "" {
+
 			if err := r.SetQueryParam("credential_type", qCredentialType); err != nil {
 				return err
 			}
 		}
-
 	}
 
-	valuesCredentialTypes := o.CredentialTypes
+	if o.CredentialTypes != nil {
 
-	joinedCredentialTypes := swag.JoinByFormat(valuesCredentialTypes, "multi")
-	// query array param credential_types
-	if err := r.SetQueryParam("credential_types", joinedCredentialTypes...); err != nil {
-		return err
+		// binding items for credential_types
+		joinedCredentialTypes := o.bindParamCredentialTypes(reg)
+
+		// query array param credential_types
+		if err := r.SetQueryParam("credential_types", joinedCredentialTypes...); err != nil {
+			return err
+		}
 	}
 
 	// path param organization_canonical
@@ -244,36 +267,55 @@ func (o *ListCredentialsParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 		// query param page_index
 		var qrPageIndex uint32
+
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
+
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
+
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
+
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
+}
+
+// bindParamListCredentials binds the parameter credential_types
+func (o *ListCredentialsParams) bindParamCredentialTypes(formats strfmt.Registry) []string {
+	credentialTypesIR := o.CredentialTypes
+
+	var credentialTypesIC []string
+	for _, credentialTypesIIR := range credentialTypesIR { // explode []string
+
+		credentialTypesIIV := credentialTypesIIR // string as string
+		credentialTypesIC = append(credentialTypesIC, credentialTypesIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	credentialTypesIS := swag.JoinByFormat(credentialTypesIC, "multi")
+
+	return credentialTypesIS
 }

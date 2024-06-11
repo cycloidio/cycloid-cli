@@ -6,14 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Pagination Pagination
+//
 // swagger:model Pagination
 type Pagination struct {
 
@@ -61,7 +63,7 @@ func (m *Pagination) validateIndex(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("index", "body", int64(*m.Index), 1, false); err != nil {
+	if err := validate.MinimumUint("index", "body", *m.Index, 1, false); err != nil {
 		return err
 	}
 
@@ -74,7 +76,7 @@ func (m *Pagination) validateSize(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("size", "body", int64(*m.Size), 0, false); err != nil {
+	if err := validate.MinimumUint("size", "body", *m.Size, 0, false); err != nil {
 		return err
 	}
 
@@ -87,10 +89,15 @@ func (m *Pagination) validateTotal(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("total", "body", int64(*m.Total), 0, false); err != nil {
+	if err := validate.MinimumUint("total", "body", *m.Total, 0, false); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this pagination based on context it is used
+func (m *Pagination) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

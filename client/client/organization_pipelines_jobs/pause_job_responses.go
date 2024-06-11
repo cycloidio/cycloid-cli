@@ -6,16 +6,16 @@ package organization_pipelines_jobs
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // PauseJobReader is a Reader for the PauseJob structure.
@@ -61,15 +61,50 @@ func NewPauseJobNoContent() *PauseJobNoContent {
 	return &PauseJobNoContent{}
 }
 
-/*PauseJobNoContent handles this case with default header values.
+/*
+PauseJobNoContent describes a response with status code 204, with default header values.
 
 Job has been paused.
 */
 type PauseJobNoContent struct {
 }
 
+// IsSuccess returns true when this pause job no content response has a 2xx status code
+func (o *PauseJobNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this pause job no content response has a 3xx status code
+func (o *PauseJobNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this pause job no content response has a 4xx status code
+func (o *PauseJobNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this pause job no content response has a 5xx status code
+func (o *PauseJobNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this pause job no content response a status code equal to that given
+func (o *PauseJobNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the pause job no content response
+func (o *PauseJobNoContent) Code() int {
+	return 204
+}
+
 func (o *PauseJobNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobNoContent ", 204)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobNoContent", 204)
+}
+
+func (o *PauseJobNoContent) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobNoContent", 204)
 }
 
 func (o *PauseJobNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -82,20 +117,60 @@ func NewPauseJobForbidden() *PauseJobForbidden {
 	return &PauseJobForbidden{}
 }
 
-/*PauseJobForbidden handles this case with default header values.
+/*
+PauseJobForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type PauseJobForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this pause job forbidden response has a 2xx status code
+func (o *PauseJobForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this pause job forbidden response has a 3xx status code
+func (o *PauseJobForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this pause job forbidden response has a 4xx status code
+func (o *PauseJobForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this pause job forbidden response has a 5xx status code
+func (o *PauseJobForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this pause job forbidden response a status code equal to that given
+func (o *PauseJobForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the pause job forbidden response
+func (o *PauseJobForbidden) Code() int {
+	return 403
+}
+
 func (o *PauseJobForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobForbidden %s", 403, payload)
+}
+
+func (o *PauseJobForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobForbidden %s", 403, payload)
 }
 
 func (o *PauseJobForbidden) GetPayload() *models.ErrorPayload {
@@ -104,12 +179,16 @@ func (o *PauseJobForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *PauseJobForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -126,20 +205,60 @@ func NewPauseJobNotFound() *PauseJobNotFound {
 	return &PauseJobNotFound{}
 }
 
-/*PauseJobNotFound handles this case with default header values.
+/*
+PauseJobNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type PauseJobNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this pause job not found response has a 2xx status code
+func (o *PauseJobNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this pause job not found response has a 3xx status code
+func (o *PauseJobNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this pause job not found response has a 4xx status code
+func (o *PauseJobNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this pause job not found response has a 5xx status code
+func (o *PauseJobNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this pause job not found response a status code equal to that given
+func (o *PauseJobNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the pause job not found response
+func (o *PauseJobNotFound) Code() int {
+	return 404
+}
+
 func (o *PauseJobNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobNotFound %s", 404, payload)
+}
+
+func (o *PauseJobNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJobNotFound %s", 404, payload)
 }
 
 func (o *PauseJobNotFound) GetPayload() *models.ErrorPayload {
@@ -148,12 +267,16 @@ func (o *PauseJobNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *PauseJobNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,18 +295,46 @@ func NewPauseJobDefault(code int) *PauseJobDefault {
 	}
 }
 
-/*PauseJobDefault handles this case with default header values.
+/*
+PauseJobDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type PauseJobDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this pause job default response has a 2xx status code
+func (o *PauseJobDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this pause job default response has a 3xx status code
+func (o *PauseJobDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this pause job default response has a 4xx status code
+func (o *PauseJobDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this pause job default response has a 5xx status code
+func (o *PauseJobDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this pause job default response a status code equal to that given
+func (o *PauseJobDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the pause job default response
@@ -192,7 +343,13 @@ func (o *PauseJobDefault) Code() int {
 }
 
 func (o *PauseJobDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJob default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJob default %s", o._statusCode, payload)
+}
+
+func (o *PauseJobDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/pause][%d] pauseJob default %s", o._statusCode, payload)
 }
 
 func (o *PauseJobDefault) GetPayload() *models.ErrorPayload {
@@ -201,12 +358,16 @@ func (o *PauseJobDefault) GetPayload() *models.ErrorPayload {
 
 func (o *PauseJobDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

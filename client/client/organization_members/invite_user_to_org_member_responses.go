@@ -6,16 +6,16 @@ package organization_members
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // InviteUserToOrgMemberReader is a Reader for the InviteUserToOrgMember structure.
@@ -67,15 +67,50 @@ func NewInviteUserToOrgMemberNoContent() *InviteUserToOrgMemberNoContent {
 	return &InviteUserToOrgMemberNoContent{}
 }
 
-/*InviteUserToOrgMemberNoContent handles this case with default header values.
+/*
+InviteUserToOrgMemberNoContent describes a response with status code 204, with default header values.
 
 The user has been invited to be a member of the organization. The verification is pending.
 */
 type InviteUserToOrgMemberNoContent struct {
 }
 
+// IsSuccess returns true when this invite user to org member no content response has a 2xx status code
+func (o *InviteUserToOrgMemberNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this invite user to org member no content response has a 3xx status code
+func (o *InviteUserToOrgMemberNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this invite user to org member no content response has a 4xx status code
+func (o *InviteUserToOrgMemberNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this invite user to org member no content response has a 5xx status code
+func (o *InviteUserToOrgMemberNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this invite user to org member no content response a status code equal to that given
+func (o *InviteUserToOrgMemberNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the invite user to org member no content response
+func (o *InviteUserToOrgMemberNoContent) Code() int {
+	return 204
+}
+
 func (o *InviteUserToOrgMemberNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNoContent ", 204)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNoContent", 204)
+}
+
+func (o *InviteUserToOrgMemberNoContent) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNoContent", 204)
 }
 
 func (o *InviteUserToOrgMemberNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -88,20 +123,60 @@ func NewInviteUserToOrgMemberNotFound() *InviteUserToOrgMemberNotFound {
 	return &InviteUserToOrgMemberNotFound{}
 }
 
-/*InviteUserToOrgMemberNotFound handles this case with default header values.
+/*
+InviteUserToOrgMemberNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type InviteUserToOrgMemberNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this invite user to org member not found response has a 2xx status code
+func (o *InviteUserToOrgMemberNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this invite user to org member not found response has a 3xx status code
+func (o *InviteUserToOrgMemberNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this invite user to org member not found response has a 4xx status code
+func (o *InviteUserToOrgMemberNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this invite user to org member not found response has a 5xx status code
+func (o *InviteUserToOrgMemberNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this invite user to org member not found response a status code equal to that given
+func (o *InviteUserToOrgMemberNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the invite user to org member not found response
+func (o *InviteUserToOrgMemberNotFound) Code() int {
+	return 404
+}
+
 func (o *InviteUserToOrgMemberNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNotFound %s", 404, payload)
+}
+
+func (o *InviteUserToOrgMemberNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNotFound %s", 404, payload)
 }
 
 func (o *InviteUserToOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -110,12 +185,16 @@ func (o *InviteUserToOrgMemberNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *InviteUserToOrgMemberNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -132,15 +211,50 @@ func NewInviteUserToOrgMemberLengthRequired() *InviteUserToOrgMemberLengthRequir
 	return &InviteUserToOrgMemberLengthRequired{}
 }
 
-/*InviteUserToOrgMemberLengthRequired handles this case with default header values.
+/*
+InviteUserToOrgMemberLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type InviteUserToOrgMemberLengthRequired struct {
 }
 
+// IsSuccess returns true when this invite user to org member length required response has a 2xx status code
+func (o *InviteUserToOrgMemberLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this invite user to org member length required response has a 3xx status code
+func (o *InviteUserToOrgMemberLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this invite user to org member length required response has a 4xx status code
+func (o *InviteUserToOrgMemberLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this invite user to org member length required response has a 5xx status code
+func (o *InviteUserToOrgMemberLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this invite user to org member length required response a status code equal to that given
+func (o *InviteUserToOrgMemberLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the invite user to org member length required response
+func (o *InviteUserToOrgMemberLengthRequired) Code() int {
+	return 411
+}
+
 func (o *InviteUserToOrgMemberLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberLengthRequired ", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberLengthRequired", 411)
+}
+
+func (o *InviteUserToOrgMemberLengthRequired) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberLengthRequired", 411)
 }
 
 func (o *InviteUserToOrgMemberLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -153,20 +267,60 @@ func NewInviteUserToOrgMemberUnprocessableEntity() *InviteUserToOrgMemberUnproce
 	return &InviteUserToOrgMemberUnprocessableEntity{}
 }
 
-/*InviteUserToOrgMemberUnprocessableEntity handles this case with default header values.
+/*
+InviteUserToOrgMemberUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type InviteUserToOrgMemberUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this invite user to org member unprocessable entity response has a 2xx status code
+func (o *InviteUserToOrgMemberUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this invite user to org member unprocessable entity response has a 3xx status code
+func (o *InviteUserToOrgMemberUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this invite user to org member unprocessable entity response has a 4xx status code
+func (o *InviteUserToOrgMemberUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this invite user to org member unprocessable entity response has a 5xx status code
+func (o *InviteUserToOrgMemberUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this invite user to org member unprocessable entity response a status code equal to that given
+func (o *InviteUserToOrgMemberUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the invite user to org member unprocessable entity response
+func (o *InviteUserToOrgMemberUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *InviteUserToOrgMemberUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberUnprocessableEntity %s", 422, payload)
+}
+
+func (o *InviteUserToOrgMemberUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberUnprocessableEntity %s", 422, payload)
 }
 
 func (o *InviteUserToOrgMemberUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -175,12 +329,16 @@ func (o *InviteUserToOrgMemberUnprocessableEntity) GetPayload() *models.ErrorPay
 
 func (o *InviteUserToOrgMemberUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -199,18 +357,46 @@ func NewInviteUserToOrgMemberDefault(code int) *InviteUserToOrgMemberDefault {
 	}
 }
 
-/*InviteUserToOrgMemberDefault handles this case with default header values.
+/*
+InviteUserToOrgMemberDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type InviteUserToOrgMemberDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this invite user to org member default response has a 2xx status code
+func (o *InviteUserToOrgMemberDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this invite user to org member default response has a 3xx status code
+func (o *InviteUserToOrgMemberDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this invite user to org member default response has a 4xx status code
+func (o *InviteUserToOrgMemberDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this invite user to org member default response has a 5xx status code
+func (o *InviteUserToOrgMemberDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this invite user to org member default response a status code equal to that given
+func (o *InviteUserToOrgMemberDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the invite user to org member default response
@@ -219,7 +405,13 @@ func (o *InviteUserToOrgMemberDefault) Code() int {
 }
 
 func (o *InviteUserToOrgMemberDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMember default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMember default %s", o._statusCode, payload)
+}
+
+func (o *InviteUserToOrgMemberDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMember default %s", o._statusCode, payload)
 }
 
 func (o *InviteUserToOrgMemberDefault) GetPayload() *models.ErrorPayload {
@@ -228,12 +420,16 @@ func (o *InviteUserToOrgMemberDefault) GetPayload() *models.ErrorPayload {
 
 func (o *InviteUserToOrgMemberDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

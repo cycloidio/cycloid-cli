@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -56,10 +57,15 @@ func (m *UpdateAPIKey) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this update API key based on context it is used
+func (m *UpdateAPIKey) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

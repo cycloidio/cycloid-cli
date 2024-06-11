@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -35,10 +35,7 @@ func (m *AWSCloudWatchLogs) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *AWSCloudWatchLogs) SetEngine(val string) {
-
 }
-
-// Region gets the region of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *AWSCloudWatchLogs) UnmarshalJSON(raw []byte) error {
@@ -97,8 +94,7 @@ func (m AWSCloudWatchLogs) MarshalJSON() ([]byte, error) {
 	}{
 
 		Region: m.Region,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -107,8 +103,7 @@ func (m AWSCloudWatchLogs) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -136,6 +131,16 @@ func (m *AWSCloudWatchLogs) validateRegion(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this a w s cloud watch logs based on the context it is used
+func (m *AWSCloudWatchLogs) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

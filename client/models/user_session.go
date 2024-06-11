@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // UserSession User's session
 //
 // The JWT which allows the user to access to the application.
+//
 // swagger:model UserSession
 type UserSession struct {
 
@@ -65,6 +67,10 @@ func (m *UserSession) validateOwns(formats strfmt.Registry) error {
 
 func (m *UserSession) validatePermissions(formats strfmt.Registry) error {
 
+	if err := validate.Required("permissions", "body", m.Permissions); err != nil {
+		return err
+	}
+
 	for k := range m.Permissions {
 
 		if err := validate.Required("permissions"+"."+k, "body", m.Permissions[k]); err != nil {
@@ -72,6 +78,11 @@ func (m *UserSession) validatePermissions(formats strfmt.Registry) error {
 		}
 		if val, ok := m.Permissions[k]; ok {
 			if err := val.Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("permissions" + "." + k)
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("permissions" + "." + k)
+				}
 				return err
 			}
 		}
@@ -85,6 +96,39 @@ func (m *UserSession) validateToken(formats strfmt.Registry) error {
 
 	if err := validate.Required("token", "body", m.Token); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this user session based on the context it is used
+func (m *UserSession) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidatePermissions(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UserSession) contextValidatePermissions(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.Required("permissions", "body", m.Permissions); err != nil {
+		return err
+	}
+
+	for k := range m.Permissions {
+
+		if val, ok := m.Permissions[k]; ok {
+			if err := val.ContextValidate(ctx, formats); err != nil {
+				return err
+			}
+		}
+
 	}
 
 	return nil

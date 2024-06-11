@@ -6,16 +6,16 @@ package service_catalogs
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UpdateServiceCatalogTerraformImageReader is a Reader for the UpdateServiceCatalogTerraformImage structure.
@@ -61,15 +61,50 @@ func NewUpdateServiceCatalogTerraformImageNoContent() *UpdateServiceCatalogTerra
 	return &UpdateServiceCatalogTerraformImageNoContent{}
 }
 
-/*UpdateServiceCatalogTerraformImageNoContent handles this case with default header values.
+/*
+UpdateServiceCatalogTerraformImageNoContent describes a response with status code 204, with default header values.
 
 Configuration has been updated
 */
 type UpdateServiceCatalogTerraformImageNoContent struct {
 }
 
+// IsSuccess returns true when this update service catalog terraform image no content response has a 2xx status code
+func (o *UpdateServiceCatalogTerraformImageNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this update service catalog terraform image no content response has a 3xx status code
+func (o *UpdateServiceCatalogTerraformImageNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update service catalog terraform image no content response has a 4xx status code
+func (o *UpdateServiceCatalogTerraformImageNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this update service catalog terraform image no content response has a 5xx status code
+func (o *UpdateServiceCatalogTerraformImageNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update service catalog terraform image no content response a status code equal to that given
+func (o *UpdateServiceCatalogTerraformImageNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the update service catalog terraform image no content response
+func (o *UpdateServiceCatalogTerraformImageNoContent) Code() int {
+	return 204
+}
+
 func (o *UpdateServiceCatalogTerraformImageNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageNoContent ", 204)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageNoContent", 204)
+}
+
+func (o *UpdateServiceCatalogTerraformImageNoContent) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageNoContent", 204)
 }
 
 func (o *UpdateServiceCatalogTerraformImageNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -82,20 +117,60 @@ func NewUpdateServiceCatalogTerraformImageForbidden() *UpdateServiceCatalogTerra
 	return &UpdateServiceCatalogTerraformImageForbidden{}
 }
 
-/*UpdateServiceCatalogTerraformImageForbidden handles this case with default header values.
+/*
+UpdateServiceCatalogTerraformImageForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UpdateServiceCatalogTerraformImageForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update service catalog terraform image forbidden response has a 2xx status code
+func (o *UpdateServiceCatalogTerraformImageForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update service catalog terraform image forbidden response has a 3xx status code
+func (o *UpdateServiceCatalogTerraformImageForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update service catalog terraform image forbidden response has a 4xx status code
+func (o *UpdateServiceCatalogTerraformImageForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update service catalog terraform image forbidden response has a 5xx status code
+func (o *UpdateServiceCatalogTerraformImageForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update service catalog terraform image forbidden response a status code equal to that given
+func (o *UpdateServiceCatalogTerraformImageForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the update service catalog terraform image forbidden response
+func (o *UpdateServiceCatalogTerraformImageForbidden) Code() int {
+	return 403
+}
+
 func (o *UpdateServiceCatalogTerraformImageForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageForbidden %s", 403, payload)
+}
+
+func (o *UpdateServiceCatalogTerraformImageForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageForbidden %s", 403, payload)
 }
 
 func (o *UpdateServiceCatalogTerraformImageForbidden) GetPayload() *models.ErrorPayload {
@@ -104,12 +179,16 @@ func (o *UpdateServiceCatalogTerraformImageForbidden) GetPayload() *models.Error
 
 func (o *UpdateServiceCatalogTerraformImageForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -126,20 +205,60 @@ func NewUpdateServiceCatalogTerraformImageUnprocessableEntity() *UpdateServiceCa
 	return &UpdateServiceCatalogTerraformImageUnprocessableEntity{}
 }
 
-/*UpdateServiceCatalogTerraformImageUnprocessableEntity handles this case with default header values.
+/*
+UpdateServiceCatalogTerraformImageUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateServiceCatalogTerraformImageUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update service catalog terraform image unprocessable entity response has a 2xx status code
+func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update service catalog terraform image unprocessable entity response has a 3xx status code
+func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update service catalog terraform image unprocessable entity response has a 4xx status code
+func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update service catalog terraform image unprocessable entity response has a 5xx status code
+func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update service catalog terraform image unprocessable entity response a status code equal to that given
+func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the update service catalog terraform image unprocessable entity response
+func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageUnprocessableEntity %s", 422, payload)
+}
+
+func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImageUnprocessableEntity %s", 422, payload)
 }
 
 func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -148,12 +267,16 @@ func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) GetPayload() *mo
 
 func (o *UpdateServiceCatalogTerraformImageUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,18 +295,46 @@ func NewUpdateServiceCatalogTerraformImageDefault(code int) *UpdateServiceCatalo
 	}
 }
 
-/*UpdateServiceCatalogTerraformImageDefault handles this case with default header values.
+/*
+UpdateServiceCatalogTerraformImageDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UpdateServiceCatalogTerraformImageDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this update service catalog terraform image default response has a 2xx status code
+func (o *UpdateServiceCatalogTerraformImageDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this update service catalog terraform image default response has a 3xx status code
+func (o *UpdateServiceCatalogTerraformImageDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this update service catalog terraform image default response has a 4xx status code
+func (o *UpdateServiceCatalogTerraformImageDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this update service catalog terraform image default response has a 5xx status code
+func (o *UpdateServiceCatalogTerraformImageDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this update service catalog terraform image default response a status code equal to that given
+func (o *UpdateServiceCatalogTerraformImageDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the update service catalog terraform image default response
@@ -192,7 +343,13 @@ func (o *UpdateServiceCatalogTerraformImageDefault) Code() int {
 }
 
 func (o *UpdateServiceCatalogTerraformImageDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImage default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImage default %s", o._statusCode, payload)
+}
+
+func (o *UpdateServiceCatalogTerraformImageDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image][%d] updateServiceCatalogTerraformImage default %s", o._statusCode, payload)
 }
 
 func (o *UpdateServiceCatalogTerraformImageDefault) GetPayload() *models.ErrorPayload {
@@ -201,12 +358,16 @@ func (o *UpdateServiceCatalogTerraformImageDefault) GetPayload() *models.ErrorPa
 
 func (o *UpdateServiceCatalogTerraformImageDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

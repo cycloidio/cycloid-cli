@@ -7,21 +7,22 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
-	"io/ioutil"
-
-	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
 // AuthConfigOAuth AppConfigAuthOAuth
+//
 // swagger:discriminator AuthConfigOAuth type
 type AuthConfigOAuth interface {
 	runtime.Validatable
+	runtime.ContextValidatable
 
 	// ID of the OAuth client.
 	// Required: true
@@ -37,6 +38,9 @@ type AuthConfigOAuth interface {
 	// Required: true
 	Type() string
 	SetType(string)
+
+	// AdditionalProperties in base type shoud be handled just like regular properties
+	// At this moment, the base type property is pushed down to the subtype
 }
 
 type authConfigOAuth struct {
@@ -74,7 +78,6 @@ func (m *authConfigOAuth) Type() string {
 
 // SetType sets the type of this polymorphic type
 func (m *authConfigOAuth) SetType(val string) {
-
 }
 
 // UnmarshalAuthConfigOAuthSlice unmarshals polymorphic slices of AuthConfigOAuth
@@ -98,7 +101,7 @@ func UnmarshalAuthConfigOAuthSlice(reader io.Reader, consumer runtime.Consumer) 
 // UnmarshalAuthConfigOAuth unmarshals polymorphic AuthConfigOAuth
 func UnmarshalAuthConfigOAuth(reader io.Reader, consumer runtime.Consumer) (AuthConfigOAuth, error) {
 	// we need to read this twice, so first into a buffer
-	data, err := ioutil.ReadAll(reader)
+	data, err := io.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}
@@ -129,31 +132,26 @@ func unmarshalAuthConfigOAuth(data []byte, consumer runtime.Consumer) (AuthConfi
 			return nil, err
 		}
 		return &result, nil
-
 	case "AzureADAuthConfig":
 		var result AzureADAuthConfig
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
-
 	case "GitHubOAuthConfig":
 		var result GitHubOAuthConfig
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
-
 	case "GoogleOAuthConfig":
 		var result GoogleOAuthConfig
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
-
 	}
 	return nil, errors.New(422, "invalid type value: %q", getType.Type)
-
 }
 
 // Validate validates this auth config o auth
@@ -189,5 +187,10 @@ func (m *authConfigOAuth) validateProvider(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this auth config o auth based on context it is used
+func (m *authConfigOAuth) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

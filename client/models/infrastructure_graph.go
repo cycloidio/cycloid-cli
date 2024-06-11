@@ -6,18 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // InfrastructureGraph InfrastructureGraph
 //
-// Holds all the Infrastructure of the project in an environment in Graph format
+// # Holds all the Infrastructure of the project in an environment in Graph format
+//
 // swagger:model InfrastructureGraph
 type InfrastructureGraph struct {
 
@@ -63,6 +64,8 @@ func (m *InfrastructureGraph) validateEdges(formats strfmt.Registry) error {
 			if err := m.Edges[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("edges" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("edges" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -88,6 +91,76 @@ func (m *InfrastructureGraph) validateNodes(formats strfmt.Registry) error {
 			if err := m.Nodes[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodes" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodes" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this infrastructure graph based on the context it is used
+func (m *InfrastructureGraph) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEdges(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateNodes(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *InfrastructureGraph) contextValidateEdges(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Edges); i++ {
+
+		if m.Edges[i] != nil {
+
+			if swag.IsZero(m.Edges[i]) { // not required
+				return nil
+			}
+
+			if err := m.Edges[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("edges" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("edges" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *InfrastructureGraph) contextValidateNodes(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Nodes); i++ {
+
+		if m.Nodes[i] != nil {
+
+			if swag.IsZero(m.Nodes[i]) { // not required
+				return nil
+			}
+
+			if err := m.Nodes[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("nodes" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("nodes" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

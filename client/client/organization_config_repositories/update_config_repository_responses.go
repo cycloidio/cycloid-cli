@@ -6,17 +6,18 @@ package organization_config_repositories
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UpdateConfigRepositoryReader is a Reader for the UpdateConfigRepository structure.
@@ -62,7 +63,8 @@ func NewUpdateConfigRepositoryOK() *UpdateConfigRepositoryOK {
 	return &UpdateConfigRepositoryOK{}
 }
 
-/*UpdateConfigRepositoryOK handles this case with default header values.
+/*
+UpdateConfigRepositoryOK describes a response with status code 200, with default header values.
 
 Success creation
 */
@@ -70,8 +72,44 @@ type UpdateConfigRepositoryOK struct {
 	Payload *UpdateConfigRepositoryOKBody
 }
 
+// IsSuccess returns true when this update config repository o k response has a 2xx status code
+func (o *UpdateConfigRepositoryOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this update config repository o k response has a 3xx status code
+func (o *UpdateConfigRepositoryOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update config repository o k response has a 4xx status code
+func (o *UpdateConfigRepositoryOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this update config repository o k response has a 5xx status code
+func (o *UpdateConfigRepositoryOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update config repository o k response a status code equal to that given
+func (o *UpdateConfigRepositoryOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the update config repository o k response
+func (o *UpdateConfigRepositoryOK) Code() int {
+	return 200
+}
+
 func (o *UpdateConfigRepositoryOK) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryOK %s", 200, payload)
+}
+
+func (o *UpdateConfigRepositoryOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryOK %s", 200, payload)
 }
 
 func (o *UpdateConfigRepositoryOK) GetPayload() *UpdateConfigRepositoryOKBody {
@@ -95,20 +133,60 @@ func NewUpdateConfigRepositoryNotFound() *UpdateConfigRepositoryNotFound {
 	return &UpdateConfigRepositoryNotFound{}
 }
 
-/*UpdateConfigRepositoryNotFound handles this case with default header values.
+/*
+UpdateConfigRepositoryNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type UpdateConfigRepositoryNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this update config repository not found response has a 2xx status code
+func (o *UpdateConfigRepositoryNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update config repository not found response has a 3xx status code
+func (o *UpdateConfigRepositoryNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update config repository not found response has a 4xx status code
+func (o *UpdateConfigRepositoryNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update config repository not found response has a 5xx status code
+func (o *UpdateConfigRepositoryNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update config repository not found response a status code equal to that given
+func (o *UpdateConfigRepositoryNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the update config repository not found response
+func (o *UpdateConfigRepositoryNotFound) Code() int {
+	return 404
+}
+
 func (o *UpdateConfigRepositoryNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryNotFound %s", 404, payload)
+}
+
+func (o *UpdateConfigRepositoryNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryNotFound %s", 404, payload)
 }
 
 func (o *UpdateConfigRepositoryNotFound) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *UpdateConfigRepositoryNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateConfigRepositoryNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,15 +221,50 @@ func NewUpdateConfigRepositoryLengthRequired() *UpdateConfigRepositoryLengthRequ
 	return &UpdateConfigRepositoryLengthRequired{}
 }
 
-/*UpdateConfigRepositoryLengthRequired handles this case with default header values.
+/*
+UpdateConfigRepositoryLengthRequired describes a response with status code 411, with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type UpdateConfigRepositoryLengthRequired struct {
 }
 
+// IsSuccess returns true when this update config repository length required response has a 2xx status code
+func (o *UpdateConfigRepositoryLengthRequired) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this update config repository length required response has a 3xx status code
+func (o *UpdateConfigRepositoryLengthRequired) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this update config repository length required response has a 4xx status code
+func (o *UpdateConfigRepositoryLengthRequired) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this update config repository length required response has a 5xx status code
+func (o *UpdateConfigRepositoryLengthRequired) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this update config repository length required response a status code equal to that given
+func (o *UpdateConfigRepositoryLengthRequired) IsCode(code int) bool {
+	return code == 411
+}
+
+// Code gets the status code for the update config repository length required response
+func (o *UpdateConfigRepositoryLengthRequired) Code() int {
+	return 411
+}
+
 func (o *UpdateConfigRepositoryLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryLengthRequired ", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryLengthRequired", 411)
+}
+
+func (o *UpdateConfigRepositoryLengthRequired) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepositoryLengthRequired", 411)
 }
 
 func (o *UpdateConfigRepositoryLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -162,18 +279,46 @@ func NewUpdateConfigRepositoryDefault(code int) *UpdateConfigRepositoryDefault {
 	}
 }
 
-/*UpdateConfigRepositoryDefault handles this case with default header values.
+/*
+UpdateConfigRepositoryDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UpdateConfigRepositoryDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this update config repository default response has a 2xx status code
+func (o *UpdateConfigRepositoryDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this update config repository default response has a 3xx status code
+func (o *UpdateConfigRepositoryDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this update config repository default response has a 4xx status code
+func (o *UpdateConfigRepositoryDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this update config repository default response has a 5xx status code
+func (o *UpdateConfigRepositoryDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this update config repository default response a status code equal to that given
+func (o *UpdateConfigRepositoryDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the update config repository default response
@@ -182,7 +327,13 @@ func (o *UpdateConfigRepositoryDefault) Code() int {
 }
 
 func (o *UpdateConfigRepositoryDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepository default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepository default %s", o._statusCode, payload)
+}
+
+func (o *UpdateConfigRepositoryDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] updateConfigRepository default %s", o._statusCode, payload)
 }
 
 func (o *UpdateConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
@@ -191,12 +342,16 @@ func (o *UpdateConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateConfigRepositoryDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -208,7 +363,8 @@ func (o *UpdateConfigRepositoryDefault) readResponse(response runtime.ClientResp
 	return nil
 }
 
-/*UpdateConfigRepositoryOKBody update config repository o k body
+/*
+UpdateConfigRepositoryOKBody update config repository o k body
 swagger:model UpdateConfigRepositoryOKBody
 */
 type UpdateConfigRepositoryOKBody struct {
@@ -242,6 +398,39 @@ func (o *UpdateConfigRepositoryOKBody) validateData(formats strfmt.Registry) err
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updateConfigRepositoryOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updateConfigRepositoryOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update config repository o k body based on the context it is used
+func (o *UpdateConfigRepositoryOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdateConfigRepositoryOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateConfigRepositoryOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updateConfigRepositoryOK" + "." + "data")
 			}
 			return err
 		}

@@ -6,17 +6,17 @@ package organizations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetEventsTagsReader is a Reader for the GetEventsTags structure.
@@ -62,7 +62,8 @@ func NewGetEventsTagsOK() *GetEventsTagsOK {
 	return &GetEventsTagsOK{}
 }
 
-/*GetEventsTagsOK handles this case with default header values.
+/*
+GetEventsTagsOK describes a response with status code 200, with default header values.
 
 The list of tags and set of values for all the events of the organization.
 */
@@ -70,8 +71,44 @@ type GetEventsTagsOK struct {
 	Payload *GetEventsTagsOKBody
 }
 
+// IsSuccess returns true when this get events tags o k response has a 2xx status code
+func (o *GetEventsTagsOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get events tags o k response has a 3xx status code
+func (o *GetEventsTagsOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get events tags o k response has a 4xx status code
+func (o *GetEventsTagsOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get events tags o k response has a 5xx status code
+func (o *GetEventsTagsOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get events tags o k response a status code equal to that given
+func (o *GetEventsTagsOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get events tags o k response
+func (o *GetEventsTagsOK) Code() int {
+	return 200
+}
+
 func (o *GetEventsTagsOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsOK %s", 200, payload)
+}
+
+func (o *GetEventsTagsOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsOK %s", 200, payload)
 }
 
 func (o *GetEventsTagsOK) GetPayload() *GetEventsTagsOKBody {
@@ -95,20 +132,60 @@ func NewGetEventsTagsForbidden() *GetEventsTagsForbidden {
 	return &GetEventsTagsForbidden{}
 }
 
-/*GetEventsTagsForbidden handles this case with default header values.
+/*
+GetEventsTagsForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetEventsTagsForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get events tags forbidden response has a 2xx status code
+func (o *GetEventsTagsForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get events tags forbidden response has a 3xx status code
+func (o *GetEventsTagsForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get events tags forbidden response has a 4xx status code
+func (o *GetEventsTagsForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get events tags forbidden response has a 5xx status code
+func (o *GetEventsTagsForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get events tags forbidden response a status code equal to that given
+func (o *GetEventsTagsForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get events tags forbidden response
+func (o *GetEventsTagsForbidden) Code() int {
+	return 403
+}
+
 func (o *GetEventsTagsForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsForbidden %s", 403, payload)
+}
+
+func (o *GetEventsTagsForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsForbidden %s", 403, payload)
 }
 
 func (o *GetEventsTagsForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +194,16 @@ func (o *GetEventsTagsForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetEventsTagsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +220,60 @@ func NewGetEventsTagsUnprocessableEntity() *GetEventsTagsUnprocessableEntity {
 	return &GetEventsTagsUnprocessableEntity{}
 }
 
-/*GetEventsTagsUnprocessableEntity handles this case with default header values.
+/*
+GetEventsTagsUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetEventsTagsUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get events tags unprocessable entity response has a 2xx status code
+func (o *GetEventsTagsUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get events tags unprocessable entity response has a 3xx status code
+func (o *GetEventsTagsUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get events tags unprocessable entity response has a 4xx status code
+func (o *GetEventsTagsUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get events tags unprocessable entity response has a 5xx status code
+func (o *GetEventsTagsUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get events tags unprocessable entity response a status code equal to that given
+func (o *GetEventsTagsUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the get events tags unprocessable entity response
+func (o *GetEventsTagsUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *GetEventsTagsUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsUnprocessableEntity %s", 422, payload)
+}
+
+func (o *GetEventsTagsUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTagsUnprocessableEntity %s", 422, payload)
 }
 
 func (o *GetEventsTagsUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -161,12 +282,16 @@ func (o *GetEventsTagsUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *GetEventsTagsUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +310,46 @@ func NewGetEventsTagsDefault(code int) *GetEventsTagsDefault {
 	}
 }
 
-/*GetEventsTagsDefault handles this case with default header values.
+/*
+GetEventsTagsDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetEventsTagsDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get events tags default response has a 2xx status code
+func (o *GetEventsTagsDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get events tags default response has a 3xx status code
+func (o *GetEventsTagsDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get events tags default response has a 4xx status code
+func (o *GetEventsTagsDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get events tags default response has a 5xx status code
+func (o *GetEventsTagsDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get events tags default response a status code equal to that given
+func (o *GetEventsTagsDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get events tags default response
@@ -205,7 +358,13 @@ func (o *GetEventsTagsDefault) Code() int {
 }
 
 func (o *GetEventsTagsDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTags default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTags default %s", o._statusCode, payload)
+}
+
+func (o *GetEventsTagsDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/events/tags][%d] getEventsTags default %s", o._statusCode, payload)
 }
 
 func (o *GetEventsTagsDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +373,16 @@ func (o *GetEventsTagsDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetEventsTagsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +394,8 @@ func (o *GetEventsTagsDefault) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-/*GetEventsTagsOKBody The list of tags with associated set of values
+/*
+GetEventsTagsOKBody The list of tags with associated set of values
 swagger:model GetEventsTagsOKBody
 */
 type GetEventsTagsOKBody struct {
@@ -257,10 +421,15 @@ func (o *GetEventsTagsOKBody) Validate(formats strfmt.Registry) error {
 
 func (o *GetEventsTagsOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("getEventsTagsOK"+"."+"data", "body", o.Data); err != nil {
-		return err
+	if o.Data == nil {
+		return errors.Required("getEventsTagsOK"+"."+"data", "body", nil)
 	}
 
+	return nil
+}
+
+// ContextValidate validates this get events tags o k body based on context it is used
+func (o *GetEventsTagsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

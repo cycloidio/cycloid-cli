@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -82,7 +83,7 @@ func (m *CloudCostManagementTagMapping) validateCreatedAt(formats strfmt.Registr
 		return err
 	}
 
-	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -95,7 +96,7 @@ func (m *CloudCostManagementTagMapping) validateID(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -108,10 +109,15 @@ func (m *CloudCostManagementTagMapping) validateUpdatedAt(formats strfmt.Registr
 		return err
 	}
 
-	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this cloud cost management tag mapping based on context it is used
+func (m *CloudCostManagementTagMapping) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

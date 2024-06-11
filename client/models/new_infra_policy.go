@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // NewInfraPolicy Create InfraPolicy
 //
 // Create a new policy to control operations across infrastructure.
+//
 // swagger:model NewInfraPolicy
 type NewInfraPolicy struct {
 
@@ -53,7 +54,7 @@ type NewInfraPolicy struct {
 
 	// severity
 	// Required: true
-	// Enum: [critical warning advisory]
+	// Enum: ["critical","warning","advisory"]
 	Severity *string `json:"severity"`
 }
 
@@ -97,20 +98,19 @@ func (m *NewInfraPolicy) validateBody(formats strfmt.Registry) error {
 }
 
 func (m *NewInfraPolicy) validateCanonical(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -123,7 +123,7 @@ func (m *NewInfraPolicy) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
 		return err
 	}
 
@@ -136,15 +136,15 @@ func (m *NewInfraPolicy) validateOwner(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("owner", "body", string(*m.Owner), 3); err != nil {
+	if err := validate.MinLength("owner", "body", *m.Owner, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("owner", "body", string(*m.Owner), 100); err != nil {
+	if err := validate.MaxLength("owner", "body", *m.Owner, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("owner", "body", string(*m.Owner), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("owner", "body", *m.Owner, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -177,7 +177,7 @@ const (
 
 // prop value enum
 func (m *NewInfraPolicy) validateSeverityEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, newInfraPolicyTypeSeverityPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, newInfraPolicyTypeSeverityPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -194,6 +194,11 @@ func (m *NewInfraPolicy) validateSeverity(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this new infra policy based on context it is used
+func (m *NewInfraPolicy) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

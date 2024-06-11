@@ -6,16 +6,17 @@ package organization_infrastructure_policies
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // ValidateProjectInfraPoliciesReader is a Reader for the ValidateProjectInfraPolicies structure.
@@ -67,7 +68,8 @@ func NewValidateProjectInfraPoliciesOK() *ValidateProjectInfraPoliciesOK {
 	return &ValidateProjectInfraPoliciesOK{}
 }
 
-/*ValidateProjectInfraPoliciesOK handles this case with default header values.
+/*
+ValidateProjectInfraPoliciesOK describes a response with status code 200, with default header values.
 
 The list of the policies not respected.
 */
@@ -75,8 +77,44 @@ type ValidateProjectInfraPoliciesOK struct {
 	Payload *ValidateProjectInfraPoliciesOKBody
 }
 
+// IsSuccess returns true when this validate project infra policies o k response has a 2xx status code
+func (o *ValidateProjectInfraPoliciesOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this validate project infra policies o k response has a 3xx status code
+func (o *ValidateProjectInfraPoliciesOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this validate project infra policies o k response has a 4xx status code
+func (o *ValidateProjectInfraPoliciesOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this validate project infra policies o k response has a 5xx status code
+func (o *ValidateProjectInfraPoliciesOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this validate project infra policies o k response a status code equal to that given
+func (o *ValidateProjectInfraPoliciesOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the validate project infra policies o k response
+func (o *ValidateProjectInfraPoliciesOK) Code() int {
+	return 200
+}
+
 func (o *ValidateProjectInfraPoliciesOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesOK %s", 200, payload)
+}
+
+func (o *ValidateProjectInfraPoliciesOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesOK %s", 200, payload)
 }
 
 func (o *ValidateProjectInfraPoliciesOK) GetPayload() *ValidateProjectInfraPoliciesOKBody {
@@ -100,20 +138,60 @@ func NewValidateProjectInfraPoliciesForbidden() *ValidateProjectInfraPoliciesFor
 	return &ValidateProjectInfraPoliciesForbidden{}
 }
 
-/*ValidateProjectInfraPoliciesForbidden handles this case with default header values.
+/*
+ValidateProjectInfraPoliciesForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ValidateProjectInfraPoliciesForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this validate project infra policies forbidden response has a 2xx status code
+func (o *ValidateProjectInfraPoliciesForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this validate project infra policies forbidden response has a 3xx status code
+func (o *ValidateProjectInfraPoliciesForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this validate project infra policies forbidden response has a 4xx status code
+func (o *ValidateProjectInfraPoliciesForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this validate project infra policies forbidden response has a 5xx status code
+func (o *ValidateProjectInfraPoliciesForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this validate project infra policies forbidden response a status code equal to that given
+func (o *ValidateProjectInfraPoliciesForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the validate project infra policies forbidden response
+func (o *ValidateProjectInfraPoliciesForbidden) Code() int {
+	return 403
+}
+
 func (o *ValidateProjectInfraPoliciesForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesForbidden %s", 403, payload)
+}
+
+func (o *ValidateProjectInfraPoliciesForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesForbidden %s", 403, payload)
 }
 
 func (o *ValidateProjectInfraPoliciesForbidden) GetPayload() *models.ErrorPayload {
@@ -122,12 +200,16 @@ func (o *ValidateProjectInfraPoliciesForbidden) GetPayload() *models.ErrorPayloa
 
 func (o *ValidateProjectInfraPoliciesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -144,20 +226,60 @@ func NewValidateProjectInfraPoliciesNotFound() *ValidateProjectInfraPoliciesNotF
 	return &ValidateProjectInfraPoliciesNotFound{}
 }
 
-/*ValidateProjectInfraPoliciesNotFound handles this case with default header values.
+/*
+ValidateProjectInfraPoliciesNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type ValidateProjectInfraPoliciesNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this validate project infra policies not found response has a 2xx status code
+func (o *ValidateProjectInfraPoliciesNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this validate project infra policies not found response has a 3xx status code
+func (o *ValidateProjectInfraPoliciesNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this validate project infra policies not found response has a 4xx status code
+func (o *ValidateProjectInfraPoliciesNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this validate project infra policies not found response has a 5xx status code
+func (o *ValidateProjectInfraPoliciesNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this validate project infra policies not found response a status code equal to that given
+func (o *ValidateProjectInfraPoliciesNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the validate project infra policies not found response
+func (o *ValidateProjectInfraPoliciesNotFound) Code() int {
+	return 404
+}
+
 func (o *ValidateProjectInfraPoliciesNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesNotFound %s", 404, payload)
+}
+
+func (o *ValidateProjectInfraPoliciesNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesNotFound %s", 404, payload)
 }
 
 func (o *ValidateProjectInfraPoliciesNotFound) GetPayload() *models.ErrorPayload {
@@ -166,12 +288,16 @@ func (o *ValidateProjectInfraPoliciesNotFound) GetPayload() *models.ErrorPayload
 
 func (o *ValidateProjectInfraPoliciesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -188,20 +314,60 @@ func NewValidateProjectInfraPoliciesUnprocessableEntity() *ValidateProjectInfraP
 	return &ValidateProjectInfraPoliciesUnprocessableEntity{}
 }
 
-/*ValidateProjectInfraPoliciesUnprocessableEntity handles this case with default header values.
+/*
+ValidateProjectInfraPoliciesUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type ValidateProjectInfraPoliciesUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this validate project infra policies unprocessable entity response has a 2xx status code
+func (o *ValidateProjectInfraPoliciesUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this validate project infra policies unprocessable entity response has a 3xx status code
+func (o *ValidateProjectInfraPoliciesUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this validate project infra policies unprocessable entity response has a 4xx status code
+func (o *ValidateProjectInfraPoliciesUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this validate project infra policies unprocessable entity response has a 5xx status code
+func (o *ValidateProjectInfraPoliciesUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this validate project infra policies unprocessable entity response a status code equal to that given
+func (o *ValidateProjectInfraPoliciesUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the validate project infra policies unprocessable entity response
+func (o *ValidateProjectInfraPoliciesUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *ValidateProjectInfraPoliciesUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesUnprocessableEntity %s", 422, payload)
+}
+
+func (o *ValidateProjectInfraPoliciesUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPoliciesUnprocessableEntity %s", 422, payload)
 }
 
 func (o *ValidateProjectInfraPoliciesUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -210,12 +376,16 @@ func (o *ValidateProjectInfraPoliciesUnprocessableEntity) GetPayload() *models.E
 
 func (o *ValidateProjectInfraPoliciesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -234,18 +404,46 @@ func NewValidateProjectInfraPoliciesDefault(code int) *ValidateProjectInfraPolic
 	}
 }
 
-/*ValidateProjectInfraPoliciesDefault handles this case with default header values.
+/*
+ValidateProjectInfraPoliciesDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type ValidateProjectInfraPoliciesDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this validate project infra policies default response has a 2xx status code
+func (o *ValidateProjectInfraPoliciesDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this validate project infra policies default response has a 3xx status code
+func (o *ValidateProjectInfraPoliciesDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this validate project infra policies default response has a 4xx status code
+func (o *ValidateProjectInfraPoliciesDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this validate project infra policies default response has a 5xx status code
+func (o *ValidateProjectInfraPoliciesDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this validate project infra policies default response a status code equal to that given
+func (o *ValidateProjectInfraPoliciesDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the validate project infra policies default response
@@ -254,7 +452,13 @@ func (o *ValidateProjectInfraPoliciesDefault) Code() int {
 }
 
 func (o *ValidateProjectInfraPoliciesDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPolicies default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPolicies default %s", o._statusCode, payload)
+}
+
+func (o *ValidateProjectInfraPoliciesDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies][%d] validateProjectInfraPolicies default %s", o._statusCode, payload)
 }
 
 func (o *ValidateProjectInfraPoliciesDefault) GetPayload() *models.ErrorPayload {
@@ -263,12 +467,16 @@ func (o *ValidateProjectInfraPoliciesDefault) GetPayload() *models.ErrorPayload 
 
 func (o *ValidateProjectInfraPoliciesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -280,7 +488,8 @@ func (o *ValidateProjectInfraPoliciesDefault) readResponse(response runtime.Clie
 	return nil
 }
 
-/*ValidateProjectInfraPoliciesOKBody validate project infra policies o k body
+/*
+ValidateProjectInfraPoliciesOKBody validate project infra policies o k body
 swagger:model ValidateProjectInfraPoliciesOKBody
 */
 type ValidateProjectInfraPoliciesOKBody struct {
@@ -304,7 +513,6 @@ func (o *ValidateProjectInfraPoliciesOKBody) Validate(formats strfmt.Registry) e
 }
 
 func (o *ValidateProjectInfraPoliciesOKBody) validateData(formats strfmt.Registry) error {
-
 	if swag.IsZero(o.Data) { // not required
 		return nil
 	}
@@ -313,6 +521,43 @@ func (o *ValidateProjectInfraPoliciesOKBody) validateData(formats strfmt.Registr
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("validateProjectInfraPoliciesOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("validateProjectInfraPoliciesOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this validate project infra policies o k body based on the context it is used
+func (o *ValidateProjectInfraPoliciesOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *ValidateProjectInfraPoliciesOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if swag.IsZero(o.Data) { // not required
+			return nil
+		}
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("validateProjectInfraPoliciesOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("validateProjectInfraPoliciesOK" + "." + "data")
 			}
 			return err
 		}

@@ -6,17 +6,18 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // EmailAuthenticationVerificationReader is a Reader for the EmailAuthenticationVerification structure.
@@ -62,7 +63,8 @@ func NewEmailAuthenticationVerificationOK() *EmailAuthenticationVerificationOK {
 	return &EmailAuthenticationVerificationOK{}
 }
 
-/*EmailAuthenticationVerificationOK handles this case with default header values.
+/*
+EmailAuthenticationVerificationOK describes a response with status code 200, with default header values.
 
 The token which represents the session of the user.
 */
@@ -70,8 +72,44 @@ type EmailAuthenticationVerificationOK struct {
 	Payload *EmailAuthenticationVerificationOKBody
 }
 
+// IsSuccess returns true when this email authentication verification o k response has a 2xx status code
+func (o *EmailAuthenticationVerificationOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this email authentication verification o k response has a 3xx status code
+func (o *EmailAuthenticationVerificationOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this email authentication verification o k response has a 4xx status code
+func (o *EmailAuthenticationVerificationOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this email authentication verification o k response has a 5xx status code
+func (o *EmailAuthenticationVerificationOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this email authentication verification o k response a status code equal to that given
+func (o *EmailAuthenticationVerificationOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the email authentication verification o k response
+func (o *EmailAuthenticationVerificationOK) Code() int {
+	return 200
+}
+
 func (o *EmailAuthenticationVerificationOK) Error() string {
-	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationOK %s", 200, payload)
+}
+
+func (o *EmailAuthenticationVerificationOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationOK %s", 200, payload)
 }
 
 func (o *EmailAuthenticationVerificationOK) GetPayload() *EmailAuthenticationVerificationOKBody {
@@ -95,20 +133,60 @@ func NewEmailAuthenticationVerificationUnauthorized() *EmailAuthenticationVerifi
 	return &EmailAuthenticationVerificationUnauthorized{}
 }
 
-/*EmailAuthenticationVerificationUnauthorized handles this case with default header values.
+/*
+EmailAuthenticationVerificationUnauthorized describes a response with status code 401, with default header values.
 
 The user cannot be authenticated with the credentials which she/he has used.
 */
 type EmailAuthenticationVerificationUnauthorized struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this email authentication verification unauthorized response has a 2xx status code
+func (o *EmailAuthenticationVerificationUnauthorized) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this email authentication verification unauthorized response has a 3xx status code
+func (o *EmailAuthenticationVerificationUnauthorized) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this email authentication verification unauthorized response has a 4xx status code
+func (o *EmailAuthenticationVerificationUnauthorized) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this email authentication verification unauthorized response has a 5xx status code
+func (o *EmailAuthenticationVerificationUnauthorized) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this email authentication verification unauthorized response a status code equal to that given
+func (o *EmailAuthenticationVerificationUnauthorized) IsCode(code int) bool {
+	return code == 401
+}
+
+// Code gets the status code for the email authentication verification unauthorized response
+func (o *EmailAuthenticationVerificationUnauthorized) Code() int {
+	return 401
+}
+
 func (o *EmailAuthenticationVerificationUnauthorized) Error() string {
-	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationUnauthorized  %+v", 401, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationUnauthorized %s", 401, payload)
+}
+
+func (o *EmailAuthenticationVerificationUnauthorized) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationUnauthorized %s", 401, payload)
 }
 
 func (o *EmailAuthenticationVerificationUnauthorized) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *EmailAuthenticationVerificationUnauthorized) GetPayload() *models.Error
 
 func (o *EmailAuthenticationVerificationUnauthorized) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +221,60 @@ func NewEmailAuthenticationVerificationUnprocessableEntity() *EmailAuthenticatio
 	return &EmailAuthenticationVerificationUnprocessableEntity{}
 }
 
-/*EmailAuthenticationVerificationUnprocessableEntity handles this case with default header values.
+/*
+EmailAuthenticationVerificationUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type EmailAuthenticationVerificationUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this email authentication verification unprocessable entity response has a 2xx status code
+func (o *EmailAuthenticationVerificationUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this email authentication verification unprocessable entity response has a 3xx status code
+func (o *EmailAuthenticationVerificationUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this email authentication verification unprocessable entity response has a 4xx status code
+func (o *EmailAuthenticationVerificationUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this email authentication verification unprocessable entity response has a 5xx status code
+func (o *EmailAuthenticationVerificationUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this email authentication verification unprocessable entity response a status code equal to that given
+func (o *EmailAuthenticationVerificationUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the email authentication verification unprocessable entity response
+func (o *EmailAuthenticationVerificationUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *EmailAuthenticationVerificationUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationUnprocessableEntity %s", 422, payload)
+}
+
+func (o *EmailAuthenticationVerificationUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerificationUnprocessableEntity %s", 422, payload)
 }
 
 func (o *EmailAuthenticationVerificationUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -161,12 +283,16 @@ func (o *EmailAuthenticationVerificationUnprocessableEntity) GetPayload() *model
 
 func (o *EmailAuthenticationVerificationUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +311,46 @@ func NewEmailAuthenticationVerificationDefault(code int) *EmailAuthenticationVer
 	}
 }
 
-/*EmailAuthenticationVerificationDefault handles this case with default header values.
+/*
+EmailAuthenticationVerificationDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type EmailAuthenticationVerificationDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this email authentication verification default response has a 2xx status code
+func (o *EmailAuthenticationVerificationDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this email authentication verification default response has a 3xx status code
+func (o *EmailAuthenticationVerificationDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this email authentication verification default response has a 4xx status code
+func (o *EmailAuthenticationVerificationDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this email authentication verification default response has a 5xx status code
+func (o *EmailAuthenticationVerificationDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this email authentication verification default response a status code equal to that given
+func (o *EmailAuthenticationVerificationDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the email authentication verification default response
@@ -205,7 +359,13 @@ func (o *EmailAuthenticationVerificationDefault) Code() int {
 }
 
 func (o *EmailAuthenticationVerificationDefault) Error() string {
-	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerification default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerification default %s", o._statusCode, payload)
+}
+
+func (o *EmailAuthenticationVerificationDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /user/email/authentication/{authentication_token}][%d] emailAuthenticationVerification default %s", o._statusCode, payload)
 }
 
 func (o *EmailAuthenticationVerificationDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +374,16 @@ func (o *EmailAuthenticationVerificationDefault) GetPayload() *models.ErrorPaylo
 
 func (o *EmailAuthenticationVerificationDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +395,8 @@ func (o *EmailAuthenticationVerificationDefault) readResponse(response runtime.C
 	return nil
 }
 
-/*EmailAuthenticationVerificationOKBody email authentication verification o k body
+/*
+EmailAuthenticationVerificationOKBody email authentication verification o k body
 swagger:model EmailAuthenticationVerificationOKBody
 */
 type EmailAuthenticationVerificationOKBody struct {
@@ -265,6 +430,39 @@ func (o *EmailAuthenticationVerificationOKBody) validateData(formats strfmt.Regi
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("emailAuthenticationVerificationOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("emailAuthenticationVerificationOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this email authentication verification o k body based on the context it is used
+func (o *EmailAuthenticationVerificationOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *EmailAuthenticationVerificationOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("emailAuthenticationVerificationOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("emailAuthenticationVerificationOK" + "." + "data")
 			}
 			return err
 		}

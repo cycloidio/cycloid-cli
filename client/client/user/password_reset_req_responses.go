@@ -6,16 +6,16 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // PasswordResetReqReader is a Reader for the PasswordResetReq structure.
@@ -55,15 +55,50 @@ func NewPasswordResetReqNoContent() *PasswordResetReqNoContent {
 	return &PasswordResetReqNoContent{}
 }
 
-/*PasswordResetReqNoContent handles this case with default header values.
+/*
+PasswordResetReqNoContent describes a response with status code 204, with default header values.
 
 The password has been changed.
 */
 type PasswordResetReqNoContent struct {
 }
 
+// IsSuccess returns true when this password reset req no content response has a 2xx status code
+func (o *PasswordResetReqNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this password reset req no content response has a 3xx status code
+func (o *PasswordResetReqNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this password reset req no content response has a 4xx status code
+func (o *PasswordResetReqNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this password reset req no content response has a 5xx status code
+func (o *PasswordResetReqNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this password reset req no content response a status code equal to that given
+func (o *PasswordResetReqNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the password reset req no content response
+func (o *PasswordResetReqNoContent) Code() int {
+	return 204
+}
+
 func (o *PasswordResetReqNoContent) Error() string {
-	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReqNoContent ", 204)
+	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReqNoContent", 204)
+}
+
+func (o *PasswordResetReqNoContent) String() string {
+	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReqNoContent", 204)
 }
 
 func (o *PasswordResetReqNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -76,20 +111,60 @@ func NewPasswordResetReqUnprocessableEntity() *PasswordResetReqUnprocessableEnti
 	return &PasswordResetReqUnprocessableEntity{}
 }
 
-/*PasswordResetReqUnprocessableEntity handles this case with default header values.
+/*
+PasswordResetReqUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type PasswordResetReqUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this password reset req unprocessable entity response has a 2xx status code
+func (o *PasswordResetReqUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this password reset req unprocessable entity response has a 3xx status code
+func (o *PasswordResetReqUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this password reset req unprocessable entity response has a 4xx status code
+func (o *PasswordResetReqUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this password reset req unprocessable entity response has a 5xx status code
+func (o *PasswordResetReqUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this password reset req unprocessable entity response a status code equal to that given
+func (o *PasswordResetReqUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the password reset req unprocessable entity response
+func (o *PasswordResetReqUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *PasswordResetReqUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReqUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReqUnprocessableEntity %s", 422, payload)
+}
+
+func (o *PasswordResetReqUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReqUnprocessableEntity %s", 422, payload)
 }
 
 func (o *PasswordResetReqUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -98,12 +173,16 @@ func (o *PasswordResetReqUnprocessableEntity) GetPayload() *models.ErrorPayload 
 
 func (o *PasswordResetReqUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -122,18 +201,46 @@ func NewPasswordResetReqDefault(code int) *PasswordResetReqDefault {
 	}
 }
 
-/*PasswordResetReqDefault handles this case with default header values.
+/*
+PasswordResetReqDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type PasswordResetReqDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this password reset req default response has a 2xx status code
+func (o *PasswordResetReqDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this password reset req default response has a 3xx status code
+func (o *PasswordResetReqDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this password reset req default response has a 4xx status code
+func (o *PasswordResetReqDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this password reset req default response has a 5xx status code
+func (o *PasswordResetReqDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this password reset req default response a status code equal to that given
+func (o *PasswordResetReqDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the password reset req default response
@@ -142,7 +249,13 @@ func (o *PasswordResetReqDefault) Code() int {
 }
 
 func (o *PasswordResetReqDefault) Error() string {
-	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReq default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReq default %s", o._statusCode, payload)
+}
+
+func (o *PasswordResetReqDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user/reset_password][%d] passwordResetReq default %s", o._statusCode, payload)
 }
 
 func (o *PasswordResetReqDefault) GetPayload() *models.ErrorPayload {
@@ -151,12 +264,16 @@ func (o *PasswordResetReqDefault) GetPayload() *models.ErrorPayload {
 
 func (o *PasswordResetReqDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

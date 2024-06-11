@@ -7,20 +7,21 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // InfraImportResourcesBody Provider's Resources body
 //
-// Entry that represents all the data needed for fetching resources
+// # Entry that represents all the data needed for fetching resources
+//
 // swagger:model InfraImportResourcesBody
 type InfraImportResourcesBody struct {
 	configurationField CloudProviderConfiguration
@@ -85,8 +86,7 @@ func (m InfraImportResourcesBody) MarshalJSON() ([]byte, error) {
 	}{
 
 		CredentialCanonical: m.CredentialCanonical,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -95,8 +95,7 @@ func (m InfraImportResourcesBody) MarshalJSON() ([]byte, error) {
 	}{
 
 		Configuration: m.configurationField,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -131,6 +130,8 @@ func (m *InfraImportResourcesBody) validateConfiguration(formats strfmt.Registry
 	if err := m.Configuration().Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("configuration")
 		}
 		return err
 	}
@@ -144,15 +145,43 @@ func (m *InfraImportResourcesBody) validateCredentialCanonical(formats strfmt.Re
 		return err
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", string(*m.CredentialCanonical), 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", *m.CredentialCanonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", string(*m.CredentialCanonical), 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", *m.CredentialCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", string(*m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", *m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this infra import resources body based on the context it is used
+func (m *InfraImportResourcesBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateConfiguration(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *InfraImportResourcesBody) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("configuration")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("configuration")
+		}
 		return err
 	}
 

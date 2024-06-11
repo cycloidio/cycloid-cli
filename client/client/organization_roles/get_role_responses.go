@@ -6,17 +6,18 @@ package organization_roles
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetRoleReader is a Reader for the GetRole structure.
@@ -62,7 +63,8 @@ func NewGetRoleOK() *GetRoleOK {
 	return &GetRoleOK{}
 }
 
-/*GetRoleOK handles this case with default header values.
+/*
+GetRoleOK describes a response with status code 200, with default header values.
 
 Role available in the organization with such canonical.
 */
@@ -70,8 +72,44 @@ type GetRoleOK struct {
 	Payload *GetRoleOKBody
 }
 
+// IsSuccess returns true when this get role o k response has a 2xx status code
+func (o *GetRoleOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get role o k response has a 3xx status code
+func (o *GetRoleOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get role o k response has a 4xx status code
+func (o *GetRoleOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get role o k response has a 5xx status code
+func (o *GetRoleOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get role o k response a status code equal to that given
+func (o *GetRoleOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get role o k response
+func (o *GetRoleOK) Code() int {
+	return 200
+}
+
 func (o *GetRoleOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleOK %s", 200, payload)
+}
+
+func (o *GetRoleOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleOK %s", 200, payload)
 }
 
 func (o *GetRoleOK) GetPayload() *GetRoleOKBody {
@@ -95,20 +133,60 @@ func NewGetRoleForbidden() *GetRoleForbidden {
 	return &GetRoleForbidden{}
 }
 
-/*GetRoleForbidden handles this case with default header values.
+/*
+GetRoleForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetRoleForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get role forbidden response has a 2xx status code
+func (o *GetRoleForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get role forbidden response has a 3xx status code
+func (o *GetRoleForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get role forbidden response has a 4xx status code
+func (o *GetRoleForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get role forbidden response has a 5xx status code
+func (o *GetRoleForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get role forbidden response a status code equal to that given
+func (o *GetRoleForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get role forbidden response
+func (o *GetRoleForbidden) Code() int {
+	return 403
+}
+
 func (o *GetRoleForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleForbidden %s", 403, payload)
+}
+
+func (o *GetRoleForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleForbidden %s", 403, payload)
 }
 
 func (o *GetRoleForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *GetRoleForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetRoleForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +221,60 @@ func NewGetRoleNotFound() *GetRoleNotFound {
 	return &GetRoleNotFound{}
 }
 
-/*GetRoleNotFound handles this case with default header values.
+/*
+GetRoleNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetRoleNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get role not found response has a 2xx status code
+func (o *GetRoleNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get role not found response has a 3xx status code
+func (o *GetRoleNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get role not found response has a 4xx status code
+func (o *GetRoleNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get role not found response has a 5xx status code
+func (o *GetRoleNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get role not found response a status code equal to that given
+func (o *GetRoleNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get role not found response
+func (o *GetRoleNotFound) Code() int {
+	return 404
+}
+
 func (o *GetRoleNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleNotFound %s", 404, payload)
+}
+
+func (o *GetRoleNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRoleNotFound %s", 404, payload)
 }
 
 func (o *GetRoleNotFound) GetPayload() *models.ErrorPayload {
@@ -161,12 +283,16 @@ func (o *GetRoleNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetRoleNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +311,46 @@ func NewGetRoleDefault(code int) *GetRoleDefault {
 	}
 }
 
-/*GetRoleDefault handles this case with default header values.
+/*
+GetRoleDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetRoleDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get role default response has a 2xx status code
+func (o *GetRoleDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get role default response has a 3xx status code
+func (o *GetRoleDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get role default response has a 4xx status code
+func (o *GetRoleDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get role default response has a 5xx status code
+func (o *GetRoleDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get role default response a status code equal to that given
+func (o *GetRoleDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get role default response
@@ -205,7 +359,13 @@ func (o *GetRoleDefault) Code() int {
 }
 
 func (o *GetRoleDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRole default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRole default %s", o._statusCode, payload)
+}
+
+func (o *GetRoleDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/roles/{role_canonical}][%d] getRole default %s", o._statusCode, payload)
 }
 
 func (o *GetRoleDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +374,16 @@ func (o *GetRoleDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetRoleDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +395,8 @@ func (o *GetRoleDefault) readResponse(response runtime.ClientResponse, consumer 
 	return nil
 }
 
-/*GetRoleOKBody get role o k body
+/*
+GetRoleOKBody get role o k body
 swagger:model GetRoleOKBody
 */
 type GetRoleOKBody struct {
@@ -265,6 +430,39 @@ func (o *GetRoleOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getRoleOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getRoleOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get role o k body based on the context it is used
+func (o *GetRoleOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetRoleOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getRoleOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getRoleOK" + "." + "data")
 			}
 			return err
 		}

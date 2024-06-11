@@ -6,17 +6,18 @@ package organization_credentials
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetCredentialReader is a Reader for the GetCredential structure.
@@ -62,7 +63,8 @@ func NewGetCredentialOK() *GetCredentialOK {
 	return &GetCredentialOK{}
 }
 
-/*GetCredentialOK handles this case with default header values.
+/*
+GetCredentialOK describes a response with status code 200, with default header values.
 
 The information of the Credential which has the specified ID.
 */
@@ -70,8 +72,44 @@ type GetCredentialOK struct {
 	Payload *GetCredentialOKBody
 }
 
+// IsSuccess returns true when this get credential o k response has a 2xx status code
+func (o *GetCredentialOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get credential o k response has a 3xx status code
+func (o *GetCredentialOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get credential o k response has a 4xx status code
+func (o *GetCredentialOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get credential o k response has a 5xx status code
+func (o *GetCredentialOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get credential o k response a status code equal to that given
+func (o *GetCredentialOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get credential o k response
+func (o *GetCredentialOK) Code() int {
+	return 200
+}
+
 func (o *GetCredentialOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialOK %s", 200, payload)
+}
+
+func (o *GetCredentialOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialOK %s", 200, payload)
 }
 
 func (o *GetCredentialOK) GetPayload() *GetCredentialOKBody {
@@ -95,20 +133,60 @@ func NewGetCredentialForbidden() *GetCredentialForbidden {
 	return &GetCredentialForbidden{}
 }
 
-/*GetCredentialForbidden handles this case with default header values.
+/*
+GetCredentialForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetCredentialForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get credential forbidden response has a 2xx status code
+func (o *GetCredentialForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get credential forbidden response has a 3xx status code
+func (o *GetCredentialForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get credential forbidden response has a 4xx status code
+func (o *GetCredentialForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get credential forbidden response has a 5xx status code
+func (o *GetCredentialForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get credential forbidden response a status code equal to that given
+func (o *GetCredentialForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get credential forbidden response
+func (o *GetCredentialForbidden) Code() int {
+	return 403
+}
+
 func (o *GetCredentialForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialForbidden %s", 403, payload)
+}
+
+func (o *GetCredentialForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialForbidden %s", 403, payload)
 }
 
 func (o *GetCredentialForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *GetCredentialForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetCredentialForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +221,60 @@ func NewGetCredentialNotFound() *GetCredentialNotFound {
 	return &GetCredentialNotFound{}
 }
 
-/*GetCredentialNotFound handles this case with default header values.
+/*
+GetCredentialNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetCredentialNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get credential not found response has a 2xx status code
+func (o *GetCredentialNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get credential not found response has a 3xx status code
+func (o *GetCredentialNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get credential not found response has a 4xx status code
+func (o *GetCredentialNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get credential not found response has a 5xx status code
+func (o *GetCredentialNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get credential not found response a status code equal to that given
+func (o *GetCredentialNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get credential not found response
+func (o *GetCredentialNotFound) Code() int {
+	return 404
+}
+
 func (o *GetCredentialNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialNotFound %s", 404, payload)
+}
+
+func (o *GetCredentialNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredentialNotFound %s", 404, payload)
 }
 
 func (o *GetCredentialNotFound) GetPayload() *models.ErrorPayload {
@@ -161,12 +283,16 @@ func (o *GetCredentialNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetCredentialNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +311,46 @@ func NewGetCredentialDefault(code int) *GetCredentialDefault {
 	}
 }
 
-/*GetCredentialDefault handles this case with default header values.
+/*
+GetCredentialDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetCredentialDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get credential default response has a 2xx status code
+func (o *GetCredentialDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get credential default response has a 3xx status code
+func (o *GetCredentialDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get credential default response has a 4xx status code
+func (o *GetCredentialDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get credential default response has a 5xx status code
+func (o *GetCredentialDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get credential default response a status code equal to that given
+func (o *GetCredentialDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get credential default response
@@ -205,7 +359,13 @@ func (o *GetCredentialDefault) Code() int {
 }
 
 func (o *GetCredentialDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredential default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredential default %s", o._statusCode, payload)
+}
+
+func (o *GetCredentialDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials/{credential_canonical}][%d] getCredential default %s", o._statusCode, payload)
 }
 
 func (o *GetCredentialDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +374,16 @@ func (o *GetCredentialDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetCredentialDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +395,8 @@ func (o *GetCredentialDefault) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-/*GetCredentialOKBody get credential o k body
+/*
+GetCredentialOKBody get credential o k body
 swagger:model GetCredentialOKBody
 */
 type GetCredentialOKBody struct {
@@ -265,6 +430,39 @@ func (o *GetCredentialOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getCredentialOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getCredentialOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get credential o k body based on the context it is used
+func (o *GetCredentialOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetCredentialOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getCredentialOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getCredentialOK" + "." + "data")
 			}
 			return err
 		}

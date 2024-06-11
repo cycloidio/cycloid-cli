@@ -6,16 +6,16 @@ package organization_pipelines_jobs
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UnpauseJobReader is a Reader for the UnpauseJob structure.
@@ -61,15 +61,50 @@ func NewUnpauseJobNoContent() *UnpauseJobNoContent {
 	return &UnpauseJobNoContent{}
 }
 
-/*UnpauseJobNoContent handles this case with default header values.
+/*
+UnpauseJobNoContent describes a response with status code 204, with default header values.
 
 Job has been unpause.
 */
 type UnpauseJobNoContent struct {
 }
 
+// IsSuccess returns true when this unpause job no content response has a 2xx status code
+func (o *UnpauseJobNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this unpause job no content response has a 3xx status code
+func (o *UnpauseJobNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this unpause job no content response has a 4xx status code
+func (o *UnpauseJobNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this unpause job no content response has a 5xx status code
+func (o *UnpauseJobNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this unpause job no content response a status code equal to that given
+func (o *UnpauseJobNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the unpause job no content response
+func (o *UnpauseJobNoContent) Code() int {
+	return 204
+}
+
 func (o *UnpauseJobNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobNoContent ", 204)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobNoContent", 204)
+}
+
+func (o *UnpauseJobNoContent) String() string {
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobNoContent", 204)
 }
 
 func (o *UnpauseJobNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -82,20 +117,60 @@ func NewUnpauseJobForbidden() *UnpauseJobForbidden {
 	return &UnpauseJobForbidden{}
 }
 
-/*UnpauseJobForbidden handles this case with default header values.
+/*
+UnpauseJobForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UnpauseJobForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this unpause job forbidden response has a 2xx status code
+func (o *UnpauseJobForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this unpause job forbidden response has a 3xx status code
+func (o *UnpauseJobForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this unpause job forbidden response has a 4xx status code
+func (o *UnpauseJobForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this unpause job forbidden response has a 5xx status code
+func (o *UnpauseJobForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this unpause job forbidden response a status code equal to that given
+func (o *UnpauseJobForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the unpause job forbidden response
+func (o *UnpauseJobForbidden) Code() int {
+	return 403
+}
+
 func (o *UnpauseJobForbidden) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobForbidden %s", 403, payload)
+}
+
+func (o *UnpauseJobForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobForbidden %s", 403, payload)
 }
 
 func (o *UnpauseJobForbidden) GetPayload() *models.ErrorPayload {
@@ -104,12 +179,16 @@ func (o *UnpauseJobForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *UnpauseJobForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -126,20 +205,60 @@ func NewUnpauseJobNotFound() *UnpauseJobNotFound {
 	return &UnpauseJobNotFound{}
 }
 
-/*UnpauseJobNotFound handles this case with default header values.
+/*
+UnpauseJobNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type UnpauseJobNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this unpause job not found response has a 2xx status code
+func (o *UnpauseJobNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this unpause job not found response has a 3xx status code
+func (o *UnpauseJobNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this unpause job not found response has a 4xx status code
+func (o *UnpauseJobNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this unpause job not found response has a 5xx status code
+func (o *UnpauseJobNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this unpause job not found response a status code equal to that given
+func (o *UnpauseJobNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the unpause job not found response
+func (o *UnpauseJobNotFound) Code() int {
+	return 404
+}
+
 func (o *UnpauseJobNotFound) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobNotFound %s", 404, payload)
+}
+
+func (o *UnpauseJobNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJobNotFound %s", 404, payload)
 }
 
 func (o *UnpauseJobNotFound) GetPayload() *models.ErrorPayload {
@@ -148,12 +267,16 @@ func (o *UnpauseJobNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *UnpauseJobNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,18 +295,46 @@ func NewUnpauseJobDefault(code int) *UnpauseJobDefault {
 	}
 }
 
-/*UnpauseJobDefault handles this case with default header values.
+/*
+UnpauseJobDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UnpauseJobDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this unpause job default response has a 2xx status code
+func (o *UnpauseJobDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this unpause job default response has a 3xx status code
+func (o *UnpauseJobDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this unpause job default response has a 4xx status code
+func (o *UnpauseJobDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this unpause job default response has a 5xx status code
+func (o *UnpauseJobDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this unpause job default response a status code equal to that given
+func (o *UnpauseJobDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the unpause job default response
@@ -192,7 +343,13 @@ func (o *UnpauseJobDefault) Code() int {
 }
 
 func (o *UnpauseJobDefault) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJob default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJob default %s", o._statusCode, payload)
+}
+
+func (o *UnpauseJobDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/unpause][%d] unpauseJob default %s", o._statusCode, payload)
 }
 
 func (o *UnpauseJobDefault) GetPayload() *models.ErrorPayload {
@@ -201,12 +358,16 @@ func (o *UnpauseJobDefault) GetPayload() *models.ErrorPayload {
 
 func (o *UnpauseJobDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

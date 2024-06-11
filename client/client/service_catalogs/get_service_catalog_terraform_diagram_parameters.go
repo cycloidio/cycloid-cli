@@ -13,68 +13,84 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewGetServiceCatalogTerraformDiagramParams creates a new GetServiceCatalogTerraformDiagramParams object
-// with the default values initialized.
+// NewGetServiceCatalogTerraformDiagramParams creates a new GetServiceCatalogTerraformDiagramParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetServiceCatalogTerraformDiagramParams() *GetServiceCatalogTerraformDiagramParams {
-	var ()
 	return &GetServiceCatalogTerraformDiagramParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetServiceCatalogTerraformDiagramParamsWithTimeout creates a new GetServiceCatalogTerraformDiagramParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetServiceCatalogTerraformDiagramParamsWithTimeout(timeout time.Duration) *GetServiceCatalogTerraformDiagramParams {
-	var ()
 	return &GetServiceCatalogTerraformDiagramParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewGetServiceCatalogTerraformDiagramParamsWithContext creates a new GetServiceCatalogTerraformDiagramParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetServiceCatalogTerraformDiagramParamsWithContext(ctx context.Context) *GetServiceCatalogTerraformDiagramParams {
-	var ()
 	return &GetServiceCatalogTerraformDiagramParams{
-
 		Context: ctx,
 	}
 }
 
 // NewGetServiceCatalogTerraformDiagramParamsWithHTTPClient creates a new GetServiceCatalogTerraformDiagramParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetServiceCatalogTerraformDiagramParamsWithHTTPClient(client *http.Client) *GetServiceCatalogTerraformDiagramParams {
-	var ()
 	return &GetServiceCatalogTerraformDiagramParams{
 		HTTPClient: client,
 	}
 }
 
-/*GetServiceCatalogTerraformDiagramParams contains all the parameters to send to the API endpoint
-for the get service catalog terraform diagram operation typically these are written to a http.Request
+/*
+GetServiceCatalogTerraformDiagramParams contains all the parameters to send to the API endpoint
+
+	for the get service catalog terraform diagram operation.
+
+	Typically these are written to a http.Request.
 */
 type GetServiceCatalogTerraformDiagramParams struct {
 
-	/*OrganizationCanonical
-	  A canonical of an organization.
+	/* OrganizationCanonical.
 
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*ServiceCatalogRef
-	  A Service Catalog name
 
+	/* ServiceCatalogRef.
+
+	   A Service Catalog name
 	*/
 	ServiceCatalogRef string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get service catalog terraform diagram params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetServiceCatalogTerraformDiagramParams) WithDefaults() *GetServiceCatalogTerraformDiagramParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get service catalog terraform diagram params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetServiceCatalogTerraformDiagramParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get service catalog terraform diagram params

@@ -7,13 +7,38 @@ package organization_invitations
 
 import (
 	"github.com/go-openapi/runtime"
-
-	strfmt "github.com/go-openapi/strfmt"
+	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization invitations API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new organization invitations API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new organization invitations API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -24,16 +49,80 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
+// This client is generated with a few options you might find useful for your swagger spec.
+//
+// Feel free to add you own set of options.
+
+// WithContentType allows the client to force the Content-Type header
+// to negotiate a specific Consumer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithContentType(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ConsumesMediaTypes = []string{mime}
+	}
+}
+
+// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
+func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/json"}
+}
+
+// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
+func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
+func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
+}
+
+// WithAccept allows the client to force the Accept header
+// to negotiate a specific Producer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithAccept(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ProducesMediaTypes = []string{mime}
+	}
+}
+
+// WithAcceptApplicationJSON sets the Accept header to "application/json".
+func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/json"}
+}
+
+// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
+func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// ClientService is the interface for Client methods
+type ClientService interface {
+	DeleteInvitation(params *DeleteInvitationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteInvitationNoContent, error)
+
+	GetInvitations(params *GetInvitationsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInvitationsOK, error)
+
+	GetPendingInvitation(params *GetPendingInvitationParams, opts ...ClientOption) (*GetPendingInvitationOK, error)
+
+	ResendInvitation(params *ResendInvitationParams, opts ...ClientOption) (*ResendInvitationNoContent, error)
+
+	SetTransport(transport runtime.ClientTransport)
+}
+
 /*
 DeleteInvitation Delete an Organization's Invitation.
 */
-func (a *Client) DeleteInvitation(params *DeleteInvitationParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteInvitationNoContent, error) {
+func (a *Client) DeleteInvitation(params *DeleteInvitationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteInvitationNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteInvitationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "deleteInvitation",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/invitations/{invitation_id}",
@@ -45,7 +134,12 @@ func (a *Client) DeleteInvitation(params *DeleteInvitationParams, authInfo runti
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -61,13 +155,12 @@ func (a *Client) DeleteInvitation(params *DeleteInvitationParams, authInfo runti
 /*
 GetInvitations Get list of the Organization's Invitations.
 */
-func (a *Client) GetInvitations(params *GetInvitationsParams, authInfo runtime.ClientAuthInfoWriter) (*GetInvitationsOK, error) {
+func (a *Client) GetInvitations(params *GetInvitationsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInvitationsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetInvitationsParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getInvitations",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/invitations",
@@ -79,7 +172,12 @@ func (a *Client) GetInvitations(params *GetInvitationsParams, authInfo runtime.C
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -95,13 +193,12 @@ func (a *Client) GetInvitations(params *GetInvitationsParams, authInfo runtime.C
 /*
 GetPendingInvitation Get the email address used for the pending invitation
 */
-func (a *Client) GetPendingInvitation(params *GetPendingInvitationParams) (*GetPendingInvitationOK, error) {
+func (a *Client) GetPendingInvitation(params *GetPendingInvitationParams, opts ...ClientOption) (*GetPendingInvitationOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetPendingInvitationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getPendingInvitation",
 		Method:             "GET",
 		PathPattern:        "/invitations/{verification_token}",
@@ -112,7 +209,12 @@ func (a *Client) GetPendingInvitation(params *GetPendingInvitationParams) (*GetP
 		Reader:             &GetPendingInvitationReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -128,13 +230,12 @@ func (a *Client) GetPendingInvitation(params *GetPendingInvitationParams) (*GetP
 /*
 ResendInvitation Resend the email containing the verification token to accept the Invitation.
 */
-func (a *Client) ResendInvitation(params *ResendInvitationParams) (*ResendInvitationNoContent, error) {
+func (a *Client) ResendInvitation(params *ResendInvitationParams, opts ...ClientOption) (*ResendInvitationNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewResendInvitationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "resendInvitation",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/invitations/{invitation_id}/resend",
@@ -145,7 +246,12 @@ func (a *Client) ResendInvitation(params *ResendInvitationParams) (*ResendInvita
 		Reader:             &ResendInvitationReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

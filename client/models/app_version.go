@@ -6,14 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // AppVersion AppVersion
+//
 // swagger:model AppVersion
 type AppVersion struct {
 
@@ -62,7 +64,7 @@ func (m *AppVersion) validateBranch(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("branch", "body", string(*m.Branch), 1); err != nil {
+	if err := validate.MinLength("branch", "body", *m.Branch, 1); err != nil {
 		return err
 	}
 
@@ -75,11 +77,11 @@ func (m *AppVersion) validateRevision(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("revision", "body", string(*m.Revision), 8); err != nil {
+	if err := validate.MinLength("revision", "body", *m.Revision, 8); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("revision", "body", string(*m.Revision), 40); err != nil {
+	if err := validate.MaxLength("revision", "body", *m.Revision, 40); err != nil {
 		return err
 	}
 
@@ -92,10 +94,15 @@ func (m *AppVersion) validateVersion(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("version", "body", string(*m.Version), 5); err != nil {
+	if err := validate.MinLength("version", "body", *m.Version, 5); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this app version based on context it is used
+func (m *AppVersion) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

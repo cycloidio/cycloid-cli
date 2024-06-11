@@ -7,18 +7,19 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // GoogleOAuthConfig AppConfigGoogleOAuth
 //
-// Google OAuth configuration
+// # Google OAuth configuration
+//
 // swagger:model GoogleOAuthConfig
 type GoogleOAuthConfig struct {
 	clientIdField *string
@@ -53,7 +54,6 @@ func (m *GoogleOAuthConfig) Type() string {
 
 // SetType sets the type of this subtype
 func (m *GoogleOAuthConfig) SetType(val string) {
-
 }
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
@@ -106,8 +106,7 @@ func (m GoogleOAuthConfig) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
-	}{},
-	)
+	}{})
 	if err != nil {
 		return nil, err
 	}
@@ -124,8 +123,7 @@ func (m GoogleOAuthConfig) MarshalJSON() ([]byte, error) {
 		Provider: m.Provider(),
 
 		Type: m.Type(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -166,6 +164,16 @@ func (m *GoogleOAuthConfig) validateProvider(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this google o auth config based on the context it is used
+func (m *GoogleOAuthConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

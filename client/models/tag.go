@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // Tag Key and value pair
 //
 // Key and value pair defined with the widely adopted name, tag.
+//
 // swagger:model Tag
 type Tag struct {
 
@@ -56,11 +58,11 @@ func (m *Tag) validateKey(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("key", "body", string(*m.Key), 1); err != nil {
+	if err := validate.MinLength("key", "body", *m.Key, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("key", "body", string(*m.Key), 254); err != nil {
+	if err := validate.MaxLength("key", "body", *m.Key, 254); err != nil {
 		return err
 	}
 
@@ -73,14 +75,19 @@ func (m *Tag) validateValue(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("value", "body", string(*m.Value), 254); err != nil {
+	if err := validate.MaxLength("value", "body", *m.Value, 254); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("value", "body", string(*m.Value), `^(?:[\w\-+=.:/@ ]*)$`); err != nil {
+	if err := validate.Pattern("value", "body", *m.Value, `^(?:[\w\-+=.:/@ ]*)$`); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this tag based on context it is used
+func (m *Tag) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

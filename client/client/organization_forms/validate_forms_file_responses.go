@@ -6,17 +6,18 @@ package organization_forms
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // ValidateFormsFileReader is a Reader for the ValidateFormsFile structure.
@@ -68,7 +69,8 @@ func NewValidateFormsFileOK() *ValidateFormsFileOK {
 	return &ValidateFormsFileOK{}
 }
 
-/*ValidateFormsFileOK handles this case with default header values.
+/*
+ValidateFormsFileOK describes a response with status code 200, with default header values.
 
 The result of validating the provided configuration
 */
@@ -76,8 +78,44 @@ type ValidateFormsFileOK struct {
 	Payload *ValidateFormsFileOKBody
 }
 
+// IsSuccess returns true when this validate forms file o k response has a 2xx status code
+func (o *ValidateFormsFileOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this validate forms file o k response has a 3xx status code
+func (o *ValidateFormsFileOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this validate forms file o k response has a 4xx status code
+func (o *ValidateFormsFileOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this validate forms file o k response has a 5xx status code
+func (o *ValidateFormsFileOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this validate forms file o k response a status code equal to that given
+func (o *ValidateFormsFileOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the validate forms file o k response
+func (o *ValidateFormsFileOK) Code() int {
+	return 200
+}
+
 func (o *ValidateFormsFileOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileOK %s", 200, payload)
+}
+
+func (o *ValidateFormsFileOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileOK %s", 200, payload)
 }
 
 func (o *ValidateFormsFileOK) GetPayload() *ValidateFormsFileOKBody {
@@ -101,20 +139,60 @@ func NewValidateFormsFileForbidden() *ValidateFormsFileForbidden {
 	return &ValidateFormsFileForbidden{}
 }
 
-/*ValidateFormsFileForbidden handles this case with default header values.
+/*
+ValidateFormsFileForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ValidateFormsFileForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this validate forms file forbidden response has a 2xx status code
+func (o *ValidateFormsFileForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this validate forms file forbidden response has a 3xx status code
+func (o *ValidateFormsFileForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this validate forms file forbidden response has a 4xx status code
+func (o *ValidateFormsFileForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this validate forms file forbidden response has a 5xx status code
+func (o *ValidateFormsFileForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this validate forms file forbidden response a status code equal to that given
+func (o *ValidateFormsFileForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the validate forms file forbidden response
+func (o *ValidateFormsFileForbidden) Code() int {
+	return 403
+}
+
 func (o *ValidateFormsFileForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileForbidden %s", 403, payload)
+}
+
+func (o *ValidateFormsFileForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileForbidden %s", 403, payload)
 }
 
 func (o *ValidateFormsFileForbidden) GetPayload() *models.ErrorPayload {
@@ -123,12 +201,16 @@ func (o *ValidateFormsFileForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *ValidateFormsFileForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -145,20 +227,60 @@ func NewValidateFormsFileNotFound() *ValidateFormsFileNotFound {
 	return &ValidateFormsFileNotFound{}
 }
 
-/*ValidateFormsFileNotFound handles this case with default header values.
+/*
+ValidateFormsFileNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type ValidateFormsFileNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this validate forms file not found response has a 2xx status code
+func (o *ValidateFormsFileNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this validate forms file not found response has a 3xx status code
+func (o *ValidateFormsFileNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this validate forms file not found response has a 4xx status code
+func (o *ValidateFormsFileNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this validate forms file not found response has a 5xx status code
+func (o *ValidateFormsFileNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this validate forms file not found response a status code equal to that given
+func (o *ValidateFormsFileNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the validate forms file not found response
+func (o *ValidateFormsFileNotFound) Code() int {
+	return 404
+}
+
 func (o *ValidateFormsFileNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileNotFound %s", 404, payload)
+}
+
+func (o *ValidateFormsFileNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileNotFound %s", 404, payload)
 }
 
 func (o *ValidateFormsFileNotFound) GetPayload() *models.ErrorPayload {
@@ -167,12 +289,16 @@ func (o *ValidateFormsFileNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *ValidateFormsFileNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -189,20 +315,60 @@ func NewValidateFormsFileUnprocessableEntity() *ValidateFormsFileUnprocessableEn
 	return &ValidateFormsFileUnprocessableEntity{}
 }
 
-/*ValidateFormsFileUnprocessableEntity handles this case with default header values.
+/*
+ValidateFormsFileUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type ValidateFormsFileUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this validate forms file unprocessable entity response has a 2xx status code
+func (o *ValidateFormsFileUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this validate forms file unprocessable entity response has a 3xx status code
+func (o *ValidateFormsFileUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this validate forms file unprocessable entity response has a 4xx status code
+func (o *ValidateFormsFileUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this validate forms file unprocessable entity response has a 5xx status code
+func (o *ValidateFormsFileUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this validate forms file unprocessable entity response a status code equal to that given
+func (o *ValidateFormsFileUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the validate forms file unprocessable entity response
+func (o *ValidateFormsFileUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *ValidateFormsFileUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileUnprocessableEntity %s", 422, payload)
+}
+
+func (o *ValidateFormsFileUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFileUnprocessableEntity %s", 422, payload)
 }
 
 func (o *ValidateFormsFileUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -211,12 +377,16 @@ func (o *ValidateFormsFileUnprocessableEntity) GetPayload() *models.ErrorPayload
 
 func (o *ValidateFormsFileUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -235,18 +405,46 @@ func NewValidateFormsFileDefault(code int) *ValidateFormsFileDefault {
 	}
 }
 
-/*ValidateFormsFileDefault handles this case with default header values.
+/*
+ValidateFormsFileDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type ValidateFormsFileDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this validate forms file default response has a 2xx status code
+func (o *ValidateFormsFileDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this validate forms file default response has a 3xx status code
+func (o *ValidateFormsFileDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this validate forms file default response has a 4xx status code
+func (o *ValidateFormsFileDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this validate forms file default response has a 5xx status code
+func (o *ValidateFormsFileDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this validate forms file default response a status code equal to that given
+func (o *ValidateFormsFileDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the validate forms file default response
@@ -255,7 +453,13 @@ func (o *ValidateFormsFileDefault) Code() int {
 }
 
 func (o *ValidateFormsFileDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFile default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFile default %s", o._statusCode, payload)
+}
+
+func (o *ValidateFormsFileDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/validate][%d] validateFormsFile default %s", o._statusCode, payload)
 }
 
 func (o *ValidateFormsFileDefault) GetPayload() *models.ErrorPayload {
@@ -264,12 +468,16 @@ func (o *ValidateFormsFileDefault) GetPayload() *models.ErrorPayload {
 
 func (o *ValidateFormsFileDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -281,7 +489,8 @@ func (o *ValidateFormsFileDefault) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
-/*ValidateFormsFileOKBody validate forms file o k body
+/*
+ValidateFormsFileOKBody validate forms file o k body
 swagger:model ValidateFormsFileOKBody
 */
 type ValidateFormsFileOKBody struct {
@@ -315,6 +524,39 @@ func (o *ValidateFormsFileOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("validateFormsFileOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("validateFormsFileOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this validate forms file o k body based on the context it is used
+func (o *ValidateFormsFileOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *ValidateFormsFileOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("validateFormsFileOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("validateFormsFileOK" + "." + "data")
 			}
 			return err
 		}

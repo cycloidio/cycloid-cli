@@ -13,125 +13,150 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetInfraPoliciesParams creates a new GetInfraPoliciesParams object
-// with the default values initialized.
+// NewGetInfraPoliciesParams creates a new GetInfraPoliciesParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetInfraPoliciesParams() *GetInfraPoliciesParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetInfraPoliciesParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetInfraPoliciesParamsWithTimeout creates a new GetInfraPoliciesParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetInfraPoliciesParamsWithTimeout(timeout time.Duration) *GetInfraPoliciesParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetInfraPoliciesParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		timeout: timeout,
 	}
 }
 
 // NewGetInfraPoliciesParamsWithContext creates a new GetInfraPoliciesParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetInfraPoliciesParamsWithContext(ctx context.Context) *GetInfraPoliciesParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetInfraPoliciesParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		Context: ctx,
 	}
 }
 
 // NewGetInfraPoliciesParamsWithHTTPClient creates a new GetInfraPoliciesParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetInfraPoliciesParamsWithHTTPClient(client *http.Client) *GetInfraPoliciesParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetInfraPoliciesParams{
-		PageIndex:  &pageIndexDefault,
-		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*GetInfraPoliciesParams contains all the parameters to send to the API endpoint
-for the get infra policies operation typically these are written to a http.Request
+/*
+GetInfraPoliciesParams contains all the parameters to send to the API endpoint
+
+	for the get infra policies operation.
+
+	Typically these are written to a http.Request.
 */
 type GetInfraPoliciesParams struct {
 
-	/*InfraPolicyCanonical
-	  Search by infra policy canonical
+	/* InfraPolicyCanonical.
 
+	   Search by infra policy canonical
 	*/
 	InfraPolicyCanonical *string
-	/*InfraPolicyCreatedAt
-	  Search by InfraPolicy's creation date
 
+	/* InfraPolicyCreatedAt.
+
+	   Search by InfraPolicy's creation date
+
+	   Format: uint64
 	*/
 	InfraPolicyCreatedAt *uint64
-	/*InfraPolicyEnabled
-	  Search by InfraPolicy's enabled
 
+	/* InfraPolicyEnabled.
+
+	   Search by InfraPolicy's enabled
 	*/
 	InfraPolicyEnabled *bool
-	/*InfraPolicyName
-	  Search by InfraPolicy's name
 
+	/* InfraPolicyName.
+
+	   Search by InfraPolicy's name
 	*/
 	InfraPolicyName *string
-	/*InfraPolicySeverity
-	  Search by InfraPolicy's severity
 
+	/* InfraPolicySeverity.
+
+	   Search by InfraPolicy's severity
 	*/
 	InfraPolicySeverity *string
-	/*OrderBy
-	  Allows to order the list of items. Example usage: field_name:asc
 
+	/* OrderBy.
+
+	   Allows to order the list of items. Example usage: field_name:asc
 
 	*/
 	OrderBy *string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*PageIndex
-	  The page number to request. The first page is 1.
 
+	/* PageIndex.
+
+	   The page number to request. The first page is 1.
+
+	   Format: uint32
+	   Default: 1
 	*/
 	PageIndex *uint32
-	/*PageSize
-	  The number of items at most which the response can have.
 
+	/* PageSize.
+
+	   The number of items at most which the response can have.
+
+	   Format: uint32
+	   Default: 1000
 	*/
 	PageSize *uint32
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get infra policies params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetInfraPoliciesParams) WithDefaults() *GetInfraPoliciesParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get infra policies params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetInfraPoliciesParams) SetDefaults() {
+	var (
+		pageIndexDefault = uint32(1)
+
+		pageSizeDefault = uint32(1000)
+	)
+
+	val := GetInfraPoliciesParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get infra policies params
@@ -278,96 +303,102 @@ func (o *GetInfraPoliciesParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 		// query param infra_policy_canonical
 		var qrInfraPolicyCanonical string
+
 		if o.InfraPolicyCanonical != nil {
 			qrInfraPolicyCanonical = *o.InfraPolicyCanonical
 		}
 		qInfraPolicyCanonical := qrInfraPolicyCanonical
 		if qInfraPolicyCanonical != "" {
+
 			if err := r.SetQueryParam("infra_policy_canonical", qInfraPolicyCanonical); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.InfraPolicyCreatedAt != nil {
 
 		// query param infra_policy_created_at
 		var qrInfraPolicyCreatedAt uint64
+
 		if o.InfraPolicyCreatedAt != nil {
 			qrInfraPolicyCreatedAt = *o.InfraPolicyCreatedAt
 		}
 		qInfraPolicyCreatedAt := swag.FormatUint64(qrInfraPolicyCreatedAt)
 		if qInfraPolicyCreatedAt != "" {
+
 			if err := r.SetQueryParam("infra_policy_created_at", qInfraPolicyCreatedAt); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.InfraPolicyEnabled != nil {
 
 		// query param infra_policy_enabled
 		var qrInfraPolicyEnabled bool
+
 		if o.InfraPolicyEnabled != nil {
 			qrInfraPolicyEnabled = *o.InfraPolicyEnabled
 		}
 		qInfraPolicyEnabled := swag.FormatBool(qrInfraPolicyEnabled)
 		if qInfraPolicyEnabled != "" {
+
 			if err := r.SetQueryParam("infra_policy_enabled", qInfraPolicyEnabled); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.InfraPolicyName != nil {
 
 		// query param infra_policy_name
 		var qrInfraPolicyName string
+
 		if o.InfraPolicyName != nil {
 			qrInfraPolicyName = *o.InfraPolicyName
 		}
 		qInfraPolicyName := qrInfraPolicyName
 		if qInfraPolicyName != "" {
+
 			if err := r.SetQueryParam("infra_policy_name", qInfraPolicyName); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.InfraPolicySeverity != nil {
 
 		// query param infra_policy_severity
 		var qrInfraPolicySeverity string
+
 		if o.InfraPolicySeverity != nil {
 			qrInfraPolicySeverity = *o.InfraPolicySeverity
 		}
 		qInfraPolicySeverity := qrInfraPolicySeverity
 		if qInfraPolicySeverity != "" {
+
 			if err := r.SetQueryParam("infra_policy_severity", qInfraPolicySeverity); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.OrderBy != nil {
 
 		// query param order_by
 		var qrOrderBy string
+
 		if o.OrderBy != nil {
 			qrOrderBy = *o.OrderBy
 		}
 		qOrderBy := qrOrderBy
 		if qOrderBy != "" {
+
 			if err := r.SetQueryParam("order_by", qOrderBy); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	// path param organization_canonical
@@ -379,32 +410,34 @@ func (o *GetInfraPoliciesParams) WriteToRequest(r runtime.ClientRequest, reg str
 
 		// query param page_index
 		var qrPageIndex uint32
+
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
+
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
+
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
+
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {

@@ -6,12 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 	"strconv"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -19,6 +19,7 @@ import (
 // PipelineDiff PipelineDiff
 //
 // Represents a diff element of a PipelineDiffs.
+//
 // swagger:model PipelineDiff
 type PipelineDiff struct {
 
@@ -32,7 +33,7 @@ type PipelineDiff struct {
 
 	// Represents the status of the element (added, removed, changed)
 	// Required: true
-	// Enum: [added removed changed]
+	// Enum: ["added","removed","changed"]
 	Status *string `json:"status"`
 }
 
@@ -73,6 +74,8 @@ func (m *PipelineDiff) validateDiff(formats strfmt.Registry) error {
 			if err := m.Diff[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("diff" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("diff" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -118,7 +121,7 @@ const (
 
 // prop value enum
 func (m *PipelineDiff) validateStatusEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, pipelineDiffTypeStatusPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, pipelineDiffTypeStatusPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -133,6 +136,45 @@ func (m *PipelineDiff) validateStatus(formats strfmt.Registry) error {
 	// value enum
 	if err := m.validateStatusEnum("status", "body", *m.Status); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this pipeline diff based on the context it is used
+func (m *PipelineDiff) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateDiff(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PipelineDiff) contextValidateDiff(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Diff); i++ {
+
+		if m.Diff[i] != nil {
+
+			if swag.IsZero(m.Diff[i]) { // not required
+				return nil
+			}
+
+			if err := m.Diff[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("diff" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("diff" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
