@@ -46,10 +46,8 @@ func NewCommands() *cobra.Command {
 }
 
 func login(org, key string) error {
-	conf, err := config.Read()
-	if err != nil {
-		return errors.Wrap(err, "unable to read config")
-	}
+	conf, _ := config.Read()
+	// If err != nil, the file does not exist, we create it anyway
 
 	// Check for a nil map.
 	// This can be the case if the config file is empty
