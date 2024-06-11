@@ -4,7 +4,8 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
+	"os"
 	"regexp"
 	"time"
 
@@ -89,7 +90,7 @@ func executeCommand(args []string) (string, error) {
 
 	cmd.SetArgs(args)
 	cmdErr := cmd.Execute()
-	cmdOut, err := ioutil.ReadAll(buf)
+	cmdOut, err := io.ReadAll(buf)
 	if err != nil {
 		panic(fmt.Sprintf("Unable to read command output buffer"))
 	}
@@ -102,7 +103,7 @@ func AddNowTimestamp(txt string) string {
 }
 
 func WriteFile(path string, data []byte) {
-	err := ioutil.WriteFile(path, data, 0644)
+	err := os.WriteFile(path, data, 0644)
 	if err != nil {
 		panic(fmt.Sprintf("Test setup, unable to write file %s : %s", path, err.Error()))
 	}
