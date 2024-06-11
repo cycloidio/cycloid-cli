@@ -1,11 +1,13 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
 import (
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestInfraPolicies(t *testing.T) {
@@ -31,7 +33,7 @@ func TestInfraPolicies(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"test")
+		require.Contains(t, cmdOut, "canonical\": \"test")
 	})
 
 	// Checks the succesfull get of a new infrapolicy
@@ -48,7 +50,7 @@ func TestInfraPolicies(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "description\":\"test infrapolicy")
+		require.Contains(t, cmdOut, "description\": \"test infrapolicy")
 	})
 
 	// Checks the succesfull list of infrapolicies in org
@@ -64,7 +66,7 @@ func TestInfraPolicies(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "description\":\"test infrapolicy")
+		require.Contains(t, cmdOut, "description\": \"test infrapolicy")
 	})
 
 	// Checks the succesfull update of a infrapolicy
@@ -88,7 +90,7 @@ func TestInfraPolicies(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "description\":\"changed description")
+		require.Contains(t, cmdOut, "description\": \"changed description")
 	})
 
 	// Checks the succesfull deletion of a infrapolicy

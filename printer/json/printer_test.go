@@ -25,11 +25,19 @@ func TestJSONPrinter(t *testing.T) {
 				C: []string{"abc", "def"},
 			}
 		)
-		exp := `{"a":"value a","b":"value b","c":["abc","def"]}`
+		exp := `{
+  "a": "value a",
+  "b": "value b",
+  "c": [
+    "abc",
+    "def"
+  ]
+}
+`
 
 		err := j.Print(obj, printer.Options{}, &b)
 		require.NoError(t, err)
-		assert.Equal(t, b.String(), exp)
+		assert.Equal(t, exp, b.String())
 
 	})
 
