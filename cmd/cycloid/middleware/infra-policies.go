@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -44,7 +44,7 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 	params := organization_infrastructure_policies.NewCreateInfraPolicyParams()
 	params.SetOrganizationCanonical(org)
 	// Reads file content and converts it into string
-	policyFileContent, err := ioutil.ReadFile(policyFile)
+	policyFileContent, err := os.ReadFile(policyFile)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to read rego file: %v", err)
 	}
@@ -151,7 +151,7 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 	params.SetInfraPolicyCanonical(infraPolicy)
 
 	// Reads file content and converts it into string
-	policyFileContent, err := ioutil.ReadFile(policyFile)
+	policyFileContent, err := os.ReadFile(policyFile)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to read rego file: %v", err)
 	}
