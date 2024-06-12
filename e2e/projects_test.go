@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -143,14 +142,14 @@ func TestProjects(t *testing.T) {
 			"--project", "snowy",
 			"--env", "sf-vars",
 			"--use-case", "default",
-			"-V", `{"pipeline": {"config": {"message": "filledFromVars"}}}`,
+			"-j", `{"pipeline": {"config": {"message": "filledFromVars"}}}`,
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"snowy")
-		var data models.Project
+		var data map[string]map[string]map[string]string
 		err := json.Unmarshal([]byte(cmdOut), &data)
 		assert.Nil(t, err)
+		assert.Equal(t, "filledFromVars", data["pipeline"]["config"]["message"])
 	})
 
 	t.Run("SuccessProjectGetStackformConfigVars", func(t *testing.T) {
@@ -183,34 +182,36 @@ func TestProjects(t *testing.T) {
 			"--project", "snowy",
 			"--env", "sf-extra-vars",
 			"--use-case", "default",
-			"-x", `pipeline.config.message=filledFromExtraVars`,
+			"-V", `pipeline.config.message=filledFromExtraVars`,
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"snowy")
-		var data models.Project
+		var data map[string]map[string]map[string]string
 		err := json.Unmarshal([]byte(cmdOut), &data)
 		assert.Nil(t, err)
+		assert.Equal(t, "filledFromExtraVars", data["pipeline"]["config"]["message"])
 	})
 
-	t.Run("SuccessProjectGetStackformConfigExtraVars", func(t *testing.T) {
+	// Extra vars
+	t.Run("SuccessProjectsCreateExtraVarsUpdate", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", CY_TEST_ROOT_ORG,
-			"project", "get-env-config",
-			"-p", "snowy", "-e", "sf-extra-vars",
+			"project",
+			"create-stackforms-env",
+			"--project", "snowy",
+			"--env", "sf-extra-vars",
+			"--use-case", "default",
+			"-V", `pipeline.config.message=filledFromExtraVars`,
+			"-V", `pipeline.config.message=filledFromExtraVars2`,
+			"--update",
 		})
 
 		assert.Nil(t, cmdErr)
-
-		// Output should be in json by default
-		var data = make(map[string]map[string]map[string]any)
+		var data map[string]map[string]map[string]string
 		err := json.Unmarshal([]byte(cmdOut), &data)
-		assert.NoError(t, err)
-
-		message, ok := data["pipeline"]["config"]["message"]
-		assert.True(t, ok)
-		assert.Equal(t, "filledFromExtraVars", message)
+		assert.Nil(t, err)
+		assert.Equal(t, "filledFromExtraVars2", data["pipeline"]["config"]["message"])
 	})
 
 	t.Run("SuccessProjectsDelete", func(t *testing.T) {
