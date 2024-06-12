@@ -7,13 +7,38 @@ package user
 
 import (
 	"github.com/go-openapi/runtime"
-
-	strfmt "github.com/go-openapi/strfmt"
+	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new user API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new user API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new user API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -24,16 +49,104 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
+// This client is generated with a few options you might find useful for your swagger spec.
+//
+// Feel free to add you own set of options.
+
+// WithContentType allows the client to force the Content-Type header
+// to negotiate a specific Consumer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithContentType(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ConsumesMediaTypes = []string{mime}
+	}
+}
+
+// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
+func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/json"}
+}
+
+// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
+func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
+func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
+}
+
+// WithAccept allows the client to force the Accept header
+// to negotiate a specific Producer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithAccept(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ProducesMediaTypes = []string{mime}
+	}
+}
+
+// WithAcceptApplicationJSON sets the Accept header to "application/json".
+func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/json"}
+}
+
+// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
+func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// ClientService is the interface for Client methods
+type ClientService interface {
+	CreateOAuthUser(params *CreateOAuthUserParams, opts ...ClientOption) (*CreateOAuthUserOK, error)
+
+	DeleteUserAccount(params *DeleteUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUserAccountNoContent, error)
+
+	EmailAuthenticationVerification(params *EmailAuthenticationVerificationParams, opts ...ClientOption) (*EmailAuthenticationVerificationOK, error)
+
+	EmailVerification(params *EmailVerificationParams, opts ...ClientOption) (*EmailVerificationNoContent, error)
+
+	EmailVerificationResend(params *EmailVerificationResendParams, opts ...ClientOption) (*EmailVerificationResendNoContent, error)
+
+	GetOAuthUser(params *GetOAuthUserParams, opts ...ClientOption) (*GetOAuthUserOK, error)
+
+	GetUserAccount(params *GetUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserAccountOK, error)
+
+	HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplaceUserEntitlementParams, opts ...ClientOption) error
+
+	Login(params *LoginParams, opts ...ClientOption) (*LoginOK, error)
+
+	PasswordResetReq(params *PasswordResetReqParams, opts ...ClientOption) (*PasswordResetReqNoContent, error)
+
+	PasswordResetUpdate(params *PasswordResetUpdateParams, opts ...ClientOption) (*PasswordResetUpdateNoContent, error)
+
+	RefreshToken(params *RefreshTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshTokenOK, error)
+
+	SignUp(params *SignUpParams, opts ...ClientOption) (*SignUpNoContent, error)
+
+	SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams, opts ...ClientOption) (*SignUpAWSMarketplaceNoContent, error)
+
+	UpdateUserAccount(params *UpdateUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateUserAccountOK, error)
+
+	UpdateUserGuide(params *UpdateUserGuideParams, opts ...ClientOption) (*UpdateUserGuideNoContent, error)
+
+	SetTransport(transport runtime.ClientTransport)
+}
+
 /*
 CreateOAuthUser Create a user from the OAuth 'social_type'
 */
-func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams) (*CreateOAuthUserOK, error) {
+func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams, opts ...ClientOption) (*CreateOAuthUserOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateOAuthUserParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "createOAuthUser",
 		Method:             "POST",
 		PathPattern:        "/user/{social_type}/oauth",
@@ -44,7 +157,12 @@ func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams) (*CreateOAuthUse
 		Reader:             &CreateOAuthUserReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -60,13 +178,12 @@ func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams) (*CreateOAuthUse
 /*
 DeleteUserAccount The authenticated user delete itself from the system.
 */
-func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteUserAccountNoContent, error) {
+func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUserAccountNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteUserAccountParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "deleteUserAccount",
 		Method:             "DELETE",
 		PathPattern:        "/user",
@@ -78,7 +195,12 @@ func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -94,13 +216,12 @@ func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo run
 /*
 EmailAuthenticationVerification Verify that the email address is own by the user.
 */
-func (a *Client) EmailAuthenticationVerification(params *EmailAuthenticationVerificationParams) (*EmailAuthenticationVerificationOK, error) {
+func (a *Client) EmailAuthenticationVerification(params *EmailAuthenticationVerificationParams, opts ...ClientOption) (*EmailAuthenticationVerificationOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewEmailAuthenticationVerificationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "emailAuthenticationVerification",
 		Method:             "PUT",
 		PathPattern:        "/user/email/authentication/{authentication_token}",
@@ -111,7 +232,12 @@ func (a *Client) EmailAuthenticationVerification(params *EmailAuthenticationVeri
 		Reader:             &EmailAuthenticationVerificationReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -127,13 +253,12 @@ func (a *Client) EmailAuthenticationVerification(params *EmailAuthenticationVeri
 /*
 EmailVerification Verify that the email address is own by the user.
 */
-func (a *Client) EmailVerification(params *EmailVerificationParams) (*EmailVerificationNoContent, error) {
+func (a *Client) EmailVerification(params *EmailVerificationParams, opts ...ClientOption) (*EmailVerificationNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewEmailVerificationParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "emailVerification",
 		Method:             "PUT",
 		PathPattern:        "/user/email/verification/{verification_token}",
@@ -144,7 +269,12 @@ func (a *Client) EmailVerification(params *EmailVerificationParams) (*EmailVerif
 		Reader:             &EmailVerificationReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -160,13 +290,12 @@ func (a *Client) EmailVerification(params *EmailVerificationParams) (*EmailVerif
 /*
 EmailVerificationResend Re-send the verification user's email to the indicated address.
 */
-func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams) (*EmailVerificationResendNoContent, error) {
+func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams, opts ...ClientOption) (*EmailVerificationResendNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewEmailVerificationResendParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "emailVerificationResend",
 		Method:             "POST",
 		PathPattern:        "/user/email/verification",
@@ -177,7 +306,12 @@ func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams) 
 		Reader:             &EmailVerificationResendReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -193,13 +327,12 @@ func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams) 
 /*
 GetOAuthUser Used to know if a user from the platform exists on that 'social_type'. If it exists we'll return the JWT 'token', if it does not we'll return the data of that user on the 'user' so it can be confirmed and created
 */
-func (a *Client) GetOAuthUser(params *GetOAuthUserParams) (*GetOAuthUserOK, error) {
+func (a *Client) GetOAuthUser(params *GetOAuthUserParams, opts ...ClientOption) (*GetOAuthUserOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetOAuthUserParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getOAuthUser",
 		Method:             "GET",
 		PathPattern:        "/user/{social_type}/oauth",
@@ -210,7 +343,12 @@ func (a *Client) GetOAuthUser(params *GetOAuthUserParams) (*GetOAuthUserOK, erro
 		Reader:             &GetOAuthUserReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -226,13 +364,12 @@ func (a *Client) GetOAuthUser(params *GetOAuthUserParams) (*GetOAuthUserOK, erro
 /*
 GetUserAccount Get the information of the account of the authenticated user.
 */
-func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.ClientAuthInfoWriter) (*GetUserAccountOK, error) {
+func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserAccountOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetUserAccountParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getUserAccount",
 		Method:             "GET",
 		PathPattern:        "/user",
@@ -244,7 +381,12 @@ func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.C
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -258,18 +400,17 @@ func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.C
 }
 
 /*
-HandleAWSMarketplaceUserEntitlement This endpoint handles redirections from AWS Marketplace to our system.
+	HandleAWSMarketplaceUserEntitlement This endpoint handles redirections from AWS Marketplace to our system.
+
 If user doesn't exist, he'll be redirected to registration page.
 If user exist, he'll be redirected to login page.
-
 */
-func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplaceUserEntitlementParams) error {
+func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplaceUserEntitlementParams, opts ...ClientOption) error {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewHandleAWSMarketplaceUserEntitlementParams()
 	}
-
-	_, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "handleAWSMarketplaceUserEntitlement",
 		Method:             "POST",
 		PathPattern:        "/user/aws_marketplace/entitlement",
@@ -280,7 +421,12 @@ func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplac
 		Reader:             &HandleAWSMarketplaceUserEntitlementReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	_, err := a.transport.Submit(op)
 	if err != nil {
 		return err
 	}
@@ -290,13 +436,12 @@ func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplac
 /*
 Login Authenticate a user and return a new JWT token.
 */
-func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
+func (a *Client) Login(params *LoginParams, opts ...ClientOption) (*LoginOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewLoginParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "login",
 		Method:             "POST",
 		PathPattern:        "/user/login",
@@ -307,7 +452,12 @@ func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
 		Reader:             &LoginReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -323,13 +473,12 @@ func (a *Client) Login(params *LoginParams) (*LoginOK, error) {
 /*
 PasswordResetReq Request to reset the password. Due to security reasons, this endpoint doesn't return Not Found (404) when the email doesn't exist or belongs to a user primary email.
 */
-func (a *Client) PasswordResetReq(params *PasswordResetReqParams) (*PasswordResetReqNoContent, error) {
+func (a *Client) PasswordResetReq(params *PasswordResetReqParams, opts ...ClientOption) (*PasswordResetReqNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPasswordResetReqParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "passwordResetReq",
 		Method:             "POST",
 		PathPattern:        "/user/reset_password",
@@ -340,7 +489,12 @@ func (a *Client) PasswordResetReq(params *PasswordResetReqParams) (*PasswordRese
 		Reader:             &PasswordResetReqReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -356,13 +510,12 @@ func (a *Client) PasswordResetReq(params *PasswordResetReqParams) (*PasswordRese
 /*
 PasswordResetUpdate Reset the user password when it has been forgotten. Due to security reasons, the endpoint doesn't return a Unprocessable Entity (422) when the token is invalid. 404 Status code is returned if the user has been deleted of the system between the user password request and this request.
 */
-func (a *Client) PasswordResetUpdate(params *PasswordResetUpdateParams) (*PasswordResetUpdateNoContent, error) {
+func (a *Client) PasswordResetUpdate(params *PasswordResetUpdateParams, opts ...ClientOption) (*PasswordResetUpdateNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPasswordResetUpdateParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "passwordResetUpdate",
 		Method:             "PUT",
 		PathPattern:        "/user/reset_password",
@@ -373,7 +526,12 @@ func (a *Client) PasswordResetUpdate(params *PasswordResetUpdateParams) (*Passwo
 		Reader:             &PasswordResetUpdateReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -389,13 +547,12 @@ func (a *Client) PasswordResetUpdate(params *PasswordResetUpdateParams) (*Passwo
 /*
 RefreshToken Refresh the user JWT and returns a new one if the previous is valid. The 'organization_canonical_query' has to be of an organization in which the user belongs to, and the 'child_canonical_query' of a child of the 'organization_canonical_query' in any level (could be of a grand child).
 */
-func (a *Client) RefreshToken(params *RefreshTokenParams, authInfo runtime.ClientAuthInfoWriter) (*RefreshTokenOK, error) {
+func (a *Client) RefreshToken(params *RefreshTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshTokenOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRefreshTokenParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "refreshToken",
 		Method:             "GET",
 		PathPattern:        "/user/refresh_token",
@@ -407,7 +564,12 @@ func (a *Client) RefreshToken(params *RefreshTokenParams, authInfo runtime.Clien
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -423,13 +585,12 @@ func (a *Client) RefreshToken(params *RefreshTokenParams, authInfo runtime.Clien
 /*
 SignUp Create a new User (sign-up).
 */
-func (a *Client) SignUp(params *SignUpParams) (*SignUpNoContent, error) {
+func (a *Client) SignUp(params *SignUpParams, opts ...ClientOption) (*SignUpNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSignUpParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "signUp",
 		Method:             "POST",
 		PathPattern:        "/user",
@@ -440,7 +601,12 @@ func (a *Client) SignUp(params *SignUpParams) (*SignUpNoContent, error) {
 		Reader:             &SignUpReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -456,13 +622,12 @@ func (a *Client) SignUp(params *SignUpParams) (*SignUpNoContent, error) {
 /*
 SignUpAWSMarketplace Create a new AWS Marketplace User.
 */
-func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams) (*SignUpAWSMarketplaceNoContent, error) {
+func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams, opts ...ClientOption) (*SignUpAWSMarketplaceNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSignUpAWSMarketplaceParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "signUpAWSMarketplace",
 		Method:             "POST",
 		PathPattern:        "/user/aws_marketplace",
@@ -473,7 +638,12 @@ func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams) (*Sign
 		Reader:             &SignUpAWSMarketplaceReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -489,13 +659,12 @@ func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams) (*Sign
 /*
 UpdateUserAccount Update the information of the account of the authenticated user.
 */
-func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateUserAccountOK, error) {
+func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateUserAccountOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateUserAccountParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "updateUserAccount",
 		Method:             "PUT",
 		PathPattern:        "/user",
@@ -507,7 +676,12 @@ func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -523,13 +697,12 @@ func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo run
 /*
 UpdateUserGuide Update user's guide progress.
 */
-func (a *Client) UpdateUserGuide(params *UpdateUserGuideParams) (*UpdateUserGuideNoContent, error) {
+func (a *Client) UpdateUserGuide(params *UpdateUserGuideParams, opts ...ClientOption) (*UpdateUserGuideNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateUserGuideParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "updateUserGuide",
 		Method:             "PUT",
 		PathPattern:        "/user/guide",
@@ -540,7 +713,12 @@ func (a *Client) UpdateUserGuide(params *UpdateUserGuideParams) (*UpdateUserGuid
 		Reader:             &UpdateUserGuideReader{formats: a.formats},
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

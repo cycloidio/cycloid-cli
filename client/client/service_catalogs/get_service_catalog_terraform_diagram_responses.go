@@ -6,17 +6,18 @@ package service_catalogs
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetServiceCatalogTerraformDiagramReader is a Reader for the GetServiceCatalogTerraformDiagram structure.
@@ -62,7 +63,8 @@ func NewGetServiceCatalogTerraformDiagramOK() *GetServiceCatalogTerraformDiagram
 	return &GetServiceCatalogTerraformDiagramOK{}
 }
 
-/*GetServiceCatalogTerraformDiagramOK handles this case with default header values.
+/*
+GetServiceCatalogTerraformDiagramOK describes a response with status code 200, with default header values.
 
 The information of Terraform Diagram
 */
@@ -70,8 +72,44 @@ type GetServiceCatalogTerraformDiagramOK struct {
 	Payload *GetServiceCatalogTerraformDiagramOKBody
 }
 
+// IsSuccess returns true when this get service catalog terraform diagram o k response has a 2xx status code
+func (o *GetServiceCatalogTerraformDiagramOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get service catalog terraform diagram o k response has a 3xx status code
+func (o *GetServiceCatalogTerraformDiagramOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get service catalog terraform diagram o k response has a 4xx status code
+func (o *GetServiceCatalogTerraformDiagramOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get service catalog terraform diagram o k response has a 5xx status code
+func (o *GetServiceCatalogTerraformDiagramOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get service catalog terraform diagram o k response a status code equal to that given
+func (o *GetServiceCatalogTerraformDiagramOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get service catalog terraform diagram o k response
+func (o *GetServiceCatalogTerraformDiagramOK) Code() int {
+	return 200
+}
+
 func (o *GetServiceCatalogTerraformDiagramOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramOK %s", 200, payload)
+}
+
+func (o *GetServiceCatalogTerraformDiagramOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramOK %s", 200, payload)
 }
 
 func (o *GetServiceCatalogTerraformDiagramOK) GetPayload() *GetServiceCatalogTerraformDiagramOKBody {
@@ -95,20 +133,60 @@ func NewGetServiceCatalogTerraformDiagramForbidden() *GetServiceCatalogTerraform
 	return &GetServiceCatalogTerraformDiagramForbidden{}
 }
 
-/*GetServiceCatalogTerraformDiagramForbidden handles this case with default header values.
+/*
+GetServiceCatalogTerraformDiagramForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetServiceCatalogTerraformDiagramForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get service catalog terraform diagram forbidden response has a 2xx status code
+func (o *GetServiceCatalogTerraformDiagramForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get service catalog terraform diagram forbidden response has a 3xx status code
+func (o *GetServiceCatalogTerraformDiagramForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get service catalog terraform diagram forbidden response has a 4xx status code
+func (o *GetServiceCatalogTerraformDiagramForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get service catalog terraform diagram forbidden response has a 5xx status code
+func (o *GetServiceCatalogTerraformDiagramForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get service catalog terraform diagram forbidden response a status code equal to that given
+func (o *GetServiceCatalogTerraformDiagramForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get service catalog terraform diagram forbidden response
+func (o *GetServiceCatalogTerraformDiagramForbidden) Code() int {
+	return 403
+}
+
 func (o *GetServiceCatalogTerraformDiagramForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramForbidden %s", 403, payload)
+}
+
+func (o *GetServiceCatalogTerraformDiagramForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramForbidden %s", 403, payload)
 }
 
 func (o *GetServiceCatalogTerraformDiagramForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *GetServiceCatalogTerraformDiagramForbidden) GetPayload() *models.ErrorP
 
 func (o *GetServiceCatalogTerraformDiagramForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +221,60 @@ func NewGetServiceCatalogTerraformDiagramNotFound() *GetServiceCatalogTerraformD
 	return &GetServiceCatalogTerraformDiagramNotFound{}
 }
 
-/*GetServiceCatalogTerraformDiagramNotFound handles this case with default header values.
+/*
+GetServiceCatalogTerraformDiagramNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetServiceCatalogTerraformDiagramNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get service catalog terraform diagram not found response has a 2xx status code
+func (o *GetServiceCatalogTerraformDiagramNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get service catalog terraform diagram not found response has a 3xx status code
+func (o *GetServiceCatalogTerraformDiagramNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get service catalog terraform diagram not found response has a 4xx status code
+func (o *GetServiceCatalogTerraformDiagramNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get service catalog terraform diagram not found response has a 5xx status code
+func (o *GetServiceCatalogTerraformDiagramNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get service catalog terraform diagram not found response a status code equal to that given
+func (o *GetServiceCatalogTerraformDiagramNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get service catalog terraform diagram not found response
+func (o *GetServiceCatalogTerraformDiagramNotFound) Code() int {
+	return 404
+}
+
 func (o *GetServiceCatalogTerraformDiagramNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramNotFound %s", 404, payload)
+}
+
+func (o *GetServiceCatalogTerraformDiagramNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagramNotFound %s", 404, payload)
 }
 
 func (o *GetServiceCatalogTerraformDiagramNotFound) GetPayload() *models.ErrorPayload {
@@ -161,12 +283,16 @@ func (o *GetServiceCatalogTerraformDiagramNotFound) GetPayload() *models.ErrorPa
 
 func (o *GetServiceCatalogTerraformDiagramNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +311,46 @@ func NewGetServiceCatalogTerraformDiagramDefault(code int) *GetServiceCatalogTer
 	}
 }
 
-/*GetServiceCatalogTerraformDiagramDefault handles this case with default header values.
+/*
+GetServiceCatalogTerraformDiagramDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetServiceCatalogTerraformDiagramDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get service catalog terraform diagram default response has a 2xx status code
+func (o *GetServiceCatalogTerraformDiagramDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get service catalog terraform diagram default response has a 3xx status code
+func (o *GetServiceCatalogTerraformDiagramDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get service catalog terraform diagram default response has a 4xx status code
+func (o *GetServiceCatalogTerraformDiagramDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get service catalog terraform diagram default response has a 5xx status code
+func (o *GetServiceCatalogTerraformDiagramDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get service catalog terraform diagram default response a status code equal to that given
+func (o *GetServiceCatalogTerraformDiagramDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get service catalog terraform diagram default response
@@ -205,7 +359,13 @@ func (o *GetServiceCatalogTerraformDiagramDefault) Code() int {
 }
 
 func (o *GetServiceCatalogTerraformDiagramDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagram default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagram default %s", o._statusCode, payload)
+}
+
+func (o *GetServiceCatalogTerraformDiagramDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram][%d] getServiceCatalogTerraformDiagram default %s", o._statusCode, payload)
 }
 
 func (o *GetServiceCatalogTerraformDiagramDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +374,16 @@ func (o *GetServiceCatalogTerraformDiagramDefault) GetPayload() *models.ErrorPay
 
 func (o *GetServiceCatalogTerraformDiagramDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +395,8 @@ func (o *GetServiceCatalogTerraformDiagramDefault) readResponse(response runtime
 	return nil
 }
 
-/*GetServiceCatalogTerraformDiagramOKBody get service catalog terraform diagram o k body
+/*
+GetServiceCatalogTerraformDiagramOKBody get service catalog terraform diagram o k body
 swagger:model GetServiceCatalogTerraformDiagramOKBody
 */
 type GetServiceCatalogTerraformDiagramOKBody struct {
@@ -272,12 +437,11 @@ func (o *GetServiceCatalogTerraformDiagramOKBody) Validate(formats strfmt.Regist
 }
 
 func (o *GetServiceCatalogTerraformDiagramOKBody) validateCreatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(o.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("getServiceCatalogTerraformDiagramOK"+"."+"created_at", "body", int64(*o.CreatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("getServiceCatalogTerraformDiagramOK"+"."+"created_at", "body", *o.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -286,23 +450,27 @@ func (o *GetServiceCatalogTerraformDiagramOKBody) validateCreatedAt(formats strf
 
 func (o *GetServiceCatalogTerraformDiagramOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("getServiceCatalogTerraformDiagramOK"+"."+"data", "body", o.Data); err != nil {
-		return err
+	if o.Data == nil {
+		return errors.Required("getServiceCatalogTerraformDiagramOK"+"."+"data", "body", nil)
 	}
 
 	return nil
 }
 
 func (o *GetServiceCatalogTerraformDiagramOKBody) validateUpdatedAt(formats strfmt.Registry) error {
-
 	if swag.IsZero(o.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumInt("getServiceCatalogTerraformDiagramOK"+"."+"updated_at", "body", int64(*o.UpdatedAt), 0, false); err != nil {
+	if err := validate.MinimumUint("getServiceCatalogTerraformDiagramOK"+"."+"updated_at", "body", *o.UpdatedAt, 0, false); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this get service catalog terraform diagram o k body based on context it is used
+func (o *GetServiceCatalogTerraformDiagramOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

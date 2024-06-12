@@ -7,13 +7,38 @@ package organization_infrastructure_policies
 
 import (
 	"github.com/go-openapi/runtime"
-
-	strfmt "github.com/go-openapi/strfmt"
+	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization infrastructure policies API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new organization infrastructure policies API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new organization infrastructure policies API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -24,16 +49,84 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
+// This client is generated with a few options you might find useful for your swagger spec.
+//
+// Feel free to add you own set of options.
+
+// WithContentType allows the client to force the Content-Type header
+// to negotiate a specific Consumer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithContentType(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ConsumesMediaTypes = []string{mime}
+	}
+}
+
+// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
+func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/json"}
+}
+
+// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
+func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
+func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
+}
+
+// WithAccept allows the client to force the Accept header
+// to negotiate a specific Producer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithAccept(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ProducesMediaTypes = []string{mime}
+	}
+}
+
+// WithAcceptApplicationJSON sets the Accept header to "application/json".
+func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/json"}
+}
+
+// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
+func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// ClientService is the interface for Client methods
+type ClientService interface {
+	CreateInfraPolicy(params *CreateInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateInfraPolicyOK, error)
+
+	DeleteInfraPolicy(params *DeleteInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteInfraPolicyNoContent, error)
+
+	GetInfraPolicies(params *GetInfraPoliciesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraPoliciesOK, error)
+
+	GetInfraPolicy(params *GetInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraPolicyOK, error)
+
+	UpdateInfraPolicy(params *UpdateInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateInfraPolicyOK, error)
+
+	ValidateProjectInfraPolicies(params *ValidateProjectInfraPoliciesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateProjectInfraPoliciesOK, error)
+
+	SetTransport(transport runtime.ClientTransport)
+}
+
 /*
 CreateInfraPolicy Create a new policy.
 */
-func (a *Client) CreateInfraPolicy(params *CreateInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter) (*CreateInfraPolicyOK, error) {
+func (a *Client) CreateInfraPolicy(params *CreateInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateInfraPolicyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateInfraPolicyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "createInfraPolicy",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/infra_policies",
@@ -45,7 +138,12 @@ func (a *Client) CreateInfraPolicy(params *CreateInfraPolicyParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -61,13 +159,12 @@ func (a *Client) CreateInfraPolicy(params *CreateInfraPolicyParams, authInfo run
 /*
 DeleteInfraPolicy Delete the InfraPolicy.
 */
-func (a *Client) DeleteInfraPolicy(params *DeleteInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteInfraPolicyNoContent, error) {
+func (a *Client) DeleteInfraPolicy(params *DeleteInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteInfraPolicyNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteInfraPolicyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "deleteInfraPolicy",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}",
@@ -79,7 +176,12 @@ func (a *Client) DeleteInfraPolicy(params *DeleteInfraPolicyParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -95,13 +197,12 @@ func (a *Client) DeleteInfraPolicy(params *DeleteInfraPolicyParams, authInfo run
 /*
 GetInfraPolicies Return a list of infrastructure policies which matches the scope specified by the filter.
 */
-func (a *Client) GetInfraPolicies(params *GetInfraPoliciesParams, authInfo runtime.ClientAuthInfoWriter) (*GetInfraPoliciesOK, error) {
+func (a *Client) GetInfraPolicies(params *GetInfraPoliciesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraPoliciesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetInfraPoliciesParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getInfraPolicies",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/infra_policies",
@@ -113,7 +214,12 @@ func (a *Client) GetInfraPolicies(params *GetInfraPoliciesParams, authInfo runti
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -129,13 +235,12 @@ func (a *Client) GetInfraPolicies(params *GetInfraPoliciesParams, authInfo runti
 /*
 GetInfraPolicy Get the information of the InfraPolicy.
 */
-func (a *Client) GetInfraPolicy(params *GetInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter) (*GetInfraPolicyOK, error) {
+func (a *Client) GetInfraPolicy(params *GetInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraPolicyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetInfraPolicyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getInfraPolicy",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}",
@@ -147,7 +252,12 @@ func (a *Client) GetInfraPolicy(params *GetInfraPolicyParams, authInfo runtime.C
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -163,13 +273,12 @@ func (a *Client) GetInfraPolicy(params *GetInfraPolicyParams, authInfo runtime.C
 /*
 UpdateInfraPolicy Update an existing InfraPolicy
 */
-func (a *Client) UpdateInfraPolicy(params *UpdateInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateInfraPolicyOK, error) {
+func (a *Client) UpdateInfraPolicy(params *UpdateInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateInfraPolicyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateInfraPolicyParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "updateInfraPolicy",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}",
@@ -181,7 +290,12 @@ func (a *Client) UpdateInfraPolicy(params *UpdateInfraPolicyParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -197,13 +311,12 @@ func (a *Client) UpdateInfraPolicy(params *UpdateInfraPolicyParams, authInfo run
 /*
 ValidateProjectInfraPolicies Check the InfraPolicies assigned to the Project and the Environment to identify if some are not respected.
 */
-func (a *Client) ValidateProjectInfraPolicies(params *ValidateProjectInfraPoliciesParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateProjectInfraPoliciesOK, error) {
+func (a *Client) ValidateProjectInfraPolicies(params *ValidateProjectInfraPoliciesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateProjectInfraPoliciesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewValidateProjectInfraPoliciesParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "validateProjectInfraPolicies",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/validate_infra_policies",
@@ -215,7 +328,12 @@ func (a *Client) ValidateProjectInfraPolicies(params *ValidateProjectInfraPolici
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

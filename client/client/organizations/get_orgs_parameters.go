@@ -13,105 +13,126 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-
-	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetOrgsParams creates a new GetOrgsParams object
-// with the default values initialized.
+// NewGetOrgsParams creates a new GetOrgsParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetOrgsParams() *GetOrgsParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetOrgsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetOrgsParamsWithTimeout creates a new GetOrgsParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetOrgsParamsWithTimeout(timeout time.Duration) *GetOrgsParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetOrgsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		timeout: timeout,
 	}
 }
 
 // NewGetOrgsParamsWithContext creates a new GetOrgsParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetOrgsParamsWithContext(ctx context.Context) *GetOrgsParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetOrgsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-
 		Context: ctx,
 	}
 }
 
 // NewGetOrgsParamsWithHTTPClient creates a new GetOrgsParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetOrgsParamsWithHTTPClient(client *http.Client) *GetOrgsParams {
-	var (
-		pageIndexDefault = uint32(1)
-		pageSizeDefault  = uint32(1000)
-	)
 	return &GetOrgsParams{
-		PageIndex:  &pageIndexDefault,
-		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*GetOrgsParams contains all the parameters to send to the API endpoint
-for the get orgs operation typically these are written to a http.Request
+/*
+GetOrgsParams contains all the parameters to send to the API endpoint
+
+	for the get orgs operation.
+
+	Typically these are written to a http.Request.
 */
 type GetOrgsParams struct {
 
-	/*OrderBy
-	  Allows to order the list of items. Example usage: field_name:asc
+	/* OrderBy.
 
+	   Allows to order the list of items. Example usage: field_name:asc
 
 	*/
 	OrderBy *string
-	/*OrganizationCreatedAt
-	  Search by organization's creation date
 
+	/* OrganizationCreatedAt.
+
+	   Search by organization's creation date
+
+	   Format: uint64
 	*/
 	OrganizationCreatedAt *uint64
-	/*OrganizationName
-	  Search by the organization's name
 
+	/* OrganizationName.
+
+	   Search by the organization's name
 	*/
 	OrganizationName *string
-	/*PageIndex
-	  The page number to request. The first page is 1.
 
+	/* PageIndex.
+
+	   The page number to request. The first page is 1.
+
+	   Format: uint32
+	   Default: 1
 	*/
 	PageIndex *uint32
-	/*PageSize
-	  The number of items at most which the response can have.
 
+	/* PageSize.
+
+	   The number of items at most which the response can have.
+
+	   Format: uint32
+	   Default: 1000
 	*/
 	PageSize *uint32
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get orgs params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetOrgsParams) WithDefaults() *GetOrgsParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get orgs params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetOrgsParams) SetDefaults() {
+	var (
+		pageIndexDefault = uint32(1)
+
+		pageSizeDefault = uint32(1000)
+	)
+
+	val := GetOrgsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get orgs params
@@ -214,80 +235,85 @@ func (o *GetOrgsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 
 		// query param order_by
 		var qrOrderBy string
+
 		if o.OrderBy != nil {
 			qrOrderBy = *o.OrderBy
 		}
 		qOrderBy := qrOrderBy
 		if qOrderBy != "" {
+
 			if err := r.SetQueryParam("order_by", qOrderBy); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.OrganizationCreatedAt != nil {
 
 		// query param organization_created_at
 		var qrOrganizationCreatedAt uint64
+
 		if o.OrganizationCreatedAt != nil {
 			qrOrganizationCreatedAt = *o.OrganizationCreatedAt
 		}
 		qOrganizationCreatedAt := swag.FormatUint64(qrOrganizationCreatedAt)
 		if qOrganizationCreatedAt != "" {
+
 			if err := r.SetQueryParam("organization_created_at", qOrganizationCreatedAt); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.OrganizationName != nil {
 
 		// query param organization_name
 		var qrOrganizationName string
+
 		if o.OrganizationName != nil {
 			qrOrganizationName = *o.OrganizationName
 		}
 		qOrganizationName := qrOrganizationName
 		if qOrganizationName != "" {
+
 			if err := r.SetQueryParam("organization_name", qOrganizationName); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.PageIndex != nil {
 
 		// query param page_index
 		var qrPageIndex uint32
+
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
+
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
+
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
+
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
-
 	}
 
 	if len(res) > 0 {

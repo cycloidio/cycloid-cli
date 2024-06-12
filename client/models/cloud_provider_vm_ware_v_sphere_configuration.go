@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -39,12 +39,7 @@ func (m *CloudProviderVMWareVSphereConfiguration) Type() string {
 
 // SetType sets the type of this subtype
 func (m *CloudProviderVMWareVSphereConfiguration) SetType(val string) {
-
 }
-
-// AllowUnverifiedSsl gets the allow unverified ssl of this subtype
-
-// Server gets the server of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *CloudProviderVMWareVSphereConfiguration) UnmarshalJSON(raw []byte) error {
@@ -89,7 +84,6 @@ func (m *CloudProviderVMWareVSphereConfiguration) UnmarshalJSON(raw []byte) erro
 	}
 
 	result.AllowUnverifiedSsl = data.AllowUnverifiedSsl
-
 	result.Server = data.Server
 
 	*m = result
@@ -117,8 +111,7 @@ func (m CloudProviderVMWareVSphereConfiguration) MarshalJSON() ([]byte, error) {
 		AllowUnverifiedSsl: m.AllowUnverifiedSsl,
 
 		Server: m.Server,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -127,8 +120,7 @@ func (m CloudProviderVMWareVSphereConfiguration) MarshalJSON() ([]byte, error) {
 	}{
 
 		Type: m.Type(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -169,6 +161,16 @@ func (m *CloudProviderVMWareVSphereConfiguration) validateServer(formats strfmt.
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this cloud provider VM ware v sphere configuration based on the context it is used
+func (m *CloudProviderVMWareVSphereConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

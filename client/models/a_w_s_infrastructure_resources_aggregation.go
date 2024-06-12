@@ -6,13 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
+	"encoding/json"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // AWSInfrastructureResourcesAggregation AWS Infrastructure Resources Aggregation
+//
+// MinProperties: 1
+// MaxProperties: 12
+//
 // swagger:model AWSInfrastructureResourcesAggregation
 type AWSInfrastructureResourcesAggregation struct {
 
@@ -51,11 +57,213 @@ type AWSInfrastructureResourcesAggregation struct {
 
 	// vpcs
 	Vpcs *InfrastructureResourcesAggregationItem `json:"vpcs,omitempty"`
+
+	// a w s infrastructure resources aggregation additional properties
+	AWSInfrastructureResourcesAggregationAdditionalProperties map[string]interface{} `json:"-"`
+}
+
+// UnmarshalJSON unmarshals this object with additional properties from JSON
+func (m *AWSInfrastructureResourcesAggregation) UnmarshalJSON(data []byte) error {
+	// stage 1, bind the properties
+	var stage1 struct {
+
+		// buckets
+		Buckets *InfrastructureResourcesAggregationItem `json:"buckets,omitempty"`
+
+		// cache clusters
+		CacheClusters *InfrastructureResourcesAggregationItem `json:"cache_clusters,omitempty"`
+
+		// db instances
+		DbInstances *InfrastructureResourcesAggregationItem `json:"db_instances,omitempty"`
+
+		// images
+		Images *InfrastructureResourcesAggregationItem `json:"images,omitempty"`
+
+		// instances
+		Instances *InfrastructureResourcesAggregationItem `json:"instances,omitempty"`
+
+		// load balancers v1
+		LoadBalancersV1 *InfrastructureResourcesAggregationItem `json:"load_balancers_v1,omitempty"`
+
+		// load balancers v2
+		LoadBalancersV2 *InfrastructureResourcesAggregationItem `json:"load_balancers_v2,omitempty"`
+
+		// security groups
+		SecurityGroups *InfrastructureResourcesAggregationItem `json:"security_groups,omitempty"`
+
+		// snapshots
+		Snapshots *InfrastructureResourcesAggregationItem `json:"snapshots,omitempty"`
+
+		// subnets
+		Subnets *InfrastructureResourcesAggregationItem `json:"subnets,omitempty"`
+
+		// volumes
+		Volumes *InfrastructureResourcesAggregationItem `json:"volumes,omitempty"`
+
+		// vpcs
+		Vpcs *InfrastructureResourcesAggregationItem `json:"vpcs,omitempty"`
+	}
+	if err := json.Unmarshal(data, &stage1); err != nil {
+		return err
+	}
+	var rcv AWSInfrastructureResourcesAggregation
+
+	rcv.Buckets = stage1.Buckets
+	rcv.CacheClusters = stage1.CacheClusters
+	rcv.DbInstances = stage1.DbInstances
+	rcv.Images = stage1.Images
+	rcv.Instances = stage1.Instances
+	rcv.LoadBalancersV1 = stage1.LoadBalancersV1
+	rcv.LoadBalancersV2 = stage1.LoadBalancersV2
+	rcv.SecurityGroups = stage1.SecurityGroups
+	rcv.Snapshots = stage1.Snapshots
+	rcv.Subnets = stage1.Subnets
+	rcv.Volumes = stage1.Volumes
+	rcv.Vpcs = stage1.Vpcs
+	*m = rcv
+
+	// stage 2, remove properties and add to map
+	stage2 := make(map[string]json.RawMessage)
+	if err := json.Unmarshal(data, &stage2); err != nil {
+		return err
+	}
+
+	delete(stage2, "buckets")
+	delete(stage2, "cache_clusters")
+	delete(stage2, "db_instances")
+	delete(stage2, "images")
+	delete(stage2, "instances")
+	delete(stage2, "load_balancers_v1")
+	delete(stage2, "load_balancers_v2")
+	delete(stage2, "security_groups")
+	delete(stage2, "snapshots")
+	delete(stage2, "subnets")
+	delete(stage2, "volumes")
+	delete(stage2, "vpcs")
+	// stage 3, add additional properties values
+	if len(stage2) > 0 {
+		result := make(map[string]interface{})
+		for k, v := range stage2 {
+			var toadd interface{}
+			if err := json.Unmarshal(v, &toadd); err != nil {
+				return err
+			}
+			result[k] = toadd
+		}
+		m.AWSInfrastructureResourcesAggregationAdditionalProperties = result
+	}
+
+	return nil
+}
+
+// MarshalJSON marshals this object with additional properties into a JSON object
+func (m AWSInfrastructureResourcesAggregation) MarshalJSON() ([]byte, error) {
+	var stage1 struct {
+
+		// buckets
+		Buckets *InfrastructureResourcesAggregationItem `json:"buckets,omitempty"`
+
+		// cache clusters
+		CacheClusters *InfrastructureResourcesAggregationItem `json:"cache_clusters,omitempty"`
+
+		// db instances
+		DbInstances *InfrastructureResourcesAggregationItem `json:"db_instances,omitempty"`
+
+		// images
+		Images *InfrastructureResourcesAggregationItem `json:"images,omitempty"`
+
+		// instances
+		Instances *InfrastructureResourcesAggregationItem `json:"instances,omitempty"`
+
+		// load balancers v1
+		LoadBalancersV1 *InfrastructureResourcesAggregationItem `json:"load_balancers_v1,omitempty"`
+
+		// load balancers v2
+		LoadBalancersV2 *InfrastructureResourcesAggregationItem `json:"load_balancers_v2,omitempty"`
+
+		// security groups
+		SecurityGroups *InfrastructureResourcesAggregationItem `json:"security_groups,omitempty"`
+
+		// snapshots
+		Snapshots *InfrastructureResourcesAggregationItem `json:"snapshots,omitempty"`
+
+		// subnets
+		Subnets *InfrastructureResourcesAggregationItem `json:"subnets,omitempty"`
+
+		// volumes
+		Volumes *InfrastructureResourcesAggregationItem `json:"volumes,omitempty"`
+
+		// vpcs
+		Vpcs *InfrastructureResourcesAggregationItem `json:"vpcs,omitempty"`
+	}
+
+	stage1.Buckets = m.Buckets
+	stage1.CacheClusters = m.CacheClusters
+	stage1.DbInstances = m.DbInstances
+	stage1.Images = m.Images
+	stage1.Instances = m.Instances
+	stage1.LoadBalancersV1 = m.LoadBalancersV1
+	stage1.LoadBalancersV2 = m.LoadBalancersV2
+	stage1.SecurityGroups = m.SecurityGroups
+	stage1.Snapshots = m.Snapshots
+	stage1.Subnets = m.Subnets
+	stage1.Volumes = m.Volumes
+	stage1.Vpcs = m.Vpcs
+
+	// make JSON object for known properties
+	props, err := json.Marshal(stage1)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(m.AWSInfrastructureResourcesAggregationAdditionalProperties) == 0 { // no additional properties
+		return props, nil
+	}
+
+	// make JSON object for the additional properties
+	additional, err := json.Marshal(m.AWSInfrastructureResourcesAggregationAdditionalProperties)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(props) < 3 { // "{}": only additional properties
+		return additional, nil
+	}
+
+	// concatenate the 2 objects
+	return swag.ConcatJSON(props, additional), nil
 }
 
 // Validate validates this a w s infrastructure resources aggregation
 func (m *AWSInfrastructureResourcesAggregation) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	// short circuits minProperties > 0
+	if m == nil {
+		return errors.TooFewProperties("", "body", 1)
+	}
+
+	props := make(map[string]json.RawMessage, 12+10)
+	j, err := swag.WriteJSON(m)
+	if err != nil {
+		return err
+	}
+
+	if err = swag.ReadJSON(j, &props); err != nil {
+		return err
+	}
+
+	nprops := len(props)
+
+	// minProperties: 1
+	if nprops < 1 {
+		return errors.TooFewProperties("", "body", 1)
+	}
+
+	// maxProperties: 12
+	if nprops > 12 {
+		return errors.TooManyProperties("", "body", 12)
+	}
 
 	if err := m.validateBuckets(formats); err != nil {
 		res = append(res, err)
@@ -112,7 +320,6 @@ func (m *AWSInfrastructureResourcesAggregation) Validate(formats strfmt.Registry
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateBuckets(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Buckets) { // not required
 		return nil
 	}
@@ -121,6 +328,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateBuckets(formats strfmt.R
 		if err := m.Buckets.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("buckets")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("buckets")
 			}
 			return err
 		}
@@ -130,7 +339,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateBuckets(formats strfmt.R
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateCacheClusters(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.CacheClusters) { // not required
 		return nil
 	}
@@ -139,6 +347,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateCacheClusters(formats st
 		if err := m.CacheClusters.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cache_clusters")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cache_clusters")
 			}
 			return err
 		}
@@ -148,7 +358,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateCacheClusters(formats st
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateDbInstances(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.DbInstances) { // not required
 		return nil
 	}
@@ -157,6 +366,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateDbInstances(formats strf
 		if err := m.DbInstances.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("db_instances")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("db_instances")
 			}
 			return err
 		}
@@ -166,7 +377,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateDbInstances(formats strf
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateImages(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Images) { // not required
 		return nil
 	}
@@ -175,6 +385,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateImages(formats strfmt.Re
 		if err := m.Images.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("images")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("images")
 			}
 			return err
 		}
@@ -184,7 +396,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateImages(formats strfmt.Re
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateInstances(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Instances) { // not required
 		return nil
 	}
@@ -193,6 +404,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateInstances(formats strfmt
 		if err := m.Instances.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("instances")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("instances")
 			}
 			return err
 		}
@@ -202,7 +415,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateInstances(formats strfmt
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV1(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LoadBalancersV1) { // not required
 		return nil
 	}
@@ -211,6 +423,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV1(formats 
 		if err := m.LoadBalancersV1.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("load_balancers_v1")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("load_balancers_v1")
 			}
 			return err
 		}
@@ -220,7 +434,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV1(formats 
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV2(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.LoadBalancersV2) { // not required
 		return nil
 	}
@@ -229,6 +442,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV2(formats 
 		if err := m.LoadBalancersV2.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("load_balancers_v2")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("load_balancers_v2")
 			}
 			return err
 		}
@@ -238,7 +453,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV2(formats 
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateSecurityGroups(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.SecurityGroups) { // not required
 		return nil
 	}
@@ -247,6 +461,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateSecurityGroups(formats s
 		if err := m.SecurityGroups.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("security_groups")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("security_groups")
 			}
 			return err
 		}
@@ -256,7 +472,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateSecurityGroups(formats s
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateSnapshots(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Snapshots) { // not required
 		return nil
 	}
@@ -265,6 +480,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateSnapshots(formats strfmt
 		if err := m.Snapshots.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("snapshots")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("snapshots")
 			}
 			return err
 		}
@@ -274,7 +491,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateSnapshots(formats strfmt
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateSubnets(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Subnets) { // not required
 		return nil
 	}
@@ -283,6 +499,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateSubnets(formats strfmt.R
 		if err := m.Subnets.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("subnets")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subnets")
 			}
 			return err
 		}
@@ -292,7 +510,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateSubnets(formats strfmt.R
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateVolumes(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Volumes) { // not required
 		return nil
 	}
@@ -301,6 +518,8 @@ func (m *AWSInfrastructureResourcesAggregation) validateVolumes(formats strfmt.R
 		if err := m.Volumes.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("volumes")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("volumes")
 			}
 			return err
 		}
@@ -310,7 +529,6 @@ func (m *AWSInfrastructureResourcesAggregation) validateVolumes(formats strfmt.R
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateVpcs(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Vpcs) { // not required
 		return nil
 	}
@@ -319,6 +537,318 @@ func (m *AWSInfrastructureResourcesAggregation) validateVpcs(formats strfmt.Regi
 		if err := m.Vpcs.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("vpcs")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("vpcs")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this a w s infrastructure resources aggregation based on the context it is used
+func (m *AWSInfrastructureResourcesAggregation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateBuckets(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateCacheClusters(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateDbInstances(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateImages(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateInstances(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLoadBalancersV1(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateLoadBalancersV2(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSecurityGroups(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSnapshots(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateSubnets(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVolumes(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVpcs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateBuckets(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Buckets != nil {
+
+		if swag.IsZero(m.Buckets) { // not required
+			return nil
+		}
+
+		if err := m.Buckets.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("buckets")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("buckets")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateCacheClusters(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.CacheClusters != nil {
+
+		if swag.IsZero(m.CacheClusters) { // not required
+			return nil
+		}
+
+		if err := m.CacheClusters.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("cache_clusters")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("cache_clusters")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateDbInstances(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.DbInstances != nil {
+
+		if swag.IsZero(m.DbInstances) { // not required
+			return nil
+		}
+
+		if err := m.DbInstances.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("db_instances")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("db_instances")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateImages(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Images != nil {
+
+		if swag.IsZero(m.Images) { // not required
+			return nil
+		}
+
+		if err := m.Images.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("images")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("images")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateInstances(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Instances != nil {
+
+		if swag.IsZero(m.Instances) { // not required
+			return nil
+		}
+
+		if err := m.Instances.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("instances")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("instances")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateLoadBalancersV1(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.LoadBalancersV1 != nil {
+
+		if swag.IsZero(m.LoadBalancersV1) { // not required
+			return nil
+		}
+
+		if err := m.LoadBalancersV1.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("load_balancers_v1")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("load_balancers_v1")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateLoadBalancersV2(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.LoadBalancersV2 != nil {
+
+		if swag.IsZero(m.LoadBalancersV2) { // not required
+			return nil
+		}
+
+		if err := m.LoadBalancersV2.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("load_balancers_v2")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("load_balancers_v2")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateSecurityGroups(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.SecurityGroups != nil {
+
+		if swag.IsZero(m.SecurityGroups) { // not required
+			return nil
+		}
+
+		if err := m.SecurityGroups.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("security_groups")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("security_groups")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateSnapshots(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Snapshots != nil {
+
+		if swag.IsZero(m.Snapshots) { // not required
+			return nil
+		}
+
+		if err := m.Snapshots.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("snapshots")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("snapshots")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateSubnets(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Subnets != nil {
+
+		if swag.IsZero(m.Subnets) { // not required
+			return nil
+		}
+
+		if err := m.Subnets.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("subnets")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("subnets")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateVolumes(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Volumes != nil {
+
+		if swag.IsZero(m.Volumes) { // not required
+			return nil
+		}
+
+		if err := m.Volumes.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("volumes")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("volumes")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *AWSInfrastructureResourcesAggregation) contextValidateVpcs(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Vpcs != nil {
+
+		if swag.IsZero(m.Vpcs) { // not required
+			return nil
+		}
+
+		if err := m.Vpcs.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("vpcs")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("vpcs")
 			}
 			return err
 		}

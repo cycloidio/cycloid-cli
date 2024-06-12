@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -39,12 +39,7 @@ func (m *CloudProviderGCPConfiguration) Type() string {
 
 // SetType sets the type of this subtype
 func (m *CloudProviderGCPConfiguration) SetType(val string) {
-
 }
-
-// Project gets the project of this subtype
-
-// Region gets the region of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *CloudProviderGCPConfiguration) UnmarshalJSON(raw []byte) error {
@@ -89,7 +84,6 @@ func (m *CloudProviderGCPConfiguration) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.Project = data.Project
-
 	result.Region = data.Region
 
 	*m = result
@@ -117,8 +111,7 @@ func (m CloudProviderGCPConfiguration) MarshalJSON() ([]byte, error) {
 		Project: m.Project,
 
 		Region: m.Region,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -127,8 +120,7 @@ func (m CloudProviderGCPConfiguration) MarshalJSON() ([]byte, error) {
 	}{
 
 		Type: m.Type(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -169,6 +161,16 @@ func (m *CloudProviderGCPConfiguration) validateRegion(formats strfmt.Registry) 
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this cloud provider g c p configuration based on the context it is used
+func (m *CloudProviderGCPConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

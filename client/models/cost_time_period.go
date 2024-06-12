@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // CostTimePeriod CostTimePeriod
 //
 // This object contains the items described in https://docs.aws.amazon.com/sdk-for-go/api/service/costexplorer/#DateInterval It defines the beginning and the end of the time frame for which, the API should gather costs.
+//
 // swagger:model CostTimePeriod
 type CostTimePeriod struct {
 
@@ -58,15 +60,15 @@ func (m *CostTimePeriod) validateBegin(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("begin", "body", string(*m.Begin), 10); err != nil {
+	if err := validate.MinLength("begin", "body", *m.Begin, 10); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("begin", "body", string(*m.Begin), 10); err != nil {
+	if err := validate.MaxLength("begin", "body", *m.Begin, 10); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("begin", "body", string(*m.Begin), `^[0-9]{4}-[0-9]{2}-[0-9]{2}$`); err != nil {
+	if err := validate.Pattern("begin", "body", *m.Begin, `^[0-9]{4}-[0-9]{2}-[0-9]{2}$`); err != nil {
 		return err
 	}
 
@@ -79,18 +81,23 @@ func (m *CostTimePeriod) validateEnd(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("end", "body", string(*m.End), 10); err != nil {
+	if err := validate.MinLength("end", "body", *m.End, 10); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("end", "body", string(*m.End), 10); err != nil {
+	if err := validate.MaxLength("end", "body", *m.End, 10); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("end", "body", string(*m.End), `^[0-9]{4}-[0-9]{2}-[0-9]{2}$`); err != nil {
+	if err := validate.Pattern("end", "body", *m.End, `^[0-9]{4}-[0-9]{2}-[0-9]{2}$`); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this cost time period based on context it is used
+func (m *CostTimePeriod) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

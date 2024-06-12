@@ -13,68 +13,84 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewDeleteKPIFavoriteParams creates a new DeleteKPIFavoriteParams object
-// with the default values initialized.
+// NewDeleteKPIFavoriteParams creates a new DeleteKPIFavoriteParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewDeleteKPIFavoriteParams() *DeleteKPIFavoriteParams {
-	var ()
 	return &DeleteKPIFavoriteParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDeleteKPIFavoriteParamsWithTimeout creates a new DeleteKPIFavoriteParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewDeleteKPIFavoriteParamsWithTimeout(timeout time.Duration) *DeleteKPIFavoriteParams {
-	var ()
 	return &DeleteKPIFavoriteParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewDeleteKPIFavoriteParamsWithContext creates a new DeleteKPIFavoriteParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewDeleteKPIFavoriteParamsWithContext(ctx context.Context) *DeleteKPIFavoriteParams {
-	var ()
 	return &DeleteKPIFavoriteParams{
-
 		Context: ctx,
 	}
 }
 
 // NewDeleteKPIFavoriteParamsWithHTTPClient creates a new DeleteKPIFavoriteParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewDeleteKPIFavoriteParamsWithHTTPClient(client *http.Client) *DeleteKPIFavoriteParams {
-	var ()
 	return &DeleteKPIFavoriteParams{
 		HTTPClient: client,
 	}
 }
 
-/*DeleteKPIFavoriteParams contains all the parameters to send to the API endpoint
-for the delete k p i favorite operation typically these are written to a http.Request
+/*
+DeleteKPIFavoriteParams contains all the parameters to send to the API endpoint
+
+	for the delete k p i favorite operation.
+
+	Typically these are written to a http.Request.
 */
 type DeleteKPIFavoriteParams struct {
 
-	/*KpiCanonical
-	  A canonical of a kpi.
+	/* KpiCanonical.
 
+	   A canonical of a kpi.
 	*/
 	KpiCanonical string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the delete k p i favorite params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *DeleteKPIFavoriteParams) WithDefaults() *DeleteKPIFavoriteParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the delete k p i favorite params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *DeleteKPIFavoriteParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the delete k p i favorite params

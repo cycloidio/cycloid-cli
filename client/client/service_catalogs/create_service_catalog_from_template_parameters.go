@@ -13,75 +13,92 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewCreateServiceCatalogFromTemplateParams creates a new CreateServiceCatalogFromTemplateParams object
-// with the default values initialized.
+// NewCreateServiceCatalogFromTemplateParams creates a new CreateServiceCatalogFromTemplateParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewCreateServiceCatalogFromTemplateParams() *CreateServiceCatalogFromTemplateParams {
-	var ()
 	return &CreateServiceCatalogFromTemplateParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewCreateServiceCatalogFromTemplateParamsWithTimeout creates a new CreateServiceCatalogFromTemplateParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewCreateServiceCatalogFromTemplateParamsWithTimeout(timeout time.Duration) *CreateServiceCatalogFromTemplateParams {
-	var ()
 	return &CreateServiceCatalogFromTemplateParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewCreateServiceCatalogFromTemplateParamsWithContext creates a new CreateServiceCatalogFromTemplateParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewCreateServiceCatalogFromTemplateParamsWithContext(ctx context.Context) *CreateServiceCatalogFromTemplateParams {
-	var ()
 	return &CreateServiceCatalogFromTemplateParams{
-
 		Context: ctx,
 	}
 }
 
 // NewCreateServiceCatalogFromTemplateParamsWithHTTPClient creates a new CreateServiceCatalogFromTemplateParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewCreateServiceCatalogFromTemplateParamsWithHTTPClient(client *http.Client) *CreateServiceCatalogFromTemplateParams {
-	var ()
 	return &CreateServiceCatalogFromTemplateParams{
 		HTTPClient: client,
 	}
 }
 
-/*CreateServiceCatalogFromTemplateParams contains all the parameters to send to the API endpoint
-for the create service catalog from template operation typically these are written to a http.Request
+/*
+CreateServiceCatalogFromTemplateParams contains all the parameters to send to the API endpoint
+
+	for the create service catalog from template operation.
+
+	Typically these are written to a http.Request.
 */
 type CreateServiceCatalogFromTemplateParams struct {
 
-	/*Body
-	  The information of the ServiceCatalog.
+	/* Body.
 
+	   The information of the ServiceCatalog.
 	*/
 	Body *models.NewServiceCatalogFromTemplate
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*ServiceCatalogRef
-	  A Service Catalog name
 
+	/* ServiceCatalogRef.
+
+	   A Service Catalog name
 	*/
 	ServiceCatalogRef string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the create service catalog from template params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *CreateServiceCatalogFromTemplateParams) WithDefaults() *CreateServiceCatalogFromTemplateParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the create service catalog from template params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *CreateServiceCatalogFromTemplateParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the create service catalog from template params
@@ -157,7 +174,6 @@ func (o *CreateServiceCatalogFromTemplateParams) WriteToRequest(r runtime.Client
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

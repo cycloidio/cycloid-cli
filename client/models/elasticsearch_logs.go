@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -46,14 +46,7 @@ func (m *ElasticsearchLogs) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *ElasticsearchLogs) SetEngine(val string) {
-
 }
-
-// Sources gets the sources of this subtype
-
-// Urls gets the urls of this subtype
-
-// Version gets the version of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *ElasticsearchLogs) UnmarshalJSON(raw []byte) error {
@@ -104,9 +97,7 @@ func (m *ElasticsearchLogs) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.Sources = data.Sources
-
 	result.Urls = data.Urls
-
 	result.Version = data.Version
 
 	*m = result
@@ -142,8 +133,7 @@ func (m ElasticsearchLogs) MarshalJSON() ([]byte, error) {
 		Urls: m.Urls,
 
 		Version: m.Version,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -152,8 +142,7 @@ func (m ElasticsearchLogs) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +174,15 @@ func (m *ElasticsearchLogs) Validate(formats strfmt.Registry) error {
 
 func (m *ElasticsearchLogs) validateSources(formats strfmt.Registry) error {
 
+	if err := validate.Required("sources", "body", m.Sources); err != nil {
+		return err
+	}
+
 	for k := range m.Sources {
+
+		if err := validate.Required("sources"+"."+k, "body", m.Sources[k]); err != nil {
+			return err
+		}
 
 		if err := validate.Required("sources"+"."+k, "body", m.Sources[k]); err != nil {
 			return err
@@ -198,6 +195,11 @@ func (m *ElasticsearchLogs) validateSources(formats strfmt.Registry) error {
 			}
 			if val, ok := m.Sources[k][kk]; ok {
 				if err := val.Validate(formats); err != nil {
+					if ve, ok := err.(*errors.Validation); ok {
+						return ve.ValidateName("sources" + "." + k + "." + kk)
+					} else if ce, ok := err.(*errors.CompositeError); ok {
+						return ce.ValidateName("sources" + "." + k + "." + kk)
+					}
 					return err
 				}
 			}
@@ -227,6 +229,47 @@ func (m *ElasticsearchLogs) validateVersion(formats strfmt.Registry) error {
 	return nil
 }
 
+// ContextValidate validate this elasticsearch logs based on the context it is used
+func (m *ElasticsearchLogs) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSources(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ElasticsearchLogs) contextValidateSources(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.Required("sources", "body", m.Sources); err != nil {
+		return err
+	}
+
+	for k := range m.Sources {
+
+		if err := validate.Required("sources"+"."+k, "body", m.Sources[k]); err != nil {
+			return err
+		}
+
+		for kk := range m.Sources[k] {
+
+			if val, ok := m.Sources[k][kk]; ok {
+				if err := val.ContextValidate(ctx, formats); err != nil {
+					return err
+				}
+			}
+
+		}
+
+	}
+
+	return nil
+}
+
 // MarshalBinary interface implementation
 func (m *ElasticsearchLogs) MarshalBinary() ([]byte, error) {
 	if m == nil {
@@ -246,6 +289,7 @@ func (m *ElasticsearchLogs) UnmarshalBinary(b []byte) error {
 }
 
 // ElasticsearchLogsSourcesAnon elasticsearch logs sources anon
+//
 // swagger:model ElasticsearchLogsSourcesAnon
 type ElasticsearchLogsSourcesAnon struct {
 
@@ -281,7 +325,6 @@ func (m *ElasticsearchLogsSourcesAnon) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ElasticsearchLogsSourcesAnon) validateMapping(formats strfmt.Registry) error {
-
 	if swag.IsZero(m.Mapping) { // not required
 		return nil
 	}
@@ -290,6 +333,43 @@ func (m *ElasticsearchLogsSourcesAnon) validateMapping(formats strfmt.Registry) 
 		if err := m.Mapping.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("mapping")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mapping")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this elasticsearch logs sources anon based on the context it is used
+func (m *ElasticsearchLogsSourcesAnon) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateMapping(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ElasticsearchLogsSourcesAnon) contextValidateMapping(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Mapping != nil {
+
+		if swag.IsZero(m.Mapping) { // not required
+			return nil
+		}
+
+		if err := m.Mapping.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("mapping")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("mapping")
 			}
 			return err
 		}
@@ -384,6 +464,11 @@ func (m *ElasticsearchLogsSourcesAnonMapping) validateTimestamp(formats strfmt.R
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this elasticsearch logs sources anon mapping based on context it is used
+func (m *ElasticsearchLogsSourcesAnonMapping) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

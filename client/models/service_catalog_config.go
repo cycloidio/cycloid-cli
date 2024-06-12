@@ -6,15 +6,17 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
 // ServiceCatalogConfig Service Catalog Configuration
 //
-// Represents a Service Catalog's Config item
+// # Represents a Service Catalog's Config item
+//
 // swagger:model ServiceCatalogConfig
 type ServiceCatalogConfig map[string]SCConfigUseCaseConfig
 
@@ -29,6 +31,31 @@ func (m ServiceCatalogConfig) Validate(formats strfmt.Registry) error {
 		}
 		if val, ok := m[k]; ok {
 			if err := val.Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName(k)
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName(k)
+				}
+				return err
+			}
+		}
+
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+// ContextValidate validate this service catalog config based on the context it is used
+func (m ServiceCatalogConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	for k := range m {
+
+		if val, ok := m[k]; ok {
+			if err := val.ContextValidate(ctx, formats); err != nil {
 				return err
 			}
 		}

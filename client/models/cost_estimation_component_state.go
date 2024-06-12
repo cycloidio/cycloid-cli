@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // CostEstimationComponentState CostEstimationComponentState
 //
 // Either a Prior or Planned cost component state.
+//
 // swagger:model CostEstimationComponentState
 type CostEstimationComponentState struct {
 
@@ -95,6 +97,11 @@ func (m *CostEstimationComponentState) validateQuantity(formats strfmt.Registry)
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this cost estimation component state based on context it is used
+func (m *CostEstimationComponentState) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

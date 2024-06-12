@@ -13,83 +13,102 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewGetBuildPreparationParams creates a new GetBuildPreparationParams object
-// with the default values initialized.
+// NewGetBuildPreparationParams creates a new GetBuildPreparationParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetBuildPreparationParams() *GetBuildPreparationParams {
-	var ()
 	return &GetBuildPreparationParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetBuildPreparationParamsWithTimeout creates a new GetBuildPreparationParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetBuildPreparationParamsWithTimeout(timeout time.Duration) *GetBuildPreparationParams {
-	var ()
 	return &GetBuildPreparationParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewGetBuildPreparationParamsWithContext creates a new GetBuildPreparationParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetBuildPreparationParamsWithContext(ctx context.Context) *GetBuildPreparationParams {
-	var ()
 	return &GetBuildPreparationParams{
-
 		Context: ctx,
 	}
 }
 
 // NewGetBuildPreparationParamsWithHTTPClient creates a new GetBuildPreparationParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetBuildPreparationParamsWithHTTPClient(client *http.Client) *GetBuildPreparationParams {
-	var ()
 	return &GetBuildPreparationParams{
 		HTTPClient: client,
 	}
 }
 
-/*GetBuildPreparationParams contains all the parameters to send to the API endpoint
-for the get build preparation operation typically these are written to a http.Request
+/*
+GetBuildPreparationParams contains all the parameters to send to the API endpoint
+
+	for the get build preparation operation.
+
+	Typically these are written to a http.Request.
 */
 type GetBuildPreparationParams struct {
 
-	/*BuildID
-	  A build id
+	/* BuildID.
 
+	   A build id
 	*/
 	BuildID string
-	/*InpathPipelineName
-	  A pipeline name
 
+	/* InpathPipelineName.
+
+	   A pipeline name
 	*/
 	InpathPipelineName string
-	/*JobName
-	  A job name
 
+	/* JobName.
+
+	   A job name
 	*/
 	JobName string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-	/*ProjectCanonical
-	  A canonical of a project.
 
+	/* ProjectCanonical.
+
+	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get build preparation params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetBuildPreparationParams) WithDefaults() *GetBuildPreparationParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get build preparation params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetBuildPreparationParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get build preparation params

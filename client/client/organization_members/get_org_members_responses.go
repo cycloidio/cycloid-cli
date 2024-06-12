@@ -6,18 +6,19 @@ package organization_members
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetOrgMembersReader is a Reader for the GetOrgMembers structure.
@@ -69,7 +70,8 @@ func NewGetOrgMembersOK() *GetOrgMembersOK {
 	return &GetOrgMembersOK{}
 }
 
-/*GetOrgMembersOK handles this case with default header values.
+/*
+GetOrgMembersOK describes a response with status code 200, with default header values.
 
 List of the members of the organization.
 */
@@ -77,8 +79,44 @@ type GetOrgMembersOK struct {
 	Payload *GetOrgMembersOKBody
 }
 
+// IsSuccess returns true when this get org members o k response has a 2xx status code
+func (o *GetOrgMembersOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get org members o k response has a 3xx status code
+func (o *GetOrgMembersOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get org members o k response has a 4xx status code
+func (o *GetOrgMembersOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get org members o k response has a 5xx status code
+func (o *GetOrgMembersOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get org members o k response a status code equal to that given
+func (o *GetOrgMembersOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get org members o k response
+func (o *GetOrgMembersOK) Code() int {
+	return 200
+}
+
 func (o *GetOrgMembersOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersOK %s", 200, payload)
+}
+
+func (o *GetOrgMembersOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersOK %s", 200, payload)
 }
 
 func (o *GetOrgMembersOK) GetPayload() *GetOrgMembersOKBody {
@@ -102,20 +140,60 @@ func NewGetOrgMembersForbidden() *GetOrgMembersForbidden {
 	return &GetOrgMembersForbidden{}
 }
 
-/*GetOrgMembersForbidden handles this case with default header values.
+/*
+GetOrgMembersForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetOrgMembersForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get org members forbidden response has a 2xx status code
+func (o *GetOrgMembersForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get org members forbidden response has a 3xx status code
+func (o *GetOrgMembersForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get org members forbidden response has a 4xx status code
+func (o *GetOrgMembersForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get org members forbidden response has a 5xx status code
+func (o *GetOrgMembersForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get org members forbidden response a status code equal to that given
+func (o *GetOrgMembersForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get org members forbidden response
+func (o *GetOrgMembersForbidden) Code() int {
+	return 403
+}
+
 func (o *GetOrgMembersForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersForbidden %s", 403, payload)
+}
+
+func (o *GetOrgMembersForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersForbidden %s", 403, payload)
 }
 
 func (o *GetOrgMembersForbidden) GetPayload() *models.ErrorPayload {
@@ -124,12 +202,16 @@ func (o *GetOrgMembersForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetOrgMembersForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -146,20 +228,60 @@ func NewGetOrgMembersNotFound() *GetOrgMembersNotFound {
 	return &GetOrgMembersNotFound{}
 }
 
-/*GetOrgMembersNotFound handles this case with default header values.
+/*
+GetOrgMembersNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetOrgMembersNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get org members not found response has a 2xx status code
+func (o *GetOrgMembersNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get org members not found response has a 3xx status code
+func (o *GetOrgMembersNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get org members not found response has a 4xx status code
+func (o *GetOrgMembersNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get org members not found response has a 5xx status code
+func (o *GetOrgMembersNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get org members not found response a status code equal to that given
+func (o *GetOrgMembersNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get org members not found response
+func (o *GetOrgMembersNotFound) Code() int {
+	return 404
+}
+
 func (o *GetOrgMembersNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersNotFound %s", 404, payload)
+}
+
+func (o *GetOrgMembersNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersNotFound %s", 404, payload)
 }
 
 func (o *GetOrgMembersNotFound) GetPayload() *models.ErrorPayload {
@@ -168,12 +290,16 @@ func (o *GetOrgMembersNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetOrgMembersNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -190,20 +316,60 @@ func NewGetOrgMembersUnprocessableEntity() *GetOrgMembersUnprocessableEntity {
 	return &GetOrgMembersUnprocessableEntity{}
 }
 
-/*GetOrgMembersUnprocessableEntity handles this case with default header values.
+/*
+GetOrgMembersUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetOrgMembersUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get org members unprocessable entity response has a 2xx status code
+func (o *GetOrgMembersUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get org members unprocessable entity response has a 3xx status code
+func (o *GetOrgMembersUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get org members unprocessable entity response has a 4xx status code
+func (o *GetOrgMembersUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get org members unprocessable entity response has a 5xx status code
+func (o *GetOrgMembersUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get org members unprocessable entity response a status code equal to that given
+func (o *GetOrgMembersUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the get org members unprocessable entity response
+func (o *GetOrgMembersUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *GetOrgMembersUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersUnprocessableEntity %s", 422, payload)
+}
+
+func (o *GetOrgMembersUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembersUnprocessableEntity %s", 422, payload)
 }
 
 func (o *GetOrgMembersUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -212,12 +378,16 @@ func (o *GetOrgMembersUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *GetOrgMembersUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -236,18 +406,46 @@ func NewGetOrgMembersDefault(code int) *GetOrgMembersDefault {
 	}
 }
 
-/*GetOrgMembersDefault handles this case with default header values.
+/*
+GetOrgMembersDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetOrgMembersDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get org members default response has a 2xx status code
+func (o *GetOrgMembersDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get org members default response has a 3xx status code
+func (o *GetOrgMembersDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get org members default response has a 4xx status code
+func (o *GetOrgMembersDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get org members default response has a 5xx status code
+func (o *GetOrgMembersDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get org members default response a status code equal to that given
+func (o *GetOrgMembersDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get org members default response
@@ -256,7 +454,13 @@ func (o *GetOrgMembersDefault) Code() int {
 }
 
 func (o *GetOrgMembersDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembers default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembers default %s", o._statusCode, payload)
+}
+
+func (o *GetOrgMembersDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/members][%d] getOrgMembers default %s", o._statusCode, payload)
 }
 
 func (o *GetOrgMembersDefault) GetPayload() *models.ErrorPayload {
@@ -265,12 +469,16 @@ func (o *GetOrgMembersDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetOrgMembersDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -282,7 +490,8 @@ func (o *GetOrgMembersDefault) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-/*GetOrgMembersOKBody get org members o k body
+/*
+GetOrgMembersOKBody get org members o k body
 swagger:model GetOrgMembersOKBody
 */
 type GetOrgMembersOKBody struct {
@@ -329,6 +538,8 @@ func (o *GetOrgMembersOKBody) validateData(formats strfmt.Registry) error {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("getOrgMembersOK" + "." + "data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("getOrgMembersOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -349,6 +560,68 @@ func (o *GetOrgMembersOKBody) validatePagination(formats strfmt.Registry) error 
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getOrgMembersOK" + "." + "pagination")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getOrgMembersOK" + "." + "pagination")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this get org members o k body based on the context it is used
+func (o *GetOrgMembersOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.contextValidatePagination(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetOrgMembersOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(o.Data); i++ {
+
+		if o.Data[i] != nil {
+
+			if swag.IsZero(o.Data[i]) { // not required
+				return nil
+			}
+
+			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("getOrgMembersOK" + "." + "data" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("getOrgMembersOK" + "." + "data" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (o *GetOrgMembersOKBody) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Pagination != nil {
+
+		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getOrgMembersOK" + "." + "pagination")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getOrgMembersOK" + "." + "pagination")
 			}
 			return err
 		}

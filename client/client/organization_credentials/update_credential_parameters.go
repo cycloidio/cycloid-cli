@@ -13,75 +13,92 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateCredentialParams creates a new UpdateCredentialParams object
-// with the default values initialized.
+// NewUpdateCredentialParams creates a new UpdateCredentialParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUpdateCredentialParams() *UpdateCredentialParams {
-	var ()
 	return &UpdateCredentialParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateCredentialParamsWithTimeout creates a new UpdateCredentialParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUpdateCredentialParamsWithTimeout(timeout time.Duration) *UpdateCredentialParams {
-	var ()
 	return &UpdateCredentialParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUpdateCredentialParamsWithContext creates a new UpdateCredentialParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUpdateCredentialParamsWithContext(ctx context.Context) *UpdateCredentialParams {
-	var ()
 	return &UpdateCredentialParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUpdateCredentialParamsWithHTTPClient creates a new UpdateCredentialParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUpdateCredentialParamsWithHTTPClient(client *http.Client) *UpdateCredentialParams {
-	var ()
 	return &UpdateCredentialParams{
 		HTTPClient: client,
 	}
 }
 
-/*UpdateCredentialParams contains all the parameters to send to the API endpoint
-for the update credential operation typically these are written to a http.Request
+/*
+UpdateCredentialParams contains all the parameters to send to the API endpoint
+
+	for the update credential operation.
+
+	Typically these are written to a http.Request.
 */
 type UpdateCredentialParams struct {
 
-	/*Body
-	  The information of the organization to update.
+	/* Body.
 
+	   The information of the organization to update.
 	*/
 	Body *models.UpdateCredential
-	/*CredentialCanonical
-	  A Credential canonical
 
+	/* CredentialCanonical.
+
+	   A Credential canonical
 	*/
 	CredentialCanonical string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the update credential params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateCredentialParams) WithDefaults() *UpdateCredentialParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the update credential params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateCredentialParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update credential params
@@ -157,7 +174,6 @@ func (o *UpdateCredentialParams) WriteToRequest(r runtime.ClientRequest, reg str
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

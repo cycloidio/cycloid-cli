@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // LogSourceEntry Log entry
 //
 // A log's entry which pertains to a specific log's source.
+//
 // swagger:model LogSourceEntry
 type LogSourceEntry struct {
 
@@ -62,7 +64,7 @@ func (m *LogSourceEntry) validateHost(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("host", "body", string(*m.Host), 1); err != nil {
+	if err := validate.MinLength("host", "body", *m.Host, 1); err != nil {
 		return err
 	}
 
@@ -75,7 +77,7 @@ func (m *LogSourceEntry) validateMessage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("message", "body", string(*m.Message), 1); err != nil {
+	if err := validate.MinLength("message", "body", *m.Message, 1); err != nil {
 		return err
 	}
 
@@ -88,6 +90,11 @@ func (m *LogSourceEntry) validateTimestamp(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this log source entry based on context it is used
+func (m *LogSourceEntry) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

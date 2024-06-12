@@ -6,17 +6,18 @@ package organization_pipelines_jobs_build
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateBuildReader is a Reader for the CreateBuild structure.
@@ -62,7 +63,8 @@ func NewCreateBuildOK() *CreateBuildOK {
 	return &CreateBuildOK{}
 }
 
-/*CreateBuildOK handles this case with default header values.
+/*
+CreateBuildOK describes a response with status code 200, with default header values.
 
 Create a new build for the pipeline's job and returns its details
 */
@@ -70,8 +72,44 @@ type CreateBuildOK struct {
 	Payload *CreateBuildOKBody
 }
 
+// IsSuccess returns true when this create build o k response has a 2xx status code
+func (o *CreateBuildOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this create build o k response has a 3xx status code
+func (o *CreateBuildOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create build o k response has a 4xx status code
+func (o *CreateBuildOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this create build o k response has a 5xx status code
+func (o *CreateBuildOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create build o k response a status code equal to that given
+func (o *CreateBuildOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the create build o k response
+func (o *CreateBuildOK) Code() int {
+	return 200
+}
+
 func (o *CreateBuildOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildOK %s", 200, payload)
+}
+
+func (o *CreateBuildOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildOK %s", 200, payload)
 }
 
 func (o *CreateBuildOK) GetPayload() *CreateBuildOKBody {
@@ -95,20 +133,60 @@ func NewCreateBuildForbidden() *CreateBuildForbidden {
 	return &CreateBuildForbidden{}
 }
 
-/*CreateBuildForbidden handles this case with default header values.
+/*
+CreateBuildForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type CreateBuildForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create build forbidden response has a 2xx status code
+func (o *CreateBuildForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create build forbidden response has a 3xx status code
+func (o *CreateBuildForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create build forbidden response has a 4xx status code
+func (o *CreateBuildForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create build forbidden response has a 5xx status code
+func (o *CreateBuildForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create build forbidden response a status code equal to that given
+func (o *CreateBuildForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the create build forbidden response
+func (o *CreateBuildForbidden) Code() int {
+	return 403
+}
+
 func (o *CreateBuildForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildForbidden %s", 403, payload)
+}
+
+func (o *CreateBuildForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildForbidden %s", 403, payload)
 }
 
 func (o *CreateBuildForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *CreateBuildForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *CreateBuildForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +221,60 @@ func NewCreateBuildNotFound() *CreateBuildNotFound {
 	return &CreateBuildNotFound{}
 }
 
-/*CreateBuildNotFound handles this case with default header values.
+/*
+CreateBuildNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type CreateBuildNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this create build not found response has a 2xx status code
+func (o *CreateBuildNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this create build not found response has a 3xx status code
+func (o *CreateBuildNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this create build not found response has a 4xx status code
+func (o *CreateBuildNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this create build not found response has a 5xx status code
+func (o *CreateBuildNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this create build not found response a status code equal to that given
+func (o *CreateBuildNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the create build not found response
+func (o *CreateBuildNotFound) Code() int {
+	return 404
+}
+
 func (o *CreateBuildNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildNotFound %s", 404, payload)
+}
+
+func (o *CreateBuildNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuildNotFound %s", 404, payload)
 }
 
 func (o *CreateBuildNotFound) GetPayload() *models.ErrorPayload {
@@ -161,12 +283,16 @@ func (o *CreateBuildNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *CreateBuildNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +311,46 @@ func NewCreateBuildDefault(code int) *CreateBuildDefault {
 	}
 }
 
-/*CreateBuildDefault handles this case with default header values.
+/*
+CreateBuildDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateBuildDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this create build default response has a 2xx status code
+func (o *CreateBuildDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this create build default response has a 3xx status code
+func (o *CreateBuildDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this create build default response has a 4xx status code
+func (o *CreateBuildDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this create build default response has a 5xx status code
+func (o *CreateBuildDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this create build default response a status code equal to that given
+func (o *CreateBuildDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the create build default response
@@ -205,7 +359,13 @@ func (o *CreateBuildDefault) Code() int {
 }
 
 func (o *CreateBuildDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuild default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuild default %s", o._statusCode, payload)
+}
+
+func (o *CreateBuildDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/jobs/{job_name}/builds][%d] createBuild default %s", o._statusCode, payload)
 }
 
 func (o *CreateBuildDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +374,16 @@ func (o *CreateBuildDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateBuildDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +395,8 @@ func (o *CreateBuildDefault) readResponse(response runtime.ClientResponse, consu
 	return nil
 }
 
-/*CreateBuildOKBody create build o k body
+/*
+CreateBuildOKBody create build o k body
 swagger:model CreateBuildOKBody
 */
 type CreateBuildOKBody struct {
@@ -265,6 +430,39 @@ func (o *CreateBuildOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createBuildOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createBuildOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this create build o k body based on the context it is used
+func (o *CreateBuildOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *CreateBuildOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("createBuildOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("createBuildOK" + "." + "data")
 			}
 			return err
 		}

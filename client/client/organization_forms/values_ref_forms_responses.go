@@ -6,17 +6,17 @@ package organization_forms
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // ValuesRefFormsReader is a Reader for the ValuesRefForms structure.
@@ -68,7 +68,8 @@ func NewValuesRefFormsOK() *ValuesRefFormsOK {
 	return &ValuesRefFormsOK{}
 }
 
-/*ValuesRefFormsOK handles this case with default header values.
+/*
+ValuesRefFormsOK describes a response with status code 200, with default header values.
 
 The result of validating the provided configuration
 */
@@ -76,8 +77,44 @@ type ValuesRefFormsOK struct {
 	Payload *ValuesRefFormsOKBody
 }
 
+// IsSuccess returns true when this values ref forms o k response has a 2xx status code
+func (o *ValuesRefFormsOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this values ref forms o k response has a 3xx status code
+func (o *ValuesRefFormsOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this values ref forms o k response has a 4xx status code
+func (o *ValuesRefFormsOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this values ref forms o k response has a 5xx status code
+func (o *ValuesRefFormsOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this values ref forms o k response a status code equal to that given
+func (o *ValuesRefFormsOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the values ref forms o k response
+func (o *ValuesRefFormsOK) Code() int {
+	return 200
+}
+
 func (o *ValuesRefFormsOK) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsOK %s", 200, payload)
+}
+
+func (o *ValuesRefFormsOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsOK %s", 200, payload)
 }
 
 func (o *ValuesRefFormsOK) GetPayload() *ValuesRefFormsOKBody {
@@ -101,20 +138,60 @@ func NewValuesRefFormsForbidden() *ValuesRefFormsForbidden {
 	return &ValuesRefFormsForbidden{}
 }
 
-/*ValuesRefFormsForbidden handles this case with default header values.
+/*
+ValuesRefFormsForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ValuesRefFormsForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this values ref forms forbidden response has a 2xx status code
+func (o *ValuesRefFormsForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this values ref forms forbidden response has a 3xx status code
+func (o *ValuesRefFormsForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this values ref forms forbidden response has a 4xx status code
+func (o *ValuesRefFormsForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this values ref forms forbidden response has a 5xx status code
+func (o *ValuesRefFormsForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this values ref forms forbidden response a status code equal to that given
+func (o *ValuesRefFormsForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the values ref forms forbidden response
+func (o *ValuesRefFormsForbidden) Code() int {
+	return 403
+}
+
 func (o *ValuesRefFormsForbidden) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsForbidden %s", 403, payload)
+}
+
+func (o *ValuesRefFormsForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsForbidden %s", 403, payload)
 }
 
 func (o *ValuesRefFormsForbidden) GetPayload() *models.ErrorPayload {
@@ -123,12 +200,16 @@ func (o *ValuesRefFormsForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *ValuesRefFormsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -145,20 +226,60 @@ func NewValuesRefFormsNotFound() *ValuesRefFormsNotFound {
 	return &ValuesRefFormsNotFound{}
 }
 
-/*ValuesRefFormsNotFound handles this case with default header values.
+/*
+ValuesRefFormsNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type ValuesRefFormsNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this values ref forms not found response has a 2xx status code
+func (o *ValuesRefFormsNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this values ref forms not found response has a 3xx status code
+func (o *ValuesRefFormsNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this values ref forms not found response has a 4xx status code
+func (o *ValuesRefFormsNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this values ref forms not found response has a 5xx status code
+func (o *ValuesRefFormsNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this values ref forms not found response a status code equal to that given
+func (o *ValuesRefFormsNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the values ref forms not found response
+func (o *ValuesRefFormsNotFound) Code() int {
+	return 404
+}
+
 func (o *ValuesRefFormsNotFound) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsNotFound %s", 404, payload)
+}
+
+func (o *ValuesRefFormsNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsNotFound %s", 404, payload)
 }
 
 func (o *ValuesRefFormsNotFound) GetPayload() *models.ErrorPayload {
@@ -167,12 +288,16 @@ func (o *ValuesRefFormsNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *ValuesRefFormsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -189,20 +314,60 @@ func NewValuesRefFormsUnprocessableEntity() *ValuesRefFormsUnprocessableEntity {
 	return &ValuesRefFormsUnprocessableEntity{}
 }
 
-/*ValuesRefFormsUnprocessableEntity handles this case with default header values.
+/*
+ValuesRefFormsUnprocessableEntity describes a response with status code 422, with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type ValuesRefFormsUnprocessableEntity struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this values ref forms unprocessable entity response has a 2xx status code
+func (o *ValuesRefFormsUnprocessableEntity) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this values ref forms unprocessable entity response has a 3xx status code
+func (o *ValuesRefFormsUnprocessableEntity) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this values ref forms unprocessable entity response has a 4xx status code
+func (o *ValuesRefFormsUnprocessableEntity) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this values ref forms unprocessable entity response has a 5xx status code
+func (o *ValuesRefFormsUnprocessableEntity) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this values ref forms unprocessable entity response a status code equal to that given
+func (o *ValuesRefFormsUnprocessableEntity) IsCode(code int) bool {
+	return code == 422
+}
+
+// Code gets the status code for the values ref forms unprocessable entity response
+func (o *ValuesRefFormsUnprocessableEntity) Code() int {
+	return 422
+}
+
 func (o *ValuesRefFormsUnprocessableEntity) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsUnprocessableEntity  %+v", 422, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsUnprocessableEntity %s", 422, payload)
+}
+
+func (o *ValuesRefFormsUnprocessableEntity) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefFormsUnprocessableEntity %s", 422, payload)
 }
 
 func (o *ValuesRefFormsUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -211,12 +376,16 @@ func (o *ValuesRefFormsUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *ValuesRefFormsUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -235,18 +404,46 @@ func NewValuesRefFormsDefault(code int) *ValuesRefFormsDefault {
 	}
 }
 
-/*ValuesRefFormsDefault handles this case with default header values.
+/*
+ValuesRefFormsDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type ValuesRefFormsDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this values ref forms default response has a 2xx status code
+func (o *ValuesRefFormsDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this values ref forms default response has a 3xx status code
+func (o *ValuesRefFormsDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this values ref forms default response has a 4xx status code
+func (o *ValuesRefFormsDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this values ref forms default response has a 5xx status code
+func (o *ValuesRefFormsDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this values ref forms default response a status code equal to that given
+func (o *ValuesRefFormsDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the values ref forms default response
@@ -255,7 +452,13 @@ func (o *ValuesRefFormsDefault) Code() int {
 }
 
 func (o *ValuesRefFormsDefault) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefForms default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefForms default %s", o._statusCode, payload)
+}
+
+func (o *ValuesRefFormsDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/forms/values_ref][%d] valuesRefForms default %s", o._statusCode, payload)
 }
 
 func (o *ValuesRefFormsDefault) GetPayload() *models.ErrorPayload {
@@ -264,12 +467,16 @@ func (o *ValuesRefFormsDefault) GetPayload() *models.ErrorPayload {
 
 func (o *ValuesRefFormsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -281,7 +488,8 @@ func (o *ValuesRefFormsDefault) readResponse(response runtime.ClientResponse, co
 	return nil
 }
 
-/*ValuesRefFormsOKBody values ref forms o k body
+/*
+ValuesRefFormsOKBody values ref forms o k body
 swagger:model ValuesRefFormsOKBody
 */
 type ValuesRefFormsOKBody struct {
@@ -307,10 +515,15 @@ func (o *ValuesRefFormsOKBody) Validate(formats strfmt.Registry) error {
 
 func (o *ValuesRefFormsOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("valuesRefFormsOK"+"."+"data", "body", o.Data); err != nil {
-		return err
+	if o.Data == nil {
+		return errors.Required("valuesRefFormsOK"+"."+"data", "body", nil)
 	}
 
+	return nil
+}
+
+// ContextValidate validates this values ref forms o k body based on context it is used
+func (o *ValuesRefFormsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

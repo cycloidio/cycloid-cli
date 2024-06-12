@@ -13,65 +13,80 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewSignUpParams creates a new SignUpParams object
-// with the default values initialized.
+// NewSignUpParams creates a new SignUpParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewSignUpParams() *SignUpParams {
-	var ()
 	return &SignUpParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewSignUpParamsWithTimeout creates a new SignUpParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewSignUpParamsWithTimeout(timeout time.Duration) *SignUpParams {
-	var ()
 	return &SignUpParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewSignUpParamsWithContext creates a new SignUpParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewSignUpParamsWithContext(ctx context.Context) *SignUpParams {
-	var ()
 	return &SignUpParams{
-
 		Context: ctx,
 	}
 }
 
 // NewSignUpParamsWithHTTPClient creates a new SignUpParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewSignUpParamsWithHTTPClient(client *http.Client) *SignUpParams {
-	var ()
 	return &SignUpParams{
 		HTTPClient: client,
 	}
 }
 
-/*SignUpParams contains all the parameters to send to the API endpoint
-for the sign up operation typically these are written to a http.Request
+/*
+SignUpParams contains all the parameters to send to the API endpoint
+
+	for the sign up operation.
+
+	Typically these are written to a http.Request.
 */
 type SignUpParams struct {
 
-	/*Body
-	  The user content
+	/* Body.
 
+	   The user content
 	*/
 	Body *models.NewUserAccount
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the sign up params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SignUpParams) WithDefaults() *SignUpParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the sign up params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *SignUpParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the sign up params
@@ -125,7 +140,6 @@ func (o *SignUpParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regist
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

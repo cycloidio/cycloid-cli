@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -40,12 +40,7 @@ func (m *CloudProviderAzureConfiguration) Type() string {
 
 // SetType sets the type of this subtype
 func (m *CloudProviderAzureConfiguration) SetType(val string) {
-
 }
-
-// Environment gets the environment of this subtype
-
-// ResourceGroupNames gets the resource group names of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *CloudProviderAzureConfiguration) UnmarshalJSON(raw []byte) error {
@@ -91,7 +86,6 @@ func (m *CloudProviderAzureConfiguration) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.Environment = data.Environment
-
 	result.ResourceGroupNames = data.ResourceGroupNames
 
 	*m = result
@@ -120,8 +114,7 @@ func (m CloudProviderAzureConfiguration) MarshalJSON() ([]byte, error) {
 		Environment: m.Environment,
 
 		ResourceGroupNames: m.ResourceGroupNames,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -130,8 +123,7 @@ func (m CloudProviderAzureConfiguration) MarshalJSON() ([]byte, error) {
 	}{
 
 		Type: m.Type(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -178,6 +170,16 @@ func (m *CloudProviderAzureConfiguration) validateResourceGroupNames(formats str
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this cloud provider azure configuration based on the context it is used
+func (m *CloudProviderAzureConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

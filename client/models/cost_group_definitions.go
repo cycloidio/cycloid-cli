@@ -6,9 +6,10 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -16,6 +17,7 @@ import (
 // CostGroupDefinitions CostGroupDefinitions
 //
 // This object contains the items describe in https://docs.aws.amazon.com/sdk-for-go/api/service/costexplorer/#GroupDefinition It also grouping the costs based on different elements: az, services, tags, etc
+//
 // swagger:model CostGroupDefinitions
 type CostGroupDefinitions struct {
 
@@ -58,15 +60,15 @@ func (m *CostGroupDefinitions) validateGroup(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("group", "body", string(*m.Group), 1); err != nil {
+	if err := validate.MinLength("group", "body", *m.Group, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("group", "body", string(*m.Group), 100); err != nil {
+	if err := validate.MaxLength("group", "body", *m.Group, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("group", "body", string(*m.Group), `^[a-zA-Z]+$`); err != nil {
+	if err := validate.Pattern("group", "body", *m.Group, `^[a-zA-Z]+$`); err != nil {
 		return err
 	}
 
@@ -79,18 +81,23 @@ func (m *CostGroupDefinitions) validateKey(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("key", "body", string(*m.Key), 1); err != nil {
+	if err := validate.MinLength("key", "body", *m.Key, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("key", "body", string(*m.Key), 100); err != nil {
+	if err := validate.MaxLength("key", "body", *m.Key, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("key", "body", string(*m.Key), `^[a-zA-Z]+$`); err != nil {
+	if err := validate.Pattern("key", "body", *m.Key, `^[a-zA-Z]+$`); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this cost group definitions based on context it is used
+func (m *CostGroupDefinitions) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

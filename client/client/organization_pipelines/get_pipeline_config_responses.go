@@ -6,17 +6,18 @@ package organization_pipelines
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetPipelineConfigReader is a Reader for the GetPipelineConfig structure.
@@ -62,7 +63,8 @@ func NewGetPipelineConfigOK() *GetPipelineConfigOK {
 	return &GetPipelineConfigOK{}
 }
 
-/*GetPipelineConfigOK handles this case with default header values.
+/*
+GetPipelineConfigOK describes a response with status code 200, with default header values.
 
 This endpoint returns the config of the pipeline.
 */
@@ -70,8 +72,44 @@ type GetPipelineConfigOK struct {
 	Payload *GetPipelineConfigOKBody
 }
 
+// IsSuccess returns true when this get pipeline config o k response has a 2xx status code
+func (o *GetPipelineConfigOK) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this get pipeline config o k response has a 3xx status code
+func (o *GetPipelineConfigOK) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get pipeline config o k response has a 4xx status code
+func (o *GetPipelineConfigOK) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this get pipeline config o k response has a 5xx status code
+func (o *GetPipelineConfigOK) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get pipeline config o k response a status code equal to that given
+func (o *GetPipelineConfigOK) IsCode(code int) bool {
+	return code == 200
+}
+
+// Code gets the status code for the get pipeline config o k response
+func (o *GetPipelineConfigOK) Code() int {
+	return 200
+}
+
 func (o *GetPipelineConfigOK) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigOK  %+v", 200, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigOK %s", 200, payload)
+}
+
+func (o *GetPipelineConfigOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigOK %s", 200, payload)
 }
 
 func (o *GetPipelineConfigOK) GetPayload() *GetPipelineConfigOKBody {
@@ -95,20 +133,60 @@ func NewGetPipelineConfigForbidden() *GetPipelineConfigForbidden {
 	return &GetPipelineConfigForbidden{}
 }
 
-/*GetPipelineConfigForbidden handles this case with default header values.
+/*
+GetPipelineConfigForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetPipelineConfigForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get pipeline config forbidden response has a 2xx status code
+func (o *GetPipelineConfigForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get pipeline config forbidden response has a 3xx status code
+func (o *GetPipelineConfigForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get pipeline config forbidden response has a 4xx status code
+func (o *GetPipelineConfigForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get pipeline config forbidden response has a 5xx status code
+func (o *GetPipelineConfigForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get pipeline config forbidden response a status code equal to that given
+func (o *GetPipelineConfigForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the get pipeline config forbidden response
+func (o *GetPipelineConfigForbidden) Code() int {
+	return 403
+}
+
 func (o *GetPipelineConfigForbidden) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigForbidden %s", 403, payload)
+}
+
+func (o *GetPipelineConfigForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigForbidden %s", 403, payload)
 }
 
 func (o *GetPipelineConfigForbidden) GetPayload() *models.ErrorPayload {
@@ -117,12 +195,16 @@ func (o *GetPipelineConfigForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetPipelineConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -139,20 +221,60 @@ func NewGetPipelineConfigNotFound() *GetPipelineConfigNotFound {
 	return &GetPipelineConfigNotFound{}
 }
 
-/*GetPipelineConfigNotFound handles this case with default header values.
+/*
+GetPipelineConfigNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetPipelineConfigNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this get pipeline config not found response has a 2xx status code
+func (o *GetPipelineConfigNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this get pipeline config not found response has a 3xx status code
+func (o *GetPipelineConfigNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this get pipeline config not found response has a 4xx status code
+func (o *GetPipelineConfigNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this get pipeline config not found response has a 5xx status code
+func (o *GetPipelineConfigNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this get pipeline config not found response a status code equal to that given
+func (o *GetPipelineConfigNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the get pipeline config not found response
+func (o *GetPipelineConfigNotFound) Code() int {
+	return 404
+}
+
 func (o *GetPipelineConfigNotFound) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigNotFound %s", 404, payload)
+}
+
+func (o *GetPipelineConfigNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfigNotFound %s", 404, payload)
 }
 
 func (o *GetPipelineConfigNotFound) GetPayload() *models.ErrorPayload {
@@ -161,12 +283,16 @@ func (o *GetPipelineConfigNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetPipelineConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -185,18 +311,46 @@ func NewGetPipelineConfigDefault(code int) *GetPipelineConfigDefault {
 	}
 }
 
-/*GetPipelineConfigDefault handles this case with default header values.
+/*
+GetPipelineConfigDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetPipelineConfigDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this get pipeline config default response has a 2xx status code
+func (o *GetPipelineConfigDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this get pipeline config default response has a 3xx status code
+func (o *GetPipelineConfigDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this get pipeline config default response has a 4xx status code
+func (o *GetPipelineConfigDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this get pipeline config default response has a 5xx status code
+func (o *GetPipelineConfigDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this get pipeline config default response a status code equal to that given
+func (o *GetPipelineConfigDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the get pipeline config default response
@@ -205,7 +359,13 @@ func (o *GetPipelineConfigDefault) Code() int {
 }
 
 func (o *GetPipelineConfigDefault) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfig default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfig default %s", o._statusCode, payload)
+}
+
+func (o *GetPipelineConfigDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config][%d] getPipelineConfig default %s", o._statusCode, payload)
 }
 
 func (o *GetPipelineConfigDefault) GetPayload() *models.ErrorPayload {
@@ -214,12 +374,16 @@ func (o *GetPipelineConfigDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetPipelineConfigDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -231,7 +395,8 @@ func (o *GetPipelineConfigDefault) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
-/*GetPipelineConfigOKBody get pipeline config o k body
+/*
+GetPipelineConfigOKBody get pipeline config o k body
 swagger:model GetPipelineConfigOKBody
 */
 type GetPipelineConfigOKBody struct {
@@ -261,6 +426,11 @@ func (o *GetPipelineConfigOKBody) validateData(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this get pipeline config o k body based on context it is used
+func (o *GetPipelineConfigOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

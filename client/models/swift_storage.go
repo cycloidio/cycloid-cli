@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -49,16 +49,7 @@ func (m *SwiftStorage) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *SwiftStorage) SetEngine(val string) {
-
 }
-
-// Container gets the container of this subtype
-
-// Object gets the object of this subtype
-
-// Region gets the region of this subtype
-
-// SkipVerifySsl gets the skip verify ssl of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *SwiftStorage) UnmarshalJSON(raw []byte) error {
@@ -112,11 +103,8 @@ func (m *SwiftStorage) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.Container = data.Container
-
 	result.Object = data.Object
-
 	result.Region = data.Region
-
 	result.SkipVerifySsl = data.SkipVerifySsl
 
 	*m = result
@@ -157,8 +145,7 @@ func (m SwiftStorage) MarshalJSON() ([]byte, error) {
 		Region: m.Region,
 
 		SkipVerifySsl: m.SkipVerifySsl,
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -167,8 +154,7 @@ func (m SwiftStorage) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	},
-	)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -209,6 +195,16 @@ func (m *SwiftStorage) validateRegion(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validate this swift storage based on the context it is used
+func (m *SwiftStorage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
 	return nil
 }
 

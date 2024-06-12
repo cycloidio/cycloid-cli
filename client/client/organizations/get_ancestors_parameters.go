@@ -13,63 +13,78 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 )
 
-// NewGetAncestorsParams creates a new GetAncestorsParams object
-// with the default values initialized.
+// NewGetAncestorsParams creates a new GetAncestorsParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewGetAncestorsParams() *GetAncestorsParams {
-	var ()
 	return &GetAncestorsParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetAncestorsParamsWithTimeout creates a new GetAncestorsParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewGetAncestorsParamsWithTimeout(timeout time.Duration) *GetAncestorsParams {
-	var ()
 	return &GetAncestorsParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewGetAncestorsParamsWithContext creates a new GetAncestorsParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewGetAncestorsParamsWithContext(ctx context.Context) *GetAncestorsParams {
-	var ()
 	return &GetAncestorsParams{
-
 		Context: ctx,
 	}
 }
 
 // NewGetAncestorsParamsWithHTTPClient creates a new GetAncestorsParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewGetAncestorsParamsWithHTTPClient(client *http.Client) *GetAncestorsParams {
-	var ()
 	return &GetAncestorsParams{
 		HTTPClient: client,
 	}
 }
 
-/*GetAncestorsParams contains all the parameters to send to the API endpoint
-for the get ancestors operation typically these are written to a http.Request
+/*
+GetAncestorsParams contains all the parameters to send to the API endpoint
+
+	for the get ancestors operation.
+
+	Typically these are written to a http.Request.
 */
 type GetAncestorsParams struct {
 
-	/*OrganizationCanonical
-	  A canonical of an organization.
+	/* OrganizationCanonical.
 
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the get ancestors params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetAncestorsParams) WithDefaults() *GetAncestorsParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the get ancestors params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *GetAncestorsParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get ancestors params

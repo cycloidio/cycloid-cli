@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewQuota New Quota
 //
-// The Quota defines the basic needs to create a quota
+// # The Quota defines the basic needs to create a quota
+//
 // swagger:model NewQuota
 type NewQuota struct {
 
@@ -85,7 +87,7 @@ func (m *NewQuota) validateCPU(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("cpu", "body", int64(*m.CPU), 0, false); err != nil {
+	if err := validate.MinimumUint("cpu", "body", *m.CPU, 0, false); err != nil {
 		return err
 	}
 
@@ -98,7 +100,7 @@ func (m *NewQuota) validateMemory(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("memory", "body", int64(*m.Memory), 0, false); err != nil {
+	if err := validate.MinimumUint("memory", "body", *m.Memory, 0, false); err != nil {
 		return err
 	}
 
@@ -111,15 +113,15 @@ func (m *NewQuota) validateResourcePoolCanonical(formats strfmt.Registry) error 
 		return err
 	}
 
-	if err := validate.MinLength("resource_pool_canonical", "body", string(*m.ResourcePoolCanonical), 3); err != nil {
+	if err := validate.MinLength("resource_pool_canonical", "body", *m.ResourcePoolCanonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("resource_pool_canonical", "body", string(*m.ResourcePoolCanonical), 100); err != nil {
+	if err := validate.MaxLength("resource_pool_canonical", "body", *m.ResourcePoolCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("resource_pool_canonical", "body", string(*m.ResourcePoolCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("resource_pool_canonical", "body", *m.ResourcePoolCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -132,7 +134,7 @@ func (m *NewQuota) validateStorage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("storage", "body", int64(*m.Storage), 0, false); err != nil {
+	if err := validate.MinimumUint("storage", "body", *m.Storage, 0, false); err != nil {
 		return err
 	}
 
@@ -145,18 +147,23 @@ func (m *NewQuota) validateTeamCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("team_canonical", "body", string(*m.TeamCanonical), 3); err != nil {
+	if err := validate.MinLength("team_canonical", "body", *m.TeamCanonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("team_canonical", "body", string(*m.TeamCanonical), 100); err != nil {
+	if err := validate.MaxLength("team_canonical", "body", *m.TeamCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("team_canonical", "body", string(*m.TeamCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("team_canonical", "body", *m.TeamCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this new quota based on context it is used
+func (m *NewQuota) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

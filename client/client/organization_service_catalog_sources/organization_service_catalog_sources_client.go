@@ -7,13 +7,38 @@ package organization_service_catalog_sources
 
 import (
 	"github.com/go-openapi/runtime"
-
-	strfmt "github.com/go-openapi/strfmt"
+	httptransport "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization service catalog sources API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
 	return &Client{transport: transport, formats: formats}
+}
+
+// New creates a new organization service catalog sources API client with basic auth credentials.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - user: user for basic authentication header.
+// - password: password for basic authentication header.
+func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
+	return &Client{transport: transport, formats: strfmt.Default}
+}
+
+// New creates a new organization service catalog sources API client with a bearer token for authentication.
+// It takes the following parameters:
+// - host: http host (github.com).
+// - basePath: any base path for the API client ("/v1", "/v3").
+// - scheme: http scheme ("http", "https").
+// - bearerToken: bearer token for Bearer authentication header.
+func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
+	transport := httptransport.New(host, basePath, []string{scheme})
+	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
+	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -24,16 +49,86 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
+// ClientOption may be used to customize the behavior of Client methods.
+type ClientOption func(*runtime.ClientOperation)
+
+// This client is generated with a few options you might find useful for your swagger spec.
+//
+// Feel free to add you own set of options.
+
+// WithContentType allows the client to force the Content-Type header
+// to negotiate a specific Consumer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithContentType(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ConsumesMediaTypes = []string{mime}
+	}
+}
+
+// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
+func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/json"}
+}
+
+// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
+func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
+func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
+	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
+}
+
+// WithAccept allows the client to force the Accept header
+// to negotiate a specific Producer from the server.
+//
+// You may use this option to set arbitrary extensions to your MIME media type.
+func WithAccept(mime string) ClientOption {
+	return func(r *runtime.ClientOperation) {
+		r.ProducesMediaTypes = []string{mime}
+	}
+}
+
+// WithAcceptApplicationJSON sets the Accept header to "application/json".
+func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/json"}
+}
+
+// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
+func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
+	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
+}
+
+// ClientService is the interface for Client methods
+type ClientService interface {
+	CreateServiceCatalogSource(params *CreateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateServiceCatalogSourceOK, error)
+
+	DeleteServiceCatalogSource(params *DeleteServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteServiceCatalogSourceNoContent, error)
+
+	GetServiceCatalogSource(params *GetServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogSourceOK, error)
+
+	GetServiceCatalogSources(params *GetServiceCatalogSourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogSourcesOK, error)
+
+	RefreshServiceCatalogSource(params *RefreshServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceOK, error)
+
+	UpdateServiceCatalogSource(params *UpdateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogSourceOK, error)
+
+	ValidateServiceCatalogSource(params *ValidateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateServiceCatalogSourceNoContent, error)
+
+	SetTransport(transport runtime.ClientTransport)
+}
+
 /*
 CreateServiceCatalogSource Creates a Service catalog source
 */
-func (a *Client) CreateServiceCatalogSource(params *CreateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter) (*CreateServiceCatalogSourceOK, error) {
+func (a *Client) CreateServiceCatalogSource(params *CreateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateServiceCatalogSourceOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateServiceCatalogSourceParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "createServiceCatalogSource",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources",
@@ -45,7 +140,12 @@ func (a *Client) CreateServiceCatalogSource(params *CreateServiceCatalogSourcePa
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -61,13 +161,12 @@ func (a *Client) CreateServiceCatalogSource(params *CreateServiceCatalogSourcePa
 /*
 DeleteServiceCatalogSource delete a Service catalog source
 */
-func (a *Client) DeleteServiceCatalogSource(params *DeleteServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteServiceCatalogSourceNoContent, error) {
+func (a *Client) DeleteServiceCatalogSource(params *DeleteServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteServiceCatalogSourceNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteServiceCatalogSourceParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "deleteServiceCatalogSource",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}",
@@ -79,7 +178,12 @@ func (a *Client) DeleteServiceCatalogSource(params *DeleteServiceCatalogSourcePa
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -95,13 +199,12 @@ func (a *Client) DeleteServiceCatalogSource(params *DeleteServiceCatalogSourcePa
 /*
 GetServiceCatalogSource Return the Service Catalog Source
 */
-func (a *Client) GetServiceCatalogSource(params *GetServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogSourceOK, error) {
+func (a *Client) GetServiceCatalogSource(params *GetServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogSourceOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetServiceCatalogSourceParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getServiceCatalogSource",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}",
@@ -113,7 +216,12 @@ func (a *Client) GetServiceCatalogSource(params *GetServiceCatalogSourceParams, 
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -129,13 +237,12 @@ func (a *Client) GetServiceCatalogSource(params *GetServiceCatalogSourceParams, 
 /*
 GetServiceCatalogSources Return all the private service catalogs
 */
-func (a *Client) GetServiceCatalogSources(params *GetServiceCatalogSourcesParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogSourcesOK, error) {
+func (a *Client) GetServiceCatalogSources(params *GetServiceCatalogSourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogSourcesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetServiceCatalogSourcesParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "getServiceCatalogSources",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources",
@@ -147,7 +254,12 @@ func (a *Client) GetServiceCatalogSources(params *GetServiceCatalogSourcesParams
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -163,13 +275,12 @@ func (a *Client) GetServiceCatalogSources(params *GetServiceCatalogSourcesParams
 /*
 RefreshServiceCatalogSource Refresh a Service catalog source
 */
-func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter) (*RefreshServiceCatalogSourceOK, error) {
+func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRefreshServiceCatalogSourceParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "refreshServiceCatalogSource",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/refresh",
@@ -181,7 +292,12 @@ func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSource
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -197,13 +313,12 @@ func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSource
 /*
 UpdateServiceCatalogSource Update a Service catalog source
 */
-func (a *Client) UpdateServiceCatalogSource(params *UpdateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateServiceCatalogSourceOK, error) {
+func (a *Client) UpdateServiceCatalogSource(params *UpdateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogSourceOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateServiceCatalogSourceParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "updateServiceCatalogSource",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}",
@@ -215,7 +330,12 @@ func (a *Client) UpdateServiceCatalogSource(params *UpdateServiceCatalogSourcePa
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
@@ -231,13 +351,12 @@ func (a *Client) UpdateServiceCatalogSource(params *UpdateServiceCatalogSourcePa
 /*
 ValidateServiceCatalogSource Validate a Service catalog source
 */
-func (a *Client) ValidateServiceCatalogSource(params *ValidateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateServiceCatalogSourceNoContent, error) {
+func (a *Client) ValidateServiceCatalogSource(params *ValidateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateServiceCatalogSourceNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewValidateServiceCatalogSourceParams()
 	}
-
-	result, err := a.transport.Submit(&runtime.ClientOperation{
+	op := &runtime.ClientOperation{
 		ID:                 "validateServiceCatalogSource",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/validate",
@@ -249,7 +368,12 @@ func (a *Client) ValidateServiceCatalogSource(params *ValidateServiceCatalogSour
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	})
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}

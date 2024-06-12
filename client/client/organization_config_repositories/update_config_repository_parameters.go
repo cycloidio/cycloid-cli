@@ -13,75 +13,92 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateConfigRepositoryParams creates a new UpdateConfigRepositoryParams object
-// with the default values initialized.
+// NewUpdateConfigRepositoryParams creates a new UpdateConfigRepositoryParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewUpdateConfigRepositoryParams() *UpdateConfigRepositoryParams {
-	var ()
 	return &UpdateConfigRepositoryParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateConfigRepositoryParamsWithTimeout creates a new UpdateConfigRepositoryParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewUpdateConfigRepositoryParamsWithTimeout(timeout time.Duration) *UpdateConfigRepositoryParams {
-	var ()
 	return &UpdateConfigRepositoryParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewUpdateConfigRepositoryParamsWithContext creates a new UpdateConfigRepositoryParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewUpdateConfigRepositoryParamsWithContext(ctx context.Context) *UpdateConfigRepositoryParams {
-	var ()
 	return &UpdateConfigRepositoryParams{
-
 		Context: ctx,
 	}
 }
 
 // NewUpdateConfigRepositoryParamsWithHTTPClient creates a new UpdateConfigRepositoryParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewUpdateConfigRepositoryParamsWithHTTPClient(client *http.Client) *UpdateConfigRepositoryParams {
-	var ()
 	return &UpdateConfigRepositoryParams{
 		HTTPClient: client,
 	}
 }
 
-/*UpdateConfigRepositoryParams contains all the parameters to send to the API endpoint
-for the update config repository operation typically these are written to a http.Request
+/*
+UpdateConfigRepositoryParams contains all the parameters to send to the API endpoint
+
+	for the update config repository operation.
+
+	Typically these are written to a http.Request.
 */
 type UpdateConfigRepositoryParams struct {
 
-	/*Body
-	  The information of the config repository to create.
+	/* Body.
 
+	   The information of the config repository to create.
 	*/
 	Body *models.UpdateConfigRepository
-	/*ConfigRepositoryCanonical
-	  Organization Config Repositories canonical
 
+	/* ConfigRepositoryCanonical.
+
+	   Organization Config Repositories canonical
 	*/
 	ConfigRepositoryCanonical string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the update config repository params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateConfigRepositoryParams) WithDefaults() *UpdateConfigRepositoryParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the update config repository params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *UpdateConfigRepositoryParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update config repository params
@@ -157,7 +174,6 @@ func (o *UpdateConfigRepositoryParams) WriteToRequest(r runtime.ClientRequest, r
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

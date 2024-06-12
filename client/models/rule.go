@@ -6,18 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Rule Rule
 //
-// Rules define the specific access to the platform
+// # Rules define the specific access to the platform
+//
 // swagger:model Rule
 type Rule struct {
 
@@ -27,7 +28,7 @@ type Rule struct {
 
 	// effect
 	// Required: true
-	// Enum: [allow]
+	// Enum: ["allow"]
 	Effect *string `json:"effect"`
 
 	// This is the id of the row from the database, but for blocking organizations we generate rules that are not in the database. When this happens the id is allowed to be 0.
@@ -90,7 +91,7 @@ const (
 
 // prop value enum
 func (m *Rule) validateEffectEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, ruleTypeEffectPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, ruleTypeEffectPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -116,10 +117,15 @@ func (m *Rule) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 0, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 0, false); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this rule based on context it is used
+func (m *Rule) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

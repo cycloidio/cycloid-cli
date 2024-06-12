@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,6 +18,7 @@ import (
 // NewRule NewRule
 //
 // NewRule represents an existing or new permission or constraint to access to an entity of the system. A Rule is aggregated into roles in order to be applied.
+//
 // swagger:model NewRule
 type NewRule struct {
 
@@ -27,7 +28,7 @@ type NewRule struct {
 
 	// effect
 	// Required: true
-	// Enum: [allow]
+	// Enum: ["allow"]
 	Effect *string `json:"effect"`
 
 	// It is the list of resources in which this Rule applies to, the format of it is the one on the Policy.Code but with the `canonical` of the entities like `organization:org-can:team:team-can` for an action of `organization:team:read`
@@ -81,7 +82,7 @@ const (
 
 // prop value enum
 func (m *NewRule) validateEffectEnum(path, location string, value string) error {
-	if err := validate.Enum(path, location, value, newRuleTypeEffectPropEnum); err != nil {
+	if err := validate.EnumCase(path, location, value, newRuleTypeEffectPropEnum, true); err != nil {
 		return err
 	}
 	return nil
@@ -98,6 +99,11 @@ func (m *NewRule) validateEffect(formats strfmt.Registry) error {
 		return err
 	}
 
+	return nil
+}
+
+// ContextValidate validates this new rule based on context it is used
+func (m *NewRule) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

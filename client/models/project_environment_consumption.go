@@ -6,16 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"context"
 
 	"github.com/go-openapi/errors"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // ProjectEnvironmentConsumption ProjectEnvironmentConsumption
 //
-// The Consumption of a Project in an Environment
+// # The Consumption of a Project in an Environment
+//
 // swagger:model ProjectEnvironmentConsumption
 type ProjectEnvironmentConsumption struct {
 
@@ -88,7 +90,7 @@ func (m *ProjectEnvironmentConsumption) validateCPU(formats strfmt.Registry) err
 		return err
 	}
 
-	if err := validate.MinimumInt("cpu", "body", int64(*m.CPU), 0, false); err != nil {
+	if err := validate.MinimumUint("cpu", "body", *m.CPU, 0, false); err != nil {
 		return err
 	}
 
@@ -105,6 +107,8 @@ func (m *ProjectEnvironmentConsumption) validateEnvironment(formats strfmt.Regis
 		if err := m.Environment.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("environment")
 			}
 			return err
 		}
@@ -119,7 +123,7 @@ func (m *ProjectEnvironmentConsumption) validateID(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -132,7 +136,7 @@ func (m *ProjectEnvironmentConsumption) validateMemory(formats strfmt.Registry) 
 		return err
 	}
 
-	if err := validate.MinimumInt("memory", "body", int64(*m.Memory), 0, false); err != nil {
+	if err := validate.MinimumUint("memory", "body", *m.Memory, 0, false); err != nil {
 		return err
 	}
 
@@ -149,6 +153,8 @@ func (m *ProjectEnvironmentConsumption) validateProject(formats strfmt.Registry)
 		if err := m.Project.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("project")
 			}
 			return err
 		}
@@ -163,8 +169,60 @@ func (m *ProjectEnvironmentConsumption) validateStorage(formats strfmt.Registry)
 		return err
 	}
 
-	if err := validate.MinimumInt("storage", "body", int64(*m.Storage), 0, false); err != nil {
+	if err := validate.MinimumUint("storage", "body", *m.Storage, 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this project environment consumption based on the context it is used
+func (m *ProjectEnvironmentConsumption) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateProject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *ProjectEnvironmentConsumption) contextValidateEnvironment(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Environment != nil {
+
+		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("environment")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("environment")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ProjectEnvironmentConsumption) contextValidateProject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Project != nil {
+
+		if err := m.Project.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("project")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("project")
+			}
+			return err
+		}
 	}
 
 	return nil

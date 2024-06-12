@@ -13,76 +13,93 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
+	"github.com/go-openapi/strfmt"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewCreateConfigRepositoryConfigParams creates a new CreateConfigRepositoryConfigParams object
-// with the default values initialized.
+// NewCreateConfigRepositoryConfigParams creates a new CreateConfigRepositoryConfigParams object,
+// with the default timeout for this client.
+//
+// Default values are not hydrated, since defaults are normally applied by the API server side.
+//
+// To enforce default values in parameter, use SetDefaults or WithDefaults.
 func NewCreateConfigRepositoryConfigParams() *CreateConfigRepositoryConfigParams {
-	var ()
 	return &CreateConfigRepositoryConfigParams{
-
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewCreateConfigRepositoryConfigParamsWithTimeout creates a new CreateConfigRepositoryConfigParams object
-// with the default values initialized, and the ability to set a timeout on a request
+// with the ability to set a timeout on a request.
 func NewCreateConfigRepositoryConfigParamsWithTimeout(timeout time.Duration) *CreateConfigRepositoryConfigParams {
-	var ()
 	return &CreateConfigRepositoryConfigParams{
-
 		timeout: timeout,
 	}
 }
 
 // NewCreateConfigRepositoryConfigParamsWithContext creates a new CreateConfigRepositoryConfigParams object
-// with the default values initialized, and the ability to set a context for a request
+// with the ability to set a context for a request.
 func NewCreateConfigRepositoryConfigParamsWithContext(ctx context.Context) *CreateConfigRepositoryConfigParams {
-	var ()
 	return &CreateConfigRepositoryConfigParams{
-
 		Context: ctx,
 	}
 }
 
 // NewCreateConfigRepositoryConfigParamsWithHTTPClient creates a new CreateConfigRepositoryConfigParams object
-// with the default values initialized, and the ability to set a custom HTTPClient for a request
+// with the ability to set a custom HTTPClient for a request.
 func NewCreateConfigRepositoryConfigParamsWithHTTPClient(client *http.Client) *CreateConfigRepositoryConfigParams {
-	var ()
 	return &CreateConfigRepositoryConfigParams{
 		HTTPClient: client,
 	}
 }
 
-/*CreateConfigRepositoryConfigParams contains all the parameters to send to the API endpoint
-for the create config repository config operation typically these are written to a http.Request
+/*
+CreateConfigRepositoryConfigParams contains all the parameters to send to the API endpoint
+
+	for the create config repository config operation.
+
+	Typically these are written to a http.Request.
 */
 type CreateConfigRepositoryConfigParams struct {
 
-	/*Body
-	  The body contains Service Catalog's config files and paths where they'll be created in the Config Repository.
+	/* Body.
 
+	   The body contains Service Catalog's config files and paths where they'll be created in the Config Repository.
 
 	*/
 	Body *models.SCConfig
-	/*ConfigRepositoryCanonical
-	  Organization Config Repositories canonical
 
+	/* ConfigRepositoryCanonical.
+
+	   Organization Config Repositories canonical
 	*/
 	ConfigRepositoryCanonical string
-	/*OrganizationCanonical
-	  A canonical of an organization.
 
+	/* OrganizationCanonical.
+
+	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
+}
+
+// WithDefaults hydrates default values in the create config repository config params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *CreateConfigRepositoryConfigParams) WithDefaults() *CreateConfigRepositoryConfigParams {
+	o.SetDefaults()
+	return o
+}
+
+// SetDefaults hydrates default values in the create config repository config params (not the query body).
+//
+// All values with no default are reset to their zero value.
+func (o *CreateConfigRepositoryConfigParams) SetDefaults() {
+	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the create config repository config params
@@ -158,7 +175,6 @@ func (o *CreateConfigRepositoryConfigParams) WriteToRequest(r runtime.ClientRequ
 		return err
 	}
 	var res []error
-
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

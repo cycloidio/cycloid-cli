@@ -6,16 +6,16 @@ package organization_invitations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	models "github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteInvitationReader is a Reader for the DeleteInvitation structure.
@@ -61,15 +61,50 @@ func NewDeleteInvitationNoContent() *DeleteInvitationNoContent {
 	return &DeleteInvitationNoContent{}
 }
 
-/*DeleteInvitationNoContent handles this case with default header values.
+/*
+DeleteInvitationNoContent describes a response with status code 204, with default header values.
 
 Invitation has been deleted.
 */
 type DeleteInvitationNoContent struct {
 }
 
+// IsSuccess returns true when this delete invitation no content response has a 2xx status code
+func (o *DeleteInvitationNoContent) IsSuccess() bool {
+	return true
+}
+
+// IsRedirect returns true when this delete invitation no content response has a 3xx status code
+func (o *DeleteInvitationNoContent) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete invitation no content response has a 4xx status code
+func (o *DeleteInvitationNoContent) IsClientError() bool {
+	return false
+}
+
+// IsServerError returns true when this delete invitation no content response has a 5xx status code
+func (o *DeleteInvitationNoContent) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete invitation no content response a status code equal to that given
+func (o *DeleteInvitationNoContent) IsCode(code int) bool {
+	return code == 204
+}
+
+// Code gets the status code for the delete invitation no content response
+func (o *DeleteInvitationNoContent) Code() int {
+	return 204
+}
+
 func (o *DeleteInvitationNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationNoContent ", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationNoContent", 204)
+}
+
+func (o *DeleteInvitationNoContent) String() string {
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationNoContent", 204)
 }
 
 func (o *DeleteInvitationNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -82,20 +117,60 @@ func NewDeleteInvitationForbidden() *DeleteInvitationForbidden {
 	return &DeleteInvitationForbidden{}
 }
 
-/*DeleteInvitationForbidden handles this case with default header values.
+/*
+DeleteInvitationForbidden describes a response with status code 403, with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteInvitationForbidden struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete invitation forbidden response has a 2xx status code
+func (o *DeleteInvitationForbidden) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete invitation forbidden response has a 3xx status code
+func (o *DeleteInvitationForbidden) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete invitation forbidden response has a 4xx status code
+func (o *DeleteInvitationForbidden) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete invitation forbidden response has a 5xx status code
+func (o *DeleteInvitationForbidden) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete invitation forbidden response a status code equal to that given
+func (o *DeleteInvitationForbidden) IsCode(code int) bool {
+	return code == 403
+}
+
+// Code gets the status code for the delete invitation forbidden response
+func (o *DeleteInvitationForbidden) Code() int {
+	return 403
+}
+
 func (o *DeleteInvitationForbidden) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationForbidden  %+v", 403, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationForbidden %s", 403, payload)
+}
+
+func (o *DeleteInvitationForbidden) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationForbidden %s", 403, payload)
 }
 
 func (o *DeleteInvitationForbidden) GetPayload() *models.ErrorPayload {
@@ -104,12 +179,16 @@ func (o *DeleteInvitationForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteInvitationForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -126,20 +205,60 @@ func NewDeleteInvitationNotFound() *DeleteInvitationNotFound {
 	return &DeleteInvitationNotFound{}
 }
 
-/*DeleteInvitationNotFound handles this case with default header values.
+/*
+DeleteInvitationNotFound describes a response with status code 404, with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteInvitationNotFound struct {
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
+// IsSuccess returns true when this delete invitation not found response has a 2xx status code
+func (o *DeleteInvitationNotFound) IsSuccess() bool {
+	return false
+}
+
+// IsRedirect returns true when this delete invitation not found response has a 3xx status code
+func (o *DeleteInvitationNotFound) IsRedirect() bool {
+	return false
+}
+
+// IsClientError returns true when this delete invitation not found response has a 4xx status code
+func (o *DeleteInvitationNotFound) IsClientError() bool {
+	return true
+}
+
+// IsServerError returns true when this delete invitation not found response has a 5xx status code
+func (o *DeleteInvitationNotFound) IsServerError() bool {
+	return false
+}
+
+// IsCode returns true when this delete invitation not found response a status code equal to that given
+func (o *DeleteInvitationNotFound) IsCode(code int) bool {
+	return code == 404
+}
+
+// Code gets the status code for the delete invitation not found response
+func (o *DeleteInvitationNotFound) Code() int {
+	return 404
+}
+
 func (o *DeleteInvitationNotFound) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationNotFound  %+v", 404, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationNotFound %s", 404, payload)
+}
+
+func (o *DeleteInvitationNotFound) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitationNotFound %s", 404, payload)
 }
 
 func (o *DeleteInvitationNotFound) GetPayload() *models.ErrorPayload {
@@ -148,12 +267,16 @@ func (o *DeleteInvitationNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteInvitationNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -172,18 +295,46 @@ func NewDeleteInvitationDefault(code int) *DeleteInvitationDefault {
 	}
 }
 
-/*DeleteInvitationDefault handles this case with default header values.
+/*
+DeleteInvitationDefault describes a response with status code -1, with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteInvitationDefault struct {
 	_statusCode int
 
-	/*The length of the response body in octets (8-bit bytes).
-	 */
+	/* The length of the response body in octets (8-bit bytes).
+
+	   Format: uint64
+	*/
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
+}
+
+// IsSuccess returns true when this delete invitation default response has a 2xx status code
+func (o *DeleteInvitationDefault) IsSuccess() bool {
+	return o._statusCode/100 == 2
+}
+
+// IsRedirect returns true when this delete invitation default response has a 3xx status code
+func (o *DeleteInvitationDefault) IsRedirect() bool {
+	return o._statusCode/100 == 3
+}
+
+// IsClientError returns true when this delete invitation default response has a 4xx status code
+func (o *DeleteInvitationDefault) IsClientError() bool {
+	return o._statusCode/100 == 4
+}
+
+// IsServerError returns true when this delete invitation default response has a 5xx status code
+func (o *DeleteInvitationDefault) IsServerError() bool {
+	return o._statusCode/100 == 5
+}
+
+// IsCode returns true when this delete invitation default response a status code equal to that given
+func (o *DeleteInvitationDefault) IsCode(code int) bool {
+	return o._statusCode == code
 }
 
 // Code gets the status code for the delete invitation default response
@@ -192,7 +343,13 @@ func (o *DeleteInvitationDefault) Code() int {
 }
 
 func (o *DeleteInvitationDefault) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitation default  %+v", o._statusCode, o.Payload)
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitation default %s", o._statusCode, payload)
+}
+
+func (o *DeleteInvitationDefault) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/invitations/{invitation_id}][%d] deleteInvitation default %s", o._statusCode, payload)
 }
 
 func (o *DeleteInvitationDefault) GetPayload() *models.ErrorPayload {
@@ -201,12 +358,16 @@ func (o *DeleteInvitationDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteInvitationDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// response header Content-Length
-	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
-	if err != nil {
-		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
+	// hydrates response header Content-Length
+	hdrContentLength := response.GetHeader("Content-Length")
+
+	if hdrContentLength != "" {
+		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
+		if err != nil {
+			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
+		}
+		o.ContentLength = valcontentLength
 	}
-	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
