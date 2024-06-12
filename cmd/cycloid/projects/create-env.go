@@ -27,10 +27,10 @@ func NewCreateEnvCommand() *cobra.Command {
 		Long: `
 You can provide stackforms variables via files, env var and the --vars flag
 The precedence order for variable provisioning is as follows:
-- --var-file flag
+- --var-file (-f) flag
 - env vars CY_STACKFORMS_VAR
-- --vars flag
-- --extra-var (-e) flag
+- --vars (-V) flag
+- --extra-var (-x) flag
 
 --vars accept json encoded values.
 
@@ -40,13 +40,12 @@ The output will be the generated configuration of the project.
 `,
 		Example: `
 # create 'prod' environment in 'my-project'
- cy --org my-org project create-stackforms-env \
+cy --org my-org project create-stackforms-env \
   --project my-project \
   --env prod \
   --use-case usecase-1 \
   --var-file vars.yml \
-  --vars '{"myRaw": "vars"}'
-`,
+  --vars '{"myRaw": "vars"}'`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			internal.Warning(cmd.ErrOrStderr(),
 				"This command will replace `cy project create-env` soon.\n"+
@@ -57,15 +56,18 @@ The output will be the generated configuration of the project.
 		RunE: createEnv,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
-	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
-	WithFlagConfig(cmd)
-	cmd.PersistentFlags().String("use-case", "", "the selected use case of the stack")
+	common.WithFlagOrg(cmd)
+	cmd.PersistentFlags().StringP("project", "p", "", "the selected project")
+	cmd.MarkFlagRequired("project")
+	cmd.PersistentFlags().StringP("use-case", "u", "", "the selected use case of the stack")
 	cmd.MarkFlagRequired("use-case")
-	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin")
-	cmd.PersistentFlags().StringArray("vars", nil, "JSON string containing variables")
-	cmd.PersistentFlags().BoolP("update", "u", false, "if true, existing environment will be updated, default: false")
-	cmd.PersistentFlags().StringToStringP("extra-var", "e", nil, "extra variable to be added to the environment in the -e key=value -e key=value format")
+	cmd.PersistentFlags().StringP("env", "e", "", "the environment name of the stack")
+	cmd.MarkFlagRequired("env")
+	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
+	cmd.PersistentFlags().StringArrayP("vars", "V", nil, "JSON string containing variables, can be set multiple times.")
+	cmd.PersistentFlags().StringToStringP("extra-var", "x", nil, "extra variable to be added to the environment in the -e key=value -e key=value format")
+	cmd.PersistentFlags().Bool("update", false, "Allow to override existing environment")
+	cmd.Flags().SortFlags = false
 
 	return cmd
 }
@@ -81,9 +83,20 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	// Right now, in the way orgs are handled, there is a possibility
+	// of an empty org.
+	// TODO: Fix in another PR about orgs.
+	if org == "" {
+		return errors.New("org is empty, please specify an org with --org")
+	}
+
 	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err
+	}
+
+	if len(project) < 2 {
+		return errors.New("project must be at least 2 characters long")
 	}
 
 	env, err := cmd.Flags().GetString("env")
@@ -91,9 +104,17 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	if len(env) < 2 {
+		return errors.New("env must be at least 2 characters long")
+	}
+
 	usecase, err := cmd.Flags().GetString("use-case")
 	if err != nil {
 		return err
+	}
+
+	if usecase == "" {
+		return errors.New("use-case is empty, please specify an use-case with --use-case")
 	}
 
 	update, err := cmd.Flags().GetBool("update")
@@ -211,8 +232,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// need to conver the environment to "new environment" as required
-	// by the API
 	envs := make([]*models.NewEnvironment, len(projectData.Environments))
 
 	for i, e := range projectData.Environments {
@@ -247,6 +266,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	// Infer icon and color based on usecase
 	var cloudProviderCanonical, icon, color string
 	switch strings.ToLower(usecase) {
 	case "aws":
@@ -254,7 +274,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		icon = "mdi-aws"
 		color = "staging"
 	case "azure":
-		cloudProviderCanonical = "azure"
+		cloudProviderCanonical = "azurerm"
 		icon = "mdi-azure"
 		color = "prod"
 	case "gcp":
@@ -283,8 +303,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			Vars:                 vars,
 		},
 	}
-
-	_, _ = m.CreateFormsConfig(org, project, *projectData.ServiceCatalog.Ref, inputs)
 
 	// Send the updateProject call
 	// TODO: Add support for resource pool canonical in case of resource quotas
