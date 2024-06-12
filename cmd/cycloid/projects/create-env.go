@@ -195,7 +195,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	// Get variables via CLI arguments --vars
+	// Get variables via CLI arguments --json-vars
 	cliVars, err := cmd.Flags().GetStringArray("json-vars")
 	if err != nil {
 		return err
@@ -206,15 +206,15 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		var extractedVars = make(map[string]interface{})
 		err = json.Unmarshal([]byte(varInput), &extractedVars)
 		if err != nil {
-			return fmt.Errorf("failed to parse var input '"+varInput+"' as JSON: %s", err)
+			return fmt.Errorf("failed to parse json-var input '"+varInput+"' as JSON: %s", err)
 		}
 
 		if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
-			return fmt.Errorf("failed to merge input vars from environment: %v", err)
+			return fmt.Errorf("failed to merge input vars from json-var input: %v\nerr: %v", extractedVars, err)
 		}
 	}
 
-	// Merge key/val from extraVar
+	// Merge key/val from --var
 	for k, v := range extraVar {
 		common.UpdateMapField(k, v, vars)
 	}
