@@ -177,6 +177,7 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 			return nil
 		}
 	}
+
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
 		r.SetHeaderParam("Authorization", "Bearer "+token)
 		return nil
