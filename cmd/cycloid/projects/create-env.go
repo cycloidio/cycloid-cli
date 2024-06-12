@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"os"
 	"strings"
 
@@ -170,7 +169,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			}
 
 			if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
-				log.Fatalf("failed to merge input vars from "+varFile+": %v", err)
+				return fmt.Errorf("failed to merge input vars from "+varFile+": %v", err)
 			}
 		}
 	}
@@ -188,7 +187,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		}
 
 		if err := mergo.Merge(&vars, envVars, mergo.WithOverride); err != nil {
-			log.Fatalf("failed to merge input vars from environment: %v", err)
+			return fmt.Errorf("failed to merge input vars from environment: %v", err)
 		}
 	}
 
@@ -207,7 +206,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		}
 
 		if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
-			log.Fatalf("failed to merge input vars from environment: %v", err)
+			return fmt.Errorf("failed to merge input vars from environment: %v", err)
 		}
 	}
 

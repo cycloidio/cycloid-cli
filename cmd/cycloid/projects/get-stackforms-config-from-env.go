@@ -34,7 +34,7 @@ The output object will be the same format required as input for 'cy project crea
 The values are generated as following:
 
 - First we get the current env value if exists (unless you set --default)
-- I no current value is present, we get the default
+- If no current value is present, we get the default
 - If no default is set, we set a zeroed value in the correct type: ("", 0, [], {})
 `,
 		Example: `
@@ -52,7 +52,7 @@ cy --org my-org project get-env-config my-project my-project use_case -o yaml
 	common.WithFlagOrg(cmd)
 	cmd.Flags().StringP("project", "p", "", "specify the project")
 	cmd.Flags().StringP("env", "e", "", "specify the env")
-	cmd.Flags().BoolP("default-values", "d", false, "if set, will fetch the default value from the stack instead of the current ones.")
+	cmd.Flags().BoolP("default", "d", false, "if set, will fetch the default value from the stack instead of the current ones.")
 
 	// This will display flag in the order declared above
 	cmd.Flags().SortFlags = false
@@ -76,7 +76,7 @@ func getStackFormsConfigFromEnv(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("missing use case argument")
 	}
 
-	getDefault, err := cmd.Flags().GetBool("default-values")
+	getDefault, err := cmd.Flags().GetBool("default")
 	if err != nil {
 		return err
 	}
@@ -108,14 +108,13 @@ func getStackFormsConfigFromEnv(cmd *cobra.Command, args []string) error {
 	}
 
 	resp, err := m.GetProjectConfig(org, project, env)
-	if err != nil || resp == nil {
+	if err != nil {
 		return printer.SmartPrint(p, nil, err, fmt.Sprint("failed to fetch project '", project, "' config for env '", env, "' in org '", org, "'"), printer.Options{}, cmd.OutOrStderr())
 	}
 
 	formData, err := common.ParseFormsConfig(resp, *resp.UseCase, !getDefault)
 	if err != nil {
-		fmt.Println("failed to parse config data")
-		return printer.SmartPrint(p, nil, err, "failed to get stack config", printer.Options{}, cmd.OutOrStdout())
+		return printer.SmartPrint(p, nil, err, "failed to get stack config, parsing failed.", printer.Options{}, cmd.OutOrStdout())
 	}
 
 	return printer.SmartPrint(p, formData, err, "failed to get stack config", printer.Options{}, cmd.OutOrStdout())
