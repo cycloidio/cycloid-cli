@@ -303,16 +303,16 @@ swagger:model GetSummaryOKBody
 */
 type GetSummaryOKBody struct {
 
-	// summary
+	// data
 	// Required: true
-	Summary *models.Summary `json:"summary"`
+	Data *models.Summary `json:"data"`
 }
 
 // Validate validates this get summary o k body
 func (o *GetSummaryOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := o.validateSummary(formats); err != nil {
+	if err := o.validateData(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -322,18 +322,18 @@ func (o *GetSummaryOKBody) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (o *GetSummaryOKBody) validateSummary(formats strfmt.Registry) error {
+func (o *GetSummaryOKBody) validateData(formats strfmt.Registry) error {
 
-	if err := validate.Required("getSummaryOK"+"."+"summary", "body", o.Summary); err != nil {
+	if err := validate.Required("getSummaryOK"+"."+"data", "body", o.Data); err != nil {
 		return err
 	}
 
-	if o.Summary != nil {
-		if err := o.Summary.Validate(formats); err != nil {
+	if o.Data != nil {
+		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getSummaryOK" + "." + "summary")
+				return ve.ValidateName("getSummaryOK" + "." + "data")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getSummaryOK" + "." + "summary")
+				return ce.ValidateName("getSummaryOK" + "." + "data")
 			}
 			return err
 		}
@@ -346,7 +346,7 @@ func (o *GetSummaryOKBody) validateSummary(formats strfmt.Registry) error {
 func (o *GetSummaryOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := o.contextValidateSummary(ctx, formats); err != nil {
+	if err := o.contextValidateData(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -356,15 +356,15 @@ func (o *GetSummaryOKBody) ContextValidate(ctx context.Context, formats strfmt.R
 	return nil
 }
 
-func (o *GetSummaryOKBody) contextValidateSummary(ctx context.Context, formats strfmt.Registry) error {
+func (o *GetSummaryOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
 
-	if o.Summary != nil {
+	if o.Data != nil {
 
-		if err := o.Summary.ContextValidate(ctx, formats); err != nil {
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getSummaryOK" + "." + "summary")
+				return ve.ValidateName("getSummaryOK" + "." + "data")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getSummaryOK" + "." + "summary")
+				return ce.ValidateName("getSummaryOK" + "." + "data")
 			}
 			return err
 		}
