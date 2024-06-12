@@ -11,7 +11,6 @@ import (
 )
 
 func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
-
 	params := organization_projects.NewGetProjectsParams()
 	params.SetOrganizationCanonical(org)
 
@@ -57,6 +56,7 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
 	params.WithEnvironmentCanonical(env)
+	params.WithDefaults()
 
 	resp, err := m.api.OrganizationProjects.GetProjectConfig(params, m.api.Credentials(&org))
 	if err != nil {
