@@ -1,7 +1,7 @@
 package stacks
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
@@ -48,7 +48,7 @@ func validateForm(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	rawForms, err := ioutil.ReadFile(formPath)
+	rawForms, err := os.ReadFile(formPath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read the form file")
 	}
