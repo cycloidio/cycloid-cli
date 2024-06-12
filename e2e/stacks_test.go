@@ -88,6 +88,6 @@ default:
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "errors\":[]")
+		assert.Contains(t, cmdOut, "errors\": []")
 	})
 }
