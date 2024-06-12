@@ -57,7 +57,6 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
 	params.WithEnvironmentCanonical(env)
-	params.SetContext(nil)
 
 	resp, err := m.api.OrganizationProjects.GetProjectConfig(params, m.api.Credentials(&org))
 	if err != nil {
@@ -143,8 +142,8 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 
 func (m *middleware) UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error) {
 	params := organization_projects.NewUpdateProjectParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(projectCanonical)
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(projectCanonical)
 
 	body := &models.UpdateProject{
 		Name:                      &projectName,
