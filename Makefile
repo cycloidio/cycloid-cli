@@ -99,19 +99,18 @@ test: ## Run end to end tests
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder
-	rm -rf ./client; \
-	mkdir ./client
+	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "rm -rf ./client" && mkdir -p client
 
 .PHONY: generate-client
-generate-client: ## Generate client from file at SWAGGER_FILE path
+generate-client: reset-old-client ## Generate client from file at SWAGGER_FILE path
 	echo "Creating swagger files"; \
-	rm -rf ./client; \
-	mkdir ./client;
-	$(SWAGGER_GENERATE) && rm swagger.yml
+	$(SWAGGER_GENERATE)
+	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 
 .PHONY: generate-client-from-local
 generate-client-from-local: reset-old-client ## Generates client using docker and local swagger (version -> v0.0-dev)
 	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE)
+	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 	echo 'v0.0-dev' > client/version
 
 .PHONY: generate-client-from-docs
@@ -124,6 +123,7 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
+	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 
 .PHONY: ecr-connect
 ecr-connect: ## Login to ecr, requires aws cli installed
