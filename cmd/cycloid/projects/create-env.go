@@ -23,28 +23,33 @@ func NewCreateEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create-stackforms-env",
 		Short: "create an environment within a project using StackForms.",
-		Long: `
-You can provide stackforms variables via files, env var and the --vars flag
-The precedence order for variable provisioning is as follows:
-- --var-file (-f) flag
-- env vars CY_STACKFORMS_VAR
-- --vars (-V) flag
-- --extra-var (-x) flag
+		Long: `Create or update (with --update) an environment within a project using StackForms.
 
---vars accept json encoded values.
+You can use the following ways to fill in the stackforms configuration (in the order of precedence):
+1. --var-file (-f) flag       -> accept any valid JSON file, if the filename is "-", read from stdin (can be set multiple times)
+2. CY_STACKFORMS_VAR env var  -> accept any valid JSON string (can be multiple json objects)
+3. --json-vars (-j) flag      -> accept any valid JSON string (can be set multiple times)
+4. --var (-V) flag            -> update a variable using a field=value syntax (e.g. -V section.group.key=value)
 
-You can provide values fron stdin using the '--var-file -' flag.
-
-The output will be the generated configuration of the project.
-`,
+The output will be the generated configuration of the project.`,
 		Example: `
 # create 'prod' environment in 'my-project'
-cy --org my-org project create-stackforms-env \
+cy project create-stackforms-env \
+  --org my-org \
   --project my-project \
   --env prod \
   --use-case usecase-1 \
   --var-file vars.yml \
-  --vars '{"myRaw": "vars"}'`,
+  --json-vars '{"myRaw": "vars"}' \
+  --var section.group.key=value
+
+# Update a project with some values from another environement
+# using -V to override some variables.
+cy project get-env-config --org my-org --project my-project --env prod \
+    | cy project create-stackforms-env --update \
+    --project my-project --env staging --use-case aws \
+    --var-file "-" \
+    -V "pipeline.database.dump_version=staging"`,
 		PreRunE: func(cmd *cobra.Command, args []string) error {
 			internal.Warning(cmd.ErrOrStderr(),
 				"This command will replace `cy project create-env` soon.\n"+
@@ -56,17 +61,16 @@ cy --org my-org project create-stackforms-env \
 	}
 
 	common.WithFlagOrg(cmd)
-	cmd.PersistentFlags().StringP("project", "p", "", "the selected project")
+	cmd.PersistentFlags().StringP("project", "p", "", "project name")
 	cmd.MarkFlagRequired("project")
+	cmd.PersistentFlags().StringP("env", "e", "", "environment name")
+	cmd.MarkFlagRequired("env")
 	cmd.PersistentFlags().StringP("use-case", "u", "", "the selected use case of the stack")
 	cmd.MarkFlagRequired("use-case")
-	cmd.PersistentFlags().StringP("env", "e", "", "the environment name of the stack")
-	cmd.MarkFlagRequired("env")
 	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
-	cmd.PersistentFlags().StringArrayP("vars", "V", nil, "JSON string containing variables, can be set multiple times.")
-	cmd.PersistentFlags().StringToStringP("extra-var", "x", nil, "extra variable to be added to the environment in the -e key=value -e key=value format")
-	cmd.PersistentFlags().Bool("update", false, "Allow to override existing environment")
-	cmd.Flags().SortFlags = false
+	cmd.PersistentFlags().StringArrayP("json-vars", "j", nil, "JSON string containing variables, can be set multiple times.")
+	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a field=value syntax (e.g. -V section.group.key=value)`)
+	cmd.PersistentFlags().Bool("update", false, "allow to override existing environment")
 
 	return cmd
 }
@@ -126,7 +130,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	extraVar, err := cmd.Flags().GetStringToString("extra-var")
+	extraVar, err := cmd.Flags().GetStringToString("var")
 	if err != nil {
 		return err
 	}
@@ -192,7 +196,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	}
 
 	// Get variables via CLI arguments --vars
-	cliVars, err := cmd.Flags().GetStringArray("vars")
+	cliVars, err := cmd.Flags().GetStringArray("json-vars")
 	if err != nil {
 		return err
 	}
@@ -226,6 +230,9 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	}
 
 	// fetch the printer from the factory
+	if output == "table" {
+		output = "json"
+	}
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
@@ -286,6 +293,8 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		color = "default"
 	}
 
+	// TODO: add the same color/icon as frontend for prod/prd staging/stg/preprod
+
 	// finally add the new environment
 	envs = append(envs, &models.NewEnvironment{
 		// TODO: https://github.com/cycloidio/cycloid-cli/issues/67
@@ -305,7 +314,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 	// Send the updateProject call
 	// TODO: Add support for resource pool canonical in case of resource quotas
-	resp, err := m.UpdateProject(org,
+	_, err = m.UpdateProject(org,
 		*projectData.Name,
 		project,
 		envs,
@@ -317,5 +326,16 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		*projectData.UpdatedAt,
 	)
 
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	errMsg := "failed to send config accepted by backend, returning inputs instead."
+	config, err := m.GetProjectConfig(org, project, env)
+	if err != nil {
+		return printer.SmartPrint(p, inputs[0].Vars, errors.Wrap(err, errMsg), "", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	formsConfig, err := common.ParseFormsConfig(config, usecase, true)
+	if err != nil {
+		return printer.SmartPrint(p, inputs[0].Vars, errors.Wrap(err, errMsg), "", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	return printer.SmartPrint(p, formsConfig, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
