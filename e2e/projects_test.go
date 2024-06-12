@@ -133,59 +133,18 @@ func TestProjects(t *testing.T) {
 		require.Contains(t, cmdOut, "canonical\": \"snowy")
 	})
 
-	t.Run("SuccessProjectsCreateStdin", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommandWithStdin([]string{
+	// Vars
+	t.Run("SuccessProjectsCreateVars", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", CY_TEST_ROOT_ORG,
 			"project",
 			"create-stackforms-env",
 			"--project", "snowy",
-			"--env", "testStackformsStdin",
+			"--env", "sf-vars",
 			"--use-case", "default",
-			"-f", "-",
-		}, `{ "pipeline": { "config": { "message": "filledFromStdin" } } }`)
-
-		assert.Nil(t, cmdErr)
-		var data = new(models.Project)
-		err := json.Unmarshal([]byte(cmdOut), data)
-		assert.NoError(t, err)
-
-		var found = false
-		for _, env := range data.Environments {
-			if *env.Canonical == "testStackformsStdin" {
-				found = true
-			}
-		}
-
-		if !found {
-			t.Errorf("testStackformsStdin not found in create project output")
-		}
-	})
-
-	t.Run("SuccessProjectGetConfigAsJSON", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"project",
-			"get-env-config",
-			"--project", "snowy",
-			"--env", "testStackformsStdin",
+			"-V", `{"pipeline": {"config": {"message": "filledFromVars"}}}`,
 		})
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "message\": \"filledFromStdin")
-	})
-
-	t.Run("SuccessProjectsCreateStdin", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommandWithStdin([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"project",
-			"create-stackform-env",
-			"--project", "snowy",
-			"--env", "testStackformsStdin",
-			"-f", "-",
-		}, `{ "pipeline": { "config": { "message": "filledFromStdin" } } }`)
 
 		assert.Nil(t, cmdErr)
 		require.Contains(t, cmdOut, "canonical\": \"snowy")
@@ -194,12 +153,12 @@ func TestProjects(t *testing.T) {
 		assert.Nil(t, err)
 	})
 
-	t.Run("SuccessProjectGetStackformEnvStdin", func(t *testing.T) {
+	t.Run("SuccessProjectGetStackformConfigVars", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", CY_TEST_ROOT_ORG,
 			"project", "get-env-config",
-			"-p", "snowy", "-e", "testStackformsStdin",
+			"-p", "snowy", "-e", "sf-vars",
 		})
 
 		assert.Nil(t, cmdErr)
@@ -211,7 +170,47 @@ func TestProjects(t *testing.T) {
 
 		message, ok := data["pipeline"]["config"]["message"]
 		assert.True(t, ok)
-		assert.Equal(t, "filledFromStdin", message)
+		assert.Equal(t, "filledFromVars", message)
+	})
+
+	// Extra vars
+	t.Run("SuccessProjectsCreateExtraVars", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create-stackforms-env",
+			"--project", "snowy",
+			"--env", "sf-extra-vars",
+			"--use-case", "default",
+			"-x", `pipeline.config.message=filledFromExtraVars`,
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Contains(t, cmdOut, "canonical\": \"snowy")
+		var data models.Project
+		err := json.Unmarshal([]byte(cmdOut), &data)
+		assert.Nil(t, err)
+	})
+
+	t.Run("SuccessProjectGetStackformConfigExtraVars", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project", "get-env-config",
+			"-p", "snowy", "-e", "sf-extra-vars",
+		})
+
+		assert.Nil(t, cmdErr)
+
+		// Output should be in json by default
+		var data = make(map[string]map[string]map[string]any)
+		err := json.Unmarshal([]byte(cmdOut), &data)
+		assert.NoError(t, err)
+
+		message, ok := data["pipeline"]["config"]["message"]
+		assert.True(t, ok)
+		assert.Equal(t, "filledFromExtraVars", message)
 	})
 
 	t.Run("SuccessProjectsDelete", func(t *testing.T) {
