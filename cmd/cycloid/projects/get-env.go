@@ -12,12 +12,14 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewGetStackformsConfigFromEnvCommand() *cobra.Command {
+func NewGetEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get-env-config <project?> <env?>",
+		Use: "get-env <project?> <env?>",
+		Aliases: []string{
+			"get-env-config",
+		},
 		Short: "Get the default stackforms config of a project's env",
-		Long: `
-This command will fetch the configuration of an environment in a project.
+		Long: `This command will fetch the configuration of an environment in a project.
 
 Output is in JSON by default.
 
@@ -35,17 +37,14 @@ The values are generated as following:
 
 - First we get the current env value if exists (unless you set --default)
 - If no current value is present, we get the default
-- If no default is set, we set a zeroed value in the correct type: ("", 0, [], {})
-`,
-		Example: `
-# Get the configuration as json (default)
+- If no default is set, we set a zeroed value in the correct type: ("", 0, [], {})`,
+		Example: `# Get the configuration as json (default)
 cy --org my-org project get-env-config -p my-project-canonical -e my-env-canonical
 
 # Get the configuration as yaml
-cy --org my-org project get-env-config my-project my-project use_case -o yaml
-`,
+cy --org my-org project get-env-config my-project my-project use_case -o yaml`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
-		RunE:    getStackFormsConfigFromEnv,
+		RunE:    getEnvConfig,
 		Args:    cobra.RangeArgs(0, 2),
 	}
 
@@ -60,7 +59,7 @@ cy --org my-org project get-env-config my-project my-project use_case -o yaml
 	return cmd
 }
 
-func getStackFormsConfigFromEnv(cmd *cobra.Command, args []string) error {
+func getEnvConfig(cmd *cobra.Command, args []string) error {
 	// Flags have precedence over args
 	project, err := cmd.Flags().GetString("project")
 	if len(args) >= 1 && project == "" {

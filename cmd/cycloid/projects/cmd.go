@@ -24,8 +24,6 @@ func NewCommands() *cobra.Command {
 		NewCreateRawEnvCommand(),
 		NewGetCommand(),
 		NewGetEnvCommand(),
-		//NewGetStackformsConfigCommand(), // needs implementation
-		NewGetStackformsConfigFromEnvCommand(),
 	)
 
 	return cmd
