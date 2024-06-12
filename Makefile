@@ -116,7 +116,7 @@ generate-client-from-local: reset-old-client ## Generates client using docker an
 
 .PHONY: generate-client-from-docs
 generate-client-from-docs: reset-old-client ## Generates client using docker and swagger from docs (version -> latest-api)
-	@wget https://docs.cycloid.io/api/swagger.yml
+	@wget -O swagger.yml https://docs.cycloid.io/api/swagger.yml
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
 	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE) && \
