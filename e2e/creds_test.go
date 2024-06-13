@@ -22,7 +22,7 @@ func TestCreds(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"vault")
+		require.Contains(t, cmdOut, "canonical\": \"vault")
 	})
 
 	t.Run("SuccessCredsGet", func(t *testing.T) {
@@ -35,7 +35,7 @@ func TestCreds(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"vault")
+		require.Contains(t, cmdOut, "canonical\": \"vault")
 	})
 
 	t.Run("SuccessCredsCreateCustom", func(t *testing.T) {
@@ -88,7 +88,7 @@ func TestCreds(t *testing.T) {
 			})
 
 			assert.Nil(t, cmdErr)
-			require.Contains(t, cmdOut, "new\":\"field")
+			require.Contains(t, cmdOut, "new\": \"field")
 		})
 	})
 	t.Run("SuccessCredsCreateCustomWithFile", func(t *testing.T) {

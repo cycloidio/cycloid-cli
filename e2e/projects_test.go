@@ -1,8 +1,9 @@
-//+build e2e
-
+// //go:build e2e
+// // +build e2e
 package e2e
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -62,10 +63,10 @@ func TestProjects(t *testing.T) {
 		// })
 		//
 		// assert.Nil(t, cmdErr)
-		// require.Contains(t, cmdOut, "canonical\":\"dummy")
+		// require.Contains(t, cmdOut, "canonical\": \"dummy")
 	})
 
-	t.Run("SuccessProjectsCreate", func(t *testing.T) {
+	t.Run("SuccessLegacyProjectsCreate", func(t *testing.T) {
 		WriteFile("/tmp/test_cli-pp-vars", TestPipelineVariables)
 		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
 
@@ -85,7 +86,7 @@ func TestProjects(t *testing.T) {
 			"create",
 			"--name", "snowy",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy",  CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
 			"--config-repo", "project-config",
 			"--env", "test",
 			"--usecase", "default",
@@ -95,10 +96,10 @@ func TestProjects(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"snowy")
+		require.Contains(t, cmdOut, "canonical\": \"snowy")
 	})
 
-	t.Run("SuccessProjectsCreateEnv", func(t *testing.T) {
+	t.Run("SuccessLegacyProjectsCreateEnv", func(t *testing.T) {
 		WriteFile("/tmp/test_cli-pp-vars", TestPipelineVariables)
 		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
 
@@ -116,7 +117,7 @@ func TestProjects(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"snowy")
+		require.Contains(t, cmdOut, "canonical\": \"snowy")
 	})
 
 	t.Run("SuccessProjectsList", func(t *testing.T) {
@@ -128,20 +129,89 @@ func TestProjects(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"snowy")
+		require.Contains(t, cmdOut, "canonical\": \"snowy")
 	})
 
-	t.Run("SuccessProjectsGet", func(t *testing.T) {
+	// Vars
+	t.Run("SuccessProjectsCreateVars", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", CY_TEST_ROOT_ORG,
 			"project",
-			"get",
+			"create-stackforms-env",
 			"--project", "snowy",
+			"--env", "sf-vars",
+			"--use-case", "default",
+			"-j", `{"pipeline": {"config": {"message": "filledFromVars"}}}`,
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\":\"snowy")
+		var data map[string]map[string]map[string]string
+		err := json.Unmarshal([]byte(cmdOut), &data)
+		assert.Nil(t, err)
+		assert.Equal(t, "filledFromVars", data["pipeline"]["config"]["message"])
+	})
+
+	t.Run("SuccessProjectGetStackformConfigVars", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project", "get-env-config",
+			"-p", "snowy", "-e", "sf-vars",
+		})
+
+		assert.Nil(t, cmdErr)
+
+		// Output should be in json by default
+		var data = make(map[string]map[string]map[string]any)
+		err := json.Unmarshal([]byte(cmdOut), &data)
+		assert.NoError(t, err)
+
+		message, ok := data["pipeline"]["config"]["message"]
+		assert.True(t, ok)
+		assert.Equal(t, "filledFromVars", message)
+	})
+
+	// Extra vars
+	t.Run("SuccessProjectsCreateExtraVars", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create-stackforms-env",
+			"--project", "snowy",
+			"--env", "sf-extra-vars",
+			"--use-case", "default",
+			"-V", `pipeline.config.message=filledFromExtraVars`,
+		})
+
+		assert.Nil(t, cmdErr)
+		var data map[string]map[string]map[string]string
+		err := json.Unmarshal([]byte(cmdOut), &data)
+		assert.Nil(t, err)
+		assert.Equal(t, "filledFromExtraVars", data["pipeline"]["config"]["message"])
+	})
+
+	// Extra vars
+	t.Run("SuccessProjectsCreateExtraVarsUpdate", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create-stackforms-env",
+			"--project", "snowy",
+			"--env", "sf-extra-vars",
+			"--use-case", "default",
+			"-V", `pipeline.config.message=filledFromExtraVars`,
+			"-V", `pipeline.config.message=filledFromExtraVars2`,
+			"--update",
+		})
+
+		assert.Nil(t, cmdErr)
+		var data map[string]map[string]map[string]string
+		err := json.Unmarshal([]byte(cmdOut), &data)
+		assert.Nil(t, err)
+		assert.Equal(t, "filledFromExtraVars2", data["pipeline"]["config"]["message"])
 	})
 
 	t.Run("SuccessProjectsDelete", func(t *testing.T) {
@@ -156,4 +226,5 @@ func TestProjects(t *testing.T) {
 		assert.Nil(t, cmdErr)
 		require.Equal(t, "", cmdOut)
 	})
+
 }

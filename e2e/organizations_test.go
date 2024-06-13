@@ -23,7 +23,7 @@ func TestOrganizations(t *testing.T) {
 		})
 
 		require.NoError(t, cmdErr)
-		assert.Contains(t, cmdOut, fmt.Sprintf("canonical\":\"%s", CY_TEST_ROOT_ORG))
+		assert.Contains(t, cmdOut, fmt.Sprintf("canonical\": \"%s", CY_TEST_ROOT_ORG))
 	})
 
 	childOrg := RandStringBytes(10)

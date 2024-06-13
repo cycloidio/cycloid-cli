@@ -20,7 +20,7 @@ import (
 // Validate the user to access to the application. The user can login with the primary email address or with username.
 //
 // MinProperties: 2
-// MaxProperties: 2
+// MaxProperties: 3
 //
 // swagger:model UserLogin
 type UserLogin struct {
@@ -197,9 +197,9 @@ func (m *UserLogin) Validate(formats strfmt.Registry) error {
 		return errors.TooFewProperties("", "body", 2)
 	}
 
-	// maxProperties: 2
-	if nprops > 2 {
-		return errors.TooManyProperties("", "body", 2)
+	// maxProperties: 3
+	if nprops > 3 {
+		return errors.TooManyProperties("", "body", 3)
 	}
 
 	if err := m.validateEmail(formats); err != nil {

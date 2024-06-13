@@ -36,7 +36,7 @@ func TestStacks(t *testing.T) {
 	// 		"--canonical", "magento",
 	// 	})
 	//
-	// 	require.Contains(t, cmdOut, "canonical\":\"magento")
+	// 	require.Contains(t, cmdOut, "canonical\": \"magento")
 	// })
 
 	t.Run("SuccessStacksList", func(t *testing.T) {
@@ -48,7 +48,7 @@ func TestStacks(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"stack-dummy")
+		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
 	})
 	t.Run("SuccessStacksGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
@@ -60,7 +60,7 @@ func TestStacks(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"stack-dummy")
+		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
 	})
 
 	t.Run("SuccessStacksValidateForm", func(t *testing.T) {
@@ -88,6 +88,6 @@ default:
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "errors\":[]")
+		assert.Contains(t, cmdOut, "errors\": []")
 	})
 }

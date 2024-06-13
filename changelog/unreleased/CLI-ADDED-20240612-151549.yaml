@@ -1,0 +1,10 @@
+component: CLI
+kind: ADDED
+body: Add project creation and config fetch using stackforms via the CLI
+time: 2024-06-12T15:15:49.798720082Z
+custom:
+  DETAILS: |
+    `cy project create-stackforms-env` command is now available and allows to create a env using stackforms
+    `cy project get-env` command is now available and allows to get a current environment stackforms configuration.
+  PR: "269"
+  TYPE: CLI

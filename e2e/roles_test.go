@@ -1,4 +1,5 @@
-//+build e2e
+//go:build e2e
+// +build e2e
 
 package e2e
 
@@ -21,7 +22,7 @@ func TestRoles(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"organization-member")
+		assert.Contains(t, cmdOut, "canonical\": \"organization-member")
 	})
 
 	t.Run("SuccessRolesGet", func(t *testing.T) {
@@ -34,6 +35,6 @@ func TestRoles(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"organization-member")
+		assert.Contains(t, cmdOut, "canonical\": \"organization-member")
 	})
 }

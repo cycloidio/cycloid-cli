@@ -34,7 +34,7 @@ func TestCatalogRepositories(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"stack-aws-sample")
+		assert.Contains(t, cmdOut, "canonical\": \"stack-aws-sample")
 	})
 
 	t.Run("SuccessCatalogRepositoriesList", func(t *testing.T) {
@@ -46,7 +46,7 @@ func TestCatalogRepositories(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"step-by-step")
+		assert.Contains(t, cmdOut, "canonical\": \"step-by-step")
 	})
 
 	t.Run("SuccessCatalogRepositoriesGet", func(t *testing.T) {
@@ -59,7 +59,7 @@ func TestCatalogRepositories(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\":\"stack-aws-sample")
+		assert.Contains(t, cmdOut, "canonical\": \"stack-aws-sample")
 	})
 
 	t.Run("SuccessCatalogRepositoriesRefresh", func(t *testing.T) {

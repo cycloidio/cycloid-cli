@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 
@@ -148,4 +150,24 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 
 	d := p.Data
 	return d, nil
+}
+
+func (m *middleware) CreateFormsConfig(org string, project string, serviceCatalogRef string, inputs []*models.FormInput) (map[string]any, error) {
+	body := &models.FormInputs{
+		ServiceCatalogRef: &serviceCatalogRef,
+		Inputs:            inputs,
+	}
+
+	params := organization_forms.NewCreateFormsConfigParams()
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(project)
+	params.WithBody(body)
+
+	resp, err := m.api.OrganizationForms.CreateFormsConfig(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	fmt.Println(resp.GetPayload().Data)
+	return nil, nil
 }
