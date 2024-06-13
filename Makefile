@@ -159,3 +159,4 @@ delete-local-be: ## Creates local BE instance and starts e2e tests. Note! Only f
 new-changelog-entry: ## Create a new entry for unreleased element
 	@echo ${PATH}
 	docker run -it -v $(CURDIR):/cycloid-cli -w /cycloid-cli cycloid/cycloid-toolkit changie new
+
