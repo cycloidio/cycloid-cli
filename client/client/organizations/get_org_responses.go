@@ -6,18 +6,17 @@ package organizations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetOrgReader is a Reader for the GetOrg structure.
@@ -63,8 +62,7 @@ func NewGetOrgOK() *GetOrgOK {
 	return &GetOrgOK{}
 }
 
-/*
-GetOrgOK describes a response with status code 200, with default header values.
+/*GetOrgOK handles this case with default header values.
 
 The information of the organization which has the specified ID.
 */
@@ -72,44 +70,8 @@ type GetOrgOK struct {
 	Payload *GetOrgOKBody
 }
 
-// IsSuccess returns true when this get org o k response has a 2xx status code
-func (o *GetOrgOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get org o k response has a 3xx status code
-func (o *GetOrgOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get org o k response has a 4xx status code
-func (o *GetOrgOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get org o k response has a 5xx status code
-func (o *GetOrgOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get org o k response a status code equal to that given
-func (o *GetOrgOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get org o k response
-func (o *GetOrgOK) Code() int {
-	return 200
-}
-
 func (o *GetOrgOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgOK %s", 200, payload)
-}
-
-func (o *GetOrgOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgOK  %+v", 200, o.Payload)
 }
 
 func (o *GetOrgOK) GetPayload() *GetOrgOKBody {
@@ -133,60 +95,20 @@ func NewGetOrgForbidden() *GetOrgForbidden {
 	return &GetOrgForbidden{}
 }
 
-/*
-GetOrgForbidden describes a response with status code 403, with default header values.
+/*GetOrgForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetOrgForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get org forbidden response has a 2xx status code
-func (o *GetOrgForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get org forbidden response has a 3xx status code
-func (o *GetOrgForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get org forbidden response has a 4xx status code
-func (o *GetOrgForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get org forbidden response has a 5xx status code
-func (o *GetOrgForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get org forbidden response a status code equal to that given
-func (o *GetOrgForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the get org forbidden response
-func (o *GetOrgForbidden) Code() int {
-	return 403
-}
-
 func (o *GetOrgForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgForbidden %s", 403, payload)
-}
-
-func (o *GetOrgForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetOrgForbidden) GetPayload() *models.ErrorPayload {
@@ -195,16 +117,12 @@ func (o *GetOrgForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetOrgForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -221,60 +139,20 @@ func NewGetOrgNotFound() *GetOrgNotFound {
 	return &GetOrgNotFound{}
 }
 
-/*
-GetOrgNotFound describes a response with status code 404, with default header values.
+/*GetOrgNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetOrgNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get org not found response has a 2xx status code
-func (o *GetOrgNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get org not found response has a 3xx status code
-func (o *GetOrgNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get org not found response has a 4xx status code
-func (o *GetOrgNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get org not found response has a 5xx status code
-func (o *GetOrgNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get org not found response a status code equal to that given
-func (o *GetOrgNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the get org not found response
-func (o *GetOrgNotFound) Code() int {
-	return 404
-}
-
 func (o *GetOrgNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgNotFound %s", 404, payload)
-}
-
-func (o *GetOrgNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrgNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetOrgNotFound) GetPayload() *models.ErrorPayload {
@@ -283,16 +161,12 @@ func (o *GetOrgNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetOrgNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -311,46 +185,18 @@ func NewGetOrgDefault(code int) *GetOrgDefault {
 	}
 }
 
-/*
-GetOrgDefault describes a response with status code -1, with default header values.
+/*GetOrgDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetOrgDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get org default response has a 2xx status code
-func (o *GetOrgDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get org default response has a 3xx status code
-func (o *GetOrgDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get org default response has a 4xx status code
-func (o *GetOrgDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get org default response has a 5xx status code
-func (o *GetOrgDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get org default response a status code equal to that given
-func (o *GetOrgDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get org default response
@@ -359,13 +205,7 @@ func (o *GetOrgDefault) Code() int {
 }
 
 func (o *GetOrgDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrg default %s", o._statusCode, payload)
-}
-
-func (o *GetOrgDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrg default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}][%d] getOrg default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetOrgDefault) GetPayload() *models.ErrorPayload {
@@ -374,16 +214,12 @@ func (o *GetOrgDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetOrgDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -395,8 +231,7 @@ func (o *GetOrgDefault) readResponse(response runtime.ClientResponse, consumer r
 	return nil
 }
 
-/*
-GetOrgOKBody get org o k body
+/*GetOrgOKBody get org o k body
 swagger:model GetOrgOKBody
 */
 type GetOrgOKBody struct {
@@ -430,39 +265,6 @@ func (o *GetOrgOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getOrgOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getOrgOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this get org o k body based on the context it is used
-func (o *GetOrgOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetOrgOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getOrgOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getOrgOK" + "." + "data")
 			}
 			return err
 		}

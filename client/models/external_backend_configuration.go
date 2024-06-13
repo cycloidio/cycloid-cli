@@ -7,30 +7,26 @@ package models
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
+
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
 // ExternalBackendConfiguration external backend configuration
-//
 // swagger:discriminator ExternalBackendConfiguration engine
 type ExternalBackendConfiguration interface {
 	runtime.Validatable
-	runtime.ContextValidatable
 
 	// engine
 	// Required: true
 	Engine() string
 	SetEngine(string)
-
-	// AdditionalProperties in base type shoud be handled just like regular properties
-	// At this moment, the base type property is pushed down to the subtype
 }
 
 type externalBackendConfiguration struct {
@@ -44,6 +40,7 @@ func (m *externalBackendConfiguration) Engine() string {
 
 // SetEngine sets the engine of this polymorphic type
 func (m *externalBackendConfiguration) SetEngine(val string) {
+
 }
 
 // UnmarshalExternalBackendConfigurationSlice unmarshals polymorphic slices of ExternalBackendConfiguration
@@ -67,7 +64,7 @@ func UnmarshalExternalBackendConfigurationSlice(reader io.Reader, consumer runti
 // UnmarshalExternalBackendConfiguration unmarshals polymorphic ExternalBackendConfiguration
 func UnmarshalExternalBackendConfiguration(reader io.Reader, consumer runtime.Consumer) (ExternalBackendConfiguration, error) {
 	// we need to read this twice, so first into a buffer
-	data, err := io.ReadAll(reader)
+	data, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}
@@ -98,106 +95,118 @@ func unmarshalExternalBackendConfiguration(data []byte, consumer runtime.Consume
 			return nil, err
 		}
 		return &result, nil
+
 	case "AWSRemoteTFState":
 		var result AWSRemoteTFState
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "AWSStorage":
 		var result AWSStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "AzureCostExport":
 		var result AzureCostExport
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "AzureRemoteTFState":
 		var result AzureRemoteTFState
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "AzureStorage":
 		var result AzureStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "ElasticsearchLogs":
 		var result ElasticsearchLogs
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "ExternalBackendConfiguration":
 		var result externalBackendConfiguration
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "GCPCostStorage":
 		var result GCPCostStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "GCPRemoteTFState":
 		var result GCPRemoteTFState
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "GCPStorage":
 		var result GCPStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "GitLabHTTPStorage":
 		var result GitLabHTTPStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "HTTPStorage":
 		var result HTTPStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "SwiftRemoteTFState":
 		var result SwiftRemoteTFState
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "SwiftStorage":
 		var result SwiftStorage
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "VMwareVsphere":
 		var result VMwareVsphere
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	}
 	return nil, errors.New(422, "invalid engine value: %q", getType.Engine)
+
 }
 
 // Validate validates this external backend configuration
 func (m *externalBackendConfiguration) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this external backend configuration based on context it is used
-func (m *externalBackendConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

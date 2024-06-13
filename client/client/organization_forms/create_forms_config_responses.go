@@ -6,17 +6,17 @@ package organization_forms
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateFormsConfigReader is a Reader for the CreateFormsConfig structure.
@@ -68,8 +68,7 @@ func NewCreateFormsConfigOK() *CreateFormsConfigOK {
 	return &CreateFormsConfigOK{}
 }
 
-/*
-CreateFormsConfigOK describes a response with status code 200, with default header values.
+/*CreateFormsConfigOK handles this case with default header values.
 
 Set of config to create the project / push onto repositories
 */
@@ -77,44 +76,8 @@ type CreateFormsConfigOK struct {
 	Payload *CreateFormsConfigOKBody
 }
 
-// IsSuccess returns true when this create forms config o k response has a 2xx status code
-func (o *CreateFormsConfigOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this create forms config o k response has a 3xx status code
-func (o *CreateFormsConfigOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create forms config o k response has a 4xx status code
-func (o *CreateFormsConfigOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this create forms config o k response has a 5xx status code
-func (o *CreateFormsConfigOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create forms config o k response a status code equal to that given
-func (o *CreateFormsConfigOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the create forms config o k response
-func (o *CreateFormsConfigOK) Code() int {
-	return 200
-}
-
 func (o *CreateFormsConfigOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigOK %s", 200, payload)
-}
-
-func (o *CreateFormsConfigOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigOK %s", 200, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateFormsConfigOK) GetPayload() *CreateFormsConfigOKBody {
@@ -138,60 +101,20 @@ func NewCreateFormsConfigForbidden() *CreateFormsConfigForbidden {
 	return &CreateFormsConfigForbidden{}
 }
 
-/*
-CreateFormsConfigForbidden describes a response with status code 403, with default header values.
+/*CreateFormsConfigForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type CreateFormsConfigForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this create forms config forbidden response has a 2xx status code
-func (o *CreateFormsConfigForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create forms config forbidden response has a 3xx status code
-func (o *CreateFormsConfigForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create forms config forbidden response has a 4xx status code
-func (o *CreateFormsConfigForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create forms config forbidden response has a 5xx status code
-func (o *CreateFormsConfigForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create forms config forbidden response a status code equal to that given
-func (o *CreateFormsConfigForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the create forms config forbidden response
-func (o *CreateFormsConfigForbidden) Code() int {
-	return 403
-}
-
 func (o *CreateFormsConfigForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigForbidden %s", 403, payload)
-}
-
-func (o *CreateFormsConfigForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigForbidden %s", 403, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigForbidden  %+v", 403, o.Payload)
 }
 
 func (o *CreateFormsConfigForbidden) GetPayload() *models.ErrorPayload {
@@ -200,16 +123,12 @@ func (o *CreateFormsConfigForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *CreateFormsConfigForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -226,60 +145,20 @@ func NewCreateFormsConfigNotFound() *CreateFormsConfigNotFound {
 	return &CreateFormsConfigNotFound{}
 }
 
-/*
-CreateFormsConfigNotFound describes a response with status code 404, with default header values.
+/*CreateFormsConfigNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type CreateFormsConfigNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this create forms config not found response has a 2xx status code
-func (o *CreateFormsConfigNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create forms config not found response has a 3xx status code
-func (o *CreateFormsConfigNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create forms config not found response has a 4xx status code
-func (o *CreateFormsConfigNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create forms config not found response has a 5xx status code
-func (o *CreateFormsConfigNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create forms config not found response a status code equal to that given
-func (o *CreateFormsConfigNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the create forms config not found response
-func (o *CreateFormsConfigNotFound) Code() int {
-	return 404
-}
-
 func (o *CreateFormsConfigNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigNotFound %s", 404, payload)
-}
-
-func (o *CreateFormsConfigNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigNotFound %s", 404, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigNotFound  %+v", 404, o.Payload)
 }
 
 func (o *CreateFormsConfigNotFound) GetPayload() *models.ErrorPayload {
@@ -288,16 +167,12 @@ func (o *CreateFormsConfigNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *CreateFormsConfigNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -314,60 +189,20 @@ func NewCreateFormsConfigUnprocessableEntity() *CreateFormsConfigUnprocessableEn
 	return &CreateFormsConfigUnprocessableEntity{}
 }
 
-/*
-CreateFormsConfigUnprocessableEntity describes a response with status code 422, with default header values.
+/*CreateFormsConfigUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateFormsConfigUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this create forms config unprocessable entity response has a 2xx status code
-func (o *CreateFormsConfigUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create forms config unprocessable entity response has a 3xx status code
-func (o *CreateFormsConfigUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create forms config unprocessable entity response has a 4xx status code
-func (o *CreateFormsConfigUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create forms config unprocessable entity response has a 5xx status code
-func (o *CreateFormsConfigUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create forms config unprocessable entity response a status code equal to that given
-func (o *CreateFormsConfigUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the create forms config unprocessable entity response
-func (o *CreateFormsConfigUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *CreateFormsConfigUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigUnprocessableEntity %s", 422, payload)
-}
-
-func (o *CreateFormsConfigUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfigUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *CreateFormsConfigUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -376,16 +211,12 @@ func (o *CreateFormsConfigUnprocessableEntity) GetPayload() *models.ErrorPayload
 
 func (o *CreateFormsConfigUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -404,46 +235,18 @@ func NewCreateFormsConfigDefault(code int) *CreateFormsConfigDefault {
 	}
 }
 
-/*
-CreateFormsConfigDefault describes a response with status code -1, with default header values.
+/*CreateFormsConfigDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateFormsConfigDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this create forms config default response has a 2xx status code
-func (o *CreateFormsConfigDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this create forms config default response has a 3xx status code
-func (o *CreateFormsConfigDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this create forms config default response has a 4xx status code
-func (o *CreateFormsConfigDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this create forms config default response has a 5xx status code
-func (o *CreateFormsConfigDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this create forms config default response a status code equal to that given
-func (o *CreateFormsConfigDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the create forms config default response
@@ -452,13 +255,7 @@ func (o *CreateFormsConfigDefault) Code() int {
 }
 
 func (o *CreateFormsConfigDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfig default %s", o._statusCode, payload)
-}
-
-func (o *CreateFormsConfigDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfig default %s", o._statusCode, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/projects/{project_canonical}/forms/config][%d] createFormsConfig default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *CreateFormsConfigDefault) GetPayload() *models.ErrorPayload {
@@ -467,16 +264,12 @@ func (o *CreateFormsConfigDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateFormsConfigDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -488,8 +281,7 @@ func (o *CreateFormsConfigDefault) readResponse(response runtime.ClientResponse,
 	return nil
 }
 
-/*
-CreateFormsConfigOKBody create forms config o k body
+/*CreateFormsConfigOKBody create forms config o k body
 swagger:model CreateFormsConfigOKBody
 */
 type CreateFormsConfigOKBody struct {
@@ -515,15 +307,10 @@ func (o *CreateFormsConfigOKBody) Validate(formats strfmt.Registry) error {
 
 func (o *CreateFormsConfigOKBody) validateData(formats strfmt.Registry) error {
 
-	if o.Data == nil {
-		return errors.Required("createFormsConfigOK"+"."+"data", "body", nil)
+	if err := validate.Required("createFormsConfigOK"+"."+"data", "body", o.Data); err != nil {
+		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this create forms config o k body based on context it is used
-func (o *CreateFormsConfigOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

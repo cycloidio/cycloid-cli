@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // UpdateCloudCostManagementAccount Update CloudCostManagementAccount
 //
 // Update a Cloud Cost Management account to connect CP.
-//
 // swagger:model UpdateCloudCostManagementAccount
 type UpdateCloudCostManagementAccount struct {
 
@@ -70,39 +68,6 @@ func (m *UpdateCloudCostManagementAccount) validateExternalBackend(formats strfm
 		if err := m.ExternalBackend.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("external_backend")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("external_backend")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this update cloud cost management account based on the context it is used
-func (m *UpdateCloudCostManagementAccount) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateExternalBackend(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *UpdateCloudCostManagementAccount) contextValidateExternalBackend(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.ExternalBackend != nil {
-
-		if err := m.ExternalBackend.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("external_backend")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("external_backend")
 			}
 			return err
 		}

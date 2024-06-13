@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
@@ -37,7 +37,12 @@ func (m *VMwareVsphere) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *VMwareVsphere) SetEngine(val string) {
+
 }
+
+// AllowUnverifiedSsl gets the allow unverified ssl of this subtype
+
+// Server gets the server of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *VMwareVsphere) UnmarshalJSON(raw []byte) error {
@@ -80,6 +85,7 @@ func (m *VMwareVsphere) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.AllowUnverifiedSsl = data.AllowUnverifiedSsl
+
 	result.Server = data.Server
 
 	*m = result
@@ -105,7 +111,8 @@ func (m VMwareVsphere) MarshalJSON() ([]byte, error) {
 		AllowUnverifiedSsl: m.AllowUnverifiedSsl,
 
 		Server: m.Server,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +121,8 @@ func (m VMwareVsphere) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -124,16 +132,6 @@ func (m VMwareVsphere) MarshalJSON() ([]byte, error) {
 
 // Validate validates this v mware vsphere
 func (m *VMwareVsphere) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-// ContextValidate validate this v mware vsphere based on the context it is used
-func (m *VMwareVsphere) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {

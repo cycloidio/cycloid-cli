@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // StateResourceInstances State Resource Instances
 //
-// # The Instances inside Resources of a State in the Inventory of the Project's environment
-//
+// The Instances inside Resources of a State in the Inventory of the Project's environment
 // swagger:model StateResourceInstances
 type StateResourceInstances struct {
 
@@ -28,11 +26,6 @@ type StateResourceInstances struct {
 
 // Validate validates this state resource instances
 func (m *StateResourceInstances) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this state resource instances based on context it is used
-func (m *StateResourceInstances) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

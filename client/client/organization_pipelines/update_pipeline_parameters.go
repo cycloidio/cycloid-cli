@@ -13,98 +13,80 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdatePipelineParams creates a new UpdatePipelineParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewUpdatePipelineParams creates a new UpdatePipelineParams object
+// with the default values initialized.
 func NewUpdatePipelineParams() *UpdatePipelineParams {
+	var ()
 	return &UpdatePipelineParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdatePipelineParamsWithTimeout creates a new UpdatePipelineParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewUpdatePipelineParamsWithTimeout(timeout time.Duration) *UpdatePipelineParams {
+	var ()
 	return &UpdatePipelineParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewUpdatePipelineParamsWithContext creates a new UpdatePipelineParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewUpdatePipelineParamsWithContext(ctx context.Context) *UpdatePipelineParams {
+	var ()
 	return &UpdatePipelineParams{
+
 		Context: ctx,
 	}
 }
 
 // NewUpdatePipelineParamsWithHTTPClient creates a new UpdatePipelineParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewUpdatePipelineParamsWithHTTPClient(client *http.Client) *UpdatePipelineParams {
+	var ()
 	return &UpdatePipelineParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-UpdatePipelineParams contains all the parameters to send to the API endpoint
-
-	for the update pipeline operation.
-
-	Typically these are written to a http.Request.
+/*UpdatePipelineParams contains all the parameters to send to the API endpoint
+for the update pipeline operation typically these are written to a http.Request
 */
 type UpdatePipelineParams struct {
 
-	/* Body.
+	/*Body
+	  The pipeline configuration
 
-	   The pipeline configuration
 	*/
 	Body *models.UpdatePipeline
+	/*InpathPipelineName
+	  A pipeline name
 
-	/* InpathPipelineName.
-
-	   A pipeline name
 	*/
 	InpathPipelineName string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the update pipeline params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdatePipelineParams) WithDefaults() *UpdatePipelineParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the update pipeline params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdatePipelineParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update pipeline params
@@ -191,6 +173,7 @@ func (o *UpdatePipelineParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

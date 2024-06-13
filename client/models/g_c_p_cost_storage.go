@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
@@ -41,7 +41,14 @@ func (m *GCPCostStorage) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *GCPCostStorage) SetEngine(val string) {
+
 }
+
+// Dataset gets the dataset of this subtype
+
+// ProjectID gets the project id of this subtype
+
+// Table gets the table of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *GCPCostStorage) UnmarshalJSON(raw []byte) error {
@@ -88,7 +95,9 @@ func (m *GCPCostStorage) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.Dataset = data.Dataset
+
 	result.ProjectID = data.ProjectID
+
 	result.Table = data.Table
 
 	*m = result
@@ -120,7 +129,8 @@ func (m GCPCostStorage) MarshalJSON() ([]byte, error) {
 		ProjectID: m.ProjectID,
 
 		Table: m.Table,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -129,7 +139,8 @@ func (m GCPCostStorage) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -139,16 +150,6 @@ func (m GCPCostStorage) MarshalJSON() ([]byte, error) {
 
 // Validate validates this g c p cost storage
 func (m *GCPCostStorage) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-// ContextValidate validate this g c p cost storage based on the context it is used
-func (m *GCPCostStorage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {

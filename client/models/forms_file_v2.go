@@ -6,17 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // FormsFileV2 Forms File V2
-//
 // swagger:model FormsFileV2
 type FormsFileV2 struct {
 
@@ -62,8 +61,6 @@ func (m *FormsFileV2) validateUseCases(formats strfmt.Registry) error {
 			if err := m.UseCases[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("use_cases" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("use_cases" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -78,45 +75,6 @@ func (m *FormsFileV2) validateVersion(formats strfmt.Registry) error {
 
 	if err := validate.Required("version", "body", m.Version); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this forms file v2 based on the context it is used
-func (m *FormsFileV2) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateUseCases(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *FormsFileV2) contextValidateUseCases(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.UseCases); i++ {
-
-		if m.UseCases[i] != nil {
-
-			if swag.IsZero(m.UseCases[i]) { // not required
-				return nil
-			}
-
-			if err := m.UseCases[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("use_cases" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("use_cases" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

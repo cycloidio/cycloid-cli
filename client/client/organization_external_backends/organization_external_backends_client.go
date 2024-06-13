@@ -9,38 +9,13 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization external backends API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
 	return &Client{transport: transport, formats: formats}
-}
-
-// New creates a new organization external backends API client with basic auth credentials.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - user: user for basic authentication header.
-// - password: password for basic authentication header.
-func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
-	return &Client{transport: transport, formats: strfmt.Default}
-}
-
-// New creates a new organization external backends API client with a bearer token for authentication.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - bearerToken: bearer token for Bearer authentication header.
-func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
-	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -51,82 +26,16 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
-// ClientOption may be used to customize the behavior of Client methods.
-type ClientOption func(*runtime.ClientOperation)
-
-// This client is generated with a few options you might find useful for your swagger spec.
-//
-// Feel free to add you own set of options.
-
-// WithContentType allows the client to force the Content-Type header
-// to negotiate a specific Consumer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithContentType(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ConsumesMediaTypes = []string{mime}
-	}
-}
-
-// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
-func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/json"}
-}
-
-// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
-func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
-func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
-}
-
-// WithAccept allows the client to force the Accept header
-// to negotiate a specific Producer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithAccept(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ProducesMediaTypes = []string{mime}
-	}
-}
-
-// WithAcceptApplicationJSON sets the Accept header to "application/json".
-func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/json"}
-}
-
-// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
-func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// ClientService is the interface for Client methods
-type ClientService interface {
-	CreateExternalBackend(params *CreateExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateExternalBackendOK, error)
-
-	DeleteExternalBackend(params *DeleteExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteExternalBackendNoContent, error)
-
-	GetExternalBackend(params *GetExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetExternalBackendOK, error)
-
-	GetExternalBackends(params *GetExternalBackendsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetExternalBackendsOK, error)
-
-	UpdateExternalBackend(params *UpdateExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateExternalBackendOK, error)
-
-	SetTransport(transport runtime.ClientTransport)
-}
-
 /*
 CreateExternalBackend Save information about the external backend
 */
-func (a *Client) CreateExternalBackend(params *CreateExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateExternalBackendOK, error) {
+func (a *Client) CreateExternalBackend(params *CreateExternalBackendParams, authInfo runtime.ClientAuthInfoWriter) (*CreateExternalBackendOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateExternalBackendParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createExternalBackend",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/external_backends",
@@ -138,12 +47,7 @@ func (a *Client) CreateExternalBackend(params *CreateExternalBackendParams, auth
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -160,12 +64,13 @@ func (a *Client) CreateExternalBackend(params *CreateExternalBackendParams, auth
 /*
 DeleteExternalBackend delete an External Backend
 */
-func (a *Client) DeleteExternalBackend(params *DeleteExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteExternalBackendNoContent, error) {
+func (a *Client) DeleteExternalBackend(params *DeleteExternalBackendParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteExternalBackendNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteExternalBackendParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteExternalBackend",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/external_backends/{external_backend_id}",
@@ -177,12 +82,7 @@ func (a *Client) DeleteExternalBackend(params *DeleteExternalBackendParams, auth
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -198,12 +98,13 @@ func (a *Client) DeleteExternalBackend(params *DeleteExternalBackendParams, auth
 /*
 GetExternalBackend Get the external backend
 */
-func (a *Client) GetExternalBackend(params *GetExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetExternalBackendOK, error) {
+func (a *Client) GetExternalBackend(params *GetExternalBackendParams, authInfo runtime.ClientAuthInfoWriter) (*GetExternalBackendOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetExternalBackendParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getExternalBackend",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/external_backends/{external_backend_id}",
@@ -215,12 +116,7 @@ func (a *Client) GetExternalBackend(params *GetExternalBackendParams, authInfo r
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -236,12 +132,13 @@ func (a *Client) GetExternalBackend(params *GetExternalBackendParams, authInfo r
 /*
 GetExternalBackends Get the list of organization external backends
 */
-func (a *Client) GetExternalBackends(params *GetExternalBackendsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetExternalBackendsOK, error) {
+func (a *Client) GetExternalBackends(params *GetExternalBackendsParams, authInfo runtime.ClientAuthInfoWriter) (*GetExternalBackendsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetExternalBackendsParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getExternalBackends",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/external_backends",
@@ -253,12 +150,7 @@ func (a *Client) GetExternalBackends(params *GetExternalBackendsParams, authInfo
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -274,12 +166,13 @@ func (a *Client) GetExternalBackends(params *GetExternalBackendsParams, authInfo
 /*
 UpdateExternalBackend Update an External Backend
 */
-func (a *Client) UpdateExternalBackend(params *UpdateExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateExternalBackendOK, error) {
+func (a *Client) UpdateExternalBackend(params *UpdateExternalBackendParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateExternalBackendOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateExternalBackendParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateExternalBackend",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/external_backends/{external_backend_id}",
@@ -291,12 +184,7 @@ func (a *Client) UpdateExternalBackend(params *UpdateExternalBackendParams, auth
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}

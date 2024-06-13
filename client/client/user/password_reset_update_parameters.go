@@ -13,80 +13,65 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewPasswordResetUpdateParams creates a new PasswordResetUpdateParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewPasswordResetUpdateParams creates a new PasswordResetUpdateParams object
+// with the default values initialized.
 func NewPasswordResetUpdateParams() *PasswordResetUpdateParams {
+	var ()
 	return &PasswordResetUpdateParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewPasswordResetUpdateParamsWithTimeout creates a new PasswordResetUpdateParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewPasswordResetUpdateParamsWithTimeout(timeout time.Duration) *PasswordResetUpdateParams {
+	var ()
 	return &PasswordResetUpdateParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewPasswordResetUpdateParamsWithContext creates a new PasswordResetUpdateParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewPasswordResetUpdateParamsWithContext(ctx context.Context) *PasswordResetUpdateParams {
+	var ()
 	return &PasswordResetUpdateParams{
+
 		Context: ctx,
 	}
 }
 
 // NewPasswordResetUpdateParamsWithHTTPClient creates a new PasswordResetUpdateParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewPasswordResetUpdateParamsWithHTTPClient(client *http.Client) *PasswordResetUpdateParams {
+	var ()
 	return &PasswordResetUpdateParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-PasswordResetUpdateParams contains all the parameters to send to the API endpoint
-
-	for the password reset update operation.
-
-	Typically these are written to a http.Request.
+/*PasswordResetUpdateParams contains all the parameters to send to the API endpoint
+for the password reset update operation typically these are written to a http.Request
 */
 type PasswordResetUpdateParams struct {
 
-	/* Body.
+	/*Body
+	  The reset password payload
 
-	   The reset password payload
 	*/
 	Body *models.UserPasswordResetUpdate
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the password reset update params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *PasswordResetUpdateParams) WithDefaults() *PasswordResetUpdateParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the password reset update params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *PasswordResetUpdateParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the password reset update params
@@ -140,6 +125,7 @@ func (o *PasswordResetUpdateParams) WriteToRequest(r runtime.ClientRequest, reg 
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

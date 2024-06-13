@@ -13,105 +13,86 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewCreateExternalBackendParams creates a new CreateExternalBackendParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewCreateExternalBackendParams creates a new CreateExternalBackendParams object
+// with the default values initialized.
 func NewCreateExternalBackendParams() *CreateExternalBackendParams {
+	var ()
 	return &CreateExternalBackendParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewCreateExternalBackendParamsWithTimeout creates a new CreateExternalBackendParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewCreateExternalBackendParamsWithTimeout(timeout time.Duration) *CreateExternalBackendParams {
+	var ()
 	return &CreateExternalBackendParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewCreateExternalBackendParamsWithContext creates a new CreateExternalBackendParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewCreateExternalBackendParamsWithContext(ctx context.Context) *CreateExternalBackendParams {
+	var ()
 	return &CreateExternalBackendParams{
+
 		Context: ctx,
 	}
 }
 
 // NewCreateExternalBackendParamsWithHTTPClient creates a new CreateExternalBackendParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewCreateExternalBackendParamsWithHTTPClient(client *http.Client) *CreateExternalBackendParams {
+	var ()
 	return &CreateExternalBackendParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-CreateExternalBackendParams contains all the parameters to send to the API endpoint
-
-	for the create external backend operation.
-
-	Typically these are written to a http.Request.
+/*CreateExternalBackendParams contains all the parameters to send to the API endpoint
+for the create external backend operation typically these are written to a http.Request
 */
 type CreateExternalBackendParams struct {
 
-	/* Body.
+	/*Body
+	  The information of the external backend
 
-	   The information of the external backend
 	*/
 	Body *models.NewExternalBackend
+	/*EnvironmentCanonical
+	  A list of environments' canonical to filter from
 
-	/* EnvironmentCanonical.
-
-	   A list of environments' canonical to filter from
 	*/
 	EnvironmentCanonical *string
+	/*ExternalBackendDefault
+	  Filter for default Terraform External Backend
 
-	/* ExternalBackendDefault.
-
-	   Filter for default Terraform External Backend
 	*/
 	ExternalBackendDefault *bool
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A list of projects' canonical to filter from
 
-	/* ProjectCanonical.
-
-	   A list of projects' canonical to filter from
 	*/
 	ProjectCanonical *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the create external backend params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *CreateExternalBackendParams) WithDefaults() *CreateExternalBackendParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the create external backend params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *CreateExternalBackendParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the create external backend params
@@ -209,6 +190,7 @@ func (o *CreateExternalBackendParams) WriteToRequest(r runtime.ClientRequest, re
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
@@ -219,34 +201,32 @@ func (o *CreateExternalBackendParams) WriteToRequest(r runtime.ClientRequest, re
 
 		// query param environment_canonical
 		var qrEnvironmentCanonical string
-
 		if o.EnvironmentCanonical != nil {
 			qrEnvironmentCanonical = *o.EnvironmentCanonical
 		}
 		qEnvironmentCanonical := qrEnvironmentCanonical
 		if qEnvironmentCanonical != "" {
-
 			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ExternalBackendDefault != nil {
 
 		// query param external_backend_default
 		var qrExternalBackendDefault bool
-
 		if o.ExternalBackendDefault != nil {
 			qrExternalBackendDefault = *o.ExternalBackendDefault
 		}
 		qExternalBackendDefault := swag.FormatBool(qrExternalBackendDefault)
 		if qExternalBackendDefault != "" {
-
 			if err := r.SetQueryParam("external_backend_default", qExternalBackendDefault); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param organization_canonical
@@ -258,17 +238,16 @@ func (o *CreateExternalBackendParams) WriteToRequest(r runtime.ClientRequest, re
 
 		// query param project_canonical
 		var qrProjectCanonical string
-
 		if o.ProjectCanonical != nil {
 			qrProjectCanonical = *o.ProjectCanonical
 		}
 		qProjectCanonical := qrProjectCanonical
 		if qProjectCanonical != "" {
-
 			if err := r.SetQueryParam("project_canonical", qProjectCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if len(res) > 0 {

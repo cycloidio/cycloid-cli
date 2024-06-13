@@ -13,102 +13,118 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewListServiceCatalogsParams creates a new ListServiceCatalogsParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewListServiceCatalogsParams creates a new ListServiceCatalogsParams object
+// with the default values initialized.
 func NewListServiceCatalogsParams() *ListServiceCatalogsParams {
+	var (
+		pageIndexDefault              = uint32(1)
+		pageSizeDefault               = uint32(1000)
+		serviceCatalogTemplateDefault = bool(false)
+	)
 	return &ListServiceCatalogsParams{
+		PageIndex:              &pageIndexDefault,
+		PageSize:               &pageSizeDefault,
+		ServiceCatalogTemplate: &serviceCatalogTemplateDefault,
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewListServiceCatalogsParamsWithTimeout creates a new ListServiceCatalogsParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewListServiceCatalogsParamsWithTimeout(timeout time.Duration) *ListServiceCatalogsParams {
+	var (
+		pageIndexDefault              = uint32(1)
+		pageSizeDefault               = uint32(1000)
+		serviceCatalogTemplateDefault = bool(false)
+	)
 	return &ListServiceCatalogsParams{
+		PageIndex:              &pageIndexDefault,
+		PageSize:               &pageSizeDefault,
+		ServiceCatalogTemplate: &serviceCatalogTemplateDefault,
+
 		timeout: timeout,
 	}
 }
 
 // NewListServiceCatalogsParamsWithContext creates a new ListServiceCatalogsParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewListServiceCatalogsParamsWithContext(ctx context.Context) *ListServiceCatalogsParams {
+	var (
+		pageIndexDefault              = uint32(1)
+		pageSizeDefault               = uint32(1000)
+		serviceCatalogTemplateDefault = bool(false)
+	)
 	return &ListServiceCatalogsParams{
+		PageIndex:              &pageIndexDefault,
+		PageSize:               &pageSizeDefault,
+		ServiceCatalogTemplate: &serviceCatalogTemplateDefault,
+
 		Context: ctx,
 	}
 }
 
 // NewListServiceCatalogsParamsWithHTTPClient creates a new ListServiceCatalogsParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewListServiceCatalogsParamsWithHTTPClient(client *http.Client) *ListServiceCatalogsParams {
+	var (
+		pageIndexDefault              = uint32(1)
+		pageSizeDefault               = uint32(1000)
+		serviceCatalogTemplateDefault = bool(false)
+	)
 	return &ListServiceCatalogsParams{
-		HTTPClient: client,
+		PageIndex:              &pageIndexDefault,
+		PageSize:               &pageSizeDefault,
+		ServiceCatalogTemplate: &serviceCatalogTemplateDefault,
+		HTTPClient:             client,
 	}
 }
 
-/*
-ListServiceCatalogsParams contains all the parameters to send to the API endpoint
-
-	for the list service catalogs operation.
-
-	Typically these are written to a http.Request.
+/*ListServiceCatalogsParams contains all the parameters to send to the API endpoint
+for the list service catalogs operation typically these are written to a http.Request
 */
 type ListServiceCatalogsParams struct {
 
-	/* OrganizationCanonical.
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*PageIndex
+	  The page number to request. The first page is 1.
 
-	/* PageIndex.
-
-	   The page number to request. The first page is 1.
-
-	   Format: uint32
-	   Default: 1
 	*/
 	PageIndex *uint32
+	/*PageSize
+	  The number of items at most which the response can have.
 
-	/* PageSize.
-
-	   The number of items at most which the response can have.
-
-	   Format: uint32
-	   Default: 1000
 	*/
 	PageSize *uint32
+	/*ServiceCatalogOwn
+	  Filters the Service Catalogs to only show the ones owned by the User Organization
 
-	/* ServiceCatalogOwn.
-
-	   Filters the Service Catalogs to only show the ones owned by the User Organization
 
 	*/
 	ServiceCatalogOwn *bool
+	/*ServiceCatalogStatus
+	  The status of the catalog service used for filtering.
 
-	/* ServiceCatalogStatus.
-
-	   The status of the catalog service used for filtering.
 	*/
 	ServiceCatalogStatus *string
+	/*ServiceCatalogTemplate
+	  Filters the Service Catalogs to only show the ones that are templates
 
-	/* ServiceCatalogTemplate.
-
-	   Filters the Service Catalogs to only show the ones that are templates
 
 	*/
 	ServiceCatalogTemplate *bool
+	/*ServiceCatalogTrusted
+	  Filters the Service Catalogs to only show the ones that are from trusted source (Cycloid)
 
-	/* ServiceCatalogTrusted.
-
-	   Filters the Service Catalogs to only show the ones that are from trusted source (Cycloid)
 
 	*/
 	ServiceCatalogTrusted *bool
@@ -116,38 +132,6 @@ type ListServiceCatalogsParams struct {
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the list service catalogs params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *ListServiceCatalogsParams) WithDefaults() *ListServiceCatalogsParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the list service catalogs params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *ListServiceCatalogsParams) SetDefaults() {
-	var (
-		pageIndexDefault = uint32(1)
-
-		pageSizeDefault = uint32(1000)
-
-		serviceCatalogTemplateDefault = bool(false)
-	)
-
-	val := ListServiceCatalogsParams{
-		PageIndex:              &pageIndexDefault,
-		PageSize:               &pageSizeDefault,
-		ServiceCatalogTemplate: &serviceCatalogTemplateDefault,
-	}
-
-	val.timeout = o.timeout
-	val.Context = o.Context
-	val.HTTPClient = o.HTTPClient
-	*o = val
 }
 
 // WithTimeout adds the timeout to the list service catalogs params
@@ -277,102 +261,96 @@ func (o *ListServiceCatalogsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 		// query param page_index
 		var qrPageIndex uint32
-
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
-
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
-
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
-
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ServiceCatalogOwn != nil {
 
 		// query param service_catalog_own
 		var qrServiceCatalogOwn bool
-
 		if o.ServiceCatalogOwn != nil {
 			qrServiceCatalogOwn = *o.ServiceCatalogOwn
 		}
 		qServiceCatalogOwn := swag.FormatBool(qrServiceCatalogOwn)
 		if qServiceCatalogOwn != "" {
-
 			if err := r.SetQueryParam("service_catalog_own", qServiceCatalogOwn); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ServiceCatalogStatus != nil {
 
 		// query param service_catalog_status
 		var qrServiceCatalogStatus string
-
 		if o.ServiceCatalogStatus != nil {
 			qrServiceCatalogStatus = *o.ServiceCatalogStatus
 		}
 		qServiceCatalogStatus := qrServiceCatalogStatus
 		if qServiceCatalogStatus != "" {
-
 			if err := r.SetQueryParam("service_catalog_status", qServiceCatalogStatus); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ServiceCatalogTemplate != nil {
 
 		// query param service_catalog_template
 		var qrServiceCatalogTemplate bool
-
 		if o.ServiceCatalogTemplate != nil {
 			qrServiceCatalogTemplate = *o.ServiceCatalogTemplate
 		}
 		qServiceCatalogTemplate := swag.FormatBool(qrServiceCatalogTemplate)
 		if qServiceCatalogTemplate != "" {
-
 			if err := r.SetQueryParam("service_catalog_template", qServiceCatalogTemplate); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ServiceCatalogTrusted != nil {
 
 		// query param service_catalog_trusted
 		var qrServiceCatalogTrusted bool
-
 		if o.ServiceCatalogTrusted != nil {
 			qrServiceCatalogTrusted = *o.ServiceCatalogTrusted
 		}
 		qServiceCatalogTrusted := swag.FormatBool(qrServiceCatalogTrusted)
 		if qServiceCatalogTrusted != "" {
-
 			if err := r.SetQueryParam("service_catalog_trusted", qServiceCatalogTrusted); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if len(res) > 0 {

@@ -8,6 +8,5 @@ package models
 // AWSInfrastructureResourceBucket AWS Infrastructure S3 bucket Resource
 //
 // This object contains the items described in the S3 bucket data type described in but it also contains its associated tags which are documented in the properties of this object definition. This object will contain a property named 'Tags' which is of the type defined by the schema definition '#/definitions/AWSTags'
-//
 // swagger:model AWSInfrastructureResourceBucket
 type AWSInfrastructureResourceBucket interface{}

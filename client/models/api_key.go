@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,7 +18,6 @@ import (
 // APIKey API key
 //
 // The entity which represents the information of an API key. The "token" field is only filled once, upon creation
-//
 // swagger:model APIKey
 type APIKey struct {
 
@@ -103,15 +102,15 @@ func (m *APIKey) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -124,7 +123,7 @@ func (m *APIKey) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -146,7 +145,7 @@ func (m *APIKey) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
 		return err
 	}
 
@@ -154,6 +153,7 @@ func (m *APIKey) validateName(formats strfmt.Registry) error {
 }
 
 func (m *APIKey) validateOwner(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -162,8 +162,6 @@ func (m *APIKey) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -187,72 +185,6 @@ func (m *APIKey) validateRules(formats strfmt.Registry) error {
 			if err := m.Rules[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("rules" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// ContextValidate validate this API key based on the context it is used
-func (m *APIKey) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateOwner(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateRules(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *APIKey) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Owner != nil {
-
-		if swag.IsZero(m.Owner) { // not required
-			return nil
-		}
-
-		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("owner")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *APIKey) contextValidateRules(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Rules); i++ {
-
-		if m.Rules[i] != nil {
-
-			if swag.IsZero(m.Rules[i]) { // not required
-				return nil
-			}
-
-			if err := m.Rules[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("rules" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

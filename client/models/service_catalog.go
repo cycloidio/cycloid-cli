@@ -6,20 +6,19 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"encoding/json"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // ServiceCatalog Service Catalog
 //
-// # Represents the Service Catalog item
-//
+// Represents the Service Catalog item
 // swagger:model ServiceCatalog
 type ServiceCatalog struct {
 
@@ -63,7 +62,7 @@ type ServiceCatalog struct {
 	Image strfmt.URI `json:"image,omitempty"`
 
 	// The import process status.
-	// Enum: ["succeeded","failed","importing"]
+	// Enum: [succeeded failed importing]
 	ImportStatus string `json:"import_status,omitempty"`
 
 	// keywords
@@ -203,15 +202,15 @@ func (m *ServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -219,11 +218,12 @@ func (m *ServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateCreatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -231,6 +231,7 @@ func (m *ServiceCatalog) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Dependencies) { // not required
 		return nil
 	}
@@ -244,8 +245,6 @@ func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
 			if err := m.Dependencies[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -289,7 +288,7 @@ func (m *ServiceCatalog) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -297,6 +296,7 @@ func (m *ServiceCatalog) validateID(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateImage(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Image) { // not required
 		return nil
 	}
@@ -334,13 +334,14 @@ const (
 
 // prop value enum
 func (m *ServiceCatalog) validateImportStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, serviceCatalogTypeImportStatusPropEnum, true); err != nil {
+	if err := validate.Enum(path, location, value, serviceCatalogTypeImportStatusPropEnum); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (m *ServiceCatalog) validateImportStatus(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ImportStatus) { // not required
 		return nil
 	}
@@ -390,19 +391,20 @@ func (m *ServiceCatalog) validateRef(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ServiceCatalogSourceCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("service_catalog_source_canonical", "body", m.ServiceCatalogSourceCanonical, 3); err != nil {
+	if err := validate.MinLength("service_catalog_source_canonical", "body", string(m.ServiceCatalogSourceCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("service_catalog_source_canonical", "body", m.ServiceCatalogSourceCanonical, 100); err != nil {
+	if err := validate.MaxLength("service_catalog_source_canonical", "body", string(m.ServiceCatalogSourceCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("service_catalog_source_canonical", "body", m.ServiceCatalogSourceCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("service_catalog_source_canonical", "body", string(m.ServiceCatalogSourceCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -410,6 +412,7 @@ func (m *ServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Re
 }
 
 func (m *ServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Technologies) { // not required
 		return nil
 	}
@@ -423,8 +426,6 @@ func (m *ServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
 			if err := m.Technologies[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("technologies" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("technologies" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -445,80 +446,13 @@ func (m *ServiceCatalog) validateTrusted(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateUpdatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this service catalog based on the context it is used
-func (m *ServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateDependencies(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateTechnologies(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *ServiceCatalog) contextValidateDependencies(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Dependencies); i++ {
-
-		if m.Dependencies[i] != nil {
-
-			if swag.IsZero(m.Dependencies[i]) { // not required
-				return nil
-			}
-
-			if err := m.Dependencies[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *ServiceCatalog) contextValidateTechnologies(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Technologies); i++ {
-
-		if m.Technologies[i] != nil {
-
-			if swag.IsZero(m.Technologies[i]) { // not required
-				return nil
-			}
-
-			if err := m.Technologies[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("technologies" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("technologies" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

@@ -6,17 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"encoding/json"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // CheckReport CheckReport
-//
 // swagger:model CheckReport
 type CheckReport struct {
 
@@ -37,7 +36,7 @@ type CheckReport struct {
 
 	// The status of the service checked.
 	// Required: true
-	// Enum: ["Unknown","Success","Error"]
+	// Enum: [Unknown Success Error]
 	Status *string `json:"status"`
 }
 
@@ -73,7 +72,7 @@ func (m *CheckReport) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 1); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 1); err != nil {
 		return err
 	}
 
@@ -86,7 +85,7 @@ func (m *CheckReport) validateCategory(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("category", "body", *m.Category, 1); err != nil {
+	if err := validate.MinLength("category", "body", string(*m.Category), 1); err != nil {
 		return err
 	}
 
@@ -99,7 +98,7 @@ func (m *CheckReport) validateMessage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("message", "body", *m.Message, 1); err != nil {
+	if err := validate.MinLength("message", "body", string(*m.Message), 1); err != nil {
 		return err
 	}
 
@@ -132,7 +131,7 @@ const (
 
 // prop value enum
 func (m *CheckReport) validateStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, checkReportTypeStatusPropEnum, true); err != nil {
+	if err := validate.Enum(path, location, value, checkReportTypeStatusPropEnum); err != nil {
 		return err
 	}
 	return nil
@@ -149,11 +148,6 @@ func (m *CheckReport) validateStatus(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this check report based on context it is used
-func (m *CheckReport) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

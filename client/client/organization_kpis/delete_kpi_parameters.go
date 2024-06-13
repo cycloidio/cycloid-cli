@@ -13,108 +13,85 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewDeleteKpiParams creates a new DeleteKpiParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewDeleteKpiParams creates a new DeleteKpiParams object
+// with the default values initialized.
 func NewDeleteKpiParams() *DeleteKpiParams {
+	var ()
 	return &DeleteKpiParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDeleteKpiParamsWithTimeout creates a new DeleteKpiParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewDeleteKpiParamsWithTimeout(timeout time.Duration) *DeleteKpiParams {
+	var ()
 	return &DeleteKpiParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewDeleteKpiParamsWithContext creates a new DeleteKpiParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewDeleteKpiParamsWithContext(ctx context.Context) *DeleteKpiParams {
+	var ()
 	return &DeleteKpiParams{
+
 		Context: ctx,
 	}
 }
 
 // NewDeleteKpiParamsWithHTTPClient creates a new DeleteKpiParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewDeleteKpiParamsWithHTTPClient(client *http.Client) *DeleteKpiParams {
+	var ()
 	return &DeleteKpiParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-DeleteKpiParams contains all the parameters to send to the API endpoint
-
-	for the delete kpi operation.
-
-	Typically these are written to a http.Request.
+/*DeleteKpiParams contains all the parameters to send to the API endpoint
+for the delete kpi operation typically these are written to a http.Request
 */
 type DeleteKpiParams struct {
 
-	/* Begin.
+	/*Begin
+	  The unix timestamp in seconds, which indicate the start of the time range.
 
-	   The unix timestamp in seconds, which indicate the start of the time range.
-
-	   Format: uint64
 	*/
 	Begin *uint64
+	/*End
+	  The unix timestamp in seconds, which indicate the end of the time range.
 
-	/* End.
-
-	   The unix timestamp in seconds, which indicate the end of the time range.
-
-	   Format: uint64
 	*/
 	End *uint64
+	/*FetchData
+	  Flag to retrieve KPIs' data upon retrieving KPIs themselves
 
-	/* FetchData.
-
-	   Flag to retrieve KPIs' data upon retrieving KPIs themselves
 
 	*/
 	FetchData *bool
+	/*KpiCanonical
+	  A canonical of a kpi.
 
-	/* KpiCanonical.
-
-	   A canonical of a kpi.
 	*/
 	KpiCanonical string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the delete kpi params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteKpiParams) WithDefaults() *DeleteKpiParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the delete kpi params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteKpiParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the delete kpi params
@@ -217,51 +194,48 @@ func (o *DeleteKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 
 		// query param begin
 		var qrBegin uint64
-
 		if o.Begin != nil {
 			qrBegin = *o.Begin
 		}
 		qBegin := swag.FormatUint64(qrBegin)
 		if qBegin != "" {
-
 			if err := r.SetQueryParam("begin", qBegin); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.End != nil {
 
 		// query param end
 		var qrEnd uint64
-
 		if o.End != nil {
 			qrEnd = *o.End
 		}
 		qEnd := swag.FormatUint64(qrEnd)
 		if qEnd != "" {
-
 			if err := r.SetQueryParam("end", qEnd); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.FetchData != nil {
 
 		// query param fetch_data
 		var qrFetchData bool
-
 		if o.FetchData != nil {
 			qrFetchData = *o.FetchData
 		}
 		qFetchData := swag.FormatBool(qrFetchData)
 		if qFetchData != "" {
-
 			if err := r.SetQueryParam("fetch_data", qFetchData); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param kpi_canonical

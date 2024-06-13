@@ -13,116 +13,92 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateKpiParams creates a new UpdateKpiParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewUpdateKpiParams creates a new UpdateKpiParams object
+// with the default values initialized.
 func NewUpdateKpiParams() *UpdateKpiParams {
+	var ()
 	return &UpdateKpiParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateKpiParamsWithTimeout creates a new UpdateKpiParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewUpdateKpiParamsWithTimeout(timeout time.Duration) *UpdateKpiParams {
+	var ()
 	return &UpdateKpiParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewUpdateKpiParamsWithContext creates a new UpdateKpiParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewUpdateKpiParamsWithContext(ctx context.Context) *UpdateKpiParams {
+	var ()
 	return &UpdateKpiParams{
+
 		Context: ctx,
 	}
 }
 
 // NewUpdateKpiParamsWithHTTPClient creates a new UpdateKpiParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewUpdateKpiParamsWithHTTPClient(client *http.Client) *UpdateKpiParams {
+	var ()
 	return &UpdateKpiParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-UpdateKpiParams contains all the parameters to send to the API endpoint
-
-	for the update kpi operation.
-
-	Typically these are written to a http.Request.
+/*UpdateKpiParams contains all the parameters to send to the API endpoint
+for the update kpi operation typically these are written to a http.Request
 */
 type UpdateKpiParams struct {
 
-	/* Begin.
+	/*Begin
+	  The unix timestamp in seconds, which indicate the start of the time range.
 
-	   The unix timestamp in seconds, which indicate the start of the time range.
-
-	   Format: uint64
 	*/
 	Begin *uint64
+	/*Body
+	  The information of the KPI new data
 
-	/* Body.
-
-	   The information of the KPI new data
 	*/
 	Body *models.NewKPI
+	/*End
+	  The unix timestamp in seconds, which indicate the end of the time range.
 
-	/* End.
-
-	   The unix timestamp in seconds, which indicate the end of the time range.
-
-	   Format: uint64
 	*/
 	End *uint64
+	/*FetchData
+	  Flag to retrieve KPIs' data upon retrieving KPIs themselves
 
-	/* FetchData.
-
-	   Flag to retrieve KPIs' data upon retrieving KPIs themselves
 
 	*/
 	FetchData *bool
+	/*KpiCanonical
+	  A canonical of a kpi.
 
-	/* KpiCanonical.
-
-	   A canonical of a kpi.
 	*/
 	KpiCanonical string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the update kpi params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateKpiParams) WithDefaults() *UpdateKpiParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the update kpi params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateKpiParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update kpi params
@@ -236,18 +212,18 @@ func (o *UpdateKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 
 		// query param begin
 		var qrBegin uint64
-
 		if o.Begin != nil {
 			qrBegin = *o.Begin
 		}
 		qBegin := swag.FormatUint64(qrBegin)
 		if qBegin != "" {
-
 			if err := r.SetQueryParam("begin", qBegin); err != nil {
 				return err
 			}
 		}
+
 	}
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err
@@ -258,34 +234,32 @@ func (o *UpdateKpiParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 
 		// query param end
 		var qrEnd uint64
-
 		if o.End != nil {
 			qrEnd = *o.End
 		}
 		qEnd := swag.FormatUint64(qrEnd)
 		if qEnd != "" {
-
 			if err := r.SetQueryParam("end", qEnd); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.FetchData != nil {
 
 		// query param fetch_data
 		var qrFetchData bool
-
 		if o.FetchData != nil {
 			qrFetchData = *o.FetchData
 		}
 		qFetchData := swag.FormatBool(qrFetchData)
 		if qFetchData != "" {
-
 			if err := r.SetQueryParam("fetch_data", qFetchData); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param kpi_canonical

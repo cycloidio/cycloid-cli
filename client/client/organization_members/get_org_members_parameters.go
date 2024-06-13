@@ -13,158 +13,130 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetOrgMembersParams creates a new GetOrgMembersParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetOrgMembersParams creates a new GetOrgMembersParams object
+// with the default values initialized.
 func NewGetOrgMembersParams() *GetOrgMembersParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetOrgMembersParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetOrgMembersParamsWithTimeout creates a new GetOrgMembersParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetOrgMembersParamsWithTimeout(timeout time.Duration) *GetOrgMembersParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetOrgMembersParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: timeout,
 	}
 }
 
 // NewGetOrgMembersParamsWithContext creates a new GetOrgMembersParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetOrgMembersParamsWithContext(ctx context.Context) *GetOrgMembersParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetOrgMembersParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		Context: ctx,
 	}
 }
 
 // NewGetOrgMembersParamsWithHTTPClient creates a new GetOrgMembersParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetOrgMembersParamsWithHTTPClient(client *http.Client) *GetOrgMembersParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetOrgMembersParams{
+		PageIndex:  &pageIndexDefault,
+		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*
-GetOrgMembersParams contains all the parameters to send to the API endpoint
-
-	for the get org members operation.
-
-	Typically these are written to a http.Request.
+/*GetOrgMembersParams contains all the parameters to send to the API endpoint
+for the get org members operation typically these are written to a http.Request
 */
 type GetOrgMembersParams struct {
 
-	/* MemberCreatedAt.
+	/*MemberCreatedAt
+	  Search by member joining date
 
-	   Search by member joining date
-
-	   Format: uint64
 	*/
 	MemberCreatedAt *uint64
+	/*OrderBy
+	  Allows to order the list of items. Example usage: field_name:asc
 
-	/* OrderBy.
-
-	   Allows to order the list of items. Example usage: field_name:asc
 
 	*/
 	OrderBy *string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*PageIndex
+	  The page number to request. The first page is 1.
 
-	/* PageIndex.
-
-	   The page number to request. The first page is 1.
-
-	   Format: uint32
-	   Default: 1
 	*/
 	PageIndex *uint32
+	/*PageSize
+	  The number of items at most which the response can have.
 
-	/* PageSize.
-
-	   The number of items at most which the response can have.
-
-	   Format: uint32
-	   Default: 1000
 	*/
 	PageSize *uint32
+	/*RoleName
+	  Search by the role's name
 
-	/* RoleName.
-
-	   Search by the role's name
 	*/
 	RoleName *string
+	/*UserCanonical
+	  Search by the user canonical
 
-	/* UserCanonical.
-
-	   Search by the user canonical
 	*/
 	UserCanonical *string
+	/*UserCreatedAt
+	  Search by user creation date
 
-	/* UserCreatedAt.
-
-	   Search by user creation date
-
-	   Format: uint64
 	*/
 	UserCreatedAt *uint64
+	/*UserFamilyName
+	  Search by the user's family name
 
-	/* UserFamilyName.
-
-	   Search by the user's family name
 	*/
 	UserFamilyName *string
+	/*UserGivenName
+	  Search by the user's given name
 
-	/* UserGivenName.
-
-	   Search by the user's given name
 	*/
 	UserGivenName *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get org members params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetOrgMembersParams) WithDefaults() *GetOrgMembersParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get org members params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetOrgMembersParams) SetDefaults() {
-	var (
-		pageIndexDefault = uint32(1)
-
-		pageSizeDefault = uint32(1000)
-	)
-
-	val := GetOrgMembersParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-	}
-
-	val.timeout = o.timeout
-	val.Context = o.Context
-	val.HTTPClient = o.HTTPClient
-	*o = val
 }
 
 // WithTimeout adds the timeout to the get org members params
@@ -322,34 +294,32 @@ func (o *GetOrgMembersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 		// query param member_created_at
 		var qrMemberCreatedAt uint64
-
 		if o.MemberCreatedAt != nil {
 			qrMemberCreatedAt = *o.MemberCreatedAt
 		}
 		qMemberCreatedAt := swag.FormatUint64(qrMemberCreatedAt)
 		if qMemberCreatedAt != "" {
-
 			if err := r.SetQueryParam("member_created_at", qMemberCreatedAt); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.OrderBy != nil {
 
 		// query param order_by
 		var qrOrderBy string
-
 		if o.OrderBy != nil {
 			qrOrderBy = *o.OrderBy
 		}
 		qOrderBy := qrOrderBy
 		if qOrderBy != "" {
-
 			if err := r.SetQueryParam("order_by", qOrderBy); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param organization_canonical
@@ -361,119 +331,112 @@ func (o *GetOrgMembersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 
 		// query param page_index
 		var qrPageIndex uint32
-
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
-
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
-
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
-
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.RoleName != nil {
 
 		// query param role_name
 		var qrRoleName string
-
 		if o.RoleName != nil {
 			qrRoleName = *o.RoleName
 		}
 		qRoleName := qrRoleName
 		if qRoleName != "" {
-
 			if err := r.SetQueryParam("role_name", qRoleName); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.UserCanonical != nil {
 
 		// query param user_canonical
 		var qrUserCanonical string
-
 		if o.UserCanonical != nil {
 			qrUserCanonical = *o.UserCanonical
 		}
 		qUserCanonical := qrUserCanonical
 		if qUserCanonical != "" {
-
 			if err := r.SetQueryParam("user_canonical", qUserCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.UserCreatedAt != nil {
 
 		// query param user_created_at
 		var qrUserCreatedAt uint64
-
 		if o.UserCreatedAt != nil {
 			qrUserCreatedAt = *o.UserCreatedAt
 		}
 		qUserCreatedAt := swag.FormatUint64(qrUserCreatedAt)
 		if qUserCreatedAt != "" {
-
 			if err := r.SetQueryParam("user_created_at", qUserCreatedAt); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.UserFamilyName != nil {
 
 		// query param user_family_name
 		var qrUserFamilyName string
-
 		if o.UserFamilyName != nil {
 			qrUserFamilyName = *o.UserFamilyName
 		}
 		qUserFamilyName := qrUserFamilyName
 		if qUserFamilyName != "" {
-
 			if err := r.SetQueryParam("user_family_name", qUserFamilyName); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.UserGivenName != nil {
 
 		// query param user_given_name
 		var qrUserGivenName string
-
 		if o.UserGivenName != nil {
 			qrUserGivenName = *o.UserGivenName
 		}
 		qUserGivenName := qrUserGivenName
 		if qUserGivenName != "" {
-
 			if err := r.SetQueryParam("user_given_name", qUserGivenName); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if len(res) > 0 {

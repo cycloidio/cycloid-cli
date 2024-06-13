@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -54,39 +53,6 @@ func (m *InfraPoliciesValidationResultItem) validateInfraPolicy(formats strfmt.R
 		if err := m.InfraPolicy.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("infra_policy")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("infra_policy")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this infra policies validation result item based on the context it is used
-func (m *InfraPoliciesValidationResultItem) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateInfraPolicy(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *InfraPoliciesValidationResultItem) contextValidateInfraPolicy(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.InfraPolicy != nil {
-
-		if err := m.InfraPolicy.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("infra_policy")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("infra_policy")
 			}
 			return err
 		}

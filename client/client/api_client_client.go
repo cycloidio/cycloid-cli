@@ -8,7 +8,8 @@ package client
 import (
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/client/client/cost_estimation"
 	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
@@ -34,7 +35,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/user"
 )
 
-// Default API HTTP client.
+// Default API client HTTP client.
 var Default = NewHTTPClient(nil)
 
 const (
@@ -49,14 +50,14 @@ const (
 // DefaultSchemes are the default schemes found in Meta (info) section of spec file
 var DefaultSchemes = []string{"https"}
 
-// NewHTTPClient creates a new API HTTP client.
-func NewHTTPClient(formats strfmt.Registry) *API {
+// NewHTTPClient creates a new API client HTTP client.
+func NewHTTPClient(formats strfmt.Registry) *APIClient {
 	return NewHTTPClientWithConfig(formats, nil)
 }
 
-// NewHTTPClientWithConfig creates a new API HTTP client,
+// NewHTTPClientWithConfig creates a new API client HTTP client,
 // using a customizable transport config.
-func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *API {
+func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *APIClient {
 	// ensure nullable parameters have default
 	if cfg == nil {
 		cfg = DefaultTransportConfig()
@@ -67,37 +68,60 @@ func NewHTTPClientWithConfig(formats strfmt.Registry, cfg *TransportConfig) *API
 	return New(transport, formats)
 }
 
-// New creates a new API client
-func New(transport runtime.ClientTransport, formats strfmt.Registry) *API {
+// New creates a new API client client
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *APIClient {
 	// ensure nullable parameters have default
 	if formats == nil {
 		formats = strfmt.Default
 	}
 
-	cli := new(API)
+	cli := new(APIClient)
 	cli.Transport = transport
+
 	cli.CostEstimation = cost_estimation.New(transport, formats)
+
 	cli.Cycloid = cycloid.New(transport, formats)
+
 	cli.OrganizationAPIKeys = organization_api_keys.New(transport, formats)
+
 	cli.OrganizationChildren = organization_children.New(transport, formats)
+
 	cli.OrganizationConfigRepositories = organization_config_repositories.New(transport, formats)
+
 	cli.OrganizationCredentials = organization_credentials.New(transport, formats)
+
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
+
 	cli.OrganizationForms = organization_forms.New(transport, formats)
+
 	cli.OrganizationInfrastructurePolicies = organization_infrastructure_policies.New(transport, formats)
+
 	cli.OrganizationInvitations = organization_invitations.New(transport, formats)
+
 	cli.OrganizationKpis = organization_kpis.New(transport, formats)
+
 	cli.OrganizationMembers = organization_members.New(transport, formats)
+
 	cli.OrganizationPipelines = organization_pipelines.New(transport, formats)
+
 	cli.OrganizationPipelinesJobs = organization_pipelines_jobs.New(transport, formats)
+
 	cli.OrganizationPipelinesJobsBuild = organization_pipelines_jobs_build.New(transport, formats)
+
 	cli.OrganizationProjects = organization_projects.New(transport, formats)
+
 	cli.OrganizationRoles = organization_roles.New(transport, formats)
+
 	cli.OrganizationServiceCatalogSources = organization_service_catalog_sources.New(transport, formats)
+
 	cli.OrganizationWorkers = organization_workers.New(transport, formats)
+
 	cli.Organizations = organizations.New(transport, formats)
+
 	cli.ServiceCatalogs = service_catalogs.New(transport, formats)
+
 	cli.User = user.New(transport, formats)
+
 	return cli
 }
 
@@ -140,78 +164,101 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 	return cfg
 }
 
-// API is a client for API
-type API struct {
-	CostEstimation cost_estimation.ClientService
+// APIClient is a client for API client
+type APIClient struct {
+	CostEstimation *cost_estimation.Client
 
-	Cycloid cycloid.ClientService
+	Cycloid *cycloid.Client
 
-	OrganizationAPIKeys organization_api_keys.ClientService
+	OrganizationAPIKeys *organization_api_keys.Client
 
-	OrganizationChildren organization_children.ClientService
+	OrganizationChildren *organization_children.Client
 
-	OrganizationConfigRepositories organization_config_repositories.ClientService
+	OrganizationConfigRepositories *organization_config_repositories.Client
 
-	OrganizationCredentials organization_credentials.ClientService
+	OrganizationCredentials *organization_credentials.Client
 
-	OrganizationExternalBackends organization_external_backends.ClientService
+	OrganizationExternalBackends *organization_external_backends.Client
 
-	OrganizationForms organization_forms.ClientService
+	OrganizationForms *organization_forms.Client
 
-	OrganizationInfrastructurePolicies organization_infrastructure_policies.ClientService
+	OrganizationInfrastructurePolicies *organization_infrastructure_policies.Client
 
-	OrganizationInvitations organization_invitations.ClientService
+	OrganizationInvitations *organization_invitations.Client
 
-	OrganizationKpis organization_kpis.ClientService
+	OrganizationKpis *organization_kpis.Client
 
-	OrganizationMembers organization_members.ClientService
+	OrganizationMembers *organization_members.Client
 
-	OrganizationPipelines organization_pipelines.ClientService
+	OrganizationPipelines *organization_pipelines.Client
 
-	OrganizationPipelinesJobs organization_pipelines_jobs.ClientService
+	OrganizationPipelinesJobs *organization_pipelines_jobs.Client
 
-	OrganizationPipelinesJobsBuild organization_pipelines_jobs_build.ClientService
+	OrganizationPipelinesJobsBuild *organization_pipelines_jobs_build.Client
 
-	OrganizationProjects organization_projects.ClientService
+	OrganizationProjects *organization_projects.Client
 
-	OrganizationRoles organization_roles.ClientService
+	OrganizationRoles *organization_roles.Client
 
-	OrganizationServiceCatalogSources organization_service_catalog_sources.ClientService
+	OrganizationServiceCatalogSources *organization_service_catalog_sources.Client
 
-	OrganizationWorkers organization_workers.ClientService
+	OrganizationWorkers *organization_workers.Client
 
-	Organizations organizations.ClientService
+	Organizations *organizations.Client
 
-	ServiceCatalogs service_catalogs.ClientService
+	ServiceCatalogs *service_catalogs.Client
 
-	User user.ClientService
+	User *user.Client
 
 	Transport runtime.ClientTransport
 }
 
 // SetTransport changes the transport on the client and all its subresources
-func (c *API) SetTransport(transport runtime.ClientTransport) {
+func (c *APIClient) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
+
 	c.CostEstimation.SetTransport(transport)
+
 	c.Cycloid.SetTransport(transport)
+
 	c.OrganizationAPIKeys.SetTransport(transport)
+
 	c.OrganizationChildren.SetTransport(transport)
+
 	c.OrganizationConfigRepositories.SetTransport(transport)
+
 	c.OrganizationCredentials.SetTransport(transport)
+
 	c.OrganizationExternalBackends.SetTransport(transport)
+
 	c.OrganizationForms.SetTransport(transport)
+
 	c.OrganizationInfrastructurePolicies.SetTransport(transport)
+
 	c.OrganizationInvitations.SetTransport(transport)
+
 	c.OrganizationKpis.SetTransport(transport)
+
 	c.OrganizationMembers.SetTransport(transport)
+
 	c.OrganizationPipelines.SetTransport(transport)
+
 	c.OrganizationPipelinesJobs.SetTransport(transport)
+
 	c.OrganizationPipelinesJobsBuild.SetTransport(transport)
+
 	c.OrganizationProjects.SetTransport(transport)
+
 	c.OrganizationRoles.SetTransport(transport)
+
 	c.OrganizationServiceCatalogSources.SetTransport(transport)
+
 	c.OrganizationWorkers.SetTransport(transport)
+
 	c.Organizations.SetTransport(transport)
+
 	c.ServiceCatalogs.SetTransport(transport)
+
 	c.User.SetTransport(transport)
+
 }

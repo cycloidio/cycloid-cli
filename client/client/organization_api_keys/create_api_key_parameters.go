@@ -13,86 +13,70 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewCreateAPIKeyParams creates a new CreateAPIKeyParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewCreateAPIKeyParams creates a new CreateAPIKeyParams object
+// with the default values initialized.
 func NewCreateAPIKeyParams() *CreateAPIKeyParams {
+	var ()
 	return &CreateAPIKeyParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewCreateAPIKeyParamsWithTimeout creates a new CreateAPIKeyParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewCreateAPIKeyParamsWithTimeout(timeout time.Duration) *CreateAPIKeyParams {
+	var ()
 	return &CreateAPIKeyParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewCreateAPIKeyParamsWithContext creates a new CreateAPIKeyParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewCreateAPIKeyParamsWithContext(ctx context.Context) *CreateAPIKeyParams {
+	var ()
 	return &CreateAPIKeyParams{
+
 		Context: ctx,
 	}
 }
 
 // NewCreateAPIKeyParamsWithHTTPClient creates a new CreateAPIKeyParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewCreateAPIKeyParamsWithHTTPClient(client *http.Client) *CreateAPIKeyParams {
+	var ()
 	return &CreateAPIKeyParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-CreateAPIKeyParams contains all the parameters to send to the API endpoint
-
-	for the create API key operation.
-
-	Typically these are written to a http.Request.
+/*CreateAPIKeyParams contains all the parameters to send to the API endpoint
+for the create API key operation typically these are written to a http.Request
 */
 type CreateAPIKeyParams struct {
 
-	/* Body.
+	/*Body
+	  The information of the API key to create.
 
-	   The information of the API key to create.
 	*/
 	Body *models.NewAPIKey
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the create API key params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *CreateAPIKeyParams) WithDefaults() *CreateAPIKeyParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the create API key params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *CreateAPIKeyParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the create API key params
@@ -157,6 +141,7 @@ func (o *CreateAPIKeyParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

@@ -13,96 +13,78 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewRenamePipelineParams creates a new RenamePipelineParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewRenamePipelineParams creates a new RenamePipelineParams object
+// with the default values initialized.
 func NewRenamePipelineParams() *RenamePipelineParams {
+	var ()
 	return &RenamePipelineParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewRenamePipelineParamsWithTimeout creates a new RenamePipelineParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewRenamePipelineParamsWithTimeout(timeout time.Duration) *RenamePipelineParams {
+	var ()
 	return &RenamePipelineParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewRenamePipelineParamsWithContext creates a new RenamePipelineParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewRenamePipelineParamsWithContext(ctx context.Context) *RenamePipelineParams {
+	var ()
 	return &RenamePipelineParams{
+
 		Context: ctx,
 	}
 }
 
 // NewRenamePipelineParamsWithHTTPClient creates a new RenamePipelineParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewRenamePipelineParamsWithHTTPClient(client *http.Client) *RenamePipelineParams {
+	var ()
 	return &RenamePipelineParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-RenamePipelineParams contains all the parameters to send to the API endpoint
-
-	for the rename pipeline operation.
-
-	Typically these are written to a http.Request.
+/*RenamePipelineParams contains all the parameters to send to the API endpoint
+for the rename pipeline operation typically these are written to a http.Request
 */
 type RenamePipelineParams struct {
 
-	/* InpathPipelineName.
+	/*InpathPipelineName
+	  A pipeline name
 
-	   A pipeline name
 	*/
 	InpathPipelineName string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*PipelineName
+	  A pipeline name
 
-	/* PipelineName.
-
-	   A pipeline name
 	*/
 	PipelineName string
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the rename pipeline params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *RenamePipelineParams) WithDefaults() *RenamePipelineParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the rename pipeline params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *RenamePipelineParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the rename pipeline params
@@ -204,7 +186,6 @@ func (o *RenamePipelineParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 	qrPipelineName := o.PipelineName
 	qPipelineName := qrPipelineName
 	if qPipelineName != "" {
-
 		if err := r.SetQueryParam("pipeline_name", qPipelineName); err != nil {
 			return err
 		}

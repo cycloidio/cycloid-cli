@@ -6,18 +6,17 @@ package organizations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // SendEventReader is a Reader for the SendEvent structure.
@@ -52,8 +51,9 @@ func (o *SendEventReader) ReadResponse(response runtime.ClientResponse, consumer
 			return nil, err
 		}
 		return nil, result
+
 	default:
-		return nil, runtime.NewAPIError("[POST /organizations/{organization_canonical}/events] sendEvent", response, response.Code())
+		return nil, runtime.NewAPIError("unknown error", response, response.Code())
 	}
 }
 
@@ -62,8 +62,7 @@ func NewSendEventOK() *SendEventOK {
 	return &SendEventOK{}
 }
 
-/*
-SendEventOK describes a response with status code 200, with default header values.
+/*SendEventOK handles this case with default header values.
 
 Event has been registered
 */
@@ -71,44 +70,8 @@ type SendEventOK struct {
 	Payload *SendEventOKBody
 }
 
-// IsSuccess returns true when this send event o k response has a 2xx status code
-func (o *SendEventOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this send event o k response has a 3xx status code
-func (o *SendEventOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this send event o k response has a 4xx status code
-func (o *SendEventOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this send event o k response has a 5xx status code
-func (o *SendEventOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this send event o k response a status code equal to that given
-func (o *SendEventOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the send event o k response
-func (o *SendEventOK) Code() int {
-	return 200
-}
-
 func (o *SendEventOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventOK %s", 200, payload)
-}
-
-func (o *SendEventOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventOK %s", 200, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventOK  %+v", 200, o.Payload)
 }
 
 func (o *SendEventOK) GetPayload() *SendEventOKBody {
@@ -132,60 +95,20 @@ func NewSendEventForbidden() *SendEventForbidden {
 	return &SendEventForbidden{}
 }
 
-/*
-SendEventForbidden describes a response with status code 403, with default header values.
+/*SendEventForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type SendEventForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this send event forbidden response has a 2xx status code
-func (o *SendEventForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this send event forbidden response has a 3xx status code
-func (o *SendEventForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this send event forbidden response has a 4xx status code
-func (o *SendEventForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this send event forbidden response has a 5xx status code
-func (o *SendEventForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this send event forbidden response a status code equal to that given
-func (o *SendEventForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the send event forbidden response
-func (o *SendEventForbidden) Code() int {
-	return 403
-}
-
 func (o *SendEventForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventForbidden %s", 403, payload)
-}
-
-func (o *SendEventForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventForbidden %s", 403, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventForbidden  %+v", 403, o.Payload)
 }
 
 func (o *SendEventForbidden) GetPayload() *models.ErrorPayload {
@@ -194,16 +117,12 @@ func (o *SendEventForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *SendEventForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -220,60 +139,20 @@ func NewSendEventNotFound() *SendEventNotFound {
 	return &SendEventNotFound{}
 }
 
-/*
-SendEventNotFound describes a response with status code 404, with default header values.
+/*SendEventNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type SendEventNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this send event not found response has a 2xx status code
-func (o *SendEventNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this send event not found response has a 3xx status code
-func (o *SendEventNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this send event not found response has a 4xx status code
-func (o *SendEventNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this send event not found response has a 5xx status code
-func (o *SendEventNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this send event not found response a status code equal to that given
-func (o *SendEventNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the send event not found response
-func (o *SendEventNotFound) Code() int {
-	return 404
-}
-
 func (o *SendEventNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventNotFound %s", 404, payload)
-}
-
-func (o *SendEventNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventNotFound %s", 404, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventNotFound  %+v", 404, o.Payload)
 }
 
 func (o *SendEventNotFound) GetPayload() *models.ErrorPayload {
@@ -282,16 +161,12 @@ func (o *SendEventNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *SendEventNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -308,60 +183,20 @@ func NewSendEventUnprocessableEntity() *SendEventUnprocessableEntity {
 	return &SendEventUnprocessableEntity{}
 }
 
-/*
-SendEventUnprocessableEntity describes a response with status code 422, with default header values.
+/*SendEventUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type SendEventUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this send event unprocessable entity response has a 2xx status code
-func (o *SendEventUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this send event unprocessable entity response has a 3xx status code
-func (o *SendEventUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this send event unprocessable entity response has a 4xx status code
-func (o *SendEventUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this send event unprocessable entity response has a 5xx status code
-func (o *SendEventUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this send event unprocessable entity response a status code equal to that given
-func (o *SendEventUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the send event unprocessable entity response
-func (o *SendEventUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *SendEventUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventUnprocessableEntity %s", 422, payload)
-}
-
-func (o *SendEventUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/events][%d] sendEventUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *SendEventUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -370,16 +205,12 @@ func (o *SendEventUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *SendEventUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -391,8 +222,7 @@ func (o *SendEventUnprocessableEntity) readResponse(response runtime.ClientRespo
 	return nil
 }
 
-/*
-SendEventOKBody The newly created event
+/*SendEventOKBody The newly created event
 swagger:model SendEventOKBody
 */
 type SendEventOKBody struct {
@@ -426,39 +256,6 @@ func (o *SendEventOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("sendEventOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("sendEventOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this send event o k body based on the context it is used
-func (o *SendEventOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *SendEventOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("sendEventOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("sendEventOK" + "." + "data")
 			}
 			return err
 		}

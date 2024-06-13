@@ -7,21 +7,20 @@ package models
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"io"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewInfraImport New Infra Import
 //
-// # Entry that represents all the data needed to import a stack
-//
+// Entry that represents all the data needed to import a stack
 // swagger:model NewInfraImport
 type NewInfraImport struct {
 	configurationField CloudProviderConfiguration
@@ -183,7 +182,8 @@ func (m NewInfraImport) MarshalJSON() ([]byte, error) {
 		Tags: m.Tags,
 
 		Targets: m.Targets,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -192,7 +192,8 @@ func (m NewInfraImport) MarshalJSON() ([]byte, error) {
 	}{
 
 		Configuration: m.configurationField,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -243,8 +244,6 @@ func (m *NewInfraImport) validateConfiguration(formats strfmt.Registry) error {
 	if err := m.Configuration().Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("configuration")
 		}
 		return err
 	}
@@ -258,15 +257,15 @@ func (m *NewInfraImport) validateCredentialCanonical(formats strfmt.Registry) er
 		return err
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", *m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", string(*m.CredentialCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", *m.CredentialCanonical, 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(*m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", *m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", string(*m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -274,6 +273,7 @@ func (m *NewInfraImport) validateCredentialCanonical(formats strfmt.Registry) er
 }
 
 func (m *NewInfraImport) validateEnvironment(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Environment) { // not required
 		return nil
 	}
@@ -282,8 +282,6 @@ func (m *NewInfraImport) validateEnvironment(formats strfmt.Registry) error {
 		if err := m.Environment.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("environment")
 			}
 			return err
 		}
@@ -293,6 +291,7 @@ func (m *NewInfraImport) validateEnvironment(formats strfmt.Registry) error {
 }
 
 func (m *NewInfraImport) validateExternalBackend(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ExternalBackend) { // not required
 		return nil
 	}
@@ -301,8 +300,6 @@ func (m *NewInfraImport) validateExternalBackend(formats strfmt.Registry) error 
 		if err := m.ExternalBackend.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("external_backend")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("external_backend")
 			}
 			return err
 		}
@@ -312,6 +309,7 @@ func (m *NewInfraImport) validateExternalBackend(formats strfmt.Registry) error 
 }
 
 func (m *NewInfraImport) validateProject(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Project) { // not required
 		return nil
 	}
@@ -320,8 +318,6 @@ func (m *NewInfraImport) validateProject(formats strfmt.Registry) error {
 		if err := m.Project.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("project")
 			}
 			return err
 		}
@@ -340,132 +336,6 @@ func (m *NewInfraImport) validateStack(formats strfmt.Registry) error {
 		if err := m.Stack.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("stack")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("stack")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this new infra import based on the context it is used
-func (m *NewInfraImport) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateConfiguration(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateExternalBackend(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateProject(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateStack(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *NewInfraImport) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
-
-	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("configuration")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("configuration")
-		}
-		return err
-	}
-
-	return nil
-}
-
-func (m *NewInfraImport) contextValidateEnvironment(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Environment != nil {
-
-		if swag.IsZero(m.Environment) { // not required
-			return nil
-		}
-
-		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("environment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("environment")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *NewInfraImport) contextValidateExternalBackend(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.ExternalBackend != nil {
-
-		if swag.IsZero(m.ExternalBackend) { // not required
-			return nil
-		}
-
-		if err := m.ExternalBackend.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("external_backend")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("external_backend")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *NewInfraImport) contextValidateProject(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Project != nil {
-
-		if swag.IsZero(m.Project) { // not required
-			return nil
-		}
-
-		if err := m.Project.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("project")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("project")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *NewInfraImport) contextValidateStack(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Stack != nil {
-
-		if err := m.Stack.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("stack")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("stack")
 			}
 			return err
 		}

@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // UserAccountEmail User's email
 //
 // The email address of a user.
-//
 // swagger:model UserAccountEmail
 type UserAccountEmail struct {
 
@@ -66,11 +64,12 @@ func (m *UserAccountEmail) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UserAccountEmail) validateCreatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -105,11 +104,6 @@ func (m *UserAccountEmail) validateVerified(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this user account email based on context it is used
-func (m *UserAccountEmail) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

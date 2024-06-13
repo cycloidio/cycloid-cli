@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -67,11 +66,12 @@ func (m *Subscription) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Subscription) validateCurrentMembers(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CurrentMembers) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("current_members", "body", *m.CurrentMembers, 0, false); err != nil {
+	if err := validate.MinimumInt("current_members", "body", int64(*m.CurrentMembers), 0, false); err != nil {
 		return err
 	}
 
@@ -84,7 +84,7 @@ func (m *Subscription) validateExpiresAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("expires_at", "body", *m.ExpiresAt, 0, false); err != nil {
+	if err := validate.MinimumInt("expires_at", "body", int64(*m.ExpiresAt), 0, false); err != nil {
 		return err
 	}
 
@@ -92,11 +92,12 @@ func (m *Subscription) validateExpiresAt(formats strfmt.Registry) error {
 }
 
 func (m *Subscription) validateMembersCount(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.MembersCount) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("members_count", "body", *m.MembersCount, 0, false); err != nil {
+	if err := validate.MinimumInt("members_count", "body", int64(*m.MembersCount), 0, false); err != nil {
 		return err
 	}
 
@@ -113,39 +114,6 @@ func (m *Subscription) validatePlan(formats strfmt.Registry) error {
 		if err := m.Plan.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("plan")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("plan")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this subscription based on the context it is used
-func (m *Subscription) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidatePlan(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Subscription) contextValidatePlan(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Plan != nil {
-
-		if err := m.Plan.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("plan")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("plan")
 			}
 			return err
 		}

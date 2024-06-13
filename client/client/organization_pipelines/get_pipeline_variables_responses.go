@@ -6,18 +6,17 @@ package organization_pipelines
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetPipelineVariablesReader is a Reader for the GetPipelineVariables structure.
@@ -69,8 +68,7 @@ func NewGetPipelineVariablesOK() *GetPipelineVariablesOK {
 	return &GetPipelineVariablesOK{}
 }
 
-/*
-GetPipelineVariablesOK describes a response with status code 200, with default header values.
+/*GetPipelineVariablesOK handles this case with default header values.
 
 This endpoint returns the variables of the pipeline.
 */
@@ -78,44 +76,8 @@ type GetPipelineVariablesOK struct {
 	Payload *GetPipelineVariablesOKBody
 }
 
-// IsSuccess returns true when this get pipeline variables o k response has a 2xx status code
-func (o *GetPipelineVariablesOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get pipeline variables o k response has a 3xx status code
-func (o *GetPipelineVariablesOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get pipeline variables o k response has a 4xx status code
-func (o *GetPipelineVariablesOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get pipeline variables o k response has a 5xx status code
-func (o *GetPipelineVariablesOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get pipeline variables o k response a status code equal to that given
-func (o *GetPipelineVariablesOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get pipeline variables o k response
-func (o *GetPipelineVariablesOK) Code() int {
-	return 200
-}
-
 func (o *GetPipelineVariablesOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesOK %s", 200, payload)
-}
-
-func (o *GetPipelineVariablesOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesOK  %+v", 200, o.Payload)
 }
 
 func (o *GetPipelineVariablesOK) GetPayload() *GetPipelineVariablesOKBody {
@@ -139,60 +101,20 @@ func NewGetPipelineVariablesForbidden() *GetPipelineVariablesForbidden {
 	return &GetPipelineVariablesForbidden{}
 }
 
-/*
-GetPipelineVariablesForbidden describes a response with status code 403, with default header values.
+/*GetPipelineVariablesForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetPipelineVariablesForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get pipeline variables forbidden response has a 2xx status code
-func (o *GetPipelineVariablesForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get pipeline variables forbidden response has a 3xx status code
-func (o *GetPipelineVariablesForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get pipeline variables forbidden response has a 4xx status code
-func (o *GetPipelineVariablesForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get pipeline variables forbidden response has a 5xx status code
-func (o *GetPipelineVariablesForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get pipeline variables forbidden response a status code equal to that given
-func (o *GetPipelineVariablesForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the get pipeline variables forbidden response
-func (o *GetPipelineVariablesForbidden) Code() int {
-	return 403
-}
-
 func (o *GetPipelineVariablesForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesForbidden %s", 403, payload)
-}
-
-func (o *GetPipelineVariablesForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetPipelineVariablesForbidden) GetPayload() *models.ErrorPayload {
@@ -201,16 +123,12 @@ func (o *GetPipelineVariablesForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetPipelineVariablesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -227,60 +145,20 @@ func NewGetPipelineVariablesNotFound() *GetPipelineVariablesNotFound {
 	return &GetPipelineVariablesNotFound{}
 }
 
-/*
-GetPipelineVariablesNotFound describes a response with status code 404, with default header values.
+/*GetPipelineVariablesNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetPipelineVariablesNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get pipeline variables not found response has a 2xx status code
-func (o *GetPipelineVariablesNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get pipeline variables not found response has a 3xx status code
-func (o *GetPipelineVariablesNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get pipeline variables not found response has a 4xx status code
-func (o *GetPipelineVariablesNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get pipeline variables not found response has a 5xx status code
-func (o *GetPipelineVariablesNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get pipeline variables not found response a status code equal to that given
-func (o *GetPipelineVariablesNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the get pipeline variables not found response
-func (o *GetPipelineVariablesNotFound) Code() int {
-	return 404
-}
-
 func (o *GetPipelineVariablesNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesNotFound %s", 404, payload)
-}
-
-func (o *GetPipelineVariablesNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetPipelineVariablesNotFound) GetPayload() *models.ErrorPayload {
@@ -289,16 +167,12 @@ func (o *GetPipelineVariablesNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetPipelineVariablesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -315,50 +189,15 @@ func NewGetPipelineVariablesConflict() *GetPipelineVariablesConflict {
 	return &GetPipelineVariablesConflict{}
 }
 
-/*
-GetPipelineVariablesConflict describes a response with status code 409, with default header values.
+/*GetPipelineVariablesConflict handles this case with default header values.
 
 Project has no config repository configured
 */
 type GetPipelineVariablesConflict struct {
 }
 
-// IsSuccess returns true when this get pipeline variables conflict response has a 2xx status code
-func (o *GetPipelineVariablesConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get pipeline variables conflict response has a 3xx status code
-func (o *GetPipelineVariablesConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get pipeline variables conflict response has a 4xx status code
-func (o *GetPipelineVariablesConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get pipeline variables conflict response has a 5xx status code
-func (o *GetPipelineVariablesConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get pipeline variables conflict response a status code equal to that given
-func (o *GetPipelineVariablesConflict) IsCode(code int) bool {
-	return code == 409
-}
-
-// Code gets the status code for the get pipeline variables conflict response
-func (o *GetPipelineVariablesConflict) Code() int {
-	return 409
-}
-
 func (o *GetPipelineVariablesConflict) Error() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesConflict", 409)
-}
-
-func (o *GetPipelineVariablesConflict) String() string {
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesConflict", 409)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariablesConflict ", 409)
 }
 
 func (o *GetPipelineVariablesConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -373,46 +212,18 @@ func NewGetPipelineVariablesDefault(code int) *GetPipelineVariablesDefault {
 	}
 }
 
-/*
-GetPipelineVariablesDefault describes a response with status code -1, with default header values.
+/*GetPipelineVariablesDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetPipelineVariablesDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get pipeline variables default response has a 2xx status code
-func (o *GetPipelineVariablesDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get pipeline variables default response has a 3xx status code
-func (o *GetPipelineVariablesDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get pipeline variables default response has a 4xx status code
-func (o *GetPipelineVariablesDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get pipeline variables default response has a 5xx status code
-func (o *GetPipelineVariablesDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get pipeline variables default response a status code equal to that given
-func (o *GetPipelineVariablesDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get pipeline variables default response
@@ -421,13 +232,7 @@ func (o *GetPipelineVariablesDefault) Code() int {
 }
 
 func (o *GetPipelineVariablesDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariables default %s", o._statusCode, payload)
-}
-
-func (o *GetPipelineVariablesDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariables default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables][%d] getPipelineVariables default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetPipelineVariablesDefault) GetPayload() *models.ErrorPayload {
@@ -436,16 +241,12 @@ func (o *GetPipelineVariablesDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetPipelineVariablesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -457,8 +258,7 @@ func (o *GetPipelineVariablesDefault) readResponse(response runtime.ClientRespon
 	return nil
 }
 
-/*
-GetPipelineVariablesOKBody get pipeline variables o k body
+/*GetPipelineVariablesOKBody get pipeline variables o k body
 swagger:model GetPipelineVariablesOKBody
 */
 type GetPipelineVariablesOKBody struct {
@@ -492,39 +292,6 @@ func (o *GetPipelineVariablesOKBody) validateData(formats strfmt.Registry) error
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getPipelineVariablesOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getPipelineVariablesOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this get pipeline variables o k body based on the context it is used
-func (o *GetPipelineVariablesOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetPipelineVariablesOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getPipelineVariablesOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getPipelineVariablesOK" + "." + "data")
 			}
 			return err
 		}

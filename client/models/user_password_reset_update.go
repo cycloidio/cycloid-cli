@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // UserPasswordResetUpdate User password reset update
 //
 // Reset the current user password to the one provided. The user must have a valid token for the resetting password action.
-//
 // swagger:model UserPasswordResetUpdate
 type UserPasswordResetUpdate struct {
 
@@ -57,7 +55,7 @@ func (m *UserPasswordResetUpdate) validatePassword(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MinLength("password", "body", m.Password.String(), 8); err != nil {
+	if err := validate.MinLength("password", "body", string(*m.Password), 8); err != nil {
 		return err
 	}
 
@@ -74,15 +72,10 @@ func (m *UserPasswordResetUpdate) validateToken(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("token", "body", *m.Token, 1); err != nil {
+	if err := validate.MinLength("token", "body", string(*m.Token), 1); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this user password reset update based on context it is used
-func (m *UserPasswordResetUpdate) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

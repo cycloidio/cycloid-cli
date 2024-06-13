@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // AppConfig AppConfig
 //
 // Global app configuration that includes all the settings and capabilities of the Cycloid instance. It is intended to be used by clients to modify the UI accordingly.
-//
 // swagger:model AppConfig
 type AppConfig struct {
 
@@ -50,39 +48,6 @@ func (m *AppConfig) validateAuthentication(formats strfmt.Registry) error {
 		if err := m.Authentication.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("authentication")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("authentication")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this app config based on the context it is used
-func (m *AppConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateAuthentication(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *AppConfig) contextValidateAuthentication(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Authentication != nil {
-
-		if err := m.Authentication.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("authentication")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("authentication")
 			}
 			return err
 		}

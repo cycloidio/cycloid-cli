@@ -6,17 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 )
 
 // TerraformJSONConfig TerraformJSONConfig
 //
-// # The JSON config for Terraform
-//
+// The JSON config for Terraform
 // swagger:model TerraformJSONConfig
 type TerraformJSONConfig struct {
 
@@ -41,15 +40,10 @@ func (m *TerraformJSONConfig) Validate(formats strfmt.Registry) error {
 
 func (m *TerraformJSONConfig) validateConfig(formats strfmt.Registry) error {
 
-	if m.Config == nil {
-		return errors.Required("config", "body", nil)
+	if err := validate.Required("config", "body", m.Config); err != nil {
+		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this terraform JSON config based on context it is used
-func (m *TerraformJSONConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

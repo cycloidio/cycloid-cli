@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // SubscriptionPlan SubscriptionPlan
 //
-// # It reflects the Plan used for the subscription
-//
+// It reflects the Plan used for the subscription
 // swagger:model SubscriptionPlan
 type SubscriptionPlan struct {
 
@@ -58,15 +56,15 @@ func (m *SubscriptionPlan) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -79,15 +77,10 @@ func (m *SubscriptionPlan) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this subscription plan based on context it is used
-func (m *SubscriptionPlan) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

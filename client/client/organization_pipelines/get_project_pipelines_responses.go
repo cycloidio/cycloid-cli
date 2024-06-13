@@ -6,19 +6,18 @@ package organization_pipelines
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetProjectPipelinesReader is a Reader for the GetProjectPipelines structure.
@@ -64,8 +63,7 @@ func NewGetProjectPipelinesOK() *GetProjectPipelinesOK {
 	return &GetProjectPipelinesOK{}
 }
 
-/*
-GetProjectPipelinesOK describes a response with status code 200, with default header values.
+/*GetProjectPipelinesOK handles this case with default header values.
 
 List of the pipelines which authenticated user has access to.
 */
@@ -73,44 +71,8 @@ type GetProjectPipelinesOK struct {
 	Payload *GetProjectPipelinesOKBody
 }
 
-// IsSuccess returns true when this get project pipelines o k response has a 2xx status code
-func (o *GetProjectPipelinesOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get project pipelines o k response has a 3xx status code
-func (o *GetProjectPipelinesOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get project pipelines o k response has a 4xx status code
-func (o *GetProjectPipelinesOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get project pipelines o k response has a 5xx status code
-func (o *GetProjectPipelinesOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get project pipelines o k response a status code equal to that given
-func (o *GetProjectPipelinesOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get project pipelines o k response
-func (o *GetProjectPipelinesOK) Code() int {
-	return 200
-}
-
 func (o *GetProjectPipelinesOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesOK %s", 200, payload)
-}
-
-func (o *GetProjectPipelinesOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesOK  %+v", 200, o.Payload)
 }
 
 func (o *GetProjectPipelinesOK) GetPayload() *GetProjectPipelinesOKBody {
@@ -134,60 +96,20 @@ func NewGetProjectPipelinesNotFound() *GetProjectPipelinesNotFound {
 	return &GetProjectPipelinesNotFound{}
 }
 
-/*
-GetProjectPipelinesNotFound describes a response with status code 404, with default header values.
+/*GetProjectPipelinesNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetProjectPipelinesNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get project pipelines not found response has a 2xx status code
-func (o *GetProjectPipelinesNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get project pipelines not found response has a 3xx status code
-func (o *GetProjectPipelinesNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get project pipelines not found response has a 4xx status code
-func (o *GetProjectPipelinesNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get project pipelines not found response has a 5xx status code
-func (o *GetProjectPipelinesNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get project pipelines not found response a status code equal to that given
-func (o *GetProjectPipelinesNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the get project pipelines not found response
-func (o *GetProjectPipelinesNotFound) Code() int {
-	return 404
-}
-
 func (o *GetProjectPipelinesNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesNotFound %s", 404, payload)
-}
-
-func (o *GetProjectPipelinesNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetProjectPipelinesNotFound) GetPayload() *models.ErrorPayload {
@@ -196,16 +118,12 @@ func (o *GetProjectPipelinesNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetProjectPipelinesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -222,60 +140,20 @@ func NewGetProjectPipelinesUnprocessableEntity() *GetProjectPipelinesUnprocessab
 	return &GetProjectPipelinesUnprocessableEntity{}
 }
 
-/*
-GetProjectPipelinesUnprocessableEntity describes a response with status code 422, with default header values.
+/*GetProjectPipelinesUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetProjectPipelinesUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get project pipelines unprocessable entity response has a 2xx status code
-func (o *GetProjectPipelinesUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get project pipelines unprocessable entity response has a 3xx status code
-func (o *GetProjectPipelinesUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get project pipelines unprocessable entity response has a 4xx status code
-func (o *GetProjectPipelinesUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get project pipelines unprocessable entity response has a 5xx status code
-func (o *GetProjectPipelinesUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get project pipelines unprocessable entity response a status code equal to that given
-func (o *GetProjectPipelinesUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the get project pipelines unprocessable entity response
-func (o *GetProjectPipelinesUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *GetProjectPipelinesUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesUnprocessableEntity %s", 422, payload)
-}
-
-func (o *GetProjectPipelinesUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelinesUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetProjectPipelinesUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -284,16 +162,12 @@ func (o *GetProjectPipelinesUnprocessableEntity) GetPayload() *models.ErrorPaylo
 
 func (o *GetProjectPipelinesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -312,46 +186,18 @@ func NewGetProjectPipelinesDefault(code int) *GetProjectPipelinesDefault {
 	}
 }
 
-/*
-GetProjectPipelinesDefault describes a response with status code -1, with default header values.
+/*GetProjectPipelinesDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetProjectPipelinesDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get project pipelines default response has a 2xx status code
-func (o *GetProjectPipelinesDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get project pipelines default response has a 3xx status code
-func (o *GetProjectPipelinesDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get project pipelines default response has a 4xx status code
-func (o *GetProjectPipelinesDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get project pipelines default response has a 5xx status code
-func (o *GetProjectPipelinesDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get project pipelines default response a status code equal to that given
-func (o *GetProjectPipelinesDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get project pipelines default response
@@ -360,13 +206,7 @@ func (o *GetProjectPipelinesDefault) Code() int {
 }
 
 func (o *GetProjectPipelinesDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelines default %s", o._statusCode, payload)
-}
-
-func (o *GetProjectPipelinesDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelines default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/projects/{project_canonical}/pipelines][%d] getProjectPipelines default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetProjectPipelinesDefault) GetPayload() *models.ErrorPayload {
@@ -375,16 +215,12 @@ func (o *GetProjectPipelinesDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetProjectPipelinesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -396,8 +232,7 @@ func (o *GetProjectPipelinesDefault) readResponse(response runtime.ClientRespons
 	return nil
 }
 
-/*
-GetProjectPipelinesOKBody get project pipelines o k body
+/*GetProjectPipelinesOKBody get project pipelines o k body
 swagger:model GetProjectPipelinesOKBody
 */
 type GetProjectPipelinesOKBody struct {
@@ -444,8 +279,6 @@ func (o *GetProjectPipelinesOKBody) validateData(formats strfmt.Registry) error 
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("getProjectPipelinesOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("getProjectPipelinesOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -466,68 +299,6 @@ func (o *GetProjectPipelinesOKBody) validatePagination(formats strfmt.Registry) 
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getProjectPipelinesOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getProjectPipelinesOK" + "." + "pagination")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this get project pipelines o k body based on the context it is used
-func (o *GetProjectPipelinesOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := o.contextValidatePagination(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetProjectPipelinesOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(o.Data); i++ {
-
-		if o.Data[i] != nil {
-
-			if swag.IsZero(o.Data[i]) { // not required
-				return nil
-			}
-
-			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("getProjectPipelinesOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("getProjectPipelinesOK" + "." + "data" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (o *GetProjectPipelinesOKBody) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Pagination != nil {
-
-		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getProjectPipelinesOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getProjectPipelinesOK" + "." + "pagination")
 			}
 			return err
 		}

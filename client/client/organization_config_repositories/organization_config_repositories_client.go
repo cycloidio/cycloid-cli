@@ -7,38 +7,13 @@ package organization_config_repositories
 
 import (
 	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization config repositories API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
 	return &Client{transport: transport, formats: formats}
-}
-
-// New creates a new organization config repositories API client with basic auth credentials.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - user: user for basic authentication header.
-// - password: password for basic authentication header.
-func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
-	return &Client{transport: transport, formats: strfmt.Default}
-}
-
-// New creates a new organization config repositories API client with a bearer token for authentication.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - bearerToken: bearer token for Bearer authentication header.
-func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
-	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -49,84 +24,16 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
-// ClientOption may be used to customize the behavior of Client methods.
-type ClientOption func(*runtime.ClientOperation)
-
-// This client is generated with a few options you might find useful for your swagger spec.
-//
-// Feel free to add you own set of options.
-
-// WithContentType allows the client to force the Content-Type header
-// to negotiate a specific Consumer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithContentType(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ConsumesMediaTypes = []string{mime}
-	}
-}
-
-// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
-func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/json"}
-}
-
-// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
-func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
-func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
-}
-
-// WithAccept allows the client to force the Accept header
-// to negotiate a specific Producer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithAccept(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ProducesMediaTypes = []string{mime}
-	}
-}
-
-// WithAcceptApplicationJSON sets the Accept header to "application/json".
-func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/json"}
-}
-
-// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
-func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// ClientService is the interface for Client methods
-type ClientService interface {
-	CreateConfigRepository(params *CreateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateConfigRepositoryOK, error)
-
-	CreateConfigRepositoryConfig(params *CreateConfigRepositoryConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateConfigRepositoryConfigNoContent, error)
-
-	DeleteConfigRepository(params *DeleteConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteConfigRepositoryNoContent, error)
-
-	GetConfigRepository(params *GetConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetConfigRepositoryOK, error)
-
-	ListConfigRepositories(params *ListConfigRepositoriesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListConfigRepositoriesOK, error)
-
-	UpdateConfigRepository(params *UpdateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateConfigRepositoryOK, error)
-
-	SetTransport(transport runtime.ClientTransport)
-}
-
 /*
 CreateConfigRepository Creates a config repository
 */
-func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateConfigRepositoryOK, error) {
+func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter) (*CreateConfigRepositoryOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateConfigRepositoryParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createConfigRepository",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories",
@@ -138,12 +45,7 @@ func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, au
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -159,12 +61,13 @@ func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, au
 /*
 CreateConfigRepositoryConfig Create Service Catalog config files in the Config Repository.
 */
-func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateConfigRepositoryConfigNoContent, error) {
+func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConfigParams, authInfo runtime.ClientAuthInfoWriter) (*CreateConfigRepositoryConfigNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateConfigRepositoryConfigParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createConfigRepositoryConfig",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}/config",
@@ -176,12 +79,7 @@ func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConf
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -197,12 +95,13 @@ func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConf
 /*
 DeleteConfigRepository delete a Config Repositories
 */
-func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteConfigRepositoryNoContent, error) {
+func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteConfigRepositoryNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteConfigRepositoryParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteConfigRepository",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
@@ -214,12 +113,7 @@ func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, au
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -235,12 +129,13 @@ func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, au
 /*
 GetConfigRepository Return the Config Repository
 */
-func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetConfigRepositoryOK, error) {
+func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter) (*GetConfigRepositoryOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetConfigRepositoryParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getConfigRepository",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
@@ -252,12 +147,7 @@ func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -273,12 +163,13 @@ func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo
 /*
 ListConfigRepositories Return all the config repositories
 */
-func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListConfigRepositoriesOK, error) {
+func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, authInfo runtime.ClientAuthInfoWriter) (*ListConfigRepositoriesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewListConfigRepositoriesParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "listConfigRepositories",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories",
@@ -290,12 +181,7 @@ func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, au
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -311,12 +197,13 @@ func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, au
 /*
 UpdateConfigRepository Update a config repository
 */
-func (a *Client) UpdateConfigRepository(params *UpdateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateConfigRepositoryOK, error) {
+func (a *Client) UpdateConfigRepository(params *UpdateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateConfigRepositoryOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateConfigRepositoryParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateConfigRepository",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/config_repositories/{config_repository_canonical}",
@@ -328,12 +215,7 @@ func (a *Client) UpdateConfigRepository(params *UpdateConfigRepositoryParams, au
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -7,38 +7,13 @@ package organization_roles
 
 import (
 	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization roles API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
 	return &Client{transport: transport, formats: formats}
-}
-
-// New creates a new organization roles API client with basic auth credentials.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - user: user for basic authentication header.
-// - password: password for basic authentication header.
-func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
-	return &Client{transport: transport, formats: strfmt.Default}
-}
-
-// New creates a new organization roles API client with a bearer token for authentication.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - bearerToken: bearer token for Bearer authentication header.
-func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
-	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -49,82 +24,16 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
-// ClientOption may be used to customize the behavior of Client methods.
-type ClientOption func(*runtime.ClientOperation)
-
-// This client is generated with a few options you might find useful for your swagger spec.
-//
-// Feel free to add you own set of options.
-
-// WithContentType allows the client to force the Content-Type header
-// to negotiate a specific Consumer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithContentType(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ConsumesMediaTypes = []string{mime}
-	}
-}
-
-// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
-func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/json"}
-}
-
-// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
-func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
-func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
-}
-
-// WithAccept allows the client to force the Accept header
-// to negotiate a specific Producer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithAccept(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ProducesMediaTypes = []string{mime}
-	}
-}
-
-// WithAcceptApplicationJSON sets the Accept header to "application/json".
-func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/json"}
-}
-
-// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
-func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// ClientService is the interface for Client methods
-type ClientService interface {
-	CreateRole(params *CreateRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateRoleOK, error)
-
-	DeleteRole(params *DeleteRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteRoleNoContent, error)
-
-	GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRoleOK, error)
-
-	GetRoles(params *GetRolesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRolesOK, error)
-
-	UpdateRole(params *UpdateRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateRoleOK, error)
-
-	SetTransport(transport runtime.ClientTransport)
-}
-
 /*
 CreateRole Create a new role available in the organization.
 */
-func (a *Client) CreateRole(params *CreateRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateRoleOK, error) {
+func (a *Client) CreateRole(params *CreateRoleParams, authInfo runtime.ClientAuthInfoWriter) (*CreateRoleOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateRoleParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createRole",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/roles",
@@ -136,12 +45,7 @@ func (a *Client) CreateRole(params *CreateRoleParams, authInfo runtime.ClientAut
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -157,12 +61,13 @@ func (a *Client) CreateRole(params *CreateRoleParams, authInfo runtime.ClientAut
 /*
 DeleteRole Delete an existing role in the organization.
 */
-func (a *Client) DeleteRole(params *DeleteRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteRoleNoContent, error) {
+func (a *Client) DeleteRole(params *DeleteRoleParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteRoleNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteRoleParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteRole",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
@@ -174,12 +79,7 @@ func (a *Client) DeleteRole(params *DeleteRoleParams, authInfo runtime.ClientAut
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -195,12 +95,13 @@ func (a *Client) DeleteRole(params *DeleteRoleParams, authInfo runtime.ClientAut
 /*
 GetRole Get the role available in the organization with an canonical
 */
-func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRoleOK, error) {
+func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoWriter) (*GetRoleOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetRoleParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getRole",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
@@ -212,12 +113,7 @@ func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoW
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -233,12 +129,13 @@ func (a *Client) GetRole(params *GetRoleParams, authInfo runtime.ClientAuthInfoW
 /*
 GetRoles Get the list of roles available in the organization.
 */
-func (a *Client) GetRoles(params *GetRolesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRolesOK, error) {
+func (a *Client) GetRoles(params *GetRolesParams, authInfo runtime.ClientAuthInfoWriter) (*GetRolesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetRolesParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getRoles",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/roles",
@@ -250,12 +147,7 @@ func (a *Client) GetRoles(params *GetRolesParams, authInfo runtime.ClientAuthInf
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -271,12 +163,13 @@ func (a *Client) GetRoles(params *GetRolesParams, authInfo runtime.ClientAuthInf
 /*
 UpdateRole Update an existing role in the organization.
 */
-func (a *Client) UpdateRole(params *UpdateRoleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateRoleOK, error) {
+func (a *Client) UpdateRole(params *UpdateRoleParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateRoleOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateRoleParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateRole",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/roles/{role_canonical}",
@@ -288,12 +181,7 @@ func (a *Client) UpdateRole(params *UpdateRoleParams, authInfo runtime.ClientAut
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}

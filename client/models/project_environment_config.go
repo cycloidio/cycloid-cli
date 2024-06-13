@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -63,8 +62,6 @@ func (m *ProjectEnvironmentConfig) validateForms(formats strfmt.Registry) error 
 		if err := m.Forms.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("forms")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("forms")
 			}
 			return err
 		}
@@ -77,37 +74,6 @@ func (m *ProjectEnvironmentConfig) validateUseCase(formats strfmt.Registry) erro
 
 	if err := validate.Required("use_case", "body", m.UseCase); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this project environment config based on the context it is used
-func (m *ProjectEnvironmentConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateForms(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *ProjectEnvironmentConfig) contextValidateForms(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Forms != nil {
-
-		if err := m.Forms.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("forms")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("forms")
-			}
-			return err
-		}
 	}
 
 	return nil

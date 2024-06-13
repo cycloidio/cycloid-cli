@@ -9,38 +9,13 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // New creates a new organizations API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
 	return &Client{transport: transport, formats: formats}
-}
-
-// New creates a new organizations API client with basic auth credentials.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - user: user for basic authentication header.
-// - password: password for basic authentication header.
-func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
-	return &Client{transport: transport, formats: strfmt.Default}
-}
-
-// New creates a new organizations API client with a bearer token for authentication.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - bearerToken: bearer token for Bearer authentication header.
-func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
-	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -51,96 +26,16 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
-// ClientOption may be used to customize the behavior of Client methods.
-type ClientOption func(*runtime.ClientOperation)
-
-// This client is generated with a few options you might find useful for your swagger spec.
-//
-// Feel free to add you own set of options.
-
-// WithContentType allows the client to force the Content-Type header
-// to negotiate a specific Consumer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithContentType(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ConsumesMediaTypes = []string{mime}
-	}
-}
-
-// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
-func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/json"}
-}
-
-// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
-func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
-func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
-}
-
-// WithAccept allows the client to force the Accept header
-// to negotiate a specific Producer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithAccept(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ProducesMediaTypes = []string{mime}
-	}
-}
-
-// WithAcceptApplicationJSON sets the Accept header to "application/json".
-func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/json"}
-}
-
-// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
-func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// ClientService is the interface for Client methods
-type ClientService interface {
-	CanDo(params *CanDoParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CanDoOK, error)
-
-	CreateOrg(params *CreateOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateOrgOK, error)
-
-	DeleteOrg(params *DeleteOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteOrgNoContent, error)
-
-	GetAncestors(params *GetAncestorsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAncestorsOK, error)
-
-	GetEvents(params *GetEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEventsOK, error)
-
-	GetEventsTags(params *GetEventsTagsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEventsTagsOK, error)
-
-	GetOrg(params *GetOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrgOK, error)
-
-	GetOrgs(params *GetOrgsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrgsOK, error)
-
-	GetRepoBranches(params *GetRepoBranchesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRepoBranchesOK, error)
-
-	GetSummary(params *GetSummaryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetSummaryOK, error)
-
-	SendEvent(params *SendEventParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*SendEventOK, error)
-
-	UpdateOrg(params *UpdateOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateOrgOK, error)
-
-	SetTransport(transport runtime.ClientTransport)
-}
-
 /*
 CanDo Checks if the JWT can do the action
 */
-func (a *Client) CanDo(params *CanDoParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CanDoOK, error) {
+func (a *Client) CanDo(params *CanDoParams, authInfo runtime.ClientAuthInfoWriter) (*CanDoOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCanDoParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "canDo",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/can_do",
@@ -152,12 +47,7 @@ func (a *Client) CanDo(params *CanDoParams, authInfo runtime.ClientAuthInfoWrite
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -173,12 +63,13 @@ func (a *Client) CanDo(params *CanDoParams, authInfo runtime.ClientAuthInfoWrite
 /*
 CreateOrg Create a new organization, making the authenticated user the owner of it.
 */
-func (a *Client) CreateOrg(params *CreateOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateOrgOK, error) {
+func (a *Client) CreateOrg(params *CreateOrgParams, authInfo runtime.ClientAuthInfoWriter) (*CreateOrgOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateOrgParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createOrg",
 		Method:             "POST",
 		PathPattern:        "/organizations",
@@ -190,12 +81,7 @@ func (a *Client) CreateOrg(params *CreateOrgParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -211,12 +97,13 @@ func (a *Client) CreateOrg(params *CreateOrgParams, authInfo runtime.ClientAuthI
 /*
 DeleteOrg Delete the organization.
 */
-func (a *Client) DeleteOrg(params *DeleteOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteOrgNoContent, error) {
+func (a *Client) DeleteOrg(params *DeleteOrgParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteOrgNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteOrgParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteOrg",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}",
@@ -228,12 +115,7 @@ func (a *Client) DeleteOrg(params *DeleteOrgParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -249,12 +131,13 @@ func (a *Client) DeleteOrg(params *DeleteOrgParams, authInfo runtime.ClientAuthI
 /*
 GetAncestors Get all the ancestors between the Organization and the User with the shortest path.
 */
-func (a *Client) GetAncestors(params *GetAncestorsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAncestorsOK, error) {
+func (a *Client) GetAncestors(params *GetAncestorsParams, authInfo runtime.ClientAuthInfoWriter) (*GetAncestorsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetAncestorsParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getAncestors",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/ancestors",
@@ -266,12 +149,7 @@ func (a *Client) GetAncestors(params *GetAncestorsParams, authInfo runtime.Clien
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -285,16 +163,17 @@ func (a *Client) GetAncestors(params *GetAncestorsParams, authInfo runtime.Clien
 }
 
 /*
-		GetEvents Retrieve the list of events which has been registered on the organization. The events to request can be filtered using Unix timestamps in milliseconds (begin and end timestamps range), the event type and severity; when more than one are applied then they are applied with a logical AND.
-	  - The Unix timestamps must always be specified, the rest of the filters
-	    are not mandatory.
+GetEvents Retrieve the list of events which has been registered on the organization. The events to request can be filtered using Unix timestamps in milliseconds (begin and end timestamps range), the event type and severity; when more than one are applied then they are applied with a logical AND.
+- The Unix timestamps must always be specified, the rest of the filters
+  are not mandatory.
 */
-func (a *Client) GetEvents(params *GetEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEventsOK, error) {
+func (a *Client) GetEvents(params *GetEventsParams, authInfo runtime.ClientAuthInfoWriter) (*GetEventsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetEventsParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getEvents",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/events",
@@ -306,12 +185,7 @@ func (a *Client) GetEvents(params *GetEventsParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -327,12 +201,13 @@ func (a *Client) GetEvents(params *GetEventsParams, authInfo runtime.ClientAuthI
 /*
 GetEventsTags Retrieve the list of tags and set of values for all the events of the organization.
 */
-func (a *Client) GetEventsTags(params *GetEventsTagsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEventsTagsOK, error) {
+func (a *Client) GetEventsTags(params *GetEventsTagsParams, authInfo runtime.ClientAuthInfoWriter) (*GetEventsTagsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetEventsTagsParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getEventsTags",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/events/tags",
@@ -344,12 +219,7 @@ func (a *Client) GetEventsTags(params *GetEventsTagsParams, authInfo runtime.Cli
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -365,12 +235,13 @@ func (a *Client) GetEventsTags(params *GetEventsTagsParams, authInfo runtime.Cli
 /*
 GetOrg Get the information of the organization.
 */
-func (a *Client) GetOrg(params *GetOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrgOK, error) {
+func (a *Client) GetOrg(params *GetOrgParams, authInfo runtime.ClientAuthInfoWriter) (*GetOrgOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetOrgParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getOrg",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}",
@@ -382,12 +253,7 @@ func (a *Client) GetOrg(params *GetOrgParams, authInfo runtime.ClientAuthInfoWri
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -403,12 +269,13 @@ func (a *Client) GetOrg(params *GetOrgParams, authInfo runtime.ClientAuthInfoWri
 /*
 GetOrgs Get the organizations that the authenticated user has access.
 */
-func (a *Client) GetOrgs(params *GetOrgsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrgsOK, error) {
+func (a *Client) GetOrgs(params *GetOrgsParams, authInfo runtime.ClientAuthInfoWriter) (*GetOrgsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetOrgsParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getOrgs",
 		Method:             "GET",
 		PathPattern:        "/organizations",
@@ -420,12 +287,7 @@ func (a *Client) GetOrgs(params *GetOrgsParams, authInfo runtime.ClientAuthInfoW
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -439,16 +301,17 @@ func (a *Client) GetOrgs(params *GetOrgsParams, authInfo runtime.ClientAuthInfoW
 }
 
 /*
-	GetRepoBranches Return all the branches of repository. If the repository is empty then an
-
+GetRepoBranches Return all the branches of repository. If the repository is empty then an
 empty list will be returned.
+
 */
-func (a *Client) GetRepoBranches(params *GetRepoBranchesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRepoBranchesOK, error) {
+func (a *Client) GetRepoBranches(params *GetRepoBranchesParams, authInfo runtime.ClientAuthInfoWriter) (*GetRepoBranchesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetRepoBranchesParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getRepoBranches",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/branches",
@@ -460,12 +323,7 @@ func (a *Client) GetRepoBranches(params *GetRepoBranchesParams, authInfo runtime
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -481,12 +339,13 @@ func (a *Client) GetRepoBranches(params *GetRepoBranchesParams, authInfo runtime
 /*
 GetSummary Get the summary of the organization
 */
-func (a *Client) GetSummary(params *GetSummaryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetSummaryOK, error) {
+func (a *Client) GetSummary(params *GetSummaryParams, authInfo runtime.ClientAuthInfoWriter) (*GetSummaryOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetSummaryParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getSummary",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/summary",
@@ -498,12 +357,7 @@ func (a *Client) GetSummary(params *GetSummaryParams, authInfo runtime.ClientAut
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -520,12 +374,13 @@ func (a *Client) GetSummary(params *GetSummaryParams, authInfo runtime.ClientAut
 /*
 SendEvent Send a event on the organization to be registered.
 */
-func (a *Client) SendEvent(params *SendEventParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*SendEventOK, error) {
+func (a *Client) SendEvent(params *SendEventParams, authInfo runtime.ClientAuthInfoWriter) (*SendEventOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSendEventParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "sendEvent",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/events",
@@ -537,12 +392,7 @@ func (a *Client) SendEvent(params *SendEventParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -559,12 +409,13 @@ func (a *Client) SendEvent(params *SendEventParams, authInfo runtime.ClientAuthI
 /*
 UpdateOrg Update the information of the organization.
 */
-func (a *Client) UpdateOrg(params *UpdateOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateOrgOK, error) {
+func (a *Client) UpdateOrg(params *UpdateOrgParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateOrgOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateOrgParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateOrg",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}",
@@ -576,12 +427,7 @@ func (a *Client) UpdateOrg(params *UpdateOrgParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}

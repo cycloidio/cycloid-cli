@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -92,7 +91,7 @@ func (m *CloudCostManagementLinkedAccount) validateID(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -105,11 +104,6 @@ func (m *CloudCostManagementLinkedAccount) validateName(formats strfmt.Registry)
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this cloud cost management linked account based on context it is used
-func (m *CloudCostManagementLinkedAccount) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

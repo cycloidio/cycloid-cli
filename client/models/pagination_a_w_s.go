@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // PaginationAWS AWS Pagination
-//
 // swagger:model PaginationAWS
 type PaginationAWS struct {
 
@@ -44,11 +42,6 @@ func (m *PaginationAWS) validateNext(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this pagination a w s based on context it is used
-func (m *PaginationAWS) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

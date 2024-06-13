@@ -6,16 +6,16 @@ package organization_roles
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteRoleReader is a Reader for the DeleteRole structure.
@@ -61,50 +61,15 @@ func NewDeleteRoleNoContent() *DeleteRoleNoContent {
 	return &DeleteRoleNoContent{}
 }
 
-/*
-DeleteRoleNoContent describes a response with status code 204, with default header values.
+/*DeleteRoleNoContent handles this case with default header values.
 
 Organization role has been deleted.
 */
 type DeleteRoleNoContent struct {
 }
 
-// IsSuccess returns true when this delete role no content response has a 2xx status code
-func (o *DeleteRoleNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this delete role no content response has a 3xx status code
-func (o *DeleteRoleNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete role no content response has a 4xx status code
-func (o *DeleteRoleNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this delete role no content response has a 5xx status code
-func (o *DeleteRoleNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete role no content response a status code equal to that given
-func (o *DeleteRoleNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the delete role no content response
-func (o *DeleteRoleNoContent) Code() int {
-	return 204
-}
-
 func (o *DeleteRoleNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleNoContent", 204)
-}
-
-func (o *DeleteRoleNoContent) String() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleNoContent", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleNoContent ", 204)
 }
 
 func (o *DeleteRoleNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -117,60 +82,20 @@ func NewDeleteRoleForbidden() *DeleteRoleForbidden {
 	return &DeleteRoleForbidden{}
 }
 
-/*
-DeleteRoleForbidden describes a response with status code 403, with default header values.
+/*DeleteRoleForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteRoleForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete role forbidden response has a 2xx status code
-func (o *DeleteRoleForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete role forbidden response has a 3xx status code
-func (o *DeleteRoleForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete role forbidden response has a 4xx status code
-func (o *DeleteRoleForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete role forbidden response has a 5xx status code
-func (o *DeleteRoleForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete role forbidden response a status code equal to that given
-func (o *DeleteRoleForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the delete role forbidden response
-func (o *DeleteRoleForbidden) Code() int {
-	return 403
-}
-
 func (o *DeleteRoleForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleForbidden %s", 403, payload)
-}
-
-func (o *DeleteRoleForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DeleteRoleForbidden) GetPayload() *models.ErrorPayload {
@@ -179,16 +104,12 @@ func (o *DeleteRoleForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteRoleForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -205,60 +126,20 @@ func NewDeleteRoleNotFound() *DeleteRoleNotFound {
 	return &DeleteRoleNotFound{}
 }
 
-/*
-DeleteRoleNotFound describes a response with status code 404, with default header values.
+/*DeleteRoleNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteRoleNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete role not found response has a 2xx status code
-func (o *DeleteRoleNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete role not found response has a 3xx status code
-func (o *DeleteRoleNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete role not found response has a 4xx status code
-func (o *DeleteRoleNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete role not found response has a 5xx status code
-func (o *DeleteRoleNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete role not found response a status code equal to that given
-func (o *DeleteRoleNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the delete role not found response
-func (o *DeleteRoleNotFound) Code() int {
-	return 404
-}
-
 func (o *DeleteRoleNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleNotFound %s", 404, payload)
-}
-
-func (o *DeleteRoleNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleNotFound %s", 404, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRoleNotFound  %+v", 404, o.Payload)
 }
 
 func (o *DeleteRoleNotFound) GetPayload() *models.ErrorPayload {
@@ -267,16 +148,12 @@ func (o *DeleteRoleNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteRoleNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -295,46 +172,18 @@ func NewDeleteRoleDefault(code int) *DeleteRoleDefault {
 	}
 }
 
-/*
-DeleteRoleDefault describes a response with status code -1, with default header values.
+/*DeleteRoleDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteRoleDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this delete role default response has a 2xx status code
-func (o *DeleteRoleDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this delete role default response has a 3xx status code
-func (o *DeleteRoleDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this delete role default response has a 4xx status code
-func (o *DeleteRoleDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this delete role default response has a 5xx status code
-func (o *DeleteRoleDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this delete role default response a status code equal to that given
-func (o *DeleteRoleDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the delete role default response
@@ -343,13 +192,7 @@ func (o *DeleteRoleDefault) Code() int {
 }
 
 func (o *DeleteRoleDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRole default %s", o._statusCode, payload)
-}
-
-func (o *DeleteRoleDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRole default %s", o._statusCode, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/roles/{role_canonical}][%d] deleteRole default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteRoleDefault) GetPayload() *models.ErrorPayload {
@@ -358,16 +201,12 @@ func (o *DeleteRoleDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteRoleDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

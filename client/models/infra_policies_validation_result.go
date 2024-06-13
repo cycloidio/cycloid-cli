@@ -6,18 +6,17 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // InfraPoliciesValidationResult Infra policies validation results.
 //
 // The set of not respected rules for the checked policies.
-//
 // swagger:model InfraPoliciesValidationResult
 type InfraPoliciesValidationResult struct {
 
@@ -54,6 +53,7 @@ func (m *InfraPoliciesValidationResult) Validate(formats strfmt.Registry) error 
 }
 
 func (m *InfraPoliciesValidationResult) validateAdvisories(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Advisories) { // not required
 		return nil
 	}
@@ -67,8 +67,6 @@ func (m *InfraPoliciesValidationResult) validateAdvisories(formats strfmt.Regist
 			if err := m.Advisories[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("advisories" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("advisories" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -80,6 +78,7 @@ func (m *InfraPoliciesValidationResult) validateAdvisories(formats strfmt.Regist
 }
 
 func (m *InfraPoliciesValidationResult) validateCriticals(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Criticals) { // not required
 		return nil
 	}
@@ -93,8 +92,6 @@ func (m *InfraPoliciesValidationResult) validateCriticals(formats strfmt.Registr
 			if err := m.Criticals[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("criticals" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("criticals" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -106,6 +103,7 @@ func (m *InfraPoliciesValidationResult) validateCriticals(formats strfmt.Registr
 }
 
 func (m *InfraPoliciesValidationResult) validateWarnings(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Warnings) { // not required
 		return nil
 	}
@@ -119,105 +117,6 @@ func (m *InfraPoliciesValidationResult) validateWarnings(formats strfmt.Registry
 			if err := m.Warnings[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("warnings" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("warnings" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// ContextValidate validate this infra policies validation result based on the context it is used
-func (m *InfraPoliciesValidationResult) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateAdvisories(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateCriticals(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateWarnings(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *InfraPoliciesValidationResult) contextValidateAdvisories(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Advisories); i++ {
-
-		if m.Advisories[i] != nil {
-
-			if swag.IsZero(m.Advisories[i]) { // not required
-				return nil
-			}
-
-			if err := m.Advisories[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("advisories" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("advisories" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *InfraPoliciesValidationResult) contextValidateCriticals(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Criticals); i++ {
-
-		if m.Criticals[i] != nil {
-
-			if swag.IsZero(m.Criticals[i]) { // not required
-				return nil
-			}
-
-			if err := m.Criticals[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("criticals" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("criticals" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *InfraPoliciesValidationResult) contextValidateWarnings(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Warnings); i++ {
-
-		if m.Warnings[i] != nil {
-
-			if swag.IsZero(m.Warnings[i]) { // not required
-				return nil
-			}
-
-			if err := m.Warnings[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("warnings" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("warnings" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

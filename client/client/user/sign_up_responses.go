@@ -6,16 +6,16 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // SignUpReader is a Reader for the SignUp structure.
@@ -61,50 +61,15 @@ func NewSignUpNoContent() *SignUpNoContent {
 	return &SignUpNoContent{}
 }
 
-/*
-SignUpNoContent describes a response with status code 204, with default header values.
+/*SignUpNoContent handles this case with default header values.
 
 Account created. The account MUST be verified through the link sent to the email address.
 */
 type SignUpNoContent struct {
 }
 
-// IsSuccess returns true when this sign up no content response has a 2xx status code
-func (o *SignUpNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this sign up no content response has a 3xx status code
-func (o *SignUpNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this sign up no content response has a 4xx status code
-func (o *SignUpNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this sign up no content response has a 5xx status code
-func (o *SignUpNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this sign up no content response a status code equal to that given
-func (o *SignUpNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the sign up no content response
-func (o *SignUpNoContent) Code() int {
-	return 204
-}
-
 func (o *SignUpNoContent) Error() string {
-	return fmt.Sprintf("[POST /user][%d] signUpNoContent", 204)
-}
-
-func (o *SignUpNoContent) String() string {
-	return fmt.Sprintf("[POST /user][%d] signUpNoContent", 204)
+	return fmt.Sprintf("[POST /user][%d] signUpNoContent ", 204)
 }
 
 func (o *SignUpNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -117,50 +82,15 @@ func NewSignUpLengthRequired() *SignUpLengthRequired {
 	return &SignUpLengthRequired{}
 }
 
-/*
-SignUpLengthRequired describes a response with status code 411, with default header values.
+/*SignUpLengthRequired handles this case with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type SignUpLengthRequired struct {
 }
 
-// IsSuccess returns true when this sign up length required response has a 2xx status code
-func (o *SignUpLengthRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this sign up length required response has a 3xx status code
-func (o *SignUpLengthRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this sign up length required response has a 4xx status code
-func (o *SignUpLengthRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this sign up length required response has a 5xx status code
-func (o *SignUpLengthRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this sign up length required response a status code equal to that given
-func (o *SignUpLengthRequired) IsCode(code int) bool {
-	return code == 411
-}
-
-// Code gets the status code for the sign up length required response
-func (o *SignUpLengthRequired) Code() int {
-	return 411
-}
-
 func (o *SignUpLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /user][%d] signUpLengthRequired", 411)
-}
-
-func (o *SignUpLengthRequired) String() string {
-	return fmt.Sprintf("[POST /user][%d] signUpLengthRequired", 411)
+	return fmt.Sprintf("[POST /user][%d] signUpLengthRequired ", 411)
 }
 
 func (o *SignUpLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -173,60 +103,20 @@ func NewSignUpUnprocessableEntity() *SignUpUnprocessableEntity {
 	return &SignUpUnprocessableEntity{}
 }
 
-/*
-SignUpUnprocessableEntity describes a response with status code 422, with default header values.
+/*SignUpUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type SignUpUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this sign up unprocessable entity response has a 2xx status code
-func (o *SignUpUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this sign up unprocessable entity response has a 3xx status code
-func (o *SignUpUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this sign up unprocessable entity response has a 4xx status code
-func (o *SignUpUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this sign up unprocessable entity response has a 5xx status code
-func (o *SignUpUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this sign up unprocessable entity response a status code equal to that given
-func (o *SignUpUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the sign up unprocessable entity response
-func (o *SignUpUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *SignUpUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user][%d] signUpUnprocessableEntity %s", 422, payload)
-}
-
-func (o *SignUpUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user][%d] signUpUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[POST /user][%d] signUpUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *SignUpUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -235,16 +125,12 @@ func (o *SignUpUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *SignUpUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -263,46 +149,18 @@ func NewSignUpDefault(code int) *SignUpDefault {
 	}
 }
 
-/*
-SignUpDefault describes a response with status code -1, with default header values.
+/*SignUpDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type SignUpDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this sign up default response has a 2xx status code
-func (o *SignUpDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this sign up default response has a 3xx status code
-func (o *SignUpDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this sign up default response has a 4xx status code
-func (o *SignUpDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this sign up default response has a 5xx status code
-func (o *SignUpDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this sign up default response a status code equal to that given
-func (o *SignUpDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the sign up default response
@@ -311,13 +169,7 @@ func (o *SignUpDefault) Code() int {
 }
 
 func (o *SignUpDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user][%d] signUp default %s", o._statusCode, payload)
-}
-
-func (o *SignUpDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user][%d] signUp default %s", o._statusCode, payload)
+	return fmt.Sprintf("[POST /user][%d] signUp default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *SignUpDefault) GetPayload() *models.ErrorPayload {
@@ -326,16 +178,12 @@ func (o *SignUpDefault) GetPayload() *models.ErrorPayload {
 
 func (o *SignUpDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

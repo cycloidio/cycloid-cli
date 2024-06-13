@@ -13,84 +13,68 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewDeleteProjectFavoriteParams creates a new DeleteProjectFavoriteParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewDeleteProjectFavoriteParams creates a new DeleteProjectFavoriteParams object
+// with the default values initialized.
 func NewDeleteProjectFavoriteParams() *DeleteProjectFavoriteParams {
+	var ()
 	return &DeleteProjectFavoriteParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDeleteProjectFavoriteParamsWithTimeout creates a new DeleteProjectFavoriteParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewDeleteProjectFavoriteParamsWithTimeout(timeout time.Duration) *DeleteProjectFavoriteParams {
+	var ()
 	return &DeleteProjectFavoriteParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewDeleteProjectFavoriteParamsWithContext creates a new DeleteProjectFavoriteParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewDeleteProjectFavoriteParamsWithContext(ctx context.Context) *DeleteProjectFavoriteParams {
+	var ()
 	return &DeleteProjectFavoriteParams{
+
 		Context: ctx,
 	}
 }
 
 // NewDeleteProjectFavoriteParamsWithHTTPClient creates a new DeleteProjectFavoriteParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewDeleteProjectFavoriteParamsWithHTTPClient(client *http.Client) *DeleteProjectFavoriteParams {
+	var ()
 	return &DeleteProjectFavoriteParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-DeleteProjectFavoriteParams contains all the parameters to send to the API endpoint
-
-	for the delete project favorite operation.
-
-	Typically these are written to a http.Request.
+/*DeleteProjectFavoriteParams contains all the parameters to send to the API endpoint
+for the delete project favorite operation typically these are written to a http.Request
 */
 type DeleteProjectFavoriteParams struct {
 
-	/* OrganizationCanonical.
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the delete project favorite params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteProjectFavoriteParams) WithDefaults() *DeleteProjectFavoriteParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the delete project favorite params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteProjectFavoriteParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the delete project favorite params

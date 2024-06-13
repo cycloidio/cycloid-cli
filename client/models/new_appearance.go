@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewAppearance Appearance
 //
-// # An Appearance holds the values of the branding configuration, which are rendered across an organization
-//
+// An Appearance holds the values of the branding configuration, which are rendered across an organization
 // swagger:model NewAppearance
 type NewAppearance struct {
 
@@ -108,8 +106,6 @@ func (m *NewAppearance) validateColor(formats strfmt.Registry) error {
 		if err := m.Color.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("color")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("color")
 			}
 			return err
 		}
@@ -124,11 +120,11 @@ func (m *NewAppearance) validateDisplayName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("display_name", "body", *m.DisplayName, 1); err != nil {
+	if err := validate.MinLength("display_name", "body", string(*m.DisplayName), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("display_name", "body", *m.DisplayName, 50); err != nil {
+	if err := validate.MaxLength("display_name", "body", string(*m.DisplayName), 50); err != nil {
 		return err
 	}
 
@@ -154,11 +150,11 @@ func (m *NewAppearance) validateFooter(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("footer", "body", *m.Footer, 0); err != nil {
+	if err := validate.MinLength("footer", "body", string(*m.Footer), 0); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("footer", "body", *m.Footer, 1000); err != nil {
+	if err := validate.MaxLength("footer", "body", string(*m.Footer), 1000); err != nil {
 		return err
 	}
 
@@ -184,11 +180,11 @@ func (m *NewAppearance) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("name", "body", *m.Name, 50); err != nil {
+	if err := validate.MaxLength("name", "body", string(*m.Name), 50); err != nil {
 		return err
 	}
 
@@ -201,43 +197,12 @@ func (m *NewAppearance) validateTabTitle(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("tab_title", "body", *m.TabTitle, 1); err != nil {
+	if err := validate.MinLength("tab_title", "body", string(*m.TabTitle), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("tab_title", "body", *m.TabTitle, 50); err != nil {
+	if err := validate.MaxLength("tab_title", "body", string(*m.TabTitle), 50); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this new appearance based on the context it is used
-func (m *NewAppearance) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateColor(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *NewAppearance) contextValidateColor(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Color != nil {
-
-		if err := m.Color.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("color")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("color")
-			}
-			return err
-		}
 	}
 
 	return nil
@@ -262,7 +227,6 @@ func (m *NewAppearance) UnmarshalBinary(b []byte) error {
 }
 
 // NewAppearanceColor new appearance color
-//
 // swagger:model NewAppearanceColor
 type NewAppearanceColor struct {
 
@@ -313,11 +277,11 @@ func (m *NewAppearanceColor) validateB(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("color"+"."+"b", "body", uint64(*m.B), 0, false); err != nil {
+	if err := validate.MinimumInt("color"+"."+"b", "body", int64(*m.B), 0, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumUint("color"+"."+"b", "body", uint64(*m.B), 255, false); err != nil {
+	if err := validate.MaximumInt("color"+"."+"b", "body", int64(*m.B), 255, false); err != nil {
 		return err
 	}
 
@@ -330,11 +294,11 @@ func (m *NewAppearanceColor) validateG(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("color"+"."+"g", "body", uint64(*m.G), 0, false); err != nil {
+	if err := validate.MinimumInt("color"+"."+"g", "body", int64(*m.G), 0, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumUint("color"+"."+"g", "body", uint64(*m.G), 255, false); err != nil {
+	if err := validate.MaximumInt("color"+"."+"g", "body", int64(*m.G), 255, false); err != nil {
 		return err
 	}
 
@@ -347,19 +311,14 @@ func (m *NewAppearanceColor) validateR(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("color"+"."+"r", "body", uint64(*m.R), 0, false); err != nil {
+	if err := validate.MinimumInt("color"+"."+"r", "body", int64(*m.R), 0, false); err != nil {
 		return err
 	}
 
-	if err := validate.MaximumUint("color"+"."+"r", "body", uint64(*m.R), 255, false); err != nil {
+	if err := validate.MaximumInt("color"+"."+"r", "body", int64(*m.R), 255, false); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new appearance color based on context it is used
-func (m *NewAppearanceColor) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

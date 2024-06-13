@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -104,15 +103,10 @@ func (m *FormInput) validateUseCase(formats strfmt.Registry) error {
 
 func (m *FormInput) validateVars(formats strfmt.Registry) error {
 
-	if m.Vars == nil {
-		return errors.Required("vars", "body", nil)
+	if err := validate.Required("vars", "body", m.Vars); err != nil {
+		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this form input based on context it is used
-func (m *FormInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

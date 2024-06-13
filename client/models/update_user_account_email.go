@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // UpdateUserAccountEmail User's email
 //
 // The email address of a user to be updated.
-//
 // swagger:model UpdateUserAccountEmail
 type UpdateUserAccountEmail struct {
 
@@ -68,11 +66,6 @@ func (m *UpdateUserAccountEmail) validatePurpose(formats strfmt.Registry) error 
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this update user account email based on context it is used
-func (m *UpdateUserAccountEmail) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

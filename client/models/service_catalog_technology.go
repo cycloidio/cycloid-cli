@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // ServiceCatalogTechnology ServiceCatalogTechnology
 //
-// # ServiceCatalogTechnology is a Technology of the Service Catalog
-//
+// ServiceCatalogTechnology is a Technology of the Service Catalog
 // swagger:model ServiceCatalogTechnology
 type ServiceCatalogTechnology struct {
 
@@ -28,11 +26,6 @@ type ServiceCatalogTechnology struct {
 
 // Validate validates this service catalog technology
 func (m *ServiceCatalogTechnology) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this service catalog technology based on context it is used
-func (m *ServiceCatalogTechnology) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

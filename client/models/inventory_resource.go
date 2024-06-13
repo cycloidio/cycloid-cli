@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // InventoryResource Inventory Resource
 //
-// # The Resource of the Inventory representing an element of your infrastructure
-//
+// The Resource of the Inventory representing an element of your infrastructure
 // swagger:model InventoryResource
 type InventoryResource struct {
 
@@ -140,11 +138,12 @@ func (m *InventoryResource) Validate(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateCPU(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CPU) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("cpu", "body", *m.CPU, 0, false); err != nil {
+	if err := validate.MinimumInt("cpu", "body", int64(*m.CPU), 0, false); err != nil {
 		return err
 	}
 
@@ -152,11 +151,12 @@ func (m *InventoryResource) validateCPU(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateEnvironmentCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.EnvironmentCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("environment_canonical", "body", m.EnvironmentCanonical, `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
+	if err := validate.Pattern("environment_canonical", "body", string(m.EnvironmentCanonical), `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
 		return err
 	}
 
@@ -164,11 +164,12 @@ func (m *InventoryResource) validateEnvironmentCanonical(formats strfmt.Registry
 }
 
 func (m *InventoryResource) validateID(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ID) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -176,6 +177,7 @@ func (m *InventoryResource) validateID(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateImage(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Image) { // not required
 		return nil
 	}
@@ -188,11 +190,12 @@ func (m *InventoryResource) validateImage(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateMemory(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Memory) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("memory", "body", *m.Memory, 0, false); err != nil {
+	if err := validate.MinimumInt("memory", "body", int64(*m.Memory), 0, false); err != nil {
 		return err
 	}
 
@@ -209,11 +212,12 @@ func (m *InventoryResource) validateName(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateProjectCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ProjectCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -230,11 +234,12 @@ func (m *InventoryResource) validateProvider(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateStorage(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Storage) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("storage", "body", *m.Storage, 0, false); err != nil {
+	if err := validate.MinimumInt("storage", "body", int64(*m.Storage), 0, false); err != nil {
 		return err
 	}
 
@@ -247,11 +252,6 @@ func (m *InventoryResource) validateType(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this inventory resource based on context it is used
-func (m *InventoryResource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

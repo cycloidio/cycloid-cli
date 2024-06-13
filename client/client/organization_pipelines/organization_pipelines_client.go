@@ -7,38 +7,13 @@ package organization_pipelines
 
 import (
 	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization pipelines API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
 	return &Client{transport: transport, formats: formats}
-}
-
-// New creates a new organization pipelines API client with basic auth credentials.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - user: user for basic authentication header.
-// - password: password for basic authentication header.
-func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
-	return &Client{transport: transport, formats: strfmt.Default}
-}
-
-// New creates a new organization pipelines API client with a bearer token for authentication.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - bearerToken: bearer token for Bearer authentication header.
-func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
-	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -49,98 +24,16 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
-// ClientOption may be used to customize the behavior of Client methods.
-type ClientOption func(*runtime.ClientOperation)
-
-// This client is generated with a few options you might find useful for your swagger spec.
-//
-// Feel free to add you own set of options.
-
-// WithContentType allows the client to force the Content-Type header
-// to negotiate a specific Consumer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithContentType(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ConsumesMediaTypes = []string{mime}
-	}
-}
-
-// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
-func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/json"}
-}
-
-// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
-func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
-func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
-}
-
-// WithAccept allows the client to force the Accept header
-// to negotiate a specific Producer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithAccept(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ProducesMediaTypes = []string{mime}
-	}
-}
-
-// WithAcceptApplicationJSON sets the Accept header to "application/json".
-func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/json"}
-}
-
-// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
-func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// ClientService is the interface for Client methods
-type ClientService interface {
-	CreatePipeline(params *CreatePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreatePipelineOK, error)
-
-	DeletePipeline(params *DeletePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeletePipelineNoContent, error)
-
-	DiffPipeline(params *DiffPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DiffPipelineOK, error)
-
-	GetPipeline(params *GetPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineOK, error)
-
-	GetPipelineConfig(params *GetPipelineConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineConfigOK, error)
-
-	GetPipelineVariables(params *GetPipelineVariablesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineVariablesOK, error)
-
-	GetPipelines(params *GetPipelinesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelinesOK, error)
-
-	GetProjectPipelines(params *GetProjectPipelinesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectPipelinesOK, error)
-
-	PausePipeline(params *PausePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PausePipelineNoContent, error)
-
-	RenamePipeline(params *RenamePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RenamePipelineNoContent, error)
-
-	SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*SyncedPipelineOK, error)
-
-	UnpausePipeline(params *UnpausePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UnpausePipelineNoContent, error)
-
-	UpdatePipeline(params *UpdatePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdatePipelineOK, error)
-
-	SetTransport(transport runtime.ClientTransport)
-}
-
 /*
 CreatePipeline Create a new pipeline
 */
-func (a *Client) CreatePipeline(params *CreatePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreatePipelineOK, error) {
+func (a *Client) CreatePipeline(params *CreatePipelineParams, authInfo runtime.ClientAuthInfoWriter) (*CreatePipelineOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreatePipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createPipeline",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines",
@@ -152,12 +45,7 @@ func (a *Client) CreatePipeline(params *CreatePipelineParams, authInfo runtime.C
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -173,12 +61,13 @@ func (a *Client) CreatePipeline(params *CreatePipelineParams, authInfo runtime.C
 /*
 DeletePipeline Delete the pipeline.
 */
-func (a *Client) DeletePipeline(params *DeletePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeletePipelineNoContent, error) {
+func (a *Client) DeletePipeline(params *DeletePipelineParams, authInfo runtime.ClientAuthInfoWriter) (*DeletePipelineNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeletePipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deletePipeline",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}",
@@ -190,12 +79,7 @@ func (a *Client) DeletePipeline(params *DeletePipelineParams, authInfo runtime.C
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -211,12 +95,13 @@ func (a *Client) DeletePipeline(params *DeletePipelineParams, authInfo runtime.C
 /*
 DiffPipeline The diff between the provided pipeline configuration and the pipeline from the given name.
 */
-func (a *Client) DiffPipeline(params *DiffPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DiffPipelineOK, error) {
+func (a *Client) DiffPipeline(params *DiffPipelineParams, authInfo runtime.ClientAuthInfoWriter) (*DiffPipelineOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDiffPipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "diffPipeline",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff",
@@ -228,12 +113,7 @@ func (a *Client) DiffPipeline(params *DiffPipelineParams, authInfo runtime.Clien
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -249,12 +129,13 @@ func (a *Client) DiffPipeline(params *DiffPipelineParams, authInfo runtime.Clien
 /*
 GetPipeline Get the configuration of the pipeline.
 */
-func (a *Client) GetPipeline(params *GetPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineOK, error) {
+func (a *Client) GetPipeline(params *GetPipelineParams, authInfo runtime.ClientAuthInfoWriter) (*GetPipelineOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetPipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getPipeline",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}",
@@ -266,12 +147,7 @@ func (a *Client) GetPipeline(params *GetPipelineParams, authInfo runtime.ClientA
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -287,12 +163,13 @@ func (a *Client) GetPipeline(params *GetPipelineParams, authInfo runtime.ClientA
 /*
 GetPipelineConfig Get the YAML configuration of the pipeline.
 */
-func (a *Client) GetPipelineConfig(params *GetPipelineConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineConfigOK, error) {
+func (a *Client) GetPipelineConfig(params *GetPipelineConfigParams, authInfo runtime.ClientAuthInfoWriter) (*GetPipelineConfigOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetPipelineConfigParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getPipelineConfig",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/config",
@@ -304,12 +181,7 @@ func (a *Client) GetPipelineConfig(params *GetPipelineConfigParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -325,12 +197,13 @@ func (a *Client) GetPipelineConfig(params *GetPipelineConfigParams, authInfo run
 /*
 GetPipelineVariables Get the YAML variables of the pipeline.
 */
-func (a *Client) GetPipelineVariables(params *GetPipelineVariablesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineVariablesOK, error) {
+func (a *Client) GetPipelineVariables(params *GetPipelineVariablesParams, authInfo runtime.ClientAuthInfoWriter) (*GetPipelineVariablesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetPipelineVariablesParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getPipelineVariables",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/variables",
@@ -342,12 +215,7 @@ func (a *Client) GetPipelineVariables(params *GetPipelineVariablesParams, authIn
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -363,12 +231,13 @@ func (a *Client) GetPipelineVariables(params *GetPipelineVariablesParams, authIn
 /*
 GetPipelines Get all the pipelines that the authenticated user has access to.
 */
-func (a *Client) GetPipelines(params *GetPipelinesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelinesOK, error) {
+func (a *Client) GetPipelines(params *GetPipelinesParams, authInfo runtime.ClientAuthInfoWriter) (*GetPipelinesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetPipelinesParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getPipelines",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/pipelines",
@@ -380,12 +249,7 @@ func (a *Client) GetPipelines(params *GetPipelinesParams, authInfo runtime.Clien
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -401,12 +265,13 @@ func (a *Client) GetPipelines(params *GetPipelinesParams, authInfo runtime.Clien
 /*
 GetProjectPipelines Get the pipelines that the authenticated user has access to.
 */
-func (a *Client) GetProjectPipelines(params *GetProjectPipelinesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectPipelinesOK, error) {
+func (a *Client) GetProjectPipelines(params *GetProjectPipelinesParams, authInfo runtime.ClientAuthInfoWriter) (*GetProjectPipelinesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetProjectPipelinesParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getProjectPipelines",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines",
@@ -418,12 +283,7 @@ func (a *Client) GetProjectPipelines(params *GetProjectPipelinesParams, authInfo
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -439,12 +299,13 @@ func (a *Client) GetProjectPipelines(params *GetProjectPipelinesParams, authInfo
 /*
 PausePipeline Pause a pipeline
 */
-func (a *Client) PausePipeline(params *PausePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PausePipelineNoContent, error) {
+func (a *Client) PausePipeline(params *PausePipelineParams, authInfo runtime.ClientAuthInfoWriter) (*PausePipelineNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewPausePipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "pausePipeline",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/pause",
@@ -456,12 +317,7 @@ func (a *Client) PausePipeline(params *PausePipelineParams, authInfo runtime.Cli
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -477,12 +333,13 @@ func (a *Client) PausePipeline(params *PausePipelineParams, authInfo runtime.Cli
 /*
 RenamePipeline Rename a pipeline
 */
-func (a *Client) RenamePipeline(params *RenamePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RenamePipelineNoContent, error) {
+func (a *Client) RenamePipeline(params *RenamePipelineParams, authInfo runtime.ClientAuthInfoWriter) (*RenamePipelineNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewRenamePipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "renamePipeline",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/rename",
@@ -494,12 +351,7 @@ func (a *Client) RenamePipeline(params *RenamePipelineParams, authInfo runtime.C
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -515,12 +367,13 @@ func (a *Client) RenamePipeline(params *RenamePipelineParams, authInfo runtime.C
 /*
 SyncedPipeline Will check if the pipeline from the database and the one specified in the stack are synced or not
 */
-func (a *Client) SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*SyncedPipelineOK, error) {
+func (a *Client) SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.ClientAuthInfoWriter) (*SyncedPipelineOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewSyncedPipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "syncedPipeline",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/synced",
@@ -532,12 +385,7 @@ func (a *Client) SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.C
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -553,12 +401,13 @@ func (a *Client) SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.C
 /*
 UnpausePipeline Unpause a pipeline
 */
-func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UnpausePipelineNoContent, error) {
+func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime.ClientAuthInfoWriter) (*UnpausePipelineNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUnpausePipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "unpausePipeline",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}/unpause",
@@ -570,12 +419,7 @@ func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -591,12 +435,13 @@ func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime
 /*
 UpdatePipeline Update the configuration of the given pipeline name.
 */
-func (a *Client) UpdatePipeline(params *UpdatePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdatePipelineOK, error) {
+func (a *Client) UpdatePipeline(params *UpdatePipelineParams, authInfo runtime.ClientAuthInfoWriter) (*UpdatePipelineOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdatePipelineParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updatePipeline",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/pipelines/{inpath_pipeline_name}",
@@ -608,12 +453,7 @@ func (a *Client) UpdatePipeline(params *UpdatePipelineParams, authInfo runtime.C
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -6,12 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"encoding/json"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -19,7 +19,6 @@ import (
 // UpdateUserAccount Update user's account
 //
 // The user's account information of the authenticated user to be updated. Emails and password can be omitted if they don't have to be updated, because we can now if they have been sent or not although go-swagger doesn't currently support `PATCH` updates (see [comment](https://github.com/cycloidio/youdeploy-http-api/pull/71#issuecomment-321894076)), we do for this one with this 2 properties because they are good for the user, specially for the `password_update` one. In order to detect if they have been sent or not, we check if the length of array of emails is 0 (if it's sent, then the length MUST be greater than 0 as specified with minItems) and in case of the `password_update` field if it's `nil` or not. If the 'picture_url' is not send then it's removed from the user as it implies that it has deleted it, and also because we do not support partial updates
-//
 // swagger:model UpdateUserAccount
 type UpdateUserAccount struct {
 
@@ -43,7 +42,7 @@ type UpdateUserAccount struct {
 
 	// User's preferred language
 	// Required: true
-	// Enum: ["en","fr","es"]
+	// Enum: [en fr es]
 	Locale *string `json:"locale"`
 
 	// mfa enabled
@@ -112,11 +111,12 @@ func (m *UpdateUserAccount) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UpdateUserAccount) validateCountryCode(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CountryCode) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("country_code", "body", m.CountryCode, `^[A-Z]{2}$`); err != nil {
+	if err := validate.Pattern("country_code", "body", string(m.CountryCode), `^[A-Z]{2}$`); err != nil {
 		return err
 	}
 
@@ -124,6 +124,7 @@ func (m *UpdateUserAccount) validateCountryCode(formats strfmt.Registry) error {
 }
 
 func (m *UpdateUserAccount) validateEmails(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Emails) { // not required
 		return nil
 	}
@@ -143,8 +144,6 @@ func (m *UpdateUserAccount) validateEmails(formats strfmt.Registry) error {
 			if err := m.Emails[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("emails" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("emails" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -161,7 +160,7 @@ func (m *UpdateUserAccount) validateFamilyName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
+	if err := validate.MinLength("family_name", "body", string(*m.FamilyName), 2); err != nil {
 		return err
 	}
 
@@ -174,7 +173,7 @@ func (m *UpdateUserAccount) validateGivenName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
+	if err := validate.MinLength("given_name", "body", string(*m.GivenName), 2); err != nil {
 		return err
 	}
 
@@ -207,7 +206,7 @@ const (
 
 // prop value enum
 func (m *UpdateUserAccount) validateLocaleEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, updateUserAccountTypeLocalePropEnum, true); err != nil {
+	if err := validate.Enum(path, location, value, updateUserAccountTypeLocalePropEnum); err != nil {
 		return err
 	}
 	return nil
@@ -237,6 +236,7 @@ func (m *UpdateUserAccount) validateMfaEnabled(formats strfmt.Registry) error {
 }
 
 func (m *UpdateUserAccount) validatePasswordUpdate(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.PasswordUpdate) { // not required
 		return nil
 	}
@@ -245,8 +245,6 @@ func (m *UpdateUserAccount) validatePasswordUpdate(formats strfmt.Registry) erro
 		if err := m.PasswordUpdate.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("password_update")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("password_update")
 			}
 			return err
 		}
@@ -256,6 +254,7 @@ func (m *UpdateUserAccount) validatePasswordUpdate(formats strfmt.Registry) erro
 }
 
 func (m *UpdateUserAccount) validatePictureURL(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.PictureURL) { // not required
 		return nil
 	}
@@ -273,80 +272,16 @@ func (m *UpdateUserAccount) validateUsername(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
+	if err := validate.MinLength("username", "body", string(*m.Username), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
+	if err := validate.MaxLength("username", "body", string(*m.Username), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("username", "body", string(*m.Username), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this update user account based on the context it is used
-func (m *UpdateUserAccount) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateEmails(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidatePasswordUpdate(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *UpdateUserAccount) contextValidateEmails(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Emails); i++ {
-
-		if m.Emails[i] != nil {
-
-			if swag.IsZero(m.Emails[i]) { // not required
-				return nil
-			}
-
-			if err := m.Emails[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("emails" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("emails" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *UpdateUserAccount) contextValidatePasswordUpdate(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.PasswordUpdate != nil {
-
-		if swag.IsZero(m.PasswordUpdate) { // not required
-			return nil
-		}
-
-		if err := m.PasswordUpdate.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("password_update")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("password_update")
-			}
-			return err
-		}
 	}
 
 	return nil
@@ -371,7 +306,6 @@ func (m *UpdateUserAccount) UnmarshalBinary(b []byte) error {
 }
 
 // UpdateUserAccountPasswordUpdate The update password requires to confirm the old password.
-//
 // swagger:model UpdateUserAccountPasswordUpdate
 type UpdateUserAccountPasswordUpdate struct {
 
@@ -412,7 +346,7 @@ func (m *UpdateUserAccountPasswordUpdate) validateCurrent(formats strfmt.Registr
 		return err
 	}
 
-	if err := validate.MinLength("password_update"+"."+"current", "body", m.Current.String(), 8); err != nil {
+	if err := validate.MinLength("password_update"+"."+"current", "body", string(*m.Current), 8); err != nil {
 		return err
 	}
 
@@ -429,7 +363,7 @@ func (m *UpdateUserAccountPasswordUpdate) validateNew(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MinLength("password_update"+"."+"new", "body", m.New.String(), 8); err != nil {
+	if err := validate.MinLength("password_update"+"."+"new", "body", string(*m.New), 8); err != nil {
 		return err
 	}
 
@@ -437,11 +371,6 @@ func (m *UpdateUserAccountPasswordUpdate) validateNew(formats strfmt.Registry) e
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this update user account password update based on context it is used
-func (m *UpdateUserAccountPasswordUpdate) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

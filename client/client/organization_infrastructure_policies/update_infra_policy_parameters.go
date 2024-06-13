@@ -13,92 +13,75 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateInfraPolicyParams creates a new UpdateInfraPolicyParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewUpdateInfraPolicyParams creates a new UpdateInfraPolicyParams object
+// with the default values initialized.
 func NewUpdateInfraPolicyParams() *UpdateInfraPolicyParams {
+	var ()
 	return &UpdateInfraPolicyParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateInfraPolicyParamsWithTimeout creates a new UpdateInfraPolicyParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewUpdateInfraPolicyParamsWithTimeout(timeout time.Duration) *UpdateInfraPolicyParams {
+	var ()
 	return &UpdateInfraPolicyParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewUpdateInfraPolicyParamsWithContext creates a new UpdateInfraPolicyParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewUpdateInfraPolicyParamsWithContext(ctx context.Context) *UpdateInfraPolicyParams {
+	var ()
 	return &UpdateInfraPolicyParams{
+
 		Context: ctx,
 	}
 }
 
 // NewUpdateInfraPolicyParamsWithHTTPClient creates a new UpdateInfraPolicyParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewUpdateInfraPolicyParamsWithHTTPClient(client *http.Client) *UpdateInfraPolicyParams {
+	var ()
 	return &UpdateInfraPolicyParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-UpdateInfraPolicyParams contains all the parameters to send to the API endpoint
-
-	for the update infra policy operation.
-
-	Typically these are written to a http.Request.
+/*UpdateInfraPolicyParams contains all the parameters to send to the API endpoint
+for the update infra policy operation typically these are written to a http.Request
 */
 type UpdateInfraPolicyParams struct {
 
-	/* Body.
+	/*Body
+	  The information of the organization to update.
 
-	   The information of the organization to update.
 	*/
 	Body *models.UpdateInfraPolicy
+	/*InfraPolicyCanonical
+	  The canonical of an InfraPolicy.
 
-	/* InfraPolicyCanonical.
-
-	   The canonical of an InfraPolicy.
 	*/
 	InfraPolicyCanonical string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the update infra policy params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateInfraPolicyParams) WithDefaults() *UpdateInfraPolicyParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the update infra policy params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateInfraPolicyParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update infra policy params
@@ -174,6 +157,7 @@ func (o *UpdateInfraPolicyParams) WriteToRequest(r runtime.ClientRequest, reg st
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

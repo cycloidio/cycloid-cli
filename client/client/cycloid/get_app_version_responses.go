@@ -6,18 +6,17 @@ package cycloid
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetAppVersionReader is a Reader for the GetAppVersion structure.
@@ -57,8 +56,7 @@ func NewGetAppVersionOK() *GetAppVersionOK {
 	return &GetAppVersionOK{}
 }
 
-/*
-GetAppVersionOK describes a response with status code 200, with default header values.
+/*GetAppVersionOK handles this case with default header values.
 
 Application version.
 */
@@ -66,44 +64,8 @@ type GetAppVersionOK struct {
 	Payload *GetAppVersionOKBody
 }
 
-// IsSuccess returns true when this get app version o k response has a 2xx status code
-func (o *GetAppVersionOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get app version o k response has a 3xx status code
-func (o *GetAppVersionOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get app version o k response has a 4xx status code
-func (o *GetAppVersionOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get app version o k response has a 5xx status code
-func (o *GetAppVersionOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get app version o k response a status code equal to that given
-func (o *GetAppVersionOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get app version o k response
-func (o *GetAppVersionOK) Code() int {
-	return 200
-}
-
 func (o *GetAppVersionOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /version][%d] getAppVersionOK %s", 200, payload)
-}
-
-func (o *GetAppVersionOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /version][%d] getAppVersionOK %s", 200, payload)
+	return fmt.Sprintf("[GET /version][%d] getAppVersionOK  %+v", 200, o.Payload)
 }
 
 func (o *GetAppVersionOK) GetPayload() *GetAppVersionOKBody {
@@ -127,60 +89,20 @@ func NewGetAppVersionUnprocessableEntity() *GetAppVersionUnprocessableEntity {
 	return &GetAppVersionUnprocessableEntity{}
 }
 
-/*
-GetAppVersionUnprocessableEntity describes a response with status code 422, with default header values.
+/*GetAppVersionUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetAppVersionUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get app version unprocessable entity response has a 2xx status code
-func (o *GetAppVersionUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get app version unprocessable entity response has a 3xx status code
-func (o *GetAppVersionUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get app version unprocessable entity response has a 4xx status code
-func (o *GetAppVersionUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get app version unprocessable entity response has a 5xx status code
-func (o *GetAppVersionUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get app version unprocessable entity response a status code equal to that given
-func (o *GetAppVersionUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the get app version unprocessable entity response
-func (o *GetAppVersionUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *GetAppVersionUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /version][%d] getAppVersionUnprocessableEntity %s", 422, payload)
-}
-
-func (o *GetAppVersionUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /version][%d] getAppVersionUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[GET /version][%d] getAppVersionUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetAppVersionUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -189,16 +111,12 @@ func (o *GetAppVersionUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *GetAppVersionUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -217,46 +135,18 @@ func NewGetAppVersionDefault(code int) *GetAppVersionDefault {
 	}
 }
 
-/*
-GetAppVersionDefault describes a response with status code -1, with default header values.
+/*GetAppVersionDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetAppVersionDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get app version default response has a 2xx status code
-func (o *GetAppVersionDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get app version default response has a 3xx status code
-func (o *GetAppVersionDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get app version default response has a 4xx status code
-func (o *GetAppVersionDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get app version default response has a 5xx status code
-func (o *GetAppVersionDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get app version default response a status code equal to that given
-func (o *GetAppVersionDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get app version default response
@@ -265,13 +155,7 @@ func (o *GetAppVersionDefault) Code() int {
 }
 
 func (o *GetAppVersionDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /version][%d] getAppVersion default %s", o._statusCode, payload)
-}
-
-func (o *GetAppVersionDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /version][%d] getAppVersion default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /version][%d] getAppVersion default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetAppVersionDefault) GetPayload() *models.ErrorPayload {
@@ -280,16 +164,12 @@ func (o *GetAppVersionDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetAppVersionDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -301,8 +181,7 @@ func (o *GetAppVersionDefault) readResponse(response runtime.ClientResponse, con
 	return nil
 }
 
-/*
-GetAppVersionOKBody get app version o k body
+/*GetAppVersionOKBody get app version o k body
 swagger:model GetAppVersionOKBody
 */
 type GetAppVersionOKBody struct {
@@ -336,39 +215,6 @@ func (o *GetAppVersionOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getAppVersionOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getAppVersionOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this get app version o k body based on the context it is used
-func (o *GetAppVersionOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetAppVersionOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getAppVersionOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getAppVersionOK" + "." + "data")
 			}
 			return err
 		}

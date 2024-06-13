@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // ResourcePool Resource Pool
 //
 // A Resource Pool holds the information of all the Resources that have the same label. The Used is the amount used by Projects using Quotas and Allocated is the amount declared by Quotas
-//
 // swagger:model ResourcePool
 type ResourcePool struct {
 
@@ -154,7 +152,7 @@ func (m *ResourcePool) validateAllocatedCPU(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("allocated_cpu", "body", *m.AllocatedCPU, 0, false); err != nil {
+	if err := validate.MinimumInt("allocated_cpu", "body", int64(*m.AllocatedCPU), 0, false); err != nil {
 		return err
 	}
 
@@ -167,7 +165,7 @@ func (m *ResourcePool) validateAllocatedMemory(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("allocated_memory", "body", *m.AllocatedMemory, 0, false); err != nil {
+	if err := validate.MinimumInt("allocated_memory", "body", int64(*m.AllocatedMemory), 0, false); err != nil {
 		return err
 	}
 
@@ -180,7 +178,7 @@ func (m *ResourcePool) validateAllocatedStorage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("allocated_storage", "body", *m.AllocatedStorage, 0, false); err != nil {
+	if err := validate.MinimumInt("allocated_storage", "body", int64(*m.AllocatedStorage), 0, false); err != nil {
 		return err
 	}
 
@@ -193,15 +191,15 @@ func (m *ResourcePool) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -214,7 +212,7 @@ func (m *ResourcePool) validateCPU(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("cpu", "body", *m.CPU, 0, false); err != nil {
+	if err := validate.MinimumInt("cpu", "body", int64(*m.CPU), 0, false); err != nil {
 		return err
 	}
 
@@ -222,11 +220,12 @@ func (m *ResourcePool) validateCPU(formats strfmt.Registry) error {
 }
 
 func (m *ResourcePool) validateID(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ID) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -248,7 +247,7 @@ func (m *ResourcePool) validateMemory(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("memory", "body", *m.Memory, 0, false); err != nil {
+	if err := validate.MinimumInt("memory", "body", int64(*m.Memory), 0, false); err != nil {
 		return err
 	}
 
@@ -270,7 +269,7 @@ func (m *ResourcePool) validateStorage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("storage", "body", *m.Storage, 0, false); err != nil {
+	if err := validate.MinimumInt("storage", "body", int64(*m.Storage), 0, false); err != nil {
 		return err
 	}
 
@@ -283,7 +282,7 @@ func (m *ResourcePool) validateUsedCPU(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("used_cpu", "body", *m.UsedCPU, 0, false); err != nil {
+	if err := validate.MinimumInt("used_cpu", "body", int64(*m.UsedCPU), 0, false); err != nil {
 		return err
 	}
 
@@ -296,7 +295,7 @@ func (m *ResourcePool) validateUsedMemory(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("used_memory", "body", *m.UsedMemory, 0, false); err != nil {
+	if err := validate.MinimumInt("used_memory", "body", int64(*m.UsedMemory), 0, false); err != nil {
 		return err
 	}
 
@@ -309,15 +308,10 @@ func (m *ResourcePool) validateUsedStorage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("used_storage", "body", *m.UsedStorage, 0, false); err != nil {
+	if err := validate.MinimumInt("used_storage", "body", int64(*m.UsedStorage), 0, false); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this resource pool based on context it is used
-func (m *ResourcePool) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

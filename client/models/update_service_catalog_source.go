@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // UpdateServiceCatalogSource UpdateServiceCatalogSource
-//
 // swagger:model UpdateServiceCatalogSource
 type UpdateServiceCatalogSource struct {
 
@@ -67,19 +65,20 @@ func (m *UpdateServiceCatalogSource) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UpdateServiceCatalogSource) validateCredentialCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", string(m.CredentialCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", m.CredentialCanonical, 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -101,15 +100,10 @@ func (m *UpdateServiceCatalogSource) validateURL(formats strfmt.Registry) error 
 		return err
 	}
 
-	if err := validate.Pattern("url", "body", *m.URL, `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
+	if err := validate.Pattern("url", "body", string(*m.URL), `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this update service catalog source based on context it is used
-func (m *UpdateServiceCatalogSource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

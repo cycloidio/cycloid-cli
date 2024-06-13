@@ -13,84 +13,68 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewDeleteServiceCatalogSourceParams creates a new DeleteServiceCatalogSourceParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewDeleteServiceCatalogSourceParams creates a new DeleteServiceCatalogSourceParams object
+// with the default values initialized.
 func NewDeleteServiceCatalogSourceParams() *DeleteServiceCatalogSourceParams {
+	var ()
 	return &DeleteServiceCatalogSourceParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDeleteServiceCatalogSourceParamsWithTimeout creates a new DeleteServiceCatalogSourceParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewDeleteServiceCatalogSourceParamsWithTimeout(timeout time.Duration) *DeleteServiceCatalogSourceParams {
+	var ()
 	return &DeleteServiceCatalogSourceParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewDeleteServiceCatalogSourceParamsWithContext creates a new DeleteServiceCatalogSourceParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewDeleteServiceCatalogSourceParamsWithContext(ctx context.Context) *DeleteServiceCatalogSourceParams {
+	var ()
 	return &DeleteServiceCatalogSourceParams{
+
 		Context: ctx,
 	}
 }
 
 // NewDeleteServiceCatalogSourceParamsWithHTTPClient creates a new DeleteServiceCatalogSourceParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewDeleteServiceCatalogSourceParamsWithHTTPClient(client *http.Client) *DeleteServiceCatalogSourceParams {
+	var ()
 	return &DeleteServiceCatalogSourceParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-DeleteServiceCatalogSourceParams contains all the parameters to send to the API endpoint
-
-	for the delete service catalog source operation.
-
-	Typically these are written to a http.Request.
+/*DeleteServiceCatalogSourceParams contains all the parameters to send to the API endpoint
+for the delete service catalog source operation typically these are written to a http.Request
 */
 type DeleteServiceCatalogSourceParams struct {
 
-	/* OrganizationCanonical.
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ServiceCatalogSourceCanonical
+	  Organization Service Catalog Sources canonical
 
-	/* ServiceCatalogSourceCanonical.
-
-	   Organization Service Catalog Sources canonical
 	*/
 	ServiceCatalogSourceCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the delete service catalog source params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteServiceCatalogSourceParams) WithDefaults() *DeleteServiceCatalogSourceParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the delete service catalog source params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteServiceCatalogSourceParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the delete service catalog source params

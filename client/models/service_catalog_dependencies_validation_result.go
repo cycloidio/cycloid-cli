@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // ServiceCatalogDependenciesValidationResult ServiceCatalogValidationResult
 //
 // The result of the Service Catalog dependencies validation. If errors and warnings are empty then it means that the dependencies are respected.
-//
 // swagger:model ServiceCatalogDependenciesValidationResult
 type ServiceCatalogDependenciesValidationResult struct {
 
@@ -63,11 +61,6 @@ func (m *ServiceCatalogDependenciesValidationResult) validateWarnings(formats st
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this service catalog dependencies validation result based on context it is used
-func (m *ServiceCatalogDependenciesValidationResult) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

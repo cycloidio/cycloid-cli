@@ -6,18 +6,17 @@ package organization_pipelines
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DiffPipelineReader is a Reader for the DiffPipeline structure.
@@ -75,8 +74,7 @@ func NewDiffPipelineOK() *DiffPipelineOK {
 	return &DiffPipelineOK{}
 }
 
-/*
-DiffPipelineOK describes a response with status code 200, with default header values.
+/*DiffPipelineOK handles this case with default header values.
 
 The diff between the provided pipeline configuration and the existing pipeline has been done.
 */
@@ -84,44 +82,8 @@ type DiffPipelineOK struct {
 	Payload *DiffPipelineOKBody
 }
 
-// IsSuccess returns true when this diff pipeline o k response has a 2xx status code
-func (o *DiffPipelineOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this diff pipeline o k response has a 3xx status code
-func (o *DiffPipelineOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this diff pipeline o k response has a 4xx status code
-func (o *DiffPipelineOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this diff pipeline o k response has a 5xx status code
-func (o *DiffPipelineOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this diff pipeline o k response a status code equal to that given
-func (o *DiffPipelineOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the diff pipeline o k response
-func (o *DiffPipelineOK) Code() int {
-	return 200
-}
-
 func (o *DiffPipelineOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineOK %s", 200, payload)
-}
-
-func (o *DiffPipelineOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineOK %s", 200, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineOK  %+v", 200, o.Payload)
 }
 
 func (o *DiffPipelineOK) GetPayload() *DiffPipelineOKBody {
@@ -145,60 +107,20 @@ func NewDiffPipelineForbidden() *DiffPipelineForbidden {
 	return &DiffPipelineForbidden{}
 }
 
-/*
-DiffPipelineForbidden describes a response with status code 403, with default header values.
+/*DiffPipelineForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DiffPipelineForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this diff pipeline forbidden response has a 2xx status code
-func (o *DiffPipelineForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this diff pipeline forbidden response has a 3xx status code
-func (o *DiffPipelineForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this diff pipeline forbidden response has a 4xx status code
-func (o *DiffPipelineForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this diff pipeline forbidden response has a 5xx status code
-func (o *DiffPipelineForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this diff pipeline forbidden response a status code equal to that given
-func (o *DiffPipelineForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the diff pipeline forbidden response
-func (o *DiffPipelineForbidden) Code() int {
-	return 403
-}
-
 func (o *DiffPipelineForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineForbidden %s", 403, payload)
-}
-
-func (o *DiffPipelineForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineForbidden %s", 403, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DiffPipelineForbidden) GetPayload() *models.ErrorPayload {
@@ -207,16 +129,12 @@ func (o *DiffPipelineForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DiffPipelineForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -233,60 +151,20 @@ func NewDiffPipelineNotFound() *DiffPipelineNotFound {
 	return &DiffPipelineNotFound{}
 }
 
-/*
-DiffPipelineNotFound describes a response with status code 404, with default header values.
+/*DiffPipelineNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DiffPipelineNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this diff pipeline not found response has a 2xx status code
-func (o *DiffPipelineNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this diff pipeline not found response has a 3xx status code
-func (o *DiffPipelineNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this diff pipeline not found response has a 4xx status code
-func (o *DiffPipelineNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this diff pipeline not found response has a 5xx status code
-func (o *DiffPipelineNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this diff pipeline not found response a status code equal to that given
-func (o *DiffPipelineNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the diff pipeline not found response
-func (o *DiffPipelineNotFound) Code() int {
-	return 404
-}
-
 func (o *DiffPipelineNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineNotFound %s", 404, payload)
-}
-
-func (o *DiffPipelineNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineNotFound %s", 404, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineNotFound  %+v", 404, o.Payload)
 }
 
 func (o *DiffPipelineNotFound) GetPayload() *models.ErrorPayload {
@@ -295,16 +173,12 @@ func (o *DiffPipelineNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DiffPipelineNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -321,50 +195,15 @@ func NewDiffPipelineLengthRequired() *DiffPipelineLengthRequired {
 	return &DiffPipelineLengthRequired{}
 }
 
-/*
-DiffPipelineLengthRequired describes a response with status code 411, with default header values.
+/*DiffPipelineLengthRequired handles this case with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type DiffPipelineLengthRequired struct {
 }
 
-// IsSuccess returns true when this diff pipeline length required response has a 2xx status code
-func (o *DiffPipelineLengthRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this diff pipeline length required response has a 3xx status code
-func (o *DiffPipelineLengthRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this diff pipeline length required response has a 4xx status code
-func (o *DiffPipelineLengthRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this diff pipeline length required response has a 5xx status code
-func (o *DiffPipelineLengthRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this diff pipeline length required response a status code equal to that given
-func (o *DiffPipelineLengthRequired) IsCode(code int) bool {
-	return code == 411
-}
-
-// Code gets the status code for the diff pipeline length required response
-func (o *DiffPipelineLengthRequired) Code() int {
-	return 411
-}
-
 func (o *DiffPipelineLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineLengthRequired", 411)
-}
-
-func (o *DiffPipelineLengthRequired) String() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineLengthRequired", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineLengthRequired ", 411)
 }
 
 func (o *DiffPipelineLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -377,60 +216,20 @@ func NewDiffPipelineUnprocessableEntity() *DiffPipelineUnprocessableEntity {
 	return &DiffPipelineUnprocessableEntity{}
 }
 
-/*
-DiffPipelineUnprocessableEntity describes a response with status code 422, with default header values.
+/*DiffPipelineUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type DiffPipelineUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this diff pipeline unprocessable entity response has a 2xx status code
-func (o *DiffPipelineUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this diff pipeline unprocessable entity response has a 3xx status code
-func (o *DiffPipelineUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this diff pipeline unprocessable entity response has a 4xx status code
-func (o *DiffPipelineUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this diff pipeline unprocessable entity response has a 5xx status code
-func (o *DiffPipelineUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this diff pipeline unprocessable entity response a status code equal to that given
-func (o *DiffPipelineUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the diff pipeline unprocessable entity response
-func (o *DiffPipelineUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *DiffPipelineUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineUnprocessableEntity %s", 422, payload)
-}
-
-func (o *DiffPipelineUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipelineUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *DiffPipelineUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -439,16 +238,12 @@ func (o *DiffPipelineUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *DiffPipelineUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -467,46 +262,18 @@ func NewDiffPipelineDefault(code int) *DiffPipelineDefault {
 	}
 }
 
-/*
-DiffPipelineDefault describes a response with status code -1, with default header values.
+/*DiffPipelineDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DiffPipelineDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this diff pipeline default response has a 2xx status code
-func (o *DiffPipelineDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this diff pipeline default response has a 3xx status code
-func (o *DiffPipelineDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this diff pipeline default response has a 4xx status code
-func (o *DiffPipelineDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this diff pipeline default response has a 5xx status code
-func (o *DiffPipelineDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this diff pipeline default response a status code equal to that given
-func (o *DiffPipelineDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the diff pipeline default response
@@ -515,13 +282,7 @@ func (o *DiffPipelineDefault) Code() int {
 }
 
 func (o *DiffPipelineDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipeline default %s", o._statusCode, payload)
-}
-
-func (o *DiffPipelineDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipeline default %s", o._statusCode, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/pipelines/{inpath_pipeline_name}/diff][%d] diffPipeline default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DiffPipelineDefault) GetPayload() *models.ErrorPayload {
@@ -530,16 +291,12 @@ func (o *DiffPipelineDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DiffPipelineDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -551,8 +308,7 @@ func (o *DiffPipelineDefault) readResponse(response runtime.ClientResponse, cons
 	return nil
 }
 
-/*
-DiffPipelineOKBody diff pipeline o k body
+/*DiffPipelineOKBody diff pipeline o k body
 swagger:model DiffPipelineOKBody
 */
 type DiffPipelineOKBody struct {
@@ -586,39 +342,6 @@ func (o *DiffPipelineOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("diffPipelineOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("diffPipelineOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this diff pipeline o k body based on the context it is used
-func (o *DiffPipelineOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *DiffPipelineOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("diffPipelineOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("diffPipelineOK" + "." + "data")
 			}
 			return err
 		}

@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Quota Quota
 //
-// # A Quota holds the information of the restrictions applied to a Team having as source a Resource Pool
-//
+// A Quota holds the information of the restrictions applied to a Team having as source a Resource Pool
 // swagger:model Quota
 type Quota struct {
 
@@ -117,7 +115,7 @@ func (m *Quota) validateCPU(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("cpu", "body", *m.CPU, 0, false); err != nil {
+	if err := validate.MinimumInt("cpu", "body", int64(*m.CPU), 0, false); err != nil {
 		return err
 	}
 
@@ -130,7 +128,7 @@ func (m *Quota) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -143,7 +141,7 @@ func (m *Quota) validateMemory(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("memory", "body", *m.Memory, 0, false); err != nil {
+	if err := validate.MinimumInt("memory", "body", int64(*m.Memory), 0, false); err != nil {
 		return err
 	}
 
@@ -160,8 +158,6 @@ func (m *Quota) validateResourcePool(formats strfmt.Registry) error {
 		if err := m.ResourcePool.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resource_pool")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("resource_pool")
 			}
 			return err
 		}
@@ -176,7 +172,7 @@ func (m *Quota) validateStorage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("storage", "body", *m.Storage, 0, false); err != nil {
+	if err := validate.MinimumInt("storage", "body", int64(*m.Storage), 0, false); err != nil {
 		return err
 	}
 
@@ -193,8 +189,6 @@ func (m *Quota) validateTeam(formats strfmt.Registry) error {
 		if err := m.Team.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("team")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("team")
 			}
 			return err
 		}
@@ -209,7 +203,7 @@ func (m *Quota) validateUsedCPU(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("used_cpu", "body", *m.UsedCPU, 0, false); err != nil {
+	if err := validate.MinimumInt("used_cpu", "body", int64(*m.UsedCPU), 0, false); err != nil {
 		return err
 	}
 
@@ -222,7 +216,7 @@ func (m *Quota) validateUsedMemory(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("used_memory", "body", *m.UsedMemory, 0, false); err != nil {
+	if err := validate.MinimumInt("used_memory", "body", int64(*m.UsedMemory), 0, false); err != nil {
 		return err
 	}
 
@@ -235,60 +229,8 @@ func (m *Quota) validateUsedStorage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("used_storage", "body", *m.UsedStorage, 0, false); err != nil {
+	if err := validate.MinimumInt("used_storage", "body", int64(*m.UsedStorage), 0, false); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this quota based on the context it is used
-func (m *Quota) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateResourcePool(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateTeam(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Quota) contextValidateResourcePool(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.ResourcePool != nil {
-
-		if err := m.ResourcePool.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("resource_pool")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("resource_pool")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Quota) contextValidateTeam(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Team != nil {
-
-		if err := m.Team.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("team")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("team")
-			}
-			return err
-		}
 	}
 
 	return nil

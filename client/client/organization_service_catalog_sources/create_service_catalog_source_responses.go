@@ -6,18 +6,17 @@ package organization_service_catalog_sources
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateServiceCatalogSourceReader is a Reader for the CreateServiceCatalogSource structure.
@@ -69,8 +68,7 @@ func NewCreateServiceCatalogSourceOK() *CreateServiceCatalogSourceOK {
 	return &CreateServiceCatalogSourceOK{}
 }
 
-/*
-CreateServiceCatalogSourceOK describes a response with status code 200, with default header values.
+/*CreateServiceCatalogSourceOK handles this case with default header values.
 
 Success creation
 */
@@ -78,44 +76,8 @@ type CreateServiceCatalogSourceOK struct {
 	Payload *CreateServiceCatalogSourceOKBody
 }
 
-// IsSuccess returns true when this create service catalog source o k response has a 2xx status code
-func (o *CreateServiceCatalogSourceOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this create service catalog source o k response has a 3xx status code
-func (o *CreateServiceCatalogSourceOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create service catalog source o k response has a 4xx status code
-func (o *CreateServiceCatalogSourceOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this create service catalog source o k response has a 5xx status code
-func (o *CreateServiceCatalogSourceOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create service catalog source o k response a status code equal to that given
-func (o *CreateServiceCatalogSourceOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the create service catalog source o k response
-func (o *CreateServiceCatalogSourceOK) Code() int {
-	return 200
-}
-
 func (o *CreateServiceCatalogSourceOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceOK %s", 200, payload)
-}
-
-func (o *CreateServiceCatalogSourceOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceOK %s", 200, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateServiceCatalogSourceOK) GetPayload() *CreateServiceCatalogSourceOKBody {
@@ -139,60 +101,20 @@ func NewCreateServiceCatalogSourceNotFound() *CreateServiceCatalogSourceNotFound
 	return &CreateServiceCatalogSourceNotFound{}
 }
 
-/*
-CreateServiceCatalogSourceNotFound describes a response with status code 404, with default header values.
+/*CreateServiceCatalogSourceNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type CreateServiceCatalogSourceNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this create service catalog source not found response has a 2xx status code
-func (o *CreateServiceCatalogSourceNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create service catalog source not found response has a 3xx status code
-func (o *CreateServiceCatalogSourceNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create service catalog source not found response has a 4xx status code
-func (o *CreateServiceCatalogSourceNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create service catalog source not found response has a 5xx status code
-func (o *CreateServiceCatalogSourceNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create service catalog source not found response a status code equal to that given
-func (o *CreateServiceCatalogSourceNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the create service catalog source not found response
-func (o *CreateServiceCatalogSourceNotFound) Code() int {
-	return 404
-}
-
 func (o *CreateServiceCatalogSourceNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceNotFound %s", 404, payload)
-}
-
-func (o *CreateServiceCatalogSourceNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceNotFound %s", 404, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceNotFound  %+v", 404, o.Payload)
 }
 
 func (o *CreateServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload {
@@ -201,16 +123,12 @@ func (o *CreateServiceCatalogSourceNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *CreateServiceCatalogSourceNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -227,50 +145,15 @@ func NewCreateServiceCatalogSourceLengthRequired() *CreateServiceCatalogSourceLe
 	return &CreateServiceCatalogSourceLengthRequired{}
 }
 
-/*
-CreateServiceCatalogSourceLengthRequired describes a response with status code 411, with default header values.
+/*CreateServiceCatalogSourceLengthRequired handles this case with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type CreateServiceCatalogSourceLengthRequired struct {
 }
 
-// IsSuccess returns true when this create service catalog source length required response has a 2xx status code
-func (o *CreateServiceCatalogSourceLengthRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create service catalog source length required response has a 3xx status code
-func (o *CreateServiceCatalogSourceLengthRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create service catalog source length required response has a 4xx status code
-func (o *CreateServiceCatalogSourceLengthRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create service catalog source length required response has a 5xx status code
-func (o *CreateServiceCatalogSourceLengthRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create service catalog source length required response a status code equal to that given
-func (o *CreateServiceCatalogSourceLengthRequired) IsCode(code int) bool {
-	return code == 411
-}
-
-// Code gets the status code for the create service catalog source length required response
-func (o *CreateServiceCatalogSourceLengthRequired) Code() int {
-	return 411
-}
-
 func (o *CreateServiceCatalogSourceLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceLengthRequired", 411)
-}
-
-func (o *CreateServiceCatalogSourceLengthRequired) String() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceLengthRequired", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceLengthRequired ", 411)
 }
 
 func (o *CreateServiceCatalogSourceLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -283,60 +166,20 @@ func NewCreateServiceCatalogSourceUnprocessableEntity() *CreateServiceCatalogSou
 	return &CreateServiceCatalogSourceUnprocessableEntity{}
 }
 
-/*
-CreateServiceCatalogSourceUnprocessableEntity describes a response with status code 422, with default header values.
+/*CreateServiceCatalogSourceUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateServiceCatalogSourceUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this create service catalog source unprocessable entity response has a 2xx status code
-func (o *CreateServiceCatalogSourceUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create service catalog source unprocessable entity response has a 3xx status code
-func (o *CreateServiceCatalogSourceUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create service catalog source unprocessable entity response has a 4xx status code
-func (o *CreateServiceCatalogSourceUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create service catalog source unprocessable entity response has a 5xx status code
-func (o *CreateServiceCatalogSourceUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create service catalog source unprocessable entity response a status code equal to that given
-func (o *CreateServiceCatalogSourceUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the create service catalog source unprocessable entity response
-func (o *CreateServiceCatalogSourceUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *CreateServiceCatalogSourceUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceUnprocessableEntity %s", 422, payload)
-}
-
-func (o *CreateServiceCatalogSourceUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSourceUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *CreateServiceCatalogSourceUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -345,16 +188,12 @@ func (o *CreateServiceCatalogSourceUnprocessableEntity) GetPayload() *models.Err
 
 func (o *CreateServiceCatalogSourceUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -373,46 +212,18 @@ func NewCreateServiceCatalogSourceDefault(code int) *CreateServiceCatalogSourceD
 	}
 }
 
-/*
-CreateServiceCatalogSourceDefault describes a response with status code -1, with default header values.
+/*CreateServiceCatalogSourceDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateServiceCatalogSourceDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this create service catalog source default response has a 2xx status code
-func (o *CreateServiceCatalogSourceDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this create service catalog source default response has a 3xx status code
-func (o *CreateServiceCatalogSourceDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this create service catalog source default response has a 4xx status code
-func (o *CreateServiceCatalogSourceDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this create service catalog source default response has a 5xx status code
-func (o *CreateServiceCatalogSourceDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this create service catalog source default response a status code equal to that given
-func (o *CreateServiceCatalogSourceDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the create service catalog source default response
@@ -421,13 +232,7 @@ func (o *CreateServiceCatalogSourceDefault) Code() int {
 }
 
 func (o *CreateServiceCatalogSourceDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSource default %s", o._statusCode, payload)
-}
-
-func (o *CreateServiceCatalogSourceDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSource default %s", o._statusCode, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/service_catalog_sources][%d] createServiceCatalogSource default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *CreateServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {
@@ -436,16 +241,12 @@ func (o *CreateServiceCatalogSourceDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateServiceCatalogSourceDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -457,8 +258,7 @@ func (o *CreateServiceCatalogSourceDefault) readResponse(response runtime.Client
 	return nil
 }
 
-/*
-CreateServiceCatalogSourceOKBody create service catalog source o k body
+/*CreateServiceCatalogSourceOKBody create service catalog source o k body
 swagger:model CreateServiceCatalogSourceOKBody
 */
 type CreateServiceCatalogSourceOKBody struct {
@@ -492,39 +292,6 @@ func (o *CreateServiceCatalogSourceOKBody) validateData(formats strfmt.Registry)
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createServiceCatalogSourceOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("createServiceCatalogSourceOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this create service catalog source o k body based on the context it is used
-func (o *CreateServiceCatalogSourceOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *CreateServiceCatalogSourceOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("createServiceCatalogSourceOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("createServiceCatalogSourceOK" + "." + "data")
 			}
 			return err
 		}

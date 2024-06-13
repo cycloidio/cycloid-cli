@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // TaskRunConfig TaskRunConfig
 //
 // The configuration of a concourse task-run.
-//
 // swagger:model TaskRunConfig
 type TaskRunConfig struct {
 
@@ -44,19 +42,15 @@ func (m *TaskRunConfig) Validate(formats strfmt.Registry) error {
 }
 
 func (m *TaskRunConfig) validatePath(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Path) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("path", "body", m.Path, 3); err != nil {
+	if err := validate.MinLength("path", "body", string(m.Path), 3); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this task run config based on context it is used
-func (m *TaskRunConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -13,84 +13,68 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewDeleteRoleParams creates a new DeleteRoleParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewDeleteRoleParams creates a new DeleteRoleParams object
+// with the default values initialized.
 func NewDeleteRoleParams() *DeleteRoleParams {
+	var ()
 	return &DeleteRoleParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDeleteRoleParamsWithTimeout creates a new DeleteRoleParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewDeleteRoleParamsWithTimeout(timeout time.Duration) *DeleteRoleParams {
+	var ()
 	return &DeleteRoleParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewDeleteRoleParamsWithContext creates a new DeleteRoleParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewDeleteRoleParamsWithContext(ctx context.Context) *DeleteRoleParams {
+	var ()
 	return &DeleteRoleParams{
+
 		Context: ctx,
 	}
 }
 
 // NewDeleteRoleParamsWithHTTPClient creates a new DeleteRoleParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewDeleteRoleParamsWithHTTPClient(client *http.Client) *DeleteRoleParams {
+	var ()
 	return &DeleteRoleParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-DeleteRoleParams contains all the parameters to send to the API endpoint
-
-	for the delete role operation.
-
-	Typically these are written to a http.Request.
+/*DeleteRoleParams contains all the parameters to send to the API endpoint
+for the delete role operation typically these are written to a http.Request
 */
 type DeleteRoleParams struct {
 
-	/* OrganizationCanonical.
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*RoleCanonical
+	  Organization Role canonical
 
-	/* RoleCanonical.
-
-	   Organization Role canonical
 	*/
 	RoleCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the delete role params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteRoleParams) WithDefaults() *DeleteRoleParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the delete role params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteRoleParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the delete role params

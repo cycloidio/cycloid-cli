@@ -7,38 +7,13 @@ package organization_kpis
 
 import (
 	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization kpis API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
 	return &Client{transport: transport, formats: formats}
-}
-
-// New creates a new organization kpis API client with basic auth credentials.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - user: user for basic authentication header.
-// - password: password for basic authentication header.
-func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
-	return &Client{transport: transport, formats: strfmt.Default}
-}
-
-// New creates a new organization kpis API client with a bearer token for authentication.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - bearerToken: bearer token for Bearer authentication header.
-func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
-	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -49,86 +24,16 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
-// ClientOption may be used to customize the behavior of Client methods.
-type ClientOption func(*runtime.ClientOperation)
-
-// This client is generated with a few options you might find useful for your swagger spec.
-//
-// Feel free to add you own set of options.
-
-// WithContentType allows the client to force the Content-Type header
-// to negotiate a specific Consumer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithContentType(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ConsumesMediaTypes = []string{mime}
-	}
-}
-
-// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
-func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/json"}
-}
-
-// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
-func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
-func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
-}
-
-// WithAccept allows the client to force the Accept header
-// to negotiate a specific Producer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithAccept(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ProducesMediaTypes = []string{mime}
-	}
-}
-
-// WithAcceptApplicationJSON sets the Accept header to "application/json".
-func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/json"}
-}
-
-// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
-func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// ClientService is the interface for Client methods
-type ClientService interface {
-	CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateKPIFavoriteNoContent, error)
-
-	CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateKpiOK, error)
-
-	DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteKPIFavoriteNoContent, error)
-
-	DeleteKpi(params *DeleteKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteKpiNoContent, error)
-
-	GetKpi(params *GetKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetKpiOK, error)
-
-	GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetKpisOK, error)
-
-	UpdateKpi(params *UpdateKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateKpiOK, error)
-
-	SetTransport(transport runtime.ClientTransport)
-}
-
 /*
 CreateKPIFavorite Add a kpi in the user favorites list.
 */
-func (a *Client) CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateKPIFavoriteNoContent, error) {
+func (a *Client) CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter) (*CreateKPIFavoriteNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateKPIFavoriteParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createKPIFavorite",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites",
@@ -140,12 +45,7 @@ func (a *Client) CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -161,12 +61,13 @@ func (a *Client) CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo run
 /*
 CreateKpi Save information about the KPI
 */
-func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateKpiOK, error) {
+func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthInfoWriter) (*CreateKpiOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateKpiParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createKpi",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/kpis",
@@ -178,12 +79,7 @@ func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -199,12 +95,13 @@ func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthI
 /*
 DeleteKPIFavorite Remove a kpi from the user favorites list.
 */
-func (a *Client) DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteKPIFavoriteNoContent, error) {
+func (a *Client) DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteKPIFavoriteNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteKPIFavoriteParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteKPIFavorite",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites",
@@ -216,12 +113,7 @@ func (a *Client) DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -237,12 +129,13 @@ func (a *Client) DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo run
 /*
 DeleteKpi delete a KPI
 */
-func (a *Client) DeleteKpi(params *DeleteKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteKpiNoContent, error) {
+func (a *Client) DeleteKpi(params *DeleteKpiParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteKpiNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteKpiParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteKpi",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/kpis/{kpi_canonical}",
@@ -254,12 +147,7 @@ func (a *Client) DeleteKpi(params *DeleteKpiParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -275,12 +163,13 @@ func (a *Client) DeleteKpi(params *DeleteKpiParams, authInfo runtime.ClientAuthI
 /*
 GetKpi Get the KPI
 */
-func (a *Client) GetKpi(params *GetKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetKpiOK, error) {
+func (a *Client) GetKpi(params *GetKpiParams, authInfo runtime.ClientAuthInfoWriter) (*GetKpiOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetKpiParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getKpi",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/kpis/{kpi_canonical}",
@@ -292,12 +181,7 @@ func (a *Client) GetKpi(params *GetKpiParams, authInfo runtime.ClientAuthInfoWri
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -313,12 +197,13 @@ func (a *Client) GetKpi(params *GetKpiParams, authInfo runtime.ClientAuthInfoWri
 /*
 GetKpis Get the list of configured organization KPIs
 */
-func (a *Client) GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetKpisOK, error) {
+func (a *Client) GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoWriter) (*GetKpisOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetKpisParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getKpis",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/kpis",
@@ -330,12 +215,7 @@ func (a *Client) GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoW
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -351,12 +231,13 @@ func (a *Client) GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoW
 /*
 UpdateKpi Update a KPI
 */
-func (a *Client) UpdateKpi(params *UpdateKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateKpiOK, error) {
+func (a *Client) UpdateKpi(params *UpdateKpiParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateKpiOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateKpiParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateKpi",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/kpis/{kpi_canonical}",
@@ -368,12 +249,7 @@ func (a *Client) UpdateKpi(params *UpdateKpiParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}

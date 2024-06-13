@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // SimpleTeam SimpleTeam
 //
 // The entity which represents the information of a team a bit simplified.
-//
 // swagger:model SimpleTeam
 type SimpleTeam struct {
 
@@ -95,15 +93,15 @@ func (m *SimpleTeam) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -116,7 +114,7 @@ func (m *SimpleTeam) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -129,7 +127,7 @@ func (m *SimpleTeam) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -142,7 +140,7 @@ func (m *SimpleTeam) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
 		return err
 	}
 
@@ -150,6 +148,7 @@ func (m *SimpleTeam) validateName(formats strfmt.Registry) error {
 }
 
 func (m *SimpleTeam) validateOwner(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -158,8 +157,6 @@ func (m *SimpleTeam) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -174,43 +171,8 @@ func (m *SimpleTeam) validateUpdatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this simple team based on the context it is used
-func (m *SimpleTeam) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateOwner(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *SimpleTeam) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Owner != nil {
-
-		if swag.IsZero(m.Owner) { // not required
-			return nil
-		}
-
-		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("owner")
-			}
-			return err
-		}
 	}
 
 	return nil

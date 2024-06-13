@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // TerraformProviderResourceSimple ResourceSimple
 //
-// # A Resource of a Provider without the config
-//
+// A Resource of a Provider without the config
 // swagger:model TerraformProviderResourceSimple
 type TerraformProviderResourceSimple struct {
 
@@ -116,8 +114,6 @@ func (m *TerraformProviderResourceSimple) validateAttributes(formats strfmt.Regi
 		if err := m.Attributes.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("attributes")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("attributes")
 			}
 			return err
 		}
@@ -132,11 +128,11 @@ func (m *TerraformProviderResourceSimple) validateCanonical(formats strfmt.Regis
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -162,6 +158,7 @@ func (m *TerraformProviderResourceSimple) validateDescription(formats strfmt.Reg
 }
 
 func (m *TerraformProviderResourceSimple) validateImage(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Image) { // not required
 		return nil
 	}
@@ -204,37 +201,6 @@ func (m *TerraformProviderResourceSimple) validateShortDescription(formats strfm
 
 	if err := validate.Required("short_description", "body", m.ShortDescription); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this terraform provider resource simple based on the context it is used
-func (m *TerraformProviderResourceSimple) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateAttributes(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *TerraformProviderResourceSimple) contextValidateAttributes(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Attributes != nil {
-
-		if err := m.Attributes.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("attributes")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("attributes")
-			}
-			return err
-		}
 	}
 
 	return nil

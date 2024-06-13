@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,7 +18,6 @@ import (
 // Job Job
 //
 // The entity which represents a job output in the application.
-//
 // swagger:model Job
 type Job struct {
 
@@ -109,6 +108,7 @@ func (m *Job) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateFinishedBuild(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.FinishedBuild) { // not required
 		return nil
 	}
@@ -117,8 +117,6 @@ func (m *Job) validateFinishedBuild(formats strfmt.Registry) error {
 		if err := m.FinishedBuild.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("finished_build")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("finished_build")
 			}
 			return err
 		}
@@ -137,6 +135,7 @@ func (m *Job) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateInputs(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Inputs) { // not required
 		return nil
 	}
@@ -150,8 +149,6 @@ func (m *Job) validateInputs(formats strfmt.Registry) error {
 			if err := m.Inputs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -172,6 +169,7 @@ func (m *Job) validateName(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateNextBuild(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.NextBuild) { // not required
 		return nil
 	}
@@ -180,8 +178,6 @@ func (m *Job) validateNextBuild(formats strfmt.Registry) error {
 		if err := m.NextBuild.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("next_build")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("next_build")
 			}
 			return err
 		}
@@ -191,6 +187,7 @@ func (m *Job) validateNextBuild(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateOutputs(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Outputs) { // not required
 		return nil
 	}
@@ -204,8 +201,6 @@ func (m *Job) validateOutputs(formats strfmt.Registry) error {
 			if err := m.Outputs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("outputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("outputs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -217,6 +212,7 @@ func (m *Job) validateOutputs(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateTransitionBuild(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.TransitionBuild) { // not required
 		return nil
 	}
@@ -225,151 +221,6 @@ func (m *Job) validateTransitionBuild(formats strfmt.Registry) error {
 		if err := m.TransitionBuild.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("transition_build")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("transition_build")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this job based on the context it is used
-func (m *Job) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateFinishedBuild(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateInputs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateNextBuild(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateOutputs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateTransitionBuild(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Job) contextValidateFinishedBuild(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.FinishedBuild != nil {
-
-		if swag.IsZero(m.FinishedBuild) { // not required
-			return nil
-		}
-
-		if err := m.FinishedBuild.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("finished_build")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("finished_build")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Job) contextValidateInputs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Inputs); i++ {
-
-		if m.Inputs[i] != nil {
-
-			if swag.IsZero(m.Inputs[i]) { // not required
-				return nil
-			}
-
-			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *Job) contextValidateNextBuild(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.NextBuild != nil {
-
-		if swag.IsZero(m.NextBuild) { // not required
-			return nil
-		}
-
-		if err := m.NextBuild.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("next_build")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("next_build")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Job) contextValidateOutputs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Outputs); i++ {
-
-		if m.Outputs[i] != nil {
-
-			if swag.IsZero(m.Outputs[i]) { // not required
-				return nil
-			}
-
-			if err := m.Outputs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("outputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("outputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *Job) contextValidateTransitionBuild(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.TransitionBuild != nil {
-
-		if swag.IsZero(m.TransitionBuild) { // not required
-			return nil
-		}
-
-		if err := m.TransitionBuild.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("transition_build")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("transition_build")
 			}
 			return err
 		}

@@ -6,17 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // CloudCostManagementProviders CloudCostManagementProviders
 //
-// # Date histogram of the cost of all the providers
+// Date histogram of the cost of all the providers
 //
 // swagger:model CloudCostManagementProviders
 type CloudCostManagementProviders struct {
@@ -50,39 +49,6 @@ func (m *CloudCostManagementProviders) validateCostHistogram(formats strfmt.Regi
 		if err := m.CostHistogram.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cost_histogram")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("cost_histogram")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this cloud cost management providers based on the context it is used
-func (m *CloudCostManagementProviders) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateCostHistogram(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *CloudCostManagementProviders) contextValidateCostHistogram(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.CostHistogram != nil {
-
-		if err := m.CostHistogram.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cost_histogram")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("cost_histogram")
 			}
 			return err
 		}

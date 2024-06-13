@@ -13,135 +13,114 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetBuildResourcesParams creates a new GetBuildResourcesParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetBuildResourcesParams creates a new GetBuildResourcesParams object
+// with the default values initialized.
 func NewGetBuildResourcesParams() *GetBuildResourcesParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetBuildResourcesParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetBuildResourcesParamsWithTimeout creates a new GetBuildResourcesParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetBuildResourcesParamsWithTimeout(timeout time.Duration) *GetBuildResourcesParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetBuildResourcesParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: timeout,
 	}
 }
 
 // NewGetBuildResourcesParamsWithContext creates a new GetBuildResourcesParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetBuildResourcesParamsWithContext(ctx context.Context) *GetBuildResourcesParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetBuildResourcesParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		Context: ctx,
 	}
 }
 
 // NewGetBuildResourcesParamsWithHTTPClient creates a new GetBuildResourcesParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetBuildResourcesParamsWithHTTPClient(client *http.Client) *GetBuildResourcesParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetBuildResourcesParams{
+		PageIndex:  &pageIndexDefault,
+		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*
-GetBuildResourcesParams contains all the parameters to send to the API endpoint
-
-	for the get build resources operation.
-
-	Typically these are written to a http.Request.
+/*GetBuildResourcesParams contains all the parameters to send to the API endpoint
+for the get build resources operation typically these are written to a http.Request
 */
 type GetBuildResourcesParams struct {
 
-	/* BuildID.
+	/*BuildID
+	  A build id
 
-	   A build id
 	*/
 	BuildID string
+	/*InpathPipelineName
+	  A pipeline name
 
-	/* InpathPipelineName.
-
-	   A pipeline name
 	*/
 	InpathPipelineName string
+	/*JobName
+	  A job name
 
-	/* JobName.
-
-	   A job name
 	*/
 	JobName string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*PageIndex
+	  The page number to request. The first page is 1.
 
-	/* PageIndex.
-
-	   The page number to request. The first page is 1.
-
-	   Format: uint32
-	   Default: 1
 	*/
 	PageIndex *uint32
+	/*PageSize
+	  The number of items at most which the response can have.
 
-	/* PageSize.
-
-	   The number of items at most which the response can have.
-
-	   Format: uint32
-	   Default: 1000
 	*/
 	PageSize *uint32
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get build resources params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetBuildResourcesParams) WithDefaults() *GetBuildResourcesParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get build resources params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetBuildResourcesParams) SetDefaults() {
-	var (
-		pageIndexDefault = uint32(1)
-
-		pageSizeDefault = uint32(1000)
-	)
-
-	val := GetBuildResourcesParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-	}
-
-	val.timeout = o.timeout
-	val.Context = o.Context
-	val.HTTPClient = o.HTTPClient
-	*o = val
 }
 
 // WithTimeout adds the timeout to the get build resources params
@@ -286,34 +265,32 @@ func (o *GetBuildResourcesParams) WriteToRequest(r runtime.ClientRequest, reg st
 
 		// query param page_index
 		var qrPageIndex uint32
-
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
-
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
-
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
-
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param project_canonical

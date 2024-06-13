@@ -13,98 +13,80 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateServiceCatalogTerraformParams creates a new UpdateServiceCatalogTerraformParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewUpdateServiceCatalogTerraformParams creates a new UpdateServiceCatalogTerraformParams object
+// with the default values initialized.
 func NewUpdateServiceCatalogTerraformParams() *UpdateServiceCatalogTerraformParams {
+	var ()
 	return &UpdateServiceCatalogTerraformParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateServiceCatalogTerraformParamsWithTimeout creates a new UpdateServiceCatalogTerraformParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewUpdateServiceCatalogTerraformParamsWithTimeout(timeout time.Duration) *UpdateServiceCatalogTerraformParams {
+	var ()
 	return &UpdateServiceCatalogTerraformParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewUpdateServiceCatalogTerraformParamsWithContext creates a new UpdateServiceCatalogTerraformParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewUpdateServiceCatalogTerraformParamsWithContext(ctx context.Context) *UpdateServiceCatalogTerraformParams {
+	var ()
 	return &UpdateServiceCatalogTerraformParams{
+
 		Context: ctx,
 	}
 }
 
 // NewUpdateServiceCatalogTerraformParamsWithHTTPClient creates a new UpdateServiceCatalogTerraformParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewUpdateServiceCatalogTerraformParamsWithHTTPClient(client *http.Client) *UpdateServiceCatalogTerraformParams {
+	var ()
 	return &UpdateServiceCatalogTerraformParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-UpdateServiceCatalogTerraformParams contains all the parameters to send to the API endpoint
-
-	for the update service catalog terraform operation.
-
-	Typically these are written to a http.Request.
+/*UpdateServiceCatalogTerraformParams contains all the parameters to send to the API endpoint
+for the update service catalog terraform operation typically these are written to a http.Request
 */
 type UpdateServiceCatalogTerraformParams struct {
 
-	/* Body.
+	/*Body
+	  The information of the ServiceCatalog Terraform.
 
-	   The information of the ServiceCatalog Terraform.
 	*/
 	Body *models.TerraformJSONConfig
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ServiceCatalogRef
+	  A Service Catalog name
 
-	/* ServiceCatalogRef.
-
-	   A Service Catalog name
 	*/
 	ServiceCatalogRef string
+	/*UseCaseCanonical
+	  A use case canonical
 
-	/* UseCaseCanonical.
-
-	   A use case canonical
 	*/
 	UseCaseCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the update service catalog terraform params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateServiceCatalogTerraformParams) WithDefaults() *UpdateServiceCatalogTerraformParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the update service catalog terraform params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateServiceCatalogTerraformParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update service catalog terraform params
@@ -191,6 +173,7 @@ func (o *UpdateServiceCatalogTerraformParams) WriteToRequest(r runtime.ClientReq
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

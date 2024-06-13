@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // User Basic info of a user
 //
 // A summary of a user to be used in places where only the basic information are need or are enough.
-//
 // swagger:model User
 type User struct {
 
@@ -138,11 +136,12 @@ func (m *User) Validate(formats strfmt.Registry) error {
 }
 
 func (m *User) validateCountryCode(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CountryCode) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("country_code", "body", m.CountryCode, `^[A-Z]{2}$`); err != nil {
+	if err := validate.Pattern("country_code", "body", string(m.CountryCode), `^[A-Z]{2}$`); err != nil {
 		return err
 	}
 
@@ -155,7 +154,7 @@ func (m *User) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -181,7 +180,7 @@ func (m *User) validateFamilyName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
+	if err := validate.MinLength("family_name", "body", string(*m.FamilyName), 2); err != nil {
 		return err
 	}
 
@@ -194,7 +193,7 @@ func (m *User) validateGivenName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
+	if err := validate.MinLength("given_name", "body", string(*m.GivenName), 2); err != nil {
 		return err
 	}
 
@@ -207,7 +206,7 @@ func (m *User) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -215,11 +214,12 @@ func (m *User) validateID(formats strfmt.Registry) error {
 }
 
 func (m *User) validateLastLoginAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.LastLoginAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("last_login_at", "body", *m.LastLoginAt, 0, false); err != nil {
+	if err := validate.MinimumInt("last_login_at", "body", int64(*m.LastLoginAt), 0, false); err != nil {
 		return err
 	}
 
@@ -232,7 +232,7 @@ func (m *User) validateLocale(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("locale", "body", *m.Locale, `^[a-z]{2}(?:-[a-z][a-z])?$`); err != nil {
+	if err := validate.Pattern("locale", "body", string(*m.Locale), `^[a-z]{2}(?:-[a-z][a-z])?$`); err != nil {
 		return err
 	}
 
@@ -249,6 +249,7 @@ func (m *User) validateMfaEnabled(formats strfmt.Registry) error {
 }
 
 func (m *User) validatePictureURL(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.PictureURL) { // not required
 		return nil
 	}
@@ -261,11 +262,12 @@ func (m *User) validatePictureURL(formats strfmt.Registry) error {
 }
 
 func (m *User) validateUpdatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -278,23 +280,18 @@ func (m *User) validateUsername(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
+	if err := validate.MinLength("username", "body", string(*m.Username), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", *m.Username, 30); err != nil {
+	if err := validate.MaxLength("username", "body", string(*m.Username), 30); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("username", "body", string(*m.Username), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this user based on context it is used
-func (m *User) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

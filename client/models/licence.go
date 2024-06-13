@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Licence Licence
 //
-// # Object containing licence parameters
-//
+// Object containing licence parameters
 // swagger:model Licence
 type Licence struct {
 
@@ -132,7 +130,7 @@ func (m *Licence) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -145,7 +143,7 @@ func (m *Licence) validateCurrentMembers(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("current_members", "body", *m.CurrentMembers, 0, false); err != nil {
+	if err := validate.MinimumInt("current_members", "body", int64(*m.CurrentMembers), 0, false); err != nil {
 		return err
 	}
 
@@ -167,7 +165,7 @@ func (m *Licence) validateExpiresAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("expires_at", "body", *m.ExpiresAt, 0, false); err != nil {
+	if err := validate.MinimumInt("expires_at", "body", int64(*m.ExpiresAt), 0, false); err != nil {
 		return err
 	}
 
@@ -189,7 +187,7 @@ func (m *Licence) validateMembersCount(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("members_count", "body", *m.MembersCount, 0, false); err != nil {
+	if err := validate.MinimumInt("members_count", "body", int64(*m.MembersCount), 0, false); err != nil {
 		return err
 	}
 
@@ -211,7 +209,7 @@ func (m *Licence) validateUpdatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -224,11 +222,6 @@ func (m *Licence) validateVersion(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this licence based on context it is used
-func (m *Licence) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

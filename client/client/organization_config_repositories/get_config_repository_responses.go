@@ -6,18 +6,17 @@ package organization_config_repositories
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetConfigRepositoryReader is a Reader for the GetConfigRepository structure.
@@ -63,8 +62,7 @@ func NewGetConfigRepositoryOK() *GetConfigRepositoryOK {
 	return &GetConfigRepositoryOK{}
 }
 
-/*
-GetConfigRepositoryOK describes a response with status code 200, with default header values.
+/*GetConfigRepositoryOK handles this case with default header values.
 
 Organization Config Repository.
 */
@@ -72,44 +70,8 @@ type GetConfigRepositoryOK struct {
 	Payload *GetConfigRepositoryOKBody
 }
 
-// IsSuccess returns true when this get config repository o k response has a 2xx status code
-func (o *GetConfigRepositoryOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get config repository o k response has a 3xx status code
-func (o *GetConfigRepositoryOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get config repository o k response has a 4xx status code
-func (o *GetConfigRepositoryOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get config repository o k response has a 5xx status code
-func (o *GetConfigRepositoryOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get config repository o k response a status code equal to that given
-func (o *GetConfigRepositoryOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get config repository o k response
-func (o *GetConfigRepositoryOK) Code() int {
-	return 200
-}
-
 func (o *GetConfigRepositoryOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryOK %s", 200, payload)
-}
-
-func (o *GetConfigRepositoryOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryOK  %+v", 200, o.Payload)
 }
 
 func (o *GetConfigRepositoryOK) GetPayload() *GetConfigRepositoryOKBody {
@@ -133,60 +95,20 @@ func NewGetConfigRepositoryForbidden() *GetConfigRepositoryForbidden {
 	return &GetConfigRepositoryForbidden{}
 }
 
-/*
-GetConfigRepositoryForbidden describes a response with status code 403, with default header values.
+/*GetConfigRepositoryForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetConfigRepositoryForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get config repository forbidden response has a 2xx status code
-func (o *GetConfigRepositoryForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get config repository forbidden response has a 3xx status code
-func (o *GetConfigRepositoryForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get config repository forbidden response has a 4xx status code
-func (o *GetConfigRepositoryForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get config repository forbidden response has a 5xx status code
-func (o *GetConfigRepositoryForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get config repository forbidden response a status code equal to that given
-func (o *GetConfigRepositoryForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the get config repository forbidden response
-func (o *GetConfigRepositoryForbidden) Code() int {
-	return 403
-}
-
 func (o *GetConfigRepositoryForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryForbidden %s", 403, payload)
-}
-
-func (o *GetConfigRepositoryForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetConfigRepositoryForbidden) GetPayload() *models.ErrorPayload {
@@ -195,16 +117,12 @@ func (o *GetConfigRepositoryForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetConfigRepositoryForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -221,60 +139,20 @@ func NewGetConfigRepositoryUnprocessableEntity() *GetConfigRepositoryUnprocessab
 	return &GetConfigRepositoryUnprocessableEntity{}
 }
 
-/*
-GetConfigRepositoryUnprocessableEntity describes a response with status code 422, with default header values.
+/*GetConfigRepositoryUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetConfigRepositoryUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get config repository unprocessable entity response has a 2xx status code
-func (o *GetConfigRepositoryUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get config repository unprocessable entity response has a 3xx status code
-func (o *GetConfigRepositoryUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get config repository unprocessable entity response has a 4xx status code
-func (o *GetConfigRepositoryUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get config repository unprocessable entity response has a 5xx status code
-func (o *GetConfigRepositoryUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get config repository unprocessable entity response a status code equal to that given
-func (o *GetConfigRepositoryUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the get config repository unprocessable entity response
-func (o *GetConfigRepositoryUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *GetConfigRepositoryUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryUnprocessableEntity %s", 422, payload)
-}
-
-func (o *GetConfigRepositoryUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepositoryUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetConfigRepositoryUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -283,16 +161,12 @@ func (o *GetConfigRepositoryUnprocessableEntity) GetPayload() *models.ErrorPaylo
 
 func (o *GetConfigRepositoryUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -311,46 +185,18 @@ func NewGetConfigRepositoryDefault(code int) *GetConfigRepositoryDefault {
 	}
 }
 
-/*
-GetConfigRepositoryDefault describes a response with status code -1, with default header values.
+/*GetConfigRepositoryDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetConfigRepositoryDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get config repository default response has a 2xx status code
-func (o *GetConfigRepositoryDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get config repository default response has a 3xx status code
-func (o *GetConfigRepositoryDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get config repository default response has a 4xx status code
-func (o *GetConfigRepositoryDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get config repository default response has a 5xx status code
-func (o *GetConfigRepositoryDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get config repository default response a status code equal to that given
-func (o *GetConfigRepositoryDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get config repository default response
@@ -359,13 +205,7 @@ func (o *GetConfigRepositoryDefault) Code() int {
 }
 
 func (o *GetConfigRepositoryDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepository default %s", o._statusCode, payload)
-}
-
-func (o *GetConfigRepositoryDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepository default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/config_repositories/{config_repository_canonical}][%d] getConfigRepository default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
@@ -374,16 +214,12 @@ func (o *GetConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetConfigRepositoryDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -395,8 +231,7 @@ func (o *GetConfigRepositoryDefault) readResponse(response runtime.ClientRespons
 	return nil
 }
 
-/*
-GetConfigRepositoryOKBody get config repository o k body
+/*GetConfigRepositoryOKBody get config repository o k body
 swagger:model GetConfigRepositoryOKBody
 */
 type GetConfigRepositoryOKBody struct {
@@ -430,39 +265,6 @@ func (o *GetConfigRepositoryOKBody) validateData(formats strfmt.Registry) error 
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getConfigRepositoryOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getConfigRepositoryOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this get config repository o k body based on the context it is used
-func (o *GetConfigRepositoryOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetConfigRepositoryOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getConfigRepositoryOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getConfigRepositoryOK" + "." + "data")
 			}
 			return err
 		}

@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewConfigRepository NewConfigRepository
-//
 // swagger:model NewConfigRepository
 type NewConfigRepository struct {
 
@@ -94,19 +92,20 @@ func (m *NewConfigRepository) validateBranch(formats strfmt.Registry) error {
 }
 
 func (m *NewConfigRepository) validateCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -119,15 +118,15 @@ func (m *NewConfigRepository) validateCredentialCanonical(formats strfmt.Registr
 		return err
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", *m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", string(*m.CredentialCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", *m.CredentialCanonical, 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(*m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", *m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", string(*m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -158,15 +157,10 @@ func (m *NewConfigRepository) validateURL(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("url", "body", *m.URL, `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
+	if err := validate.Pattern("url", "body", string(*m.URL), `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new config repository based on context it is used
-func (m *NewConfigRepository) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

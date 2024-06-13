@@ -6,18 +6,17 @@ package organization_kpis
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetKpiReader is a Reader for the GetKpi structure.
@@ -63,8 +62,7 @@ func NewGetKpiOK() *GetKpiOK {
 	return &GetKpiOK{}
 }
 
-/*
-GetKpiOK describes a response with status code 200, with default header values.
+/*GetKpiOK handles this case with default header values.
 
 The KPI
 */
@@ -72,44 +70,8 @@ type GetKpiOK struct {
 	Payload *GetKpiOKBody
 }
 
-// IsSuccess returns true when this get kpi o k response has a 2xx status code
-func (o *GetKpiOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get kpi o k response has a 3xx status code
-func (o *GetKpiOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get kpi o k response has a 4xx status code
-func (o *GetKpiOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get kpi o k response has a 5xx status code
-func (o *GetKpiOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get kpi o k response a status code equal to that given
-func (o *GetKpiOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get kpi o k response
-func (o *GetKpiOK) Code() int {
-	return 200
-}
-
 func (o *GetKpiOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiOK %s", 200, payload)
-}
-
-func (o *GetKpiOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiOK  %+v", 200, o.Payload)
 }
 
 func (o *GetKpiOK) GetPayload() *GetKpiOKBody {
@@ -133,60 +95,20 @@ func NewGetKpiForbidden() *GetKpiForbidden {
 	return &GetKpiForbidden{}
 }
 
-/*
-GetKpiForbidden describes a response with status code 403, with default header values.
+/*GetKpiForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetKpiForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get kpi forbidden response has a 2xx status code
-func (o *GetKpiForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get kpi forbidden response has a 3xx status code
-func (o *GetKpiForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get kpi forbidden response has a 4xx status code
-func (o *GetKpiForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get kpi forbidden response has a 5xx status code
-func (o *GetKpiForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get kpi forbidden response a status code equal to that given
-func (o *GetKpiForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the get kpi forbidden response
-func (o *GetKpiForbidden) Code() int {
-	return 403
-}
-
 func (o *GetKpiForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiForbidden %s", 403, payload)
-}
-
-func (o *GetKpiForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetKpiForbidden) GetPayload() *models.ErrorPayload {
@@ -195,16 +117,12 @@ func (o *GetKpiForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetKpiForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -221,60 +139,20 @@ func NewGetKpiUnprocessableEntity() *GetKpiUnprocessableEntity {
 	return &GetKpiUnprocessableEntity{}
 }
 
-/*
-GetKpiUnprocessableEntity describes a response with status code 422, with default header values.
+/*GetKpiUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetKpiUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get kpi unprocessable entity response has a 2xx status code
-func (o *GetKpiUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get kpi unprocessable entity response has a 3xx status code
-func (o *GetKpiUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get kpi unprocessable entity response has a 4xx status code
-func (o *GetKpiUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get kpi unprocessable entity response has a 5xx status code
-func (o *GetKpiUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get kpi unprocessable entity response a status code equal to that given
-func (o *GetKpiUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the get kpi unprocessable entity response
-func (o *GetKpiUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *GetKpiUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiUnprocessableEntity %s", 422, payload)
-}
-
-func (o *GetKpiUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpiUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetKpiUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -283,16 +161,12 @@ func (o *GetKpiUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *GetKpiUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -311,46 +185,18 @@ func NewGetKpiDefault(code int) *GetKpiDefault {
 	}
 }
 
-/*
-GetKpiDefault describes a response with status code -1, with default header values.
+/*GetKpiDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetKpiDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get kpi default response has a 2xx status code
-func (o *GetKpiDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get kpi default response has a 3xx status code
-func (o *GetKpiDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get kpi default response has a 4xx status code
-func (o *GetKpiDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get kpi default response has a 5xx status code
-func (o *GetKpiDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get kpi default response a status code equal to that given
-func (o *GetKpiDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get kpi default response
@@ -359,13 +205,7 @@ func (o *GetKpiDefault) Code() int {
 }
 
 func (o *GetKpiDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpi default %s", o._statusCode, payload)
-}
-
-func (o *GetKpiDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpi default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/kpis/{kpi_canonical}][%d] getKpi default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetKpiDefault) GetPayload() *models.ErrorPayload {
@@ -374,16 +214,12 @@ func (o *GetKpiDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetKpiDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -395,8 +231,7 @@ func (o *GetKpiDefault) readResponse(response runtime.ClientResponse, consumer r
 	return nil
 }
 
-/*
-GetKpiOKBody get kpi o k body
+/*GetKpiOKBody get kpi o k body
 swagger:model GetKpiOKBody
 */
 type GetKpiOKBody struct {
@@ -430,39 +265,6 @@ func (o *GetKpiOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getKpiOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getKpiOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this get kpi o k body based on the context it is used
-func (o *GetKpiOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetKpiOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getKpiOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getKpiOK" + "." + "data")
 			}
 			return err
 		}

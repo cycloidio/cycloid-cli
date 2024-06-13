@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // OnSuccessPlan OnSuccessPlan
 //
 // The plan definition when the action has been successful.
-//
 // swagger:model OnSuccessPlan
 type OnSuccessPlan struct {
 
@@ -58,8 +56,6 @@ func (m *OnSuccessPlan) validateNext(formats strfmt.Registry) error {
 		if err := m.Next.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("next")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("next")
 			}
 			return err
 		}
@@ -78,60 +74,6 @@ func (m *OnSuccessPlan) validateStep(formats strfmt.Registry) error {
 		if err := m.Step.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("step")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("step")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this on success plan based on the context it is used
-func (m *OnSuccessPlan) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateNext(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateStep(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *OnSuccessPlan) contextValidateNext(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Next != nil {
-
-		if err := m.Next.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("next")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("next")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *OnSuccessPlan) contextValidateStep(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Step != nil {
-
-		if err := m.Step.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("step")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("step")
 			}
 			return err
 		}

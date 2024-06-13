@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // TerraformProviderResourceAttributes ResourceAttributes
 //
-// # Holds specific logic of some attributes
-//
+// Holds specific logic of some attributes
 // swagger:model TerraformProviderResourceAttributes
 type TerraformProviderResourceAttributes struct {
 
@@ -31,11 +29,6 @@ type TerraformProviderResourceAttributes struct {
 
 // Validate validates this terraform provider resource attributes
 func (m *TerraformProviderResourceAttributes) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this terraform provider resource attributes based on context it is used
-func (m *TerraformProviderResourceAttributes) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

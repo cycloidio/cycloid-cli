@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // JobInput JobInput
 //
 // The entity which represents a job input in the application.
-//
 // swagger:model JobInput
 type JobInput struct {
 
@@ -94,6 +92,7 @@ func (m *JobInput) validateTrigger(formats strfmt.Registry) error {
 }
 
 func (m *JobInput) validateVersion(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Version) { // not required
 		return nil
 	}
@@ -102,43 +101,6 @@ func (m *JobInput) validateVersion(formats strfmt.Registry) error {
 		if err := m.Version.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("version")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("version")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this job input based on the context it is used
-func (m *JobInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateVersion(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *JobInput) contextValidateVersion(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Version != nil {
-
-		if swag.IsZero(m.Version) { // not required
-			return nil
-		}
-
-		if err := m.Version.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("version")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("version")
 			}
 			return err
 		}

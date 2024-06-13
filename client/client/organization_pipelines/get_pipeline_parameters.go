@@ -13,90 +13,73 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetPipelineParams creates a new GetPipelineParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetPipelineParams creates a new GetPipelineParams object
+// with the default values initialized.
 func NewGetPipelineParams() *GetPipelineParams {
+	var ()
 	return &GetPipelineParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetPipelineParamsWithTimeout creates a new GetPipelineParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetPipelineParamsWithTimeout(timeout time.Duration) *GetPipelineParams {
+	var ()
 	return &GetPipelineParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewGetPipelineParamsWithContext creates a new GetPipelineParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetPipelineParamsWithContext(ctx context.Context) *GetPipelineParams {
+	var ()
 	return &GetPipelineParams{
+
 		Context: ctx,
 	}
 }
 
 // NewGetPipelineParamsWithHTTPClient creates a new GetPipelineParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetPipelineParamsWithHTTPClient(client *http.Client) *GetPipelineParams {
+	var ()
 	return &GetPipelineParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-GetPipelineParams contains all the parameters to send to the API endpoint
-
-	for the get pipeline operation.
-
-	Typically these are written to a http.Request.
+/*GetPipelineParams contains all the parameters to send to the API endpoint
+for the get pipeline operation typically these are written to a http.Request
 */
 type GetPipelineParams struct {
 
-	/* InpathPipelineName.
+	/*InpathPipelineName
+	  A pipeline name
 
-	   A pipeline name
 	*/
 	InpathPipelineName string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get pipeline params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetPipelineParams) WithDefaults() *GetPipelineParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get pipeline params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetPipelineParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get pipeline params

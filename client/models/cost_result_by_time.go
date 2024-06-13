@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,7 +18,6 @@ import (
 // CostResultByTime CostResultByTime
 //
 // This object contains the items described in https://docs.aws.amazon.com/sdk-for-go/api/service/costexplorer/#ResultByTime It is basically containing information about the cost per group(s) and per granularity (daily/monthly) over the period of time selected. The total and unit fields have bee modified to fit our requirements, while the groups hold the information about each iteration over the time range.
-//
 // swagger:model CostResultByTime
 type CostResultByTime struct {
 
@@ -103,8 +102,6 @@ func (m *CostResultByTime) validateGroups(formats strfmt.Registry) error {
 			if err := m.Groups[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -125,8 +122,6 @@ func (m *CostResultByTime) validatePeriod(formats strfmt.Registry) error {
 		if err := m.Period.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("period")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("period")
 			}
 			return err
 		}
@@ -141,15 +136,15 @@ func (m *CostResultByTime) validateTotal(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("total", "body", *m.Total, 3); err != nil {
+	if err := validate.MinLength("total", "body", string(*m.Total), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("total", "body", *m.Total, 100); err != nil {
+	if err := validate.MaxLength("total", "body", string(*m.Total), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("total", "body", *m.Total, `^[0-9]+.[0-9]+$`); err != nil {
+	if err := validate.Pattern("total", "body", string(*m.Total), `^[0-9]+.[0-9]+$`); err != nil {
 		return err
 	}
 
@@ -162,76 +157,16 @@ func (m *CostResultByTime) validateUnit(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("unit", "body", *m.Unit, 2); err != nil {
+	if err := validate.MinLength("unit", "body", string(*m.Unit), 2); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("unit", "body", *m.Unit, 3); err != nil {
+	if err := validate.MaxLength("unit", "body", string(*m.Unit), 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("unit", "body", *m.Unit, `^[a-zA-Z]+$`); err != nil {
+	if err := validate.Pattern("unit", "body", string(*m.Unit), `^[a-zA-Z]+$`); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this cost result by time based on the context it is used
-func (m *CostResultByTime) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateGroups(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidatePeriod(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *CostResultByTime) contextValidateGroups(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Groups); i++ {
-
-		if m.Groups[i] != nil {
-
-			if swag.IsZero(m.Groups[i]) { // not required
-				return nil
-			}
-
-			if err := m.Groups[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *CostResultByTime) contextValidatePeriod(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Period != nil {
-
-		if err := m.Period.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("period")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("period")
-			}
-			return err
-		}
 	}
 
 	return nil

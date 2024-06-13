@@ -7,38 +7,13 @@ package organization_api_keys
 
 import (
 	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // New creates a new organization api keys API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
 	return &Client{transport: transport, formats: formats}
-}
-
-// New creates a new organization api keys API client with basic auth credentials.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - user: user for basic authentication header.
-// - password: password for basic authentication header.
-func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
-	return &Client{transport: transport, formats: strfmt.Default}
-}
-
-// New creates a new organization api keys API client with a bearer token for authentication.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - bearerToken: bearer token for Bearer authentication header.
-func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
-	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -49,82 +24,16 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
-// ClientOption may be used to customize the behavior of Client methods.
-type ClientOption func(*runtime.ClientOperation)
-
-// This client is generated with a few options you might find useful for your swagger spec.
-//
-// Feel free to add you own set of options.
-
-// WithContentType allows the client to force the Content-Type header
-// to negotiate a specific Consumer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithContentType(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ConsumesMediaTypes = []string{mime}
-	}
-}
-
-// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
-func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/json"}
-}
-
-// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
-func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
-func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
-}
-
-// WithAccept allows the client to force the Accept header
-// to negotiate a specific Producer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithAccept(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ProducesMediaTypes = []string{mime}
-	}
-}
-
-// WithAcceptApplicationJSON sets the Accept header to "application/json".
-func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/json"}
-}
-
-// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
-func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// ClientService is the interface for Client methods
-type ClientService interface {
-	CreateAPIKey(params *CreateAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateAPIKeyOK, error)
-
-	DeleteAPIKey(params *DeleteAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteAPIKeyNoContent, error)
-
-	GetAPIKey(params *GetAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAPIKeyOK, error)
-
-	GetAPIKeys(params *GetAPIKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAPIKeysOK, error)
-
-	UpdateAPIkey(params *UpdateAPIkeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateAPIkeyOK, error)
-
-	SetTransport(transport runtime.ClientTransport)
-}
-
 /*
 CreateAPIKey Create a new API key in the organization.
 */
-func (a *Client) CreateAPIKey(params *CreateAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateAPIKeyOK, error) {
+func (a *Client) CreateAPIKey(params *CreateAPIKeyParams, authInfo runtime.ClientAuthInfoWriter) (*CreateAPIKeyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateAPIKeyParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createAPIKey",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/api_keys",
@@ -136,12 +45,7 @@ func (a *Client) CreateAPIKey(params *CreateAPIKeyParams, authInfo runtime.Clien
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -157,12 +61,13 @@ func (a *Client) CreateAPIKey(params *CreateAPIKeyParams, authInfo runtime.Clien
 /*
 DeleteAPIKey Delete an API key of the organization.
 */
-func (a *Client) DeleteAPIKey(params *DeleteAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteAPIKeyNoContent, error) {
+func (a *Client) DeleteAPIKey(params *DeleteAPIKeyParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteAPIKeyNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteAPIKeyParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteAPIKey",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/api_keys/{api_key_canonical}",
@@ -174,12 +79,7 @@ func (a *Client) DeleteAPIKey(params *DeleteAPIKeyParams, authInfo runtime.Clien
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -195,12 +95,13 @@ func (a *Client) DeleteAPIKey(params *DeleteAPIKeyParams, authInfo runtime.Clien
 /*
 GetAPIKey Get an API key of the organization.
 */
-func (a *Client) GetAPIKey(params *GetAPIKeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAPIKeyOK, error) {
+func (a *Client) GetAPIKey(params *GetAPIKeyParams, authInfo runtime.ClientAuthInfoWriter) (*GetAPIKeyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetAPIKeyParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getAPIKey",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/api_keys/{api_key_canonical}",
@@ -212,12 +113,7 @@ func (a *Client) GetAPIKey(params *GetAPIKeyParams, authInfo runtime.ClientAuthI
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -233,12 +129,13 @@ func (a *Client) GetAPIKey(params *GetAPIKeyParams, authInfo runtime.ClientAuthI
 /*
 GetAPIKeys Get list of API keys of the organization.
 */
-func (a *Client) GetAPIKeys(params *GetAPIKeysParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAPIKeysOK, error) {
+func (a *Client) GetAPIKeys(params *GetAPIKeysParams, authInfo runtime.ClientAuthInfoWriter) (*GetAPIKeysOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetAPIKeysParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getAPIKeys",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/api_keys",
@@ -250,12 +147,7 @@ func (a *Client) GetAPIKeys(params *GetAPIKeysParams, authInfo runtime.ClientAut
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -271,12 +163,13 @@ func (a *Client) GetAPIKeys(params *GetAPIKeysParams, authInfo runtime.ClientAut
 /*
 UpdateAPIkey Update the information of an API key of the organization. If the API key has some information on the fields which aren't required and they are not sent or set to their default values, which depend of their types, the information will be removed.
 */
-func (a *Client) UpdateAPIkey(params *UpdateAPIkeyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateAPIkeyOK, error) {
+func (a *Client) UpdateAPIkey(params *UpdateAPIkeyParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateAPIkeyOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateAPIkeyParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateAPIkey",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/api_keys/{api_key_canonical}",
@@ -288,12 +181,7 @@ func (a *Client) UpdateAPIkey(params *UpdateAPIkeyParams, authInfo runtime.Clien
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}

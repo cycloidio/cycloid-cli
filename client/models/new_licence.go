@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewLicence Licence
 //
-// # Object containing licence parameters
-//
+// Object containing licence parameters
 // swagger:model NewLicence
 type NewLicence struct {
 
@@ -46,11 +44,6 @@ func (m *NewLicence) validateKey(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new licence based on context it is used
-func (m *NewLicence) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

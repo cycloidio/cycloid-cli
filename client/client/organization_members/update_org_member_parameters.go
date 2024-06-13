@@ -13,92 +13,75 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateOrgMemberParams creates a new UpdateOrgMemberParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewUpdateOrgMemberParams creates a new UpdateOrgMemberParams object
+// with the default values initialized.
 func NewUpdateOrgMemberParams() *UpdateOrgMemberParams {
+	var ()
 	return &UpdateOrgMemberParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateOrgMemberParamsWithTimeout creates a new UpdateOrgMemberParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewUpdateOrgMemberParamsWithTimeout(timeout time.Duration) *UpdateOrgMemberParams {
+	var ()
 	return &UpdateOrgMemberParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewUpdateOrgMemberParamsWithContext creates a new UpdateOrgMemberParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewUpdateOrgMemberParamsWithContext(ctx context.Context) *UpdateOrgMemberParams {
+	var ()
 	return &UpdateOrgMemberParams{
+
 		Context: ctx,
 	}
 }
 
 // NewUpdateOrgMemberParamsWithHTTPClient creates a new UpdateOrgMemberParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewUpdateOrgMemberParamsWithHTTPClient(client *http.Client) *UpdateOrgMemberParams {
+	var ()
 	return &UpdateOrgMemberParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-UpdateOrgMemberParams contains all the parameters to send to the API endpoint
-
-	for the update org member operation.
-
-	Typically these are written to a http.Request.
+/*UpdateOrgMemberParams contains all the parameters to send to the API endpoint
+for the update org member operation typically these are written to a http.Request
 */
 type UpdateOrgMemberParams struct {
 
-	/* Body.
+	/*Body
+	  The member information to be updated.
 
-	   The member information to be updated.
 	*/
 	Body *models.MemberAssignation
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*Username
+	  A username
 
-	/* Username.
-
-	   A username
 	*/
 	Username string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the update org member params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateOrgMemberParams) WithDefaults() *UpdateOrgMemberParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the update org member params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateOrgMemberParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update org member params
@@ -174,6 +157,7 @@ func (o *UpdateOrgMemberParams) WriteToRequest(r runtime.ClientRequest, reg strf
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

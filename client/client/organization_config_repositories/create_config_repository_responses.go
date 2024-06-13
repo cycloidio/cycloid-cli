@@ -6,18 +6,17 @@ package organization_config_repositories
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateConfigRepositoryReader is a Reader for the CreateConfigRepository structure.
@@ -69,8 +68,7 @@ func NewCreateConfigRepositoryOK() *CreateConfigRepositoryOK {
 	return &CreateConfigRepositoryOK{}
 }
 
-/*
-CreateConfigRepositoryOK describes a response with status code 200, with default header values.
+/*CreateConfigRepositoryOK handles this case with default header values.
 
 Success creation
 */
@@ -78,44 +76,8 @@ type CreateConfigRepositoryOK struct {
 	Payload *CreateConfigRepositoryOKBody
 }
 
-// IsSuccess returns true when this create config repository o k response has a 2xx status code
-func (o *CreateConfigRepositoryOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this create config repository o k response has a 3xx status code
-func (o *CreateConfigRepositoryOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create config repository o k response has a 4xx status code
-func (o *CreateConfigRepositoryOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this create config repository o k response has a 5xx status code
-func (o *CreateConfigRepositoryOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create config repository o k response a status code equal to that given
-func (o *CreateConfigRepositoryOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the create config repository o k response
-func (o *CreateConfigRepositoryOK) Code() int {
-	return 200
-}
-
 func (o *CreateConfigRepositoryOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryOK %s", 200, payload)
-}
-
-func (o *CreateConfigRepositoryOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryOK %s", 200, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateConfigRepositoryOK) GetPayload() *CreateConfigRepositoryOKBody {
@@ -139,60 +101,20 @@ func NewCreateConfigRepositoryNotFound() *CreateConfigRepositoryNotFound {
 	return &CreateConfigRepositoryNotFound{}
 }
 
-/*
-CreateConfigRepositoryNotFound describes a response with status code 404, with default header values.
+/*CreateConfigRepositoryNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type CreateConfigRepositoryNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this create config repository not found response has a 2xx status code
-func (o *CreateConfigRepositoryNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create config repository not found response has a 3xx status code
-func (o *CreateConfigRepositoryNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create config repository not found response has a 4xx status code
-func (o *CreateConfigRepositoryNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create config repository not found response has a 5xx status code
-func (o *CreateConfigRepositoryNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create config repository not found response a status code equal to that given
-func (o *CreateConfigRepositoryNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the create config repository not found response
-func (o *CreateConfigRepositoryNotFound) Code() int {
-	return 404
-}
-
 func (o *CreateConfigRepositoryNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryNotFound %s", 404, payload)
-}
-
-func (o *CreateConfigRepositoryNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryNotFound %s", 404, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryNotFound  %+v", 404, o.Payload)
 }
 
 func (o *CreateConfigRepositoryNotFound) GetPayload() *models.ErrorPayload {
@@ -201,16 +123,12 @@ func (o *CreateConfigRepositoryNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *CreateConfigRepositoryNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -227,50 +145,15 @@ func NewCreateConfigRepositoryLengthRequired() *CreateConfigRepositoryLengthRequ
 	return &CreateConfigRepositoryLengthRequired{}
 }
 
-/*
-CreateConfigRepositoryLengthRequired describes a response with status code 411, with default header values.
+/*CreateConfigRepositoryLengthRequired handles this case with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type CreateConfigRepositoryLengthRequired struct {
 }
 
-// IsSuccess returns true when this create config repository length required response has a 2xx status code
-func (o *CreateConfigRepositoryLengthRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create config repository length required response has a 3xx status code
-func (o *CreateConfigRepositoryLengthRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create config repository length required response has a 4xx status code
-func (o *CreateConfigRepositoryLengthRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create config repository length required response has a 5xx status code
-func (o *CreateConfigRepositoryLengthRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create config repository length required response a status code equal to that given
-func (o *CreateConfigRepositoryLengthRequired) IsCode(code int) bool {
-	return code == 411
-}
-
-// Code gets the status code for the create config repository length required response
-func (o *CreateConfigRepositoryLengthRequired) Code() int {
-	return 411
-}
-
 func (o *CreateConfigRepositoryLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryLengthRequired", 411)
-}
-
-func (o *CreateConfigRepositoryLengthRequired) String() string {
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryLengthRequired", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryLengthRequired ", 411)
 }
 
 func (o *CreateConfigRepositoryLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -283,60 +166,20 @@ func NewCreateConfigRepositoryUnprocessableEntity() *CreateConfigRepositoryUnpro
 	return &CreateConfigRepositoryUnprocessableEntity{}
 }
 
-/*
-CreateConfigRepositoryUnprocessableEntity describes a response with status code 422, with default header values.
+/*CreateConfigRepositoryUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type CreateConfigRepositoryUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this create config repository unprocessable entity response has a 2xx status code
-func (o *CreateConfigRepositoryUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this create config repository unprocessable entity response has a 3xx status code
-func (o *CreateConfigRepositoryUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create config repository unprocessable entity response has a 4xx status code
-func (o *CreateConfigRepositoryUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this create config repository unprocessable entity response has a 5xx status code
-func (o *CreateConfigRepositoryUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create config repository unprocessable entity response a status code equal to that given
-func (o *CreateConfigRepositoryUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the create config repository unprocessable entity response
-func (o *CreateConfigRepositoryUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *CreateConfigRepositoryUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryUnprocessableEntity %s", 422, payload)
-}
-
-func (o *CreateConfigRepositoryUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepositoryUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *CreateConfigRepositoryUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -345,16 +188,12 @@ func (o *CreateConfigRepositoryUnprocessableEntity) GetPayload() *models.ErrorPa
 
 func (o *CreateConfigRepositoryUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -373,46 +212,18 @@ func NewCreateConfigRepositoryDefault(code int) *CreateConfigRepositoryDefault {
 	}
 }
 
-/*
-CreateConfigRepositoryDefault describes a response with status code -1, with default header values.
+/*CreateConfigRepositoryDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type CreateConfigRepositoryDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this create config repository default response has a 2xx status code
-func (o *CreateConfigRepositoryDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this create config repository default response has a 3xx status code
-func (o *CreateConfigRepositoryDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this create config repository default response has a 4xx status code
-func (o *CreateConfigRepositoryDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this create config repository default response has a 5xx status code
-func (o *CreateConfigRepositoryDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this create config repository default response a status code equal to that given
-func (o *CreateConfigRepositoryDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the create config repository default response
@@ -421,13 +232,7 @@ func (o *CreateConfigRepositoryDefault) Code() int {
 }
 
 func (o *CreateConfigRepositoryDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepository default %s", o._statusCode, payload)
-}
-
-func (o *CreateConfigRepositoryDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepository default %s", o._statusCode, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/config_repositories][%d] createConfigRepository default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *CreateConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
@@ -436,16 +241,12 @@ func (o *CreateConfigRepositoryDefault) GetPayload() *models.ErrorPayload {
 
 func (o *CreateConfigRepositoryDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -457,8 +258,7 @@ func (o *CreateConfigRepositoryDefault) readResponse(response runtime.ClientResp
 	return nil
 }
 
-/*
-CreateConfigRepositoryOKBody create config repository o k body
+/*CreateConfigRepositoryOKBody create config repository o k body
 swagger:model CreateConfigRepositoryOKBody
 */
 type CreateConfigRepositoryOKBody struct {
@@ -492,39 +292,6 @@ func (o *CreateConfigRepositoryOKBody) validateData(formats strfmt.Registry) err
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createConfigRepositoryOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("createConfigRepositoryOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this create config repository o k body based on the context it is used
-func (o *CreateConfigRepositoryOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *CreateConfigRepositoryOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("createConfigRepositoryOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("createConfigRepositoryOK" + "." + "data")
 			}
 			return err
 		}

@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // TerraformProviderSimple TerraformProviderSimple
 //
-// # Provider of infrastructure without the config
-//
+// Provider of infrastructure without the config
 // swagger:model TerraformProviderSimple
 type TerraformProviderSimple struct {
 
@@ -81,11 +79,11 @@ func (m *TerraformProviderSimple) validateCanonical(formats strfmt.Registry) err
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -107,11 +105,6 @@ func (m *TerraformProviderSimple) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this terraform provider simple based on context it is used
-func (m *TerraformProviderSimple) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

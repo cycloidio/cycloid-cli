@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // Resource Resource
 //
 // The entity which represents a resource in the application.
-//
 // swagger:model Resource
 type Resource struct {
 
@@ -80,6 +78,7 @@ func (m *Resource) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Resource) validateBuild(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Build) { // not required
 		return nil
 	}
@@ -88,8 +87,6 @@ func (m *Resource) validateBuild(formats strfmt.Registry) error {
 		if err := m.Build.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("build")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("build")
 			}
 			return err
 		}
@@ -111,41 +108,6 @@ func (m *Resource) validateType(formats strfmt.Registry) error {
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this resource based on the context it is used
-func (m *Resource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateBuild(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Resource) contextValidateBuild(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Build != nil {
-
-		if swag.IsZero(m.Build) { // not required
-			return nil
-		}
-
-		if err := m.Build.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("build")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("build")
-			}
-			return err
-		}
 	}
 
 	return nil

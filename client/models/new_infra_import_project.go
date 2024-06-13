@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // NewInfraImportProject Create Project for the Infra Import
 //
 // The entity which represents the information of a new project.
-//
 // swagger:model NewInfraImportProject
 type NewInfraImportProject struct {
 
@@ -68,19 +66,20 @@ func (m *NewInfraImportProject) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewInfraImportProject) validateCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 1); err != nil {
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -93,15 +92,15 @@ func (m *NewInfraImportProject) validateConfigRepositoryCanonical(formats strfmt
 		return err
 	}
 
-	if err := validate.MinLength("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, 3); err != nil {
+	if err := validate.MinLength("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, 100); err != nil {
+	if err := validate.MaxLength("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -114,15 +113,10 @@ func (m *NewInfraImportProject) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new infra import project based on context it is used
-func (m *NewInfraImportProject) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

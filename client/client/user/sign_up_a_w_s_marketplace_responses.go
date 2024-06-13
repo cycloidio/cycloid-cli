@@ -6,16 +6,16 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // SignUpAWSMarketplaceReader is a Reader for the SignUpAWSMarketplace structure.
@@ -61,50 +61,15 @@ func NewSignUpAWSMarketplaceNoContent() *SignUpAWSMarketplaceNoContent {
 	return &SignUpAWSMarketplaceNoContent{}
 }
 
-/*
-SignUpAWSMarketplaceNoContent describes a response with status code 204, with default header values.
+/*SignUpAWSMarketplaceNoContent handles this case with default header values.
 
 Account created. The account MUST be verified through the link sent to the email address.
 */
 type SignUpAWSMarketplaceNoContent struct {
 }
 
-// IsSuccess returns true when this sign up a w s marketplace no content response has a 2xx status code
-func (o *SignUpAWSMarketplaceNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this sign up a w s marketplace no content response has a 3xx status code
-func (o *SignUpAWSMarketplaceNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this sign up a w s marketplace no content response has a 4xx status code
-func (o *SignUpAWSMarketplaceNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this sign up a w s marketplace no content response has a 5xx status code
-func (o *SignUpAWSMarketplaceNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this sign up a w s marketplace no content response a status code equal to that given
-func (o *SignUpAWSMarketplaceNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the sign up a w s marketplace no content response
-func (o *SignUpAWSMarketplaceNoContent) Code() int {
-	return 204
-}
-
 func (o *SignUpAWSMarketplaceNoContent) Error() string {
-	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceNoContent", 204)
-}
-
-func (o *SignUpAWSMarketplaceNoContent) String() string {
-	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceNoContent", 204)
+	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceNoContent ", 204)
 }
 
 func (o *SignUpAWSMarketplaceNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -117,50 +82,15 @@ func NewSignUpAWSMarketplaceLengthRequired() *SignUpAWSMarketplaceLengthRequired
 	return &SignUpAWSMarketplaceLengthRequired{}
 }
 
-/*
-SignUpAWSMarketplaceLengthRequired describes a response with status code 411, with default header values.
+/*SignUpAWSMarketplaceLengthRequired handles this case with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type SignUpAWSMarketplaceLengthRequired struct {
 }
 
-// IsSuccess returns true when this sign up a w s marketplace length required response has a 2xx status code
-func (o *SignUpAWSMarketplaceLengthRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this sign up a w s marketplace length required response has a 3xx status code
-func (o *SignUpAWSMarketplaceLengthRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this sign up a w s marketplace length required response has a 4xx status code
-func (o *SignUpAWSMarketplaceLengthRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this sign up a w s marketplace length required response has a 5xx status code
-func (o *SignUpAWSMarketplaceLengthRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this sign up a w s marketplace length required response a status code equal to that given
-func (o *SignUpAWSMarketplaceLengthRequired) IsCode(code int) bool {
-	return code == 411
-}
-
-// Code gets the status code for the sign up a w s marketplace length required response
-func (o *SignUpAWSMarketplaceLengthRequired) Code() int {
-	return 411
-}
-
 func (o *SignUpAWSMarketplaceLengthRequired) Error() string {
-	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceLengthRequired", 411)
-}
-
-func (o *SignUpAWSMarketplaceLengthRequired) String() string {
-	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceLengthRequired", 411)
+	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceLengthRequired ", 411)
 }
 
 func (o *SignUpAWSMarketplaceLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -173,60 +103,20 @@ func NewSignUpAWSMarketplaceUnprocessableEntity() *SignUpAWSMarketplaceUnprocess
 	return &SignUpAWSMarketplaceUnprocessableEntity{}
 }
 
-/*
-SignUpAWSMarketplaceUnprocessableEntity describes a response with status code 422, with default header values.
+/*SignUpAWSMarketplaceUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type SignUpAWSMarketplaceUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this sign up a w s marketplace unprocessable entity response has a 2xx status code
-func (o *SignUpAWSMarketplaceUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this sign up a w s marketplace unprocessable entity response has a 3xx status code
-func (o *SignUpAWSMarketplaceUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this sign up a w s marketplace unprocessable entity response has a 4xx status code
-func (o *SignUpAWSMarketplaceUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this sign up a w s marketplace unprocessable entity response has a 5xx status code
-func (o *SignUpAWSMarketplaceUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this sign up a w s marketplace unprocessable entity response a status code equal to that given
-func (o *SignUpAWSMarketplaceUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the sign up a w s marketplace unprocessable entity response
-func (o *SignUpAWSMarketplaceUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *SignUpAWSMarketplaceUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceUnprocessableEntity %s", 422, payload)
-}
-
-func (o *SignUpAWSMarketplaceUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplaceUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *SignUpAWSMarketplaceUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -235,16 +125,12 @@ func (o *SignUpAWSMarketplaceUnprocessableEntity) GetPayload() *models.ErrorPayl
 
 func (o *SignUpAWSMarketplaceUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -263,46 +149,18 @@ func NewSignUpAWSMarketplaceDefault(code int) *SignUpAWSMarketplaceDefault {
 	}
 }
 
-/*
-SignUpAWSMarketplaceDefault describes a response with status code -1, with default header values.
+/*SignUpAWSMarketplaceDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type SignUpAWSMarketplaceDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this sign up a w s marketplace default response has a 2xx status code
-func (o *SignUpAWSMarketplaceDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this sign up a w s marketplace default response has a 3xx status code
-func (o *SignUpAWSMarketplaceDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this sign up a w s marketplace default response has a 4xx status code
-func (o *SignUpAWSMarketplaceDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this sign up a w s marketplace default response has a 5xx status code
-func (o *SignUpAWSMarketplaceDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this sign up a w s marketplace default response a status code equal to that given
-func (o *SignUpAWSMarketplaceDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the sign up a w s marketplace default response
@@ -311,13 +169,7 @@ func (o *SignUpAWSMarketplaceDefault) Code() int {
 }
 
 func (o *SignUpAWSMarketplaceDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplace default %s", o._statusCode, payload)
-}
-
-func (o *SignUpAWSMarketplaceDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplace default %s", o._statusCode, payload)
+	return fmt.Sprintf("[POST /user/aws_marketplace][%d] signUpAWSMarketplace default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *SignUpAWSMarketplaceDefault) GetPayload() *models.ErrorPayload {
@@ -326,16 +178,12 @@ func (o *SignUpAWSMarketplaceDefault) GetPayload() *models.ErrorPayload {
 
 func (o *SignUpAWSMarketplaceDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

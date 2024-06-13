@@ -13,90 +13,73 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetRepoBranchesParams creates a new GetRepoBranchesParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetRepoBranchesParams creates a new GetRepoBranchesParams object
+// with the default values initialized.
 func NewGetRepoBranchesParams() *GetRepoBranchesParams {
+	var ()
 	return &GetRepoBranchesParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetRepoBranchesParamsWithTimeout creates a new GetRepoBranchesParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetRepoBranchesParamsWithTimeout(timeout time.Duration) *GetRepoBranchesParams {
+	var ()
 	return &GetRepoBranchesParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewGetRepoBranchesParamsWithContext creates a new GetRepoBranchesParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetRepoBranchesParamsWithContext(ctx context.Context) *GetRepoBranchesParams {
+	var ()
 	return &GetRepoBranchesParams{
+
 		Context: ctx,
 	}
 }
 
 // NewGetRepoBranchesParamsWithHTTPClient creates a new GetRepoBranchesParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetRepoBranchesParamsWithHTTPClient(client *http.Client) *GetRepoBranchesParams {
+	var ()
 	return &GetRepoBranchesParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-GetRepoBranchesParams contains all the parameters to send to the API endpoint
-
-	for the get repo branches operation.
-
-	Typically these are written to a http.Request.
+/*GetRepoBranchesParams contains all the parameters to send to the API endpoint
+for the get repo branches operation typically these are written to a http.Request
 */
 type GetRepoBranchesParams struct {
 
-	/* CredentialCanonical.
+	/*CredentialCanonical
+	  A Credential canonical
 
-	   A Credential canonical
 	*/
 	CredentialCanonical *string
+	/*GitURL
+	  Git URL to repository
 
-	/* GitURL.
-
-	   Git URL to repository
 	*/
 	GitURL string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get repo branches params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetRepoBranchesParams) WithDefaults() *GetRepoBranchesParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get repo branches params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetRepoBranchesParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get repo branches params
@@ -177,24 +160,22 @@ func (o *GetRepoBranchesParams) WriteToRequest(r runtime.ClientRequest, reg strf
 
 		// query param credential_canonical
 		var qrCredentialCanonical string
-
 		if o.CredentialCanonical != nil {
 			qrCredentialCanonical = *o.CredentialCanonical
 		}
 		qCredentialCanonical := qrCredentialCanonical
 		if qCredentialCanonical != "" {
-
 			if err := r.SetQueryParam("credential_canonical", qCredentialCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// query param git_url
 	qrGitURL := o.GitURL
 	qGitURL := qrGitURL
 	if qGitURL != "" {
-
 		if err := r.SetQueryParam("git_url", qGitURL); err != nil {
 			return err
 		}

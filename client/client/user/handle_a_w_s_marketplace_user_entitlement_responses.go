@@ -6,16 +6,16 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // HandleAWSMarketplaceUserEntitlementReader is a Reader for the HandleAWSMarketplaceUserEntitlement structure.
@@ -49,8 +49,7 @@ func NewHandleAWSMarketplaceUserEntitlementMovedPermanently() *HandleAWSMarketpl
 	return &HandleAWSMarketplaceUserEntitlementMovedPermanently{}
 }
 
-/*
-HandleAWSMarketplaceUserEntitlementMovedPermanently describes a response with status code 301, with default header values.
+/*HandleAWSMarketplaceUserEntitlementMovedPermanently handles this case with default header values.
 
 The user is redirected based on his account state.
 */
@@ -58,52 +57,14 @@ type HandleAWSMarketplaceUserEntitlementMovedPermanently struct {
 	Location string
 }
 
-// IsSuccess returns true when this handle a w s marketplace user entitlement moved permanently response has a 2xx status code
-func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this handle a w s marketplace user entitlement moved permanently response has a 3xx status code
-func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) IsRedirect() bool {
-	return true
-}
-
-// IsClientError returns true when this handle a w s marketplace user entitlement moved permanently response has a 4xx status code
-func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this handle a w s marketplace user entitlement moved permanently response has a 5xx status code
-func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this handle a w s marketplace user entitlement moved permanently response a status code equal to that given
-func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) IsCode(code int) bool {
-	return code == 301
-}
-
-// Code gets the status code for the handle a w s marketplace user entitlement moved permanently response
-func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) Code() int {
-	return 301
-}
-
 func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) Error() string {
-	return fmt.Sprintf("[POST /user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlementMovedPermanently", 301)
-}
-
-func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) String() string {
-	return fmt.Sprintf("[POST /user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlementMovedPermanently", 301)
+	return fmt.Sprintf("[POST /user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlementMovedPermanently ", 301)
 }
 
 func (o *HandleAWSMarketplaceUserEntitlementMovedPermanently) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Location
-	hdrLocation := response.GetHeader("Location")
-
-	if hdrLocation != "" {
-		o.Location = hdrLocation
-	}
+	// response header Location
+	o.Location = response.GetHeader("Location")
 
 	return nil
 }
@@ -115,46 +76,18 @@ func NewHandleAWSMarketplaceUserEntitlementDefault(code int) *HandleAWSMarketpla
 	}
 }
 
-/*
-HandleAWSMarketplaceUserEntitlementDefault describes a response with status code -1, with default header values.
+/*HandleAWSMarketplaceUserEntitlementDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type HandleAWSMarketplaceUserEntitlementDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this handle a w s marketplace user entitlement default response has a 2xx status code
-func (o *HandleAWSMarketplaceUserEntitlementDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this handle a w s marketplace user entitlement default response has a 3xx status code
-func (o *HandleAWSMarketplaceUserEntitlementDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this handle a w s marketplace user entitlement default response has a 4xx status code
-func (o *HandleAWSMarketplaceUserEntitlementDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this handle a w s marketplace user entitlement default response has a 5xx status code
-func (o *HandleAWSMarketplaceUserEntitlementDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this handle a w s marketplace user entitlement default response a status code equal to that given
-func (o *HandleAWSMarketplaceUserEntitlementDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the handle a w s marketplace user entitlement default response
@@ -163,13 +96,7 @@ func (o *HandleAWSMarketplaceUserEntitlementDefault) Code() int {
 }
 
 func (o *HandleAWSMarketplaceUserEntitlementDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlement default %s", o._statusCode, payload)
-}
-
-func (o *HandleAWSMarketplaceUserEntitlementDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlement default %s", o._statusCode, payload)
+	return fmt.Sprintf("[POST /user/aws_marketplace/entitlement][%d] handleAWSMarketplaceUserEntitlement default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *HandleAWSMarketplaceUserEntitlementDefault) GetPayload() *models.ErrorPayload {
@@ -178,16 +105,12 @@ func (o *HandleAWSMarketplaceUserEntitlementDefault) GetPayload() *models.ErrorP
 
 func (o *HandleAWSMarketplaceUserEntitlementDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

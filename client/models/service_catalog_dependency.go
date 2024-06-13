@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // ServiceCatalogDependency ServiceCatalogDependency
 //
-// # Service Catalog Dependency identifies ServiceCatalog being dependency of other
-//
+// Service Catalog Dependency identifies ServiceCatalog being dependency of other
 // swagger:model ServiceCatalogDependency
 type ServiceCatalogDependency struct {
 
@@ -28,11 +26,6 @@ type ServiceCatalogDependency struct {
 
 // Validate validates this service catalog dependency
 func (m *ServiceCatalogDependency) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this service catalog dependency based on context it is used
-func (m *ServiceCatalogDependency) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

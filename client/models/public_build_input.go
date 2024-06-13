@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // PublicBuildInput PublicBuildInput
 //
-// # Represent the information of a build input
-//
+// Represent the information of a build input
 // swagger:model PublicBuildInput
 type PublicBuildInput struct {
 
@@ -93,15 +91,6 @@ func (m *PublicBuildInput) validatePipelineID(formats strfmt.Registry) error {
 
 func (m *PublicBuildInput) validateVersion(formats strfmt.Registry) error {
 
-	if err := validate.Required("version", "body", m.Version); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validates this public build input based on context it is used
-func (m *PublicBuildInput) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,12 +6,12 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"encoding/json"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -19,14 +19,13 @@ import (
 // UpdateProject Update Project
 //
 // The entity which represents the information of the project to be updated.
-//
 // swagger:model UpdateProject
 type UpdateProject struct {
 
 	// The cloud provider canonical that this project is using - between the
 	// supported ones.
 	//
-	// Enum: ["aws","google","azurerm","flexibleengine","openstack"]
+	// Enum: [aws google azurerm flexibleengine openstack]
 	CloudProvider string `json:"cloud_provider,omitempty"`
 
 	// The config_repository_canonical points to new Config Repository the project
@@ -155,13 +154,14 @@ const (
 
 // prop value enum
 func (m *UpdateProject) validateCloudProviderEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, updateProjectTypeCloudProviderPropEnum, true); err != nil {
+	if err := validate.Enum(path, location, value, updateProjectTypeCloudProviderPropEnum); err != nil {
 		return err
 	}
 	return nil
 }
 
 func (m *UpdateProject) validateCloudProvider(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CloudProvider) { // not required
 		return nil
 	}
@@ -175,19 +175,20 @@ func (m *UpdateProject) validateCloudProvider(formats strfmt.Registry) error {
 }
 
 func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ConfigRepositoryCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("config_repository_canonical", "body", m.ConfigRepositoryCanonical, 3); err != nil {
+	if err := validate.MinLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("config_repository_canonical", "body", m.ConfigRepositoryCanonical, 100); err != nil {
+	if err := validate.MaxLength("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("config_repository_canonical", "body", m.ConfigRepositoryCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("config_repository_canonical", "body", string(m.ConfigRepositoryCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -195,6 +196,7 @@ func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registr
 }
 
 func (m *UpdateProject) validateEnvironments(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Environments) { // not required
 		return nil
 	}
@@ -214,8 +216,6 @@ func (m *UpdateProject) validateEnvironments(formats strfmt.Registry) error {
 			if err := m.Environments[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -227,6 +227,7 @@ func (m *UpdateProject) validateEnvironments(formats strfmt.Registry) error {
 }
 
 func (m *UpdateProject) validateInputs(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Inputs) { // not required
 		return nil
 	}
@@ -240,8 +241,6 @@ func (m *UpdateProject) validateInputs(formats strfmt.Registry) error {
 			if err := m.Inputs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -258,7 +257,7 @@ func (m *UpdateProject) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 
@@ -271,7 +270,7 @@ func (m *UpdateProject) validateServiceCatalogRef(formats strfmt.Registry) error
 		return err
 	}
 
-	if err := validate.Pattern("service_catalog_ref", "body", *m.ServiceCatalogRef, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+:[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("service_catalog_ref", "body", string(*m.ServiceCatalogRef), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+:[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -284,76 +283,8 @@ func (m *UpdateProject) validateUpdatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this update project based on the context it is used
-func (m *UpdateProject) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateEnvironments(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateInputs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *UpdateProject) contextValidateEnvironments(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Environments); i++ {
-
-		if m.Environments[i] != nil {
-
-			if swag.IsZero(m.Environments[i]) { // not required
-				return nil
-			}
-
-			if err := m.Environments[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *UpdateProject) contextValidateInputs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Inputs); i++ {
-
-		if m.Inputs[i] != nil {
-
-			if swag.IsZero(m.Inputs[i]) { // not required
-				return nil
-			}
-
-			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

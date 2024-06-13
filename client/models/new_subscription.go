@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewSubscription New Subscription
 //
-// # It reflects the creation of a Subscription
-//
+// It reflects the creation of a Subscription
 // swagger:model NewSubscription
 type NewSubscription struct {
 
@@ -49,23 +47,18 @@ func (m *NewSubscription) validatePlanCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("plan_canonical", "body", *m.PlanCanonical, 3); err != nil {
+	if err := validate.MinLength("plan_canonical", "body", string(*m.PlanCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("plan_canonical", "body", *m.PlanCanonical, 100); err != nil {
+	if err := validate.MaxLength("plan_canonical", "body", string(*m.PlanCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("plan_canonical", "body", *m.PlanCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("plan_canonical", "body", string(*m.PlanCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new subscription based on context it is used
-func (m *NewSubscription) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

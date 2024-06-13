@@ -7,19 +7,18 @@ package models
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // AzureADAuthConfig AppConfigAzureADOAuth
 //
-// # AzureAD OAuth configuration
-//
+// AzureAD OAuth configuration
 // swagger:model AzureADAuthConfig
 type AzureADAuthConfig struct {
 	clientIdField *string
@@ -58,7 +57,10 @@ func (m *AzureADAuthConfig) Type() string {
 
 // SetType sets the type of this subtype
 func (m *AzureADAuthConfig) SetType(val string) {
+
 }
+
+// TenantID gets the tenant id of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *AzureADAuthConfig) UnmarshalJSON(raw []byte) error {
@@ -123,7 +125,8 @@ func (m AzureADAuthConfig) MarshalJSON() ([]byte, error) {
 	}{
 
 		TenantID: m.TenantID,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +143,8 @@ func (m AzureADAuthConfig) MarshalJSON() ([]byte, error) {
 		Provider: m.Provider(),
 
 		Type: m.Type(),
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -194,16 +198,6 @@ func (m *AzureADAuthConfig) validateTenantID(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validate this azure a d auth config based on the context it is used
-func (m *AzureADAuthConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

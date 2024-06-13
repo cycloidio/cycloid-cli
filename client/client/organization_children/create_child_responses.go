@@ -6,18 +6,17 @@ package organization_children
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CreateChildReader is a Reader for the CreateChild structure.
@@ -34,8 +33,9 @@ func (o *CreateChildReader) ReadResponse(response runtime.ClientResponse, consum
 			return nil, err
 		}
 		return result, nil
+
 	default:
-		return nil, runtime.NewAPIError("[POST /organizations/{organization_canonical}/children] createChild", response, response.Code())
+		return nil, runtime.NewAPIError("unknown error", response, response.Code())
 	}
 }
 
@@ -44,8 +44,7 @@ func NewCreateChildOK() *CreateChildOK {
 	return &CreateChildOK{}
 }
 
-/*
-CreateChildOK describes a response with status code 200, with default header values.
+/*CreateChildOK handles this case with default header values.
 
 Organization created. The body contains the information of the new created organization.
 */
@@ -53,44 +52,8 @@ type CreateChildOK struct {
 	Payload *CreateChildOKBody
 }
 
-// IsSuccess returns true when this create child o k response has a 2xx status code
-func (o *CreateChildOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this create child o k response has a 3xx status code
-func (o *CreateChildOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this create child o k response has a 4xx status code
-func (o *CreateChildOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this create child o k response has a 5xx status code
-func (o *CreateChildOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this create child o k response a status code equal to that given
-func (o *CreateChildOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the create child o k response
-func (o *CreateChildOK) Code() int {
-	return 200
-}
-
 func (o *CreateChildOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/children][%d] createChildOK %s", 200, payload)
-}
-
-func (o *CreateChildOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[POST /organizations/{organization_canonical}/children][%d] createChildOK %s", 200, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/children][%d] createChildOK  %+v", 200, o.Payload)
 }
 
 func (o *CreateChildOK) GetPayload() *CreateChildOKBody {
@@ -109,8 +72,7 @@ func (o *CreateChildOK) readResponse(response runtime.ClientResponse, consumer r
 	return nil
 }
 
-/*
-CreateChildOKBody create child o k body
+/*CreateChildOKBody create child o k body
 swagger:model CreateChildOKBody
 */
 type CreateChildOKBody struct {
@@ -144,39 +106,6 @@ func (o *CreateChildOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("createChildOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("createChildOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this create child o k body based on the context it is used
-func (o *CreateChildOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *CreateChildOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("createChildOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("createChildOK" + "." + "data")
 			}
 			return err
 		}

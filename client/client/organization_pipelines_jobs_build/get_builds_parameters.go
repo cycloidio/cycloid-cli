@@ -13,139 +13,122 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetBuildsParams creates a new GetBuildsParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetBuildsParams creates a new GetBuildsParams object
+// with the default values initialized.
 func NewGetBuildsParams() *GetBuildsParams {
+	var (
+		concoursePageLimitDefault = uint64(10)
+		concoursePageSinceDefault = uint64(0)
+		concoursePageUntilDefault = uint64(0)
+	)
 	return &GetBuildsParams{
+		ConcoursePageLimit: &concoursePageLimitDefault,
+		ConcoursePageSince: &concoursePageSinceDefault,
+		ConcoursePageUntil: &concoursePageUntilDefault,
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetBuildsParamsWithTimeout creates a new GetBuildsParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetBuildsParamsWithTimeout(timeout time.Duration) *GetBuildsParams {
+	var (
+		concoursePageLimitDefault = uint64(10)
+		concoursePageSinceDefault = uint64(0)
+		concoursePageUntilDefault = uint64(0)
+	)
 	return &GetBuildsParams{
+		ConcoursePageLimit: &concoursePageLimitDefault,
+		ConcoursePageSince: &concoursePageSinceDefault,
+		ConcoursePageUntil: &concoursePageUntilDefault,
+
 		timeout: timeout,
 	}
 }
 
 // NewGetBuildsParamsWithContext creates a new GetBuildsParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetBuildsParamsWithContext(ctx context.Context) *GetBuildsParams {
+	var (
+		concoursePageLimitDefault = uint64(10)
+		concoursePageSinceDefault = uint64(0)
+		concoursePageUntilDefault = uint64(0)
+	)
 	return &GetBuildsParams{
+		ConcoursePageLimit: &concoursePageLimitDefault,
+		ConcoursePageSince: &concoursePageSinceDefault,
+		ConcoursePageUntil: &concoursePageUntilDefault,
+
 		Context: ctx,
 	}
 }
 
 // NewGetBuildsParamsWithHTTPClient creates a new GetBuildsParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetBuildsParamsWithHTTPClient(client *http.Client) *GetBuildsParams {
+	var (
+		concoursePageLimitDefault = uint64(10)
+		concoursePageSinceDefault = uint64(0)
+		concoursePageUntilDefault = uint64(0)
+	)
 	return &GetBuildsParams{
-		HTTPClient: client,
+		ConcoursePageLimit: &concoursePageLimitDefault,
+		ConcoursePageSince: &concoursePageSinceDefault,
+		ConcoursePageUntil: &concoursePageUntilDefault,
+		HTTPClient:         client,
 	}
 }
 
-/*
-GetBuildsParams contains all the parameters to send to the API endpoint
-
-	for the get builds operation.
-
-	Typically these are written to a http.Request.
+/*GetBuildsParams contains all the parameters to send to the API endpoint
+for the get builds operation typically these are written to a http.Request
 */
 type GetBuildsParams struct {
 
-	/* ConcoursePageLimit.
+	/*ConcoursePageLimit
+	  The number of items at most which the response can have.
 
-	   The number of items at most which the response can have.
-
-	   Format: uint64
-	   Default: 10
 	*/
 	ConcoursePageLimit *uint64
+	/*ConcoursePageSince
+	  The time after which we should look for entities to return.
 
-	/* ConcoursePageSince.
-
-	   The time after which we should look for entities to return.
-
-	   Format: uint64
 	*/
 	ConcoursePageSince *uint64
+	/*ConcoursePageUntil
+	  The time before which we should look for entities to return.
 
-	/* ConcoursePageUntil.
-
-	   The time before which we should look for entities to return.
-
-	   Format: uint64
 	*/
 	ConcoursePageUntil *uint64
+	/*InpathPipelineName
+	  A pipeline name
 
-	/* InpathPipelineName.
-
-	   A pipeline name
 	*/
 	InpathPipelineName string
+	/*JobName
+	  A job name
 
-	/* JobName.
-
-	   A job name
 	*/
 	JobName string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get builds params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetBuildsParams) WithDefaults() *GetBuildsParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get builds params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetBuildsParams) SetDefaults() {
-	var (
-		concoursePageLimitDefault = uint64(10)
-
-		concoursePageSinceDefault = uint64(0)
-
-		concoursePageUntilDefault = uint64(0)
-	)
-
-	val := GetBuildsParams{
-		ConcoursePageLimit: &concoursePageLimitDefault,
-		ConcoursePageSince: &concoursePageSinceDefault,
-		ConcoursePageUntil: &concoursePageUntilDefault,
-	}
-
-	val.timeout = o.timeout
-	val.Context = o.Context
-	val.HTTPClient = o.HTTPClient
-	*o = val
 }
 
 // WithTimeout adds the timeout to the get builds params
@@ -270,51 +253,48 @@ func (o *GetBuildsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Reg
 
 		// query param concourse_page_limit
 		var qrConcoursePageLimit uint64
-
 		if o.ConcoursePageLimit != nil {
 			qrConcoursePageLimit = *o.ConcoursePageLimit
 		}
 		qConcoursePageLimit := swag.FormatUint64(qrConcoursePageLimit)
 		if qConcoursePageLimit != "" {
-
 			if err := r.SetQueryParam("concourse_page_limit", qConcoursePageLimit); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ConcoursePageSince != nil {
 
 		// query param concourse_page_since
 		var qrConcoursePageSince uint64
-
 		if o.ConcoursePageSince != nil {
 			qrConcoursePageSince = *o.ConcoursePageSince
 		}
 		qConcoursePageSince := swag.FormatUint64(qrConcoursePageSince)
 		if qConcoursePageSince != "" {
-
 			if err := r.SetQueryParam("concourse_page_since", qConcoursePageSince); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ConcoursePageUntil != nil {
 
 		// query param concourse_page_until
 		var qrConcoursePageUntil uint64
-
 		if o.ConcoursePageUntil != nil {
 			qrConcoursePageUntil = *o.ConcoursePageUntil
 		}
 		qConcoursePageUntil := swag.FormatUint64(qrConcoursePageUntil)
 		if qConcoursePageUntil != "" {
-
 			if err := r.SetQueryParam("concourse_page_until", qConcoursePageUntil); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param inpath_pipeline_name

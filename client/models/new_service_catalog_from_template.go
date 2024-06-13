@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewServiceCatalogFromTemplate Service Catalog
 //
-// # Represents the Service Catalog item
-//
+// Represents the Service Catalog item
 // swagger:model NewServiceCatalogFromTemplate
 type NewServiceCatalogFromTemplate struct {
 
@@ -95,15 +93,15 @@ func (m *NewServiceCatalogFromTemplate) validateCanonical(formats strfmt.Registr
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -111,11 +109,12 @@ func (m *NewServiceCatalogFromTemplate) validateCanonical(formats strfmt.Registr
 }
 
 func (m *NewServiceCatalogFromTemplate) validateCreatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -137,15 +136,15 @@ func (m *NewServiceCatalogFromTemplate) validateServiceCatalogSourceCanonical(fo
 		return err
 	}
 
-	if err := validate.MinLength("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, 3); err != nil {
+	if err := validate.MinLength("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, 100); err != nil {
+	if err := validate.MaxLength("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("service_catalog_source_canonical", "body", string(*m.ServiceCatalogSourceCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -153,11 +152,12 @@ func (m *NewServiceCatalogFromTemplate) validateServiceCatalogSourceCanonical(fo
 }
 
 func (m *NewServiceCatalogFromTemplate) validateUpdatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -170,11 +170,6 @@ func (m *NewServiceCatalogFromTemplate) validateUseCase(formats strfmt.Registry)
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new service catalog from template based on context it is used
-func (m *NewServiceCatalogFromTemplate) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

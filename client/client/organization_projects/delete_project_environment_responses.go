@@ -6,16 +6,16 @@ package organization_projects
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteProjectEnvironmentReader is a Reader for the DeleteProjectEnvironment structure.
@@ -61,50 +61,15 @@ func NewDeleteProjectEnvironmentNoContent() *DeleteProjectEnvironmentNoContent {
 	return &DeleteProjectEnvironmentNoContent{}
 }
 
-/*
-DeleteProjectEnvironmentNoContent describes a response with status code 204, with default header values.
+/*DeleteProjectEnvironmentNoContent handles this case with default header values.
 
 Project environment has been deleted.
 */
 type DeleteProjectEnvironmentNoContent struct {
 }
 
-// IsSuccess returns true when this delete project environment no content response has a 2xx status code
-func (o *DeleteProjectEnvironmentNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this delete project environment no content response has a 3xx status code
-func (o *DeleteProjectEnvironmentNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete project environment no content response has a 4xx status code
-func (o *DeleteProjectEnvironmentNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this delete project environment no content response has a 5xx status code
-func (o *DeleteProjectEnvironmentNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete project environment no content response a status code equal to that given
-func (o *DeleteProjectEnvironmentNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the delete project environment no content response
-func (o *DeleteProjectEnvironmentNoContent) Code() int {
-	return 204
-}
-
 func (o *DeleteProjectEnvironmentNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentNoContent", 204)
-}
-
-func (o *DeleteProjectEnvironmentNoContent) String() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentNoContent", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentNoContent ", 204)
 }
 
 func (o *DeleteProjectEnvironmentNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -117,60 +82,20 @@ func NewDeleteProjectEnvironmentForbidden() *DeleteProjectEnvironmentForbidden {
 	return &DeleteProjectEnvironmentForbidden{}
 }
 
-/*
-DeleteProjectEnvironmentForbidden describes a response with status code 403, with default header values.
+/*DeleteProjectEnvironmentForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteProjectEnvironmentForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete project environment forbidden response has a 2xx status code
-func (o *DeleteProjectEnvironmentForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete project environment forbidden response has a 3xx status code
-func (o *DeleteProjectEnvironmentForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete project environment forbidden response has a 4xx status code
-func (o *DeleteProjectEnvironmentForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete project environment forbidden response has a 5xx status code
-func (o *DeleteProjectEnvironmentForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete project environment forbidden response a status code equal to that given
-func (o *DeleteProjectEnvironmentForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the delete project environment forbidden response
-func (o *DeleteProjectEnvironmentForbidden) Code() int {
-	return 403
-}
-
 func (o *DeleteProjectEnvironmentForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentForbidden %s", 403, payload)
-}
-
-func (o *DeleteProjectEnvironmentForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DeleteProjectEnvironmentForbidden) GetPayload() *models.ErrorPayload {
@@ -179,16 +104,12 @@ func (o *DeleteProjectEnvironmentForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteProjectEnvironmentForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -205,60 +126,20 @@ func NewDeleteProjectEnvironmentNotFound() *DeleteProjectEnvironmentNotFound {
 	return &DeleteProjectEnvironmentNotFound{}
 }
 
-/*
-DeleteProjectEnvironmentNotFound describes a response with status code 404, with default header values.
+/*DeleteProjectEnvironmentNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteProjectEnvironmentNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete project environment not found response has a 2xx status code
-func (o *DeleteProjectEnvironmentNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete project environment not found response has a 3xx status code
-func (o *DeleteProjectEnvironmentNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete project environment not found response has a 4xx status code
-func (o *DeleteProjectEnvironmentNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete project environment not found response has a 5xx status code
-func (o *DeleteProjectEnvironmentNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete project environment not found response a status code equal to that given
-func (o *DeleteProjectEnvironmentNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the delete project environment not found response
-func (o *DeleteProjectEnvironmentNotFound) Code() int {
-	return 404
-}
-
 func (o *DeleteProjectEnvironmentNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentNotFound %s", 404, payload)
-}
-
-func (o *DeleteProjectEnvironmentNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentNotFound %s", 404, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironmentNotFound  %+v", 404, o.Payload)
 }
 
 func (o *DeleteProjectEnvironmentNotFound) GetPayload() *models.ErrorPayload {
@@ -267,16 +148,12 @@ func (o *DeleteProjectEnvironmentNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteProjectEnvironmentNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -295,46 +172,18 @@ func NewDeleteProjectEnvironmentDefault(code int) *DeleteProjectEnvironmentDefau
 	}
 }
 
-/*
-DeleteProjectEnvironmentDefault describes a response with status code -1, with default header values.
+/*DeleteProjectEnvironmentDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteProjectEnvironmentDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this delete project environment default response has a 2xx status code
-func (o *DeleteProjectEnvironmentDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this delete project environment default response has a 3xx status code
-func (o *DeleteProjectEnvironmentDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this delete project environment default response has a 4xx status code
-func (o *DeleteProjectEnvironmentDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this delete project environment default response has a 5xx status code
-func (o *DeleteProjectEnvironmentDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this delete project environment default response a status code equal to that given
-func (o *DeleteProjectEnvironmentDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the delete project environment default response
@@ -343,13 +192,7 @@ func (o *DeleteProjectEnvironmentDefault) Code() int {
 }
 
 func (o *DeleteProjectEnvironmentDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironment default %s", o._statusCode, payload)
-}
-
-func (o *DeleteProjectEnvironmentDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironment default %s", o._statusCode, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}][%d] deleteProjectEnvironment default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteProjectEnvironmentDefault) GetPayload() *models.ErrorPayload {
@@ -358,16 +201,12 @@ func (o *DeleteProjectEnvironmentDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteProjectEnvironmentDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

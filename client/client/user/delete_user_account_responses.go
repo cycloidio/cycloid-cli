@@ -6,16 +6,16 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteUserAccountReader is a Reader for the DeleteUserAccount structure.
@@ -55,50 +55,15 @@ func NewDeleteUserAccountNoContent() *DeleteUserAccountNoContent {
 	return &DeleteUserAccountNoContent{}
 }
 
-/*
-DeleteUserAccountNoContent describes a response with status code 204, with default header values.
+/*DeleteUserAccountNoContent handles this case with default header values.
 
 User account has been deleted.
 */
 type DeleteUserAccountNoContent struct {
 }
 
-// IsSuccess returns true when this delete user account no content response has a 2xx status code
-func (o *DeleteUserAccountNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this delete user account no content response has a 3xx status code
-func (o *DeleteUserAccountNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete user account no content response has a 4xx status code
-func (o *DeleteUserAccountNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this delete user account no content response has a 5xx status code
-func (o *DeleteUserAccountNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete user account no content response a status code equal to that given
-func (o *DeleteUserAccountNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the delete user account no content response
-func (o *DeleteUserAccountNoContent) Code() int {
-	return 204
-}
-
 func (o *DeleteUserAccountNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccountNoContent", 204)
-}
-
-func (o *DeleteUserAccountNoContent) String() string {
-	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccountNoContent", 204)
+	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccountNoContent ", 204)
 }
 
 func (o *DeleteUserAccountNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -111,60 +76,20 @@ func NewDeleteUserAccountForbidden() *DeleteUserAccountForbidden {
 	return &DeleteUserAccountForbidden{}
 }
 
-/*
-DeleteUserAccountForbidden describes a response with status code 403, with default header values.
+/*DeleteUserAccountForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteUserAccountForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete user account forbidden response has a 2xx status code
-func (o *DeleteUserAccountForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete user account forbidden response has a 3xx status code
-func (o *DeleteUserAccountForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete user account forbidden response has a 4xx status code
-func (o *DeleteUserAccountForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete user account forbidden response has a 5xx status code
-func (o *DeleteUserAccountForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete user account forbidden response a status code equal to that given
-func (o *DeleteUserAccountForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the delete user account forbidden response
-func (o *DeleteUserAccountForbidden) Code() int {
-	return 403
-}
-
 func (o *DeleteUserAccountForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccountForbidden %s", 403, payload)
-}
-
-func (o *DeleteUserAccountForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccountForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccountForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DeleteUserAccountForbidden) GetPayload() *models.ErrorPayload {
@@ -173,16 +98,12 @@ func (o *DeleteUserAccountForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteUserAccountForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -201,46 +122,18 @@ func NewDeleteUserAccountDefault(code int) *DeleteUserAccountDefault {
 	}
 }
 
-/*
-DeleteUserAccountDefault describes a response with status code -1, with default header values.
+/*DeleteUserAccountDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteUserAccountDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this delete user account default response has a 2xx status code
-func (o *DeleteUserAccountDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this delete user account default response has a 3xx status code
-func (o *DeleteUserAccountDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this delete user account default response has a 4xx status code
-func (o *DeleteUserAccountDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this delete user account default response has a 5xx status code
-func (o *DeleteUserAccountDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this delete user account default response a status code equal to that given
-func (o *DeleteUserAccountDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the delete user account default response
@@ -249,13 +142,7 @@ func (o *DeleteUserAccountDefault) Code() int {
 }
 
 func (o *DeleteUserAccountDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccount default %s", o._statusCode, payload)
-}
-
-func (o *DeleteUserAccountDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccount default %s", o._statusCode, payload)
+	return fmt.Sprintf("[DELETE /user][%d] deleteUserAccount default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteUserAccountDefault) GetPayload() *models.ErrorPayload {
@@ -264,16 +151,12 @@ func (o *DeleteUserAccountDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteUserAccountDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

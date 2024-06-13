@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,7 +18,6 @@ import (
 // NewProject Create Project
 //
 // The entity which represents the information of a new project.
-//
 // swagger:model NewProject
 type NewProject struct {
 
@@ -114,19 +113,20 @@ func (m *NewProject) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 1); err != nil {
+	if err := validate.MinLength("canonical", "body", string(m.Canonical), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(m.Canonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -139,15 +139,15 @@ func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) 
 		return err
 	}
 
-	if err := validate.MinLength("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, 3); err != nil {
+	if err := validate.MinLength("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, 100); err != nil {
+	if err := validate.MaxLength("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("config_repository_canonical", "body", string(*m.ConfigRepositoryCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -155,6 +155,7 @@ func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) 
 }
 
 func (m *NewProject) validateInputs(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Inputs) { // not required
 		return nil
 	}
@@ -168,8 +169,6 @@ func (m *NewProject) validateInputs(formats strfmt.Registry) error {
 			if err := m.Inputs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -186,7 +185,7 @@ func (m *NewProject) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 1); err != nil {
 		return err
 	}
 
@@ -194,6 +193,7 @@ func (m *NewProject) validateName(formats strfmt.Registry) error {
 }
 
 func (m *NewProject) validatePipelines(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Pipelines) { // not required
 		return nil
 	}
@@ -213,8 +213,6 @@ func (m *NewProject) validatePipelines(formats strfmt.Registry) error {
 			if err := m.Pipelines[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("pipelines" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("pipelines" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -235,88 +233,21 @@ func (m *NewProject) validateServiceCatalogRef(formats strfmt.Registry) error {
 }
 
 func (m *NewProject) validateTeamCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.TeamCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 3); err != nil {
+	if err := validate.MinLength("team_canonical", "body", string(m.TeamCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("team_canonical", "body", m.TeamCanonical, 100); err != nil {
+	if err := validate.MaxLength("team_canonical", "body", string(m.TeamCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("team_canonical", "body", string(m.TeamCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this new project based on the context it is used
-func (m *NewProject) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateInputs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidatePipelines(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *NewProject) contextValidateInputs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Inputs); i++ {
-
-		if m.Inputs[i] != nil {
-
-			if swag.IsZero(m.Inputs[i]) { // not required
-				return nil
-			}
-
-			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *NewProject) contextValidatePipelines(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Pipelines); i++ {
-
-		if m.Pipelines[i] != nil {
-
-			if swag.IsZero(m.Pipelines[i]) { // not required
-				return nil
-			}
-
-			if err := m.Pipelines[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("pipelines" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("pipelines" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

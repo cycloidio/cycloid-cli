@@ -13,84 +13,68 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewDeleteConfigRepositoryParams creates a new DeleteConfigRepositoryParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewDeleteConfigRepositoryParams creates a new DeleteConfigRepositoryParams object
+// with the default values initialized.
 func NewDeleteConfigRepositoryParams() *DeleteConfigRepositoryParams {
+	var ()
 	return &DeleteConfigRepositoryParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewDeleteConfigRepositoryParamsWithTimeout creates a new DeleteConfigRepositoryParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewDeleteConfigRepositoryParamsWithTimeout(timeout time.Duration) *DeleteConfigRepositoryParams {
+	var ()
 	return &DeleteConfigRepositoryParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewDeleteConfigRepositoryParamsWithContext creates a new DeleteConfigRepositoryParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewDeleteConfigRepositoryParamsWithContext(ctx context.Context) *DeleteConfigRepositoryParams {
+	var ()
 	return &DeleteConfigRepositoryParams{
+
 		Context: ctx,
 	}
 }
 
 // NewDeleteConfigRepositoryParamsWithHTTPClient creates a new DeleteConfigRepositoryParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewDeleteConfigRepositoryParamsWithHTTPClient(client *http.Client) *DeleteConfigRepositoryParams {
+	var ()
 	return &DeleteConfigRepositoryParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-DeleteConfigRepositoryParams contains all the parameters to send to the API endpoint
-
-	for the delete config repository operation.
-
-	Typically these are written to a http.Request.
+/*DeleteConfigRepositoryParams contains all the parameters to send to the API endpoint
+for the delete config repository operation typically these are written to a http.Request
 */
 type DeleteConfigRepositoryParams struct {
 
-	/* ConfigRepositoryCanonical.
+	/*ConfigRepositoryCanonical
+	  Organization Config Repositories canonical
 
-	   Organization Config Repositories canonical
 	*/
 	ConfigRepositoryCanonical string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the delete config repository params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteConfigRepositoryParams) WithDefaults() *DeleteConfigRepositoryParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the delete config repository params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *DeleteConfigRepositoryParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the delete config repository params

@@ -13,123 +13,104 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetJobsParams creates a new GetJobsParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetJobsParams creates a new GetJobsParams object
+// with the default values initialized.
 func NewGetJobsParams() *GetJobsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetJobsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetJobsParamsWithTimeout creates a new GetJobsParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetJobsParamsWithTimeout(timeout time.Duration) *GetJobsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetJobsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: timeout,
 	}
 }
 
 // NewGetJobsParamsWithContext creates a new GetJobsParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetJobsParamsWithContext(ctx context.Context) *GetJobsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetJobsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		Context: ctx,
 	}
 }
 
 // NewGetJobsParamsWithHTTPClient creates a new GetJobsParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetJobsParamsWithHTTPClient(client *http.Client) *GetJobsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetJobsParams{
+		PageIndex:  &pageIndexDefault,
+		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*
-GetJobsParams contains all the parameters to send to the API endpoint
-
-	for the get jobs operation.
-
-	Typically these are written to a http.Request.
+/*GetJobsParams contains all the parameters to send to the API endpoint
+for the get jobs operation typically these are written to a http.Request
 */
 type GetJobsParams struct {
 
-	/* InpathPipelineName.
+	/*InpathPipelineName
+	  A pipeline name
 
-	   A pipeline name
 	*/
 	InpathPipelineName string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*PageIndex
+	  The page number to request. The first page is 1.
 
-	/* PageIndex.
-
-	   The page number to request. The first page is 1.
-
-	   Format: uint32
-	   Default: 1
 	*/
 	PageIndex *uint32
+	/*PageSize
+	  The number of items at most which the response can have.
 
-	/* PageSize.
-
-	   The number of items at most which the response can have.
-
-	   Format: uint32
-	   Default: 1000
 	*/
 	PageSize *uint32
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get jobs params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetJobsParams) WithDefaults() *GetJobsParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get jobs params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetJobsParams) SetDefaults() {
-	var (
-		pageIndexDefault = uint32(1)
-
-		pageSizeDefault = uint32(1000)
-	)
-
-	val := GetJobsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-	}
-
-	val.timeout = o.timeout
-	val.Context = o.Context
-	val.HTTPClient = o.HTTPClient
-	*o = val
 }
 
 // WithTimeout adds the timeout to the get jobs params
@@ -242,34 +223,32 @@ func (o *GetJobsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Regis
 
 		// query param page_index
 		var qrPageIndex uint32
-
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
-
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
-
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
-
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param project_canonical

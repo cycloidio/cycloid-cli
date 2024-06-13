@@ -13,86 +13,70 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewCreateChildParams creates a new CreateChildParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewCreateChildParams creates a new CreateChildParams object
+// with the default values initialized.
 func NewCreateChildParams() *CreateChildParams {
+	var ()
 	return &CreateChildParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewCreateChildParamsWithTimeout creates a new CreateChildParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewCreateChildParamsWithTimeout(timeout time.Duration) *CreateChildParams {
+	var ()
 	return &CreateChildParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewCreateChildParamsWithContext creates a new CreateChildParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewCreateChildParamsWithContext(ctx context.Context) *CreateChildParams {
+	var ()
 	return &CreateChildParams{
+
 		Context: ctx,
 	}
 }
 
 // NewCreateChildParamsWithHTTPClient creates a new CreateChildParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewCreateChildParamsWithHTTPClient(client *http.Client) *CreateChildParams {
+	var ()
 	return &CreateChildParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-CreateChildParams contains all the parameters to send to the API endpoint
-
-	for the create child operation.
-
-	Typically these are written to a http.Request.
+/*CreateChildParams contains all the parameters to send to the API endpoint
+for the create child operation typically these are written to a http.Request
 */
 type CreateChildParams struct {
 
-	/* Body.
+	/*Body
+	  The information of the organization to create.
 
-	   The information of the organization to create.
 	*/
 	Body *models.NewOrganization
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the create child params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *CreateChildParams) WithDefaults() *CreateChildParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the create child params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *CreateChildParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the create child params
@@ -157,6 +141,7 @@ func (o *CreateChildParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

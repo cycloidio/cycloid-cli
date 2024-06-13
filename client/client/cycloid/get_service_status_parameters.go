@@ -13,78 +13,63 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetServiceStatusParams creates a new GetServiceStatusParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetServiceStatusParams creates a new GetServiceStatusParams object
+// with the default values initialized.
 func NewGetServiceStatusParams() *GetServiceStatusParams {
+	var ()
 	return &GetServiceStatusParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetServiceStatusParamsWithTimeout creates a new GetServiceStatusParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetServiceStatusParamsWithTimeout(timeout time.Duration) *GetServiceStatusParams {
+	var ()
 	return &GetServiceStatusParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewGetServiceStatusParamsWithContext creates a new GetServiceStatusParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetServiceStatusParamsWithContext(ctx context.Context) *GetServiceStatusParams {
+	var ()
 	return &GetServiceStatusParams{
+
 		Context: ctx,
 	}
 }
 
 // NewGetServiceStatusParamsWithHTTPClient creates a new GetServiceStatusParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetServiceStatusParamsWithHTTPClient(client *http.Client) *GetServiceStatusParams {
+	var ()
 	return &GetServiceStatusParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-GetServiceStatusParams contains all the parameters to send to the API endpoint
-
-	for the get service status operation.
-
-	Typically these are written to a http.Request.
+/*GetServiceStatusParams contains all the parameters to send to the API endpoint
+for the get service status operation typically these are written to a http.Request
 */
 type GetServiceStatusParams struct {
 
-	/* ServiceStatusCanonical.
+	/*ServiceStatusCanonical
+	  The canonical of the service you want to get the status from
 
-	   The canonical of the service you want to get the status from
 	*/
 	ServiceStatusCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get service status params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetServiceStatusParams) WithDefaults() *GetServiceStatusParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get service status params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetServiceStatusParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get service status params

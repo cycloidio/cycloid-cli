@@ -6,16 +6,16 @@ package organization_members
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // RemoveOrgMemberReader is a Reader for the RemoveOrgMember structure.
@@ -61,50 +61,15 @@ func NewRemoveOrgMemberNoContent() *RemoveOrgMemberNoContent {
 	return &RemoveOrgMemberNoContent{}
 }
 
-/*
-RemoveOrgMemberNoContent describes a response with status code 204, with default header values.
+/*RemoveOrgMemberNoContent handles this case with default header values.
 
 Member has been removed.
 */
 type RemoveOrgMemberNoContent struct {
 }
 
-// IsSuccess returns true when this remove org member no content response has a 2xx status code
-func (o *RemoveOrgMemberNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this remove org member no content response has a 3xx status code
-func (o *RemoveOrgMemberNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this remove org member no content response has a 4xx status code
-func (o *RemoveOrgMemberNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this remove org member no content response has a 5xx status code
-func (o *RemoveOrgMemberNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this remove org member no content response a status code equal to that given
-func (o *RemoveOrgMemberNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the remove org member no content response
-func (o *RemoveOrgMemberNoContent) Code() int {
-	return 204
-}
-
 func (o *RemoveOrgMemberNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNoContent", 204)
-}
-
-func (o *RemoveOrgMemberNoContent) String() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNoContent", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNoContent ", 204)
 }
 
 func (o *RemoveOrgMemberNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -117,60 +82,20 @@ func NewRemoveOrgMemberForbidden() *RemoveOrgMemberForbidden {
 	return &RemoveOrgMemberForbidden{}
 }
 
-/*
-RemoveOrgMemberForbidden describes a response with status code 403, with default header values.
+/*RemoveOrgMemberForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type RemoveOrgMemberForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this remove org member forbidden response has a 2xx status code
-func (o *RemoveOrgMemberForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this remove org member forbidden response has a 3xx status code
-func (o *RemoveOrgMemberForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this remove org member forbidden response has a 4xx status code
-func (o *RemoveOrgMemberForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this remove org member forbidden response has a 5xx status code
-func (o *RemoveOrgMemberForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this remove org member forbidden response a status code equal to that given
-func (o *RemoveOrgMemberForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the remove org member forbidden response
-func (o *RemoveOrgMemberForbidden) Code() int {
-	return 403
-}
-
 func (o *RemoveOrgMemberForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberForbidden %s", 403, payload)
-}
-
-func (o *RemoveOrgMemberForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberForbidden  %+v", 403, o.Payload)
 }
 
 func (o *RemoveOrgMemberForbidden) GetPayload() *models.ErrorPayload {
@@ -179,16 +104,12 @@ func (o *RemoveOrgMemberForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *RemoveOrgMemberForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -205,60 +126,20 @@ func NewRemoveOrgMemberNotFound() *RemoveOrgMemberNotFound {
 	return &RemoveOrgMemberNotFound{}
 }
 
-/*
-RemoveOrgMemberNotFound describes a response with status code 404, with default header values.
+/*RemoveOrgMemberNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type RemoveOrgMemberNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this remove org member not found response has a 2xx status code
-func (o *RemoveOrgMemberNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this remove org member not found response has a 3xx status code
-func (o *RemoveOrgMemberNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this remove org member not found response has a 4xx status code
-func (o *RemoveOrgMemberNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this remove org member not found response has a 5xx status code
-func (o *RemoveOrgMemberNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this remove org member not found response a status code equal to that given
-func (o *RemoveOrgMemberNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the remove org member not found response
-func (o *RemoveOrgMemberNotFound) Code() int {
-	return 404
-}
-
 func (o *RemoveOrgMemberNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNotFound %s", 404, payload)
-}
-
-func (o *RemoveOrgMemberNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNotFound %s", 404, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNotFound  %+v", 404, o.Payload)
 }
 
 func (o *RemoveOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -267,16 +148,12 @@ func (o *RemoveOrgMemberNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *RemoveOrgMemberNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -295,46 +172,18 @@ func NewRemoveOrgMemberDefault(code int) *RemoveOrgMemberDefault {
 	}
 }
 
-/*
-RemoveOrgMemberDefault describes a response with status code -1, with default header values.
+/*RemoveOrgMemberDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type RemoveOrgMemberDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this remove org member default response has a 2xx status code
-func (o *RemoveOrgMemberDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this remove org member default response has a 3xx status code
-func (o *RemoveOrgMemberDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this remove org member default response has a 4xx status code
-func (o *RemoveOrgMemberDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this remove org member default response has a 5xx status code
-func (o *RemoveOrgMemberDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this remove org member default response a status code equal to that given
-func (o *RemoveOrgMemberDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the remove org member default response
@@ -343,13 +192,7 @@ func (o *RemoveOrgMemberDefault) Code() int {
 }
 
 func (o *RemoveOrgMemberDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMember default %s", o._statusCode, payload)
-}
-
-func (o *RemoveOrgMemberDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMember default %s", o._statusCode, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMember default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *RemoveOrgMemberDefault) GetPayload() *models.ErrorPayload {
@@ -358,16 +201,12 @@ func (o *RemoveOrgMemberDefault) GetPayload() *models.ErrorPayload {
 
 func (o *RemoveOrgMemberDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

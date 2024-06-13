@@ -6,19 +6,18 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"encoding/json"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // KPI KPI
 //
-// # A KPI
-//
+// A KPI
 // swagger:model KPI
 type KPI struct {
 
@@ -83,7 +82,7 @@ type KPI struct {
 
 	// type
 	// Required: true
-	// Enum: ["build_avg_time","build_frequency","build_history","code_coverage","time_to_release"]
+	// Enum: [build_avg_time build_frequency build_history code_coverage time_to_release]
 	Type *string `json:"type"`
 
 	// updated at
@@ -93,7 +92,7 @@ type KPI struct {
 
 	// widget
 	// Required: true
-	// Enum: ["bars","stackbars","doughnut","history","line","pie","summary"]
+	// Enum: [bars stackbars doughnut history line pie summary]
 	Widget *string `json:"widget"`
 }
 
@@ -161,15 +160,15 @@ func (m *KPI) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -178,8 +177,8 @@ func (m *KPI) validateCanonical(formats strfmt.Registry) error {
 
 func (m *KPI) validateConfig(formats strfmt.Registry) error {
 
-	if m.Config == nil {
-		return errors.Required("config", "body", nil)
+	if err := validate.Required("config", "body", m.Config); err != nil {
+		return err
 	}
 
 	return nil
@@ -191,7 +190,7 @@ func (m *KPI) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -208,19 +207,20 @@ func (m *KPI) validateDescription(formats strfmt.Registry) error {
 }
 
 func (m *KPI) validateEnvironmentCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.EnvironmentCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("environment_canonical", "body", m.EnvironmentCanonical, 1); err != nil {
+	if err := validate.MinLength("environment_canonical", "body", string(m.EnvironmentCanonical), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("environment_canonical", "body", m.EnvironmentCanonical, 100); err != nil {
+	if err := validate.MaxLength("environment_canonical", "body", string(m.EnvironmentCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("environment_canonical", "body", m.EnvironmentCanonical, `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
+	if err := validate.Pattern("environment_canonical", "body", string(m.EnvironmentCanonical), `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
 		return err
 	}
 
@@ -242,7 +242,7 @@ func (m *KPI) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -255,7 +255,7 @@ func (m *KPI) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
 		return err
 	}
 
@@ -263,19 +263,20 @@ func (m *KPI) validateName(formats strfmt.Registry) error {
 }
 
 func (m *KPI) validateProjectCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ProjectCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("project_canonical", "body", m.ProjectCanonical, 1); err != nil {
+	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("project_canonical", "body", m.ProjectCanonical, 100); err != nil {
+	if err := validate.MaxLength("project_canonical", "body", string(m.ProjectCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -314,7 +315,7 @@ const (
 
 // prop value enum
 func (m *KPI) validateTypeEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, kPITypeTypePropEnum, true); err != nil {
+	if err := validate.Enum(path, location, value, kPITypeTypePropEnum); err != nil {
 		return err
 	}
 	return nil
@@ -340,7 +341,7 @@ func (m *KPI) validateUpdatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -385,7 +386,7 @@ const (
 
 // prop value enum
 func (m *KPI) validateWidgetEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, kPITypeWidgetPropEnum, true); err != nil {
+	if err := validate.Enum(path, location, value, kPITypeWidgetPropEnum); err != nil {
 		return err
 	}
 	return nil
@@ -402,11 +403,6 @@ func (m *KPI) validateWidget(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this k p i based on context it is used
-func (m *KPI) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

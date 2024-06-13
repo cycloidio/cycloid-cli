@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewInventoryResource New Inventory Resource
 //
-// # The Resource of the Inventory representing an element of your infrastructure
-//
+// The Resource of the Inventory representing an element of your infrastructure
 // swagger:model NewInventoryResource
 type NewInventoryResource struct {
 
@@ -26,11 +24,9 @@ type NewInventoryResource struct {
 	CPU *uint64 `json:"cpu,omitempty"`
 
 	// List of attributes (key value object) of the Resource, can be anything
-	// Example: {"another":"one","custom":"attribute"}
 	CustomAttributes interface{} `json:"custom_attributes,omitempty"`
 
 	// A way to distinguish and categorize resources
-	// Example: my-label
 	// Required: true
 	Label *string `json:"label"`
 
@@ -94,11 +90,12 @@ func (m *NewInventoryResource) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewInventoryResource) validateCPU(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CPU) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("cpu", "body", *m.CPU, 0, false); err != nil {
+	if err := validate.MinimumInt("cpu", "body", int64(*m.CPU), 0, false); err != nil {
 		return err
 	}
 
@@ -115,11 +112,12 @@ func (m *NewInventoryResource) validateLabel(formats strfmt.Registry) error {
 }
 
 func (m *NewInventoryResource) validateMemory(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Memory) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("memory", "body", *m.Memory, 0, false); err != nil {
+	if err := validate.MinimumInt("memory", "body", int64(*m.Memory), 0, false); err != nil {
 		return err
 	}
 
@@ -145,11 +143,12 @@ func (m *NewInventoryResource) validateProvider(formats strfmt.Registry) error {
 }
 
 func (m *NewInventoryResource) validateStorage(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Storage) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("storage", "body", *m.Storage, 0, false); err != nil {
+	if err := validate.MinimumInt("storage", "body", int64(*m.Storage), 0, false); err != nil {
 		return err
 	}
 
@@ -162,11 +161,6 @@ func (m *NewInventoryResource) validateType(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new inventory resource based on context it is used
-func (m *NewInventoryResource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

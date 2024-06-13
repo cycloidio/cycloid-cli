@@ -7,7 +7,6 @@ package models
 
 // UserGuide User guide JSON schema
 //
-// # The user's guide progress JSON schema
-//
+// The user's guide progress JSON schema
 // swagger:model UserGuide
 type UserGuide interface{}

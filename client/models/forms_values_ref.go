@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // FormsValuesRef Forms values ref
 //
-// # It has the information to get the values of an entity of the Form
-//
+// It has the information to get the values of an entity of the Form
 // swagger:model FormsValuesRef
 type FormsValuesRef struct {
 
@@ -46,11 +44,6 @@ func (m *FormsValuesRef) validateURL(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this forms values ref based on context it is used
-func (m *FormsValuesRef) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

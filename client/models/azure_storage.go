@@ -7,11 +7,11 @@ package models
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -46,7 +46,14 @@ func (m *AzureStorage) Engine() string {
 
 // SetEngine sets the engine of this subtype
 func (m *AzureStorage) SetEngine(val string) {
+
 }
+
+// Blob gets the blob of this subtype
+
+// Container gets the container of this subtype
+
+// Endpoint gets the endpoint of this subtype
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *AzureStorage) UnmarshalJSON(raw []byte) error {
@@ -97,7 +104,9 @@ func (m *AzureStorage) UnmarshalJSON(raw []byte) error {
 	}
 
 	result.Blob = data.Blob
+
 	result.Container = data.Container
+
 	result.Endpoint = data.Endpoint
 
 	*m = result
@@ -133,7 +142,8 @@ func (m AzureStorage) MarshalJSON() ([]byte, error) {
 		Container: m.Container,
 
 		Endpoint: m.Endpoint,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -142,7 +152,8 @@ func (m AzureStorage) MarshalJSON() ([]byte, error) {
 	}{
 
 		Engine: m.Engine(),
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -170,16 +181,6 @@ func (m *AzureStorage) validateContainer(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validate this azure storage based on the context it is used
-func (m *AzureStorage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
 	return nil
 }
 

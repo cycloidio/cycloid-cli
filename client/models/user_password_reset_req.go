@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // UserPasswordResetReq User password reset request
 //
 // Request to send a token for allowing the user to reset its current password.
-//
 // swagger:model UserPasswordResetReq
 type UserPasswordResetReq struct {
 
@@ -51,11 +49,6 @@ func (m *UserPasswordResetReq) validateEmail(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this user password reset req based on context it is used
-func (m *UserPasswordResetReq) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Environment Environment
 //
-// # Represent an environment with may be related to a Project and Pipeline
-//
+// Represent an environment with may be related to a Project and Pipeline
 // swagger:model Environment
 type Environment struct {
 
@@ -114,15 +112,15 @@ func (m *Environment) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 1); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
 		return err
 	}
 
@@ -130,6 +128,7 @@ func (m *Environment) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateCloudProvider(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CloudProvider) { // not required
 		return nil
 	}
@@ -138,8 +137,6 @@ func (m *Environment) validateCloudProvider(formats strfmt.Registry) error {
 		if err := m.CloudProvider.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("cloud_provider")
 			}
 			return err
 		}
@@ -154,7 +151,7 @@ func (m *Environment) validateColor(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("color", "body", *m.Color, 64); err != nil {
+	if err := validate.MaxLength("color", "body", string(*m.Color), 64); err != nil {
 		return err
 	}
 
@@ -167,7 +164,7 @@ func (m *Environment) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -180,7 +177,7 @@ func (m *Environment) validateIcon(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("icon", "body", *m.Icon, 64); err != nil {
+	if err := validate.MaxLength("icon", "body", string(*m.Icon), 64); err != nil {
 		return err
 	}
 
@@ -193,7 +190,7 @@ func (m *Environment) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -206,7 +203,7 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -214,55 +211,21 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateUseCase(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.UseCase) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("use_case", "body", m.UseCase, 3); err != nil {
+	if err := validate.MinLength("use_case", "body", string(m.UseCase), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("use_case", "body", m.UseCase, 100); err != nil {
+	if err := validate.MaxLength("use_case", "body", string(m.UseCase), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("use_case", "body", m.UseCase, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("use_case", "body", string(m.UseCase), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this environment based on the context it is used
-func (m *Environment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateCloudProvider(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Environment) contextValidateCloudProvider(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.CloudProvider != nil {
-
-		if swag.IsZero(m.CloudProvider) { // not required
-			return nil
-		}
-
-		if err := m.CloudProvider.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("cloud_provider")
-			}
-			return err
-		}
 	}
 
 	return nil

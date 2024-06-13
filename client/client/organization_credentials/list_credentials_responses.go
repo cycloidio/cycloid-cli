@@ -6,19 +6,18 @@ package organization_credentials
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // ListCredentialsReader is a Reader for the ListCredentials structure.
@@ -64,8 +63,7 @@ func NewListCredentialsOK() *ListCredentialsOK {
 	return &ListCredentialsOK{}
 }
 
-/*
-ListCredentialsOK describes a response with status code 200, with default header values.
+/*ListCredentialsOK handles this case with default header values.
 
 List of the Credentials
 */
@@ -73,44 +71,8 @@ type ListCredentialsOK struct {
 	Payload *ListCredentialsOKBody
 }
 
-// IsSuccess returns true when this list credentials o k response has a 2xx status code
-func (o *ListCredentialsOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this list credentials o k response has a 3xx status code
-func (o *ListCredentialsOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this list credentials o k response has a 4xx status code
-func (o *ListCredentialsOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this list credentials o k response has a 5xx status code
-func (o *ListCredentialsOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this list credentials o k response a status code equal to that given
-func (o *ListCredentialsOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the list credentials o k response
-func (o *ListCredentialsOK) Code() int {
-	return 200
-}
-
 func (o *ListCredentialsOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsOK %s", 200, payload)
-}
-
-func (o *ListCredentialsOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsOK  %+v", 200, o.Payload)
 }
 
 func (o *ListCredentialsOK) GetPayload() *ListCredentialsOKBody {
@@ -134,60 +96,20 @@ func NewListCredentialsForbidden() *ListCredentialsForbidden {
 	return &ListCredentialsForbidden{}
 }
 
-/*
-ListCredentialsForbidden describes a response with status code 403, with default header values.
+/*ListCredentialsForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type ListCredentialsForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this list credentials forbidden response has a 2xx status code
-func (o *ListCredentialsForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this list credentials forbidden response has a 3xx status code
-func (o *ListCredentialsForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this list credentials forbidden response has a 4xx status code
-func (o *ListCredentialsForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this list credentials forbidden response has a 5xx status code
-func (o *ListCredentialsForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this list credentials forbidden response a status code equal to that given
-func (o *ListCredentialsForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the list credentials forbidden response
-func (o *ListCredentialsForbidden) Code() int {
-	return 403
-}
-
 func (o *ListCredentialsForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsForbidden %s", 403, payload)
-}
-
-func (o *ListCredentialsForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsForbidden  %+v", 403, o.Payload)
 }
 
 func (o *ListCredentialsForbidden) GetPayload() *models.ErrorPayload {
@@ -196,16 +118,12 @@ func (o *ListCredentialsForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *ListCredentialsForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -222,60 +140,20 @@ func NewListCredentialsNotFound() *ListCredentialsNotFound {
 	return &ListCredentialsNotFound{}
 }
 
-/*
-ListCredentialsNotFound describes a response with status code 404, with default header values.
+/*ListCredentialsNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type ListCredentialsNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this list credentials not found response has a 2xx status code
-func (o *ListCredentialsNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this list credentials not found response has a 3xx status code
-func (o *ListCredentialsNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this list credentials not found response has a 4xx status code
-func (o *ListCredentialsNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this list credentials not found response has a 5xx status code
-func (o *ListCredentialsNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this list credentials not found response a status code equal to that given
-func (o *ListCredentialsNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the list credentials not found response
-func (o *ListCredentialsNotFound) Code() int {
-	return 404
-}
-
 func (o *ListCredentialsNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsNotFound %s", 404, payload)
-}
-
-func (o *ListCredentialsNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentialsNotFound  %+v", 404, o.Payload)
 }
 
 func (o *ListCredentialsNotFound) GetPayload() *models.ErrorPayload {
@@ -284,16 +162,12 @@ func (o *ListCredentialsNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *ListCredentialsNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -312,46 +186,18 @@ func NewListCredentialsDefault(code int) *ListCredentialsDefault {
 	}
 }
 
-/*
-ListCredentialsDefault describes a response with status code -1, with default header values.
+/*ListCredentialsDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type ListCredentialsDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this list credentials default response has a 2xx status code
-func (o *ListCredentialsDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this list credentials default response has a 3xx status code
-func (o *ListCredentialsDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this list credentials default response has a 4xx status code
-func (o *ListCredentialsDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this list credentials default response has a 5xx status code
-func (o *ListCredentialsDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this list credentials default response a status code equal to that given
-func (o *ListCredentialsDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the list credentials default response
@@ -360,13 +206,7 @@ func (o *ListCredentialsDefault) Code() int {
 }
 
 func (o *ListCredentialsDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentials default %s", o._statusCode, payload)
-}
-
-func (o *ListCredentialsDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentials default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/credentials][%d] listCredentials default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *ListCredentialsDefault) GetPayload() *models.ErrorPayload {
@@ -375,16 +215,12 @@ func (o *ListCredentialsDefault) GetPayload() *models.ErrorPayload {
 
 func (o *ListCredentialsDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -396,8 +232,7 @@ func (o *ListCredentialsDefault) readResponse(response runtime.ClientResponse, c
 	return nil
 }
 
-/*
-ListCredentialsOKBody list credentials o k body
+/*ListCredentialsOKBody list credentials o k body
 swagger:model ListCredentialsOKBody
 */
 type ListCredentialsOKBody struct {
@@ -444,8 +279,6 @@ func (o *ListCredentialsOKBody) validateData(formats strfmt.Registry) error {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("listCredentialsOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("listCredentialsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -466,68 +299,6 @@ func (o *ListCredentialsOKBody) validatePagination(formats strfmt.Registry) erro
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("listCredentialsOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("listCredentialsOK" + "." + "pagination")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this list credentials o k body based on the context it is used
-func (o *ListCredentialsOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := o.contextValidatePagination(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *ListCredentialsOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(o.Data); i++ {
-
-		if o.Data[i] != nil {
-
-			if swag.IsZero(o.Data[i]) { // not required
-				return nil
-			}
-
-			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("listCredentialsOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("listCredentialsOK" + "." + "data" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (o *ListCredentialsOKBody) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Pagination != nil {
-
-		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("listCredentialsOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("listCredentialsOK" + "." + "pagination")
 			}
 			return err
 		}

@@ -7,7 +7,6 @@ package models
 
 // TerraformJSONDiagram TerraformDiagram
 //
-// # The JSON Diagram structure
-//
+// The JSON Diagram structure
 // swagger:model TerraformJSONDiagram
 type TerraformJSONDiagram interface{}

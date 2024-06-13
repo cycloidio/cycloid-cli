@@ -13,92 +13,75 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewUpdateServiceCatalogTerraformDiagramParams creates a new UpdateServiceCatalogTerraformDiagramParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewUpdateServiceCatalogTerraformDiagramParams creates a new UpdateServiceCatalogTerraformDiagramParams object
+// with the default values initialized.
 func NewUpdateServiceCatalogTerraformDiagramParams() *UpdateServiceCatalogTerraformDiagramParams {
+	var ()
 	return &UpdateServiceCatalogTerraformDiagramParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUpdateServiceCatalogTerraformDiagramParamsWithTimeout creates a new UpdateServiceCatalogTerraformDiagramParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewUpdateServiceCatalogTerraformDiagramParamsWithTimeout(timeout time.Duration) *UpdateServiceCatalogTerraformDiagramParams {
+	var ()
 	return &UpdateServiceCatalogTerraformDiagramParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewUpdateServiceCatalogTerraformDiagramParamsWithContext creates a new UpdateServiceCatalogTerraformDiagramParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewUpdateServiceCatalogTerraformDiagramParamsWithContext(ctx context.Context) *UpdateServiceCatalogTerraformDiagramParams {
+	var ()
 	return &UpdateServiceCatalogTerraformDiagramParams{
+
 		Context: ctx,
 	}
 }
 
 // NewUpdateServiceCatalogTerraformDiagramParamsWithHTTPClient creates a new UpdateServiceCatalogTerraformDiagramParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewUpdateServiceCatalogTerraformDiagramParamsWithHTTPClient(client *http.Client) *UpdateServiceCatalogTerraformDiagramParams {
+	var ()
 	return &UpdateServiceCatalogTerraformDiagramParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-UpdateServiceCatalogTerraformDiagramParams contains all the parameters to send to the API endpoint
-
-	for the update service catalog terraform diagram operation.
-
-	Typically these are written to a http.Request.
+/*UpdateServiceCatalogTerraformDiagramParams contains all the parameters to send to the API endpoint
+for the update service catalog terraform diagram operation typically these are written to a http.Request
 */
 type UpdateServiceCatalogTerraformDiagramParams struct {
 
-	/* Body.
+	/*Body
+	  The information of the ServiceCatalog Terraform Diagram
 
-	   The information of the ServiceCatalog Terraform Diagram
 	*/
 	Body models.TerraformJSONDiagram
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ServiceCatalogRef
+	  A Service Catalog name
 
-	/* ServiceCatalogRef.
-
-	   A Service Catalog name
 	*/
 	ServiceCatalogRef string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the update service catalog terraform diagram params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateServiceCatalogTerraformDiagramParams) WithDefaults() *UpdateServiceCatalogTerraformDiagramParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the update service catalog terraform diagram params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UpdateServiceCatalogTerraformDiagramParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the update service catalog terraform diagram params
@@ -174,6 +157,7 @@ func (o *UpdateServiceCatalogTerraformDiagramParams) WriteToRequest(r runtime.Cl
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

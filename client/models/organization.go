@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -18,7 +18,6 @@ import (
 // Organization Organization
 //
 // The entity which holds all the direct information attached to an organization.
-//
 // swagger:model Organization
 type Organization struct {
 
@@ -174,6 +173,7 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateAdmins(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Admins) { // not required
 		return nil
 	}
@@ -187,8 +187,6 @@ func (m *Organization) validateAdmins(formats strfmt.Registry) error {
 			if err := m.Admins[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("admins" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("admins" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -200,6 +198,7 @@ func (m *Organization) validateAdmins(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateAppearance(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Appearance) { // not required
 		return nil
 	}
@@ -208,8 +207,6 @@ func (m *Organization) validateAppearance(formats strfmt.Registry) error {
 		if err := m.Appearance.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("appearance")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("appearance")
 			}
 			return err
 		}
@@ -251,15 +248,15 @@ func (m *Organization) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -299,7 +296,7 @@ func (m *Organization) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -321,7 +318,7 @@ func (m *Organization) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -343,7 +340,7 @@ func (m *Organization) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", string(*m.Name), 3); err != nil {
 		return err
 	}
 
@@ -360,6 +357,7 @@ func (m *Organization) validateQuotas(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateSubscription(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Subscription) { // not required
 		return nil
 	}
@@ -368,8 +366,6 @@ func (m *Organization) validateSubscription(formats strfmt.Registry) error {
 		if err := m.Subscription.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("subscription")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("subscription")
 			}
 			return err
 		}
@@ -384,97 +380,8 @@ func (m *Organization) validateUpdatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this organization based on the context it is used
-func (m *Organization) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateAdmins(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateAppearance(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateSubscription(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Organization) contextValidateAdmins(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Admins); i++ {
-
-		if m.Admins[i] != nil {
-
-			if swag.IsZero(m.Admins[i]) { // not required
-				return nil
-			}
-
-			if err := m.Admins[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("admins" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("admins" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *Organization) contextValidateAppearance(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Appearance != nil {
-
-		if swag.IsZero(m.Appearance) { // not required
-			return nil
-		}
-
-		if err := m.Appearance.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("appearance")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("appearance")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Organization) contextValidateSubscription(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Subscription != nil {
-
-		if swag.IsZero(m.Subscription) { // not required
-			return nil
-		}
-
-		if err := m.Subscription.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("subscription")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("subscription")
-			}
-			return err
-		}
 	}
 
 	return nil

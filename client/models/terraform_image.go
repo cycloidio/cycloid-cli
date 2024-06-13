@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // TerraformImage TerraformImage
 //
-// # The Image from the TF structure
-//
+// The Image from the TF structure
 // swagger:model TerraformImage
 type TerraformImage struct {
 
@@ -47,11 +45,8 @@ func (m *TerraformImage) validateImage(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
+	// Format "byte" (base64 string) is already validated when unmarshalled
 
-// ContextValidate validates this terraform image based on context it is used
-func (m *TerraformImage) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

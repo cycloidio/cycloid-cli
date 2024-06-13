@@ -6,19 +6,18 @@ package organization_children
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetChildrenReader is a Reader for the GetChildren structure.
@@ -70,8 +69,7 @@ func NewGetChildrenOK() *GetChildrenOK {
 	return &GetChildrenOK{}
 }
 
-/*
-GetChildrenOK describes a response with status code 200, with default header values.
+/*GetChildrenOK handles this case with default header values.
 
 List of the children organizations which the authenticated user has access.
 */
@@ -79,44 +77,8 @@ type GetChildrenOK struct {
 	Payload *GetChildrenOKBody
 }
 
-// IsSuccess returns true when this get children o k response has a 2xx status code
-func (o *GetChildrenOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get children o k response has a 3xx status code
-func (o *GetChildrenOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get children o k response has a 4xx status code
-func (o *GetChildrenOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get children o k response has a 5xx status code
-func (o *GetChildrenOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get children o k response a status code equal to that given
-func (o *GetChildrenOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get children o k response
-func (o *GetChildrenOK) Code() int {
-	return 200
-}
-
 func (o *GetChildrenOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenOK %s", 200, payload)
-}
-
-func (o *GetChildrenOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenOK  %+v", 200, o.Payload)
 }
 
 func (o *GetChildrenOK) GetPayload() *GetChildrenOKBody {
@@ -140,60 +102,20 @@ func NewGetChildrenForbidden() *GetChildrenForbidden {
 	return &GetChildrenForbidden{}
 }
 
-/*
-GetChildrenForbidden describes a response with status code 403, with default header values.
+/*GetChildrenForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetChildrenForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get children forbidden response has a 2xx status code
-func (o *GetChildrenForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get children forbidden response has a 3xx status code
-func (o *GetChildrenForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get children forbidden response has a 4xx status code
-func (o *GetChildrenForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get children forbidden response has a 5xx status code
-func (o *GetChildrenForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get children forbidden response a status code equal to that given
-func (o *GetChildrenForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the get children forbidden response
-func (o *GetChildrenForbidden) Code() int {
-	return 403
-}
-
 func (o *GetChildrenForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenForbidden %s", 403, payload)
-}
-
-func (o *GetChildrenForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetChildrenForbidden) GetPayload() *models.ErrorPayload {
@@ -202,16 +124,12 @@ func (o *GetChildrenForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetChildrenForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -228,60 +146,20 @@ func NewGetChildrenNotFound() *GetChildrenNotFound {
 	return &GetChildrenNotFound{}
 }
 
-/*
-GetChildrenNotFound describes a response with status code 404, with default header values.
+/*GetChildrenNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetChildrenNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get children not found response has a 2xx status code
-func (o *GetChildrenNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get children not found response has a 3xx status code
-func (o *GetChildrenNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get children not found response has a 4xx status code
-func (o *GetChildrenNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get children not found response has a 5xx status code
-func (o *GetChildrenNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get children not found response a status code equal to that given
-func (o *GetChildrenNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the get children not found response
-func (o *GetChildrenNotFound) Code() int {
-	return 404
-}
-
 func (o *GetChildrenNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenNotFound %s", 404, payload)
-}
-
-func (o *GetChildrenNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetChildrenNotFound) GetPayload() *models.ErrorPayload {
@@ -290,16 +168,12 @@ func (o *GetChildrenNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetChildrenNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -316,60 +190,20 @@ func NewGetChildrenUnprocessableEntity() *GetChildrenUnprocessableEntity {
 	return &GetChildrenUnprocessableEntity{}
 }
 
-/*
-GetChildrenUnprocessableEntity describes a response with status code 422, with default header values.
+/*GetChildrenUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetChildrenUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get children unprocessable entity response has a 2xx status code
-func (o *GetChildrenUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get children unprocessable entity response has a 3xx status code
-func (o *GetChildrenUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get children unprocessable entity response has a 4xx status code
-func (o *GetChildrenUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get children unprocessable entity response has a 5xx status code
-func (o *GetChildrenUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get children unprocessable entity response a status code equal to that given
-func (o *GetChildrenUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the get children unprocessable entity response
-func (o *GetChildrenUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *GetChildrenUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenUnprocessableEntity %s", 422, payload)
-}
-
-func (o *GetChildrenUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildrenUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetChildrenUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -378,16 +212,12 @@ func (o *GetChildrenUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *GetChildrenUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -406,46 +236,18 @@ func NewGetChildrenDefault(code int) *GetChildrenDefault {
 	}
 }
 
-/*
-GetChildrenDefault describes a response with status code -1, with default header values.
+/*GetChildrenDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetChildrenDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get children default response has a 2xx status code
-func (o *GetChildrenDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get children default response has a 3xx status code
-func (o *GetChildrenDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get children default response has a 4xx status code
-func (o *GetChildrenDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get children default response has a 5xx status code
-func (o *GetChildrenDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get children default response a status code equal to that given
-func (o *GetChildrenDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get children default response
@@ -454,13 +256,7 @@ func (o *GetChildrenDefault) Code() int {
 }
 
 func (o *GetChildrenDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildren default %s", o._statusCode, payload)
-}
-
-func (o *GetChildrenDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildren default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/children][%d] getChildren default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetChildrenDefault) GetPayload() *models.ErrorPayload {
@@ -469,16 +265,12 @@ func (o *GetChildrenDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetChildrenDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -490,8 +282,7 @@ func (o *GetChildrenDefault) readResponse(response runtime.ClientResponse, consu
 	return nil
 }
 
-/*
-GetChildrenOKBody get children o k body
+/*GetChildrenOKBody get children o k body
 swagger:model GetChildrenOKBody
 */
 type GetChildrenOKBody struct {
@@ -538,8 +329,6 @@ func (o *GetChildrenOKBody) validateData(formats strfmt.Registry) error {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -560,68 +349,6 @@ func (o *GetChildrenOKBody) validatePagination(formats strfmt.Registry) error {
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getChildrenOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getChildrenOK" + "." + "pagination")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this get children o k body based on the context it is used
-func (o *GetChildrenOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := o.contextValidatePagination(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetChildrenOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(o.Data); i++ {
-
-		if o.Data[i] != nil {
-
-			if swag.IsZero(o.Data[i]) { // not required
-				return nil
-			}
-
-			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (o *GetChildrenOKBody) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Pagination != nil {
-
-		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getChildrenOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getChildrenOK" + "." + "pagination")
 			}
 			return err
 		}

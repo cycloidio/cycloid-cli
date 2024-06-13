@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -148,7 +148,7 @@ func (m *Pipeline) validateCreatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -165,8 +165,6 @@ func (m *Pipeline) validateEnvironment(formats strfmt.Registry) error {
 		if err := m.Environment.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("environment")
 			}
 			return err
 		}
@@ -176,6 +174,7 @@ func (m *Pipeline) validateEnvironment(formats strfmt.Registry) error {
 }
 
 func (m *Pipeline) validateGroups(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Groups) { // not required
 		return nil
 	}
@@ -189,8 +188,6 @@ func (m *Pipeline) validateGroups(formats strfmt.Registry) error {
 			if err := m.Groups[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -225,8 +222,6 @@ func (m *Pipeline) validateJobs(formats strfmt.Registry) error {
 			if err := m.Jobs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -265,8 +260,6 @@ func (m *Pipeline) validateProject(formats strfmt.Registry) error {
 		if err := m.Project.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("project")
 			}
 			return err
 		}
@@ -299,7 +292,7 @@ func (m *Pipeline) validateUpdatedAt(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -312,126 +305,16 @@ func (m *Pipeline) validateUseCase(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("use_case", "body", *m.UseCase, 1); err != nil {
+	if err := validate.MinLength("use_case", "body", string(*m.UseCase), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("use_case", "body", *m.UseCase, 100); err != nil {
+	if err := validate.MaxLength("use_case", "body", string(*m.UseCase), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("use_case", "body", *m.UseCase, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+	if err := validate.Pattern("use_case", "body", string(*m.UseCase), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this pipeline based on the context it is used
-func (m *Pipeline) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateGroups(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateJobs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateProject(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *Pipeline) contextValidateEnvironment(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Environment != nil {
-
-		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("environment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("environment")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Pipeline) contextValidateGroups(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Groups); i++ {
-
-		if m.Groups[i] != nil {
-
-			if swag.IsZero(m.Groups[i]) { // not required
-				return nil
-			}
-
-			if err := m.Groups[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *Pipeline) contextValidateJobs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Jobs); i++ {
-
-		if m.Jobs[i] != nil {
-
-			if swag.IsZero(m.Jobs[i]) { // not required
-				return nil
-			}
-
-			if err := m.Jobs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *Pipeline) contextValidateProject(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Project != nil {
-
-		if err := m.Project.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("project")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("project")
-			}
-			return err
-		}
 	}
 
 	return nil

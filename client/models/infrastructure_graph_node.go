@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // InfrastructureGraphNode Infrastructure
 //
-// # Holds the information of a Node of the Graph
-//
+// Holds the information of a Node of the Graph
 // swagger:model InfrastructureGraphNode
 type InfrastructureGraphNode struct {
 
@@ -101,39 +99,6 @@ func (m *InfrastructureGraphNode) validateResource(formats strfmt.Registry) erro
 		if err := m.Resource.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("resource")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this infrastructure graph node based on the context it is used
-func (m *InfrastructureGraphNode) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateResource(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *InfrastructureGraphNode) contextValidateResource(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Resource != nil {
-
-		if err := m.Resource.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("resource")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("resource")
 			}
 			return err
 		}

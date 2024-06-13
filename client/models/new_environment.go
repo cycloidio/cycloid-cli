@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // NewEnvironment NewEnvironment
 //
-// # Represent an entity necessary for environment creation
-//
+// Represent an entity necessary for environment creation
 // swagger:model NewEnvironment
 type NewEnvironment struct {
 
@@ -75,15 +73,15 @@ func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 1); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
 		return err
 	}
 
@@ -91,19 +89,20 @@ func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *NewEnvironment) validateCloudProviderCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CloudProviderCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("cloud_provider_canonical", "body", m.CloudProviderCanonical, 3); err != nil {
+	if err := validate.MinLength("cloud_provider_canonical", "body", string(m.CloudProviderCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("cloud_provider_canonical", "body", m.CloudProviderCanonical, 100); err != nil {
+	if err := validate.MaxLength("cloud_provider_canonical", "body", string(m.CloudProviderCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("cloud_provider_canonical", "body", m.CloudProviderCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("cloud_provider_canonical", "body", string(m.CloudProviderCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -111,11 +110,12 @@ func (m *NewEnvironment) validateCloudProviderCanonical(formats strfmt.Registry)
 }
 
 func (m *NewEnvironment) validateColor(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Color) { // not required
 		return nil
 	}
 
-	if err := validate.MaxLength("color", "body", m.Color, 64); err != nil {
+	if err := validate.MaxLength("color", "body", string(m.Color), 64); err != nil {
 		return err
 	}
 
@@ -123,19 +123,15 @@ func (m *NewEnvironment) validateColor(formats strfmt.Registry) error {
 }
 
 func (m *NewEnvironment) validateIcon(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Icon) { // not required
 		return nil
 	}
 
-	if err := validate.MaxLength("icon", "body", m.Icon, 64); err != nil {
+	if err := validate.MaxLength("icon", "body", string(m.Icon), 64); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new environment based on context it is used
-func (m *NewEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

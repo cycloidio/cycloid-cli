@@ -13,132 +13,110 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetInvitationsParams creates a new GetInvitationsParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetInvitationsParams creates a new GetInvitationsParams object
+// with the default values initialized.
 func NewGetInvitationsParams() *GetInvitationsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetInvitationsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetInvitationsParamsWithTimeout creates a new GetInvitationsParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetInvitationsParamsWithTimeout(timeout time.Duration) *GetInvitationsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetInvitationsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: timeout,
 	}
 }
 
 // NewGetInvitationsParamsWithContext creates a new GetInvitationsParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetInvitationsParamsWithContext(ctx context.Context) *GetInvitationsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetInvitationsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		Context: ctx,
 	}
 }
 
 // NewGetInvitationsParamsWithHTTPClient creates a new GetInvitationsParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetInvitationsParamsWithHTTPClient(client *http.Client) *GetInvitationsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetInvitationsParams{
+		PageIndex:  &pageIndexDefault,
+		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*
-GetInvitationsParams contains all the parameters to send to the API endpoint
-
-	for the get invitations operation.
-
-	Typically these are written to a http.Request.
+/*GetInvitationsParams contains all the parameters to send to the API endpoint
+for the get invitations operation typically these are written to a http.Request
 */
 type GetInvitationsParams struct {
 
-	/* InvitationCreatedAt.
+	/*InvitationCreatedAt
+	  Search by Invitation's creation date
 
-	   Search by Invitation's creation date
-
-	   Format: uint64
 	*/
 	InvitationCreatedAt *uint64
+	/*InvitationState
+	  Search by Invitation's state
 
-	/* InvitationState.
-
-	   Search by Invitation's state
 	*/
 	InvitationState *string
+	/*OrderBy
+	  Allows to order the list of items. Example usage: field_name:asc
 
-	/* OrderBy.
-
-	   Allows to order the list of items. Example usage: field_name:asc
 
 	*/
 	OrderBy *string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*PageIndex
+	  The page number to request. The first page is 1.
 
-	/* PageIndex.
-
-	   The page number to request. The first page is 1.
-
-	   Format: uint32
-	   Default: 1
 	*/
 	PageIndex *uint32
+	/*PageSize
+	  The number of items at most which the response can have.
 
-	/* PageSize.
-
-	   The number of items at most which the response can have.
-
-	   Format: uint32
-	   Default: 1000
 	*/
 	PageSize *uint32
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get invitations params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetInvitationsParams) WithDefaults() *GetInvitationsParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get invitations params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetInvitationsParams) SetDefaults() {
-	var (
-		pageIndexDefault = uint32(1)
-
-		pageSizeDefault = uint32(1000)
-	)
-
-	val := GetInvitationsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-	}
-
-	val.timeout = o.timeout
-	val.Context = o.Context
-	val.HTTPClient = o.HTTPClient
-	*o = val
 }
 
 // WithTimeout adds the timeout to the get invitations params
@@ -252,51 +230,48 @@ func (o *GetInvitationsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 
 		// query param invitation_created_at
 		var qrInvitationCreatedAt uint64
-
 		if o.InvitationCreatedAt != nil {
 			qrInvitationCreatedAt = *o.InvitationCreatedAt
 		}
 		qInvitationCreatedAt := swag.FormatUint64(qrInvitationCreatedAt)
 		if qInvitationCreatedAt != "" {
-
 			if err := r.SetQueryParam("invitation_created_at", qInvitationCreatedAt); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.InvitationState != nil {
 
 		// query param invitation_state
 		var qrInvitationState string
-
 		if o.InvitationState != nil {
 			qrInvitationState = *o.InvitationState
 		}
 		qInvitationState := qrInvitationState
 		if qInvitationState != "" {
-
 			if err := r.SetQueryParam("invitation_state", qInvitationState); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.OrderBy != nil {
 
 		// query param order_by
 		var qrOrderBy string
-
 		if o.OrderBy != nil {
 			qrOrderBy = *o.OrderBy
 		}
 		qOrderBy := qrOrderBy
 		if qOrderBy != "" {
-
 			if err := r.SetQueryParam("order_by", qOrderBy); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param organization_canonical
@@ -308,34 +283,32 @@ func (o *GetInvitationsParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 
 		// query param page_index
 		var qrPageIndex uint32
-
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
-
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
-
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
-
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if len(res) > 0 {

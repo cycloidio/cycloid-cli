@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // MetadataField MetadataField
 //
-// # Represent the metadata of a build input
-//
+// Represent the metadata of a build input
 // swagger:model MetadataField
 type MetadataField struct {
 
@@ -63,11 +61,6 @@ func (m *MetadataField) validateValue(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this metadata field based on context it is used
-func (m *MetadataField) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -13,71 +13,56 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewHandleAWSMarketplaceUserEntitlementParams creates a new HandleAWSMarketplaceUserEntitlementParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewHandleAWSMarketplaceUserEntitlementParams creates a new HandleAWSMarketplaceUserEntitlementParams object
+// with the default values initialized.
 func NewHandleAWSMarketplaceUserEntitlementParams() *HandleAWSMarketplaceUserEntitlementParams {
+
 	return &HandleAWSMarketplaceUserEntitlementParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewHandleAWSMarketplaceUserEntitlementParamsWithTimeout creates a new HandleAWSMarketplaceUserEntitlementParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewHandleAWSMarketplaceUserEntitlementParamsWithTimeout(timeout time.Duration) *HandleAWSMarketplaceUserEntitlementParams {
+
 	return &HandleAWSMarketplaceUserEntitlementParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewHandleAWSMarketplaceUserEntitlementParamsWithContext creates a new HandleAWSMarketplaceUserEntitlementParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewHandleAWSMarketplaceUserEntitlementParamsWithContext(ctx context.Context) *HandleAWSMarketplaceUserEntitlementParams {
+
 	return &HandleAWSMarketplaceUserEntitlementParams{
+
 		Context: ctx,
 	}
 }
 
 // NewHandleAWSMarketplaceUserEntitlementParamsWithHTTPClient creates a new HandleAWSMarketplaceUserEntitlementParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewHandleAWSMarketplaceUserEntitlementParamsWithHTTPClient(client *http.Client) *HandleAWSMarketplaceUserEntitlementParams {
+
 	return &HandleAWSMarketplaceUserEntitlementParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-HandleAWSMarketplaceUserEntitlementParams contains all the parameters to send to the API endpoint
-
-	for the handle a w s marketplace user entitlement operation.
-
-	Typically these are written to a http.Request.
+/*HandleAWSMarketplaceUserEntitlementParams contains all the parameters to send to the API endpoint
+for the handle a w s marketplace user entitlement operation typically these are written to a http.Request
 */
 type HandleAWSMarketplaceUserEntitlementParams struct {
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the handle a w s marketplace user entitlement params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *HandleAWSMarketplaceUserEntitlementParams) WithDefaults() *HandleAWSMarketplaceUserEntitlementParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the handle a w s marketplace user entitlement params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *HandleAWSMarketplaceUserEntitlementParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the handle a w s marketplace user entitlement params

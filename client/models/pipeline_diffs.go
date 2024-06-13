@@ -6,18 +6,17 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 )
 
 // PipelineDiffs PipelineDiffs
 //
-// # Represents the diffs between two pipelines
-//
+// Represents the diffs between two pipelines
 // swagger:model PipelineDiffs
 type PipelineDiffs struct {
 
@@ -61,6 +60,7 @@ func (m *PipelineDiffs) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PipelineDiffs) validateGroups(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Groups) { // not required
 		return nil
 	}
@@ -74,8 +74,6 @@ func (m *PipelineDiffs) validateGroups(formats strfmt.Registry) error {
 			if err := m.Groups[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -87,6 +85,7 @@ func (m *PipelineDiffs) validateGroups(formats strfmt.Registry) error {
 }
 
 func (m *PipelineDiffs) validateJobs(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Jobs) { // not required
 		return nil
 	}
@@ -100,8 +99,6 @@ func (m *PipelineDiffs) validateJobs(formats strfmt.Registry) error {
 			if err := m.Jobs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -113,6 +110,7 @@ func (m *PipelineDiffs) validateJobs(formats strfmt.Registry) error {
 }
 
 func (m *PipelineDiffs) validateResourceTypes(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ResourceTypes) { // not required
 		return nil
 	}
@@ -126,8 +124,6 @@ func (m *PipelineDiffs) validateResourceTypes(formats strfmt.Registry) error {
 			if err := m.ResourceTypes[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("resource_types" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("resource_types" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -139,6 +135,7 @@ func (m *PipelineDiffs) validateResourceTypes(formats strfmt.Registry) error {
 }
 
 func (m *PipelineDiffs) validateResources(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Resources) { // not required
 		return nil
 	}
@@ -152,134 +149,6 @@ func (m *PipelineDiffs) validateResources(formats strfmt.Registry) error {
 			if err := m.Resources[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("resources" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("resources" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-// ContextValidate validate this pipeline diffs based on the context it is used
-func (m *PipelineDiffs) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateGroups(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateJobs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateResourceTypes(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateResources(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *PipelineDiffs) contextValidateGroups(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Groups); i++ {
-
-		if m.Groups[i] != nil {
-
-			if swag.IsZero(m.Groups[i]) { // not required
-				return nil
-			}
-
-			if err := m.Groups[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *PipelineDiffs) contextValidateJobs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Jobs); i++ {
-
-		if m.Jobs[i] != nil {
-
-			if swag.IsZero(m.Jobs[i]) { // not required
-				return nil
-			}
-
-			if err := m.Jobs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *PipelineDiffs) contextValidateResourceTypes(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.ResourceTypes); i++ {
-
-		if m.ResourceTypes[i] != nil {
-
-			if swag.IsZero(m.ResourceTypes[i]) { // not required
-				return nil
-			}
-
-			if err := m.ResourceTypes[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("resource_types" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("resource_types" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *PipelineDiffs) contextValidateResources(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Resources); i++ {
-
-		if m.Resources[i] != nil {
-
-			if swag.IsZero(m.Resources[i]) { // not required
-				return nil
-			}
-
-			if err := m.Resources[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("resources" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("resources" + "." + strconv.Itoa(i))
 				}
 				return err
 			}

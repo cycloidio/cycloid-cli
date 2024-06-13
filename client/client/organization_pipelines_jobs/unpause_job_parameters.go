@@ -13,96 +13,78 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewUnpauseJobParams creates a new UnpauseJobParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewUnpauseJobParams creates a new UnpauseJobParams object
+// with the default values initialized.
 func NewUnpauseJobParams() *UnpauseJobParams {
+	var ()
 	return &UnpauseJobParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewUnpauseJobParamsWithTimeout creates a new UnpauseJobParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewUnpauseJobParamsWithTimeout(timeout time.Duration) *UnpauseJobParams {
+	var ()
 	return &UnpauseJobParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewUnpauseJobParamsWithContext creates a new UnpauseJobParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewUnpauseJobParamsWithContext(ctx context.Context) *UnpauseJobParams {
+	var ()
 	return &UnpauseJobParams{
+
 		Context: ctx,
 	}
 }
 
 // NewUnpauseJobParamsWithHTTPClient creates a new UnpauseJobParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewUnpauseJobParamsWithHTTPClient(client *http.Client) *UnpauseJobParams {
+	var ()
 	return &UnpauseJobParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-UnpauseJobParams contains all the parameters to send to the API endpoint
-
-	for the unpause job operation.
-
-	Typically these are written to a http.Request.
+/*UnpauseJobParams contains all the parameters to send to the API endpoint
+for the unpause job operation typically these are written to a http.Request
 */
 type UnpauseJobParams struct {
 
-	/* InpathPipelineName.
+	/*InpathPipelineName
+	  A pipeline name
 
-	   A pipeline name
 	*/
 	InpathPipelineName string
+	/*JobName
+	  A job name
 
-	/* JobName.
-
-	   A job name
 	*/
 	JobName string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the unpause job params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UnpauseJobParams) WithDefaults() *UnpauseJobParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the unpause job params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *UnpauseJobParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the unpause job params

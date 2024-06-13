@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // NewResourcePool New Resource Pool
 //
 // The Resource Pool defines the basic needs to create/update a resource pool
-//
 // swagger:model NewResourcePool
 type NewResourcePool struct {
 
@@ -63,11 +61,6 @@ func (m *NewResourcePool) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this new resource pool based on context it is used
-func (m *NewResourcePool) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

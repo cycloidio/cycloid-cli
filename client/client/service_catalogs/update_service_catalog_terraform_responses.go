@@ -6,16 +6,16 @@ package service_catalogs
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UpdateServiceCatalogTerraformReader is a Reader for the UpdateServiceCatalogTerraform structure.
@@ -67,50 +67,15 @@ func NewUpdateServiceCatalogTerraformNoContent() *UpdateServiceCatalogTerraformN
 	return &UpdateServiceCatalogTerraformNoContent{}
 }
 
-/*
-UpdateServiceCatalogTerraformNoContent describes a response with status code 204, with default header values.
+/*UpdateServiceCatalogTerraformNoContent handles this case with default header values.
 
 Configuration has been updated
 */
 type UpdateServiceCatalogTerraformNoContent struct {
 }
 
-// IsSuccess returns true when this update service catalog terraform no content response has a 2xx status code
-func (o *UpdateServiceCatalogTerraformNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this update service catalog terraform no content response has a 3xx status code
-func (o *UpdateServiceCatalogTerraformNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update service catalog terraform no content response has a 4xx status code
-func (o *UpdateServiceCatalogTerraformNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this update service catalog terraform no content response has a 5xx status code
-func (o *UpdateServiceCatalogTerraformNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update service catalog terraform no content response a status code equal to that given
-func (o *UpdateServiceCatalogTerraformNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the update service catalog terraform no content response
-func (o *UpdateServiceCatalogTerraformNoContent) Code() int {
-	return 204
-}
-
 func (o *UpdateServiceCatalogTerraformNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformNoContent", 204)
-}
-
-func (o *UpdateServiceCatalogTerraformNoContent) String() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformNoContent", 204)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformNoContent ", 204)
 }
 
 func (o *UpdateServiceCatalogTerraformNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -123,60 +88,20 @@ func NewUpdateServiceCatalogTerraformForbidden() *UpdateServiceCatalogTerraformF
 	return &UpdateServiceCatalogTerraformForbidden{}
 }
 
-/*
-UpdateServiceCatalogTerraformForbidden describes a response with status code 403, with default header values.
+/*UpdateServiceCatalogTerraformForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UpdateServiceCatalogTerraformForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this update service catalog terraform forbidden response has a 2xx status code
-func (o *UpdateServiceCatalogTerraformForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this update service catalog terraform forbidden response has a 3xx status code
-func (o *UpdateServiceCatalogTerraformForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update service catalog terraform forbidden response has a 4xx status code
-func (o *UpdateServiceCatalogTerraformForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this update service catalog terraform forbidden response has a 5xx status code
-func (o *UpdateServiceCatalogTerraformForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update service catalog terraform forbidden response a status code equal to that given
-func (o *UpdateServiceCatalogTerraformForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the update service catalog terraform forbidden response
-func (o *UpdateServiceCatalogTerraformForbidden) Code() int {
-	return 403
-}
-
 func (o *UpdateServiceCatalogTerraformForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformForbidden %s", 403, payload)
-}
-
-func (o *UpdateServiceCatalogTerraformForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformForbidden %s", 403, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformForbidden  %+v", 403, o.Payload)
 }
 
 func (o *UpdateServiceCatalogTerraformForbidden) GetPayload() *models.ErrorPayload {
@@ -185,16 +110,12 @@ func (o *UpdateServiceCatalogTerraformForbidden) GetPayload() *models.ErrorPaylo
 
 func (o *UpdateServiceCatalogTerraformForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -211,60 +132,20 @@ func NewUpdateServiceCatalogTerraformNotFound() *UpdateServiceCatalogTerraformNo
 	return &UpdateServiceCatalogTerraformNotFound{}
 }
 
-/*
-UpdateServiceCatalogTerraformNotFound describes a response with status code 404, with default header values.
+/*UpdateServiceCatalogTerraformNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type UpdateServiceCatalogTerraformNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this update service catalog terraform not found response has a 2xx status code
-func (o *UpdateServiceCatalogTerraformNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this update service catalog terraform not found response has a 3xx status code
-func (o *UpdateServiceCatalogTerraformNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update service catalog terraform not found response has a 4xx status code
-func (o *UpdateServiceCatalogTerraformNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this update service catalog terraform not found response has a 5xx status code
-func (o *UpdateServiceCatalogTerraformNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update service catalog terraform not found response a status code equal to that given
-func (o *UpdateServiceCatalogTerraformNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the update service catalog terraform not found response
-func (o *UpdateServiceCatalogTerraformNotFound) Code() int {
-	return 404
-}
-
 func (o *UpdateServiceCatalogTerraformNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformNotFound %s", 404, payload)
-}
-
-func (o *UpdateServiceCatalogTerraformNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformNotFound %s", 404, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformNotFound  %+v", 404, o.Payload)
 }
 
 func (o *UpdateServiceCatalogTerraformNotFound) GetPayload() *models.ErrorPayload {
@@ -273,16 +154,12 @@ func (o *UpdateServiceCatalogTerraformNotFound) GetPayload() *models.ErrorPayloa
 
 func (o *UpdateServiceCatalogTerraformNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -299,60 +176,20 @@ func NewUpdateServiceCatalogTerraformUnprocessableEntity() *UpdateServiceCatalog
 	return &UpdateServiceCatalogTerraformUnprocessableEntity{}
 }
 
-/*
-UpdateServiceCatalogTerraformUnprocessableEntity describes a response with status code 422, with default header values.
+/*UpdateServiceCatalogTerraformUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateServiceCatalogTerraformUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this update service catalog terraform unprocessable entity response has a 2xx status code
-func (o *UpdateServiceCatalogTerraformUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this update service catalog terraform unprocessable entity response has a 3xx status code
-func (o *UpdateServiceCatalogTerraformUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update service catalog terraform unprocessable entity response has a 4xx status code
-func (o *UpdateServiceCatalogTerraformUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this update service catalog terraform unprocessable entity response has a 5xx status code
-func (o *UpdateServiceCatalogTerraformUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update service catalog terraform unprocessable entity response a status code equal to that given
-func (o *UpdateServiceCatalogTerraformUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the update service catalog terraform unprocessable entity response
-func (o *UpdateServiceCatalogTerraformUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *UpdateServiceCatalogTerraformUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformUnprocessableEntity %s", 422, payload)
-}
-
-func (o *UpdateServiceCatalogTerraformUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraformUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *UpdateServiceCatalogTerraformUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -361,16 +198,12 @@ func (o *UpdateServiceCatalogTerraformUnprocessableEntity) GetPayload() *models.
 
 func (o *UpdateServiceCatalogTerraformUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -389,46 +222,18 @@ func NewUpdateServiceCatalogTerraformDefault(code int) *UpdateServiceCatalogTerr
 	}
 }
 
-/*
-UpdateServiceCatalogTerraformDefault describes a response with status code -1, with default header values.
+/*UpdateServiceCatalogTerraformDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UpdateServiceCatalogTerraformDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this update service catalog terraform default response has a 2xx status code
-func (o *UpdateServiceCatalogTerraformDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this update service catalog terraform default response has a 3xx status code
-func (o *UpdateServiceCatalogTerraformDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this update service catalog terraform default response has a 4xx status code
-func (o *UpdateServiceCatalogTerraformDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this update service catalog terraform default response has a 5xx status code
-func (o *UpdateServiceCatalogTerraformDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this update service catalog terraform default response a status code equal to that given
-func (o *UpdateServiceCatalogTerraformDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the update service catalog terraform default response
@@ -437,13 +242,7 @@ func (o *UpdateServiceCatalogTerraformDefault) Code() int {
 }
 
 func (o *UpdateServiceCatalogTerraformDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraform default %s", o._statusCode, payload)
-}
-
-func (o *UpdateServiceCatalogTerraformDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraform default %s", o._statusCode, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform][%d] updateServiceCatalogTerraform default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *UpdateServiceCatalogTerraformDefault) GetPayload() *models.ErrorPayload {
@@ -452,16 +251,12 @@ func (o *UpdateServiceCatalogTerraformDefault) GetPayload() *models.ErrorPayload
 
 func (o *UpdateServiceCatalogTerraformDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

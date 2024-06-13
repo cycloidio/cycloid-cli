@@ -6,17 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"strconv"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // ServiceCatalogSource ServiceCatalogSource
-//
 // swagger:model ServiceCatalogSource
 type ServiceCatalogSource struct {
 
@@ -145,15 +144,15 @@ func (m *ServiceCatalogSource) validateCanonical(formats strfmt.Registry) error 
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -161,6 +160,7 @@ func (m *ServiceCatalogSource) validateCanonical(formats strfmt.Registry) error 
 }
 
 func (m *ServiceCatalogSource) validateChanges(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Changes) { // not required
 		return nil
 	}
@@ -169,8 +169,6 @@ func (m *ServiceCatalogSource) validateChanges(formats strfmt.Registry) error {
 		if err := m.Changes.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("changes")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("changes")
 			}
 			return err
 		}
@@ -180,11 +178,12 @@ func (m *ServiceCatalogSource) validateChanges(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalogSource) validateCreatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -192,19 +191,20 @@ func (m *ServiceCatalogSource) validateCreatedAt(formats strfmt.Registry) error 
 }
 
 func (m *ServiceCatalogSource) validateCredentialCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", string(m.CredentialCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", m.CredentialCanonical, 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -217,7 +217,7 @@ func (m *ServiceCatalogSource) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -243,8 +243,6 @@ func (m *ServiceCatalogSource) validateOwner(formats strfmt.Registry) error {
 		if err := m.Owner.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("owner")
 			}
 			return err
 		}
@@ -254,11 +252,12 @@ func (m *ServiceCatalogSource) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalogSource) validateRefreshedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.RefreshedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("refreshed_at", "body", *m.RefreshedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("refreshed_at", "body", int64(*m.RefreshedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -266,6 +265,7 @@ func (m *ServiceCatalogSource) validateRefreshedAt(formats strfmt.Registry) erro
 }
 
 func (m *ServiceCatalogSource) validateServiceCatalogs(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ServiceCatalogs) { // not required
 		return nil
 	}
@@ -279,8 +279,6 @@ func (m *ServiceCatalogSource) validateServiceCatalogs(formats strfmt.Registry) 
 			if err := m.ServiceCatalogs[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("service_catalogs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("service_catalogs" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -297,7 +295,7 @@ func (m *ServiceCatalogSource) validateStackCount(formats strfmt.Registry) error
 		return err
 	}
 
-	if err := validate.MinimumUint("stack_count", "body", uint64(*m.StackCount), 0, false); err != nil {
+	if err := validate.MinimumInt("stack_count", "body", int64(*m.StackCount), 0, false); err != nil {
 		return err
 	}
 
@@ -305,11 +303,12 @@ func (m *ServiceCatalogSource) validateStackCount(formats strfmt.Registry) error
 }
 
 func (m *ServiceCatalogSource) validateUpdatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -322,93 +321,8 @@ func (m *ServiceCatalogSource) validateURL(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("url", "body", *m.URL, `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
+	if err := validate.Pattern("url", "body", string(*m.URL), `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this service catalog source based on the context it is used
-func (m *ServiceCatalogSource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateChanges(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateOwner(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateServiceCatalogs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *ServiceCatalogSource) contextValidateChanges(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Changes != nil {
-
-		if swag.IsZero(m.Changes) { // not required
-			return nil
-		}
-
-		if err := m.Changes.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("changes")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("changes")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *ServiceCatalogSource) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Owner != nil {
-
-		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("owner")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *ServiceCatalogSource) contextValidateServiceCatalogs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.ServiceCatalogs); i++ {
-
-		if m.ServiceCatalogs[i] != nil {
-
-			if swag.IsZero(m.ServiceCatalogs[i]) { // not required
-				return nil
-			}
-
-			if err := m.ServiceCatalogs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("service_catalogs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("service_catalogs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
 	}
 
 	return nil

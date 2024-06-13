@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // ConfigRepository ConfigRepository
-//
 // swagger:model ConfigRepository
 type ConfigRepository struct {
 
@@ -110,15 +108,15 @@ func (m *ConfigRepository) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", string(*m.Canonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", string(*m.Canonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", string(*m.Canonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -126,11 +124,12 @@ func (m *ConfigRepository) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *ConfigRepository) validateCreatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("created_at", "body", int64(*m.CreatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -138,19 +137,20 @@ func (m *ConfigRepository) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *ConfigRepository) validateCredentialCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", string(m.CredentialCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", m.CredentialCanonical, 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -172,7 +172,7 @@ func (m *ConfigRepository) validateID(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+	if err := validate.MinimumInt("id", "body", int64(*m.ID), 1, false); err != nil {
 		return err
 	}
 
@@ -189,11 +189,12 @@ func (m *ConfigRepository) validateName(formats strfmt.Registry) error {
 }
 
 func (m *ConfigRepository) validateUpdatedAt(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+	if err := validate.MinimumInt("updated_at", "body", int64(*m.UpdatedAt), 0, false); err != nil {
 		return err
 	}
 
@@ -206,15 +207,10 @@ func (m *ConfigRepository) validateURL(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("url", "body", *m.URL, `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
+	if err := validate.Pattern("url", "body", string(*m.URL), `^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?`); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this config repository based on context it is used
-func (m *ConfigRepository) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

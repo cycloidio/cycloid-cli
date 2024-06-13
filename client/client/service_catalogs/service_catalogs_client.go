@@ -9,38 +9,13 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // New creates a new service catalogs API client.
-func New(transport runtime.ClientTransport, formats strfmt.Registry) ClientService {
+func New(transport runtime.ClientTransport, formats strfmt.Registry) *Client {
 	return &Client{transport: transport, formats: formats}
-}
-
-// New creates a new service catalogs API client with basic auth credentials.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - user: user for basic authentication header.
-// - password: password for basic authentication header.
-func NewClientWithBasicAuth(host, basePath, scheme, user, password string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BasicAuth(user, password)
-	return &Client{transport: transport, formats: strfmt.Default}
-}
-
-// New creates a new service catalogs API client with a bearer token for authentication.
-// It takes the following parameters:
-// - host: http host (github.com).
-// - basePath: any base path for the API client ("/v1", "/v3").
-// - scheme: http scheme ("http", "https").
-// - bearerToken: bearer token for Bearer authentication header.
-func NewClientWithBearerToken(host, basePath, scheme, bearerToken string) ClientService {
-	transport := httptransport.New(host, basePath, []string{scheme})
-	transport.DefaultAuthentication = httptransport.BearerToken(bearerToken)
-	return &Client{transport: transport, formats: strfmt.Default}
 }
 
 /*
@@ -51,100 +26,16 @@ type Client struct {
 	formats   strfmt.Registry
 }
 
-// ClientOption may be used to customize the behavior of Client methods.
-type ClientOption func(*runtime.ClientOperation)
-
-// This client is generated with a few options you might find useful for your swagger spec.
-//
-// Feel free to add you own set of options.
-
-// WithContentType allows the client to force the Content-Type header
-// to negotiate a specific Consumer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithContentType(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ConsumesMediaTypes = []string{mime}
-	}
-}
-
-// WithContentTypeApplicationJSON sets the Content-Type header to "application/json".
-func WithContentTypeApplicationJSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/json"}
-}
-
-// WithContentTypeApplicationVndCycloidIoV1JSON sets the Content-Type header to "application/vnd.cycloid.io.v1+json".
-func WithContentTypeApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// WithContentTypeApplicationxWwwFormUrlencoded sets the Content-Type header to "application/x-www-form-urlencoded".
-func WithContentTypeApplicationxWwwFormUrlencoded(r *runtime.ClientOperation) {
-	r.ConsumesMediaTypes = []string{"application/x-www-form-urlencoded"}
-}
-
-// WithAccept allows the client to force the Accept header
-// to negotiate a specific Producer from the server.
-//
-// You may use this option to set arbitrary extensions to your MIME media type.
-func WithAccept(mime string) ClientOption {
-	return func(r *runtime.ClientOperation) {
-		r.ProducesMediaTypes = []string{mime}
-	}
-}
-
-// WithAcceptApplicationJSON sets the Accept header to "application/json".
-func WithAcceptApplicationJSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/json"}
-}
-
-// WithAcceptApplicationVndCycloidIoV1JSON sets the Accept header to "application/vnd.cycloid.io.v1+json".
-func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
-	r.ProducesMediaTypes = []string{"application/vnd.cycloid.io.v1+json"}
-}
-
-// ClientService is the interface for Client methods
-type ClientService interface {
-	CreateServiceCatalog(params *CreateServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateServiceCatalogOK, error)
-
-	CreateServiceCatalogFromTemplate(params *CreateServiceCatalogFromTemplateParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateServiceCatalogFromTemplateOK, error)
-
-	DeleteServiceCatalog(params *DeleteServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteServiceCatalogNoContent, error)
-
-	GetServiceCatalog(params *GetServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogOK, error)
-
-	GetServiceCatalogConfig(params *GetServiceCatalogConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogConfigOK, error)
-
-	GetServiceCatalogTerraform(params *GetServiceCatalogTerraformParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformOK, error)
-
-	GetServiceCatalogTerraformDiagram(params *GetServiceCatalogTerraformDiagramParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformDiagramOK, error)
-
-	GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraformImageParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformImageOK, error)
-
-	ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListServiceCatalogsOK, error)
-
-	UpdateServiceCatalog(params *UpdateServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogOK, error)
-
-	UpdateServiceCatalogTerraform(params *UpdateServiceCatalogTerraformParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogTerraformNoContent, error)
-
-	UpdateServiceCatalogTerraformDiagram(params *UpdateServiceCatalogTerraformDiagramParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogTerraformDiagramNoContent, error)
-
-	UpdateServiceCatalogTerraformImage(params *UpdateServiceCatalogTerraformImageParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogTerraformImageNoContent, error)
-
-	ValidateServiceCatalogDependencies(params *ValidateServiceCatalogDependenciesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateServiceCatalogDependenciesOK, error)
-
-	SetTransport(transport runtime.ClientTransport)
-}
-
 /*
 CreateServiceCatalog Create a new Service Catalog
 */
-func (a *Client) CreateServiceCatalog(params *CreateServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateServiceCatalogOK, error) {
+func (a *Client) CreateServiceCatalog(params *CreateServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter) (*CreateServiceCatalogOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateServiceCatalogParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createServiceCatalog",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs",
@@ -156,12 +47,7 @@ func (a *Client) CreateServiceCatalog(params *CreateServiceCatalogParams, authIn
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -176,13 +62,15 @@ func (a *Client) CreateServiceCatalog(params *CreateServiceCatalogParams, authIn
 
 /*
 CreateServiceCatalogFromTemplate Create a new Service Catalog using the ref and use case passed as template
+
 */
-func (a *Client) CreateServiceCatalogFromTemplate(params *CreateServiceCatalogFromTemplateParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateServiceCatalogFromTemplateOK, error) {
+func (a *Client) CreateServiceCatalogFromTemplate(params *CreateServiceCatalogFromTemplateParams, authInfo runtime.ClientAuthInfoWriter) (*CreateServiceCatalogFromTemplateOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewCreateServiceCatalogFromTemplateParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "createServiceCatalogFromTemplate",
 		Method:             "POST",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/template",
@@ -194,12 +82,7 @@ func (a *Client) CreateServiceCatalogFromTemplate(params *CreateServiceCatalogFr
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -215,12 +98,13 @@ func (a *Client) CreateServiceCatalogFromTemplate(params *CreateServiceCatalogFr
 /*
 DeleteServiceCatalog Delete the service catalog.
 */
-func (a *Client) DeleteServiceCatalog(params *DeleteServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteServiceCatalogNoContent, error) {
+func (a *Client) DeleteServiceCatalog(params *DeleteServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter) (*DeleteServiceCatalogNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewDeleteServiceCatalogParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "deleteServiceCatalog",
 		Method:             "DELETE",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}",
@@ -232,12 +116,7 @@ func (a *Client) DeleteServiceCatalog(params *DeleteServiceCatalogParams, authIn
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -254,12 +133,13 @@ func (a *Client) DeleteServiceCatalog(params *DeleteServiceCatalogParams, authIn
 /*
 GetServiceCatalog Get the information of the service catalog
 */
-func (a *Client) GetServiceCatalog(params *GetServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogOK, error) {
+func (a *Client) GetServiceCatalog(params *GetServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetServiceCatalogParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getServiceCatalog",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}",
@@ -271,12 +151,7 @@ func (a *Client) GetServiceCatalog(params *GetServiceCatalogParams, authInfo run
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -292,12 +167,13 @@ func (a *Client) GetServiceCatalog(params *GetServiceCatalogParams, authInfo run
 /*
 GetServiceCatalogConfig Get the config of the service catalog
 */
-func (a *Client) GetServiceCatalogConfig(params *GetServiceCatalogConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogConfigOK, error) {
+func (a *Client) GetServiceCatalogConfig(params *GetServiceCatalogConfigParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogConfigOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetServiceCatalogConfigParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getServiceCatalogConfig",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/config",
@@ -309,12 +185,7 @@ func (a *Client) GetServiceCatalogConfig(params *GetServiceCatalogConfigParams, 
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -330,12 +201,13 @@ func (a *Client) GetServiceCatalogConfig(params *GetServiceCatalogConfigParams, 
 /*
 GetServiceCatalogTerraform Get the information of the service catalog Terraform config
 */
-func (a *Client) GetServiceCatalogTerraform(params *GetServiceCatalogTerraformParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformOK, error) {
+func (a *Client) GetServiceCatalogTerraform(params *GetServiceCatalogTerraformParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogTerraformOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetServiceCatalogTerraformParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getServiceCatalogTerraform",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform",
@@ -347,12 +219,7 @@ func (a *Client) GetServiceCatalogTerraform(params *GetServiceCatalogTerraformPa
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -368,12 +235,13 @@ func (a *Client) GetServiceCatalogTerraform(params *GetServiceCatalogTerraformPa
 /*
 GetServiceCatalogTerraformDiagram Get the information of the service catalog Terraform diagram
 */
-func (a *Client) GetServiceCatalogTerraformDiagram(params *GetServiceCatalogTerraformDiagramParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformDiagramOK, error) {
+func (a *Client) GetServiceCatalogTerraformDiagram(params *GetServiceCatalogTerraformDiagramParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogTerraformDiagramOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetServiceCatalogTerraformDiagramParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getServiceCatalogTerraformDiagram",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram",
@@ -385,12 +253,7 @@ func (a *Client) GetServiceCatalogTerraformDiagram(params *GetServiceCatalogTerr
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -406,12 +269,13 @@ func (a *Client) GetServiceCatalogTerraformDiagram(params *GetServiceCatalogTerr
 /*
 GetServiceCatalogTerraformImage Get the SC TF Image
 */
-func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraformImageParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformImageOK, error) {
+func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraformImageParams, authInfo runtime.ClientAuthInfoWriter) (*GetServiceCatalogTerraformImageOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewGetServiceCatalogTerraformImageParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "getServiceCatalogTerraformImage",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image",
@@ -423,12 +287,7 @@ func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraf
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -444,12 +303,13 @@ func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraf
 /*
 ListServiceCatalogs Return all the service catalogs
 */
-func (a *Client) ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListServiceCatalogsOK, error) {
+func (a *Client) ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter) (*ListServiceCatalogsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewListServiceCatalogsParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "listServiceCatalogs",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs",
@@ -461,12 +321,7 @@ func (a *Client) ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -482,12 +337,13 @@ func (a *Client) ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo
 /*
 UpdateServiceCatalog Update the information of the service catalog
 */
-func (a *Client) UpdateServiceCatalog(params *UpdateServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogOK, error) {
+func (a *Client) UpdateServiceCatalog(params *UpdateServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateServiceCatalogOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateServiceCatalogParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateServiceCatalog",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}",
@@ -499,12 +355,7 @@ func (a *Client) UpdateServiceCatalog(params *UpdateServiceCatalogParams, authIn
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -520,12 +371,13 @@ func (a *Client) UpdateServiceCatalog(params *UpdateServiceCatalogParams, authIn
 /*
 UpdateServiceCatalogTerraform Update/Create the information of the service catalog Terraform config
 */
-func (a *Client) UpdateServiceCatalogTerraform(params *UpdateServiceCatalogTerraformParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogTerraformNoContent, error) {
+func (a *Client) UpdateServiceCatalogTerraform(params *UpdateServiceCatalogTerraformParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateServiceCatalogTerraformNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateServiceCatalogTerraformParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateServiceCatalogTerraform",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/{use_case_canonical}/terraform",
@@ -537,12 +389,7 @@ func (a *Client) UpdateServiceCatalogTerraform(params *UpdateServiceCatalogTerra
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -558,12 +405,13 @@ func (a *Client) UpdateServiceCatalogTerraform(params *UpdateServiceCatalogTerra
 /*
 UpdateServiceCatalogTerraformDiagram Update/Create the information of the service catalog Terraform diagram
 */
-func (a *Client) UpdateServiceCatalogTerraformDiagram(params *UpdateServiceCatalogTerraformDiagramParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogTerraformDiagramNoContent, error) {
+func (a *Client) UpdateServiceCatalogTerraformDiagram(params *UpdateServiceCatalogTerraformDiagramParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateServiceCatalogTerraformDiagramNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateServiceCatalogTerraformDiagramParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateServiceCatalogTerraformDiagram",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram",
@@ -575,12 +423,7 @@ func (a *Client) UpdateServiceCatalogTerraformDiagram(params *UpdateServiceCatal
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -596,12 +439,13 @@ func (a *Client) UpdateServiceCatalogTerraformDiagram(params *UpdateServiceCatal
 /*
 UpdateServiceCatalogTerraformImage Update/Create the Image for the SC TF Image
 */
-func (a *Client) UpdateServiceCatalogTerraformImage(params *UpdateServiceCatalogTerraformImageParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogTerraformImageNoContent, error) {
+func (a *Client) UpdateServiceCatalogTerraformImage(params *UpdateServiceCatalogTerraformImageParams, authInfo runtime.ClientAuthInfoWriter) (*UpdateServiceCatalogTerraformImageNoContent, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewUpdateServiceCatalogTerraformImageParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "updateServiceCatalogTerraformImage",
 		Method:             "PUT",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/terraform/diagram/image",
@@ -613,12 +457,7 @@ func (a *Client) UpdateServiceCatalogTerraformImage(params *UpdateServiceCatalog
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -634,12 +473,13 @@ func (a *Client) UpdateServiceCatalogTerraformImage(params *UpdateServiceCatalog
 /*
 ValidateServiceCatalogDependencies Validates the dependencies of a Service Catalog
 */
-func (a *Client) ValidateServiceCatalogDependencies(params *ValidateServiceCatalogDependenciesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateServiceCatalogDependenciesOK, error) {
+func (a *Client) ValidateServiceCatalogDependencies(params *ValidateServiceCatalogDependenciesParams, authInfo runtime.ClientAuthInfoWriter) (*ValidateServiceCatalogDependenciesOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
 		params = NewValidateServiceCatalogDependenciesParams()
 	}
-	op := &runtime.ClientOperation{
+
+	result, err := a.transport.Submit(&runtime.ClientOperation{
 		ID:                 "validateServiceCatalogDependencies",
 		Method:             "GET",
 		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/dependencies/validate",
@@ -651,12 +491,7 @@ func (a *Client) ValidateServiceCatalogDependencies(params *ValidateServiceCatal
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
+	})
 	if err != nil {
 		return nil, err
 	}

@@ -6,16 +6,14 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // Preparation Preparation
-//
 // swagger:model Preparation
 type Preparation struct {
 
@@ -97,8 +95,8 @@ func (m *Preparation) validateBuildID(formats strfmt.Registry) error {
 
 func (m *Preparation) validateInputs(formats strfmt.Registry) error {
 
-	if m.Inputs == nil {
-		return errors.Required("inputs", "body", nil)
+	if err := validate.Required("inputs", "body", m.Inputs); err != nil {
+		return err
 	}
 
 	return nil
@@ -106,8 +104,8 @@ func (m *Preparation) validateInputs(formats strfmt.Registry) error {
 
 func (m *Preparation) validateInputsSatisfied(formats strfmt.Registry) error {
 
-	if m.InputsSatisfied == nil {
-		return errors.Required("inputs_satisfied", "body", nil)
+	if err := validate.Required("inputs_satisfied", "body", m.InputsSatisfied); err != nil {
+		return err
 	}
 
 	return nil
@@ -124,8 +122,8 @@ func (m *Preparation) validateMaxRunningBuilds(formats strfmt.Registry) error {
 
 func (m *Preparation) validateMissingInputReasons(formats strfmt.Registry) error {
 
-	if m.MissingInputReasons == nil {
-		return errors.Required("missing_input_reasons", "body", nil)
+	if err := validate.Required("missing_input_reasons", "body", m.MissingInputReasons); err != nil {
+		return err
 	}
 
 	return nil
@@ -146,11 +144,6 @@ func (m *Preparation) validatePausedPipeline(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this preparation based on context it is used
-func (m *Preparation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

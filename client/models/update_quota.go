@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // UpdateQuota Update Quota
 //
-// # The Quota defines the basic needs to update a create
-//
+// The Quota defines the basic needs to update a create
 // swagger:model UpdateQuota
 type UpdateQuota struct {
 
@@ -65,7 +63,7 @@ func (m *UpdateQuota) validateCPU(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("cpu", "body", *m.CPU, 0, false); err != nil {
+	if err := validate.MinimumInt("cpu", "body", int64(*m.CPU), 0, false); err != nil {
 		return err
 	}
 
@@ -78,7 +76,7 @@ func (m *UpdateQuota) validateMemory(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("memory", "body", *m.Memory, 0, false); err != nil {
+	if err := validate.MinimumInt("memory", "body", int64(*m.Memory), 0, false); err != nil {
 		return err
 	}
 
@@ -91,15 +89,10 @@ func (m *UpdateQuota) validateStorage(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinimumUint("storage", "body", *m.Storage, 0, false); err != nil {
+	if err := validate.MinimumInt("storage", "body", int64(*m.Storage), 0, false); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this update quota based on context it is used
-func (m *UpdateQuota) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

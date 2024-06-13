@@ -13,102 +13,83 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewAbortBuildParams creates a new AbortBuildParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewAbortBuildParams creates a new AbortBuildParams object
+// with the default values initialized.
 func NewAbortBuildParams() *AbortBuildParams {
+	var ()
 	return &AbortBuildParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewAbortBuildParamsWithTimeout creates a new AbortBuildParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewAbortBuildParamsWithTimeout(timeout time.Duration) *AbortBuildParams {
+	var ()
 	return &AbortBuildParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewAbortBuildParamsWithContext creates a new AbortBuildParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewAbortBuildParamsWithContext(ctx context.Context) *AbortBuildParams {
+	var ()
 	return &AbortBuildParams{
+
 		Context: ctx,
 	}
 }
 
 // NewAbortBuildParamsWithHTTPClient creates a new AbortBuildParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewAbortBuildParamsWithHTTPClient(client *http.Client) *AbortBuildParams {
+	var ()
 	return &AbortBuildParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-AbortBuildParams contains all the parameters to send to the API endpoint
-
-	for the abort build operation.
-
-	Typically these are written to a http.Request.
+/*AbortBuildParams contains all the parameters to send to the API endpoint
+for the abort build operation typically these are written to a http.Request
 */
 type AbortBuildParams struct {
 
-	/* BuildID.
+	/*BuildID
+	  A build id
 
-	   A build id
 	*/
 	BuildID string
+	/*InpathPipelineName
+	  A pipeline name
 
-	/* InpathPipelineName.
-
-	   A pipeline name
 	*/
 	InpathPipelineName string
+	/*JobName
+	  A job name
 
-	/* JobName.
-
-	   A job name
 	*/
 	JobName string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the abort build params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *AbortBuildParams) WithDefaults() *AbortBuildParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the abort build params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *AbortBuildParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the abort build params

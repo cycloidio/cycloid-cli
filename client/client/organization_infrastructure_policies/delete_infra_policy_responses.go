@@ -6,16 +6,16 @@ package organization_infrastructure_policies
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteInfraPolicyReader is a Reader for the DeleteInfraPolicy structure.
@@ -61,50 +61,15 @@ func NewDeleteInfraPolicyNoContent() *DeleteInfraPolicyNoContent {
 	return &DeleteInfraPolicyNoContent{}
 }
 
-/*
-DeleteInfraPolicyNoContent describes a response with status code 204, with default header values.
+/*DeleteInfraPolicyNoContent handles this case with default header values.
 
 InfraPolicy has been deleted.
 */
 type DeleteInfraPolicyNoContent struct {
 }
 
-// IsSuccess returns true when this delete infra policy no content response has a 2xx status code
-func (o *DeleteInfraPolicyNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this delete infra policy no content response has a 3xx status code
-func (o *DeleteInfraPolicyNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete infra policy no content response has a 4xx status code
-func (o *DeleteInfraPolicyNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this delete infra policy no content response has a 5xx status code
-func (o *DeleteInfraPolicyNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete infra policy no content response a status code equal to that given
-func (o *DeleteInfraPolicyNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the delete infra policy no content response
-func (o *DeleteInfraPolicyNoContent) Code() int {
-	return 204
-}
-
 func (o *DeleteInfraPolicyNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyNoContent", 204)
-}
-
-func (o *DeleteInfraPolicyNoContent) String() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyNoContent", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyNoContent ", 204)
 }
 
 func (o *DeleteInfraPolicyNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -117,60 +82,20 @@ func NewDeleteInfraPolicyForbidden() *DeleteInfraPolicyForbidden {
 	return &DeleteInfraPolicyForbidden{}
 }
 
-/*
-DeleteInfraPolicyForbidden describes a response with status code 403, with default header values.
+/*DeleteInfraPolicyForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteInfraPolicyForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete infra policy forbidden response has a 2xx status code
-func (o *DeleteInfraPolicyForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete infra policy forbidden response has a 3xx status code
-func (o *DeleteInfraPolicyForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete infra policy forbidden response has a 4xx status code
-func (o *DeleteInfraPolicyForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete infra policy forbidden response has a 5xx status code
-func (o *DeleteInfraPolicyForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete infra policy forbidden response a status code equal to that given
-func (o *DeleteInfraPolicyForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the delete infra policy forbidden response
-func (o *DeleteInfraPolicyForbidden) Code() int {
-	return 403
-}
-
 func (o *DeleteInfraPolicyForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyForbidden %s", 403, payload)
-}
-
-func (o *DeleteInfraPolicyForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DeleteInfraPolicyForbidden) GetPayload() *models.ErrorPayload {
@@ -179,16 +104,12 @@ func (o *DeleteInfraPolicyForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteInfraPolicyForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -205,60 +126,20 @@ func NewDeleteInfraPolicyNotFound() *DeleteInfraPolicyNotFound {
 	return &DeleteInfraPolicyNotFound{}
 }
 
-/*
-DeleteInfraPolicyNotFound describes a response with status code 404, with default header values.
+/*DeleteInfraPolicyNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteInfraPolicyNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete infra policy not found response has a 2xx status code
-func (o *DeleteInfraPolicyNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete infra policy not found response has a 3xx status code
-func (o *DeleteInfraPolicyNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete infra policy not found response has a 4xx status code
-func (o *DeleteInfraPolicyNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete infra policy not found response has a 5xx status code
-func (o *DeleteInfraPolicyNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete infra policy not found response a status code equal to that given
-func (o *DeleteInfraPolicyNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the delete infra policy not found response
-func (o *DeleteInfraPolicyNotFound) Code() int {
-	return 404
-}
-
 func (o *DeleteInfraPolicyNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyNotFound %s", 404, payload)
-}
-
-func (o *DeleteInfraPolicyNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyNotFound %s", 404, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicyNotFound  %+v", 404, o.Payload)
 }
 
 func (o *DeleteInfraPolicyNotFound) GetPayload() *models.ErrorPayload {
@@ -267,16 +148,12 @@ func (o *DeleteInfraPolicyNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteInfraPolicyNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -295,46 +172,18 @@ func NewDeleteInfraPolicyDefault(code int) *DeleteInfraPolicyDefault {
 	}
 }
 
-/*
-DeleteInfraPolicyDefault describes a response with status code -1, with default header values.
+/*DeleteInfraPolicyDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteInfraPolicyDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this delete infra policy default response has a 2xx status code
-func (o *DeleteInfraPolicyDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this delete infra policy default response has a 3xx status code
-func (o *DeleteInfraPolicyDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this delete infra policy default response has a 4xx status code
-func (o *DeleteInfraPolicyDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this delete infra policy default response has a 5xx status code
-func (o *DeleteInfraPolicyDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this delete infra policy default response a status code equal to that given
-func (o *DeleteInfraPolicyDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the delete infra policy default response
@@ -343,13 +192,7 @@ func (o *DeleteInfraPolicyDefault) Code() int {
 }
 
 func (o *DeleteInfraPolicyDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicy default %s", o._statusCode, payload)
-}
-
-func (o *DeleteInfraPolicyDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicy default %s", o._statusCode, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/infra_policies/{infra_policy_canonical}][%d] deleteInfraPolicy default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteInfraPolicyDefault) GetPayload() *models.ErrorPayload {
@@ -358,16 +201,12 @@ func (o *DeleteInfraPolicyDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteInfraPolicyDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

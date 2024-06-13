@@ -7,30 +7,26 @@ package models
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"io"
+	"io/ioutil"
+
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/validate"
 )
 
 // CloudProviderConfiguration cloud provider configuration
-//
 // swagger:discriminator CloudProviderConfiguration type
 type CloudProviderConfiguration interface {
 	runtime.Validatable
-	runtime.ContextValidatable
 
 	// type
 	// Required: true
 	Type() string
 	SetType(string)
-
-	// AdditionalProperties in base type shoud be handled just like regular properties
-	// At this moment, the base type property is pushed down to the subtype
 }
 
 type cloudProviderConfiguration struct {
@@ -44,6 +40,7 @@ func (m *cloudProviderConfiguration) Type() string {
 
 // SetType sets the type of this polymorphic type
 func (m *cloudProviderConfiguration) SetType(val string) {
+
 }
 
 // UnmarshalCloudProviderConfigurationSlice unmarshals polymorphic slices of CloudProviderConfiguration
@@ -67,7 +64,7 @@ func UnmarshalCloudProviderConfigurationSlice(reader io.Reader, consumer runtime
 // UnmarshalCloudProviderConfiguration unmarshals polymorphic CloudProviderConfiguration
 func UnmarshalCloudProviderConfiguration(reader io.Reader, consumer runtime.Consumer) (CloudProviderConfiguration, error) {
 	// we need to read this twice, so first into a buffer
-	data, err := io.ReadAll(reader)
+	data, err := ioutil.ReadAll(reader)
 	if err != nil {
 		return nil, err
 	}
@@ -98,40 +95,41 @@ func unmarshalCloudProviderConfiguration(data []byte, consumer runtime.Consumer)
 			return nil, err
 		}
 		return &result, nil
+
 	case "CloudProviderAzureConfiguration":
 		var result CloudProviderAzureConfiguration
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "CloudProviderConfiguration":
 		var result cloudProviderConfiguration
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "CloudProviderGCPConfiguration":
 		var result CloudProviderGCPConfiguration
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	case "CloudProviderVMWareVSphereConfiguration":
 		var result CloudProviderVMWareVSphereConfiguration
 		if err := consumer.Consume(buf2, &result); err != nil {
 			return nil, err
 		}
 		return &result, nil
+
 	}
 	return nil, errors.New(422, "invalid type value: %q", getType.Type)
+
 }
 
 // Validate validates this cloud provider configuration
 func (m *cloudProviderConfiguration) Validate(formats strfmt.Registry) error {
-	return nil
-}
-
-// ContextValidate validates this cloud provider configuration based on context it is used
-func (m *cloudProviderConfiguration) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }

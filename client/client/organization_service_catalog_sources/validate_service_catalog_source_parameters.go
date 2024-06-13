@@ -13,84 +13,68 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewValidateServiceCatalogSourceParams creates a new ValidateServiceCatalogSourceParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewValidateServiceCatalogSourceParams creates a new ValidateServiceCatalogSourceParams object
+// with the default values initialized.
 func NewValidateServiceCatalogSourceParams() *ValidateServiceCatalogSourceParams {
+	var ()
 	return &ValidateServiceCatalogSourceParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewValidateServiceCatalogSourceParamsWithTimeout creates a new ValidateServiceCatalogSourceParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewValidateServiceCatalogSourceParamsWithTimeout(timeout time.Duration) *ValidateServiceCatalogSourceParams {
+	var ()
 	return &ValidateServiceCatalogSourceParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewValidateServiceCatalogSourceParamsWithContext creates a new ValidateServiceCatalogSourceParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewValidateServiceCatalogSourceParamsWithContext(ctx context.Context) *ValidateServiceCatalogSourceParams {
+	var ()
 	return &ValidateServiceCatalogSourceParams{
+
 		Context: ctx,
 	}
 }
 
 // NewValidateServiceCatalogSourceParamsWithHTTPClient creates a new ValidateServiceCatalogSourceParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewValidateServiceCatalogSourceParamsWithHTTPClient(client *http.Client) *ValidateServiceCatalogSourceParams {
+	var ()
 	return &ValidateServiceCatalogSourceParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-ValidateServiceCatalogSourceParams contains all the parameters to send to the API endpoint
-
-	for the validate service catalog source operation.
-
-	Typically these are written to a http.Request.
+/*ValidateServiceCatalogSourceParams contains all the parameters to send to the API endpoint
+for the validate service catalog source operation typically these are written to a http.Request
 */
 type ValidateServiceCatalogSourceParams struct {
 
-	/* OrganizationCanonical.
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ServiceCatalogSourceCanonical
+	  Organization Service Catalog Sources canonical
 
-	/* ServiceCatalogSourceCanonical.
-
-	   Organization Service Catalog Sources canonical
 	*/
 	ServiceCatalogSourceCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the validate service catalog source params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *ValidateServiceCatalogSourceParams) WithDefaults() *ValidateServiceCatalogSourceParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the validate service catalog source params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *ValidateServiceCatalogSourceParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the validate service catalog source params

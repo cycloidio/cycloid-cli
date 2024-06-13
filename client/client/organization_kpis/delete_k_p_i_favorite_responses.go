@@ -6,16 +6,16 @@ package organization_kpis
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteKPIFavoriteReader is a Reader for the DeleteKPIFavorite structure.
@@ -61,50 +61,15 @@ func NewDeleteKPIFavoriteNoContent() *DeleteKPIFavoriteNoContent {
 	return &DeleteKPIFavoriteNoContent{}
 }
 
-/*
-DeleteKPIFavoriteNoContent describes a response with status code 204, with default header values.
+/*DeleteKPIFavoriteNoContent handles this case with default header values.
 
 The kpi has been removed from user favorites list.
 */
 type DeleteKPIFavoriteNoContent struct {
 }
 
-// IsSuccess returns true when this delete k p i favorite no content response has a 2xx status code
-func (o *DeleteKPIFavoriteNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this delete k p i favorite no content response has a 3xx status code
-func (o *DeleteKPIFavoriteNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete k p i favorite no content response has a 4xx status code
-func (o *DeleteKPIFavoriteNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this delete k p i favorite no content response has a 5xx status code
-func (o *DeleteKPIFavoriteNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete k p i favorite no content response a status code equal to that given
-func (o *DeleteKPIFavoriteNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the delete k p i favorite no content response
-func (o *DeleteKPIFavoriteNoContent) Code() int {
-	return 204
-}
-
 func (o *DeleteKPIFavoriteNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteNoContent", 204)
-}
-
-func (o *DeleteKPIFavoriteNoContent) String() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteNoContent", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteNoContent ", 204)
 }
 
 func (o *DeleteKPIFavoriteNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -117,60 +82,20 @@ func NewDeleteKPIFavoriteForbidden() *DeleteKPIFavoriteForbidden {
 	return &DeleteKPIFavoriteForbidden{}
 }
 
-/*
-DeleteKPIFavoriteForbidden describes a response with status code 403, with default header values.
+/*DeleteKPIFavoriteForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteKPIFavoriteForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete k p i favorite forbidden response has a 2xx status code
-func (o *DeleteKPIFavoriteForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete k p i favorite forbidden response has a 3xx status code
-func (o *DeleteKPIFavoriteForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete k p i favorite forbidden response has a 4xx status code
-func (o *DeleteKPIFavoriteForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete k p i favorite forbidden response has a 5xx status code
-func (o *DeleteKPIFavoriteForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete k p i favorite forbidden response a status code equal to that given
-func (o *DeleteKPIFavoriteForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the delete k p i favorite forbidden response
-func (o *DeleteKPIFavoriteForbidden) Code() int {
-	return 403
-}
-
 func (o *DeleteKPIFavoriteForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteForbidden %s", 403, payload)
-}
-
-func (o *DeleteKPIFavoriteForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DeleteKPIFavoriteForbidden) GetPayload() *models.ErrorPayload {
@@ -179,16 +104,12 @@ func (o *DeleteKPIFavoriteForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteKPIFavoriteForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -205,60 +126,20 @@ func NewDeleteKPIFavoriteNotFound() *DeleteKPIFavoriteNotFound {
 	return &DeleteKPIFavoriteNotFound{}
 }
 
-/*
-DeleteKPIFavoriteNotFound describes a response with status code 404, with default header values.
+/*DeleteKPIFavoriteNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteKPIFavoriteNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete k p i favorite not found response has a 2xx status code
-func (o *DeleteKPIFavoriteNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete k p i favorite not found response has a 3xx status code
-func (o *DeleteKPIFavoriteNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete k p i favorite not found response has a 4xx status code
-func (o *DeleteKPIFavoriteNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete k p i favorite not found response has a 5xx status code
-func (o *DeleteKPIFavoriteNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete k p i favorite not found response a status code equal to that given
-func (o *DeleteKPIFavoriteNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the delete k p i favorite not found response
-func (o *DeleteKPIFavoriteNotFound) Code() int {
-	return 404
-}
-
 func (o *DeleteKPIFavoriteNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteNotFound %s", 404, payload)
-}
-
-func (o *DeleteKPIFavoriteNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteNotFound %s", 404, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavoriteNotFound  %+v", 404, o.Payload)
 }
 
 func (o *DeleteKPIFavoriteNotFound) GetPayload() *models.ErrorPayload {
@@ -267,16 +148,12 @@ func (o *DeleteKPIFavoriteNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteKPIFavoriteNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -295,46 +172,18 @@ func NewDeleteKPIFavoriteDefault(code int) *DeleteKPIFavoriteDefault {
 	}
 }
 
-/*
-DeleteKPIFavoriteDefault describes a response with status code -1, with default header values.
+/*DeleteKPIFavoriteDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type DeleteKPIFavoriteDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this delete k p i favorite default response has a 2xx status code
-func (o *DeleteKPIFavoriteDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this delete k p i favorite default response has a 3xx status code
-func (o *DeleteKPIFavoriteDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this delete k p i favorite default response has a 4xx status code
-func (o *DeleteKPIFavoriteDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this delete k p i favorite default response has a 5xx status code
-func (o *DeleteKPIFavoriteDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this delete k p i favorite default response a status code equal to that given
-func (o *DeleteKPIFavoriteDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the delete k p i favorite default response
@@ -343,13 +192,7 @@ func (o *DeleteKPIFavoriteDefault) Code() int {
 }
 
 func (o *DeleteKPIFavoriteDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavorite default %s", o._statusCode, payload)
-}
-
-func (o *DeleteKPIFavoriteDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavorite default %s", o._statusCode, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/kpis/{kpi_canonical}/favorites][%d] deleteKPIFavorite default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *DeleteKPIFavoriteDefault) GetPayload() *models.ErrorPayload {
@@ -358,16 +201,12 @@ func (o *DeleteKPIFavoriteDefault) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteKPIFavoriteDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 

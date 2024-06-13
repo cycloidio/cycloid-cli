@@ -13,92 +13,75 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewCreatePipelineParams creates a new CreatePipelineParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewCreatePipelineParams creates a new CreatePipelineParams object
+// with the default values initialized.
 func NewCreatePipelineParams() *CreatePipelineParams {
+	var ()
 	return &CreatePipelineParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewCreatePipelineParamsWithTimeout creates a new CreatePipelineParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewCreatePipelineParamsWithTimeout(timeout time.Duration) *CreatePipelineParams {
+	var ()
 	return &CreatePipelineParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewCreatePipelineParamsWithContext creates a new CreatePipelineParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewCreatePipelineParamsWithContext(ctx context.Context) *CreatePipelineParams {
+	var ()
 	return &CreatePipelineParams{
+
 		Context: ctx,
 	}
 }
 
 // NewCreatePipelineParamsWithHTTPClient creates a new CreatePipelineParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewCreatePipelineParamsWithHTTPClient(client *http.Client) *CreatePipelineParams {
+	var ()
 	return &CreatePipelineParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-CreatePipelineParams contains all the parameters to send to the API endpoint
-
-	for the create pipeline operation.
-
-	Typically these are written to a http.Request.
+/*CreatePipelineParams contains all the parameters to send to the API endpoint
+for the create pipeline operation typically these are written to a http.Request
 */
 type CreatePipelineParams struct {
 
-	/* Body.
+	/*Body
+	  The configuration of the pipeline to create.
 
-	   The configuration of the pipeline to create.
 	*/
 	Body *models.NewPipeline
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A canonical of a project.
 
-	/* ProjectCanonical.
-
-	   A canonical of a project.
 	*/
 	ProjectCanonical string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the create pipeline params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *CreatePipelineParams) WithDefaults() *CreatePipelineParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the create pipeline params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *CreatePipelineParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the create pipeline params
@@ -174,6 +157,7 @@ func (o *CreatePipelineParams) WriteToRequest(r runtime.ClientRequest, reg strfm
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

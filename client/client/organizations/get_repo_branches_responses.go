@@ -6,18 +6,17 @@ package organizations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetRepoBranchesReader is a Reader for the GetRepoBranches structure.
@@ -69,8 +68,7 @@ func NewGetRepoBranchesOK() *GetRepoBranchesOK {
 	return &GetRepoBranchesOK{}
 }
 
-/*
-GetRepoBranchesOK describes a response with status code 200, with default header values.
+/*GetRepoBranchesOK handles this case with default header values.
 
 List of the repository branches
 */
@@ -78,44 +76,8 @@ type GetRepoBranchesOK struct {
 	Payload *GetRepoBranchesOKBody
 }
 
-// IsSuccess returns true when this get repo branches o k response has a 2xx status code
-func (o *GetRepoBranchesOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get repo branches o k response has a 3xx status code
-func (o *GetRepoBranchesOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get repo branches o k response has a 4xx status code
-func (o *GetRepoBranchesOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get repo branches o k response has a 5xx status code
-func (o *GetRepoBranchesOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get repo branches o k response a status code equal to that given
-func (o *GetRepoBranchesOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get repo branches o k response
-func (o *GetRepoBranchesOK) Code() int {
-	return 200
-}
-
 func (o *GetRepoBranchesOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesOK %s", 200, payload)
-}
-
-func (o *GetRepoBranchesOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesOK  %+v", 200, o.Payload)
 }
 
 func (o *GetRepoBranchesOK) GetPayload() *GetRepoBranchesOKBody {
@@ -139,60 +101,20 @@ func NewGetRepoBranchesForbidden() *GetRepoBranchesForbidden {
 	return &GetRepoBranchesForbidden{}
 }
 
-/*
-GetRepoBranchesForbidden describes a response with status code 403, with default header values.
+/*GetRepoBranchesForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetRepoBranchesForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get repo branches forbidden response has a 2xx status code
-func (o *GetRepoBranchesForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get repo branches forbidden response has a 3xx status code
-func (o *GetRepoBranchesForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get repo branches forbidden response has a 4xx status code
-func (o *GetRepoBranchesForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get repo branches forbidden response has a 5xx status code
-func (o *GetRepoBranchesForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get repo branches forbidden response a status code equal to that given
-func (o *GetRepoBranchesForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the get repo branches forbidden response
-func (o *GetRepoBranchesForbidden) Code() int {
-	return 403
-}
-
 func (o *GetRepoBranchesForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesForbidden %s", 403, payload)
-}
-
-func (o *GetRepoBranchesForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetRepoBranchesForbidden) GetPayload() *models.ErrorPayload {
@@ -201,16 +123,12 @@ func (o *GetRepoBranchesForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetRepoBranchesForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -227,60 +145,20 @@ func NewGetRepoBranchesNotFound() *GetRepoBranchesNotFound {
 	return &GetRepoBranchesNotFound{}
 }
 
-/*
-GetRepoBranchesNotFound describes a response with status code 404, with default header values.
+/*GetRepoBranchesNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetRepoBranchesNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get repo branches not found response has a 2xx status code
-func (o *GetRepoBranchesNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get repo branches not found response has a 3xx status code
-func (o *GetRepoBranchesNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get repo branches not found response has a 4xx status code
-func (o *GetRepoBranchesNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get repo branches not found response has a 5xx status code
-func (o *GetRepoBranchesNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get repo branches not found response a status code equal to that given
-func (o *GetRepoBranchesNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the get repo branches not found response
-func (o *GetRepoBranchesNotFound) Code() int {
-	return 404
-}
-
 func (o *GetRepoBranchesNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesNotFound %s", 404, payload)
-}
-
-func (o *GetRepoBranchesNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetRepoBranchesNotFound) GetPayload() *models.ErrorPayload {
@@ -289,16 +167,12 @@ func (o *GetRepoBranchesNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetRepoBranchesNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -315,60 +189,20 @@ func NewGetRepoBranchesUnprocessableEntity() *GetRepoBranchesUnprocessableEntity
 	return &GetRepoBranchesUnprocessableEntity{}
 }
 
-/*
-GetRepoBranchesUnprocessableEntity describes a response with status code 422, with default header values.
+/*GetRepoBranchesUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetRepoBranchesUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get repo branches unprocessable entity response has a 2xx status code
-func (o *GetRepoBranchesUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get repo branches unprocessable entity response has a 3xx status code
-func (o *GetRepoBranchesUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get repo branches unprocessable entity response has a 4xx status code
-func (o *GetRepoBranchesUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get repo branches unprocessable entity response has a 5xx status code
-func (o *GetRepoBranchesUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get repo branches unprocessable entity response a status code equal to that given
-func (o *GetRepoBranchesUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the get repo branches unprocessable entity response
-func (o *GetRepoBranchesUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *GetRepoBranchesUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesUnprocessableEntity %s", 422, payload)
-}
-
-func (o *GetRepoBranchesUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranchesUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetRepoBranchesUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -377,16 +211,12 @@ func (o *GetRepoBranchesUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *GetRepoBranchesUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -405,46 +235,18 @@ func NewGetRepoBranchesDefault(code int) *GetRepoBranchesDefault {
 	}
 }
 
-/*
-GetRepoBranchesDefault describes a response with status code -1, with default header values.
+/*GetRepoBranchesDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetRepoBranchesDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get repo branches default response has a 2xx status code
-func (o *GetRepoBranchesDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get repo branches default response has a 3xx status code
-func (o *GetRepoBranchesDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get repo branches default response has a 4xx status code
-func (o *GetRepoBranchesDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get repo branches default response has a 5xx status code
-func (o *GetRepoBranchesDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get repo branches default response a status code equal to that given
-func (o *GetRepoBranchesDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get repo branches default response
@@ -453,13 +255,7 @@ func (o *GetRepoBranchesDefault) Code() int {
 }
 
 func (o *GetRepoBranchesDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranches default %s", o._statusCode, payload)
-}
-
-func (o *GetRepoBranchesDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranches default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/branches][%d] getRepoBranches default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetRepoBranchesDefault) GetPayload() *models.ErrorPayload {
@@ -468,16 +264,12 @@ func (o *GetRepoBranchesDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetRepoBranchesDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -489,8 +281,7 @@ func (o *GetRepoBranchesDefault) readResponse(response runtime.ClientResponse, c
 	return nil
 }
 
-/*
-GetRepoBranchesOKBody get repo branches o k body
+/*GetRepoBranchesOKBody get repo branches o k body
 swagger:model GetRepoBranchesOKBody
 */
 type GetRepoBranchesOKBody struct {
@@ -520,11 +311,6 @@ func (o *GetRepoBranchesOKBody) validateData(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this get repo branches o k body based on context it is used
-func (o *GetRepoBranchesOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

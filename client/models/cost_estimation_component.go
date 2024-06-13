@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // CostEstimationComponent CostEstimationComponent
 //
 // Cost component of a cloud resource estimate.
-//
 // swagger:model CostEstimationComponent
 type CostEstimationComponent struct {
 
@@ -78,6 +76,7 @@ func (m *CostEstimationComponent) validateLabel(formats strfmt.Registry) error {
 }
 
 func (m *CostEstimationComponent) validatePlanned(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Planned) { // not required
 		return nil
 	}
@@ -86,8 +85,6 @@ func (m *CostEstimationComponent) validatePlanned(formats strfmt.Registry) error
 		if err := m.Planned.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("planned")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("planned")
 			}
 			return err
 		}
@@ -97,6 +94,7 @@ func (m *CostEstimationComponent) validatePlanned(formats strfmt.Registry) error
 }
 
 func (m *CostEstimationComponent) validatePrior(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.Prior) { // not required
 		return nil
 	}
@@ -105,8 +103,6 @@ func (m *CostEstimationComponent) validatePrior(formats strfmt.Registry) error {
 		if err := m.Prior.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("prior")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("prior")
 			}
 			return err
 		}
@@ -119,66 +115,6 @@ func (m *CostEstimationComponent) validateRate(formats strfmt.Registry) error {
 
 	if err := validate.Required("rate", "body", m.Rate); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this cost estimation component based on the context it is used
-func (m *CostEstimationComponent) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidatePlanned(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidatePrior(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *CostEstimationComponent) contextValidatePlanned(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Planned != nil {
-
-		if swag.IsZero(m.Planned) { // not required
-			return nil
-		}
-
-		if err := m.Planned.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("planned")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("planned")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *CostEstimationComponent) contextValidatePrior(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Prior != nil {
-
-		if swag.IsZero(m.Prior) { // not required
-			return nil
-		}
-
-		if err := m.Prior.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("prior")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("prior")
-			}
-			return err
-		}
 	}
 
 	return nil

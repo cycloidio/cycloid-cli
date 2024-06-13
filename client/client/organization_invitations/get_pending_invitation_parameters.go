@@ -13,78 +13,63 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetPendingInvitationParams creates a new GetPendingInvitationParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetPendingInvitationParams creates a new GetPendingInvitationParams object
+// with the default values initialized.
 func NewGetPendingInvitationParams() *GetPendingInvitationParams {
+	var ()
 	return &GetPendingInvitationParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetPendingInvitationParamsWithTimeout creates a new GetPendingInvitationParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetPendingInvitationParamsWithTimeout(timeout time.Duration) *GetPendingInvitationParams {
+	var ()
 	return &GetPendingInvitationParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewGetPendingInvitationParamsWithContext creates a new GetPendingInvitationParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetPendingInvitationParamsWithContext(ctx context.Context) *GetPendingInvitationParams {
+	var ()
 	return &GetPendingInvitationParams{
+
 		Context: ctx,
 	}
 }
 
 // NewGetPendingInvitationParamsWithHTTPClient creates a new GetPendingInvitationParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetPendingInvitationParamsWithHTTPClient(client *http.Client) *GetPendingInvitationParams {
+	var ()
 	return &GetPendingInvitationParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-GetPendingInvitationParams contains all the parameters to send to the API endpoint
-
-	for the get pending invitation operation.
-
-	Typically these are written to a http.Request.
+/*GetPendingInvitationParams contains all the parameters to send to the API endpoint
+for the get pending invitation operation typically these are written to a http.Request
 */
 type GetPendingInvitationParams struct {
 
-	/* VerificationToken.
+	/*VerificationToken
+	  A token for verifying emails, invitations, etc.
 
-	   A token for verifying emails, invitations, etc.
 	*/
 	VerificationToken string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get pending invitation params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetPendingInvitationParams) WithDefaults() *GetPendingInvitationParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get pending invitation params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetPendingInvitationParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get pending invitation params

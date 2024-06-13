@@ -13,97 +13,79 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetExternalBackendsParams creates a new GetExternalBackendsParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetExternalBackendsParams creates a new GetExternalBackendsParams object
+// with the default values initialized.
 func NewGetExternalBackendsParams() *GetExternalBackendsParams {
+	var ()
 	return &GetExternalBackendsParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetExternalBackendsParamsWithTimeout creates a new GetExternalBackendsParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetExternalBackendsParamsWithTimeout(timeout time.Duration) *GetExternalBackendsParams {
+	var ()
 	return &GetExternalBackendsParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewGetExternalBackendsParamsWithContext creates a new GetExternalBackendsParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetExternalBackendsParamsWithContext(ctx context.Context) *GetExternalBackendsParams {
+	var ()
 	return &GetExternalBackendsParams{
+
 		Context: ctx,
 	}
 }
 
 // NewGetExternalBackendsParamsWithHTTPClient creates a new GetExternalBackendsParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetExternalBackendsParamsWithHTTPClient(client *http.Client) *GetExternalBackendsParams {
+	var ()
 	return &GetExternalBackendsParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-GetExternalBackendsParams contains all the parameters to send to the API endpoint
-
-	for the get external backends operation.
-
-	Typically these are written to a http.Request.
+/*GetExternalBackendsParams contains all the parameters to send to the API endpoint
+for the get external backends operation typically these are written to a http.Request
 */
 type GetExternalBackendsParams struct {
 
-	/* EnvironmentCanonical.
+	/*EnvironmentCanonical
+	  A list of environments' canonical to filter from
 
-	   A list of environments' canonical to filter from
 	*/
 	EnvironmentCanonical *string
+	/*ExternalBackendDefault
+	  Filter for default Terraform External Backend
 
-	/* ExternalBackendDefault.
-
-	   Filter for default Terraform External Backend
 	*/
 	ExternalBackendDefault *bool
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*ProjectCanonical
+	  A list of projects' canonical to filter from
 
-	/* ProjectCanonical.
-
-	   A list of projects' canonical to filter from
 	*/
 	ProjectCanonical *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get external backends params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetExternalBackendsParams) WithDefaults() *GetExternalBackendsParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get external backends params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetExternalBackendsParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get external backends params
@@ -195,34 +177,32 @@ func (o *GetExternalBackendsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 		// query param environment_canonical
 		var qrEnvironmentCanonical string
-
 		if o.EnvironmentCanonical != nil {
 			qrEnvironmentCanonical = *o.EnvironmentCanonical
 		}
 		qEnvironmentCanonical := qrEnvironmentCanonical
 		if qEnvironmentCanonical != "" {
-
 			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ExternalBackendDefault != nil {
 
 		// query param external_backend_default
 		var qrExternalBackendDefault bool
-
 		if o.ExternalBackendDefault != nil {
 			qrExternalBackendDefault = *o.ExternalBackendDefault
 		}
 		qExternalBackendDefault := swag.FormatBool(qrExternalBackendDefault)
 		if qExternalBackendDefault != "" {
-
 			if err := r.SetQueryParam("external_backend_default", qExternalBackendDefault); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param organization_canonical
@@ -234,17 +214,16 @@ func (o *GetExternalBackendsParams) WriteToRequest(r runtime.ClientRequest, reg 
 
 		// query param project_canonical
 		var qrProjectCanonical string
-
 		if o.ProjectCanonical != nil {
 			qrProjectCanonical = *o.ProjectCanonical
 		}
 		qProjectCanonical := qrProjectCanonical
 		if qProjectCanonical != "" {
-
 			if err := r.SetQueryParam("project_canonical", qProjectCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if len(res) > 0 {

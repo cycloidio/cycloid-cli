@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // FormsValidationResult FormsValidationResult
 //
-// # The result of the validation, if errors is empty means that is correct
-//
+// The result of the validation, if errors is empty means that is correct
 // swagger:model FormsValidationResult
 type FormsValidationResult struct {
 
@@ -67,39 +65,6 @@ func (m *FormsValidationResult) validateForms(formats strfmt.Registry) error {
 		if err := m.Forms.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("forms")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("forms")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this forms validation result based on the context it is used
-func (m *FormsValidationResult) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateForms(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *FormsValidationResult) contextValidateForms(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Forms != nil {
-
-		if err := m.Forms.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("forms")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("forms")
 			}
 			return err
 		}

@@ -6,18 +6,17 @@ package organizations
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // UpdateOrgReader is a Reader for the UpdateOrg structure.
@@ -75,8 +74,7 @@ func NewUpdateOrgOK() *UpdateOrgOK {
 	return &UpdateOrgOK{}
 }
 
-/*
-UpdateOrgOK describes a response with status code 200, with default header values.
+/*UpdateOrgOK handles this case with default header values.
 
 Organization updated. The body contains information of the updated organization.
 */
@@ -84,44 +82,8 @@ type UpdateOrgOK struct {
 	Payload *UpdateOrgOKBody
 }
 
-// IsSuccess returns true when this update org o k response has a 2xx status code
-func (o *UpdateOrgOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this update org o k response has a 3xx status code
-func (o *UpdateOrgOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update org o k response has a 4xx status code
-func (o *UpdateOrgOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this update org o k response has a 5xx status code
-func (o *UpdateOrgOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update org o k response a status code equal to that given
-func (o *UpdateOrgOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the update org o k response
-func (o *UpdateOrgOK) Code() int {
-	return 200
-}
-
 func (o *UpdateOrgOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgOK %s", 200, payload)
-}
-
-func (o *UpdateOrgOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgOK %s", 200, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgOK  %+v", 200, o.Payload)
 }
 
 func (o *UpdateOrgOK) GetPayload() *UpdateOrgOKBody {
@@ -145,60 +107,20 @@ func NewUpdateOrgForbidden() *UpdateOrgForbidden {
 	return &UpdateOrgForbidden{}
 }
 
-/*
-UpdateOrgForbidden describes a response with status code 403, with default header values.
+/*UpdateOrgForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type UpdateOrgForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this update org forbidden response has a 2xx status code
-func (o *UpdateOrgForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this update org forbidden response has a 3xx status code
-func (o *UpdateOrgForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update org forbidden response has a 4xx status code
-func (o *UpdateOrgForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this update org forbidden response has a 5xx status code
-func (o *UpdateOrgForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update org forbidden response a status code equal to that given
-func (o *UpdateOrgForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the update org forbidden response
-func (o *UpdateOrgForbidden) Code() int {
-	return 403
-}
-
 func (o *UpdateOrgForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgForbidden %s", 403, payload)
-}
-
-func (o *UpdateOrgForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgForbidden %s", 403, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgForbidden  %+v", 403, o.Payload)
 }
 
 func (o *UpdateOrgForbidden) GetPayload() *models.ErrorPayload {
@@ -207,16 +129,12 @@ func (o *UpdateOrgForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateOrgForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -233,60 +151,20 @@ func NewUpdateOrgNotFound() *UpdateOrgNotFound {
 	return &UpdateOrgNotFound{}
 }
 
-/*
-UpdateOrgNotFound describes a response with status code 404, with default header values.
+/*UpdateOrgNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type UpdateOrgNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this update org not found response has a 2xx status code
-func (o *UpdateOrgNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this update org not found response has a 3xx status code
-func (o *UpdateOrgNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update org not found response has a 4xx status code
-func (o *UpdateOrgNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this update org not found response has a 5xx status code
-func (o *UpdateOrgNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update org not found response a status code equal to that given
-func (o *UpdateOrgNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the update org not found response
-func (o *UpdateOrgNotFound) Code() int {
-	return 404
-}
-
 func (o *UpdateOrgNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgNotFound %s", 404, payload)
-}
-
-func (o *UpdateOrgNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgNotFound %s", 404, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgNotFound  %+v", 404, o.Payload)
 }
 
 func (o *UpdateOrgNotFound) GetPayload() *models.ErrorPayload {
@@ -295,16 +173,12 @@ func (o *UpdateOrgNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateOrgNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -321,50 +195,15 @@ func NewUpdateOrgLengthRequired() *UpdateOrgLengthRequired {
 	return &UpdateOrgLengthRequired{}
 }
 
-/*
-UpdateOrgLengthRequired describes a response with status code 411, with default header values.
+/*UpdateOrgLengthRequired handles this case with default header values.
 
 The request has a body but it doesn't have a Content-Length header.
 */
 type UpdateOrgLengthRequired struct {
 }
 
-// IsSuccess returns true when this update org length required response has a 2xx status code
-func (o *UpdateOrgLengthRequired) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this update org length required response has a 3xx status code
-func (o *UpdateOrgLengthRequired) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update org length required response has a 4xx status code
-func (o *UpdateOrgLengthRequired) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this update org length required response has a 5xx status code
-func (o *UpdateOrgLengthRequired) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update org length required response a status code equal to that given
-func (o *UpdateOrgLengthRequired) IsCode(code int) bool {
-	return code == 411
-}
-
-// Code gets the status code for the update org length required response
-func (o *UpdateOrgLengthRequired) Code() int {
-	return 411
-}
-
 func (o *UpdateOrgLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgLengthRequired", 411)
-}
-
-func (o *UpdateOrgLengthRequired) String() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgLengthRequired", 411)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgLengthRequired ", 411)
 }
 
 func (o *UpdateOrgLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -377,60 +216,20 @@ func NewUpdateOrgUnprocessableEntity() *UpdateOrgUnprocessableEntity {
 	return &UpdateOrgUnprocessableEntity{}
 }
 
-/*
-UpdateOrgUnprocessableEntity describes a response with status code 422, with default header values.
+/*UpdateOrgUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type UpdateOrgUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this update org unprocessable entity response has a 2xx status code
-func (o *UpdateOrgUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this update org unprocessable entity response has a 3xx status code
-func (o *UpdateOrgUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this update org unprocessable entity response has a 4xx status code
-func (o *UpdateOrgUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this update org unprocessable entity response has a 5xx status code
-func (o *UpdateOrgUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this update org unprocessable entity response a status code equal to that given
-func (o *UpdateOrgUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the update org unprocessable entity response
-func (o *UpdateOrgUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *UpdateOrgUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgUnprocessableEntity %s", 422, payload)
-}
-
-func (o *UpdateOrgUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrgUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *UpdateOrgUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -439,16 +238,12 @@ func (o *UpdateOrgUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateOrgUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -467,46 +262,18 @@ func NewUpdateOrgDefault(code int) *UpdateOrgDefault {
 	}
 }
 
-/*
-UpdateOrgDefault describes a response with status code -1, with default header values.
+/*UpdateOrgDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type UpdateOrgDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this update org default response has a 2xx status code
-func (o *UpdateOrgDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this update org default response has a 3xx status code
-func (o *UpdateOrgDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this update org default response has a 4xx status code
-func (o *UpdateOrgDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this update org default response has a 5xx status code
-func (o *UpdateOrgDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this update org default response a status code equal to that given
-func (o *UpdateOrgDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the update org default response
@@ -515,13 +282,7 @@ func (o *UpdateOrgDefault) Code() int {
 }
 
 func (o *UpdateOrgDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrg default %s", o._statusCode, payload)
-}
-
-func (o *UpdateOrgDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrg default %s", o._statusCode, payload)
+	return fmt.Sprintf("[PUT /organizations/{organization_canonical}][%d] updateOrg default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *UpdateOrgDefault) GetPayload() *models.ErrorPayload {
@@ -530,16 +291,12 @@ func (o *UpdateOrgDefault) GetPayload() *models.ErrorPayload {
 
 func (o *UpdateOrgDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -551,8 +308,7 @@ func (o *UpdateOrgDefault) readResponse(response runtime.ClientResponse, consume
 	return nil
 }
 
-/*
-UpdateOrgOKBody update org o k body
+/*UpdateOrgOKBody update org o k body
 swagger:model UpdateOrgOKBody
 */
 type UpdateOrgOKBody struct {
@@ -586,39 +342,6 @@ func (o *UpdateOrgOKBody) validateData(formats strfmt.Registry) error {
 		if err := o.Data.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("updateOrgOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("updateOrgOK" + "." + "data")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this update org o k body based on the context it is used
-func (o *UpdateOrgOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *UpdateOrgOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Data != nil {
-
-		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("updateOrgOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("updateOrgOK" + "." + "data")
 			}
 			return err
 		}

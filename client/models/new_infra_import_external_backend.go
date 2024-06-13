@@ -7,13 +7,13 @@ package models
 
 import (
 	"bytes"
-	"context"
 	"encoding/json"
 	"io"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -21,7 +21,6 @@ import (
 // NewInfraImportExternalBackend New External backend
 //
 // An external backend contains the configuration needed in order to be plugged into the Cycloid system. A backend is a general purpose concept, but Cycloid specifies which ones are supported and the list of those which are supported for every concrete feature.
-//
 // swagger:model NewInfraImportExternalBackend
 type NewInfraImportExternalBackend struct {
 	configurationField ExternalBackendConfiguration
@@ -85,7 +84,8 @@ func (m NewInfraImportExternalBackend) MarshalJSON() ([]byte, error) {
 	}{
 
 		CredentialCanonical: m.CredentialCanonical,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +94,8 @@ func (m NewInfraImportExternalBackend) MarshalJSON() ([]byte, error) {
 	}{
 
 		Configuration: m.configurationField,
-	})
+	},
+	)
 	if err != nil {
 		return nil, err
 	}
@@ -129,8 +130,6 @@ func (m *NewInfraImportExternalBackend) validateConfiguration(formats strfmt.Reg
 	if err := m.Configuration().Validate(formats); err != nil {
 		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("configuration")
 		}
 		return err
 	}
@@ -139,47 +138,20 @@ func (m *NewInfraImportExternalBackend) validateConfiguration(formats strfmt.Reg
 }
 
 func (m *NewInfraImportExternalBackend) validateCredentialCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", string(m.CredentialCanonical), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", m.CredentialCanonical, 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", string(m.CredentialCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this new infra import external backend based on the context it is used
-func (m *NewInfraImportExternalBackend) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateConfiguration(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *NewInfraImportExternalBackend) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
-
-	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("configuration")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("configuration")
-		}
+	if err := validate.Pattern("credential_canonical", "body", string(m.CredentialCanonical), `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

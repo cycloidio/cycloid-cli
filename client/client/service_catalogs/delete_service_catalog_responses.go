@@ -6,16 +6,16 @@ package service_catalogs
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // DeleteServiceCatalogReader is a Reader for the DeleteServiceCatalog structure.
@@ -50,8 +50,9 @@ func (o *DeleteServiceCatalogReader) ReadResponse(response runtime.ClientRespons
 			return nil, err
 		}
 		return nil, result
+
 	default:
-		return nil, runtime.NewAPIError("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}] deleteServiceCatalog", response, response.Code())
+		return nil, runtime.NewAPIError("unknown error", response, response.Code())
 	}
 }
 
@@ -60,50 +61,15 @@ func NewDeleteServiceCatalogNoContent() *DeleteServiceCatalogNoContent {
 	return &DeleteServiceCatalogNoContent{}
 }
 
-/*
-DeleteServiceCatalogNoContent describes a response with status code 204, with default header values.
+/*DeleteServiceCatalogNoContent handles this case with default header values.
 
 Service Catalog has been deleted.
 */
 type DeleteServiceCatalogNoContent struct {
 }
 
-// IsSuccess returns true when this delete service catalog no content response has a 2xx status code
-func (o *DeleteServiceCatalogNoContent) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this delete service catalog no content response has a 3xx status code
-func (o *DeleteServiceCatalogNoContent) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete service catalog no content response has a 4xx status code
-func (o *DeleteServiceCatalogNoContent) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this delete service catalog no content response has a 5xx status code
-func (o *DeleteServiceCatalogNoContent) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete service catalog no content response a status code equal to that given
-func (o *DeleteServiceCatalogNoContent) IsCode(code int) bool {
-	return code == 204
-}
-
-// Code gets the status code for the delete service catalog no content response
-func (o *DeleteServiceCatalogNoContent) Code() int {
-	return 204
-}
-
 func (o *DeleteServiceCatalogNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogNoContent", 204)
-}
-
-func (o *DeleteServiceCatalogNoContent) String() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogNoContent", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogNoContent ", 204)
 }
 
 func (o *DeleteServiceCatalogNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -116,60 +82,20 @@ func NewDeleteServiceCatalogForbidden() *DeleteServiceCatalogForbidden {
 	return &DeleteServiceCatalogForbidden{}
 }
 
-/*
-DeleteServiceCatalogForbidden describes a response with status code 403, with default header values.
+/*DeleteServiceCatalogForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type DeleteServiceCatalogForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete service catalog forbidden response has a 2xx status code
-func (o *DeleteServiceCatalogForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete service catalog forbidden response has a 3xx status code
-func (o *DeleteServiceCatalogForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete service catalog forbidden response has a 4xx status code
-func (o *DeleteServiceCatalogForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete service catalog forbidden response has a 5xx status code
-func (o *DeleteServiceCatalogForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete service catalog forbidden response a status code equal to that given
-func (o *DeleteServiceCatalogForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the delete service catalog forbidden response
-func (o *DeleteServiceCatalogForbidden) Code() int {
-	return 403
-}
-
 func (o *DeleteServiceCatalogForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogForbidden %s", 403, payload)
-}
-
-func (o *DeleteServiceCatalogForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogForbidden  %+v", 403, o.Payload)
 }
 
 func (o *DeleteServiceCatalogForbidden) GetPayload() *models.ErrorPayload {
@@ -178,16 +104,12 @@ func (o *DeleteServiceCatalogForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteServiceCatalogForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -204,60 +126,20 @@ func NewDeleteServiceCatalogNotFound() *DeleteServiceCatalogNotFound {
 	return &DeleteServiceCatalogNotFound{}
 }
 
-/*
-DeleteServiceCatalogNotFound describes a response with status code 404, with default header values.
+/*DeleteServiceCatalogNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type DeleteServiceCatalogNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this delete service catalog not found response has a 2xx status code
-func (o *DeleteServiceCatalogNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete service catalog not found response has a 3xx status code
-func (o *DeleteServiceCatalogNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete service catalog not found response has a 4xx status code
-func (o *DeleteServiceCatalogNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete service catalog not found response has a 5xx status code
-func (o *DeleteServiceCatalogNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete service catalog not found response a status code equal to that given
-func (o *DeleteServiceCatalogNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the delete service catalog not found response
-func (o *DeleteServiceCatalogNotFound) Code() int {
-	return 404
-}
-
 func (o *DeleteServiceCatalogNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogNotFound %s", 404, payload)
-}
-
-func (o *DeleteServiceCatalogNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogNotFound %s", 404, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogNotFound  %+v", 404, o.Payload)
 }
 
 func (o *DeleteServiceCatalogNotFound) GetPayload() *models.ErrorPayload {
@@ -266,16 +148,12 @@ func (o *DeleteServiceCatalogNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *DeleteServiceCatalogNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -292,50 +170,15 @@ func NewDeleteServiceCatalogConflict() *DeleteServiceCatalogConflict {
 	return &DeleteServiceCatalogConflict{}
 }
 
-/*
-DeleteServiceCatalogConflict describes a response with status code 409, with default header values.
+/*DeleteServiceCatalogConflict handles this case with default header values.
 
 Service Catalog deletion has internal conflict
 */
 type DeleteServiceCatalogConflict struct {
 }
 
-// IsSuccess returns true when this delete service catalog conflict response has a 2xx status code
-func (o *DeleteServiceCatalogConflict) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this delete service catalog conflict response has a 3xx status code
-func (o *DeleteServiceCatalogConflict) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this delete service catalog conflict response has a 4xx status code
-func (o *DeleteServiceCatalogConflict) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this delete service catalog conflict response has a 5xx status code
-func (o *DeleteServiceCatalogConflict) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this delete service catalog conflict response a status code equal to that given
-func (o *DeleteServiceCatalogConflict) IsCode(code int) bool {
-	return code == 409
-}
-
-// Code gets the status code for the delete service catalog conflict response
-func (o *DeleteServiceCatalogConflict) Code() int {
-	return 409
-}
-
 func (o *DeleteServiceCatalogConflict) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogConflict", 409)
-}
-
-func (o *DeleteServiceCatalogConflict) String() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogConflict", 409)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}][%d] deleteServiceCatalogConflict ", 409)
 }
 
 func (o *DeleteServiceCatalogConflict) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {

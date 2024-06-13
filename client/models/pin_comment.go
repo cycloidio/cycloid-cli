@@ -6,18 +6,16 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
 
 // PinComment PinComment
 //
-// # Represents a pin comment of a resource
-//
+// Represents a pin comment of a resource
 // swagger:model PinComment
 type PinComment struct {
 
@@ -46,11 +44,6 @@ func (m *PinComment) validatePinComment(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this pin comment based on context it is used
-func (m *PinComment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

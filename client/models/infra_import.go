@@ -6,11 +6,11 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
 	"encoding/json"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -42,7 +42,7 @@ type InfraImport struct {
 
 	// The import process status.
 	// Required: true
-	// Enum: ["succeeded","failed","importing"]
+	// Enum: [succeeded failed importing]
 	Status *string `json:"status"`
 }
 
@@ -95,19 +95,20 @@ func (m *InfraImport) validateLogs(formats strfmt.Registry) error {
 }
 
 func (m *InfraImport) validateProjectCanonical(formats strfmt.Registry) error {
+
 	if swag.IsZero(m.ProjectCanonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("project_canonical", "body", m.ProjectCanonical, 1); err != nil {
+	if err := validate.MinLength("project_canonical", "body", string(m.ProjectCanonical), 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("project_canonical", "body", m.ProjectCanonical, 100); err != nil {
+	if err := validate.MaxLength("project_canonical", "body", string(m.ProjectCanonical), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+	if err := validate.Pattern("project_canonical", "body", string(m.ProjectCanonical), `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
@@ -149,7 +150,7 @@ const (
 
 // prop value enum
 func (m *InfraImport) validateStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, infraImportTypeStatusPropEnum, true); err != nil {
+	if err := validate.Enum(path, location, value, infraImportTypeStatusPropEnum); err != nil {
 		return err
 	}
 	return nil
@@ -166,11 +167,6 @@ func (m *InfraImport) validateStatus(formats strfmt.Registry) error {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this infra import based on context it is used
-func (m *InfraImport) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

@@ -13,80 +13,65 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// NewEmailVerificationResendParams creates a new EmailVerificationResendParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewEmailVerificationResendParams creates a new EmailVerificationResendParams object
+// with the default values initialized.
 func NewEmailVerificationResendParams() *EmailVerificationResendParams {
+	var ()
 	return &EmailVerificationResendParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewEmailVerificationResendParamsWithTimeout creates a new EmailVerificationResendParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewEmailVerificationResendParamsWithTimeout(timeout time.Duration) *EmailVerificationResendParams {
+	var ()
 	return &EmailVerificationResendParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewEmailVerificationResendParamsWithContext creates a new EmailVerificationResendParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewEmailVerificationResendParamsWithContext(ctx context.Context) *EmailVerificationResendParams {
+	var ()
 	return &EmailVerificationResendParams{
+
 		Context: ctx,
 	}
 }
 
 // NewEmailVerificationResendParamsWithHTTPClient creates a new EmailVerificationResendParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewEmailVerificationResendParamsWithHTTPClient(client *http.Client) *EmailVerificationResendParams {
+	var ()
 	return &EmailVerificationResendParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-EmailVerificationResendParams contains all the parameters to send to the API endpoint
-
-	for the email verification resend operation.
-
-	Typically these are written to a http.Request.
+/*EmailVerificationResendParams contains all the parameters to send to the API endpoint
+for the email verification resend operation typically these are written to a http.Request
 */
 type EmailVerificationResendParams struct {
 
-	/* Body.
+	/*Body
+	  The email address to re-send the verification email. This endpoint doesn't return any error status code if the email doesn't exist nor it's already verified for avoiding that an attacker could find registered users email address.
 
-	   The email address to re-send the verification email. This endpoint doesn't return any error status code if the email doesn't exist nor it's already verified for avoiding that an attacker could find registered users email address.
 	*/
 	Body *models.UserEmail
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the email verification resend params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *EmailVerificationResendParams) WithDefaults() *EmailVerificationResendParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the email verification resend params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *EmailVerificationResendParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the email verification resend params
@@ -140,6 +125,7 @@ func (o *EmailVerificationResendParams) WriteToRequest(r runtime.ClientRequest, 
 		return err
 	}
 	var res []error
+
 	if o.Body != nil {
 		if err := r.SetBodyParam(o.Body); err != nil {
 			return err

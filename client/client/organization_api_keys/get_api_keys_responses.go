@@ -6,19 +6,18 @@ package organization_api_keys
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
+
+	models "github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetAPIKeysReader is a Reader for the GetAPIKeys structure.
@@ -70,8 +69,7 @@ func NewGetAPIKeysOK() *GetAPIKeysOK {
 	return &GetAPIKeysOK{}
 }
 
-/*
-GetAPIKeysOK describes a response with status code 200, with default header values.
+/*GetAPIKeysOK handles this case with default header values.
 
 List of the API keys which the organization has.
 */
@@ -79,44 +77,8 @@ type GetAPIKeysOK struct {
 	Payload *GetAPIKeysOKBody
 }
 
-// IsSuccess returns true when this get Api keys o k response has a 2xx status code
-func (o *GetAPIKeysOK) IsSuccess() bool {
-	return true
-}
-
-// IsRedirect returns true when this get Api keys o k response has a 3xx status code
-func (o *GetAPIKeysOK) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api keys o k response has a 4xx status code
-func (o *GetAPIKeysOK) IsClientError() bool {
-	return false
-}
-
-// IsServerError returns true when this get Api keys o k response has a 5xx status code
-func (o *GetAPIKeysOK) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api keys o k response a status code equal to that given
-func (o *GetAPIKeysOK) IsCode(code int) bool {
-	return code == 200
-}
-
-// Code gets the status code for the get Api keys o k response
-func (o *GetAPIKeysOK) Code() int {
-	return 200
-}
-
 func (o *GetAPIKeysOK) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysOK %s", 200, payload)
-}
-
-func (o *GetAPIKeysOK) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysOK %s", 200, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysOK  %+v", 200, o.Payload)
 }
 
 func (o *GetAPIKeysOK) GetPayload() *GetAPIKeysOKBody {
@@ -140,60 +102,20 @@ func NewGetAPIKeysForbidden() *GetAPIKeysForbidden {
 	return &GetAPIKeysForbidden{}
 }
 
-/*
-GetAPIKeysForbidden describes a response with status code 403, with default header values.
+/*GetAPIKeysForbidden handles this case with default header values.
 
 The authenticated user cannot perform the operation because, it doesn't have permissions for such operation.
 */
 type GetAPIKeysForbidden struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get Api keys forbidden response has a 2xx status code
-func (o *GetAPIKeysForbidden) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api keys forbidden response has a 3xx status code
-func (o *GetAPIKeysForbidden) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api keys forbidden response has a 4xx status code
-func (o *GetAPIKeysForbidden) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api keys forbidden response has a 5xx status code
-func (o *GetAPIKeysForbidden) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api keys forbidden response a status code equal to that given
-func (o *GetAPIKeysForbidden) IsCode(code int) bool {
-	return code == 403
-}
-
-// Code gets the status code for the get Api keys forbidden response
-func (o *GetAPIKeysForbidden) Code() int {
-	return 403
-}
-
 func (o *GetAPIKeysForbidden) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysForbidden %s", 403, payload)
-}
-
-func (o *GetAPIKeysForbidden) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysForbidden %s", 403, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysForbidden  %+v", 403, o.Payload)
 }
 
 func (o *GetAPIKeysForbidden) GetPayload() *models.ErrorPayload {
@@ -202,16 +124,12 @@ func (o *GetAPIKeysForbidden) GetPayload() *models.ErrorPayload {
 
 func (o *GetAPIKeysForbidden) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -228,60 +146,20 @@ func NewGetAPIKeysNotFound() *GetAPIKeysNotFound {
 	return &GetAPIKeysNotFound{}
 }
 
-/*
-GetAPIKeysNotFound describes a response with status code 404, with default header values.
+/*GetAPIKeysNotFound handles this case with default header values.
 
 The response sent when any of the entities present in the path is not found.
 */
 type GetAPIKeysNotFound struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get Api keys not found response has a 2xx status code
-func (o *GetAPIKeysNotFound) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api keys not found response has a 3xx status code
-func (o *GetAPIKeysNotFound) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api keys not found response has a 4xx status code
-func (o *GetAPIKeysNotFound) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api keys not found response has a 5xx status code
-func (o *GetAPIKeysNotFound) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api keys not found response a status code equal to that given
-func (o *GetAPIKeysNotFound) IsCode(code int) bool {
-	return code == 404
-}
-
-// Code gets the status code for the get Api keys not found response
-func (o *GetAPIKeysNotFound) Code() int {
-	return 404
-}
-
 func (o *GetAPIKeysNotFound) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysNotFound %s", 404, payload)
-}
-
-func (o *GetAPIKeysNotFound) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysNotFound %s", 404, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysNotFound  %+v", 404, o.Payload)
 }
 
 func (o *GetAPIKeysNotFound) GetPayload() *models.ErrorPayload {
@@ -290,16 +168,12 @@ func (o *GetAPIKeysNotFound) GetPayload() *models.ErrorPayload {
 
 func (o *GetAPIKeysNotFound) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -316,60 +190,20 @@ func NewGetAPIKeysUnprocessableEntity() *GetAPIKeysUnprocessableEntity {
 	return &GetAPIKeysUnprocessableEntity{}
 }
 
-/*
-GetAPIKeysUnprocessableEntity describes a response with status code 422, with default header values.
+/*GetAPIKeysUnprocessableEntity handles this case with default header values.
 
 All the custom errors that are generated from the Cycloid API
 */
 type GetAPIKeysUnprocessableEntity struct {
-
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
 }
 
-// IsSuccess returns true when this get Api keys unprocessable entity response has a 2xx status code
-func (o *GetAPIKeysUnprocessableEntity) IsSuccess() bool {
-	return false
-}
-
-// IsRedirect returns true when this get Api keys unprocessable entity response has a 3xx status code
-func (o *GetAPIKeysUnprocessableEntity) IsRedirect() bool {
-	return false
-}
-
-// IsClientError returns true when this get Api keys unprocessable entity response has a 4xx status code
-func (o *GetAPIKeysUnprocessableEntity) IsClientError() bool {
-	return true
-}
-
-// IsServerError returns true when this get Api keys unprocessable entity response has a 5xx status code
-func (o *GetAPIKeysUnprocessableEntity) IsServerError() bool {
-	return false
-}
-
-// IsCode returns true when this get Api keys unprocessable entity response a status code equal to that given
-func (o *GetAPIKeysUnprocessableEntity) IsCode(code int) bool {
-	return code == 422
-}
-
-// Code gets the status code for the get Api keys unprocessable entity response
-func (o *GetAPIKeysUnprocessableEntity) Code() int {
-	return 422
-}
-
 func (o *GetAPIKeysUnprocessableEntity) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysUnprocessableEntity %s", 422, payload)
-}
-
-func (o *GetAPIKeysUnprocessableEntity) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getApiKeysUnprocessableEntity  %+v", 422, o.Payload)
 }
 
 func (o *GetAPIKeysUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -378,16 +212,12 @@ func (o *GetAPIKeysUnprocessableEntity) GetPayload() *models.ErrorPayload {
 
 func (o *GetAPIKeysUnprocessableEntity) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -406,46 +236,18 @@ func NewGetAPIKeysDefault(code int) *GetAPIKeysDefault {
 	}
 }
 
-/*
-GetAPIKeysDefault describes a response with status code -1, with default header values.
+/*GetAPIKeysDefault handles this case with default header values.
 
 The response sent when an unexpected error happened, as known as an internal server error.
 */
 type GetAPIKeysDefault struct {
 	_statusCode int
 
-	/* The length of the response body in octets (8-bit bytes).
-
-	   Format: uint64
-	*/
+	/*The length of the response body in octets (8-bit bytes).
+	 */
 	ContentLength uint64
 
 	Payload *models.ErrorPayload
-}
-
-// IsSuccess returns true when this get API keys default response has a 2xx status code
-func (o *GetAPIKeysDefault) IsSuccess() bool {
-	return o._statusCode/100 == 2
-}
-
-// IsRedirect returns true when this get API keys default response has a 3xx status code
-func (o *GetAPIKeysDefault) IsRedirect() bool {
-	return o._statusCode/100 == 3
-}
-
-// IsClientError returns true when this get API keys default response has a 4xx status code
-func (o *GetAPIKeysDefault) IsClientError() bool {
-	return o._statusCode/100 == 4
-}
-
-// IsServerError returns true when this get API keys default response has a 5xx status code
-func (o *GetAPIKeysDefault) IsServerError() bool {
-	return o._statusCode/100 == 5
-}
-
-// IsCode returns true when this get API keys default response a status code equal to that given
-func (o *GetAPIKeysDefault) IsCode(code int) bool {
-	return o._statusCode == code
 }
 
 // Code gets the status code for the get API keys default response
@@ -454,13 +256,7 @@ func (o *GetAPIKeysDefault) Code() int {
 }
 
 func (o *GetAPIKeysDefault) Error() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getAPIKeys default %s", o._statusCode, payload)
-}
-
-func (o *GetAPIKeysDefault) String() string {
-	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getAPIKeys default %s", o._statusCode, payload)
+	return fmt.Sprintf("[GET /organizations/{organization_canonical}/api_keys][%d] getAPIKeys default  %+v", o._statusCode, o.Payload)
 }
 
 func (o *GetAPIKeysDefault) GetPayload() *models.ErrorPayload {
@@ -469,16 +265,12 @@ func (o *GetAPIKeysDefault) GetPayload() *models.ErrorPayload {
 
 func (o *GetAPIKeysDefault) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	// hydrates response header Content-Length
-	hdrContentLength := response.GetHeader("Content-Length")
-
-	if hdrContentLength != "" {
-		valcontentLength, err := swag.ConvertUint64(hdrContentLength)
-		if err != nil {
-			return errors.InvalidType("Content-Length", "header", "uint64", hdrContentLength)
-		}
-		o.ContentLength = valcontentLength
+	// response header Content-Length
+	contentLength, err := swag.ConvertUint64(response.GetHeader("Content-Length"))
+	if err != nil {
+		return errors.InvalidType("Content-Length", "header", "uint64", response.GetHeader("Content-Length"))
 	}
+	o.ContentLength = contentLength
 
 	o.Payload = new(models.ErrorPayload)
 
@@ -490,8 +282,7 @@ func (o *GetAPIKeysDefault) readResponse(response runtime.ClientResponse, consum
 	return nil
 }
 
-/*
-GetAPIKeysOKBody get API keys o k body
+/*GetAPIKeysOKBody get API keys o k body
 swagger:model GetAPIKeysOKBody
 */
 type GetAPIKeysOKBody struct {
@@ -538,8 +329,6 @@ func (o *GetAPIKeysOKBody) validateData(formats strfmt.Registry) error {
 			if err := o.Data[i].Validate(formats); err != nil {
 				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("getApiKeysOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("getApiKeysOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
 				return err
 			}
@@ -560,68 +349,6 @@ func (o *GetAPIKeysOKBody) validatePagination(formats strfmt.Registry) error {
 		if err := o.Pagination.Validate(formats); err != nil {
 			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("getApiKeysOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getApiKeysOK" + "." + "pagination")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this get API keys o k body based on the context it is used
-func (o *GetAPIKeysOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := o.contextValidateData(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := o.contextValidatePagination(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (o *GetAPIKeysOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(o.Data); i++ {
-
-		if o.Data[i] != nil {
-
-			if swag.IsZero(o.Data[i]) { // not required
-				return nil
-			}
-
-			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("getApiKeysOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("getApiKeysOK" + "." + "data" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (o *GetAPIKeysOKBody) contextValidatePagination(ctx context.Context, formats strfmt.Registry) error {
-
-	if o.Pagination != nil {
-
-		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("getApiKeysOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("getApiKeysOK" + "." + "pagination")
 			}
 			return err
 		}

@@ -6,10 +6,9 @@ package models
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
-	"context"
+	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/go-openapi/errors"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
 	"github.com/go-openapi/validate"
 )
@@ -17,7 +16,6 @@ import (
 // CostGroup CostGroup
 //
 // This object contains the items described in https://docs.aws.amazon.com/sdk-for-go/api/service/costexplorer/#Group The groups hold the information about the price per key(s) for each iteration over the time range requested.
-//
 // swagger:model CostGroup
 type CostGroup struct {
 
@@ -68,15 +66,15 @@ func (m *CostGroup) validateAmount(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("amount", "body", *m.Amount, 3); err != nil {
+	if err := validate.MinLength("amount", "body", string(*m.Amount), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("amount", "body", *m.Amount, 100); err != nil {
+	if err := validate.MaxLength("amount", "body", string(*m.Amount), 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("amount", "body", *m.Amount, `^[0-9]+.[0-9]+$`); err != nil {
+	if err := validate.Pattern("amount", "body", string(*m.Amount), `^[0-9]+.[0-9]+$`); err != nil {
 		return err
 	}
 
@@ -98,23 +96,18 @@ func (m *CostGroup) validateUnit(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("unit", "body", *m.Unit, 3); err != nil {
+	if err := validate.MinLength("unit", "body", string(*m.Unit), 3); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("unit", "body", *m.Unit, 3); err != nil {
+	if err := validate.MaxLength("unit", "body", string(*m.Unit), 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("unit", "body", *m.Unit, `^[A-Z]+$`); err != nil {
+	if err := validate.Pattern("unit", "body", string(*m.Unit), `^[A-Z]+$`); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// ContextValidate validates this cost group based on context it is used
-func (m *CostGroup) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 

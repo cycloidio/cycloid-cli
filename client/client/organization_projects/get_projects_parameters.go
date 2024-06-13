@@ -13,171 +13,141 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetProjectsParams creates a new GetProjectsParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetProjectsParams creates a new GetProjectsParams object
+// with the default values initialized.
 func NewGetProjectsParams() *GetProjectsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetProjectsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetProjectsParamsWithTimeout creates a new GetProjectsParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetProjectsParamsWithTimeout(timeout time.Duration) *GetProjectsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetProjectsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		timeout: timeout,
 	}
 }
 
 // NewGetProjectsParamsWithContext creates a new GetProjectsParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetProjectsParamsWithContext(ctx context.Context) *GetProjectsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetProjectsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+
 		Context: ctx,
 	}
 }
 
 // NewGetProjectsParamsWithHTTPClient creates a new GetProjectsParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetProjectsParamsWithHTTPClient(client *http.Client) *GetProjectsParams {
+	var (
+		pageIndexDefault = uint32(1)
+		pageSizeDefault  = uint32(1000)
+	)
 	return &GetProjectsParams{
+		PageIndex:  &pageIndexDefault,
+		PageSize:   &pageSizeDefault,
 		HTTPClient: client,
 	}
 }
 
-/*
-GetProjectsParams contains all the parameters to send to the API endpoint
-
-	for the get projects operation.
-
-	Typically these are written to a http.Request.
+/*GetProjectsParams contains all the parameters to send to the API endpoint
+for the get projects operation typically these are written to a http.Request
 */
 type GetProjectsParams struct {
 
-	/* EnvironmentCanonical.
+	/*EnvironmentCanonical
+	  A list of environments' canonical to filter from
 
-	   A list of environments' canonical to filter from
 	*/
 	EnvironmentCanonical *string
+	/*Favorite
+	  Flag to retrieve favorite data from the members favorite list.
 
-	/* Favorite.
-
-	   Flag to retrieve favorite data from the members favorite list.
 
 	*/
 	Favorite *bool
+	/*MemberID
+	  Search by entity's owner
 
-	/* MemberID.
-
-	   Search by entity's owner
-
-	   Format: uint32
 	*/
 	MemberID *uint32
+	/*OrderBy
+	  Allows to order the list of items. Example usage: field_name:asc
 
-	/* OrderBy.
-
-	   Allows to order the list of items. Example usage: field_name:asc
 
 	*/
 	OrderBy *string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+	/*PageIndex
+	  The page number to request. The first page is 1.
 
-	/* PageIndex.
-
-	   The page number to request. The first page is 1.
-
-	   Format: uint32
-	   Default: 1
 	*/
 	PageIndex *uint32
+	/*PageSize
+	  The number of items at most which the response can have.
 
-	/* PageSize.
-
-	   The number of items at most which the response can have.
-
-	   Format: uint32
-	   Default: 1000
 	*/
 	PageSize *uint32
+	/*ProjectConfigRepositoryCanonical
+	  Search by project's config repository's canonical
 
-	/* ProjectConfigRepositoryCanonical.
-
-	   Search by project's config repository's canonical
 	*/
 	ProjectConfigRepositoryCanonical *string
+	/*ProjectCreatedAt
+	  Search by project's creation date
 
-	/* ProjectCreatedAt.
-
-	   Search by project's creation date
-
-	   Format: uint64
 	*/
 	ProjectCreatedAt *uint64
+	/*ProjectDescription
+	  Search by project's description
 
-	/* ProjectDescription.
-
-	   Search by project's description
 	*/
 	ProjectDescription *string
+	/*ProjectName
+	  Search by project's name
 
-	/* ProjectName.
-
-	   Search by project's name
 	*/
 	ProjectName *string
+	/*ServiceCatalogSourceCanonical
+	  Organization Service Catalog Sources canonical
 
-	/* ServiceCatalogSourceCanonical.
-
-	   Organization Service Catalog Sources canonical
 	*/
 	ServiceCatalogSourceCanonical *string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get projects params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetProjectsParams) WithDefaults() *GetProjectsParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get projects params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetProjectsParams) SetDefaults() {
-	var (
-		pageIndexDefault = uint32(1)
-
-		pageSizeDefault = uint32(1000)
-	)
-
-	val := GetProjectsParams{
-		PageIndex: &pageIndexDefault,
-		PageSize:  &pageSizeDefault,
-	}
-
-	val.timeout = o.timeout
-	val.Context = o.Context
-	val.HTTPClient = o.HTTPClient
-	*o = val
 }
 
 // WithTimeout adds the timeout to the get projects params
@@ -357,68 +327,64 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 
 		// query param environment_canonical
 		var qrEnvironmentCanonical string
-
 		if o.EnvironmentCanonical != nil {
 			qrEnvironmentCanonical = *o.EnvironmentCanonical
 		}
 		qEnvironmentCanonical := qrEnvironmentCanonical
 		if qEnvironmentCanonical != "" {
-
 			if err := r.SetQueryParam("environment_canonical", qEnvironmentCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.Favorite != nil {
 
 		// query param favorite
 		var qrFavorite bool
-
 		if o.Favorite != nil {
 			qrFavorite = *o.Favorite
 		}
 		qFavorite := swag.FormatBool(qrFavorite)
 		if qFavorite != "" {
-
 			if err := r.SetQueryParam("favorite", qFavorite); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.MemberID != nil {
 
 		// query param member_id
 		var qrMemberID uint32
-
 		if o.MemberID != nil {
 			qrMemberID = *o.MemberID
 		}
 		qMemberID := swag.FormatUint32(qrMemberID)
 		if qMemberID != "" {
-
 			if err := r.SetQueryParam("member_id", qMemberID); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.OrderBy != nil {
 
 		// query param order_by
 		var qrOrderBy string
-
 		if o.OrderBy != nil {
 			qrOrderBy = *o.OrderBy
 		}
 		qOrderBy := qrOrderBy
 		if qOrderBy != "" {
-
 			if err := r.SetQueryParam("order_by", qOrderBy); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	// path param organization_canonical
@@ -430,119 +396,112 @@ func (o *GetProjectsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.R
 
 		// query param page_index
 		var qrPageIndex uint32
-
 		if o.PageIndex != nil {
 			qrPageIndex = *o.PageIndex
 		}
 		qPageIndex := swag.FormatUint32(qrPageIndex)
 		if qPageIndex != "" {
-
 			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.PageSize != nil {
 
 		// query param page_size
 		var qrPageSize uint32
-
 		if o.PageSize != nil {
 			qrPageSize = *o.PageSize
 		}
 		qPageSize := swag.FormatUint32(qrPageSize)
 		if qPageSize != "" {
-
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ProjectConfigRepositoryCanonical != nil {
 
 		// query param project_config_repository_canonical
 		var qrProjectConfigRepositoryCanonical string
-
 		if o.ProjectConfigRepositoryCanonical != nil {
 			qrProjectConfigRepositoryCanonical = *o.ProjectConfigRepositoryCanonical
 		}
 		qProjectConfigRepositoryCanonical := qrProjectConfigRepositoryCanonical
 		if qProjectConfigRepositoryCanonical != "" {
-
 			if err := r.SetQueryParam("project_config_repository_canonical", qProjectConfigRepositoryCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ProjectCreatedAt != nil {
 
 		// query param project_created_at
 		var qrProjectCreatedAt uint64
-
 		if o.ProjectCreatedAt != nil {
 			qrProjectCreatedAt = *o.ProjectCreatedAt
 		}
 		qProjectCreatedAt := swag.FormatUint64(qrProjectCreatedAt)
 		if qProjectCreatedAt != "" {
-
 			if err := r.SetQueryParam("project_created_at", qProjectCreatedAt); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ProjectDescription != nil {
 
 		// query param project_description
 		var qrProjectDescription string
-
 		if o.ProjectDescription != nil {
 			qrProjectDescription = *o.ProjectDescription
 		}
 		qProjectDescription := qrProjectDescription
 		if qProjectDescription != "" {
-
 			if err := r.SetQueryParam("project_description", qProjectDescription); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ProjectName != nil {
 
 		// query param project_name
 		var qrProjectName string
-
 		if o.ProjectName != nil {
 			qrProjectName = *o.ProjectName
 		}
 		qProjectName := qrProjectName
 		if qProjectName != "" {
-
 			if err := r.SetQueryParam("project_name", qProjectName); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if o.ServiceCatalogSourceCanonical != nil {
 
 		// query param service_catalog_source_canonical
 		var qrServiceCatalogSourceCanonical string
-
 		if o.ServiceCatalogSourceCanonical != nil {
 			qrServiceCatalogSourceCanonical = *o.ServiceCatalogSourceCanonical
 		}
 		qServiceCatalogSourceCanonical := qrServiceCatalogSourceCanonical
 		if qServiceCatalogSourceCanonical != "" {
-
 			if err := r.SetQueryParam("service_catalog_source_canonical", qServiceCatalogSourceCanonical); err != nil {
 				return err
 			}
 		}
+
 	}
 
 	if len(res) > 0 {

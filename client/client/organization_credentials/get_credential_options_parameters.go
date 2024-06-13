@@ -13,87 +13,70 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
-	"github.com/go-openapi/strfmt"
+
+	strfmt "github.com/go-openapi/strfmt"
 )
 
-// NewGetCredentialOptionsParams creates a new GetCredentialOptionsParams object,
-// with the default timeout for this client.
-//
-// Default values are not hydrated, since defaults are normally applied by the API server side.
-//
-// To enforce default values in parameter, use SetDefaults or WithDefaults.
+// NewGetCredentialOptionsParams creates a new GetCredentialOptionsParams object
+// with the default values initialized.
 func NewGetCredentialOptionsParams() *GetCredentialOptionsParams {
+	var ()
 	return &GetCredentialOptionsParams{
+
 		timeout: cr.DefaultTimeout,
 	}
 }
 
 // NewGetCredentialOptionsParamsWithTimeout creates a new GetCredentialOptionsParams object
-// with the ability to set a timeout on a request.
+// with the default values initialized, and the ability to set a timeout on a request
 func NewGetCredentialOptionsParamsWithTimeout(timeout time.Duration) *GetCredentialOptionsParams {
+	var ()
 	return &GetCredentialOptionsParams{
+
 		timeout: timeout,
 	}
 }
 
 // NewGetCredentialOptionsParamsWithContext creates a new GetCredentialOptionsParams object
-// with the ability to set a context for a request.
+// with the default values initialized, and the ability to set a context for a request
 func NewGetCredentialOptionsParamsWithContext(ctx context.Context) *GetCredentialOptionsParams {
+	var ()
 	return &GetCredentialOptionsParams{
+
 		Context: ctx,
 	}
 }
 
 // NewGetCredentialOptionsParamsWithHTTPClient creates a new GetCredentialOptionsParams object
-// with the ability to set a custom HTTPClient for a request.
+// with the default values initialized, and the ability to set a custom HTTPClient for a request
 func NewGetCredentialOptionsParamsWithHTTPClient(client *http.Client) *GetCredentialOptionsParams {
+	var ()
 	return &GetCredentialOptionsParams{
 		HTTPClient: client,
 	}
 }
 
-/*
-GetCredentialOptionsParams contains all the parameters to send to the API endpoint
-
-	for the get credential options operation.
-
-	Typically these are written to a http.Request.
+/*GetCredentialOptionsParams contains all the parameters to send to the API endpoint
+for the get credential options operation typically these are written to a http.Request
 */
 type GetCredentialOptionsParams struct {
 
-	/* CredentialCanonical.
+	/*CredentialCanonical
+	  A Credential canonical
 
-	   A Credential canonical
 	*/
 	CredentialCanonical string
+	/*OrganizationCanonical
+	  A canonical of an organization.
 
-	/* OrganizationCanonical.
-
-	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-
-	// Service.
+	/*Service*/
 	Service string
 
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
-}
-
-// WithDefaults hydrates default values in the get credential options params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetCredentialOptionsParams) WithDefaults() *GetCredentialOptionsParams {
-	o.SetDefaults()
-	return o
-}
-
-// SetDefaults hydrates default values in the get credential options params (not the query body).
-//
-// All values with no default are reset to their zero value.
-func (o *GetCredentialOptionsParams) SetDefaults() {
-	// no default values defined for this parameter
 }
 
 // WithTimeout adds the timeout to the get credential options params
@@ -184,7 +167,6 @@ func (o *GetCredentialOptionsParams) WriteToRequest(r runtime.ClientRequest, reg
 	qrService := o.Service
 	qService := qrService
 	if qService != "" {
-
 		if err := r.SetQueryParam("service", qService); err != nil {
 			return err
 		}
