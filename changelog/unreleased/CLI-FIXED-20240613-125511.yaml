@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Fix version for release
-time: 2024-06-13T12:55:11.766947309Z
-custom:
-  DETAILS: ""
-  PR: "269"
-  TYPE: CLI
