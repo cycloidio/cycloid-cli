@@ -101,11 +101,11 @@ test: ## Run end to end tests
 reset-old-client: ## Resets old client folder
 	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "rm -rf ./client" && mkdir -p client
 
+# Used in CI, do not use docker compose here.
 .PHONY: generate-client
 generate-client: reset-old-client ## Generate client from file at SWAGGER_FILE path
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE)
-	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 
 .PHONY: generate-client-from-local
 generate-client-from-local: reset-old-client ## Generates client using docker and local swagger (version -> v0.0-dev)
