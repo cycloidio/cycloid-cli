@@ -1,8 +1,0 @@
-component: CLI
-kind: BREAKING
-body: Update go version to 1.22.4 and go-swagger to 0.31.0
-time: 2024-06-13T15:49:51.51777363Z
-custom:
-  DETAILS: ""
-  PR: "272"
-  TYPE: CLI
