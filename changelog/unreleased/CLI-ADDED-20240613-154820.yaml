@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: Add `cy project create-stackforms-env` command to create env using stackforms
+time: 2024-06-13T15:48:20.172904726Z
+custom:
+  DETAILS: Add `cy project create-stackforms-env` command to create env using stackforms.
+  PR: "269"
+  TYPE: CLI

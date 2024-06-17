@@ -1,0 +1,10 @@
+component: CLI
+kind: ADDED
+body: Add `cy project get-env` command to retrieve configuration value on projects
+  using stackforms.
+time: 2024-06-13T15:49:02.117940232Z
+custom:
+  DETAILS: Add `cy project get-env` command to retrieve configuration value on projects
+    using stackforms.
+  PR: "269"
+  TYPE: CLI
