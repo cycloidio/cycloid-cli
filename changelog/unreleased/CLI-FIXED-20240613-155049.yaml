@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Fix all env related commands not returning UI icons on update.
-time: 2024-06-13T15:50:49.002342257Z
-custom:
-  DETAILS: Fix all env related commands not returning UI icons on update.█
-  PR: "269"
-  TYPE: CLI
