@@ -308,12 +308,7 @@ func EntityGetValue(entity *models.FormEntity, getCurrent bool) any {
 	}
 }
 
-func ParseFormsConfig(conf *models.ProjectEnvironmentConfig, useCase string, getCurrent bool) (vars map[string]map[string]map[string]any, err error) {
-	form, err := GetFormsUseCase(conf.Forms.UseCases, useCase)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to extract forms data from project config.")
-	}
-
+func ParseFormsConfig(form *models.FormUseCase, getCurrent bool) (vars map[string]map[string]map[string]any, err error) {
 	vars = make(map[string]map[string]map[string]any)
 	for _, section := range form.Sections {
 		if section == nil {
@@ -334,11 +329,11 @@ func ParseFormsConfig(conf *models.ProjectEnvironmentConfig, useCase string, get
 				}
 
 				value := EntityGetValue(varEntity, getCurrent)
-				// We have to strings.ToLower() the keys otherwise, it will not be
-				// recognized as input for a create-env
-				vars[strings.ToLower(*varEntity.Name)] = value
+				vars[*varEntity.Key] = value
 			}
 
+			// We have to strings.ToLower() the groups and sections names
+			// otherwise, it will not be recognized as input for a create-env
 			groups[strings.ToLower(*group.Name)] = vars
 		}
 
