@@ -332,7 +332,12 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, inputs[0].Vars, errors.Wrap(err, errMsg), "", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	formsConfig, err := common.ParseFormsConfig(config, usecase, true)
+	form, err := common.GetFormsUseCase(config.Forms.UseCases, usecase)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract forms data from project config.")
+	}
+
+	formsConfig, err := common.ParseFormsConfig(form, true)
 	if err != nil {
 		return printer.SmartPrint(p, inputs[0].Vars, errors.Wrap(err, errMsg), "", printer.Options{}, cmd.OutOrStdout())
 	}

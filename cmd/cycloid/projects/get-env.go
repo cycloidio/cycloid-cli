@@ -111,7 +111,12 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, fmt.Sprint("failed to fetch project '", project, "' config for env '", env, "' in org '", org, "'"), printer.Options{}, cmd.OutOrStderr())
 	}
 
-	formData, err := common.ParseFormsConfig(resp, *resp.UseCase, !getDefault)
+	form, err := common.GetFormsUseCase(resp.Forms.UseCases, *resp.UseCase)
+	if err != nil {
+		return errors.Wrap(err, "failed to extract forms data from project config.")
+	}
+
+	formData, err := common.ParseFormsConfig(form, !getDefault)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to get stack config, parsing failed.", printer.Options{}, cmd.OutOrStdout())
 	}
