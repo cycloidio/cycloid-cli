@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Make `cy project create-stackforms-env` fetch default by default`
-time: 2024-06-19T08:44:33.316756532Z
-custom:
-  DETAILS: This behavior can be disabled with the `--no-fetch-defaults` flag
-  PR: "277"
-  TYPE: CLI

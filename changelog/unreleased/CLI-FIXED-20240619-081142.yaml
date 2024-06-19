@@ -1,9 +1,0 @@
-component: CLI
-kind: FIXED
-body: Fix forms config parsing for stackforms related commands not sending the correct
-  vars keys.
-time: 2024-06-19T08:11:42.378864793Z
-custom:
-  DETAILS: ""
-  PR: "277"
-  TYPE: CLI
