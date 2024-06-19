@@ -18,7 +18,7 @@ import (
 func NewGetConfigCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get-config <ref?> <use-case?> [flags]",
-		Short: "get a stack configuration",
+		Short: "output a V2 stack default configuration in JSON (require stackforms)",
 		Example: `
 cy --org my-org stacks get-config my:stack-ref stack-usecase
 `,
@@ -32,6 +32,33 @@ cy --org my-org stacks get-config my:stack-ref stack-usecase
 	cmd.Flags().StringP("use-case", "u", "", "usecase you want")
 
 	return cmd
+}
+
+func ExtractFormsFromStackConfig(data interface{}, useCase string) (*models.FormUseCase, error) {
+	formData, ok := data.(map[string]interface{})
+	if !ok {
+		return nil, errors.New("failed to cast forms data")
+	}
+
+	useCaseData, ok := formData[useCase].(map[string]interface{})
+	if !ok {
+		return nil, errors.New("failed to extract selected use-case: " + useCase)
+	}
+
+	// Type casting is not working but marshall/unmashall works
+	// TODO: Clean this or ask backend to return a typed response
+	jsonData, err := json.Marshal(useCaseData["forms"])
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to marshall config")
+	}
+
+	var d *models.FormUseCase
+	err = json.Unmarshal(jsonData, &d)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to parse forms usecase, struct invalid.")
+	}
+
+	return d, nil
 }
 
 func getConfig(cmd *cobra.Command, args []string) error {
@@ -80,27 +107,12 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	data, ok := s.(map[string]interface{})
-	if !ok {
-		return printer.SmartPrint(p, nil, fmt.Errorf("failed to parse stack data"), "", printer.Options{}, cmd.OutOrStdout())
-	}
-
-	useCaseData, ok := data[useCase].(map[string]interface{})
-	if !ok {
-		return printer.SmartPrint(p, nil, fmt.Errorf("failed to parse stack config data: %v:", data), "", printer.Options{}, cmd.OutOrStdout())
-	}
-
-	// Type casting is not working but marshall/unmashall works
-	// TODO: Clean this or ask backend to return a typed response
-	jsonData, err := json.Marshal(useCaseData["forms"])
+	data, err := ExtractFormsFromStackConfig(s, useCase)
 	if err != nil {
-		return errors.Wrap(err, "failed to marshall config")
+		return printer.SmartPrint(p, nil, err, "failed to parse config from API response", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	var d *models.FormUseCase
-	err = json.Unmarshal(jsonData, &d)
-
-	formConfig, err := common.ParseFormsConfig(d, false)
+	formConfig, err := common.ParseFormsConfig(data, false)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to parse stack config", printer.Options{}, cmd.OutOrStdout())
 	}

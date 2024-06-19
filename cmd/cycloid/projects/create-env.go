@@ -15,6 +15,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -24,6 +25,9 @@ func NewCreateEnvCommand() *cobra.Command {
 		Use:   "create-stackforms-env",
 		Short: "create an environment within a project using StackForms.",
 		Long: `Create or update (with --update) an environment within a project using StackForms.
+
+By default, the command will fetch the stack's default value for you to override.
+You can cancel this with the --no-fetch-defaults flag
 
 You can use the following ways to fill in the stackforms configuration (in the order of precedence):
 1. --var-file (-f) flag       -> accept any valid JSON file, if the filename is "-", read from stdin (can be set multiple times)
@@ -71,6 +75,7 @@ cy project get-env-config --org my-org --project my-project --env prod \
 	cmd.PersistentFlags().StringArrayP("json-vars", "j", nil, "JSON string containing variables, can be set multiple times.")
 	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a field=value syntax (e.g. -V section.group.key=value)`)
 	cmd.PersistentFlags().Bool("update", false, "allow to override existing environment")
+	cmd.PersistentFlags().Bool("no-fetch-defaults", false, "disable the fetching of the stacks default values")
 
 	return cmd
 }
@@ -111,12 +116,12 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return errors.New("env must be at least 2 characters long")
 	}
 
-	usecase, err := cmd.Flags().GetString("use-case")
+	useCase, err := cmd.Flags().GetString("use-case")
 	if err != nil {
 		return err
 	}
 
-	if usecase == "" {
+	if useCase == "" {
 		return errors.New("use-case is empty, please specify an use-case with --use-case")
 	}
 
@@ -135,11 +140,42 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	noFetchDefault, err := cmd.Flags().GetBool("no-fetch-defaults")
+	if err != nil {
+		return err
+	}
+
 	//
 	// Variable merge
 	//
-
 	var vars = make(map[string]interface{})
+
+	// We need the project data first to get the stack ref
+	projectData, err := m.GetProject(org, project)
+	if err != nil {
+		return err
+	}
+
+	if !noFetchDefault {
+		// First we fetch the stack's default
+		stack, err := m.GetStackConfig(org, *projectData.ServiceCatalog.Ref)
+		if err != nil {
+			return errors.Wrap(err, "failed to retrieve stack's defaults values")
+		}
+
+		data, err := stacks.ExtractFormsFromStackConfig(stack, useCase)
+		if err != nil {
+			return err
+		}
+
+		defaultValues, err := common.ParseFormsConfig(data, false)
+		if err != nil {
+			return err
+		}
+
+		// We merge default values first
+		mergo.Merge(&vars, defaultValues, mergo.WithOverride)
+	}
 
 	// Fetch vars from files and stdin
 	for _, varFile := range varsFiles {
@@ -219,11 +255,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		common.UpdateMapField(k, v, vars)
 	}
 
-	projectData, err := m.GetProject(org, project)
-	if err != nil {
-		return err
-	}
-
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
@@ -274,7 +305,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 	// Infer icon and color based on usecase
 	var cloudProviderCanonical, icon, color string
-	switch strings.ToLower(usecase) {
+	switch strings.ToLower(useCase) {
 	case "aws":
 		cloudProviderCanonical = "aws"
 		icon = "mdi-aws"
@@ -307,7 +338,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	inputs := []*models.FormInput{
 		{
 			EnvironmentCanonical: &env,
-			UseCase:              &usecase,
+			UseCase:              &useCase,
 			Vars:                 vars,
 		},
 	}
@@ -332,7 +363,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, inputs[0].Vars, errors.Wrap(err, errMsg), "", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	form, err := common.GetFormsUseCase(config.Forms.UseCases, usecase)
+	form, err := common.GetFormsUseCase(config.Forms.UseCases, useCase)
 	if err != nil {
 		return errors.Wrap(err, "failed to extract forms data from project config.")
 	}
