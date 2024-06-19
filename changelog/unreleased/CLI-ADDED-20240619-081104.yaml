@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add a `cy stacks get-config <ref> <use-case>` to retrieve a stack default config
-time: 2024-06-19T08:11:04.73480973Z
-custom:
-  DETAILS: ""
-  PR: "277"
-  TYPE: CLI
