@@ -1,0 +1,8 @@
+component: CLI
+kind: FIXED
+body: Remove API validation on bad playload from API for catalog repository refresh
+time: 2024-07-01T12:56:55.729536601Z
+custom:
+  DETAILS: ""
+  PR: "278"
+  TYPE: CLI

@@ -62,7 +62,6 @@ func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) error {
 }
 
 func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string) (*models.ServiceCatalogSource, error) {
-
 	params := organization_service_catalog_sources.NewCreateServiceCatalogSourceParams()
 	params.SetOrganizationCanonical(org)
 
@@ -142,7 +141,6 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 }
 
 func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error) {
-
 	params := organization_service_catalog_sources.NewRefreshServiceCatalogSourceParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogSourceCanonical(catalogRepo)
@@ -153,10 +151,11 @@ func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// TODO: Put back validation when backend fix it
+	//err = p.Validate(strfmt.Default)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	d := p.Data
 

@@ -78,6 +78,7 @@ type Middleware interface {
 	SyncedPipeline(org, project, env string) (*models.PipelineStatus, error)
 
 	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error)
+	CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo string) (*models.Project, error)
 	DeleteProjectEnv(org, project, env string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)

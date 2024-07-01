@@ -8,6 +8,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
 )
 
 func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
@@ -72,8 +73,40 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error) {
+func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo string) (*models.Project, error) {
+	params := organization_projects.NewCreateProjectParams()
+	params.WithOrganizationCanonical(org)
 
+	body := &models.NewProject{
+		Name:                      &projectName,
+		Description:               description,
+		Canonical:                 projectCanonical,
+		ServiceCatalogRef:         &stackRef,
+		ConfigRepositoryCanonical: &configRepo,
+	}
+
+	err := body.Validate(strfmt.Default)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to validate body input for createProject")
+	}
+
+	params.WithBody(body)
+
+	response, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := response.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to validate response from API after project creation.")
+	}
+
+	return payload.Data, nil
+}
+
+func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error) {
 	var body *models.NewProject
 	var pipelines []*models.NewPipeline
 
@@ -103,6 +136,7 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 		PassedConfig: pipelineTemplate,
 		YamlVars:     vars,
 	}
+
 	err := pipeline.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
