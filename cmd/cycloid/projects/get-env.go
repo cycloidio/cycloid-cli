@@ -48,7 +48,6 @@ cy --org my-org project get-env-config my-project my-project use_case -o yaml`,
 		Args:    cobra.RangeArgs(0, 2),
 	}
 
-	common.WithFlagOrg(cmd)
 	cmd.Flags().StringP("project", "p", "", "specify the project")
 	cmd.Flags().StringP("env", "e", "", "specify the env")
 	cmd.Flags().BoolP("default", "d", false, "if set, will fetch the default value from the stack instead of the current ones.")
@@ -85,7 +84,7 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

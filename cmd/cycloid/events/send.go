@@ -2,7 +2,7 @@ package events
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -58,7 +58,7 @@ func send(cmd *cobra.Command, args []string) error {
 
 	var err error
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
@@ -104,7 +104,7 @@ func send(cmd *cobra.Command, args []string) error {
 
 	var msg string
 	if messageFile != "" {
-		rawMsg, err := ioutil.ReadFile(messageFile)
+		rawMsg, err := os.ReadFile(messageFile)
 		if err != nil {
 			return errors.Wrap(err, "unable to read message file")
 		}

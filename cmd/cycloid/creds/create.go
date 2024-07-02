@@ -3,6 +3,7 @@ package creds
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -187,7 +188,7 @@ func create(cmd *cobra.Command, args []string) error {
 	var rawCred *models.CredentialRaw
 
 	credT := cmd.CalledAs()
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
@@ -226,7 +227,7 @@ func create(cmd *cobra.Command, args []string) error {
 			return err
 		}
 
-		sshKey, err := ioutil.ReadFile(sshKeyPath)
+		sshKey, err := os.ReadFile(sshKeyPath)
 		if err != nil {
 			return errors.Wrap(err, "unable to read SSH key")
 		}

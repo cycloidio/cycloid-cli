@@ -1,13 +1,31 @@
 package common
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
 	projectFlag, envFlag, orgFlag, credFlag, canFlag string
 	idFlag                                           uint32
 )
+
+func GetOrg(cmd *cobra.Command) (org string, err error) {
+	org = viper.GetString("org")
+	if org == "" {
+		return "", errors.New("org is not set, use --org flag or CY_ORG env var")
+	}
+
+	if viper.GetString("verbosity") == "debug" {
+		fmt.Fprintln(os.Stderr, "\033[1;34mdebug:\033[0m using org:", org)
+	}
+
+	return org, nil
+}
 
 func WithFlagOrg(cmd *cobra.Command) string {
 	flagName := "org"

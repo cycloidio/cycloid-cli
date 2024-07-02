@@ -24,7 +24,6 @@ func NewGetCommand() *cobra.Command {
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.Flags().StringVar(&refFlag, "ref", "", "referential of the stack")
 	cmd.MarkFlagRequired("ref")
@@ -36,7 +35,7 @@ func get(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
