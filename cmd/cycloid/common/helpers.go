@@ -106,7 +106,7 @@ func WithToken(t string) APIOptions {
 }
 
 type APIClient struct {
-	*client.APIClient
+	*client.API
 
 	Config APIConfig
 }
@@ -148,7 +148,7 @@ func NewAPI(opts ...APIOptions) *APIClient {
 	// tr.DefaultAuthentication = httptransport.BearerToken("token")
 	// api.SetTransport(tr)
 	return &APIClient{
-		APIClient: api,
+		API: api,
 
 		Config: acfg,
 	}
@@ -316,7 +316,12 @@ func EntityGetValue(entity *models.FormEntity, getCurrent bool) any {
 	}
 }
 
-func ParseFormsConfig(form *models.FormUseCase, getCurrent bool) (vars map[string]map[string]map[string]any, err error) {
+func ParseFormsConfig(conf *models.ProjectEnvironmentConfig, useCase string, getCurrent bool) (vars map[string]map[string]map[string]any, err error) {
+	form, err := GetFormsUseCase(conf.Forms.UseCases, useCase)
+	if err != nil {
+		return nil, errors.Wrap(err, "failed to extract forms data from project config.")
+	}
+
 	vars = make(map[string]map[string]map[string]any)
 	for _, section := range form.Sections {
 		if section == nil {
@@ -337,11 +342,11 @@ func ParseFormsConfig(form *models.FormUseCase, getCurrent bool) (vars map[strin
 				}
 
 				value := EntityGetValue(varEntity, getCurrent)
-				vars[*varEntity.Key] = value
+				// We have to strings.ToLower() the keys otherwise, it will not be
+				// recognized as input for a create-env
+				vars[strings.ToLower(*varEntity.Name)] = value
 			}
 
-			// We have to strings.ToLower() the groups and sections names
-			// otherwise, it will not be recognized as input for a create-env
 			groups[strings.ToLower(*group.Name)] = vars
 		}
 

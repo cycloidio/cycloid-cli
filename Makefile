@@ -99,24 +99,23 @@ test: ## Run end to end tests
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder
-	rm -rf ./client; \
-	mkdir ./client
+	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "rm -rf ./client" && mkdir -p client
 
+# Used in CI, do not use docker compose here.
 .PHONY: generate-client
-generate-client: ## Generate client from file at SWAGGER_FILE path
+generate-client: reset-old-client ## Generate client from file at SWAGGER_FILE path
 	echo "Creating swagger files"; \
-	rm -rf ./client; \
-	mkdir ./client;
-	$(SWAGGER_GENERATE) && rm swagger.yml
+	$(SWAGGER_GENERATE)
 
 .PHONY: generate-client-from-local
 generate-client-from-local: reset-old-client ## Generates client using docker and local swagger (version -> v0.0-dev)
 	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE)
+	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 	echo 'v0.0-dev' > client/version
 
 .PHONY: generate-client-from-docs
 generate-client-from-docs: reset-old-client ## Generates client using docker and swagger from docs (version -> latest-api)
-	@wget https://docs.cycloid.io/api/swagger.yml
+	@wget -O swagger.yml https://docs.cycloid.io/api/swagger.yml
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
 	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE) && \
@@ -124,6 +123,7 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
+	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 
 .PHONY: ecr-connect
 ecr-connect: ## Login to ecr, requires aws cli installed
@@ -137,10 +137,10 @@ start-local-be: ## Starts local BE instance. Note! Only for cycloid developers
 	@echo "Generating fake data to be used in the tests..."
 	@cd $(LOCAL_BE_GIT_PATH) && sed -i '/cost-explorer-es/d' config.yml
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE).yml -f $(DOCKER_COMPOSE).cli.yml up youdeploy-init
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.cli.yml up youdeploy-init
 	@echo "Running BE server with the fake data generated..."
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	$(DOCKER_COMPOSE) -f $(DOCKER_COMPOSE).yml -f $(DOCKER_COMPOSE).cli.yml up -d youdeploy-api
+	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.cli.yml up -d youdeploy-api
 
 .PHONY: local-e2e-test
 local-e2e-test: ## Launches local e2e tests. Note! Only for cycloid developers
