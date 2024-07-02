@@ -2,7 +2,7 @@ package pipelines
 
 import (
 	"fmt"
-	"io/os"
+	"os"
 
 	"github.com/pkg/errors"
 

@@ -25,6 +25,7 @@ func NewCommands() *cobra.Command {
 	}
 
 	WithFlagAPIKey(cmd)
+	viper.BindPFlag("api-key", cmd.Flags().Lookup("api-key"))
 
 	cmd.AddCommand(
 		NewListCommand(),
@@ -43,6 +44,7 @@ func login(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get org flag")
 	}
 
+	// Get api key via env var or cli flag
 	apiKey := viper.GetString("api-key")
 	if apiKey == "" {
 		return errors.Wrap(err, "apiKey not set or invalid")

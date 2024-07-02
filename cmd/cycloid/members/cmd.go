@@ -2,8 +2,6 @@ package members
 
 import (
 	"github.com/spf13/cobra"
-
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 func NewCommands() *cobra.Command {
@@ -22,7 +20,6 @@ func NewCommands() *cobra.Command {
 		Short:   short,
 		Long:    long,
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.AddCommand(NewUpdateCommand(),
 		NewDeleteCommand(),
