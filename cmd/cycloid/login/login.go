@@ -8,6 +8,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/config"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // NewCommands returns the cobra command holding
@@ -16,15 +18,14 @@ func NewCommands() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "login",
 		Short: "Login against the Cycloid console",
-		Example: `,
-	# Login in an org using api-key
-	cy login --org my-org --api-key eyJhbGciOiJI...
-`,
+		Example: `# Login in an org using api-key
+export CY_API_KEY=xxxx
+cy login --org my-org`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    login,
 	}
 
-	WithFlagAPIKey(cmd)
+	cmd.Flags().String("api-key", "", "[deprecated] set the API key, use CY_API_KEY env var instead.")
 	viper.BindPFlag("api-key", cmd.Flags().Lookup("api-key"))
 
 	cmd.AddCommand(
@@ -35,7 +36,6 @@ func NewCommands() *cobra.Command {
 }
 
 func login(cmd *cobra.Command, args []string) error {
-
 	conf, _ := config.Read()
 	// If err != nil, the file does not exist, we create it anyway
 
@@ -44,10 +44,20 @@ func login(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get org flag")
 	}
 
+	p, err := factory.GetPrinter(viper.GetString("output"))
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
 	// Get api key via env var or cli flag
 	apiKey := viper.GetString("api-key")
 	if apiKey == "" {
-		return errors.Wrap(err, "apiKey not set or invalid")
+		return printer.SmartPrint(p, apiKey, nil, "CY_API_KEY is not set or invalid", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	// Warn user about deprecation
+	if cmd.Flags().Lookup("api-key").Changed {
+		internal.Warning(cmd.OutOrStderr(), "--api-key is deprecated, use CY_API_KEY env var instead")
 	}
 
 	// Check for a nil map.
@@ -61,7 +71,7 @@ func login(cmd *cobra.Command, args []string) error {
 	}
 
 	if err := config.Write(conf); err != nil {
-		return errors.Wrap(err, "unable to save config")
+		return printer.SmartPrint(p, apiKey, err, "unable to write config file", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	return nil

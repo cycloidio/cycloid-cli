@@ -47,7 +47,15 @@ func NewRootCommand() *cobra.Command {
 		SilenceUsage:  false,
 		Use:           "cy",
 		Short:         "Cycloid CLI",
-		Long:          `Cy is a CLI for Cycloid framework. Learn more at https://www.cycloid.io/.`,
+		Long: `CLI tool to interact with Cycloid API.
+Documentation at https://docs.beta.cycloid.io/reference/cli/
+
+Environment:
+
+CY_API_URL   -> Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
+CY_ORG       -> Set the current organization
+CY_API_TOKEN -> Set the current API TOKEN
+CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default warning `,
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", "The formatting style for command output: json|yaml|table")
@@ -62,6 +70,9 @@ func NewRootCommand() *cobra.Command {
 
 	rootCmd.PersistentFlags().Bool("insecure", false, "Decide to skip or not TLS verification")
 	viper.BindPFlag("insecure", rootCmd.PersistentFlags().Lookup("insecure"))
+
+	rootCmd.PersistentFlags().String("org", "", "Specify the org to use. override CY_ORG env var. Required for all Org scoped endpoint.")
+	viper.BindPFlag("org", rootCmd.PersistentFlags().Lookup("org"))
 
 	// Remove usage on error, this is annoying in scripting
 	rootCmd.SilenceUsage = true
