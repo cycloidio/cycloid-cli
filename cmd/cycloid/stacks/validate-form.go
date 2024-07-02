@@ -24,7 +24,6 @@ func NewValidateFormCmd() *cobra.Command {
 		RunE:    validateForm,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 	common.RequiredPersistentFlag(WithFlagForms, cmd)
 
 	return cmd
@@ -34,7 +33,7 @@ func validateForm(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

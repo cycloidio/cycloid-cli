@@ -22,21 +22,7 @@ func NewGetCommand() *cobra.Command {
 	# get API key 'my-key' in the org my-org
 	cy api-key get --org my-org --canonical my-key
 `,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			org, err := cmd.Flags().GetString("org")
-			if err != nil {
-				return fmt.Errorf("unable to get org flag: %w", err)
-			}
-			output, err := cmd.Flags().GetString("output")
-			if err != nil {
-				return fmt.Errorf("unable to get output flag: %w", err)
-			}
-			canonical, err := cmd.Flags().GetString("canonical")
-			if err != nil {
-				return fmt.Errorf("unable to get canonical flag: %w", err)
-			}
-			return get(cmd, org, canonical, output)
-		},
+		RunE: get,
 	}
 
 	WithFlagCanonical(cmd)
@@ -46,7 +32,20 @@ func NewGetCommand() *cobra.Command {
 
 // get will send the GET request to the API in order to
 // get the generated token
-func get(cmd *cobra.Command, org, canonical, output string) error {
+func get(cmd *cobra.Command, args []string) error {
+	org, err := common.GetOrg(cmd)
+	if err != nil {
+		return fmt.Errorf("unable to get org flag: %w", err)
+	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return fmt.Errorf("unable to get output flag: %w", err)
+	}
+	canonical, err := cmd.Flags().GetString("canonical")
+	if err != nil {
+		return fmt.Errorf("unable to get canonical flag: %w", err)
+	}
+
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 

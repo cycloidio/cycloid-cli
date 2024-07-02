@@ -7,7 +7,6 @@ import (
 	"io"
 	"os"
 	"regexp"
-	"strings"
 	"time"
 
 	rootCmd "github.com/cycloidio/cycloid-cli/cmd"
@@ -90,25 +89,6 @@ func executeCommand(args []string) (string, error) {
 	cmd.SetErr(errBuf)
 
 	cmd.SetArgs(args)
-	cmdErr := cmd.Execute()
-	cmdOut, err := io.ReadAll(buf)
-	if err != nil {
-		panic(fmt.Sprintf("Unable to read command output buffer"))
-	}
-	return string(cmdOut), cmdErr
-}
-
-func executeCommandWithStdin(args []string, stdin string) (string, error) {
-	cmd := rootCmd.NewRootCommand()
-
-	buf := new(bytes.Buffer)
-	errBuf := new(bytes.Buffer)
-	cmd.SetOut(buf)
-	cmd.SetErr(errBuf)
-
-	cmd.SetArgs(args)
-	cmd.SetIn(strings.NewReader(stdin))
-
 	cmdErr := cmd.Execute()
 	cmdOut, err := io.ReadAll(buf)
 	if err != nil {

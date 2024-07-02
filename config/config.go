@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/adrg/xdg"
 	"github.com/pkg/errors"
@@ -38,7 +38,7 @@ func Read() (*Config, error) {
 			Organizations: make(map[string]Organization),
 		}, errors.Wrap(err, "unable to find XDG config path")
 	}
-	content, err := ioutil.ReadFile(configFilePath)
+	content, err := os.ReadFile(configFilePath)
 	if err != nil {
 		// we return an empty Config in case it's the first time we try to access
 		// the config and it does not exist yet
@@ -65,5 +65,5 @@ func Write(c *Config) error {
 		return errors.Wrap(err, "unable to find XDG config path")
 	}
 
-	return ioutil.WriteFile(configFilePath, content, 0644)
+	return os.WriteFile(configFilePath, content, 0600)
 }

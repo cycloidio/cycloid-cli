@@ -19,35 +19,35 @@ func NewListCommand() *cobra.Command {
 		Use:   "list",
 		Short: "list API keys",
 		Example: `
-	# list API keys in the org my-org
-	cy api-key list --org my-org
+# list API keys in the org my-org
+cy api-key list --org my-org
 `,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			org, err := cmd.Flags().GetString("org")
-			if err != nil {
-				return fmt.Errorf("unable to get org flag: %w", err)
-			}
-			output, err := cmd.Flags().GetString("output")
-			if err != nil {
-				return fmt.Errorf("unable to get output flag: %w", err)
-			}
-			return list(cmd, org, output)
-		},
+		RunE: list,
 	}
 	return cmd
 }
 
-// list will send the GET request to the API in order to
 // list the generated tokens
-func list(cmd *cobra.Command, org, output string) error {
+func list(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
+
+	org, err := cmd.Flags().GetString("org")
+	if err != nil {
+		return err
+	}
+
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return fmt.Errorf("unable to get output flag: %w", err)
+	}
 
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
+
 	keys, err := m.ListAPIKey(org)
 	return printer.SmartPrint(p, keys, err, "unable to list API keys", printer.Options{}, cmd.OutOrStdout())
 }

@@ -2,7 +2,7 @@ package infrapolicies
 
 import (
 	"fmt"
-	"io/ioutil"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -35,7 +35,7 @@ func NewValidateCommand() *cobra.Command {
 // validate will send the GET request to the API in order to
 // validate the terraform Plan located in planPath
 func validate(cmd *cobra.Command, args []string) error {
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to validate org flag: %w", err)
 	}
@@ -56,7 +56,7 @@ func validate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to get output flag: %w", err)
 	}
 
-	plan, err := ioutil.ReadFile(planPath)
+	plan, err := os.ReadFile(planPath)
 	if err != nil {
 		return fmt.Errorf("unable to read terraform plan file: %w", err)
 	}

@@ -1,7 +1,6 @@
 package catalogRepositories
 
 import (
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 )
 
@@ -15,7 +14,6 @@ func NewCommands() *cobra.Command {
 		},
 		Short: "Manage the catalog repositories",
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.AddCommand(NewCreateCommand(),
 		NewUpdateCommand(),

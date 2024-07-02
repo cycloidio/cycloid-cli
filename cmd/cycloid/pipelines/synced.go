@@ -25,8 +25,6 @@ func NewSyncedCommand() *cobra.Command {
 		RunE: synced,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
-
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
 
@@ -41,14 +39,17 @@ func synced(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err
 	}
+
 	env, err := cmd.Flags().GetString("env")
 	if err != nil {
 		return err
 	}
+
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")

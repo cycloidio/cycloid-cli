@@ -2,8 +2,6 @@ package apikey
 
 import (
 	"github.com/spf13/cobra"
-
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 var (
@@ -24,7 +22,6 @@ func NewCommands() *cobra.Command {
 		Example: example,
 		Short:   short,
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.AddCommand(
 		NewDeleteCommand(),

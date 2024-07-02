@@ -23,8 +23,6 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	// create --branch test --cred 105 --url "git@github.com:foo/bla.git"  --name configname  --default
-
 	common.RequiredFlag(common.WithFlagCred, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
@@ -38,7 +36,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

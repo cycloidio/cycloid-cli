@@ -34,10 +34,11 @@ func createBuild(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
 	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err

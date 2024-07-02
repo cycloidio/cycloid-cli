@@ -18,7 +18,6 @@ func NewCreateChildCommand() *cobra.Command {
 		RunE:    createChild,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 	common.RequiredPersistentFlag(WithFlagParentOrganization, cmd)
 
 	return cmd
@@ -28,10 +27,11 @@ func createChild(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
 	porg, err := cmd.Flags().GetString("parent-org")
 	if err != nil {
 		return err

@@ -16,8 +16,8 @@ func NewUnpauseCommand() *cobra.Command {
 		Use:   "unpause",
 		Short: "unpause a pipeline",
 		Example: `
-	# unpause pipeline my-project-env
-	cy --org my-org pipeline unpause --project my-project --env env
+# unpause pipeline my-project-env
+cy --org my-org pipeline unpause --project my-project --env env
 `,
 		RunE:    unpause,
 		PreRunE: internal.CheckAPIAndCLIVersion,
@@ -33,18 +33,21 @@ func unpause(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
 	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err
 	}
+
 	env, err := cmd.Flags().GetString("env")
 	if err != nil {
 		return err
 	}
+
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")

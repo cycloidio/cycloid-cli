@@ -1,7 +1,6 @@
 package projects
 
 import (
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/spf13/cobra"
 )
 
@@ -14,7 +13,6 @@ func NewCommands() *cobra.Command {
 		},
 		Short: "Manage the projects",
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	cmd.AddCommand(NewDeleteCommand(),
 		NewCreateCommand(),

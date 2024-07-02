@@ -63,7 +63,7 @@ func createRawEnv(cmd *cobra.Command, args []string) error {
 
 	var err error
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

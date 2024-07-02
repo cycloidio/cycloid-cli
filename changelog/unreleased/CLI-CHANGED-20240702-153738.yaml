@@ -1,0 +1,9 @@
+component: CLI
+kind: CHANGED
+body: Allow to use CY_ORG env var to define the current org instead of --org flag
+time: 2024-07-02T15:37:38.698172633Z
+custom:
+  DETAILS: You can still use the --org flag, the CLI flag will have precedence over
+    the env var.
+  PR: "274"
+  TYPE: CLI

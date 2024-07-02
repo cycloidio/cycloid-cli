@@ -18,19 +18,19 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	var (
-		purpose           = "remote_tfstate"
-		err               error
-		org, project, env string
-		ebC               models.ExternalBackendConfiguration
-		engine            = cmd.CalledAs()
-		defaultEB         bool
+		purpose      = "remote_tfstate"
+		err          error
+		project, env string
+		ebC          models.ExternalBackendConfiguration
+		engine       = cmd.CalledAs()
+		defaultEB    bool
 	)
 
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
-	org, err = cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
