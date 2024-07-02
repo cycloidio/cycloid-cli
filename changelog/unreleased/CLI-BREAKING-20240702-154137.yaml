@@ -1,0 +1,9 @@
+component: CLI
+kind: BREAKING
+body: Env var TOKEN is replaced by CY_API_KEY for giving token via env var.
+time: 2024-07-02T15:41:37.096071763Z
+custom:
+  DETAILS: The old `TOKEN` env var still works but emits a warning. It will be removed
+    in a futur release.
+  PR: "273"
+  TYPE: CLI
