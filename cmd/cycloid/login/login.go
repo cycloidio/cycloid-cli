@@ -3,6 +3,7 @@ package login
 import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
@@ -20,23 +21,10 @@ func NewCommands() *cobra.Command {
 	cy login --org my-org --api-key eyJhbGciOiJI...
 `,
 		PreRunE: internal.CheckAPIAndCLIVersion,
-		RunE: func(cmd *cobra.Command, args []string) error {
-
-			org, err := cmd.Flags().GetString("org")
-			if err != nil {
-				return errors.Wrap(err, "unable to get org flag")
-			}
-			apiKey, err := cmd.Flags().GetString("api-key")
-			if err != nil {
-				return errors.Wrap(err, "unable to get child flag")
-			}
-
-			return login(org, apiKey)
-		},
+		RunE:    login,
 	}
 
-	common.RequiredFlag(WithFlagAPIKey, cmd)
-	common.RequiredFlag(WithFlagOrg, cmd)
+	WithFlagAPIKey(cmd)
 
 	cmd.AddCommand(
 		NewListCommand(),
@@ -45,9 +33,20 @@ func NewCommands() *cobra.Command {
 	return cmd
 }
 
-func login(org, key string) error {
+func login(cmd *cobra.Command, args []string) error {
+
 	conf, _ := config.Read()
 	// If err != nil, the file does not exist, we create it anyway
+
+	org, err := common.GetOrg(cmd)
+	if err != nil {
+		return errors.Wrap(err, "unable to get org flag")
+	}
+
+	apiKey := viper.GetString("api-key")
+	if apiKey == "" {
+		return errors.Wrap(err, "apiKey not set or invalid")
+	}
 
 	// Check for a nil map.
 	// This can be the case if the config file is empty
@@ -56,7 +55,7 @@ func login(org, key string) error {
 	}
 
 	conf.Organizations[org] = config.Organization{
-		Token: key,
+		Token: apiKey,
 	}
 
 	if err := config.Write(conf); err != nil {
