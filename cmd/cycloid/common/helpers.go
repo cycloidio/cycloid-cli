@@ -106,7 +106,7 @@ func WithToken(t string) APIOptions {
 }
 
 type APIClient struct {
-	*client.API
+	*client.APIClient
 
 	Config APIConfig
 }
@@ -148,7 +148,7 @@ func NewAPI(opts ...APIOptions) *APIClient {
 	// tr.DefaultAuthentication = httptransport.BearerToken("token")
 	// api.SetTransport(tr)
 	return &APIClient{
-		API: api,
+		APIClient: api,
 
 		Config: acfg,
 	}
