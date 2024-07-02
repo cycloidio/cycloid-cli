@@ -133,7 +133,7 @@ ecr-connect: ## Login to ecr, requires aws cli installed
 start-local-be: ## Starts local BE instance. Note! Only for cycloid developers
 	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
 	@if [ -z "$$API_LICENCE_KEY" ]; then echo "API_LICENCE_KEY is not set"; exit 1; fi; \
-	@echo "Starting Local BE..."
+	echo "Starting Local BE..."
 	@echo "Generating fake data to be used in the tests..."
 	@cd $(LOCAL_BE_GIT_PATH) && sed -i '/cost-explorer-es/d' config.yml
 	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
