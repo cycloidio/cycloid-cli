@@ -115,8 +115,6 @@ type ClientService interface {
 
 	GetProject(params *GetProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectOK, error)
 
-	GetProjectConfig(params *GetProjectConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectConfigOK, error)
-
 	GetProjects(params *GetProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectsOK, error)
 
 	UpdateProject(params *UpdateProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateProjectOK, error)
@@ -349,44 +347,6 @@ func (a *Client) GetProject(params *GetProjectParams, authInfo runtime.ClientAut
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetProjectDefault)
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
-GetProjectConfig Fetch the current project's environment's configuration.
-*/
-func (a *Client) GetProjectConfig(params *GetProjectConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectConfigOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetProjectConfigParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "getProjectConfig",
-		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environment/{environment_canonical}/config",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetProjectConfigReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetProjectConfigOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	unexpectedSuccess := result.(*GetProjectConfigDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
