@@ -52,12 +52,12 @@ func login(cmd *cobra.Command, args []string) error {
 	// Get api key via env var or cli flag
 	apiKey := viper.GetString("api-key")
 	if apiKey == "" {
-		return printer.SmartPrint(p, apiKey, nil, "CY_API_KEY is not set or invalid", printer.Options{}, cmd.OutOrStderr())
+		return printer.SmartPrint(p, nil, nil, "CY_API_KEY is not set or invalid", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	// Warn user about deprecation
 	if cmd.Flags().Lookup("api-key").Changed {
-		internal.Warning(cmd.OutOrStderr(), "--api-key is deprecated, use CY_API_KEY env var instead")
+		internal.Warning(cmd.ErrOrStderr(), "--api-key is deprecated, use CY_API_KEY env var instead")
 	}
 
 	// Check for a nil map.
@@ -71,7 +71,7 @@ func login(cmd *cobra.Command, args []string) error {
 	}
 
 	if err := config.Write(conf); err != nil {
-		return printer.SmartPrint(p, apiKey, err, "unable to write config file", printer.Options{}, cmd.OutOrStderr())
+		return printer.SmartPrint(p, nil, err, "unable to write config file", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	return nil

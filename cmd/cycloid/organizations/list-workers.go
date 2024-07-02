@@ -18,7 +18,6 @@ func NewListWorkersCommand() *cobra.Command {
 		RunE:    listWorkers,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	return cmd
 }

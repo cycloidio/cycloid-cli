@@ -27,12 +27,6 @@ func GetOrg(cmd *cobra.Command) (org string, err error) {
 	return org, nil
 }
 
-func WithFlagOrg(cmd *cobra.Command) string {
-	flagName := "org"
-	cmd.PersistentFlags().StringVar(&orgFlag, flagName, "", "Org cannonical name")
-	return flagName
-}
-
 func WithFlagProject(cmd *cobra.Command) string {
 	flagName := "project"
 	cmd.PersistentFlags().StringVar(&projectFlag, flagName, "", "Project cannonical name")

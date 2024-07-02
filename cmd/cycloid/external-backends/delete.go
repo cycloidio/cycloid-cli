@@ -23,7 +23,6 @@ func NewDeleteCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	common.RequiredFlag(common.WithFlagID, cmd)
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 
 	return cmd
 }

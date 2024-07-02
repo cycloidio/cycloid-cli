@@ -64,7 +64,6 @@ cy project get-env-config --org my-org --project my-project --env prod \
 		RunE: createEnv,
 	}
 
-	common.WithFlagOrg(cmd)
 	cmd.PersistentFlags().StringP("project", "p", "", "project name")
 	cmd.MarkFlagRequired("project")
 	cmd.PersistentFlags().StringP("env", "e", "", "environment name")
