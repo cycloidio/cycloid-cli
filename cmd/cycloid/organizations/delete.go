@@ -24,8 +24,6 @@ func NewDeleteCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
-
 	return cmd
 }
 
@@ -33,7 +31,7 @@ func del(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable get org flag")
 	}

@@ -64,7 +64,6 @@ cy project get-env-config --org my-org --project my-project --env prod \
 		RunE: createEnv,
 	}
 
-	common.WithFlagOrg(cmd)
 	cmd.PersistentFlags().StringP("project", "p", "", "project name")
 	cmd.MarkFlagRequired("project")
 	cmd.PersistentFlags().StringP("env", "e", "", "environment name")
@@ -86,7 +85,7 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 	var err error
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

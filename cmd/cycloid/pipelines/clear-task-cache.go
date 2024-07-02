@@ -1,7 +1,6 @@
 package pipelines
 
 import (
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -36,7 +35,7 @@ func cleartaskCache(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
