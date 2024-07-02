@@ -159,11 +159,11 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 	if token == "" {
 		// we first try to get the token from the env variable
 		var ok bool
-		token, ok = os.LookupEnv("CY_API_KEY")
+		token, ok = os.LookupEnv("CY_API_TOKEN")
 		if !ok {
 			token, ok = os.LookupEnv("TOKEN")
 			if ok {
-				fmt.Println("TOKEN env var is deprecated, please use CY_API_KEY instead")
+				fmt.Println("TOKEN env var is deprecated, please use CY_API_TOKEN instead")
 			}
 		}
 	}
