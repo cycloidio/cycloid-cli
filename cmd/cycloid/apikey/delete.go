@@ -22,21 +22,7 @@ func NewDeleteCommand() *cobra.Command {
 	# delete the API key 'my-key' in the org my-org
 	cy api-key delete --org my-org --canonical my-key
 `,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			org, err := cmd.Flags().GetString("org")
-			if err != nil {
-				return fmt.Errorf("unable to get org flag: %w", err)
-			}
-			output, err := cmd.Flags().GetString("output")
-			if err != nil {
-				return fmt.Errorf("unable to get output flag: %w", err)
-			}
-			canonical, err := cmd.Flags().GetString("canonical")
-			if err != nil {
-				return fmt.Errorf("unable to get canonical flag: %w", err)
-			}
-			return remove(cmd, org, canonical, output)
-		},
+		RunE: remove,
 	}
 
 	WithFlagCanonical(cmd)
@@ -46,7 +32,20 @@ func NewDeleteCommand() *cobra.Command {
 
 // remove will send the DELETE request to the API in order to
 // delete a generated token
-func remove(cmd *cobra.Command, org, canonical, output string) error {
+func remove(cmd *cobra.Command, args []string) error {
+	org, err := common.GetOrg(cmd)
+	if err != nil {
+		return fmt.Errorf("unable to get org flag: %w", err)
+	}
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return fmt.Errorf("unable to get output flag: %w", err)
+	}
+	canonical, err := cmd.Flags().GetString("canonical")
+	if err != nil {
+		return fmt.Errorf("unable to get canonical flag: %w", err)
+	}
+
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 

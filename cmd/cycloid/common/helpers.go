@@ -158,8 +158,16 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 	var token = a.Config.Token
 	if token == "" {
 		// we first try to get the token from the env variable
-		token = os.Getenv("TOKEN")
+		var ok bool
+		token, ok = os.LookupEnv("CY_API_TOKEN")
+		if !ok {
+			token, ok = os.LookupEnv("TOKEN")
+			if ok {
+				fmt.Println("TOKEN env var is deprecated, please use CY_API_TOKEN instead")
+			}
+		}
 	}
+
 	// if the token is not set with env variable we try to fetch
 	// him from the config (if the user is logged)
 	if len(token) == 0 {
@@ -308,12 +316,7 @@ func EntityGetValue(entity *models.FormEntity, getCurrent bool) any {
 	}
 }
 
-func ParseFormsConfig(conf *models.ProjectEnvironmentConfig, useCase string, getCurrent bool) (vars map[string]map[string]map[string]any, err error) {
-	form, err := GetFormsUseCase(conf.Forms.UseCases, useCase)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to extract forms data from project config.")
-	}
-
+func ParseFormsConfig(form *models.FormUseCase, getCurrent bool) (vars map[string]map[string]map[string]any, err error) {
 	vars = make(map[string]map[string]map[string]any)
 	for _, section := range form.Sections {
 		if section == nil {
@@ -334,9 +337,7 @@ func ParseFormsConfig(conf *models.ProjectEnvironmentConfig, useCase string, get
 				}
 
 				value := EntityGetValue(varEntity, getCurrent)
-				// We have to strings.ToLower() the keys otherwise, it will not be
-				// recognized as input for a create-env
-				vars[strings.ToLower(*varEntity.Name)] = value
+				vars[*varEntity.Key] = value
 			}
 
 			groups[strings.ToLower(*group.Name)] = vars

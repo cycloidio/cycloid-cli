@@ -12,7 +12,6 @@ import (
 )
 
 func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
-
 	params := service_catalogs.NewListServiceCatalogsParams()
 	params.SetOrganizationCanonical(org)
 
@@ -33,7 +32,6 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 }
 
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
-
 	params := service_catalogs.NewGetServiceCatalogParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogRef(ref)
@@ -55,7 +53,6 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 }
 
 func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
-
 	params := service_catalogs.NewGetServiceCatalogConfigParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogRef(ref)
