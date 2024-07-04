@@ -99,7 +99,7 @@ test: ## Run end to end tests
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder
-	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "rm -rf ./client" && mkdir -p client
+	rm -rf ./client && mkdir -p client
 
 # Used in CI, do not use docker compose here.
 .PHONY: generate-client
