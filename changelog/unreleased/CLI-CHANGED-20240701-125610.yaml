@@ -1,9 +1,0 @@
-component: CLI
-kind: CHANGED
-body: Allow to create a project without an environment.
-time: 2024-07-01T12:56:10.824500737Z
-custom:
-  DETAILS: The env creation with the old flags still exists, but is now deprecated
-    and will be removed in a further release.
-  PR: "278"
-  TYPE: CLI
