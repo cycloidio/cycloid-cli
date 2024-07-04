@@ -1,9 +1,7 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -11,7 +9,7 @@ import (
 )
 
 func TestLogin(t *testing.T) {
-	t.Run("SuccessOrgLogin", func(t *testing.T) {
+	t.Run("SuccessOrgLoginLegacy", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"login",
 			"--org", CY_TEST_ROOT_ORG,
@@ -22,13 +20,16 @@ func TestLogin(t *testing.T) {
 		assert.Equal(t, "", cmdOut)
 	})
 
-	t.Run("ErrorMissingRequiredFlag", func(t *testing.T) {
-		_, cmdErr := executeCommand([]string{
+	t.Run("SuccessOrgLogin", func(t *testing.T) {
+		err := os.Setenv("CY_API_KEY", CY_TEST_ROOT_API_KEY)
+		require.Nil(t, err)
+
+		cmdOut, cmdErr := executeCommand([]string{
 			"login",
 			"--org", CY_TEST_ROOT_ORG,
 		})
 
-		require.NotNil(t, cmdErr)
-		assert.Contains(t, string(cmdErr.Error()), "required flag(s) \"api-key\" not set")
+		require.Nil(t, cmdErr)
+		assert.Equal(t, "", cmdOut)
 	})
 }

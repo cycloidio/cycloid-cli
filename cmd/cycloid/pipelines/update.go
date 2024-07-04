@@ -1,7 +1,7 @@
 package pipelines
 
 import (
-	"io/ioutil"
+	"os"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -40,10 +40,11 @@ func update(cmd *cobra.Command, args []string) error {
 
 	var err error
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
 	project, err := cmd.Flags().GetString("project")
 	if err != nil {
 		return err
@@ -71,13 +72,13 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	rawPipeline, err := ioutil.ReadFile(pipelinePath)
+	rawPipeline, err := os.ReadFile(pipelinePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read pipeline file")
 	}
 	pipeline := string(rawPipeline)
 
-	rawVars, err := ioutil.ReadFile(varsPath)
+	rawVars, err := os.ReadFile(varsPath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read variables file")
 	}

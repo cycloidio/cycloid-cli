@@ -44,7 +44,7 @@ func getMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

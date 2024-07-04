@@ -25,7 +25,6 @@ func NewUpdateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagOrg, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 
 	return cmd
@@ -40,7 +39,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable get org flag")
 	}
