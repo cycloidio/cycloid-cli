@@ -65,7 +65,7 @@ type ValuesRefFormsParams struct {
 
 	/* Body.
 
-	   The content of the forms file to be validated.
+	   The URL to fetch the values from
 	*/
 	Body *models.FormsValuesRef
 

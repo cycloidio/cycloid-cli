@@ -64,7 +64,6 @@ cy project get-env-config --org my-org --project my-project --env prod \
 		RunE: createEnv,
 	}
 
-	common.WithFlagOrg(cmd)
 	cmd.PersistentFlags().StringP("project", "p", "", "project name")
 	cmd.MarkFlagRequired("project")
 	cmd.PersistentFlags().StringP("env", "e", "", "environment name")
@@ -86,16 +85,9 @@ func createEnv(cmd *cobra.Command, args []string) error {
 
 	var err error
 
-	org, err := cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
-	}
-
-	// Right now, in the way orgs are handled, there is a possibility
-	// of an empty org.
-	// TODO: Fix in another PR about orgs.
-	if org == "" {
-		return errors.New("org is empty, please specify an org with --org")
 	}
 
 	project, err := cmd.Flags().GetString("project")

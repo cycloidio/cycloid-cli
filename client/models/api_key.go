@@ -17,7 +17,7 @@ import (
 
 // APIKey API key
 //
-// The entity which represents the information of an API key. The "token" field is only filled once, upon creation
+// The entity which represents the information of an API key. The "token" field is only filled once, upon creation. It can only be used on an organization scope, for example user endpoints will not support it.
 //
 // swagger:model APIKey
 type APIKey struct {

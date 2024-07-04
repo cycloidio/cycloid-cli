@@ -158,8 +158,16 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 	var token = a.Config.Token
 	if token == "" {
 		// we first try to get the token from the env variable
-		token = os.Getenv("TOKEN")
+		var ok bool
+		token, ok = os.LookupEnv("CY_API_TOKEN")
+		if !ok {
+			token, ok = os.LookupEnv("TOKEN")
+			if ok {
+				fmt.Println("TOKEN env var is deprecated, please use CY_API_TOKEN instead")
+			}
+		}
 	}
+
 	// if the token is not set with env variable we try to fetch
 	// him from the config (if the user is logged)
 	if len(token) == 0 {
@@ -332,8 +340,6 @@ func ParseFormsConfig(form *models.FormUseCase, getCurrent bool) (vars map[strin
 				vars[*varEntity.Key] = value
 			}
 
-			// We have to strings.ToLower() the groups and sections names
-			// otherwise, it will not be recognized as input for a create-env
 			groups[strings.ToLower(*group.Name)] = vars
 		}
 

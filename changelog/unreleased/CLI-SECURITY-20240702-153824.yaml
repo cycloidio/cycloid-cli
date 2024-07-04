@@ -1,0 +1,8 @@
+component: CLI
+kind: SECURITY
+body: Make the configuration write as 0600 permissions in user home config
+time: 2024-07-02T15:38:24.286288523Z
+custom:
+  DETAILS: ""
+  PR: "274"
+  TYPE: CLI

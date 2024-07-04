@@ -19,13 +19,13 @@ func createEvents(cmd *cobra.Command, args []string) error {
 
 	var (
 		err       error
-		org, cred string
+		cred string
 		purpose   = "events"
 		ebC       models.ExternalBackendConfiguration
 		engine    = cmd.CalledAs()
 	)
 
-	org, err = cmd.Flags().GetString("org")
+	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
