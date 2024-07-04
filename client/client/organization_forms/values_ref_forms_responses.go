@@ -71,7 +71,7 @@ func NewValuesRefFormsOK() *ValuesRefFormsOK {
 /*
 ValuesRefFormsOK describes a response with status code 200, with default header values.
 
-The result of validating the provided configuration
+The result pulling the values from the url
 */
 type ValuesRefFormsOK struct {
 	Payload *ValuesRefFormsOKBody
