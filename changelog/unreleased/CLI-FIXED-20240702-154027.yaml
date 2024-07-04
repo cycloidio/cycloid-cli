@@ -1,9 +1,0 @@
-component: CLI
-kind: FIXED
-body: --org flag is now global
-time: 2024-07-02T15:40:27.815286561Z
-custom:
-  DETAILS: This fixes inconsistency between commands, you can also set the org via
-    env vars now.
-  PR: "274"
-  TYPE: CLI
