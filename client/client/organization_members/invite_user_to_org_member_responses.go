@@ -6,6 +6,7 @@ package organization_members
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
@@ -26,8 +28,8 @@ type InviteUserToOrgMemberReader struct {
 // ReadResponse reads a server response into the received o.
 func (o *InviteUserToOrgMemberReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
 	switch response.Code() {
-	case 204:
-		result := NewInviteUserToOrgMemberNoContent()
+	case 200:
+		result := NewInviteUserToOrgMemberOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -62,58 +64,72 @@ func (o *InviteUserToOrgMemberReader) ReadResponse(response runtime.ClientRespon
 	}
 }
 
-// NewInviteUserToOrgMemberNoContent creates a InviteUserToOrgMemberNoContent with default headers values
-func NewInviteUserToOrgMemberNoContent() *InviteUserToOrgMemberNoContent {
-	return &InviteUserToOrgMemberNoContent{}
+// NewInviteUserToOrgMemberOK creates a InviteUserToOrgMemberOK with default headers values
+func NewInviteUserToOrgMemberOK() *InviteUserToOrgMemberOK {
+	return &InviteUserToOrgMemberOK{}
 }
 
 /*
-InviteUserToOrgMemberNoContent describes a response with status code 204, with default header values.
+InviteUserToOrgMemberOK describes a response with status code 200, with default header values.
 
-The user has been invited to be a member of the organization. The verification is pending.
+The information of the member of the organization.
 */
-type InviteUserToOrgMemberNoContent struct {
+type InviteUserToOrgMemberOK struct {
+	Payload *InviteUserToOrgMemberOKBody
 }
 
-// IsSuccess returns true when this invite user to org member no content response has a 2xx status code
-func (o *InviteUserToOrgMemberNoContent) IsSuccess() bool {
+// IsSuccess returns true when this invite user to org member o k response has a 2xx status code
+func (o *InviteUserToOrgMemberOK) IsSuccess() bool {
 	return true
 }
 
-// IsRedirect returns true when this invite user to org member no content response has a 3xx status code
-func (o *InviteUserToOrgMemberNoContent) IsRedirect() bool {
+// IsRedirect returns true when this invite user to org member o k response has a 3xx status code
+func (o *InviteUserToOrgMemberOK) IsRedirect() bool {
 	return false
 }
 
-// IsClientError returns true when this invite user to org member no content response has a 4xx status code
-func (o *InviteUserToOrgMemberNoContent) IsClientError() bool {
+// IsClientError returns true when this invite user to org member o k response has a 4xx status code
+func (o *InviteUserToOrgMemberOK) IsClientError() bool {
 	return false
 }
 
-// IsServerError returns true when this invite user to org member no content response has a 5xx status code
-func (o *InviteUserToOrgMemberNoContent) IsServerError() bool {
+// IsServerError returns true when this invite user to org member o k response has a 5xx status code
+func (o *InviteUserToOrgMemberOK) IsServerError() bool {
 	return false
 }
 
-// IsCode returns true when this invite user to org member no content response a status code equal to that given
-func (o *InviteUserToOrgMemberNoContent) IsCode(code int) bool {
-	return code == 204
+// IsCode returns true when this invite user to org member o k response a status code equal to that given
+func (o *InviteUserToOrgMemberOK) IsCode(code int) bool {
+	return code == 200
 }
 
-// Code gets the status code for the invite user to org member no content response
-func (o *InviteUserToOrgMemberNoContent) Code() int {
-	return 204
+// Code gets the status code for the invite user to org member o k response
+func (o *InviteUserToOrgMemberOK) Code() int {
+	return 200
 }
 
-func (o *InviteUserToOrgMemberNoContent) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNoContent", 204)
+func (o *InviteUserToOrgMemberOK) Error() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberOK %s", 200, payload)
 }
 
-func (o *InviteUserToOrgMemberNoContent) String() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNoContent", 204)
+func (o *InviteUserToOrgMemberOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberOK %s", 200, payload)
 }
 
-func (o *InviteUserToOrgMemberNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *InviteUserToOrgMemberOK) GetPayload() *InviteUserToOrgMemberOKBody {
+	return o.Payload
+}
+
+func (o *InviteUserToOrgMemberOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(InviteUserToOrgMemberOKBody)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+		return err
+	}
 
 	return nil
 }
@@ -171,12 +187,12 @@ func (o *InviteUserToOrgMemberNotFound) Code() int {
 
 func (o *InviteUserToOrgMemberNotFound) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNotFound %s", 404, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberNotFound %s", 404, payload)
 }
 
 func (o *InviteUserToOrgMemberNotFound) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberNotFound %s", 404, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberNotFound %s", 404, payload)
 }
 
 func (o *InviteUserToOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -250,11 +266,11 @@ func (o *InviteUserToOrgMemberLengthRequired) Code() int {
 }
 
 func (o *InviteUserToOrgMemberLengthRequired) Error() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberLengthRequired", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberLengthRequired", 411)
 }
 
 func (o *InviteUserToOrgMemberLengthRequired) String() string {
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberLengthRequired", 411)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberLengthRequired", 411)
 }
 
 func (o *InviteUserToOrgMemberLengthRequired) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -315,12 +331,12 @@ func (o *InviteUserToOrgMemberUnprocessableEntity) Code() int {
 
 func (o *InviteUserToOrgMemberUnprocessableEntity) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberUnprocessableEntity %s", 422, payload)
 }
 
 func (o *InviteUserToOrgMemberUnprocessableEntity) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMemberUnprocessableEntity %s", 422, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMemberUnprocessableEntity %s", 422, payload)
 }
 
 func (o *InviteUserToOrgMemberUnprocessableEntity) GetPayload() *models.ErrorPayload {
@@ -406,12 +422,12 @@ func (o *InviteUserToOrgMemberDefault) Code() int {
 
 func (o *InviteUserToOrgMemberDefault) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMember default %s", o._statusCode, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMember default %s", o._statusCode, payload)
 }
 
 func (o *InviteUserToOrgMemberDefault) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/members-invitations][%d] inviteUserToOrgMember default %s", o._statusCode, payload)
+	return fmt.Sprintf("[POST /organizations/{organization_canonical}/members][%d] inviteUserToOrgMember default %s", o._statusCode, payload)
 }
 
 func (o *InviteUserToOrgMemberDefault) GetPayload() *models.ErrorPayload {
@@ -438,5 +454,99 @@ func (o *InviteUserToOrgMemberDefault) readResponse(response runtime.ClientRespo
 		return err
 	}
 
+	return nil
+}
+
+/*
+InviteUserToOrgMemberOKBody invite user to org member o k body
+swagger:model InviteUserToOrgMemberOKBody
+*/
+type InviteUserToOrgMemberOKBody struct {
+
+	// data
+	// Required: true
+	Data *models.MemberOrg `json:"data"`
+}
+
+// Validate validates this invite user to org member o k body
+func (o *InviteUserToOrgMemberOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *InviteUserToOrgMemberOKBody) validateData(formats strfmt.Registry) error {
+
+	if err := validate.Required("inviteUserToOrgMemberOK"+"."+"data", "body", o.Data); err != nil {
+		return err
+	}
+
+	if o.Data != nil {
+		if err := o.Data.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("inviteUserToOrgMemberOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("inviteUserToOrgMemberOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this invite user to org member o k body based on the context it is used
+func (o *InviteUserToOrgMemberOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *InviteUserToOrgMemberOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("inviteUserToOrgMemberOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("inviteUserToOrgMemberOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *InviteUserToOrgMemberOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *InviteUserToOrgMemberOKBody) UnmarshalBinary(b []byte) error {
+	var res InviteUserToOrgMemberOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

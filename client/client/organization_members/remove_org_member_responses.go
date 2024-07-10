@@ -100,11 +100,11 @@ func (o *RemoveOrgMemberNoContent) Code() int {
 }
 
 func (o *RemoveOrgMemberNoContent) Error() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNoContent", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberNoContent", 204)
 }
 
 func (o *RemoveOrgMemberNoContent) String() string {
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNoContent", 204)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberNoContent", 204)
 }
 
 func (o *RemoveOrgMemberNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
@@ -165,12 +165,12 @@ func (o *RemoveOrgMemberForbidden) Code() int {
 
 func (o *RemoveOrgMemberForbidden) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberForbidden %s", 403, payload)
 }
 
 func (o *RemoveOrgMemberForbidden) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberForbidden %s", 403, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberForbidden %s", 403, payload)
 }
 
 func (o *RemoveOrgMemberForbidden) GetPayload() *models.ErrorPayload {
@@ -253,12 +253,12 @@ func (o *RemoveOrgMemberNotFound) Code() int {
 
 func (o *RemoveOrgMemberNotFound) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNotFound %s", 404, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberNotFound %s", 404, payload)
 }
 
 func (o *RemoveOrgMemberNotFound) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMemberNotFound %s", 404, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMemberNotFound %s", 404, payload)
 }
 
 func (o *RemoveOrgMemberNotFound) GetPayload() *models.ErrorPayload {
@@ -344,12 +344,12 @@ func (o *RemoveOrgMemberDefault) Code() int {
 
 func (o *RemoveOrgMemberDefault) Error() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMember default %s", o._statusCode, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMember default %s", o._statusCode, payload)
 }
 
 func (o *RemoveOrgMemberDefault) String() string {
 	payload, _ := json.Marshal(o.Payload)
-	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{username}][%d] removeOrgMember default %s", o._statusCode, payload)
+	return fmt.Sprintf("[DELETE /organizations/{organization_canonical}/members/{member_id}][%d] removeOrgMember default %s", o._statusCode, payload)
 }
 
 func (o *RemoveOrgMemberDefault) GetPayload() *models.ErrorPayload {

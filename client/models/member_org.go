@@ -28,24 +28,33 @@ type MemberOrg struct {
 	CreatedAt *uint64 `json:"created_at"`
 
 	// user email
-	// Required: true
 	// Format: email
-	Email *strfmt.Email `json:"email"`
+	Email strfmt.Email `json:"email,omitempty"`
 
 	// family name
-	// Required: true
 	// Min Length: 2
-	FamilyName *string `json:"family_name"`
+	FamilyName string `json:"family_name,omitempty"`
 
 	// given name
-	// Required: true
 	// Min Length: 2
-	GivenName *string `json:"given_name"`
+	GivenName string `json:"given_name,omitempty"`
 
 	// id
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
+
+	// The email address to which the invitation was sent. It's used to resend the invitation.
+	// Format: email
+	InvitationEmail strfmt.Email `json:"invitation_email,omitempty"`
+
+	// invitation resent at
+	// Minimum: 0
+	InvitationResentAt *uint64 `json:"invitation_resent_at,omitempty"`
+
+	// invitation state
+	// Enum: ["pending","accepted","declined"]
+	InvitationState string `json:"invitation_state,omitempty"`
 
 	// When the user had been invited to join as a member. When not present, the user is already a member, so she/he has verified her/his invitation.
 	// Minimum: 0
@@ -59,13 +68,11 @@ type MemberOrg struct {
 	LastLoginAt *uint64 `json:"last_login_at,omitempty"`
 
 	// User's preferred language
-	// Required: true
 	// Enum: ["en","fr","es"]
-	Locale *string `json:"locale"`
+	Locale string `json:"locale,omitempty"`
 
 	// mfa enabled
-	// Required: true
-	MfaEnabled *bool `json:"mfa_enabled"`
+	MfaEnabled bool `json:"mfa_enabled,omitempty"`
 
 	// picture url
 	// Format: uri
@@ -80,11 +87,10 @@ type MemberOrg struct {
 	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 
 	// username
-	// Required: true
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Username *string `json:"username"`
+	Username string `json:"username,omitempty"`
 }
 
 // Validate validates this member org
@@ -111,6 +117,18 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateInvitationEmail(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInvitationResentAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInvitationState(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateInvitedAt(formats); err != nil {
 		res = append(res, err)
 	}
@@ -124,10 +142,6 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateLocale(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateMfaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -167,9 +181,8 @@ func (m *MemberOrg) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateEmail(formats strfmt.Registry) error {
-
-	if err := validate.Required("email", "body", m.Email); err != nil {
-		return err
+	if swag.IsZero(m.Email) { // not required
+		return nil
 	}
 
 	if err := validate.FormatOf("email", "body", "email", m.Email.String(), formats); err != nil {
@@ -180,12 +193,11 @@ func (m *MemberOrg) validateEmail(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateFamilyName(formats strfmt.Registry) error {
-
-	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
-		return err
+	if swag.IsZero(m.FamilyName) { // not required
+		return nil
 	}
 
-	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
+	if err := validate.MinLength("family_name", "body", m.FamilyName, 2); err != nil {
 		return err
 	}
 
@@ -193,12 +205,11 @@ func (m *MemberOrg) validateFamilyName(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateGivenName(formats strfmt.Registry) error {
-
-	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
-		return err
+	if swag.IsZero(m.GivenName) { // not required
+		return nil
 	}
 
-	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
+	if err := validate.MinLength("given_name", "body", m.GivenName, 2); err != nil {
 		return err
 	}
 
@@ -212,6 +223,75 @@ func (m *MemberOrg) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MemberOrg) validateInvitationEmail(formats strfmt.Registry) error {
+	if swag.IsZero(m.InvitationEmail) { // not required
+		return nil
+	}
+
+	if err := validate.FormatOf("invitation_email", "body", "email", m.InvitationEmail.String(), formats); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MemberOrg) validateInvitationResentAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.InvitationResentAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumUint("invitation_resent_at", "body", *m.InvitationResentAt, 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var memberOrgTypeInvitationStatePropEnum []interface{}
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["pending","accepted","declined"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		memberOrgTypeInvitationStatePropEnum = append(memberOrgTypeInvitationStatePropEnum, v)
+	}
+}
+
+const (
+
+	// MemberOrgInvitationStatePending captures enum value "pending"
+	MemberOrgInvitationStatePending string = "pending"
+
+	// MemberOrgInvitationStateAccepted captures enum value "accepted"
+	MemberOrgInvitationStateAccepted string = "accepted"
+
+	// MemberOrgInvitationStateDeclined captures enum value "declined"
+	MemberOrgInvitationStateDeclined string = "declined"
+)
+
+// prop value enum
+func (m *MemberOrg) validateInvitationStateEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, memberOrgTypeInvitationStatePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *MemberOrg) validateInvitationState(formats strfmt.Registry) error {
+	if swag.IsZero(m.InvitationState) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateInvitationStateEnum("invitation_state", "body", m.InvitationState); err != nil {
 		return err
 	}
 
@@ -294,22 +374,12 @@ func (m *MemberOrg) validateLocaleEnum(path, location string, value string) erro
 }
 
 func (m *MemberOrg) validateLocale(formats strfmt.Registry) error {
-
-	if err := validate.Required("locale", "body", m.Locale); err != nil {
-		return err
+	if swag.IsZero(m.Locale) { // not required
+		return nil
 	}
 
 	// value enum
-	if err := m.validateLocaleEnum("locale", "body", *m.Locale); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MemberOrg) validateMfaEnabled(formats strfmt.Registry) error {
-
-	if err := validate.Required("mfa_enabled", "body", m.MfaEnabled); err != nil {
+	if err := m.validateLocaleEnum("locale", "body", m.Locale); err != nil {
 		return err
 	}
 
@@ -361,20 +431,19 @@ func (m *MemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateUsername(formats strfmt.Registry) error {
+	if swag.IsZero(m.Username) { // not required
+		return nil
+	}
 
-	if err := validate.Required("username", "body", m.Username); err != nil {
+	if err := validate.MinLength("username", "body", m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
+	if err := validate.MaxLength("username", "body", m.Username, 100); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("username", "body", m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
