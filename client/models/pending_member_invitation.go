@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// PendingInvite PendingInvite
+// PendingMemberInvitation PendingMemberInvitation
 //
-// # Contains the email used for the invitation
+// # Contains the email used for the member invitation
 //
-// swagger:model PendingInvite
-type PendingInvite struct {
+// swagger:model PendingMemberInvitation
+type PendingMemberInvitation struct {
 
 	// email
 	// Required: true
@@ -27,8 +27,8 @@ type PendingInvite struct {
 	Email *strfmt.Email `json:"email"`
 }
 
-// Validate validates this pending invite
-func (m *PendingInvite) Validate(formats strfmt.Registry) error {
+// Validate validates this pending member invitation
+func (m *PendingMemberInvitation) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateEmail(formats); err != nil {
@@ -41,7 +41,7 @@ func (m *PendingInvite) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *PendingInvite) validateEmail(formats strfmt.Registry) error {
+func (m *PendingMemberInvitation) validateEmail(formats strfmt.Registry) error {
 
 	if err := validate.Required("email", "body", m.Email); err != nil {
 		return err
@@ -54,13 +54,13 @@ func (m *PendingInvite) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this pending invite based on context it is used
-func (m *PendingInvite) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this pending member invitation based on context it is used
+func (m *PendingMemberInvitation) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *PendingInvite) MarshalBinary() ([]byte, error) {
+func (m *PendingMemberInvitation) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -68,8 +68,8 @@ func (m *PendingInvite) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *PendingInvite) UnmarshalBinary(b []byte) error {
-	var res PendingInvite
+func (m *PendingMemberInvitation) UnmarshalBinary(b []byte) error {
+	var res PendingMemberInvitation
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

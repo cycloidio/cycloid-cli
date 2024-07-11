@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewRemoveOrgMemberParams creates a new RemoveOrgMemberParams object,
@@ -61,17 +62,19 @@ RemoveOrgMemberParams contains all the parameters to send to the API endpoint
 */
 type RemoveOrgMemberParams struct {
 
+	/* MemberID.
+
+	   A member id
+
+	   Format: uint32
+	*/
+	MemberID uint32
+
 	/* OrganizationCanonical.
 
 	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
-
-	/* Username.
-
-	   A username
-	*/
-	Username string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -126,6 +129,17 @@ func (o *RemoveOrgMemberParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithMemberID adds the memberID to the remove org member params
+func (o *RemoveOrgMemberParams) WithMemberID(memberID uint32) *RemoveOrgMemberParams {
+	o.SetMemberID(memberID)
+	return o
+}
+
+// SetMemberID adds the memberId to the remove org member params
+func (o *RemoveOrgMemberParams) SetMemberID(memberID uint32) {
+	o.MemberID = memberID
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the remove org member params
 func (o *RemoveOrgMemberParams) WithOrganizationCanonical(organizationCanonical string) *RemoveOrgMemberParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -137,17 +151,6 @@ func (o *RemoveOrgMemberParams) SetOrganizationCanonical(organizationCanonical s
 	o.OrganizationCanonical = organizationCanonical
 }
 
-// WithUsername adds the username to the remove org member params
-func (o *RemoveOrgMemberParams) WithUsername(username string) *RemoveOrgMemberParams {
-	o.SetUsername(username)
-	return o
-}
-
-// SetUsername adds the username to the remove org member params
-func (o *RemoveOrgMemberParams) SetUsername(username string) {
-	o.Username = username
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *RemoveOrgMemberParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -156,13 +159,13 @@ func (o *RemoveOrgMemberParams) WriteToRequest(r runtime.ClientRequest, reg strf
 	}
 	var res []error
 
-	// path param organization_canonical
-	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
+	// path param member_id
+	if err := r.SetPathParam("member_id", swag.FormatUint32(o.MemberID)); err != nil {
 		return err
 	}
 
-	// path param username
-	if err := r.SetPathParam("username", o.Username); err != nil {
+	// path param organization_canonical
+	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
 		return err
 	}
 

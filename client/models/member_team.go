@@ -47,7 +47,7 @@ type MemberTeam struct {
 	ID *uint32 `json:"id"`
 
 	// Team member who invited the current user to the team.
-	InvitedBy *MemberTeam `json:"invited_by,omitempty"`
+	InvitedBy *MemberOrg `json:"invited_by,omitempty"`
 
 	// When the user logged in last time.
 	// Minimum: 0
