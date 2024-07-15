@@ -55,7 +55,7 @@ func TestMembers(t *testing.T) {
 			"--org", CY_TEST_ROOT_ORG,
 			"members",
 			"get",
-			"--name", "cycloidio",
+			"--id", "1",
 		})
 
 		require.Nil(t, cmdErr)

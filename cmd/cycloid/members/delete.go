@@ -15,7 +15,7 @@ func NewDeleteCommand() *cobra.Command {
 	var (
 		example = `
 	# Remove a member from my-org organization
-	cy --org my-org members delete --name my-username
+	cy --org my-org members delete --id 50
 	`
 		short = "Remove a user from the organization"
 		long  = short
@@ -30,7 +30,7 @@ func NewDeleteCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(WithFlagName, cmd)
+	common.RequiredFlag(WithFlagID, cmd)
 
 	return cmd
 }
@@ -44,7 +44,7 @@ func deleteMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cmd.Flags().GetString("name")
+	id, err := cmd.Flags().GetUint32("id")
 	if err != nil {
 		return err
 	}
@@ -60,6 +60,6 @@ func deleteMember(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteMember(org, name)
+	err = m.DeleteMember(org, id)
 	return printer.SmartPrint(p, nil, err, "unable to remove member", printer.Options{}, cmd.OutOrStdout())
 }
