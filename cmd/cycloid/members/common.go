@@ -5,12 +5,13 @@ import (
 )
 
 var (
-	nameFlag, emailFlag, roleFlag, inviteFlag string
+	idFlag                          uint32
+	emailFlag, roleFlag, inviteFlag string
 )
 
-func WithFlagName(cmd *cobra.Command) string {
-	flagName := "name"
-	cmd.Flags().StringVar(&nameFlag, flagName, "", "name")
+func WithFlagID(cmd *cobra.Command) string {
+	flagName := "id"
+	cmd.Flags().Uint32Var(&idFlag, flagName, 0, "name")
 	return flagName
 }
 

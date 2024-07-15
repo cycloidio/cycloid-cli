@@ -19,7 +19,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
-	"github.com/cycloidio/cycloid-cli/client/client/organization_invitations"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_kpis"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
@@ -85,7 +84,6 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *API {
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 	cli.OrganizationForms = organization_forms.New(transport, formats)
 	cli.OrganizationInfrastructurePolicies = organization_infrastructure_policies.New(transport, formats)
-	cli.OrganizationInvitations = organization_invitations.New(transport, formats)
 	cli.OrganizationKpis = organization_kpis.New(transport, formats)
 	cli.OrganizationMembers = organization_members.New(transport, formats)
 	cli.OrganizationPipelines = organization_pipelines.New(transport, formats)
@@ -160,8 +158,6 @@ type API struct {
 
 	OrganizationInfrastructurePolicies organization_infrastructure_policies.ClientService
 
-	OrganizationInvitations organization_invitations.ClientService
-
 	OrganizationKpis organization_kpis.ClientService
 
 	OrganizationMembers organization_members.ClientService
@@ -201,7 +197,6 @@ func (c *API) SetTransport(transport runtime.ClientTransport) {
 	c.OrganizationExternalBackends.SetTransport(transport)
 	c.OrganizationForms.SetTransport(transport)
 	c.OrganizationInfrastructurePolicies.SetTransport(transport)
-	c.OrganizationInvitations.SetTransport(transport)
 	c.OrganizationKpis.SetTransport(transport)
 	c.OrganizationMembers.SetTransport(transport)
 	c.OrganizationPipelines.SetTransport(transport)
