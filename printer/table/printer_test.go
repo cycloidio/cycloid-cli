@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/cycloidio/cycloid-cli/printer"
 )
 
 func int64Ptr(i int64) *int64 {

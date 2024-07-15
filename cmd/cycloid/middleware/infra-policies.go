@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"os"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 // ValidateInfraPolicies will validate the TF plan against

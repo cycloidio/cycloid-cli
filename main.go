@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cycloidio/cycloid-cli/cmd"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/cycloidio/cycloid-cli/cmd"
 )
 
 var (

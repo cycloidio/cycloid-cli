@@ -1,9 +1,10 @@
 package middleware
 
 import (
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error) {
