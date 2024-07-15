@@ -10,19 +10,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// NewLIstCommand returns the cobra command
-// to list the infrapolicies in a organisation
+// NewListCommand returns the cobra command
+// to list the infrapolicies in a organization
 func NewListCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "list",
 		Short: "list infrapolicies",
 		Example: `
-	# list all infrapolicies in an organisation
-	cy --org my-org ip list -ouput=table|json|yaml
+	# list all infrapolicies in an organization
+	cy --org my-org ip list -output=table|json|yaml
 
 	# parse the result using
-	cy --org my-org ip list -ouput=json | jq --color-output .
+	cy --org my-org ip list -output=json | jq --color-output .
 		`,
 		RunE:    list,
 		PreRunE: internal.CheckAPIAndCLIVersion,

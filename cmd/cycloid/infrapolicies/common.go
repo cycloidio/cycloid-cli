@@ -8,7 +8,7 @@ var (
 	nameFlag        string
 	ownerFlag       string
 	severityFlag    string
-	cannonicalFlag  string
+	canonicalFlag   string
 	descriptionFlag string
 	enabledFlag     bool
 )
@@ -33,7 +33,7 @@ func WithFlagName(cmd *cobra.Command) string {
 
 func WithFlagOwner(cmd *cobra.Command) string {
 	flagName := "owner"
-	cmd.PersistentFlags().StringVar(&ownerFlag, flagName, "", "InfraPolicy's owner cannonical")
+	cmd.PersistentFlags().StringVar(&ownerFlag, flagName, "", "InfraPolicy's owner canonical")
 	return flagName
 }
 
@@ -43,9 +43,9 @@ func WithFlagSeverity(cmd *cobra.Command) string {
 	return flagName
 }
 
-func WithFlagCannonical(cmd *cobra.Command) string {
-	flagName := "cannonical"
-	cmd.PersistentFlags().StringVar(&cannonicalFlag, flagName, "", "InfraPolicy's cannonical")
+func WithFlagcanonical(cmd *cobra.Command) string {
+	flagName := "canonical"
+	cmd.PersistentFlags().StringVar(&canonicalFlag, flagName, "", "InfraPolicy's canonical")
 	return flagName
 }
 
@@ -57,6 +57,6 @@ func WithFlagDescription(cmd *cobra.Command) string {
 
 func WithFlagEnabled(cmd *cobra.Command) string {
 	flagName := "enabled"
-	cmd.PersistentFlags().BoolVar(&enabledFlag, flagName, false, "Wheter to enable or not the infraPolicy. Note! You have to specify enabled=true|false enabled false|true doesn't work")
+	cmd.PersistentFlags().BoolVar(&enabledFlag, flagName, false, "Whether to enable or not the infraPolicy. Note! You have to specify enabled=true|false enabled false|true doesn't work")
 	return flagName
 }

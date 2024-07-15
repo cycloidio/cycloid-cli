@@ -13,8 +13,8 @@ import (
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
-		Short: "delete an organization",
+		Use:    "delete",
+		Short:  "delete an organization",
 		Hidden: true,
 		Example: `
 	# delete an organization with canonical name my-org

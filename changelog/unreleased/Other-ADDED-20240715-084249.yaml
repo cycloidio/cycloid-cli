@@ -1,0 +1,8 @@
+component: Other
+kind: ADDED
+body: Added linter for the CLI code
+time: 2024-07-15T08:42:49.392878258Z
+custom:
+  DETAILS: ""
+  PR: "285"
+  TYPE: CLI

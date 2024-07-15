@@ -113,7 +113,7 @@ func generate(obj interface{}, opts printer.Options) ([]string, [][]string, erro
 	// the object is a pointer to a struct:
 	// example: *models.ExternalBackend
 	case reflect.Ptr:
-		// we need to get the Value targetted by this pointer
+		// we need to get the Value targeted by this pointer
 		elt := rObj.Elem()
 		headers = headersFromStruct(elt, opts)
 		entries = make([][]string, 1)

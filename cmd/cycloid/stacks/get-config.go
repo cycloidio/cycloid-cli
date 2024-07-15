@@ -70,14 +70,14 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ref, err := cmd.Flags().GetString("ref")
+	ref, _ := cmd.Flags().GetString("ref")
 	if len(args) >= 1 && ref == "" {
 		ref = args[0]
 	} else if ref == "" {
 		return fmt.Errorf("missing ref argument.")
 	}
 
-	useCase, err := cmd.Flags().GetString("use-case")
+	useCase, _ := cmd.Flags().GetString("use-case")
 	if len(args) == 2 && useCase == "" {
 		useCase = args[1]
 	} else if useCase == "" {

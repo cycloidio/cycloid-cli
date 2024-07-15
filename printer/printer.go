@@ -5,6 +5,7 @@ import (
 
 	"github.com/pkg/errors"
 )
+
 // Printer is an interface that knows how to print runtime objects
 type Printer interface {
 	// Print will write the object in the writer using the given options
