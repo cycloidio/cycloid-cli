@@ -149,7 +149,7 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, variables, usec
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
 
-	vars := common.ReplaceCycloidVarsString(cyCtx, string(variables))
+	vars := common.ReplaceCycloidVarsString(cyCtx, variables)
 
 	pipelineName := common.GetPipelineName(project, env)
 

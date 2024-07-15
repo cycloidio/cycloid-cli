@@ -60,14 +60,14 @@ cy --org my-org project get-env-config my-project my-project use_case -o yaml`,
 
 func getEnvConfig(cmd *cobra.Command, args []string) error {
 	// Flags have precedence over args
-	project, err := cmd.Flags().GetString("project")
+	project, _ := cmd.Flags().GetString("project")
 	if len(args) >= 1 && project == "" {
 		project = args[0]
 	} else if project == "" {
 		return fmt.Errorf("missing project argument")
 	}
 
-	env, err := cmd.Flags().GetString("env")
+	env, _ := cmd.Flags().GetString("env")
 	if len(args) == 2 && env == "" {
 		env = args[1]
 	} else if env == "" {

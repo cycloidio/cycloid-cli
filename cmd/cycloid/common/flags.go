@@ -10,8 +10,8 @@ import (
 )
 
 var (
-	projectFlag, envFlag, orgFlag, credFlag, canFlag string
-	idFlag                                           uint32
+	projectFlag, envFlag, credFlag, canFlag string
+	idFlag                                  uint32
 )
 
 func GetOrg(cmd *cobra.Command) (org string, err error) {
@@ -29,7 +29,7 @@ func GetOrg(cmd *cobra.Command) (org string, err error) {
 
 func WithFlagProject(cmd *cobra.Command) string {
 	flagName := "project"
-	cmd.PersistentFlags().StringVar(&projectFlag, flagName, "", "Project cannonical name")
+	cmd.PersistentFlags().StringVar(&projectFlag, flagName, "", "Project canonical name")
 	return flagName
 }
 

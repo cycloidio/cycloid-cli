@@ -13,11 +13,11 @@ import (
 
 func NewListChildrensCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "list-children",
+		Use: "list-children",
 		Aliases: []string{
 			"list-childrens",
 		},
-		Short:   "list the organization childrens",
+		Short:   "list the organization children",
 		RunE:    listChildrens,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}

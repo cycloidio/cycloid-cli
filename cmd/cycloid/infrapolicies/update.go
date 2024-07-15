@@ -13,27 +13,28 @@ import (
 // NewUpdateCommand returns the cobra command
 // to update a infrapolicy
 // Note! For boolean flags it is required var=bool
-//       https://github.com/spf13/cobra/issues/613
+//
+//	https://github.com/spf13/cobra/issues/613
 func NewUpdateCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "update",
 		Short: "update a infrapolicy",
 		Example: `
-	# update an existent infrapolicy with cannonical my_policy
+	# update an existent infrapolicy with canonical my_policy
 	cy --org my-org ip update \
-	   --cannonical my_policy
+	   --canonical my_policy
 	   --policy-path /path/to/file/file.rego \
 	   --name my-policy
 	   --description "an awesome infrapolicy" \
-	   --owner user_cannonical \
+	   --owner user_canonical \
 	   --severity "advisory" \
 	   --enabled=true
 		`,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	common.RequiredFlag(WithFlagCannonical, cmd)
+	common.RequiredFlag(WithFlagcanonical, cmd)
 
 	WithFlagPolicyPath(cmd)
 	WithFlagName(cmd)
@@ -75,7 +76,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cannonical, err := cmd.Flags().GetString("cannonical")
+	canonical, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -102,7 +103,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	res, err := m.UpdateInfraPolicy(org, cannonical, policyPath, description, name, owner, severity, enabled)
+	res, err := m.UpdateInfraPolicy(org, canonical, policyPath, description, name, owner, severity, enabled)
 	return printer.SmartPrint(p, res, err, "unable to update infrapolicy", printer.Options{}, cmd.OutOrStdout())
 
 }

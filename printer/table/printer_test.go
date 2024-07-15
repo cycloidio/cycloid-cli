@@ -54,7 +54,7 @@ value a	value b	abc
 
 		err := tab.Print(&obj, printer.Options{}, &b)
 		require.NoError(t, err)
-		assert.Contains(t, b.String(), string(exptNow))
+		assert.Contains(t, b.String(), exptNow)
 	})
 	t.Run("SuccessAvoidNestedStruct", func(t *testing.T) {
 		var (

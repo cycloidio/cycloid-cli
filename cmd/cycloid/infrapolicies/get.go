@@ -20,12 +20,12 @@ func NewGetCommand() *cobra.Command {
 		Example: `
 	# get a infrapolicy my_policy
 	cy --org my-org ip get \
-	   --cannonical my_policy 
+	   --canonical my_policy 
 		`,
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	common.RequiredFlag(WithFlagCannonical, cmd)
+	common.RequiredFlag(WithFlagcanonical, cmd)
 
 	return cmd
 
@@ -40,7 +40,7 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cannonical, err := cmd.Flags().GetString("cannonical")
+	canonical, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	res, err := m.GetInfraPolicy(org, cannonical)
+	res, err := m.GetInfraPolicy(org, canonical)
 	return printer.SmartPrint(p, res, err, "unable to get infrapolicy", printer.Options{}, cmd.OutOrStdout())
 
 }
