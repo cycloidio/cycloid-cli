@@ -4,11 +4,12 @@ import (
 	"regexp"
 	"strings"
 
+	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
-	"github.com/pkg/errors"
 )
 
 func (m *middleware) ListProjects(org string) ([]*models.Project, error) {

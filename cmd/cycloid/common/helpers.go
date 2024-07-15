@@ -2,23 +2,22 @@ package common
 
 import (
 	"fmt"
+	"net/url"
 	"os"
 	"reflect"
 	"regexp"
 	"strings"
 
-	"net/url"
-
-	"github.com/cycloidio/cycloid-cli/client/client"
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/config"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
+	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/cycloidio/cycloid-cli/client/client"
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/config"
 )
 
 var orgRe = regexp.MustCompile(`\(\$ organization_canonical \$\)`)

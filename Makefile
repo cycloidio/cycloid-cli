@@ -164,3 +164,8 @@ new-changelog-entry: ## Create a new entry for unreleased element
 lint: ## Lint the source code
 	@echo -e "Running golangci-lint"
 	@golangci-lint run -v
+
+.PHONY: format-go
+format-go:
+	@gci write --skip-generated -s standard -s default -s "prefix(github.com/cycloidio)" . > /dev/null
+	@goimports -w -local github.com/cycloidio .
