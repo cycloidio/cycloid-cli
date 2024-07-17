@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: "Update client to version v5.1.15"
+time: 2024-07-17T15:58:30.464686970+00:00
+custom:
+  DETAILS: ""
+  PR: "292"
+  TYPE: CLI
