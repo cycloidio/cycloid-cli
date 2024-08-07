@@ -29,6 +29,9 @@ type InfrastructureGraphNode struct {
 	// Required: true
 	ID *string `json:"id"`
 
+	// name
+	Name string `json:"name,omitempty"`
+
 	// It holds [x,y]
 	// Required: true
 	Position []uint64 `json:"position"`
