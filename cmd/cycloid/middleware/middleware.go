@@ -79,7 +79,7 @@ type Middleware interface {
 
 	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error)
 	CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo string) (*models.Project, error)
-	DeleteProjectEnv(org, project, env string) error
+	DeleteEnv(org, project, env string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	GetProjectConfig(org string, project string, environment string) (*models.ProjectEnvironmentConfig, error)

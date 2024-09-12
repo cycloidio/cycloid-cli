@@ -212,13 +212,13 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 	return d, err
 }
 
-func (m *middleware) DeleteProjectEnv(org, project, env string) error {
-	params := organization_projects.NewDeleteProjectEnvironmentParams()
+func (m *middleware) DeleteEnv(org, project, env string) error {
+	params := organization_projects.NewDeleteEnvironmentParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
 	params.SetEnvironmentCanonical(env)
 
-	_, err := m.api.OrganizationProjects.DeleteProjectEnvironment(params, m.api.Credentials(&org))
+	_, err := m.api.OrganizationProjects.DeleteEnvironment(params, m.api.Credentials(&org))
 	if err != nil {
 		return NewApiError(err)
 	}
