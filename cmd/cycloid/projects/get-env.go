@@ -3,13 +3,14 @@ package projects
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
 func NewGetEnvCommand() *cobra.Command {
@@ -60,14 +61,14 @@ cy --org my-org project get-env-config my-project my-project use_case -o yaml`,
 
 func getEnvConfig(cmd *cobra.Command, args []string) error {
 	// Flags have precedence over args
-	project, err := cmd.Flags().GetString("project")
+	project, _ := cmd.Flags().GetString("project")
 	if len(args) >= 1 && project == "" {
 		project = args[0]
 	} else if project == "" {
 		return fmt.Errorf("missing project argument")
 	}
 
-	env, err := cmd.Flags().GetString("env")
+	env, _ := cmd.Flags().GetString("env")
 	if len(args) == 2 && env == "" {
 		env = args[1]
 	} else if env == "" {

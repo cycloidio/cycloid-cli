@@ -15,8 +15,8 @@ import (
 // Advanced user still can use it passing a user token in CY_TOKEN env var during a login.
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create",
-		Short: "create an organization",
+		Use:    "create",
+		Short:  "create an organization",
 		Hidden: true,
 		Example: `
 	# create an organization foo

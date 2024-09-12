@@ -6,11 +6,12 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/version"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 func Warning(out io.Writer, msg string) {

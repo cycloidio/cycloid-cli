@@ -3,10 +3,9 @@ package pipelines
 import (
 	"os"
 
+	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-
-	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"

@@ -348,6 +348,9 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		inputs,
 		*projectData.UpdatedAt,
 	)
+	if err != nil {
+		return errors.Wrap(err, "failed to send config to backend")
+	}
 
 	errMsg := "failed to send config accepted by backend, returning inputs instead."
 	config, err := m.GetProjectConfig(org, project, env)
