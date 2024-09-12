@@ -3,10 +3,11 @@ package middleware
 import (
 	"strings"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error {

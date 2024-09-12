@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/stretchr/testify/assert"
 )
 
 func ptrStr(s string) *string { return &s }

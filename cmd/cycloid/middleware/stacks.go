@@ -3,12 +3,12 @@ package middleware
 import (
 	"fmt"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
-	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
-
-	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
 	"gopkg.in/yaml.v3"
+
+	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
+	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
