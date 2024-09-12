@@ -1,8 +1,0 @@
-component: Members
-kind: CHANGED
-body: 'Updated members commands to fit the recent endpoints changes. '
-time: 2024-07-15T08:45:37.006029336Z
-custom:
-  DETAILS: ""
-  PR: "270"
-  TYPE: CLI
