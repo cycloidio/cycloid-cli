@@ -24,6 +24,9 @@
 
             go_1_22
             go-swagger
+            gci
+            golangci-lint
+            golangci-lint-langserver
           ]);
         };
       });
