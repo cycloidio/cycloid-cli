@@ -18,11 +18,11 @@ func createEvents(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	var (
-		err       error
-		cred string
-		purpose   = "events"
-		ebC       models.ExternalBackendConfiguration
-		engine    = cmd.CalledAs()
+		err     error
+		cred    string
+		purpose = "events"
+		ebC     models.ExternalBackendConfiguration
+		engine  = cmd.CalledAs()
 	)
 
 	org, err := common.GetOrg(cmd)

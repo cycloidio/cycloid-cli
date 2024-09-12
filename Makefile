@@ -159,3 +159,13 @@ delete-local-be: ## Creates local BE instance and starts e2e tests. Note! Only f
 new-changelog-entry: ## Create a new entry for unreleased element
 	@echo ${PATH}
 	docker run -it -v $(CURDIR):/cycloid-cli -w /cycloid-cli cycloid/cycloid-toolkit changie new
+
+.PHONY: lint
+lint: ## Lint the source code
+	@echo -e "Running golangci-lint"
+	@golangci-lint run -v
+
+.PHONY: format-go
+format-go:
+	@gci write --skip-generated -s standard -s default -s "prefix(github.com/cycloidio)" . > /dev/null
+	@goimports -w -local github.com/cycloidio .

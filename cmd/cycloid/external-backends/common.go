@@ -7,8 +7,6 @@ var (
 	regionFlag          string
 	awsBucketName       string
 	awsBucketPath       string
-	gcpBucketName       string
-	gcpBucketPath       string
 	awsS3BucketEndpoint string
 	urls                []string
 	prefilters          map[string]string

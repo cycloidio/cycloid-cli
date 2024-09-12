@@ -1,13 +1,14 @@
 package infrapolicies
 
 import (
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
 // NewDeleteCommand returns the cobra command
@@ -20,12 +21,12 @@ func NewDeleteCommand() *cobra.Command {
 		Example: `
 	# create a infrapolicy my_policy
 	cy --org my-org ip delete \
-	   --cannonical my_policy 
+	   --canonical my_policy 
 		`,
 		RunE:    delete,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	common.RequiredFlag(WithFlagCannonical, cmd)
+	common.RequiredFlag(WithFlagcanonical, cmd)
 
 	return cmd
 
@@ -40,7 +41,7 @@ func delete(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cannonical, err := cmd.Flags().GetString("cannonical")
+	canonical, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -57,7 +58,7 @@ func delete(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteInfraPolicy(org, cannonical)
+	err = m.DeleteInfraPolicy(org, canonical)
 	return printer.SmartPrint(p, nil, err, "unable to delete infrapolicy", printer.Options{}, cmd.OutOrStdout())
 
 }

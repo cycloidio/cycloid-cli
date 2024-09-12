@@ -1,9 +1,10 @@
 package middleware
 
 import (
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 type Middleware interface {
@@ -108,11 +109,11 @@ type Middleware interface {
 	// ValidateInfraPolicies will validate the TF plan against OPA policies defined on the Cycloid server
 	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error)
 	// CreateInfraPolicy will create a new infraPolicy with the repo file supplied
-	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
-	DeleteInfraPolicy(org, policyCannonical string) error
+	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, error)
+	DeleteInfraPolicy(org, policycanonical string) error
 	ListInfraPolicies(org string) ([]*models.InfraPolicy, error)
 	GetInfraPolicy(org, infraPolicy string) (*models.InfraPolicy, error)
-	UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
+	UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, error)
 
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, error)

@@ -1,19 +1,21 @@
 package infrapolicies
 
 import (
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
 // NewCreateCommand returns the cobra command
 // to create a new infrapolicy using a file
 // Note! For boolean flags it is required var=bool
-//       https://github.com/spf13/cobra/issues/613
+//
+//	https://github.com/spf13/cobra/issues/613
 func NewCreateCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
@@ -25,7 +27,7 @@ func NewCreateCommand() *cobra.Command {
 	   --policy-path /path/to/file/file.rego \
 	   --name my-policy
 	   --description "an awesome infrapolicy" \
-	   --owner user_cannonical \
+	   --owner user_canonical \
 	   --severity "advisory" \
 	   --enabled=true
 		`,
@@ -37,7 +39,7 @@ func NewCreateCommand() *cobra.Command {
 	common.RequiredFlag(WithFlagOwner, cmd)
 	common.RequiredFlag(WithFlagSeverity, cmd)
 
-	WithFlagCannonical(cmd)
+	WithFlagcanonical(cmd)
 	WithFlagDescription(cmd)
 	WithFlagEnabled(cmd)
 
@@ -74,7 +76,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	cannonical, err := cmd.Flags().GetString("cannonical")
+	canonical, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -101,7 +103,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	res, err := m.CreateInfraPolicy(org, policyPath, cannonical, description, name, owner, severity, enabled)
+	res, err := m.CreateInfraPolicy(org, policyPath, canonical, description, name, owner, severity, enabled)
 	return printer.SmartPrint(p, res, err, "unable to create infrapolicy", printer.Options{}, cmd.OutOrStdout())
 
 }

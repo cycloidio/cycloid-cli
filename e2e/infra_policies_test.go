@@ -15,7 +15,7 @@ func TestInfraPolicies(t *testing.T) {
 
 	// Checks the succesfull creation of a new infrapolicy
 	// The test validates that the reply of the create method
-	// contains the cannonical of the created infrapolicy
+	// contains the canonical of the created infrapolicy
 	t.Run("SuccessInfraPolicyCreate", func(t *testing.T) {
 		WriteFile("/tmp/test-cli-ip.rego", TestInfraPolicySample)
 
@@ -46,7 +46,7 @@ func TestInfraPolicies(t *testing.T) {
 			"--org", CY_TEST_ROOT_ORG,
 			"ip",
 			"get",
-			"--cannonical", "test",
+			"--canonical", "test",
 		})
 
 		assert.Nil(t, cmdErr)
@@ -80,7 +80,7 @@ func TestInfraPolicies(t *testing.T) {
 			"--org", CY_TEST_ROOT_ORG,
 			"ip",
 			"update",
-			"--cannonical", "test",
+			"--canonical", "test",
 			"--policy-path", "/tmp/test-cli-ip.rego",
 			"--name", "test",
 			"--description", "changed description",
@@ -103,7 +103,7 @@ func TestInfraPolicies(t *testing.T) {
 			"--org", CY_TEST_ROOT_ORG,
 			"ip",
 			"delete",
-			"--cannonical", "test",
+			"--canonical", "test",
 		})
 
 		assert.Nil(t, cmdErr)
