@@ -1,12 +1,13 @@
 package middleware
 
 import (
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs_build"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) PausePipeline(org, project, env string) error {
@@ -149,7 +150,7 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, variables, usec
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
 
-	vars := common.ReplaceCycloidVarsString(cyCtx, string(variables))
+	vars := common.ReplaceCycloidVarsString(cyCtx, variables)
 
 	pipelineName := common.GetPipelineName(project, env)
 

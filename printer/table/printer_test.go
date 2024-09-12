@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/cycloidio/cycloid-cli/printer"
 )
 
 func int64Ptr(i int64) *int64 {
@@ -54,7 +55,7 @@ value a	value b	abc
 
 		err := tab.Print(&obj, printer.Options{}, &b)
 		require.NoError(t, err)
-		assert.Contains(t, b.String(), string(exptNow))
+		assert.Contains(t, b.String(), exptNow)
 	})
 	t.Run("SuccessAvoidNestedStruct", func(t *testing.T) {
 		var (

@@ -50,7 +50,7 @@ func list(output string) error {
 			Name  string
 			Token string
 		}{
-			Name:  name,
+			Name: name,
 			// Special formatting to display only the 7 last chars of a token
 			Token: o.Token[len(o.Token)-7:],
 		})

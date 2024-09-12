@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"regexp"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error) {
