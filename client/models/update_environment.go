@@ -14,19 +14,12 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewEnvironment NewEnvironment
+// UpdateEnvironment Update Environment
 //
-// # Represent an entity necessary for environment creation
+// # Represent an entity necessary for environment update
 //
-// swagger:model NewEnvironment
-type NewEnvironment struct {
-
-	// canonical
-	// Required: true
-	// Max Length: 100
-	// Min Length: 1
-	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
-	Canonical *string `json:"canonical"`
+// swagger:model UpdateEnvironment
+type UpdateEnvironment struct {
 
 	// cloud provider canonical
 	// Max Length: 100
@@ -49,13 +42,9 @@ type NewEnvironment struct {
 	UseCase string `json:"use_case,omitempty"`
 }
 
-// Validate validates this new environment
-func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
+// Validate validates this update environment
+func (m *UpdateEnvironment) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateCanonical(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateCloudProviderCanonical(formats); err != nil {
 		res = append(res, err)
@@ -79,28 +68,7 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
-
-	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *NewEnvironment) validateCloudProviderCanonical(formats strfmt.Registry) error {
+func (m *UpdateEnvironment) validateCloudProviderCanonical(formats strfmt.Registry) error {
 	if swag.IsZero(m.CloudProviderCanonical) { // not required
 		return nil
 	}
@@ -120,7 +88,7 @@ func (m *NewEnvironment) validateCloudProviderCanonical(formats strfmt.Registry)
 	return nil
 }
 
-func (m *NewEnvironment) validateColor(formats strfmt.Registry) error {
+func (m *UpdateEnvironment) validateColor(formats strfmt.Registry) error {
 	if swag.IsZero(m.Color) { // not required
 		return nil
 	}
@@ -132,7 +100,7 @@ func (m *NewEnvironment) validateColor(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewEnvironment) validateIcon(formats strfmt.Registry) error {
+func (m *UpdateEnvironment) validateIcon(formats strfmt.Registry) error {
 	if swag.IsZero(m.Icon) { // not required
 		return nil
 	}
@@ -144,7 +112,7 @@ func (m *NewEnvironment) validateIcon(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewEnvironment) validateUseCase(formats strfmt.Registry) error {
+func (m *UpdateEnvironment) validateUseCase(formats strfmt.Registry) error {
 	if swag.IsZero(m.UseCase) { // not required
 		return nil
 	}
@@ -164,13 +132,13 @@ func (m *NewEnvironment) validateUseCase(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this new environment based on context it is used
-func (m *NewEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this update environment based on context it is used
+func (m *UpdateEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *NewEnvironment) MarshalBinary() ([]byte, error) {
+func (m *UpdateEnvironment) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -178,8 +146,8 @@ func (m *NewEnvironment) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *NewEnvironment) UnmarshalBinary(b []byte) error {
-	var res NewEnvironment
+func (m *UpdateEnvironment) UnmarshalBinary(b []byte) error {
+	var res UpdateEnvironment
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
