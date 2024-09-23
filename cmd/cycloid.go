@@ -54,7 +54,7 @@ Environment:
 
 CY_API_URL   -> Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
 CY_ORG       -> Set the current organization
-CY_API_TOKEN -> Set the current API TOKEN
+CY_API_KEY   -> Set the current API Key to use
 CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default warning `,
 	}
 
