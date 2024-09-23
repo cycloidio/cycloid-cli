@@ -141,6 +141,9 @@ func NewAPI(opts ...APIOptions) *APIClient {
 		cfg = cfg.WithBasePath(apiUrl.Path)
 	}
 
+	fmt.Fprintf(os.Stderr, "apiUrl: %v\n", apiUrl)
+	fmt.Fprintf(os.Stderr, "config: %v\n", cfg)
+
 	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
 
 	rt, err := httptransport.TLSTransport(httptransport.TLSClientOptions{InsecureSkipVerify: acfg.Insecure})
