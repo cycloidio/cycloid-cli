@@ -1,6 +1,3 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
@@ -33,7 +30,7 @@ func TestCatalogRepositories(t *testing.T) {
 			"--name", "step-by-step",
 		})
 
-		require.Nil(t, cmdErr, "more info, root org is: "+CY_TEST_ROOT_ORG)
+		require.Nil(t, cmdErr)
 		assert.Contains(t, cmdOut, "canonical\": \"stack-aws-sample")
 	})
 
