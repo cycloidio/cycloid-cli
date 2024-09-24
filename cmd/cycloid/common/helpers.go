@@ -155,14 +155,20 @@ func NewAPI(opts ...APIOptions) *APIClient {
 
 func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 	var token = a.Config.Token
+
+	// we first try to get the token from the env variable
 	if token == "" {
-		// we first try to get the token from the env variable
-		var ok bool
-		token, ok = os.LookupEnv("CY_API_TOKEN")
-		if !ok {
-			token, ok = os.LookupEnv("TOKEN")
-			if ok {
-				fmt.Println("TOKEN env var is deprecated, please use CY_API_TOKEN instead")
+		var ok = false
+		for _, env_var := range []string{"CY_API_KEY", "CY_API_TOKEN", "TOKEN"} {
+			token, ok = os.LookupEnv(env_var)
+
+			// Still display warning for future deprecation
+			if ok && env_var == "TOKEN" {
+				fmt.Fprintln(os.Stderr, "TOKEN env var is deprecated, please use CY_API_KEY instead")
+			}
+
+			if ok && len(token) != 0 {
+				break
 			}
 		}
 	}
@@ -186,6 +192,10 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 	}
 
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
+		if token == "" {
+			return errors.New("No API_KEY was provided, please provide one by CY_API_KEY env var or using cy login.")
+		}
+
 		r.SetHeaderParam("Authorization", "Bearer "+token)
 		return nil
 	})
