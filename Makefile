@@ -69,6 +69,7 @@ SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 CY_API_URL         ?= http://127.0.0.1:3001
 # Env list specified in file /e2e/e2e.go
 CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo.git
+CY_TEST_ROOT_ORG ?= "fake-cycloid"
 
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
@@ -93,9 +94,10 @@ build: ## Builds the binary
 .PHONY: test
 test: ## Run end to end tests
 	@echo "Using API url: $(CY_API_URL) (from \$$CY_API_URL)"
+	@echo "Using ORG: $(CY_TEST_ROOT_ORG) (from \$$CY_TEST_ROOT_ORG)"
 	@echo "Using GIT: $(CY_TEST_GIT_CR_URL) (from \$$CY_TEST_GIT_CR_URL)"
 	@if [ -z "$$CY_TEST_ROOT_API_KEY" ]; then echo "Unable to read API KEY from \$$CY_TEST_ROOT_API_KEY"; exit 1; fi; \
-	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" go test ./... --tags e2e
+	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" go test ./... --tags e2e
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder

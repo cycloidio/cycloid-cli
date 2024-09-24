@@ -123,6 +123,14 @@ func NewAPI(opts ...APIOptions) *APIClient {
 		o(&acfg)
 	}
 
+	if !strings.HasPrefix(acfg.URL, "https://") {
+		if strings.Contains(acfg.URL, "localhost") {
+			// This handles the weird case of localhost:3001
+			// being interpreted as scheme=localhost by url.Parse
+			acfg.URL = "http://" + acfg.URL
+		}
+	}
+
 	apiUrl, err := url.Parse(acfg.URL)
 	if err == nil && apiUrl.Host != "" {
 		cfg = cfg.WithHost(apiUrl.Host)
