@@ -33,7 +33,7 @@ func TestCatalogRepositories(t *testing.T) {
 			"--name", "step-by-step",
 		})
 
-		require.Nil(t, cmdErr)
+		require.Nil(t, cmdErr, "more info, root org is: "+CY_TEST_ROOT_ORG)
 		assert.Contains(t, cmdOut, "canonical\": \"stack-aws-sample")
 	})
 
