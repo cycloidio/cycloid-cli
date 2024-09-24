@@ -7,7 +7,7 @@ import (
 
 var (
 	CY_TEST_ROOT_API_KEY = "my secret api key"
-	CY_TEST_ROOT_ORG     = "cycloidio"
+	CY_TEST_ROOT_ORG     = "fake-cycloid"
 	// Note, this url should be accessible by Cycloid API
 	CY_TEST_GIT_CR_URL    = "Url of the git repository used as config repository"
 	CY_TEST_GIT_CR_BRANCH = "master"
