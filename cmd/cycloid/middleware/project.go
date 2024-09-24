@@ -74,7 +74,7 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo string) (*models.Project, error) {
+func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error) {
 	params := organization_projects.NewCreateProjectParams()
 	params.WithOrganizationCanonical(org)
 
@@ -84,6 +84,7 @@ func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, desc
 		Canonical:                 projectCanonical,
 		ServiceCatalogRef:         &stackRef,
 		ConfigRepositoryCanonical: &configRepo,
+		Owner:                     owner,
 	}
 
 	err := body.Validate(strfmt.Default)
@@ -107,7 +108,7 @@ func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, desc
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error) {
+func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo, owner string) (*models.Project, error) {
 	var body *models.NewProject
 	var pipelines []*models.NewPipeline
 
@@ -152,6 +153,7 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipe
 		ServiceCatalogRef:         &stackRef,
 		ConfigRepositoryCanonical: &configRepo,
 		Pipelines:                 pipelines,
+		Owner:                     owner,
 	}
 
 	err = body.Validate(strfmt.Default)
