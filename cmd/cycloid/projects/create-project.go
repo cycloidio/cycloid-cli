@@ -25,13 +25,9 @@ func NewCreateCommand() *cobra.Command {
 	cy --org my-org project create \
 		--name my-project \
 		--description "an awesome project" \
+		--owner "username" \
 		--stack-ref my-stack-ref \
-		--config-repo config-repo-canonical \
-		--env environment-name \
-		--usecase usecase-1 \
-		--vars /path/to/variables.yml \
-		--pipeline /path/to/pipeline.yml \
-		--config /path/to/config=/path/in/config_repo
+		--config-repo config-repo-canonical
 `,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
@@ -44,7 +40,7 @@ func NewCreateCommand() *cobra.Command {
 	cmd.Flags().String("pipeline", "", "[deprecated] path to a pipeline file for the env creation")
 	cmd.Flags().StringToString("config", nil, "[deprecated] path to a config file to inject in the config repo")
 	cmd.Flags().String("usecase", "", "[deprecated] the usecase for the env creation")
-	cmd.Flags().String("owner", "", "the owner canonical")
+	cmd.Flags().String("owner", "", "the owner username")
 
 	WithFlagDescription(cmd)
 	WithFlagCanonical(cmd)
