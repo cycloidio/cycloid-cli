@@ -25,7 +25,7 @@ type ProjectEnvironmentConfig struct {
 
 	// forms
 	// Required: true
-	Forms *FormsFileV2 `json:"forms"`
+	Forms *FormsFileV3 `json:"forms"`
 
 	// The resource pool canonical, only require when using Quotas
 	ResourcePoolCanonical string `json:"resource_pool_canonical,omitempty"`
