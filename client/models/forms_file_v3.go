@@ -15,10 +15,10 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// FormsFileV2 Forms File V2
+// FormsFileV3 Forms File V3
 //
-// swagger:model FormsFileV2
-type FormsFileV2 struct {
+// swagger:model FormsFileV3
+type FormsFileV3 struct {
 
 	// use cases
 	// Required: true
@@ -29,8 +29,8 @@ type FormsFileV2 struct {
 	Version *string `json:"version"`
 }
 
-// Validate validates this forms file v2
-func (m *FormsFileV2) Validate(formats strfmt.Registry) error {
+// Validate validates this forms file v3
+func (m *FormsFileV3) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateUseCases(formats); err != nil {
@@ -47,7 +47,7 @@ func (m *FormsFileV2) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *FormsFileV2) validateUseCases(formats strfmt.Registry) error {
+func (m *FormsFileV3) validateUseCases(formats strfmt.Registry) error {
 
 	if err := validate.Required("use_cases", "body", m.UseCases); err != nil {
 		return err
@@ -74,7 +74,7 @@ func (m *FormsFileV2) validateUseCases(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *FormsFileV2) validateVersion(formats strfmt.Registry) error {
+func (m *FormsFileV3) validateVersion(formats strfmt.Registry) error {
 
 	if err := validate.Required("version", "body", m.Version); err != nil {
 		return err
@@ -83,8 +83,8 @@ func (m *FormsFileV2) validateVersion(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this forms file v2 based on the context it is used
-func (m *FormsFileV2) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validate this forms file v3 based on the context it is used
+func (m *FormsFileV3) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateUseCases(ctx, formats); err != nil {
@@ -97,7 +97,7 @@ func (m *FormsFileV2) ContextValidate(ctx context.Context, formats strfmt.Regist
 	return nil
 }
 
-func (m *FormsFileV2) contextValidateUseCases(ctx context.Context, formats strfmt.Registry) error {
+func (m *FormsFileV3) contextValidateUseCases(ctx context.Context, formats strfmt.Registry) error {
 
 	for i := 0; i < len(m.UseCases); i++ {
 
@@ -123,7 +123,7 @@ func (m *FormsFileV2) contextValidateUseCases(ctx context.Context, formats strfm
 }
 
 // MarshalBinary interface implementation
-func (m *FormsFileV2) MarshalBinary() ([]byte, error) {
+func (m *FormsFileV3) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -131,8 +131,8 @@ func (m *FormsFileV2) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *FormsFileV2) UnmarshalBinary(b []byte) error {
-	var res FormsFileV2
+func (m *FormsFileV3) UnmarshalBinary(b []byte) error {
+	var res FormsFileV3
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
