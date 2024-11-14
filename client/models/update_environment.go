@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -35,6 +36,11 @@ type UpdateEnvironment struct {
 	// Max Length: 64
 	Icon string `json:"icon,omitempty"`
 
+	// The variables set within a form with the corresponding environment
+	// canonical and use case
+	//
+	Inputs []*FormInput `json:"inputs"`
+
 	// use case
 	// Max Length: 100
 	// Min Length: 3
@@ -55,6 +61,10 @@ func (m *UpdateEnvironment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateIcon(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInputs(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -112,6 +122,32 @@ func (m *UpdateEnvironment) validateIcon(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *UpdateEnvironment) validateInputs(formats strfmt.Registry) error {
+	if swag.IsZero(m.Inputs) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Inputs); i++ {
+		if swag.IsZero(m.Inputs[i]) { // not required
+			continue
+		}
+
+		if m.Inputs[i] != nil {
+			if err := m.Inputs[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *UpdateEnvironment) validateUseCase(formats strfmt.Registry) error {
 	if swag.IsZero(m.UseCase) { // not required
 		return nil
@@ -132,8 +168,42 @@ func (m *UpdateEnvironment) validateUseCase(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this update environment based on context it is used
+// ContextValidate validate this update environment based on the context it is used
 func (m *UpdateEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateInputs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UpdateEnvironment) contextValidateInputs(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Inputs); i++ {
+
+		if m.Inputs[i] != nil {
+
+			if swag.IsZero(m.Inputs[i]) { // not required
+				return nil
+			}
+
+			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

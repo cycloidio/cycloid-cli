@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -42,6 +43,17 @@ type NewEnvironment struct {
 	// Max Length: 64
 	Icon string `json:"icon,omitempty"`
 
+	// The variables set within a form with the corresponding environment
+	// canonical and use case
+	//
+	Inputs []*FormInput `json:"inputs"`
+
+	// Each instance should include passed_config if no inputs are sent on
+	// environment creation, otherwise it will be inferred internally.
+	//
+	// Min Items: 1
+	Pipelines []*NewPipeline `json:"pipelines"`
+
 	// use case
 	// Max Length: 100
 	// Min Length: 3
@@ -66,6 +78,14 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateIcon(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateInputs(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validatePipelines(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -144,6 +164,64 @@ func (m *NewEnvironment) validateIcon(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *NewEnvironment) validateInputs(formats strfmt.Registry) error {
+	if swag.IsZero(m.Inputs) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Inputs); i++ {
+		if swag.IsZero(m.Inputs[i]) { // not required
+			continue
+		}
+
+		if m.Inputs[i] != nil {
+			if err := m.Inputs[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *NewEnvironment) validatePipelines(formats strfmt.Registry) error {
+	if swag.IsZero(m.Pipelines) { // not required
+		return nil
+	}
+
+	iPipelinesSize := int64(len(m.Pipelines))
+
+	if err := validate.MinItems("pipelines", "body", iPipelinesSize, 1); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.Pipelines); i++ {
+		if swag.IsZero(m.Pipelines[i]) { // not required
+			continue
+		}
+
+		if m.Pipelines[i] != nil {
+			if err := m.Pipelines[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("pipelines" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("pipelines" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *NewEnvironment) validateUseCase(formats strfmt.Registry) error {
 	if swag.IsZero(m.UseCase) { // not required
 		return nil
@@ -164,8 +242,71 @@ func (m *NewEnvironment) validateUseCase(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this new environment based on context it is used
+// ContextValidate validate this new environment based on the context it is used
 func (m *NewEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateInputs(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidatePipelines(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NewEnvironment) contextValidateInputs(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Inputs); i++ {
+
+		if m.Inputs[i] != nil {
+
+			if swag.IsZero(m.Inputs[i]) { // not required
+				return nil
+			}
+
+			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *NewEnvironment) contextValidatePipelines(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Pipelines); i++ {
+
+		if m.Pipelines[i] != nil {
+
+			if swag.IsZero(m.Pipelines[i]) { // not required
+				return nil
+			}
+
+			if err := m.Pipelines[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("pipelines" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("pipelines" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
