@@ -13,11 +13,11 @@ import (
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:    "delete",
-		Short:  "delete an organization",
-		Hidden: true,
+		Use:   "delete",
+		Short: "delete an organization (require root API_KEY)",
 		Example: `
 	# delete an organization with canonical name my-org
+	# The API_KEY must be obtained from the root organization
 	cy organization delete --org my-org
 `,
 		RunE:    del,
