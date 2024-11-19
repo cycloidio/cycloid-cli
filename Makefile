@@ -69,7 +69,7 @@ SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 CY_API_URL         ?= http://127.0.0.1:3001
 # Env list specified in file /e2e/e2e.go
 CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo.git
-CY_TEST_ROOT_ORG ?= "fake-cycloid"
+CY_TEST_ROOT_ORG ?= "cycloidio"
 
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
