@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
@@ -154,11 +156,83 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 	return d, err
 }
 
-func (m *middleware) CreateEnv(org, project, env string) error {
-	return errors.New("not implemented")
+func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) error {
+	params := organization_projects.NewCreateEnvironmentParams()
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(project)
+
+	if color == "" {
+		color = "default"
+	}
+
+	if icon == "" {
+		icon = "extension"
+	}
+
+	envBody := *&models.NewEnvironment{
+		Canonical:              &envCanonical,
+		UseCase:                useCase,
+		Inputs:                 []*models.FormInput{inputs},
+		Icon:                   icon,
+		Color:                  color,
+		CloudProviderCanonical: cloudProviderCanonical,
+	}
+
+	err := envBody.Validate(strfmt.Default)
+	if err != nil {
+		return errors.Wrap(err, "Validation failed for createEnv argument, check API docs for allow values in createEnv")
+	}
+
+	params.WithBody(&envBody)
+
+	response, err := m.api.OrganizationProjects.CreateEnvironment(params, m.api.Credentials(&org))
+	if response.Code() == 409 {
+		return errors.New(fmt.Sprintf("environment %s already exists.", envCanonical))
+	}
+
+	if err != nil {
+		return errors.Wrap(err, "an error occurred while calling Cycloid API for createEnv.")
+	}
+
+	return nil
 }
-func (m *middleware) UpdateEnv(org, project, env string) error {
-	return errors.New("not implemented")
+
+func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*organization_projects.UpdateEnvironmentOKBody, error) {
+	params := organization_projects.NewUpdateEnvironmentParams()
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(project)
+	params.WithEnvironmentCanonical(envCanonical)
+
+	if color == "" {
+		color = "default"
+	}
+
+	if icon == "" {
+		icon = "extension"
+	}
+
+	envBody := *&models.UpdateEnvironment{
+		UseCase:                useCase,
+		Inputs:                 []*models.FormInput{inputs},
+		Icon:                   icon,
+		Color:                  color,
+		CloudProviderCanonical: cloudProviderCanonical,
+	}
+
+	err := envBody.Validate(strfmt.Default)
+	if err != nil {
+		return nil, errors.Wrap(err, "Validation failed for updateEnv argument, check API docs for allow values in createEnv")
+	}
+
+	params.WithBody(&envBody)
+
+	response, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
+
+	if err != nil {
+		return nil, errors.Wrap(err, "an error occurred while calling Cycloid API for updateEnv.")
+	}
+
+	return response.Payload, nil
 }
 
 func (m *middleware) DeleteEnv(org, project, env string) error {
