@@ -1,15 +1,11 @@
 package middleware
 
 import (
-	"regexp"
-	"strings"
-
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
@@ -60,7 +56,12 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	params.WithEnvironmentCanonical(env)
 	params.WithDefaults()
 
-	resp, err := m.api.OrganizationProjects.GetProjectConfig(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationProjects.GetProjectConfig(
+		params,
+		m.api.Credentials(&org),
+		organization_projects.WithContentType("application/vnd.cycloid.io.v1+json"),
+		organization_projects.WithAccept("application/json"),
+	)
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -74,7 +75,7 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error) {
+func (m *middleware) CreateProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error) {
 	params := organization_projects.NewCreateProjectParams()
 	params.WithOrganizationCanonical(org)
 
@@ -108,75 +109,9 @@ func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, desc
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo, owner string) (*models.Project, error) {
-	var body *models.NewProject
-	var pipelines []*models.NewPipeline
-
-	if projectCanonical == "" {
-		re := regexp.MustCompile(`[^a-z0-9\-_]`)
-		projectCanonical = re.ReplaceAllString(strings.ToLower(projectName), "-")
-	}
-
-	cyCtx := common.CycloidContext{Env: env,
-		Org:     org,
-		Project: projectCanonical}
-
-	params := organization_projects.NewCreateProjectParams()
-	params.SetOrganizationCanonical(org)
-
-	pipelineName := common.GetPipelineName(projectCanonical, env)
-
-	vars := common.ReplaceCycloidVarsString(cyCtx, variables)
-
-	pipeline := &models.NewPipeline{
-		Environment: &models.NewEnvironment{
-			// TODO: https://github.com/cycloidio/cycloid-cli/issues/67
-			Canonical: &env,
-		},
-		PipelineName: &pipelineName,
-		UseCase:      usecase,
-		PassedConfig: pipelineTemplate,
-		YamlVars:     vars,
-	}
-
-	err := pipeline.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
-	pipelines = append(pipelines, pipeline)
-
-	body = &models.NewProject{
-		Name:                      &projectName,
-		Description:               description,
-		Canonical:                 projectCanonical,
-		ServiceCatalogRef:         &stackRef,
-		ConfigRepositoryCanonical: &configRepo,
-		Pipelines:                 pipelines,
-		Owner:                     owner,
-	}
-
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
-	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewApiError(err)
-	}
-
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
-	d := p.Data
-	return d, err
-}
-
+/*
+Warning: This method is deprecated. You can't create envs from this route anymore, use the env CRUD
+*/
 func (m *middleware) UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error) {
 	params := organization_projects.NewUpdateProjectParams()
 	params.WithOrganizationCanonical(org)
@@ -199,7 +134,12 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.UpdateProject(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationProjects.UpdateProject(
+		params,
+		m.api.Credentials(&org),
+		// organization_projects.WithContentType("application/vnd.cycloid.io.v1+json"),
+		// organization_projects.WithAccept("application/json"),
+	)
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -212,6 +152,13 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 
 	d := p.Data
 	return d, err
+}
+
+func (m *middleware) CreateEnv(org, project, env string) error {
+	return errors.New("not implemented")
+}
+func (m *middleware) UpdateEnv(org, project, env string) error {
+	return errors.New("not implemented")
 }
 
 func (m *middleware) DeleteEnv(org, project, env string) error {
