@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -51,15 +50,6 @@ type UpdateProject struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// environments
-	// Min Items: 0
-	Environments []*NewEnvironment `json:"environments"`
-
-	// The variables set within a form with the corresponding environment
-	// canonical and use case
-	//
-	Inputs []*FormInput `json:"inputs"`
-
 	// name
 	// Required: true
 	// Min Length: 1
@@ -94,14 +84,6 @@ func (m *UpdateProject) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateConfigRepositoryCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateEnvironments(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateInputs(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -194,64 +176,6 @@ func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registr
 	return nil
 }
 
-func (m *UpdateProject) validateEnvironments(formats strfmt.Registry) error {
-	if swag.IsZero(m.Environments) { // not required
-		return nil
-	}
-
-	iEnvironmentsSize := int64(len(m.Environments))
-
-	if err := validate.MinItems("environments", "body", iEnvironmentsSize, 0); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(m.Environments); i++ {
-		if swag.IsZero(m.Environments[i]) { // not required
-			continue
-		}
-
-		if m.Environments[i] != nil {
-			if err := m.Environments[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *UpdateProject) validateInputs(formats strfmt.Registry) error {
-	if swag.IsZero(m.Inputs) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Inputs); i++ {
-		if swag.IsZero(m.Inputs[i]) { // not required
-			continue
-		}
-
-		if m.Inputs[i] != nil {
-			if err := m.Inputs[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 func (m *UpdateProject) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -291,71 +215,8 @@ func (m *UpdateProject) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this update project based on the context it is used
+// ContextValidate validates this update project based on context it is used
 func (m *UpdateProject) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateEnvironments(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateInputs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *UpdateProject) contextValidateEnvironments(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Environments); i++ {
-
-		if m.Environments[i] != nil {
-
-			if swag.IsZero(m.Environments[i]) { // not required
-				return nil
-			}
-
-			if err := m.Environments[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *UpdateProject) contextValidateInputs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Inputs); i++ {
-
-		if m.Inputs[i] != nil {
-
-			if swag.IsZero(m.Inputs[i]) { // not required
-				return nil
-			}
-
-			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 

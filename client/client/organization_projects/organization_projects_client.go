@@ -167,7 +167,7 @@ func (a *Client) CreateEnvironment(params *CreateEnvironmentParams, authInfo run
 }
 
 /*
-CreateProject Create a new project with envs and pipelines in the organization.
+CreateProject Create a new project with pipelines in the organization.
 */
 func (a *Client) CreateProject(params *CreateProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateProjectOK, error) {
 	// TODO: Validate the params before sending

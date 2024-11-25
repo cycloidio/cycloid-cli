@@ -65,8 +65,7 @@ type CreateProjectParams struct {
 
 	/* Body.
 
-	     The information of the project to create and optionally its configuration inputs.
-	If the configuration inputs are not sent the project configuration is not generated and should be generated separately.
+	   The information of the project to create.
 
 	*/
 	Body *models.NewProject
