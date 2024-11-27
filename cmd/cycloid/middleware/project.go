@@ -169,7 +169,7 @@ func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProvide
 		icon = "extension"
 	}
 
-	envBody := *&models.NewEnvironment{
+	envBody := models.NewEnvironment{
 		Canonical:              &envCanonical,
 		UseCase:                useCase,
 		Inputs:                 []*models.FormInput{inputs},
@@ -197,7 +197,7 @@ func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProvide
 	return nil
 }
 
-func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*organization_projects.UpdateEnvironmentOKBody, error) {
+func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.UpdateEnvironment, error) {
 	params := organization_projects.NewUpdateEnvironmentParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
@@ -211,7 +211,7 @@ func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProvide
 		icon = "extension"
 	}
 
-	envBody := *&models.UpdateEnvironment{
+	envBody := models.UpdateEnvironment{
 		UseCase:                useCase,
 		Inputs:                 []*models.FormInput{inputs},
 		Icon:                   icon,
@@ -232,7 +232,7 @@ func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProvide
 		return nil, errors.Wrap(err, "an error occurred while calling Cycloid API for updateEnv.")
 	}
 
-	return response.Payload, nil
+	return response.Payload.Data, nil
 }
 
 func (m *middleware) DeleteEnv(org, project, env string) error {
