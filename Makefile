@@ -69,15 +69,15 @@ SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 CY_API_URL         ?= http://127.0.0.1:3001
 # Env list specified in file /e2e/e2e.go
 CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo.git
-CY_TEST_ROOT_ORG ?= "cycloidio"
+CY_TEST_ROOT_ORG ?= "fake-cycloid"
 
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
 # AWS - ECR login
 export AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws)
 export AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
-AWS_DEFAULT_REGION    ?= eu-west-1
-AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
+export AWS_DEFAULT_REGION    ?= eu-west-1
+export AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
 # Local BE
 LOCAL_BE_GIT_PATH ?= ../youdeploy-http-api
 YD_API_TAG        ?= staging
