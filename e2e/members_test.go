@@ -102,7 +102,7 @@ func TestMembers(t *testing.T) {
 		err := json.Unmarshal([]byte(cmdOut), &memberList)
 		require.Nil(t, err, "unmarshalling cli json output")
 
-		ok := JsonListFindObjectValue(memberList, "email", "foo@bli.fr")
+		ok := JsonListFindObjectValue(memberList, "invitation_email", "foo@bli.fr")
 		assert.True(t, ok, fmt.Sprint("member with foo@bli.fr email address not found in json:\n", cmdOut))
 	})
 }
