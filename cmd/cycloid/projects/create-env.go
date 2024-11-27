@@ -15,15 +15,15 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create-stackforms-env",
-		Short: "create an environment within a project using StackForms.",
+		Use:     "create-env",
+		Aliases: []string{"create-stackforms-env", "create-raw-env"},
+		Short:   "create an environment within a project using StackForms.",
 		Long: `Create or update (with --update) an environment within a project using StackForms.
 
 By default, the command will fetch the stack's default value for you to override.
@@ -54,14 +54,9 @@ cy project get-env-config --org my-org --project my-project --env prod \
     --project my-project --env staging --use-case aws \
     --var-file "-" \
     -V "pipeline.database.dump_version=staging"`,
-		PreRunE: func(cmd *cobra.Command, args []string) error {
-			internal.Warning(cmd.ErrOrStderr(),
-				"This command will replace `cy project create-env` soon.\n"+
-					"Please see https://github.com/cycloidio/cycloid-cli/issues/268 for more information.\n")
-			return internal.CheckAPIAndCLIVersion(cmd, args)
-		},
+		PreRunE: internal.CheckAPIAndCLIVersion,
 
-		RunE: createEnv,
+		RunE: createEnvParseArgs,
 	}
 
 	cmd.PersistentFlags().StringP("project", "p", "", "project name")
@@ -72,14 +67,24 @@ cy project get-env-config --org my-org --project my-project --env prod \
 	cmd.MarkFlagRequired("use-case")
 	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
 	cmd.PersistentFlags().StringArrayP("json-vars", "j", nil, "JSON string containing variables, can be set multiple times.")
-	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a field=value syntax (e.g. -V section.group.key=value)`)
+	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a section.group.var=value syntax`)
 	cmd.PersistentFlags().Bool("update", false, "allow to override existing environment")
 	cmd.PersistentFlags().Bool("no-fetch-defaults", false, "disable the fetching of the stacks default values")
+
+	// TODO
+	// Handle legacy createEnv, we create the flags to detect
+	// env creation without stackforms and redirect user to the old command
+	cmd.Flags().String("pipeline", "", "[deprecated] path to a pipeline file.")
+	cmd.Flags().MarkHidden("pipeline")
+	cmd.Flags().String("vars", "", "[deprecated] path to a pipeline config file.")
+	cmd.Flags().MarkHidden("vars")
+	cmd.Flags().StringToString("config", nil, "[deprecated] config key=val for legacy stacks")
+	cmd.Flags().MarkHidden("config")
 
 	return cmd
 }
 
-func createEnv(cmd *cobra.Command, args []string) error {
+func createEnvParseArgs(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -137,10 +142,38 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	// Handle legacy flags
+	// We will detect the stacks V2 flags and use the legacy function here
+	legacyPipeline, err := cmd.Flags().GetString("pipeline")
+	if err != nil {
+		return err
+	}
+
+	legacyVars, err := cmd.Flags().GetString("vars")
+	if err != nil {
+		return err
+	}
+
+	legacyConfig, err := cmd.Flags().GetStringToString("config")
+	if err != nil {
+		return err
+	}
+
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
+
+	if (legacyPipeline + legacyVars) != "" {
+		internal.Warning(cmd.ErrOrStderr(), "You are using a legacy V2 stack and should migrate to use stackforms.")
+		internal.Warning(cmd.ErrOrStderr(), "This way of creating env will be deprecated in the future")
+		createRawEnv(cmd, org, project, env, useCase, legacyVars, legacyPipeline, output, legacyConfig)
+	}
+
 	//
 	// Variable merge
 	//
-	var vars = make(map[string]interface{})
+	var vars = make(map[string]map[string]map[string]interface{})
 
 	// We need the project data first to get the stack ref
 	projectData, err := m.GetProject(org, project)
@@ -155,15 +188,21 @@ func createEnv(cmd *cobra.Command, args []string) error {
 			return errors.Wrap(err, "failed to retrieve stack's defaults values")
 		}
 
-		data, err := stacks.ExtractFormsFromStackConfig(stack, useCase)
-		if err != nil {
-			return err
+		var stackConfig map[string]struct {
+			Forms common.UseCase `json:"forms"`
 		}
 
-		defaultValues, err := common.ParseFormsConfig(data, false)
+		errMsg := `failed to serialize API response for stack default value fetched with getServiceCatalogConfig.`
+		stackJson, err := json.MarshalIndent(stack, "", "  ")
 		if err != nil {
-			return err
+			return errors.Wrap(err, errMsg)
 		}
+		err = json.Unmarshal(stackJson, &stackConfig)
+		if err != nil {
+			return errors.Wrap(err, errMsg)
+		}
+
+		defaultValues := common.UseCaseToFormInput(stackConfig[useCase].Forms, true)
 
 		// We merge default values first
 		mergo.Merge(&vars, defaultValues, mergo.WithOverride)
@@ -247,11 +286,6 @@ func createEnv(cmd *cobra.Command, args []string) error {
 		common.UpdateMapField(k, v, vars)
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
 	// fetch the printer from the factory
 	if output == "table" {
 		output = "json"
@@ -317,56 +351,23 @@ func createEnv(cmd *cobra.Command, args []string) error {
 	}
 
 	// TODO: add the same color/icon as frontend for prod/prd staging/stg/preprod
-
-	// finally add the new environment
-	envs = append(envs, &models.NewEnvironment{
-		// TODO: https://github.com/cycloidio/cycloid-cli/issues/67
-		Canonical:              &env,
-		CloudProviderCanonical: cloudProviderCanonical,
-		Color:                  color,
-		Icon:                   icon,
-	})
-
-	inputs := []*models.FormInput{
-		{
-			EnvironmentCanonical: &env,
-			UseCase:              &useCase,
-			Vars:                 vars,
-		},
+	inputs := models.FormInput{
+		EnvironmentCanonical: &env,
+		UseCase:              &useCase,
+		Vars:                 vars,
 	}
 
-	// Send the updateProject call
 	// TODO: Add support for resource pool canonical in case of resource quotas
-	_, err = m.UpdateProject(org,
-		*projectData.Name,
+	err = m.CreateEnv(
+		org,
 		project,
-		envs,
-		projectData.Description,
-		*projectData.ServiceCatalog.Ref,
-		*projectData.Owner.Username,
-		projectData.ConfigRepositoryCanonical,
-		inputs,
-		*projectData.UpdatedAt,
+		env,
+		useCase,
+		cloudProviderCanonical,
+		color,
+		icon,
+		&inputs,
 	)
-	if err != nil {
-		return errors.Wrap(err, "failed to send config to backend")
-	}
 
-	errMsg := "failed to send config accepted by backend, returning inputs instead."
-	config, err := m.GetProjectConfig(org, project, env)
-	if err != nil {
-		return printer.SmartPrint(p, inputs[0].Vars, errors.Wrap(err, errMsg), "", printer.Options{}, cmd.OutOrStdout())
-	}
-
-	form, err := common.GetFormsUseCase(config.Forms.UseCases, useCase)
-	if err != nil {
-		return errors.Wrap(err, "failed to extract forms data from project config.")
-	}
-
-	formsConfig, err := common.ParseFormsConfig(form, true)
-	if err != nil {
-		return printer.SmartPrint(p, inputs[0].Vars, errors.Wrap(err, errMsg), "", printer.Options{}, cmd.OutOrStdout())
-	}
-
-	return printer.SmartPrint(p, formsConfig, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, inputs.Vars, err, "", printer.Options{}, cmd.OutOrStdout())
 }
