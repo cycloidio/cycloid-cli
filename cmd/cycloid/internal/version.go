@@ -14,6 +14,17 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/version"
 )
 
+func Error(out io.Writer, msg string) {
+	switch viper.GetString("verbosity") {
+	case "info", "debug", "warning":
+		// This is still dirty, we should detect if the current
+		// terminal is able to support colors
+		// But that would be for another PR.
+		fmt.Fprintf(out, "\033[1;31merror:\033[0m %s", msg)
+	default:
+	}
+}
+
 func Warning(out io.Writer, msg string) {
 	switch viper.GetString("verbosity") {
 	case "info", "debug", "warning":
