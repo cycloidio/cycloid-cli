@@ -217,7 +217,7 @@ func mergeVars(defaultValues FormVars, varsFiles []string, jsonVars []string, ke
 	}
 
 	for _, varInput := range jsonVars {
-		var extractedVars = make(map[string]interface{})
+		var extractedVars = make(FormVars)
 
 		err := json.Unmarshal([]byte(varInput), &extractedVars)
 		if err != nil {
