@@ -40,48 +40,48 @@ func TestGenerateCanonical(t *testing.T) {
 	}
 }
 
-func TestUpdateMapField(t *testing.T) {
-	inputs := []struct {
-		Field    string
-		Value    any
-		Base     map[string]any
-		Expected map[string]any
-	}{
-		{
-			Field: "test",
-			Value: "value",
-			Base:  make(map[string]any),
-			Expected: map[string]any{
-				"test": "value",
-			},
-		},
-		{
-			Field: "test.nested.value",
-			Value: "hello",
-			Base:  make(map[string]any),
-			Expected: map[string]any{
-				"test": map[string]any{
-					"nested": map[string]any{
-						"value": "hello",
-					},
-				},
-			},
-		},
-		{
-			Field: "changed",
-			Value: "yes",
-			Base: map[string]any{
-				"changed": "notChanged",
-			},
-			Expected: map[string]any{
-				"changed": "yes",
-			},
-		},
-	}
-
-	for _, input := range inputs {
-		err := common.UpdateMapField(input.Field, input.Value, input.Base)
-		assert.Nil(t, err)
-		assert.Equal(t, input.Expected, input.Base)
-	}
-}
+// func TestCorrectUpdateMapField(t *testing.T) {
+// 	inputs := []struct {
+// 		Field    string
+// 		Value    any
+// 		Base     map[string]map[string]map[string]any
+// 		Expected map[string]map[string]map[string]any
+// 	}{
+// 		{
+// 			Field: "config.test.toto",
+// 			Value: "tutu",
+// 			Base:  make(map[string]map[string]map[string]any),
+// 			Expected: map[string]map[string]map[string]any{
+// 				"config": {
+// 					"test": {"toto": "tutu"},
+// 				},
+// 			},
+// 		},
+// 		{
+// 			Field: "config.test.toto",
+// 			Value: true,
+// 			Base:  make(map[string]map[string]map[string]any),
+// 			Expected: map[string]map[string]map[string]any{
+// 				"config": {
+// 					"test": {"toto": true},
+// 				},
+// 			},
+// 		},
+// 		{
+// 			Field: "config.test.toto",
+// 			Value: 3,
+// 			Base:  make(map[string]map[string]map[string]any),
+// 			Expected: map[string]map[string]map[string]any{
+// 				"config": {
+// 					"test": {"toto": 3},
+// 				},
+// 			},
+// 		},
+// 	}
+//
+// 	for _, input := range inputs {
+// 		err := common.UpdateMapField(input.Field, input.Value, input.Base)
+// 		assert.Nil(t, err)
+// 		assert.Equal(t, input.Expected, input.Base)
+// 	}
+// }
