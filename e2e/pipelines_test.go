@@ -1,6 +1,3 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
@@ -63,15 +60,25 @@ func TestPipelines(t *testing.T) {
 			"--description", "this is a test project",
 			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
 			"--config-repo", "project-config",
+		})
+
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create-env",
+			"--project", "pipeline-test",
 			"--env", "test",
-			"--usecase", "default",
+			"--use-case", "default",
 			"--vars", "/tmp/test_cli-pp-vars",
 			"--pipeline", "/tmp/test_cli-pp",
 			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
 		})
 
+		assert.Nil(t, cmdErr, "Env creation on prepare should not fail", cmdOut)
+
 		// Ensure the catalog is present
-		cmdOut, cmdErr := executeCommand([]string{
+		cmdOut, cmdErr = executeCommand([]string{
 			"--output", "json",
 			"--org", CY_TEST_ROOT_ORG,
 			"project",

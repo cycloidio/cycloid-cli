@@ -65,12 +65,12 @@ func TestMembers(t *testing.T) {
 
 		require.Nil(t, cmdErr, "CLI should not error on this action.")
 
-		var memberList []map[string]interface{}
-		err := json.Unmarshal([]byte(cmdOut), &memberList)
-		require.Nil(t, err, "unmarshalling cli json output")
+		var member map[string]any
+		err := json.Unmarshal([]byte(cmdOut), &member)
+		require.Nil(t, err, "we should be able to serialized the CLI json output: ", cmdOut)
 
-		ok := JsonListFindObjectValue(memberList, "email", "cycloidio@cycloid.io")
-		assert.True(t, ok, fmt.Sprint("member with cycloidio@cycloid.io email address not found in json:\n", cmdOut))
+		assert.Equal(t, member["email"], "cycloidio@cycloid.io",
+			"member with cycloidio@cycloid.io email address not found in json:\n", cmdOut)
 	})
 
 	t.Run("SuccessMembersInvite", func(t *testing.T) {

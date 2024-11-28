@@ -96,8 +96,16 @@ func TestExternalBackends(t *testing.T) {
 			"--description", "this is a test project",
 			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
 			"--config-repo", "project-config",
+		})
+
+		executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create-env",
+			"--project", "eb-test",
 			"--env", "test",
-			"--usecase", "default",
+			"--use-case", "default",
 			"--vars", "/tmp/test_cli-pp-vars",
 			"--pipeline", "/tmp/test_cli-pp",
 			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
