@@ -64,6 +64,7 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 		organization_projects.WithContentType("application/vnd.cycloid.io.v1+json"),
 		organization_projects.WithAccept("application/json"),
 	)
+
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -186,8 +187,15 @@ func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProvide
 	params.WithBody(&envBody)
 
 	response, err := m.api.OrganizationProjects.CreateEnvironment(params, m.api.Credentials(&org))
+
 	if response.Code() == 409 {
+		// Careful before changing the error message, it's matched insite create-env.go
 		return errors.New(fmt.Sprintf("environment %s already exists.", envCanonical))
+	}
+
+	// Fix for bad http response code in API
+	if response.Code() == 200 || response.Code() == 204 {
+		return nil
 	}
 
 	if err != nil {
