@@ -337,7 +337,7 @@ func EntityGetValue(entity *models.FormEntity, getCurrent bool) any {
 // e.g. field='one.nested.key' value='myValue'
 // If the map is nil, it will be created
 func UpdateMapField(field string, value interface{}, m map[string]map[string]map[string]interface{}) error {
-	keys := strings.Split(field, ".")
+	keys := strings.Split(strings.ToLower(field), ".")
 
 	if len(keys) != 3 {
 		return errors.New("key=val update failed, you can only update a value using `section.group.var=value` syntax")
