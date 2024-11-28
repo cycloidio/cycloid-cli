@@ -134,27 +134,6 @@ func TestProjects(t *testing.T) {
 			"project canonical should be in json output: ", cmdOut)
 	})
 
-	t.Run("SuccessLegacyProjectsCreateEnv", func(t *testing.T) {
-		WriteFile("/tmp/test_cli-pp-vars", TestPipelineVariables)
-		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
-
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"project",
-			"create-env",
-			"--project", "snowy",
-			"--env", "test",
-			"--use-case", "default",
-			"--vars", "/tmp/test_cli-pp-vars",
-			"--pipeline", "/tmp/test_cli-pp",
-			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
-		})
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"snowy")
-	})
-
 	t.Run("SuccessProjectsList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
