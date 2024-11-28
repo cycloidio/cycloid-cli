@@ -1,8 +1,6 @@
 package projects
 
 import (
-	"os"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -128,10 +126,7 @@ func create(cmd *cobra.Command, args []string) error {
 	// Handle deprecation
 	if env+usecase+varsPath+pipelinePath != "" {
 		// If any of the env provisioning vars is not empty, create the project with an env
-		internal.Error(cmd.ErrOrStderr(), `
-			Creating an environment when creating a project is not possible anymore.
-			Please create your env separately using the 'cy project create-env' command.\n`)
-		os.Exit(1)
+		return errors.New("Creating an environment when creating a project is not possible anymore. Please create your env separately using the 'cy project create-env' command.")
 	}
 
 	project, err := m.CreateProject(org, name, canonical, description, stackRef, configRepo, ownerCanonical)
