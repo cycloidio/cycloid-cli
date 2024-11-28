@@ -97,7 +97,7 @@ test: ## Run end to end tests
 	@echo "Using ORG: $(CY_TEST_ROOT_ORG) (from \$$CY_TEST_ROOT_ORG)"
 	@echo "Using GIT: $(CY_TEST_GIT_CR_URL) (from \$$CY_TEST_GIT_CR_URL)"
 	@if [ -z "$$CY_TEST_ROOT_API_KEY" ]; then echo "Unable to read API KEY from \$$CY_TEST_ROOT_API_KEY"; exit 1; fi; \
-	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" go test ./... --tags e2e
+	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" go test ./... --tags e2e -v
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder
