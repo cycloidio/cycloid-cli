@@ -67,7 +67,7 @@ type UpdateServiceCatalogParams struct {
 
 	   The information of the ServiceCatalog Terraform.
 	*/
-	Body *models.NewServiceCatalog
+	Body *models.UpdateServiceCatalog
 
 	/* OrganizationCanonical.
 
@@ -135,13 +135,13 @@ func (o *UpdateServiceCatalogParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the update service catalog params
-func (o *UpdateServiceCatalogParams) WithBody(body *models.NewServiceCatalog) *UpdateServiceCatalogParams {
+func (o *UpdateServiceCatalogParams) WithBody(body *models.UpdateServiceCatalog) *UpdateServiceCatalogParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the update service catalog params
-func (o *UpdateServiceCatalogParams) SetBody(body *models.NewServiceCatalog) {
+func (o *UpdateServiceCatalogParams) SetBody(body *models.UpdateServiceCatalog) {
 	o.Body = body
 }
 

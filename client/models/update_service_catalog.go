@@ -15,12 +15,12 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewServiceCatalog NewServiceCatalog
+// UpdateServiceCatalog UpdateServiceCatalog
 //
 // # Represents the Service Catalog item
 //
-// swagger:model NewServiceCatalog
-type NewServiceCatalog struct {
+// swagger:model UpdateServiceCatalog
+type UpdateServiceCatalog struct {
 
 	// author
 	// Required: true
@@ -72,8 +72,8 @@ type NewServiceCatalog struct {
 	Visibility string `json:"visibility,omitempty"`
 }
 
-// Validate validates this new service catalog
-func (m *NewServiceCatalog) Validate(formats strfmt.Registry) error {
+// Validate validates this update service catalog
+func (m *UpdateServiceCatalog) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAuthor(formats); err != nil {
@@ -122,7 +122,7 @@ func (m *NewServiceCatalog) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewServiceCatalog) validateAuthor(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateAuthor(formats strfmt.Registry) error {
 
 	if err := validate.Required("author", "body", m.Author); err != nil {
 		return err
@@ -131,7 +131,7 @@ func (m *NewServiceCatalog) validateAuthor(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
@@ -151,7 +151,7 @@ func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewServiceCatalog) validateDependencies(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateDependencies(formats strfmt.Registry) error {
 	if swag.IsZero(m.Dependencies) { // not required
 		return nil
 	}
@@ -177,7 +177,7 @@ func (m *NewServiceCatalog) validateDependencies(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *NewServiceCatalog) validateDescription(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateDescription(formats strfmt.Registry) error {
 
 	if err := validate.Required("description", "body", m.Description); err != nil {
 		return err
@@ -186,7 +186,7 @@ func (m *NewServiceCatalog) validateDescription(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewServiceCatalog) validateImage(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateImage(formats strfmt.Registry) error {
 	if swag.IsZero(m.Image) { // not required
 		return nil
 	}
@@ -198,7 +198,7 @@ func (m *NewServiceCatalog) validateImage(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewServiceCatalog) validateKeywords(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateKeywords(formats strfmt.Registry) error {
 
 	if err := validate.Required("keywords", "body", m.Keywords); err != nil {
 		return err
@@ -207,7 +207,7 @@ func (m *NewServiceCatalog) validateKeywords(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewServiceCatalog) validateName(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
@@ -216,7 +216,7 @@ func (m *NewServiceCatalog) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Required("service_catalog_source_canonical", "body", m.ServiceCatalogSourceCanonical); err != nil {
 		return err
@@ -237,7 +237,7 @@ func (m *NewServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt
 	return nil
 }
 
-func (m *NewServiceCatalog) validateTeamCanonical(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateTeamCanonical(formats strfmt.Registry) error {
 	if swag.IsZero(m.TeamCanonical) { // not required
 		return nil
 	}
@@ -257,7 +257,7 @@ func (m *NewServiceCatalog) validateTeamCanonical(formats strfmt.Registry) error
 	return nil
 }
 
-func (m *NewServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
 	if swag.IsZero(m.Technologies) { // not required
 		return nil
 	}
@@ -283,8 +283,8 @@ func (m *NewServiceCatalog) validateTechnologies(formats strfmt.Registry) error 
 	return nil
 }
 
-// ContextValidate validate this new service catalog based on the context it is used
-func (m *NewServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validate this update service catalog based on the context it is used
+func (m *UpdateServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateDependencies(ctx, formats); err != nil {
@@ -301,7 +301,7 @@ func (m *NewServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.
 	return nil
 }
 
-func (m *NewServiceCatalog) contextValidateDependencies(ctx context.Context, formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) contextValidateDependencies(ctx context.Context, formats strfmt.Registry) error {
 
 	for i := 0; i < len(m.Dependencies); i++ {
 
@@ -326,7 +326,7 @@ func (m *NewServiceCatalog) contextValidateDependencies(ctx context.Context, for
 	return nil
 }
 
-func (m *NewServiceCatalog) contextValidateTechnologies(ctx context.Context, formats strfmt.Registry) error {
+func (m *UpdateServiceCatalog) contextValidateTechnologies(ctx context.Context, formats strfmt.Registry) error {
 
 	for i := 0; i < len(m.Technologies); i++ {
 
@@ -352,7 +352,7 @@ func (m *NewServiceCatalog) contextValidateTechnologies(ctx context.Context, for
 }
 
 // MarshalBinary interface implementation
-func (m *NewServiceCatalog) MarshalBinary() ([]byte, error) {
+func (m *UpdateServiceCatalog) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -360,8 +360,8 @@ func (m *NewServiceCatalog) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *NewServiceCatalog) UnmarshalBinary(b []byte) error {
-	var res NewServiceCatalog
+func (m *UpdateServiceCatalog) UnmarshalBinary(b []byte) error {
+	var res UpdateServiceCatalog
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
