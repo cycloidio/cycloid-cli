@@ -38,7 +38,7 @@ You can use the following ways to fill in the stackforms configuration (in the o
 The output will be the generated configuration of the project.`,
 		Example: `
 # create 'prod' environment in 'my-project'
-cy project create-stackforms-env \
+cy project create-env \
   --org my-org \
   --project my-project \
   --env prod \
@@ -50,7 +50,7 @@ cy project create-stackforms-env \
 # Update a project with some values from another environement
 # using -V to override some variables.
 cy project get-env-config --org my-org --project my-project --env prod \
-    | cy project create-stackforms-env --update \
+    | cy project create-env --update \
     --project my-project --env staging --use-case aws \
     --var-file "-" \
     -V "pipeline.database.dump_version=staging"`,
@@ -85,11 +85,6 @@ cy project get-env-config --org my-org --project my-project --env prod \
 }
 
 func createEnvParseArgs(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
-	var err error
-
 	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -142,6 +137,11 @@ func createEnvParseArgs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
+
 	// Handle legacy flags
 	// We will detect the stacks V2 flags and use the legacy function here
 	legacyPipeline, err := cmd.Flags().GetString("pipeline")
@@ -159,27 +159,95 @@ func createEnvParseArgs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
 	if (legacyPipeline + legacyVars) != "" {
 		internal.Warning(cmd.ErrOrStderr(), "You are using a legacy V2 stack and should migrate to use stackforms.")
 		internal.Warning(cmd.ErrOrStderr(), "This way of creating env will be deprecated in the future")
-		createRawEnv(cmd, org, project, env, useCase, legacyVars, legacyPipeline, output, legacyConfig)
+		return createRawEnv(cmd, org, project, env, useCase, legacyVars, legacyPipeline, output, legacyConfig)
 	}
 
-	//
-	// Variable merge
-	//
-	var vars = make(map[string]map[string]map[string]interface{})
+	return createEnv(cmd, org, project, env, useCase, output, update, noFetchDefault, varsFiles, extraVar)
+}
+
+type FormVars = map[string]map[string]map[string]interface{}
+
+// Merge variable in correct order of precedence for createEnv and updateEnv
+func mergeVars(defaultValues FormVars, varsFiles []string, jsonVars []string, keyValVars map[string]string) (FormVars, error) {
+	var vars = make(FormVars)
+
+	// We merge default values first
+	mergo.Merge(&vars, defaultValues, mergo.WithOverride)
+
+	// Fetch vars from files and stdin
+	for _, varFile := range varsFiles {
+		var decoder *json.Decoder
+
+		if varFile == "-" {
+			decoder = json.NewDecoder(os.Stdin)
+		} else {
+			reader, err := os.Open(varFile)
+			if err != nil {
+				return nil, errors.Errorf("failed to read input vars from stdin: %v", err)
+			}
+
+			defer reader.Close()
+			decoder = json.NewDecoder(reader)
+		}
+
+		// Files can contain one or more object, so we scan for all with a decoder
+		for {
+			var extractedVars = make(FormVars)
+			err := decoder.Decode(&extractedVars)
+			if err == io.EOF {
+				internal.Debug("finished reading input vars from", varFile)
+				break
+			}
+
+			if err != nil {
+				if varFile == "-" {
+					varFile = "stdin"
+				}
+
+				return nil, fmt.Errorf("failed to read input vars from "+varFile+": %v", err)
+			}
+
+			if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
+				return nil, errors.Errorf("failed to merge input vars from "+varFile+": %v", err)
+			}
+		}
+	}
+
+	for _, varInput := range jsonVars {
+		var extractedVars = make(map[string]interface{})
+
+		err := json.Unmarshal([]byte(varInput), &extractedVars)
+		if err != nil {
+			return nil, errors.Errorf("failed to parse json-var input '"+varInput+"' as JSON: %s", err)
+		}
+
+		if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
+			return nil, errors.Errorf("failed to merge input vars from json-var input: %v\nerr: %v", extractedVars, err)
+		}
+	}
+
+	// Merge key/val from --var
+	for k, v := range keyValVars {
+		common.UpdateMapField(k, v, vars)
+	}
+
+	return vars, nil
+}
+
+func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, update, noFetchDefault bool, varsFiles []string, extraVar map[string]string) error {
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	// We need the project data first to get the stack ref
 	projectData, err := m.GetProject(org, project)
 	if err != nil {
 		return err
 	}
+
+	var defaultValues FormVars
 
 	if !noFetchDefault {
 		// First we fetch the stack's default
@@ -197,69 +265,14 @@ func createEnvParseArgs(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return errors.Wrap(err, errMsg)
 		}
+
 		err = json.Unmarshal(stackJson, &stackConfig)
 		if err != nil {
 			return errors.Wrap(err, errMsg)
 		}
 
-		defaultValues := common.UseCaseToFormInput(stackConfig[useCase].Forms, true)
+		defaultValues = common.UseCaseToFormInput(stackConfig[useCase].Forms, true)
 
-		// We merge default values first
-		mergo.Merge(&vars, defaultValues, mergo.WithOverride)
-	}
-
-	// Fetch vars from files and stdin
-	for _, varFile := range varsFiles {
-		internal.Debug("found var file", varFile)
-		var decoder *json.Decoder
-		if varFile == "-" {
-			decoder = json.NewDecoder(os.Stdin)
-		} else {
-			reader, err := os.Open(varFile)
-			if err != nil {
-				return fmt.Errorf("failed to read input vars from stdin: %v", err)
-			}
-			defer reader.Close()
-			decoder = json.NewDecoder(reader)
-		}
-
-		// Files can contain one or more object, so we scan for all with a decoder
-		for {
-			var extractedVars = make(map[string]interface{})
-			err := decoder.Decode(&extractedVars)
-			if err == io.EOF {
-				internal.Debug("finished reading input vars from", varFile)
-				break
-			}
-
-			if err != nil {
-				if varFile == "-" {
-					varFile = "stdin"
-				}
-				return fmt.Errorf("failed to read input vars from "+varFile+": %v", err)
-			}
-
-			if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
-				return fmt.Errorf("failed to merge input vars from "+varFile+": %v", err)
-			}
-		}
-	}
-
-	// Get vars via the CY_STACKFORMS_VARS env var
-	envConfig, exists := os.LookupEnv("CY_STACKFORMS_VARS")
-	if exists {
-		internal.Debug("found config via env var", envConfig)
-		var envVars = make(map[string]interface{})
-		err := json.Unmarshal([]byte(envConfig), &envVars)
-
-		// TODO: does this should error if parsing fail, of should we just put a warning ?
-		if err != nil {
-			return fmt.Errorf("failed to parse env var config '"+envConfig+"' as JSON: %s", err)
-		}
-
-		if err := mergo.Merge(&vars, envVars, mergo.WithOverride); err != nil {
-			return fmt.Errorf("failed to merge input vars from environment: %v", err)
-		}
 	}
 
 	// Get variables via CLI arguments --json-vars
@@ -268,65 +281,27 @@ func createEnvParseArgs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	for _, varInput := range cliVars {
-		internal.Debug("found var input", varInput)
-		var extractedVars = make(map[string]interface{})
-		err = json.Unmarshal([]byte(varInput), &extractedVars)
-		if err != nil {
-			return fmt.Errorf("failed to parse json-var input '"+varInput+"' as JSON: %s", err)
-		}
+	var jsonVars []string
 
-		if err := mergo.Merge(&vars, extractedVars, mergo.WithOverride); err != nil {
-			return fmt.Errorf("failed to merge input vars from json-var input: %v\nerr: %v", extractedVars, err)
-		}
+	envConfig, exists := os.LookupEnv("CY_STACKFORMS_VARS")
+	if exists {
+		jsonVars = append(jsonVars, envConfig)
 	}
 
-	// Merge key/val from --var
-	for k, v := range extraVar {
-		common.UpdateMapField(k, v, vars)
+	jsonVars = append(jsonVars, cliVars...)
+	vars, err := mergeVars(defaultValues, varsFiles, jsonVars, extraVar)
+	if err != nil {
+		return errors.Wrapf(err, "Failed to merge variables: %v", vars)
 	}
 
 	// fetch the printer from the factory
 	if output == "table" {
 		output = "json"
 	}
+
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
-	}
-
-	envs := make([]*models.NewEnvironment, len(projectData.Environments))
-
-	for i, e := range projectData.Environments {
-		if *e.Canonical == env && !update {
-			return fmt.Errorf("environment %s exists already in %s\nIf you want to update it, add the --update flag.", env, project)
-		}
-
-		if e.Canonical == nil {
-			return fmt.Errorf("missing canonical for environment %v", e)
-		}
-
-		cloudProviderCanonical := ""
-		if e.CloudProvider != nil {
-			cloudProviderCanonical = *e.CloudProvider.Canonical
-		}
-
-		color := "default"
-		if e.Color != nil {
-			color = *e.Color
-		}
-
-		icon := "extension"
-		if e.Icon != nil {
-			icon = *e.Icon
-		}
-
-		envs[i] = &models.NewEnvironment{
-			Canonical:              e.Canonical,
-			CloudProviderCanonical: cloudProviderCanonical,
-			Color:                  color,
-			Icon:                   icon,
-		}
 	}
 
 	// Infer icon and color based on usecase
@@ -368,6 +343,21 @@ func createEnvParseArgs(cmd *cobra.Command, args []string) error {
 		icon,
 		&inputs,
 	)
+
+	if errors.Is(err, errors.Errorf("environment %s already exists.", env)) && update {
+		responseData, err := m.UpdateEnv(
+			org,
+			project,
+			env,
+			useCase,
+			cloudProviderCanonical,
+			color,
+			icon,
+			&inputs,
+		)
+
+		return printer.SmartPrint(p, responseData.Inputs[0], err, "failed to update environment "+env, printer.Options{}, cmd.OutOrStdout())
+	}
 
 	return printer.SmartPrint(p, inputs.Vars, err, "", printer.Options{}, cmd.OutOrStdout())
 }
