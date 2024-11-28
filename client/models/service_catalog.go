@@ -27,12 +27,18 @@ type ServiceCatalog struct {
 	// Required: true
 	Author *string `json:"author"`
 
+	// Determines if given stack is a blueprint
+	Blueprint bool `json:"blueprint,omitempty"`
+
 	// canonical
 	// Required: true
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
+
+	// Cloud providers supported by the stack
+	CloudProviders []*CloudProvider `json:"cloud_providers"`
 
 	// created at
 	// Minimum: 0
@@ -74,6 +80,13 @@ type ServiceCatalog struct {
 	// Required: true
 	Name *string `json:"name"`
 
+	// Organization that the stack belongs to
+	// Required: true
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	OrganizationCanonical *string `json:"organization_canonical"`
+
 	// Indicates if this stack can be configured with form's and has a Quota configuration.
 	// Required: true
 	QuotaEnabled *bool `json:"quota_enabled"`
@@ -91,8 +104,8 @@ type ServiceCatalog struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	ServiceCatalogSourceCanonical string `json:"service_catalog_source_canonical,omitempty"`
 
-	// status
-	Status string `json:"status,omitempty"`
+	// Team that maintains the stack
+	Team *SimpleTeam `json:"team,omitempty"`
 
 	// technologies
 	Technologies []*ServiceCatalogTechnology `json:"technologies"`
@@ -104,6 +117,10 @@ type ServiceCatalog struct {
 	// updated at
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at,omitempty"`
+
+	// visibility
+	// Required: true
+	Visibility *string `json:"visibility"`
 }
 
 // Validate validates this service catalog
@@ -115,6 +132,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCloudProviders(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -158,6 +179,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateOrganizationCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateQuotaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
@@ -170,6 +195,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateTeam(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateTechnologies(formats); err != nil {
 		res = append(res, err)
 	}
@@ -179,6 +208,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVisibility(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -213,6 +246,32 @@ func (m *ServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateCloudProviders(formats strfmt.Registry) error {
+	if swag.IsZero(m.CloudProviders) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.CloudProviders); i++ {
+		if swag.IsZero(m.CloudProviders[i]) { // not required
+			continue
+		}
+
+		if m.CloudProviders[i] != nil {
+			if err := m.CloudProviders[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -371,6 +430,27 @@ func (m *ServiceCatalog) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ServiceCatalog) validateOrganizationCanonical(formats strfmt.Registry) error {
+
+	if err := validate.Required("organization_canonical", "body", m.OrganizationCanonical); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("organization_canonical", "body", *m.OrganizationCanonical, 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("organization_canonical", "body", *m.OrganizationCanonical, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("organization_canonical", "body", *m.OrganizationCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ServiceCatalog) validateQuotaEnabled(formats strfmt.Registry) error {
 
 	if err := validate.Required("quota_enabled", "body", m.QuotaEnabled); err != nil {
@@ -404,6 +484,25 @@ func (m *ServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Re
 
 	if err := validate.Pattern("service_catalog_source_canonical", "body", m.ServiceCatalogSourceCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateTeam(formats strfmt.Registry) error {
+	if swag.IsZero(m.Team) { // not required
+		return nil
+	}
+
+	if m.Team != nil {
+		if err := m.Team.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("team")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("team")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -456,11 +555,28 @@ func (m *ServiceCatalog) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ServiceCatalog) validateVisibility(formats strfmt.Registry) error {
+
+	if err := validate.Required("visibility", "body", m.Visibility); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ContextValidate validate this service catalog based on the context it is used
 func (m *ServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateCloudProviders(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateDependencies(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTeam(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -471,6 +587,31 @@ func (m *ServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Reg
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ServiceCatalog) contextValidateCloudProviders(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.CloudProviders); i++ {
+
+		if m.CloudProviders[i] != nil {
+
+			if swag.IsZero(m.CloudProviders[i]) { // not required
+				return nil
+			}
+
+			if err := m.CloudProviders[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -494,6 +635,27 @@ func (m *ServiceCatalog) contextValidateDependencies(ctx context.Context, format
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) contextValidateTeam(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Team != nil {
+
+		if swag.IsZero(m.Team) { // not required
+			return nil
+		}
+
+		if err := m.Team.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("team")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("team")
+			}
+			return err
+		}
 	}
 
 	return nil

@@ -93,25 +93,12 @@ type ListServiceCatalogsParams struct {
 	*/
 	ServiceCatalogOwn *bool
 
-	/* ServiceCatalogStatus.
-
-	   The status of the catalog service used for filtering.
-	*/
-	ServiceCatalogStatus *string
-
 	/* ServiceCatalogTemplate.
 
 	   Filters the Service Catalogs to only show the ones that are templates
 
 	*/
 	ServiceCatalogTemplate *bool
-
-	/* ServiceCatalogTrusted.
-
-	   Filters the Service Catalogs to only show the ones that are from trusted source (Cycloid)
-
-	*/
-	ServiceCatalogTrusted *bool
 
 	timeout    time.Duration
 	Context    context.Context
@@ -227,17 +214,6 @@ func (o *ListServiceCatalogsParams) SetServiceCatalogOwn(serviceCatalogOwn *bool
 	o.ServiceCatalogOwn = serviceCatalogOwn
 }
 
-// WithServiceCatalogStatus adds the serviceCatalogStatus to the list service catalogs params
-func (o *ListServiceCatalogsParams) WithServiceCatalogStatus(serviceCatalogStatus *string) *ListServiceCatalogsParams {
-	o.SetServiceCatalogStatus(serviceCatalogStatus)
-	return o
-}
-
-// SetServiceCatalogStatus adds the serviceCatalogStatus to the list service catalogs params
-func (o *ListServiceCatalogsParams) SetServiceCatalogStatus(serviceCatalogStatus *string) {
-	o.ServiceCatalogStatus = serviceCatalogStatus
-}
-
 // WithServiceCatalogTemplate adds the serviceCatalogTemplate to the list service catalogs params
 func (o *ListServiceCatalogsParams) WithServiceCatalogTemplate(serviceCatalogTemplate *bool) *ListServiceCatalogsParams {
 	o.SetServiceCatalogTemplate(serviceCatalogTemplate)
@@ -247,17 +223,6 @@ func (o *ListServiceCatalogsParams) WithServiceCatalogTemplate(serviceCatalogTem
 // SetServiceCatalogTemplate adds the serviceCatalogTemplate to the list service catalogs params
 func (o *ListServiceCatalogsParams) SetServiceCatalogTemplate(serviceCatalogTemplate *bool) {
 	o.ServiceCatalogTemplate = serviceCatalogTemplate
-}
-
-// WithServiceCatalogTrusted adds the serviceCatalogTrusted to the list service catalogs params
-func (o *ListServiceCatalogsParams) WithServiceCatalogTrusted(serviceCatalogTrusted *bool) *ListServiceCatalogsParams {
-	o.SetServiceCatalogTrusted(serviceCatalogTrusted)
-	return o
-}
-
-// SetServiceCatalogTrusted adds the serviceCatalogTrusted to the list service catalogs params
-func (o *ListServiceCatalogsParams) SetServiceCatalogTrusted(serviceCatalogTrusted *bool) {
-	o.ServiceCatalogTrusted = serviceCatalogTrusted
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -324,23 +289,6 @@ func (o *ListServiceCatalogsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		}
 	}
 
-	if o.ServiceCatalogStatus != nil {
-
-		// query param service_catalog_status
-		var qrServiceCatalogStatus string
-
-		if o.ServiceCatalogStatus != nil {
-			qrServiceCatalogStatus = *o.ServiceCatalogStatus
-		}
-		qServiceCatalogStatus := qrServiceCatalogStatus
-		if qServiceCatalogStatus != "" {
-
-			if err := r.SetQueryParam("service_catalog_status", qServiceCatalogStatus); err != nil {
-				return err
-			}
-		}
-	}
-
 	if o.ServiceCatalogTemplate != nil {
 
 		// query param service_catalog_template
@@ -353,23 +301,6 @@ func (o *ListServiceCatalogsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		if qServiceCatalogTemplate != "" {
 
 			if err := r.SetQueryParam("service_catalog_template", qServiceCatalogTemplate); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.ServiceCatalogTrusted != nil {
-
-		// query param service_catalog_trusted
-		var qrServiceCatalogTrusted bool
-
-		if o.ServiceCatalogTrusted != nil {
-			qrServiceCatalogTrusted = *o.ServiceCatalogTrusted
-		}
-		qServiceCatalogTrusted := swag.FormatBool(qrServiceCatalogTrusted)
-		if qServiceCatalogTrusted != "" {
-
-			if err := r.SetQueryParam("service_catalog_trusted", qServiceCatalogTrusted); err != nil {
 				return err
 			}
 		}
