@@ -85,7 +85,7 @@ type Middleware interface {
 	GetProject(org string, project string) (*models.Project, error)
 	GetProjectConfig(org string, project string, environment string) (*models.ProjectEnvironmentConfig, error)
 	ListProjects(org string) ([]*models.Project, error)
-	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error)
+	UpdateProject(org, projectName, projectCanonical string, description, stackRef, owner, configRepo string, updatedAt uint64) (*models.Project, error)
 
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)

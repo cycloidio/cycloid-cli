@@ -1,14 +1,12 @@
 package projects
 
 import (
-	"fmt"
 	"os"
 
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
@@ -22,54 +20,23 @@ func createRawEnv(cmd *cobra.Command, org, project, env, useCase, varsPath, pipe
 
 	var err error
 
-	projectData, err := m.GetProject(org, project)
-	if err != nil {
-		return err
-	}
-
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// need to conver the environment to "new environment" as required
-	// by the API
-	envs := make([]*models.NewEnvironment, len(projectData.Environments))
-
-	for i, e := range projectData.Environments {
-		if *e.Canonical == env {
-			return fmt.Errorf("environment %s exists already in %s", env, project)
-		}
-		envs[i] = &models.NewEnvironment{
-			Canonical: e.Canonical,
-		}
-	}
-
-	// finally add the new environment
-	envs = append(envs, &models.NewEnvironment{
-		// TODO: https://github.com/cycloidio/cycloid-cli/issues/67
-		Canonical: &env,
-	})
-
-	//
-	// UPDATE PROJECT
-	//
-	resp, err := m.UpdateProject(org,
-		*projectData.Name,
+	err = m.CreateEnv(
+		org,
 		project,
-		envs,
-		projectData.Description,
-		*projectData.ServiceCatalog.Ref,
-		*projectData.Owner.Username,
-		projectData.ConfigRepositoryCanonical,
-		nil,
-		*projectData.UpdatedAt)
+		env,
+		useCase,
+		"",
+		"", // TODO add color and icon handling
+		"",
+		nil)
 
-	err = printer.SmartPrint(p, nil, err, "unable to update project", printer.Options{}, cmd.OutOrStdout())
-	if err != nil {
-		return err
-	}
+	printer.SmartPrint(p, nil, err, "unable to create env "+env, printer.Options{}, cmd.OutOrStdout())
 
 	//
 	// CREATE PIPELINE
@@ -119,19 +86,11 @@ func createRawEnv(cmd *cobra.Command, org, project, env, useCase, varsPath, pipe
 	}
 
 	err = m.PushConfig(org, project, env, cfs)
-	err = printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
-	if err != nil {
-		return err
-	}
+	printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
 
 	//
 	// PIPELINE UNPAUSE
 	//
 	err = m.UnpausePipeline(org, project, env)
-	err = printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, cmd.OutOrStdout())
-	if err != nil {
-		return err
-	}
-
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, nil, err, "unable to unpause pipeline", printer.Options{}, cmd.OutOrStdout())
 }
