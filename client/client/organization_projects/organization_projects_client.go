@@ -115,6 +115,8 @@ type ClientService interface {
 
 	DeleteProjectFavorite(params *DeleteProjectFavoriteParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteProjectFavoriteNoContent, error)
 
+	GetEnvironment(params *GetEnvironmentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEnvironmentOK, error)
+
 	GetProject(params *GetProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectOK, error)
 
 	GetProjectConfig(params *GetProjectConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectConfigOK, error)
@@ -353,6 +355,44 @@ func (a *Client) DeleteProjectFavorite(params *DeleteProjectFavoriteParams, auth
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*DeleteProjectFavoriteDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetEnvironment Get a project environment of the organization.
+*/
+func (a *Client) GetEnvironment(params *GetEnvironmentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEnvironmentOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetEnvironmentParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getEnvironment",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetEnvironmentReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetEnvironmentOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetEnvironmentDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
