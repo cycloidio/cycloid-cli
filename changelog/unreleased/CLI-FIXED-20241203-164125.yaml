@@ -1,0 +1,9 @@
+component: CLI
+kind: FIXED
+body: Fixed an issue where stackforms vars input precedence was not respected on certain
+  types
+time: 2024-12-03T16:41:25.336872265Z
+custom:
+  DETAILS: ""
+  PR: "313"
+  TYPE: CLI
