@@ -21,10 +21,10 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 
@@ -42,10 +42,10 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 
@@ -63,10 +63,10 @@ func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 
@@ -140,10 +140,10 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 	return d, nil

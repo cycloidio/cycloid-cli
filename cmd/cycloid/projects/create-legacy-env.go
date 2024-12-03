@@ -7,7 +7,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
@@ -30,10 +29,10 @@ func createLegacyEnv(cmd *cobra.Command, org, project, env, useCase, varsPath, p
 		project,
 		env,
 		useCase,
-		"",                  // color
-		"",                  // icon // TODO add color and icon handling
-		"",                  // cloudProviderCanonical
-		&models.FormInput{}, // inputs
+		"",  // color
+		"",  // icon // TODO add color and icon handling
+		"",  // cloudProviderCanonical
+		nil, // inputs
 	)
 
 	if err != nil {

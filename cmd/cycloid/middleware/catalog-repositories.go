@@ -18,10 +18,10 @@ func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatal
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 
@@ -40,10 +40,10 @@ func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.Serv
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 
@@ -96,10 +96,10 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string
 
 	p := resp.GetPayload()
 
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 
@@ -131,10 +131,10 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 

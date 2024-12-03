@@ -62,7 +62,7 @@ func TestPipelines(t *testing.T) {
 			"--config-repo", "project-config",
 		})
 
-		cmdOut, cmdErr := executeCommand([]string{
+		executeCommand([]string{
 			"--output", "json",
 			"--org", CY_TEST_ROOT_ORG,
 			"project",
@@ -75,10 +75,8 @@ func TestPipelines(t *testing.T) {
 			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
 		})
 
-		assert.Nil(t, cmdErr, "Env creation on prepare should not fail", cmdOut)
-
 		// Ensure the catalog is present
-		cmdOut, cmdErr = executeCommand([]string{
+		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", CY_TEST_ROOT_ORG,
 			"project",

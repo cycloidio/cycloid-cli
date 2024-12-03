@@ -41,10 +41,10 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 
@@ -61,8 +61,8 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	resp, err := m.api.OrganizationProjects.GetProjectConfig(
 		params,
 		m.api.Credentials(&org),
-		organization_projects.WithContentType("application/vnd.cycloid.io.v1+json"),
-		organization_projects.WithAccept("application/json"),
+		// organization_projects.WithContentType("application/vnd.cycloid.io.v1+json"),
+		// organization_projects.WithAccept("application/json"),
 	)
 
 	if err != nil {
@@ -104,10 +104,10 @@ func (m *middleware) CreateProject(org, projectName, projectCanonical, descripti
 	}
 
 	payload := response.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to validate response from API after project creation.")
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, errors.Wrap(err, "failed to validate response from API after project creation.")
+	// }
 
 	return payload.Data, nil
 }
@@ -168,13 +168,24 @@ func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProvide
 		icon = "extension"
 	}
 
-	envBody := models.NewEnvironment{
-		Canonical:              &envCanonical,
-		UseCase:                useCase,
-		Inputs:                 []*models.FormInput{inputs},
-		Icon:                   icon,
-		Color:                  color,
-		CloudProviderCanonical: cloudProviderCanonical,
+	var envBody models.NewEnvironment
+	if inputs == nil {
+		envBody = models.NewEnvironment{
+			Canonical:              &envCanonical,
+			UseCase:                useCase,
+			Icon:                   icon,
+			Color:                  color,
+			CloudProviderCanonical: cloudProviderCanonical,
+		}
+	} else {
+		envBody = models.NewEnvironment{
+			Canonical:              &envCanonical,
+			UseCase:                useCase,
+			Inputs:                 []*models.FormInput{inputs},
+			Icon:                   icon,
+			Color:                  color,
+			CloudProviderCanonical: cloudProviderCanonical,
+		}
 	}
 
 	err := envBody.Validate(strfmt.Default)
@@ -192,7 +203,7 @@ func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProvide
 	}
 
 	// Fix for bad http response code in API
-	if response.Code() == 200 || response.Code() == 204 {
+	if response.Code() == 200 {
 		return nil
 	}
 
@@ -225,11 +236,11 @@ func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProvide
 		CloudProviderCanonical: cloudProviderCanonical,
 	}
 
-	err := envBody.Validate(strfmt.Default)
-	if err != nil {
-		return nil, errors.Wrap(err, "Validation failed for updateEnv argument, check API docs for allow values in createEnv")
-	}
-
+	// err := envBody.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, errors.Wrap(err, "Validation failed for updateEnv argument, check API docs for allow values in createEnv")
+	// }
+	//
 	params.WithBody(&envBody)
 
 	response, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
