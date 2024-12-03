@@ -345,7 +345,7 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 	)
 
 	if errors.Is(err, errors.Errorf("environment %s already exists.", env)) && update {
-		responseData, err := m.UpdateEnv(
+		_, err := m.UpdateEnv(
 			org,
 			project,
 			env,
@@ -356,7 +356,21 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 			&inputs,
 		)
 
-		return printer.SmartPrint(p, responseData.Inputs[0], err, "failed to update environment "+env, printer.Options{}, cmd.OutOrStdout())
+		// return the config understood by the backend
+		resp, err := m.GetProjectConfig(org, project, env)
+		data, err := json.Marshal(resp.Forms.UseCases[0])
+		if err != nil {
+			return errors.New("failed to marshall API response.")
+		}
+
+		var useCase common.UseCase
+		err = json.Unmarshal(data, &useCase)
+		if err != nil {
+			// we didn't got correct response from backend but we can return our inputs
+			return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
+		}
+
+		return printer.SmartPrint(p, common.UseCaseToFormInput(useCase, false), err, "failed to update environment "+env, printer.Options{}, cmd.OutOrStdout())
 	}
 
 	return printer.SmartPrint(p, inputs.Vars, err, "", printer.Options{}, cmd.OutOrStdout())

@@ -214,7 +214,7 @@ func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProvide
 	return nil
 }
 
-func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.UpdateEnvironment, error) {
+func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.Environment, error) {
 	params := organization_projects.NewUpdateEnvironmentParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)

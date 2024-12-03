@@ -79,7 +79,7 @@ type Middleware interface {
 
 	CreateProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error)
 	CreateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) error
-	UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.UpdateEnvironment, error)
+	UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.Environment, error)
 	DeleteEnv(org, project, envCanonical string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)

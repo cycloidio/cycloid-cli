@@ -189,7 +189,7 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		Vars:                 vars,
 	}
 
-	response, err := m.UpdateEnv(
+	_, err = m.UpdateEnv(
 		org,
 		project,
 		env,
@@ -200,5 +200,19 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		&inputs,
 	)
 
-	return printer.SmartPrint(p, response.Inputs[0].Vars, err, "", printer.Options{}, cmd.OutOrStdout())
+	// return the config understood by the backend
+	resp, err := m.GetProjectConfig(org, project, env)
+	data, err := json.Marshal(resp.Forms.UseCases[0])
+	if err != nil {
+		return errors.New("failed to marshall API response.")
+	}
+
+	var envData common.UseCase
+	err = json.Unmarshal(data, &envData)
+	if err != nil {
+		// we didn't got correct response from backend but we can return our inputs
+		return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	return printer.SmartPrint(p, common.UseCaseToFormInput(envData, false), err, "", printer.Options{}, cmd.OutOrStdout())
 }
