@@ -403,7 +403,7 @@ type UpdateEnvironmentOKBody struct {
 
 	// data
 	// Required: true
-	Data *models.UpdateEnvironment `json:"data"`
+	Data *models.Environment `json:"data"`
 }
 
 // Validate validates this update environment o k body
