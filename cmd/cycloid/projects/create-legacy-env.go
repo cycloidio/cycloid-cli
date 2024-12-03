@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
@@ -14,11 +15,9 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func createRawEnv(cmd *cobra.Command, org, project, env, useCase, varsPath, pipelinePath, output string, configs map[string]string) error {
+func createLegacyEnv(cmd *cobra.Command, org, project, env, useCase, varsPath, pipelinePath, output string, configs map[string]string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
-
-	var err error
 
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
@@ -31,17 +30,19 @@ func createRawEnv(cmd *cobra.Command, org, project, env, useCase, varsPath, pipe
 		project,
 		env,
 		useCase,
-		"",
-		"", // TODO add color and icon handling
-		"",
-		nil)
+		"",                  // color
+		"",                  // icon // TODO add color and icon handling
+		"",                  // cloudProviderCanonical
+		&models.FormInput{}, // inputs
+	)
 
-	printer.SmartPrint(p, nil, err, "unable to create env "+env, printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to create env "+env, printer.Options{}, cmd.OutOrStdout())
+	}
 
 	//
 	// CREATE PIPELINE
 	//
-
 	rawPipeline, err := os.ReadFile(pipelinePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read pipeline file")
@@ -74,7 +75,6 @@ func createRawEnv(cmd *cobra.Command, org, project, env, useCase, varsPath, pipe
 
 	// Additionals config files
 	if len(configs) > 0 {
-
 		for fp, dest := range configs {
 			var c strfmt.Base64
 			c, err = os.ReadFile(fp)
@@ -86,7 +86,9 @@ func createRawEnv(cmd *cobra.Command, org, project, env, useCase, varsPath, pipe
 	}
 
 	err = m.PushConfig(org, project, env, cfs)
-	printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to push config", printer.Options{}, cmd.OutOrStdout())
+	}
 
 	//
 	// PIPELINE UNPAUSE

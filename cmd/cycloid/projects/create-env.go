@@ -162,7 +162,7 @@ func createEnvParseArgs(cmd *cobra.Command, args []string) error {
 	if (legacyPipeline + legacyVars) != "" {
 		internal.Warning(cmd.ErrOrStderr(), "You are using a legacy V2 stack and should migrate to use stackforms.")
 		internal.Warning(cmd.ErrOrStderr(), "This way of creating env will be deprecated in the future")
-		return createRawEnv(cmd, org, project, env, useCase, legacyVars, legacyPipeline, output, legacyConfig)
+		return createLegacyEnv(cmd, org, project, env, useCase, legacyVars, legacyPipeline, output, legacyConfig)
 	}
 
 	return createEnv(cmd, org, project, env, useCase, output, update, noFetchDefault, varsFiles, extraVar)
