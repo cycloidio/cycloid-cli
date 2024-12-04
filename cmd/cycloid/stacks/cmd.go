@@ -17,6 +17,7 @@ func NewCommands() *cobra.Command {
 	cmd.AddCommand(
 		NewListCommand(),
 		NewGetCommand(),
+		NewUpdateCommand(),
 		NewGetConfigCommand(),
 		NewValidateFormCmd(),
 	)
