@@ -26,10 +26,12 @@ func NewCreateCommand() *cobra.Command {
 
 	// create --branch test --cred my-cred --url "git@github.com:foo/bla.git"  --name catalogname
 	common.WithFlagCred(cmd)
-
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
 	common.RequiredFlag(WithFlagURL, cmd)
+
+	cmd.Flags().String("visibility", "", "set the stacks base visibility in the catalog. accepted values are 'local', 'share' or 'hidden' default to 'local'")
+	cmd.Flags().String("team", "", "set the team canonical to be set as maintener of the stacks")
 
 	return cmd
 }
@@ -73,12 +75,22 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
+	visibility, err := cmd.Flags().GetString("visibility")
+	if err != nil {
+		return errors.Wrap(err, "unable to get visibility flag")
+	}
+
+	teamCanonical, err := cmd.Flags().GetString("team")
+	if err != nil {
+		return errors.Wrap(err, "unable to get team flag")
+	}
+
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.CreateCatalogRepository(org, name, url, branch, cred)
+	cr, err := m.CreateCatalogRepository(org, name, url, branch, cred, visibility, teamCanonical)
 	return printer.SmartPrint(p, cr, err, "unable to create catalog repository", printer.Options{}, cmd.OutOrStdout())
 }
