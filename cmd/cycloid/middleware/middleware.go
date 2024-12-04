@@ -77,14 +77,15 @@ type Middleware interface {
 	GetPipeline(org, project, env string) (*models.Pipeline, error)
 	SyncedPipeline(org, project, env string) (*models.PipelineStatus, error)
 
-	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo, owner string) (*models.Project, error)
-	CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error)
-	DeleteEnv(org, project, env string) error
+	CreateProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error)
+	CreateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) error
+	UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.Environment, error)
+	DeleteEnv(org, project, envCanonical string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	GetProjectConfig(org string, project string, environment string) (*models.ProjectEnvironmentConfig, error)
 	ListProjects(org string) ([]*models.Project, error)
-	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error)
+	UpdateProject(org, projectName, projectCanonical string, description, stackRef, owner, configRepo string, updatedAt uint64) (*models.Project, error)
 
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)

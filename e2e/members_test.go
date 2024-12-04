@@ -1,9 +1,8 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
+	"encoding/json"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -46,7 +45,13 @@ func TestMembers(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "email\": \"cycloidio@cycloid.io")
+
+		var memberList []map[string]interface{}
+		err := json.Unmarshal([]byte(cmdOut), &memberList)
+		require.Nil(t, err, "unmarshalling cli json output")
+
+		ok := JsonListFindObjectValue(memberList, "email", "cycloidio@cycloid.io")
+		assert.True(t, ok, fmt.Sprint("member with cycloidio@cycloid.io email address not found in json:\n", cmdOut))
 	})
 
 	t.Run("SuccessMembersGet", func(t *testing.T) {
@@ -58,8 +63,14 @@ func TestMembers(t *testing.T) {
 			"--id", "1",
 		})
 
-		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "email\": \"cycloidio@cycloid.io")
+		require.Nil(t, cmdErr, "CLI should not error on this action.")
+
+		var member map[string]any
+		err := json.Unmarshal([]byte(cmdOut), &member)
+		require.Nil(t, err, "we should be able to serialized the CLI json output: ", cmdOut)
+
+		assert.Equal(t, member["email"], "cycloidio@cycloid.io",
+			"member with cycloidio@cycloid.io email address not found in json:\n", cmdOut)
 	})
 
 	t.Run("SuccessMembersInvite", func(t *testing.T) {
@@ -74,6 +85,7 @@ func TestMembers(t *testing.T) {
 
 		require.Nil(t, cmdErr)
 		assert.Equal(t, "", cmdOut)
+
 	})
 
 	t.Run("SuccessMembersListInvite", func(t *testing.T) {
@@ -85,6 +97,12 @@ func TestMembers(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "email\": \"foo@bli.fr")
+
+		var memberList []map[string]interface{}
+		err := json.Unmarshal([]byte(cmdOut), &memberList)
+		require.Nil(t, err, "unmarshalling cli json output")
+
+		ok := JsonListFindObjectValue(memberList, "invitation_email", "foo@bli.fr")
+		assert.True(t, ok, fmt.Sprint("member with foo@bli.fr email address not found in json:\n", cmdOut))
 	})
 }

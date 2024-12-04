@@ -66,10 +66,36 @@ func TestProjects(t *testing.T) {
 		// require.Contains(t, cmdOut, "canonical\": \"dummy")
 	})
 
-	t.Run("SuccessLegacyProjectsCreate", func(t *testing.T) {
-		WriteFile("/tmp/test_cli-pp-vars", TestPipelineVariables)
-		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
+	t.Run("CreateProjectWithEnvShouldFail", func(t *testing.T) {
+		// Cleanup
+		executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"delete",
+			"--project", "snowy-invalid",
+		})
 
+		_, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create",
+			"--name", "snowy",
+			"--description", "this is a test project",
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--config-repo", "project-config",
+			"--env", "test",
+			"--usecase", "default",
+			"--vars", "/tmp/test_cli-pp-vars",
+			"--pipeline", "/tmp/test_cli-pp",
+			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
+		})
+
+		assert.ErrorContains(t, cmdErr, "Creating an environment when creating a project is not possible anymore", "Creating a project with an env is prohibited now.")
+	})
+
+	t.Run("SuccessLegacyProjectsCreate", func(t *testing.T) {
 		// Cleanup
 		executeCommand([]string{
 			"--output", "json",
@@ -88,36 +114,18 @@ func TestProjects(t *testing.T) {
 			"--description", "this is a test project",
 			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
 			"--config-repo", "project-config",
-			"--env", "test",
-			"--usecase", "default",
-			"--vars", "/tmp/test_cli-pp-vars",
-			"--pipeline", "/tmp/test_cli-pp",
-			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
-		})
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"snowy")
-	})
-
-	t.Run("SuccessLegacyProjectsCreateEnv", func(t *testing.T) {
-		WriteFile("/tmp/test_cli-pp-vars", TestPipelineVariables)
-		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
-
-		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"project",
-			"create-env",
-			"--project", "snowy",
-			"--env", "test2",
-			"--usecase", "default",
-			"--vars", "/tmp/test_cli-pp-vars",
-			"--pipeline", "/tmp/test_cli-pp",
-			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"snowy")
+
+		var expectedData map[string]any
+		err := json.Unmarshal([]byte(cmdOut), &expectedData)
+		assert.Nil(t, err, "whe should be able to parse json output")
+		require.Equal(t,
+			"snowy",
+			expectedData["canonical"],
+			"project canonical should be in json output: ", cmdOut)
 	})
 
 	t.Run("SuccessProjectsList", func(t *testing.T) {
@@ -138,7 +146,7 @@ func TestProjects(t *testing.T) {
 			"--output", "json",
 			"--org", CY_TEST_ROOT_ORG,
 			"project",
-			"create-stackforms-env",
+			"create-env",
 			"--project", "snowy",
 			"--env", "sf-vars",
 			"--use-case", "default",
@@ -227,4 +235,46 @@ func TestProjects(t *testing.T) {
 		require.Equal(t, "", cmdOut)
 	})
 
+	t.Run("SuccessCreateEnvLegacy", func(t *testing.T) {
+		WriteFile("/tmp/test_cli-pp-vars", TestPipelineVariables)
+		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
+
+		// Cleanup
+		executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"delete",
+			"--project", "snowy-legacy",
+		})
+
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create",
+			"--name", "snowy-legacy",
+			"--description", "this is a test project",
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--config-repo", "project-config",
+			"--output", "json",
+		})
+
+		assert.Nil(t, cmdErr, "project creation should have succeeded: ", cmdOut)
+
+		cmdOut, cmdErr = executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create-env",
+			"--project", "snowy-legacy",
+			"--env", "test",
+			"--pipeline", "/tmp/test_cli-pp",
+			"--vars", "/tmp/test_cli-pp-vars",
+			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
+			"--use-case", "default",
+		})
+
+		assert.Nil(t, cmdErr, "createEnv should handle legacy env creation, error: ", cmdOut)
+	})
 }

@@ -1,15 +1,13 @@
 package middleware
 
 import (
-	"regexp"
-	"strings"
+	"fmt"
 
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
@@ -43,10 +41,10 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 
@@ -60,7 +58,13 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	params.WithEnvironmentCanonical(env)
 	params.WithDefaults()
 
-	resp, err := m.api.OrganizationProjects.GetProjectConfig(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationProjects.GetProjectConfig(
+		params,
+		m.api.Credentials(&org),
+		// organization_projects.WithContentType("application/vnd.cycloid.io.v1+json"),
+		// organization_projects.WithAccept("application/json"),
+	)
+
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -74,7 +78,7 @@ func (m *middleware) GetProjectConfig(org string, project string, env string) (*
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error) {
+func (m *middleware) CreateProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error) {
 	params := organization_projects.NewCreateProjectParams()
 	params.WithOrganizationCanonical(org)
 
@@ -100,84 +104,18 @@ func (m *middleware) CreateEmptyProject(org, projectName, projectCanonical, desc
 	}
 
 	payload := response.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to validate response from API after project creation.")
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, errors.Wrap(err, "failed to validate response from API after project creation.")
+	// }
 
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo, owner string) (*models.Project, error) {
-	var body *models.NewProject
-	var pipelines []*models.NewPipeline
-
-	if projectCanonical == "" {
-		re := regexp.MustCompile(`[^a-z0-9\-_]`)
-		projectCanonical = re.ReplaceAllString(strings.ToLower(projectName), "-")
-	}
-
-	cyCtx := common.CycloidContext{Env: env,
-		Org:     org,
-		Project: projectCanonical}
-
-	params := organization_projects.NewCreateProjectParams()
-	params.SetOrganizationCanonical(org)
-
-	pipelineName := common.GetPipelineName(projectCanonical, env)
-
-	vars := common.ReplaceCycloidVarsString(cyCtx, variables)
-
-	pipeline := &models.NewPipeline{
-		Environment: &models.NewEnvironment{
-			// TODO: https://github.com/cycloidio/cycloid-cli/issues/67
-			Canonical: &env,
-		},
-		PipelineName: &pipelineName,
-		UseCase:      usecase,
-		PassedConfig: pipelineTemplate,
-		YamlVars:     vars,
-	}
-
-	err := pipeline.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
-	pipelines = append(pipelines, pipeline)
-
-	body = &models.NewProject{
-		Name:                      &projectName,
-		Description:               description,
-		Canonical:                 projectCanonical,
-		ServiceCatalogRef:         &stackRef,
-		ConfigRepositoryCanonical: &configRepo,
-		Pipelines:                 pipelines,
-		Owner:                     owner,
-	}
-
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
-	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewApiError(err)
-	}
-
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
-	d := p.Data
-	return d, err
-}
-
-func (m *middleware) UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error) {
+/*
+Warning: This method is deprecated. You can't create envs from this route anymore, use the env CRUD
+*/
+func (m *middleware) UpdateProject(org, projectName, projectCanonical string, description, stackRef, owner, configRepo string, updatedAt uint64) (*models.Project, error) {
 	params := organization_projects.NewUpdateProjectParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(projectCanonical)
@@ -187,9 +125,7 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 		Description:               description,
 		ServiceCatalogRef:         &stackRef,
 		ConfigRepositoryCanonical: configRepo,
-		Environments:              envs,
 		Owner:                     owner,
-		Inputs:                    inputs,
 		UpdatedAt:                 &updatedAt,
 	}
 
@@ -199,7 +135,12 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.UpdateProject(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationProjects.UpdateProject(
+		params,
+		m.api.Credentials(&org),
+		// organization_projects.WithContentType("application/vnd.cycloid.io.v1+json"),
+		// organization_projects.WithAccept("application/json"),
+	)
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -212,6 +153,103 @@ func (m *middleware) UpdateProject(org, projectName, projectCanonical string, en
 
 	d := p.Data
 	return d, err
+}
+
+func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) error {
+	params := organization_projects.NewCreateEnvironmentParams()
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(project)
+
+	if color == "" {
+		color = "default"
+	}
+
+	if icon == "" {
+		icon = "extension"
+	}
+
+	var envBody models.NewEnvironment
+	if inputs == nil {
+		envBody = models.NewEnvironment{
+			Canonical:              &envCanonical,
+			UseCase:                useCase,
+			Icon:                   icon,
+			Color:                  color,
+			CloudProviderCanonical: cloudProviderCanonical,
+		}
+	} else {
+		envBody = models.NewEnvironment{
+			Canonical:              &envCanonical,
+			UseCase:                useCase,
+			Inputs:                 []*models.FormInput{inputs},
+			Icon:                   icon,
+			Color:                  color,
+			CloudProviderCanonical: cloudProviderCanonical,
+		}
+	}
+
+	err := envBody.Validate(strfmt.Default)
+	if err != nil {
+		return errors.Wrap(err, "Validation failed for createEnv argument, check API docs for allow values in createEnv")
+	}
+
+	params.WithBody(&envBody)
+
+	response, err := m.api.OrganizationProjects.CreateEnvironment(params, m.api.Credentials(&org))
+
+	if response.Code() == 409 {
+		// Careful before changing the error message, it's matched insite create-env.go
+		return errors.New(fmt.Sprintf("environment %s already exists.", envCanonical))
+	}
+
+	// Fix for bad http response code in API
+	if response.Code() == 200 {
+		return nil
+	}
+
+	if err != nil {
+		return errors.Wrap(err, "an error occurred while calling Cycloid API for createEnv.")
+	}
+
+	return nil
+}
+
+func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.Environment, error) {
+	params := organization_projects.NewUpdateEnvironmentParams()
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(project)
+	params.WithEnvironmentCanonical(envCanonical)
+
+	if color == "" {
+		color = "default"
+	}
+
+	if icon == "" {
+		icon = "extension"
+	}
+
+	envBody := models.UpdateEnvironment{
+		UseCase:                useCase,
+		Inputs:                 []*models.FormInput{inputs},
+		Icon:                   icon,
+		Color:                  color,
+		CloudProviderCanonical: cloudProviderCanonical,
+	}
+
+	// err := envBody.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, errors.Wrap(err, "Validation failed for updateEnv argument, check API docs for allow values in createEnv")
+	// }
+	//
+	params.WithBody(&envBody)
+
+	response, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
+
+	if err != nil {
+		return nil, errors.Wrap(err, "an error occurred while calling Cycloid API for updateEnv.")
+	}
+
+	return response.Payload.Data, nil
 }
 
 func (m *middleware) DeleteEnv(org, project, env string) error {

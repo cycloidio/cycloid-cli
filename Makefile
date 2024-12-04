@@ -69,15 +69,15 @@ SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 CY_API_URL         ?= http://127.0.0.1:3001
 # Env list specified in file /e2e/e2e.go
 CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo.git
-CY_TEST_ROOT_ORG ?= "cycloidio"
+CY_TEST_ROOT_ORG ?= "fake-cycloid"
 
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
 # AWS - ECR login
 export AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws)
 export AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
-AWS_DEFAULT_REGION    ?= eu-west-1
-AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
+export AWS_DEFAULT_REGION    ?= eu-west-1
+export AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
 # Local BE
 LOCAL_BE_GIT_PATH ?= ../youdeploy-http-api
 YD_API_TAG        ?= staging
@@ -97,7 +97,7 @@ test: ## Run end to end tests
 	@echo "Using ORG: $(CY_TEST_ROOT_ORG) (from \$$CY_TEST_ROOT_ORG)"
 	@echo "Using GIT: $(CY_TEST_GIT_CR_URL) (from \$$CY_TEST_GIT_CR_URL)"
 	@if [ -z "$$CY_TEST_ROOT_API_KEY" ]; then echo "Unable to read API KEY from \$$CY_TEST_ROOT_API_KEY"; exit 1; fi; \
-	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" go test ./... --tags e2e
+	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" go test ./... --tags e2e -v
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder

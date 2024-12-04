@@ -1,17 +1,12 @@
 package projects
 
 import (
-	"os"
-
-	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -36,10 +31,15 @@ func NewCreateCommand() *cobra.Command {
 	common.RequiredFlag(WithFlagStackRef, cmd)
 	common.RequiredFlag(WithFlagConfigRepository, cmd)
 	cmd.Flags().StringP("env", "e", "", "[deprecated] add an environment with project creation")
+	cmd.Flags().MarkHidden("env")
 	cmd.Flags().String("vars", "", "[deprecated] path to a variable file for the env creation")
+	cmd.Flags().MarkHidden("vars")
 	cmd.Flags().String("pipeline", "", "[deprecated] path to a pipeline file for the env creation")
+	cmd.Flags().MarkHidden("pipeline")
 	cmd.Flags().StringToString("config", nil, "[deprecated] path to a config file to inject in the config repo")
+	cmd.Flags().MarkHidden("config")
 	cmd.Flags().String("usecase", "", "[deprecated] the usecase for the env creation")
+	cmd.Flags().MarkHidden("usecase")
 	cmd.Flags().String("owner", "", "the owner username")
 
 	WithFlagDescription(cmd)
@@ -86,6 +86,23 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
+
+	// fetch the printer from the factory
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// Deprecated flags, we still collect them to give a correct error message to the user
+	_, err = cmd.Flags().GetStringToString("config")
+	if err != nil {
+		return err
+	}
+
 	env, err := cmd.Flags().GetString("env")
 	if err != nil {
 		return err
@@ -106,84 +123,12 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	configs, err := cmd.Flags().GetStringToString("config")
-	if err != nil {
-		return err
-	}
-
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
+	// Handle deprecation
 	if env+usecase+varsPath+pipelinePath != "" {
 		// If any of the env provisioning vars is not empty, create the project with an env
-		internal.Warning(cmd.ErrOrStderr(), "Creating an environment when creating a project is deprecated and will be removed in a future release. Please create your env separately using the 'cy project create-env' command.\n")
-		project, err := createProjectWithPipeline(org, name, canonical, description, stackRef, configRepo, env, usecase, varsPath, pipelinePath, ownerCanonical, configs)
-		return printer.SmartPrint(p, project, err, "", printer.Options{}, cmd.OutOrStdout())
+		return errors.New("Creating an environment when creating a project is not possible anymore. Please create your env separately using the 'cy project create-env' command.")
 	}
 
-	project, err := m.CreateEmptyProject(org, name, canonical, description, stackRef, configRepo, ownerCanonical)
+	project, err := m.CreateProject(org, name, canonical, description, stackRef, configRepo, ownerCanonical)
 	return printer.SmartPrint(p, project, err, "", printer.Options{}, cmd.OutOrStdout())
-}
-
-func createProjectWithPipeline(org, name, canonical, description, stackRef, configRepo, env, usecase, varsPath, pipelinePath, owner string, configs map[string]string) (*models.Project, error) {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
-	rawPipeline, err := os.ReadFile(pipelinePath)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to read pipeline file")
-	}
-	pipelineTemplate := string(rawPipeline)
-
-	rawVars, err := os.ReadFile(varsPath)
-	if err != nil {
-		return nil, errors.Wrap(err, "unable to read variables file")
-	}
-
-	vars := string(rawVars)
-
-	project, err := m.CreateProject(org, name, canonical, env, pipelineTemplate, vars, description, stackRef, usecase, configRepo, owner)
-	err = errors.Wrap(err, "unable to create project")
-	if err != nil {
-		return nil, err
-	}
-
-	//
-	// PUSH CONFIG If project creation succeeded we push the config files
-	//
-	// Pipeline vars file
-	crVarsPath, err := pipelines.GetPipelineVarsPath(m, org, *project.Canonical, usecase)
-	if err != nil {
-		errors.Wrap(err, "unable to get pipeline variables destination path")
-	}
-	cfs := make(map[string]strfmt.Base64)
-	cfs[crVarsPath] = rawVars
-
-	// Additionals config files
-	if len(configs) > 0 {
-		for fp, dest := range configs {
-			var c strfmt.Base64
-			c, err = os.ReadFile(fp)
-			if err != nil {
-				return nil, errors.Wrap(err, "unable to read config file")
-			}
-			cfs[dest] = c
-		}
-	}
-
-	err = m.PushConfig(org, *project.Canonical, env, cfs)
-	err = errors.Wrap(err, "unable to push config")
-	if err != nil {
-		return nil, err
-	}
-
-	return project, nil
 }

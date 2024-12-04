@@ -1,0 +1,9 @@
+component: CLI
+kind: BREAKING
+body: create-env uses now stackforms by default
+time: 2024-12-03T16:39:23.199719606Z
+custom:
+  DETAILS: the old create-env logic will apply if you give the legacy flags, but they
+    won't be advertised anymore on the CLI.
+  PR: "313"
+  TYPE: CLI
