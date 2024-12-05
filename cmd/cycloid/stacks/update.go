@@ -137,7 +137,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if team == "" {
+	if team == "" && stack.Team != nil {
 		team = *stack.Team.Canonical
 	}
 
