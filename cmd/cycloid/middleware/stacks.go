@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
@@ -21,10 +22,6 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	}
 
 	p := resp.GetPayload()
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	d := p.Data
 
@@ -42,14 +39,67 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	}
 
 	p := resp.GetPayload()
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	d := p.Data
 
 	return d, nil
+}
+
+func (m *middleware) UpdateStack(
+	org, ref, name, canonical, author, description, visibility, catalogRepoCanonical, teamCanonical string,
+	image strfmt.URI,
+	keywords []string,
+	technologies []*models.ServiceCatalogTechnology,
+	dependencies []*models.ServiceCatalogDependency,
+) (*models.ServiceCatalog, error) {
+	params := service_catalogs.NewUpdateServiceCatalogParams()
+	params.WithOrganizationCanonical(org)
+	params.WithServiceCatalogRef(ref)
+
+	body := &models.UpdateServiceCatalog{
+		Name:                          &name,
+		Author:                        &author,
+		Description:                   &description,
+		Keywords:                      keywords,
+		ServiceCatalogSourceCanonical: &catalogRepoCanonical,
+	}
+
+	if canonical != "" {
+		body.Canonical = canonical
+	}
+
+	if image != "" {
+		body.Image = image
+	}
+
+	switch visibility {
+	case "shared", "local", "hidden":
+		body.Visibility = visibility
+	case "":
+		break
+	default:
+		return nil, errors.New("invalid visibility parameter for CreateCatalogRepository, accepted values are 'local', 'shared' or 'hidden'")
+	}
+
+	if teamCanonical != "" {
+		body.TeamCanonical = teamCanonical
+	}
+
+	err := body.Validate(strfmt.Default)
+	if err != nil {
+		return nil, errors.Wrap(err, "validation failed for updateServiceCatalog input")
+	}
+
+	params.WithBody(body)
+
+	response, err := m.api.ServiceCatalogs.UpdateServiceCatalog(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := response.GetPayload()
+
+	return payload.Data, nil
 }
 
 func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
@@ -63,10 +113,6 @@ func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
 	}
 
 	p := resp.GetPayload()
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	d := p.Data
 
@@ -140,10 +186,6 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	}
 
 	p := resp.GetPayload()
-	// err = p.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	d := p.Data
 	return d, nil

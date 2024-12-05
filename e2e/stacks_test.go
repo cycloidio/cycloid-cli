@@ -1,6 +1,3 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
@@ -50,6 +47,7 @@ func TestStacks(t *testing.T) {
 		require.Nil(t, cmdErr)
 		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
 	})
+
 	t.Run("SuccessStacksGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
@@ -89,5 +87,20 @@ default:
 
 		require.Nil(t, cmdErr)
 		assert.Contains(t, cmdOut, "errors\": []")
+	})
+
+	t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"stack",
+			"update",
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--visibility", "shared",
+		})
+
+		require.Nil(t, cmdErr)
+		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
+		assert.Contains(t, cmdOut, "visibility\": \"shared")
 	})
 }
