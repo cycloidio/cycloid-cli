@@ -11,6 +11,7 @@ var (
 	// Note, this url should be accessible by Cycloid API
 	CY_TEST_GIT_CR_URL    = "Url of the git repository used as config repository"
 	CY_TEST_GIT_CR_BRANCH = "master"
+	CY_API_URL            = "http://127.0.0.1:3001" // default for local tests
 )
 
 func init() {
@@ -32,6 +33,11 @@ func init() {
 	gitBranch := os.Getenv("CY_TEST_GIT_CR_BRANCH")
 	if len(gitBranch) > 0 {
 		CY_TEST_GIT_CR_BRANCH = gitBranch
+	}
+
+	apiUrl, ok := os.LookupEnv("CY_API_URL")
+	if ok {
+		CY_API_URL = apiUrl
 	}
 }
 
