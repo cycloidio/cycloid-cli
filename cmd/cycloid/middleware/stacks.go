@@ -57,32 +57,17 @@ func (m *middleware) UpdateStack(
 	params.WithServiceCatalogRef(ref)
 
 	body := &models.UpdateServiceCatalog{
-		Name:                          &name,
 		Author:                        &author,
+		Canonical:                     canonical,
+		Dependencies:                  dependencies,
 		Description:                   &description,
+		Image:                         image,
 		Keywords:                      keywords,
+		Name:                          &name,
 		ServiceCatalogSourceCanonical: &catalogRepoCanonical,
-	}
-
-	if canonical != "" {
-		body.Canonical = canonical
-	}
-
-	if image != "" {
-		body.Image = image
-	}
-
-	switch visibility {
-	case "shared", "local", "hidden":
-		body.Visibility = visibility
-	case "":
-		break
-	default:
-		return nil, errors.New("invalid visibility parameter for CreateCatalogRepository, accepted values are 'local', 'shared' or 'hidden'")
-	}
-
-	if teamCanonical != "" {
-		body.TeamCanonical = teamCanonical
+		TeamCanonical:                 teamCanonical,
+		Technologies:                  technologies,
+		Visibility:                    visibility,
 	}
 
 	err := body.Validate(strfmt.Default)
@@ -98,6 +83,16 @@ func (m *middleware) UpdateStack(
 	}
 
 	payload := response.GetPayload()
+
+	// TODO: This is a local fix for https://github.com/cycloidio/youdeploy-http-api/issues/5020
+	// Remove this condition when backend will be fixed
+	// If the team attribute is nil, this means that the backend did not found the maitainer canonical
+	if teamCanonical != "" && payload.Data.Team == nil {
+		return payload.Data, errors.Errorf(
+			"maintainer with canonical '%s' may not exists, maintainer on stack ref '%s' has been removed, please check you team canonical argument and ensure that the team exists.",
+			teamCanonical, ref,
+		)
+	}
 
 	return payload.Data, nil
 }
