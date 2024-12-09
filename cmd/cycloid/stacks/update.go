@@ -77,6 +77,11 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
+	// We will make the CLI work like a PATCH request
+	// 1. we fetch the current stack values
+	// 2. we update values when the flag is set explicitly
+	// 3. we send the request
+
 	// Fetch the current stack state
 	stack, err := m.GetStack(org, stackRef)
 	if err != nil {
@@ -84,72 +89,82 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	// Manage optional parameters
-	name, err := cmd.Flags().GetString("name")
-	if err != nil {
-		return err
-	}
+	var name, author, description, image, visibility, team string
+	var keywords []string
 
-	if name == "" {
+	flagSet := cmd.Flags()
+
+	if flagSet.Changed("name") {
+		name, err = flagSet.GetString("name")
+		if err != nil {
+			return err
+		}
+	} else {
 		name = *stack.Name
 	}
 
-	author, err := cmd.Flags().GetString("author")
-	if err != nil {
-		return err
-	}
-
-	if author == "" {
+	if flagSet.Changed("author") {
+		author, err = flagSet.GetString("author")
+		if err != nil {
+			return err
+		}
+	} else {
 		author = *stack.Author
 	}
 
-	description, err := cmd.Flags().GetString("description")
-	if err != nil {
-		return err
-	}
-
-	if description == "" {
+	if flagSet.Changed("description") {
+		description, err = flagSet.GetString("description")
+		if err != nil {
+			return err
+		}
+	} else {
 		description = *stack.Description
 	}
 
 	var imageUrl strfmt.URI
-	image, err := cmd.Flags().GetString("image")
-	if err != nil {
-		return err
-	}
+	if flagSet.Changed("image") {
+		image, err = flagSet.GetString("image")
+		if err != nil {
+			return err
+		}
 
-	if image == "" {
-		imageUrl = stack.Image
-	} else {
 		imageUrl = strfmt.URI(image)
+	} else {
+		imageUrl = stack.Image
 	}
 
-	visibility, err := cmd.Flags().GetString("visibility")
-	if err != nil {
-		return err
-	}
-
-	if visibility == "" {
+	if flagSet.Changed("visibility") {
+		visibility, err = flagSet.GetString("visibility")
+		if err != nil {
+			return err
+		}
+	} else {
 		visibility = *stack.Visibility
 	}
 
-	team, err := cmd.Flags().GetString("team")
-	if err != nil {
-		return err
+	if flagSet.Changed("team") {
+		team, err = flagSet.GetString("team")
+		if err != nil {
+			return err
+		}
+	} else {
+		if stack.Team != nil {
+			team = *stack.Team.Canonical
+		}
 	}
 
-	if team == "" && stack.Team != nil {
-		team = *stack.Team.Canonical
+	if flagSet.Changed("keyword") {
+		keywords, err = flagSet.GetStringSlice("keyword")
+		if err != nil {
+			return err
+		}
+	} else {
+		if stack.Keywords != nil {
+			keywords = stack.Keywords
+		}
 	}
 
-	keywords, err := cmd.Flags().GetStringSlice("keyword")
-	if err != nil {
-		return err
-	}
-
-	if keywords == nil {
-		keywords = stack.Keywords
-	}
-
+	// Send request
 	s, err := m.UpdateStack(org, stackRef, name, *stack.Canonical, author, description, visibility, stack.ServiceCatalogSourceCanonical, team, imageUrl, keywords, stack.Technologies, stack.Dependencies)
 	return printer.SmartPrint(p, s, err, fmt.Sprintf("fail to update stack with ref: %s", stackRef), printer.Options{}, cmd.OutOrStdout())
 }
