@@ -360,11 +360,21 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 			&inputs,
 		)
 
+		if err != nil {
+			return errors.Wrapf(err, "failed to update env '%s': ", env)
+		}
+
 		// return the config understood by the backend
 		resp, err := m.GetProjectConfig(org, project, env)
+		if err != nil {
+			// we didn't got correct response from backend but we can return our inputs
+			return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
+		}
+
 		data, err := json.Marshal(resp.Forms.UseCases[0])
 		if err != nil {
-			return errors.New("failed to marshall API response.")
+			// we didn't got correct response from backend but we can return our inputs
+			return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
 		}
 
 		var useCase common.UseCase
@@ -374,7 +384,7 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 			return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
 		}
 
-		return printer.SmartPrint(p, common.UseCaseToFormInput(useCase, false), err, "failed to update environment "+env, printer.Options{}, cmd.OutOrStdout())
+		return printer.SmartPrint(p, common.UseCaseToFormInput(useCase, false), nil, "", printer.Options{}, cmd.OutOrStdout())
 	}
 
 	return printer.SmartPrint(p, inputs.Vars, err, "", printer.Options{}, cmd.OutOrStdout())
