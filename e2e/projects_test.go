@@ -5,6 +5,8 @@ package e2e
 import (
 	"encoding/json"
 	"fmt"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -40,9 +42,40 @@ func TestProjects(t *testing.T) {
 			"--url", CY_TEST_GIT_CR_URL,
 		})
 
+		// Add the CLI test catalog
+		executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"catalog-repository",
+			"create",
+			"--branch", "stacks",
+			"--url", "https://github.com/cycloidio/cycloid-cli-test-catalog.git",
+			"--name", "cli-test",
+		})
+
+		executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"catalog-repository",
+			"refresh",
+			"--canonical", "cli-test",
+		})
+
+		// Ensure the catalog is present
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"catalog-repository",
+			"get",
+			"--canonical", "cli-test",
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Contains(t, cmdOut, "canonical\": \"cli-test")
+
 		// Here is an example if you want to add a specific catalog.
 		// Since the latest update we have by default all the public stacks
-		// // Provide service catalog public
+		// Provide service catalog public
 		// executeCommand([]string{
 		// 	"--output", "json",
 		// 	"--org", CY_TEST_ROOT_ORG,
@@ -277,4 +310,151 @@ func TestProjects(t *testing.T) {
 
 		assert.Nil(t, cmdErr, "createEnv should handle legacy env creation, error: ", cmdOut)
 	})
+
+	t.Run("StackformsTestSetup", func(t *testing.T) {
+		var project = "stackforms-tests"
+
+		// Cleanup
+		executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"delete",
+			"--project", project,
+		})
+
+		// Setup
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"project",
+			"create",
+			"--name", project,
+			"--description", "test of stackforms update values",
+			"--stack-ref", fmt.Sprintf("%s:stack-e2e-stackforms", CY_TEST_ROOT_ORG),
+			"--config-repo", "project-config",
+			"--output", "json",
+		})
+
+		assert.Nil(t, cmdErr, "project creation should have succeeded: ", cmdOut)
+	})
+
+	type TestCase struct {
+		Input  string
+		Output interface{}
+	}
+
+	var formsTestCases = map[string]TestCase{
+		"string": {
+			Input:  "my-string",
+			Output: "my-string",
+		},
+		"integer": {
+			Input:  "1",
+			Output: 1,
+		},
+		"float": {
+			Input:  "1.1",
+			Output: 1.1,
+		},
+		"bool": {
+			Input:  "true",
+			Output: true,
+		},
+		"bool-caps": {
+			Input:  "True",
+			Output: true,
+		},
+		"map": {
+			Input: `{"myString": "string", "myBool": true, "myInt": 1, "myFloat", 1.1, "myNested": {"hello", "world"}, "myArray": ["hello", "world"]}`,
+			Output: map[string]any{
+				"myString": "string",
+				"myBool":   true,
+				"myInt":    1,
+				"myFloat":  1.1,
+				"myNested": map[string]string{
+					"hello": "world",
+				},
+				"myArray": []string{"hello", "world"},
+			},
+		},
+		"array": {
+			Input: `["string", 1, 1.1, true, ["hello", "world"], {"hello": "world"}]`,
+			Output: []any{
+				"string",
+				1,
+				1.1,
+				true,
+				[]string{"hello", "world"},
+				map[string]string{"hello": "world"},
+			},
+		},
+	}
+
+	for _, method := range []string{"VarFlag", "JsonVars", "VarFiles"} {
+		t.Run("StackformsTest"+method, func(t *testing.T) {
+			var project = "stackforms-tests"
+
+			for testKey, testValue := range formsTestCases {
+				var key string
+				if testKey == "bool-caps" {
+					key = "bool"
+				} else {
+					key = testKey
+				}
+
+				// This section is for Json vars handling
+				var inputAsJsonValue string
+				if key == "string" {
+					// since all testValue.Input are string, we need a simple way to encore json
+					// as it would be from the CLI or a file
+					// using json.Marshal() would not work since all Input are strings
+					// So we just have to add quotes if the Input value is a string.
+					inputAsJsonValue = fmt.Sprintf(`"%s"`, testValue.Input)
+				} else {
+					inputAsJsonValue = testValue.Input
+				}
+
+				jsonInput := fmt.Sprintf(`{"types": { "tests": { "%s" : %s } } }`, key, inputAsJsonValue)
+
+				var extraFlag []string
+				switch method {
+				case "VarFlag":
+					extraFlag = []string{"-V", fmt.Sprintf("%s=%s", key, testValue.Input)}
+
+				case "JsonVars":
+					extraFlag = []string{"--json-vars", jsonInput}
+
+				case "JsonEnvVars":
+					t.Setenv("CY_STACKFORMS_VARS", jsonInput)
+
+				case "VarFiles":
+					err := os.WriteFile("/tmp/jsonVar.json", []byte(jsonInput+"\n"), 0664)
+					assert.Nil(t, err, "tests must be able to write to /tmp")
+
+					extraFlag = []string{"-f", "/tmp/jsonVar.json"}
+				}
+
+				cmd := append([]string{
+					"--output", "json",
+					"--org", CY_TEST_ROOT_ORG,
+					"project",
+					"create-env",
+					"--project", project,
+					"--env", fmt.Sprintf("%s-%s", strings.ToLower(method), key), // One env per type
+					"--use-case", "default",
+					"--update",
+				}, extraFlag...)
+
+				cmdOut, cmdErr := executeCommand(cmd)
+				assert.Nil(t, cmdErr, "create env should not fail", cmdOut)
+
+				// Parse json output to ensure our value has been taken by backend
+				var data = make(map[string]map[string]map[string]any)
+				err := json.Unmarshal([]byte(cmdOut), &data)
+				assert.NoError(t, err, "we should be able to serialize response as JSON\n", "out:\n", cmdOut, "err:\n", cmdErr)
+				assert.Equal(t, testValue.Output, data["types"]["tests"][key], "response should match the expected type output, cli output: ", cmdOut)
+			}
+		})
+	}
 }
