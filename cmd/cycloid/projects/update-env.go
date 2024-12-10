@@ -27,7 +27,7 @@ You can cancel this with the --no-fetch-defaults flag
 
 You can use the following ways to fill in the stackforms configuration (in the order of precedence):
 1. --var-file (-f) flag       -> accept any valid JSON file, if the filename is "-", read from stdin (can be set multiple times)
-2. CY_STACKFORMS_VAR env var  -> accept any valid JSON string (can be multiple json objects)
+2. CY_STACKFORMS_VARS env var  -> accept any valid JSON string (can be multiple json objects)
 3. --json-vars (-j) flag      -> accept any valid JSON string (can be set multiple times)
 4. --var (-V) flag            -> update a variable using a field=value syntax (e.g. -V section.group.key=value)
 
