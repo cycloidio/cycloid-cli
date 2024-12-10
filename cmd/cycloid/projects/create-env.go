@@ -183,7 +183,7 @@ func mergeVars(defaultValues FormVars, varsFiles []string, jsonVars []string, ke
 
 		if varFile == "-" {
 			decoder = json.NewDecoder(os.Stdin)
-		} else {
+		} else if varFile != "" {
 			reader, err := os.Open(varFile)
 			if err != nil {
 				return nil, errors.Errorf("failed to read input vars from stdin: %v", err)
@@ -217,6 +217,10 @@ func mergeVars(defaultValues FormVars, varsFiles []string, jsonVars []string, ke
 	}
 
 	for _, varInput := range jsonVars {
+		if varInput == "" {
+			continue
+		}
+
 		var extractedVars = make(FormVars)
 
 		err := json.Unmarshal([]byte(varInput), &extractedVars)
