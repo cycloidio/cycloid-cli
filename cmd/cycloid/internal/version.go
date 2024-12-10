@@ -6,12 +6,24 @@ import (
 	"os"
 	"regexp"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/version"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
+
+func Error(out io.Writer, msg string) {
+	switch viper.GetString("verbosity") {
+	case "info", "debug", "warning":
+		// This is still dirty, we should detect if the current
+		// terminal is able to support colors
+		// But that would be for another PR.
+		fmt.Fprintf(out, "\033[1;31merror:\033[0m %s", msg)
+	default:
+	}
+}
 
 func Warning(out io.Writer, msg string) {
 	switch viper.GetString("verbosity") {

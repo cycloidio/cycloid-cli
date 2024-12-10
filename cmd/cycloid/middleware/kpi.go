@@ -3,10 +3,11 @@ package middleware
 import (
 	"encoding/json"
 
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_kpis"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) CreateKpi(name, kpiType, widget, org, project, job, env, config string) (*models.KPI, error) {

@@ -1,0 +1,10 @@
+---
+component: "CLI"
+kind: "FIXED"
+body: "Fixed bugs related to the API update"
+time: 2024-12-03T16:40:23.517487Z
+
+custom:
+  DETAILS: "CLI should behave as expected now."
+  PR: "313"
+  TYPE: "CLI"

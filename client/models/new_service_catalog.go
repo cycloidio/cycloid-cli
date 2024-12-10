@@ -15,7 +15,7 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewServiceCatalog Service Catalog
+// NewServiceCatalog NewServiceCatalog
 //
 // # Represents the Service Catalog item
 //
@@ -31,10 +31,6 @@ type NewServiceCatalog struct {
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical string `json:"canonical,omitempty"`
-
-	// created at
-	// Minimum: 0
-	CreatedAt *uint64 `json:"created_at,omitempty"`
 
 	// dependencies
 	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
@@ -62,15 +58,18 @@ type NewServiceCatalog struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	ServiceCatalogSourceCanonical *string `json:"service_catalog_source_canonical"`
 
-	// status
-	Status string `json:"status,omitempty"`
+	// Team responsible for the maintenance of the underlying service catalogs
+	//
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	TeamCanonical string `json:"team_canonical,omitempty"`
 
 	// technologies
 	Technologies []*ServiceCatalogTechnology `json:"technologies"`
 
-	// updated at
-	// Minimum: 0
-	UpdatedAt *uint64 `json:"updated_at,omitempty"`
+	// visibility
+	Visibility string `json:"visibility,omitempty"`
 }
 
 // Validate validates this new service catalog
@@ -82,10 +81,6 @@ func (m *NewServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -113,11 +108,11 @@ func (m *NewServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateTechnologies(formats); err != nil {
+	if err := m.validateTeamCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateUpdatedAt(formats); err != nil {
+	if err := m.validateTechnologies(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -150,18 +145,6 @@ func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 	}
 
 	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *NewServiceCatalog) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
-		return nil
-	}
-
-	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
 	}
 
@@ -254,6 +237,26 @@ func (m *NewServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt
 	return nil
 }
 
+func (m *NewServiceCatalog) validateTeamCanonical(formats strfmt.Registry) error {
+	if swag.IsZero(m.TeamCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("team_canonical", "body", m.TeamCanonical, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *NewServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
 	if swag.IsZero(m.Technologies) { // not required
 		return nil
@@ -275,18 +278,6 @@ func (m *NewServiceCatalog) validateTechnologies(formats strfmt.Registry) error 
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *NewServiceCatalog) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
-		return nil
-	}
-
-	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
-		return err
 	}
 
 	return nil

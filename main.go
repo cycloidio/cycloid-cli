@@ -4,20 +4,14 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/cycloidio/cycloid-cli/cmd"
-	"github.com/cycloidio/cycloid-cli/internal/version"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/cycloidio/cycloid-cli/cmd"
 )
 
 var (
 	// Used for flags.
-	cfgFile    string
-	userOutput string
-	verbosity  string
-
-	versionString = fmt.Sprintf("%s, revision %s, branch %s, date %s; go %s", version.Version, version.Revision, version.Branch, version.BuildDate, version.GoVersion)
-
 	rootCmd *cobra.Command
 )
 

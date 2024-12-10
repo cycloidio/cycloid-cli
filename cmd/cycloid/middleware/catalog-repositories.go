@@ -1,9 +1,11 @@
 package middleware
 
 import (
+	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error) {
@@ -17,10 +19,6 @@ func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatal
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	d := p.Data
 
@@ -39,10 +37,6 @@ func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.Serv
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	d := p.Data
 
@@ -61,7 +55,7 @@ func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) error {
 	return nil
 }
 
-func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string) (*models.ServiceCatalogSource, error) {
+func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred, visibility, teamCanonical string) (*models.ServiceCatalogSource, error) {
 	params := organization_service_catalog_sources.NewCreateServiceCatalogSourceParams()
 	params.SetOrganizationCanonical(org)
 
@@ -82,6 +76,19 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string
 		}
 	}
 
+	switch visibility {
+	case "shared", "local", "hidden":
+		body.Visibility = visibility
+	case "":
+		break
+	default:
+		return nil, errors.New("invalid visibility parameter for CreateCatalogRepository, accepted values are 'local', 'shared' or 'hidden'")
+	}
+
+	if teamCanonical != "" {
+		body.TeamCanonical = teamCanonical
+	}
+
 	params.SetBody(body)
 	err := body.Validate(strfmt.Default)
 	if err != nil {
@@ -95,18 +102,13 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred string
 
 	p := resp.GetPayload()
 
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
 	d := p.Data
 
 	return d, nil
 }
 
-func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string) (*models.ServiceCatalogSource, error) {
-
+func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string,
+) (*models.ServiceCatalogSource, error) {
 	params := organization_service_catalog_sources.NewUpdateServiceCatalogSourceParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogSourceCanonical(catalogRepo)
@@ -130,10 +132,6 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	d := p.Data
 
@@ -151,11 +149,6 @@ func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.
 	}
 
 	p := resp.GetPayload()
-	// TODO: Put back validation when backend fix it
-	//err = p.Validate(strfmt.Default)
-	//if err != nil {
-	//	return nil, err
-	//}
 
 	d := p.Data
 

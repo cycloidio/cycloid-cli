@@ -27,7 +27,7 @@ type FormsValidationResult struct {
 
 	// forms
 	// Required: true
-	Forms *FormsFileV2 `json:"forms"`
+	Forms *FormsFileV3 `json:"forms"`
 }
 
 // Validate validates this forms validation result

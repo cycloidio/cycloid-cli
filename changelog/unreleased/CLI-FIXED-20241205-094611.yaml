@@ -1,0 +1,8 @@
+component: CLI
+kind: FIXED
+body: Fixed inconsistency on --org and CY_ORG parameter
+time: 2024-12-05T09:46:11.017703786Z
+custom:
+  DETAILS: ""
+  PR: "313"
+  TYPE: CLI

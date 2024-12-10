@@ -2,23 +2,21 @@ package common
 
 import (
 	"fmt"
+	"net/url"
 	"os"
-	"reflect"
 	"regexp"
 	"strings"
 
-	"net/url"
-
-	"github.com/cycloidio/cycloid-cli/client/client"
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/config"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
+	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/cycloidio/cycloid-cli/client/client"
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/config"
 )
 
 var orgRe = regexp.MustCompile(`\(\$ organization_canonical \$\)`)
@@ -124,6 +122,14 @@ func NewAPI(opts ...APIOptions) *APIClient {
 		o(&acfg)
 	}
 
+	if !strings.HasPrefix(acfg.URL, "https://") {
+		if strings.Contains(acfg.URL, "localhost") {
+			// This handles the weird case of localhost:3001
+			// being interpreted as scheme=localhost by url.Parse
+			acfg.URL = "http://" + acfg.URL
+		}
+	}
+
 	apiUrl, err := url.Parse(acfg.URL)
 	if err == nil && apiUrl.Host != "" {
 		cfg = cfg.WithHost(apiUrl.Host)
@@ -156,14 +162,20 @@ func NewAPI(opts ...APIOptions) *APIClient {
 
 func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 	var token = a.Config.Token
+
+	// we first try to get the token from the env variable
 	if token == "" {
-		// we first try to get the token from the env variable
-		var ok bool
-		token, ok = os.LookupEnv("CY_API_TOKEN")
-		if !ok {
-			token, ok = os.LookupEnv("TOKEN")
-			if ok {
-				fmt.Println("TOKEN env var is deprecated, please use CY_API_TOKEN instead")
+		var ok = false
+		for _, env_var := range []string{"CY_API_KEY", "CY_API_TOKEN", "TOKEN"} {
+			token, ok = os.LookupEnv(env_var)
+
+			// Still display warning for future deprecation
+			if ok && env_var == "TOKEN" {
+				fmt.Fprintln(os.Stderr, "TOKEN env var is deprecated, please use CY_API_KEY instead")
+			}
+
+			if ok && len(token) != 0 {
+				break
 			}
 		}
 	}
@@ -187,6 +199,10 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 	}
 
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
+		if token == "" {
+			return errors.New("No API_KEY was provided, please provide one by CY_API_KEY env var or using cy login.")
+		}
+
 		r.SetHeaderParam("Authorization", "Bearer "+token)
 		return nil
 	})
@@ -316,85 +332,22 @@ func EntityGetValue(entity *models.FormEntity, getCurrent bool) any {
 	}
 }
 
-func ParseFormsConfig(form *models.FormUseCase, getCurrent bool) (vars map[string]map[string]map[string]any, err error) {
-	vars = make(map[string]map[string]map[string]any)
-	for _, section := range form.Sections {
-		if section == nil {
-			continue
-		}
-
-		var groups = make(map[string]map[string]any)
-		for _, group := range section.Groups {
-			if group == nil {
-				continue
-			}
-
-			vars := make(map[string]any)
-
-			for _, varEntity := range group.Vars {
-				if varEntity == nil {
-					continue
-				}
-
-				value := EntityGetValue(varEntity, getCurrent)
-				vars[*varEntity.Key] = value
-			}
-
-			groups[strings.ToLower(*group.Name)] = vars
-		}
-
-		vars[strings.ToLower(*section.Name)] = groups
-	}
-
-	return vars, nil
-}
-
-func GetFormsUseCase(formsUseCases []*models.FormUseCase, useCase string) (*models.FormUseCase, error) {
-	if formsUseCases == nil {
-		return nil, fmt.Errorf("got empty forms use case")
-	}
-
-	for _, form := range formsUseCases {
-		if *form.Name == useCase {
-			return form, nil
-		}
-	}
-
-	return nil, errors.New(fmt.Sprint("failed to find usecase:", useCase, "in form input:", formsUseCases))
-}
-
 // Update map 'm' with field 'field' to 'value'
 // the field must be in dot notation
 // e.g. field='one.nested.key' value='myValue'
 // If the map is nil, it will be created
-func UpdateMapField(field string, value any, m map[string]any) error {
-	keys := strings.Split(field, ".")
+func UpdateMapField(field string, value interface{}, m map[string]map[string]map[string]interface{}) error {
+	keys := strings.Split(strings.ToLower(field), ".")
+
+	if len(keys) != 3 {
+		return errors.New("key=val update failed, you can only update a value using `section.group.var=value` syntax")
+	}
 
 	if m == nil {
-		m = make(map[string]any)
+		m = make(map[string]map[string]map[string]any)
 	}
 
-	if len(keys) == 1 {
-		m[keys[0]] = value
-		return nil
-	}
-
-	child, exists := m[keys[0]]
-	if exists && reflect.ValueOf(child).Kind() == reflect.Map {
-		childMap, ok := child.(map[string]any)
-		if !ok {
-			return fmt.Errorf("failed to parse nested map: %v\n%v", child, childMap)
-		}
-		return UpdateMapField(strings.Join(keys[1:], "."), value, childMap)
-	}
-
-	child = make(map[string]any)
-	err := UpdateMapField(strings.Join(keys[1:], "."), value, child.(map[string]any))
-	if err != nil {
-		return err
-	}
-
-	m[keys[0]] = child
+	m[keys[0]][keys[1]][keys[2]] = value
 
 	return nil
 }

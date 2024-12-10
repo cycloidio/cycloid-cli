@@ -19,7 +19,7 @@ func NewDeleteCommand() *cobra.Command {
 	# delete a project in 'my-org' organization
 	cy --org my-org project delete --project my-project
 `,
-		RunE:    del,
+		RunE:    deleteProject,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
@@ -27,7 +27,7 @@ func NewDeleteCommand() *cobra.Command {
 	return cmd
 }
 
-func del(cmd *cobra.Command, args []string) error {
+func deleteProject(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 

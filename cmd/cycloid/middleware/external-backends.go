@@ -3,9 +3,10 @@ package middleware
 import (
 	"errors"
 
+	"github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBackend, error) {

@@ -1,10 +1,10 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -50,6 +50,7 @@ func TestStacks(t *testing.T) {
 		require.Nil(t, cmdErr)
 		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
 	})
+
 	t.Run("SuccessStacksGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
@@ -89,5 +90,83 @@ default:
 
 		require.Nil(t, cmdErr)
 		assert.Contains(t, cmdOut, "errors\": []")
+	})
+
+	t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", CY_TEST_ROOT_ORG,
+			"stack",
+			"update",
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--visibility", "shared",
+		})
+
+		require.Nil(t, cmdErr)
+		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
+		assert.Contains(t, cmdOut, "visibility\": \"shared")
+	})
+
+	t.Run("SuccessAddStackMaintainer", func(t *testing.T) {
+		t.Setenv("CY_ORG", CY_TEST_ROOT_ORG)
+		var teamCanonical = "test-team"
+		body := map[string]any{
+			"canonical": teamCanonical,
+			"name":      teamCanonical,
+			"roles_canonical": []string{
+				"default-project-viewer",
+			},
+		}
+		jsonBody, err := json.Marshal(body)
+		assert.Nil(t, err, "[preparation]: json serialization shouldn't fail.")
+
+		// team management is not implemented on the CLI, so making the call ourselves
+		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", CY_API_URL, CY_TEST_ROOT_ORG), bytes.NewBuffer(jsonBody))
+		assert.Nil(t, err, "[preparation]: request creationg shoudn't fail")
+
+		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", CY_TEST_ROOT_API_KEY))
+		request.Header.Add("Content-Type", "application/vnd.cycloid.io.v1+json")
+
+		client := &http.Client{}
+		_, err = client.Do(request)
+		assert.Nil(t, err, "[Preparation]: request to create teams shouldn't fail")
+
+		// At this point we should have a team, I assume CR and stacks are present too
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--team", teamCanonical,
+		})
+
+		assert.Nil(t, cmdErr, "CLI should be able to update the correct team without error")
+		assert.Contains(t, cmdOut, teamCanonical, "team canonical should be in the JSON response.")
+	})
+
+	t.Run("SuccessRemoveMaintainer", func(t *testing.T) {
+		t.Setenv("CY_ORG", CY_TEST_ROOT_ORG)
+		// We assume that the team exists from the previous test
+		var teamCanonical = "test-team"
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--team", "", // setting the flag with empty string should remove the maintainer
+		})
+
+		assert.Nil(t, cmdErr, "CLI should be able to update the correct team without error")
+		assert.NotContains(t, cmdOut, teamCanonical, "team canonical should not be in json response")
+	})
+
+	t.Run("InvalidMaintainerShouldError", func(t *testing.T) {
+		t.Setenv("CY_ORG", CY_TEST_ROOT_ORG)
+		_, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--team", "invalidteam",
+		})
+
+		assert.Error(t, cmdErr, "CLI should output an error if we try to update a stack with a team that doesn't exists")
 	})
 }

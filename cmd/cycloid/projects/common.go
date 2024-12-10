@@ -43,7 +43,7 @@ func WithFlagUsecase(cmd *cobra.Command) string {
 }
 func WithFlagStackRef(cmd *cobra.Command) string {
 	flagName := "stack-ref"
-	cmd.Flags().StringVar(&stackRefFlag, flagName, "", "")
+	cmd.Flags().StringVar(&stackRefFlag, flagName, "", "stack reference")
 	return flagName
 }
 func WithFlagCanonical(cmd *cobra.Command) string {
@@ -58,6 +58,6 @@ func WithFlagDescription(cmd *cobra.Command) string {
 }
 func WithFlagConfigRepository(cmd *cobra.Command) string {
 	flagName := "config-repo"
-	cmd.Flags().StringVar(&configRepositoryFlag, flagName, "", "")
+	cmd.Flags().StringVar(&configRepositoryFlag, flagName, "", "Config repository canonical to save configuration")
 	return flagName
 }

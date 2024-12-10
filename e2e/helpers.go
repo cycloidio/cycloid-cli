@@ -155,6 +155,16 @@ func JsonListExtractFields(js string, field, filterField, filterRegex string) ([
 	return out, nil
 }
 
+func JsonListFindObjectValue(list []map[string]interface{}, key, value string) bool {
+	for _, item := range list {
+		if item[key] == value {
+			return true
+		}
+	}
+
+	return false
+}
+
 // // JsonExtractField Extract a field from a json entity
 // func JsonExtractField(js []byte, field string) (interface{}, error) {
 // 		var e interface{}

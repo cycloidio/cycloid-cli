@@ -12,11 +12,11 @@ import (
 )
 
 // This command have been Hidden because it is not compatible with API key login.
-// Advanced user still can use it passing a user token in CY_TOKEN env var during a login.
+// Advanced user still can use it passing a user token in CY_API_KEY env var during a login.
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create",
-		Short: "create an organization",
+		Use:    "create",
+		Short:  "create an organization",
 		Hidden: true,
 		Example: `
 	# create an organization foo

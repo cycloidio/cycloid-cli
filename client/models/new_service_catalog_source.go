@@ -45,10 +45,22 @@ type NewServiceCatalogSource struct {
 	//
 	Owner string `json:"owner,omitempty"`
 
+	// Team responsible for the maintenance of the underlying service catalogs
+	//
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	TeamCanonical string `json:"team_canonical,omitempty"`
+
 	// url
 	// Required: true
 	// Pattern: ^((/|~)[^/]*)+.(\.git)|(([\w\]+@[\w\.]+))(:(//)?)([\w\.@\:/\-~]+)(/)?
 	URL *string `json:"url"`
+
+	// The visibility setting allows to specify which visibility will be applied to stacks in this catalog repository.
+	// This option is only applied during initial catalog repository creation, not for subsequent updates.
+	//
+	Visibility string `json:"visibility,omitempty"`
 }
 
 // Validate validates this new service catalog source
@@ -68,6 +80,10 @@ func (m *NewServiceCatalogSource) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTeamCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -133,6 +149,26 @@ func (m *NewServiceCatalogSource) validateCredentialCanonical(formats strfmt.Reg
 func (m *NewServiceCatalogSource) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewServiceCatalogSource) validateTeamCanonical(formats strfmt.Registry) error {
+	if swag.IsZero(m.TeamCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("team_canonical", "body", m.TeamCanonical, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

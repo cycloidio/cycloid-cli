@@ -1,15 +1,17 @@
 package projects
 
 import (
+	"encoding/json"
 	"fmt"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
 func NewGetEnvCommand() *cobra.Command {
@@ -60,21 +62,21 @@ cy --org my-org project get-env-config my-project my-project use_case -o yaml`,
 
 func getEnvConfig(cmd *cobra.Command, args []string) error {
 	// Flags have precedence over args
-	project, err := cmd.Flags().GetString("project")
+	project, _ := cmd.Flags().GetString("project")
 	if len(args) >= 1 && project == "" {
 		project = args[0]
 	} else if project == "" {
 		return fmt.Errorf("missing project argument")
 	}
 
-	env, err := cmd.Flags().GetString("env")
+	env, _ := cmd.Flags().GetString("env")
 	if len(args) == 2 && env == "" {
 		env = args[1]
 	} else if env == "" {
 		return fmt.Errorf("missing use case argument")
 	}
 
-	getDefault, err := cmd.Flags().GetBool("default")
+	useDefaults, err := cmd.Flags().GetBool("default")
 	if err != nil {
 		return err
 	}
@@ -110,15 +112,14 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, fmt.Sprint("failed to fetch project '", project, "' config for env '", env, "' in org '", org, "'"), printer.Options{}, cmd.OutOrStderr())
 	}
 
-	form, err := common.GetFormsUseCase(resp.Forms.UseCases, *resp.UseCase)
+	data, err := json.Marshal(resp.Forms.UseCases[0])
 	if err != nil {
-		return errors.Wrap(err, "failed to extract forms data from project config.")
+		return errors.New("failed to marshall API response.")
 	}
 
-	formData, err := common.ParseFormsConfig(form, !getDefault)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to get stack config, parsing failed.", printer.Options{}, cmd.OutOrStdout())
-	}
+	var useCase common.UseCase
+	err = json.Unmarshal(data, &useCase)
 
-	return printer.SmartPrint(p, formData, err, "failed to get stack config", printer.Options{}, cmd.OutOrStdout())
+	// Yes, it's always one -_o_-
+	return printer.SmartPrint(p, common.UseCaseToFormInput(useCase, useDefaults), err, "failed to get stack config", printer.Options{}, cmd.OutOrStdout())
 }

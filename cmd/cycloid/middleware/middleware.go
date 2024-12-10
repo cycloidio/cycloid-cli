@@ -1,16 +1,17 @@
 package middleware
 
 import (
+	strfmt "github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 type Middleware interface {
 	GetAppVersion() (*models.AppVersion, error)
 	GetStatus() (*models.GeneralStatus, error)
 
-	CreateCatalogRepository(org, name, url, branch, cred string) (*models.ServiceCatalogSource, error)
+	CreateCatalogRepository(org, name, url, branch, cred, visibility, teamCanonical string) (*models.ServiceCatalogSource, error)
 	DeleteCatalogRepository(org, catalogRepo string) error
 	GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error)
 	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
@@ -76,20 +77,22 @@ type Middleware interface {
 	GetPipeline(org, project, env string) (*models.Pipeline, error)
 	SyncedPipeline(org, project, env string) (*models.PipelineStatus, error)
 
-	CreateProject(org, projectName, projectCanonical, env, pipelineTemplate, variables, description, stackRef, usecase, configRepo string) (*models.Project, error)
-	CreateEmptyProject(org, projectName, projectCanonical, description, stackRef, configRepo string) (*models.Project, error)
-	DeleteProjectEnv(org, project, env string) error
+	CreateProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error)
+	CreateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) error
+	UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.Environment, error)
+	DeleteEnv(org, project, envCanonical string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	GetProjectConfig(org string, project string, environment string) (*models.ProjectEnvironmentConfig, error)
 	ListProjects(org string) ([]*models.Project, error)
-	UpdateProject(org, projectName, projectCanonical string, envs []*models.NewEnvironment, description, stackRef, owner, configRepo string, inputs []*models.FormInput, updatedAt uint64) (*models.Project, error)
+	UpdateProject(org, projectName, projectCanonical string, description, stackRef, owner, configRepo string, updatedAt uint64) (*models.Project, error)
 
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)
 	ListRoles(org string) ([]*models.Role, error)
 
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
+	UpdateStack(org, ref, name, canonical, author, description, visibility, catalogRepoCanonical, teamCanonical string, image strfmt.URI, keywords []string, technologies []*models.ServiceCatalogTechnology, dependencies []*models.ServiceCatalogDependency) (*models.ServiceCatalog, error)
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
 
 	CreateKpi(name, kpiType, widget, org, project, job, env, config string) (*models.KPI, error)
@@ -108,11 +111,11 @@ type Middleware interface {
 	// ValidateInfraPolicies will validate the TF plan against OPA policies defined on the Cycloid server
 	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error)
 	// CreateInfraPolicy will create a new infraPolicy with the repo file supplied
-	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
-	DeleteInfraPolicy(org, policyCannonical string) error
+	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, error)
+	DeleteInfraPolicy(org, policycanonical string) error
 	ListInfraPolicies(org string) ([]*models.InfraPolicy, error)
 	GetInfraPolicy(org, infraPolicy string) (*models.InfraPolicy, error)
-	UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownerCannonical, severity string, enabled bool) (*models.InfraPolicy, error)
+	UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, error)
 
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, error)
