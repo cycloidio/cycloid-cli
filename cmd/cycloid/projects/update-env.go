@@ -167,6 +167,9 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 	}
 
 	vars, err := mergeVars(defaultValues, varsFiles, append([]string{envConfig}, cliVars...), extraVar)
+	if err != nil {
+		return err
+	}
 
 	// Handle output options
 	output, err := cmd.Flags().GetString("output")
@@ -200,8 +203,16 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		&inputs,
 	)
 
+	if err != nil {
+		return err
+	}
+
 	// return the config understood by the backend
 	resp, err := m.GetProjectConfig(org, project, env)
+	if err != nil {
+		return errors.Wrap(err, "fail to get current configuration ")
+	}
+
 	data, err := json.Marshal(resp.Forms.UseCases[0])
 	if err != nil {
 		return errors.New("failed to marshall API response.")
