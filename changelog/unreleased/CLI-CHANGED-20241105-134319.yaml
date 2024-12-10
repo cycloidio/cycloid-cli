@@ -1,8 +1,0 @@
-component: CLI
-kind: CHANGED
-body: "Update client to version v5.1.98"
-time: 2024-11-05T13:43:19.058980911+00:00
-custom:
-  DETAILS: ""
-  PR: "308"
-  TYPE: CLI
