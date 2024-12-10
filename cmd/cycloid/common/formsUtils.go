@@ -55,7 +55,7 @@ func UseCaseToFormInput(useCase UseCase, useDefaults bool) map[string]map[string
 			}
 
 			for _, widget := range group.Vars {
-				widgetName := strings.ToLower(widget.Name)
+				widgetName := strings.ToLower(widget.Key)
 				result[useCaseName][groupName][widgetName] = widget.GetValue(useDefaults)
 			}
 		}
