@@ -1,9 +1,0 @@
-component: CLI
-kind: FIXED
-body: Cycloid CLI now correctly uses CY_API_KEY env var instead of CY_API_TOKEN.
-time: 2024-09-23T13:17:12.423881323Z
-custom:
-  DETAILS: Old env vars still works, TOKEN and CY_API_TOKEN will be deprecated on
-    the future.
-  PR: "299"
-  TYPE: CLI
