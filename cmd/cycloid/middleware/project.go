@@ -246,7 +246,7 @@ func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProvide
 	response, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
 
 	if err != nil {
-		return nil, errors.Wrap(err, "an error occurred while calling Cycloid API for updateEnv.")
+		return nil, NewApiError(err)
 	}
 
 	return response.Payload.Data, nil
