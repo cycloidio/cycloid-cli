@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add `cy event list` for listing events
-time: 2024-12-12T18:00:39.116611598+01:00
-custom:
-    DETAILS: This is a basic implementation of the getEvents API endpoint.
-    PR: "324"
-    TYPE: CLI
