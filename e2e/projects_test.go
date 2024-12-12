@@ -340,33 +340,65 @@ func TestProjects(t *testing.T) {
 	})
 
 	type TestCase struct {
+		Keys   []string
+		Type   string
 		Input  string
 		Output interface{}
 	}
 
-	var formsTestCases = map[string]TestCase{
-		"string": {
+	var formsTestCases = []TestCase{
+		{
+			Keys:   []string{"types", "tests", "string"},
+			Type:   "string",
 			Input:  "my-string",
 			Output: "my-string",
 		},
-		"integer": {
+		{
+			Keys:   []string{"types", "tests", "integer"},
+			Type:   "integer",
 			Input:  "1",
 			Output: 1,
 		},
-		"float": {
+		{
+			Keys:   []string{"types", "tests", "integer"},
+			Type:   "integer",
+			Input:  "-29291",
+			Output: -29291,
+		},
+		{
+			Keys:   []string{"types", "tests", "float"},
+			Type:   "float",
 			Input:  "1.1",
 			Output: 1.1,
 		},
-		"bool": {
+		{
+			Keys:   []string{"types", "tests", "float"},
+			Type:   "float",
+			Input:  "-666.423",
+			Output: -666.423,
+		},
+		{
+			Keys:   []string{"types", "tests", "bool"},
+			Type:   "bool",
 			Input:  "true",
 			Output: true,
 		},
-		"bool-caps": {
+		{
+			Keys:   []string{"types", "tests", "bool"},
+			Type:   "bool",
 			Input:  "True",
 			Output: true,
 		},
-		"map": {
-			Input: `{"myString": "string", "myBool": true, "myInt": 1, "myFloat", 1.1, "myNested": {"hello", "world"}, "myArray": ["hello", "world"]}`,
+		{
+			Keys:   []string{"types", "tests", "string"},
+			Type:   "null",
+			Input:  "null",
+			Output: nil,
+		},
+		{
+			Keys:  []string{"types", "tests", "map"},
+			Type:  "map",
+			Input: `{"myString": "string", "myBool": true, "myInt": 1, "myFloat": 1.1, "myNested": {"hello": "world"}, "myArray": ["hello", "world"]}`,
 			Output: map[string]any{
 				"myString": "string",
 				"myBool":   true,
@@ -378,7 +410,9 @@ func TestProjects(t *testing.T) {
 				"myArray": []string{"hello", "world"},
 			},
 		},
-		"array": {
+		{
+			Keys:  []string{"types", "tests", "array"},
+			Type:  "array",
 			Input: `["string", 1, 1.1, true, ["hello", "world"], {"hello": "world"}]`,
 			Output: []any{
 				"string",
@@ -389,50 +423,86 @@ func TestProjects(t *testing.T) {
 				map[string]string{"hello": "world"},
 			},
 		},
+		{
+			Keys:   []string{"section spaces AND CAPS", "group spaces AND CAPS", "no_spaces_no_caps"},
+			Type:   "string",
+			Input:  `thisIsAStringYay`,
+			Output: "thisIsAStringYay",
+		},
+		{
+			Keys:   []string{"can two sections have same name with different caps ?", "can two groups have same name with different caps ?", "group1"},
+			Type:   "string",
+			Input:  "lowkey",
+			Output: "lowkey",
+		},
+		{
+			Keys:   []string{"CAN TWO SECTIONS HAVE SAME NAME WITH DIFFERENT CAPS ?", "CAN TWO GROUPS HAVE SAME NAME WITH DIFFERENT CAPS ?", "group2"},
+			Type:   "string",
+			Input:  `SHOUT`,
+			Output: "SHOUT",
+		},
 	}
 
 	for _, method := range []string{"VarFlag", "JsonVars", "VarFiles"} {
 		t.Run("StackformsTest"+method, func(t *testing.T) {
 			var project = "stackforms-tests"
 
-			for testKey, testValue := range formsTestCases {
-				var key string
-				if testKey == "bool-caps" {
-					key = "bool"
-				} else {
-					key = testKey
-				}
+			for _, testValue := range formsTestCases {
 
 				// This section is for Json vars handling
 				var inputAsJsonValue string
-				if key == "string" {
+				switch testValue.Type {
+				case "string":
 					// since all testValue.Input are string, we need a simple way to encore json
 					// as it would be from the CLI or a file
 					// using json.Marshal() would not work since all Input are strings
 					// So we just have to add quotes if the Input value is a string.
 					inputAsJsonValue = fmt.Sprintf(`"%s"`, testValue.Input)
-				} else {
+
+				case "bool":
+					// Lower the capital bool test case as it would be invalid JSON
+					inputAsJsonValue = fmt.Sprintf(`%s`, strings.ToLower(testValue.Input))
+
+				default:
 					inputAsJsonValue = testValue.Input
 				}
 
-				jsonInput := fmt.Sprintf(`{"types": { "tests": { "%s" : %s } } }`, key, inputAsJsonValue)
+				// Lazy way to just build the JSON string as it would be inputted via the CLI
+				var stringJsonInput string
+				keysLen := len(testValue.Keys)
+				for index, key := range testValue.Keys {
+					if index < keysLen-1 {
+						stringJsonInput += fmt.Sprintf(`{"%s": `, key)
+						continue
+					}
+
+					// Close the json
+					stringJsonInput += fmt.Sprintf(`{"%s": %s %s`, key, inputAsJsonValue, strings.Repeat("}", keysLen))
+				}
 
 				var extraFlag []string
 				switch method {
 				case "VarFlag":
-					extraFlag = []string{"-V", fmt.Sprintf("%s=%s", key, testValue.Input)}
+					switch testValue.Type {
+					case "array", "map":
+						// not supported to update map or array using this flag
+						t.SkipNow()
+					default:
+						extraFlag = []string{"-V", fmt.Sprintf("%s=%s", strings.Join(testValue.Keys, "."), testValue.Input)}
+					}
 
 				case "JsonVars":
-					extraFlag = []string{"--json-vars", jsonInput}
+					extraFlag = []string{"--json-vars", stringJsonInput}
 
 				case "JsonEnvVars":
-					t.Setenv("CY_STACKFORMS_VARS", jsonInput)
+					t.Setenv("CY_STACKFORMS_VARS", stringJsonInput)
 
 				case "VarFiles":
-					err := os.WriteFile("/tmp/jsonVar.json", []byte(jsonInput+"\n"), 0664)
-					assert.Nil(t, err, "tests must be able to write to /tmp")
+					filename := fmt.Sprintf("/tmp/cli-varfile-%s.json", testValue.Type)
+					err := os.WriteFile(filename, []byte(stringJsonInput+"\n"), 0664)
+					assert.Nil(t, err, "tests must be able to write to ", filename)
 
-					extraFlag = []string{"-f", "/tmp/jsonVar.json"}
+					extraFlag = []string{"-f", filename}
 				}
 
 				cmd := append([]string{
@@ -441,7 +511,7 @@ func TestProjects(t *testing.T) {
 					"project",
 					"create-env",
 					"--project", project,
-					"--env", fmt.Sprintf("%s-%s", strings.ToLower(method), key), // One env per type
+					"--env", fmt.Sprintf("%s-%s", strings.ToLower(method), testValue.Type), // One env per type
 					"--use-case", "default",
 					"--update",
 				}, extraFlag...)
@@ -453,7 +523,21 @@ func TestProjects(t *testing.T) {
 				var data = make(map[string]map[string]map[string]any)
 				err := json.Unmarshal([]byte(cmdOut), &data)
 				assert.NoError(t, err, "we should be able to serialize response as JSON\n", "out:\n", cmdOut, "err:\n", cmdErr)
-				assert.Equal(t, testValue.Output, data["types"]["tests"][key], "response should match the expected type output, cli output: ", cmdOut)
+
+				cliResult := data["types"]["tests"][testValue.Type]
+
+				switch testValue.Type {
+				case "string", "bool", "float", "integer", "null":
+					assert.EqualValues(t, cliResult, testValue.Output)
+				case "map", "array":
+					jsonResult, err := json.MarshalIndent(cliResult, "", "  ")
+					assert.NoErrorf(t, err, "CLI JSON output, for key types.tests.%s should be json serializable", testValue.Type)
+
+					jsonExpect, err := json.MarshalIndent(cliResult, "", "  ")
+					assert.NoError(t, err, "the expected test output should be JSON serializable")
+
+					assert.JSONEq(t, string(jsonExpect), string(jsonResult), "The two json should be the same.")
+				}
 			}
 		})
 	}
