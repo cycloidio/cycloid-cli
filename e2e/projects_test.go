@@ -483,13 +483,7 @@ func TestProjects(t *testing.T) {
 				var extraFlag []string
 				switch method {
 				case "VarFlag":
-					switch testValue.Type {
-					case "array", "map":
-						// not supported to update map or array using this flag
-						t.SkipNow()
-					default:
-						extraFlag = []string{"-V", fmt.Sprintf("%s=%s", strings.Join(testValue.Keys, "."), testValue.Input)}
-					}
+					extraFlag = []string{"-V", fmt.Sprintf("%s=%s", strings.Join(testValue.Keys, "."), testValue.Input)}
 
 				case "JsonVars":
 					extraFlag = []string{"--json-vars", stringJsonInput}
@@ -498,7 +492,7 @@ func TestProjects(t *testing.T) {
 					t.Setenv("CY_STACKFORMS_VARS", stringJsonInput)
 
 				case "VarFiles":
-					filename := fmt.Sprintf("/tmp/cli-varfile-%s.json", testValue.Type)
+					filename := fmt.Sprintf("/tmp/cli-%s-%s.json", method, testValue.Type)
 					err := os.WriteFile(filename, []byte(stringJsonInput+"\n"), 0664)
 					assert.Nil(t, err, "tests must be able to write to ", filename)
 
@@ -524,11 +518,11 @@ func TestProjects(t *testing.T) {
 				err := json.Unmarshal([]byte(cmdOut), &data)
 				assert.NoError(t, err, "we should be able to serialize response as JSON\n", "out:\n", cmdOut, "err:\n", cmdErr)
 
-				cliResult := data["types"]["tests"][testValue.Type]
+				cliResult := data[testValue.Keys[0]][testValue.Keys[1]][testValue.Keys[2]]
 
 				switch testValue.Type {
 				case "string", "bool", "float", "integer", "null":
-					assert.EqualValues(t, cliResult, testValue.Output)
+					assert.EqualValues(t, testValue.Output, cliResult)
 				case "map", "array":
 					jsonResult, err := json.MarshalIndent(cliResult, "", "  ")
 					assert.NoErrorf(t, err, "CLI JSON output, for key types.tests.%s should be json serializable", testValue.Type)

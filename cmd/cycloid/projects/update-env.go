@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -14,6 +15,12 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
+)
+
+var (
+	varFiles  []string
+	jsonVars  []string
+	extraVars []string
 )
 
 func NewUpdateEnvCommand() *cobra.Command {
@@ -54,15 +61,17 @@ cy project update \
 	cmd.MarkFlagRequired("env")
 	cmd.PersistentFlags().StringP("use-case", "u", "", "the selected use case of the stack")
 	cmd.MarkFlagRequired("use-case")
-	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
-	cmd.PersistentFlags().StringArrayP("json-vars", "j", nil, "JSON string containing variables, can be set multiple times.")
-	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a section.group.var=value syntax - JSON values aren't supported for this flag.`)
-	cmd.PersistentFlags().Bool("no-fetch-defaults", false, "disable the fetching of the stacks default values")
 
+	cmd.Flags().StringArrayVarP(&varFiles, "var-file", "f", []string{}, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
+	cmd.Flags().StringArrayVarP(&jsonVars, "json-vars", "j", []string{}, "JSON string containing variables, can be set multiple times.")
+	cmd.Flags().StringArrayVarP(&extraVars, "var", "V", []string{}, `update a variable using a section.group.var=value syntax - JSON values aren't supported for this flag.`)
+
+	cmd.PersistentFlags().Bool("no-fetch-defaults", false, "disable the fetching of the stacks default values")
 	return cmd
 }
 
 func updateEnv(cmd *cobra.Command, args []string) error {
+	fmt.Println(args)
 	org, err := common.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -95,14 +104,13 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		return errors.New("use-case is empty, please specify an use-case with --use-case")
 	}
 
-	varsFiles, err := cmd.Flags().GetStringArray("var-file")
-	if err != nil {
-		return err
-	}
-
-	extraVar, err := cmd.Flags().GetStringToString("var")
-	if err != nil {
-		return err
+	var keyValVars = make(map[string]string)
+	for _, keyVal := range extraVars {
+		key, val, found := strings.Cut(keyVal, "=")
+		if !found {
+			return errors.New("invalid update with --var (-V) flag, format should be section.group.var=value")
+		}
+		keyValVars[key] = val
 	}
 
 	noFetchDefault, err := cmd.Flags().GetBool("no-fetch-defaults")
@@ -166,7 +174,7 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	vars, err := mergeVars(defaultValues, varsFiles, append([]string{envConfig}, cliVars...), extraVar)
+	vars, err := mergeVars(defaultValues, varFiles, append([]string{envConfig}, cliVars...), keyValVars)
 	if err != nil {
 		return err
 	}

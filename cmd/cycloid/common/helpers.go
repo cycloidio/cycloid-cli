@@ -1,6 +1,7 @@
 package common
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
@@ -235,6 +236,20 @@ func UpdateMapField(field string, value string, m map[string]map[string]map[stri
 
 	if m == nil {
 		m = make(map[string]map[string]map[string]any)
+	}
+
+	// Try to detect JSON first
+	// we strip value for space and newline in begin/end of the string
+	trimmedValue := strings.TrimSpace(value)
+	if strings.HasPrefix(trimmedValue, "[") && strings.HasSuffix(trimmedValue, "]") || strings.HasPrefix(trimmedValue, "{") && strings.HasSuffix(trimmedValue, "}") {
+		var data interface{}
+		err := json.Unmarshal([]byte(trimmedValue), &data)
+		if err != nil {
+			return errors.Wrapf(err, "invalid JSON value in key=val update with value '%s'", trimmedValue)
+		}
+
+		m[keys[0]][keys[1]][keys[2]] = data
+		return nil
 	}
 
 	// Detect standard types
