@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"fmt"
-
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
@@ -195,20 +193,9 @@ func (m *middleware) CreateEnv(org, project, envCanonical, useCase, cloudProvide
 
 	params.WithBody(&envBody)
 
-	response, err := m.api.OrganizationProjects.CreateEnvironment(params, m.api.Credentials(&org))
-
-	if response.Code() == 409 {
-		// Careful before changing the error message, it's matched insite create-env.go
-		return errors.New(fmt.Sprintf("environment %s already exists.", envCanonical))
-	}
-
-	// Fix for bad http response code in API
-	if response.Code() == 200 {
-		return nil
-	}
-
+	_, err = m.api.OrganizationProjects.CreateEnvironment(params, m.api.Credentials(&org))
 	if err != nil {
-		return errors.Wrap(err, "an error occurred while calling Cycloid API for createEnv.")
+		return NewApiError(err)
 	}
 
 	return nil
@@ -246,7 +233,7 @@ func (m *middleware) UpdateEnv(org, project, envCanonical, useCase, cloudProvide
 	response, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
 
 	if err != nil {
-		return nil, errors.Wrap(err, "an error occurred while calling Cycloid API for updateEnv.")
+		return nil, NewApiError(err)
 	}
 
 	return response.Payload.Data, nil

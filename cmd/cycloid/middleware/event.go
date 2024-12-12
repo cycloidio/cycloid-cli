@@ -8,7 +8,6 @@ import (
 )
 
 func (m *middleware) SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error {
-
 	params := organizations.NewSendEventParams()
 	params.SetOrganizationCanonical(org)
 
@@ -51,4 +50,26 @@ func (m *middleware) SendEvent(org, eventType, title, message, severity string, 
 	}
 
 	return nil
+}
+
+func (m *middleware) ListEvents(org string, eventType, eventSeverity []string, begin, end uint64) ([]*models.Event, error) {
+	params := organizations.NewGetEventsParams()
+	params.WithOrganizationCanonical(org)
+	params.Begin = &begin
+	params.End = &end
+
+	if len(eventSeverity) != 0 {
+		params.WithSeverity(eventSeverity)
+	}
+
+	if len(eventType) != 0 {
+		params.WithType(eventType)
+	}
+
+	response, err := m.api.Organizations.GetEvents(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	return response.Payload.Data, nil
 }

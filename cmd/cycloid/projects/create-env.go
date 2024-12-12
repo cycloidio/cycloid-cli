@@ -67,7 +67,7 @@ cy project get-env-config --org my-org --project my-project --env prod \
 	cmd.MarkFlagRequired("use-case")
 	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
 	cmd.PersistentFlags().StringArrayP("json-vars", "j", nil, "JSON string containing variables, can be set multiple times.")
-	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a section.group.var=value syntax`)
+	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a section.group.var=value syntax - JSON values aren't supported for this flag.`)
 	cmd.PersistentFlags().Bool("update", false, "allow to override existing environment")
 	cmd.PersistentFlags().Bool("no-fetch-defaults", false, "disable the fetching of the stacks default values")
 
@@ -183,7 +183,7 @@ func mergeVars(defaultValues FormVars, varsFiles []string, jsonVars []string, ke
 
 		if varFile == "-" {
 			decoder = json.NewDecoder(os.Stdin)
-		} else {
+		} else if varFile != "" {
 			reader, err := os.Open(varFile)
 			if err != nil {
 				return nil, errors.Errorf("failed to read input vars from stdin: %v", err)
@@ -217,6 +217,10 @@ func mergeVars(defaultValues FormVars, varsFiles []string, jsonVars []string, ke
 	}
 
 	for _, varInput := range jsonVars {
+		if varInput == "" {
+			continue
+		}
+
 		var extractedVars = make(FormVars)
 
 		err := json.Unmarshal([]byte(varInput), &extractedVars)
@@ -231,7 +235,10 @@ func mergeVars(defaultValues FormVars, varsFiles []string, jsonVars []string, ke
 
 	// Merge key/val from --var
 	for k, v := range keyValVars {
-		common.UpdateMapField(k, v, vars)
+		err := common.UpdateMapField(k, v, vars)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return vars, nil
@@ -344,8 +351,10 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 		&inputs,
 	)
 
-	if errors.Is(err, errors.Errorf("environment %s already exists.", env)) && update {
-		_, err := m.UpdateEnv(
+	// we extract the potential apiErr to check to http error code 409
+	var apiErr *middleware.ApiError
+	if update && errors.As(err, &apiErr) && apiErr.HttpCode == "409" {
+		_, err = m.UpdateEnv(
 			org,
 			project,
 			env,
@@ -356,22 +365,34 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 			&inputs,
 		)
 
-		// return the config understood by the backend
-		resp, err := m.GetProjectConfig(org, project, env)
-		data, err := json.Marshal(resp.Forms.UseCases[0])
 		if err != nil {
-			return errors.New("failed to marshall API response.")
+			return errors.Wrapf(err, "failed to update env '%s': ", env)
 		}
-
-		var useCase common.UseCase
-		err = json.Unmarshal(data, &useCase)
-		if err != nil {
-			// we didn't got correct response from backend but we can return our inputs
-			return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
-		}
-
-		return printer.SmartPrint(p, common.UseCaseToFormInput(useCase, false), err, "failed to update environment "+env, printer.Options{}, cmd.OutOrStdout())
 	}
 
-	return printer.SmartPrint(p, inputs.Vars, err, "", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "failed to create env", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	// return the config understood by the backend
+	resp, err := m.GetProjectConfig(org, project, env)
+	if err != nil {
+		// we didn't got correct response from backend but we can return our inputs
+		return printer.SmartPrint(p, inputs, err, "cannot read current config for current env in backend.", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	data, err := json.Marshal(resp.Forms.UseCases[0])
+	if err != nil {
+		// we didn't got correct response from backend but we can return our inputs
+		return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	var formsUseCase common.UseCase
+	err = json.Unmarshal(data, &formsUseCase)
+	if err != nil {
+		// we didn't got correct response from backend but we can return our inputs
+		return printer.SmartPrint(p, nil, err, "fail to get env config", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	return printer.SmartPrint(p, common.UseCaseToFormInput(formsUseCase, false), nil, "", printer.Options{}, cmd.OutOrStdout())
 }
