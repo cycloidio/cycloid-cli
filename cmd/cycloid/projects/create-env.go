@@ -235,7 +235,10 @@ func mergeVars(defaultValues FormVars, varsFiles []string, jsonVars []string, ke
 
 	// Merge key/val from --var
 	for k, v := range keyValVars {
-		common.UpdateMapField(k, v, vars)
+		err := common.UpdateMapField(k, v, vars)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return vars, nil
@@ -348,8 +351,10 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 		&inputs,
 	)
 
-	if errors.Is(err, errors.Errorf("environment %s already exists.", env)) && update {
-		_, err := m.UpdateEnv(
+	// we extract the potential apiErr to check to http error code 409
+	var apiErr *middleware.ApiError
+	if update && errors.As(err, &apiErr) && apiErr.HttpCode == "409" {
+		_, err = m.UpdateEnv(
 			org,
 			project,
 			env,
@@ -363,29 +368,31 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 		if err != nil {
 			return errors.Wrapf(err, "failed to update env '%s': ", env)
 		}
-
-		// return the config understood by the backend
-		resp, err := m.GetProjectConfig(org, project, env)
-		if err != nil {
-			// we didn't got correct response from backend but we can return our inputs
-			return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
-		}
-
-		data, err := json.Marshal(resp.Forms.UseCases[0])
-		if err != nil {
-			// we didn't got correct response from backend but we can return our inputs
-			return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
-		}
-
-		var useCase common.UseCase
-		err = json.Unmarshal(data, &useCase)
-		if err != nil {
-			// we didn't got correct response from backend but we can return our inputs
-			return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
-		}
-
-		return printer.SmartPrint(p, common.UseCaseToFormInput(useCase, false), nil, "", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	return printer.SmartPrint(p, inputs.Vars, err, "", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "failed to create env", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	// return the config understood by the backend
+	resp, err := m.GetProjectConfig(org, project, env)
+	if err != nil {
+		// we didn't got correct response from backend but we can return our inputs
+		return printer.SmartPrint(p, inputs, err, "cannot read current config for current env in backend.", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	data, err := json.Marshal(resp.Forms.UseCases[0])
+	if err != nil {
+		// we didn't got correct response from backend but we can return our inputs
+		return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	var formsUseCase common.UseCase
+	err = json.Unmarshal(data, &formsUseCase)
+	if err != nil {
+		// we didn't got correct response from backend but we can return our inputs
+		return printer.SmartPrint(p, nil, err, "fail to get env config", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	return printer.SmartPrint(p, common.UseCaseToFormInput(formsUseCase, false), nil, "", printer.Options{}, cmd.OutOrStdout())
 }

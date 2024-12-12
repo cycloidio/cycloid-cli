@@ -222,7 +222,7 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 	err = json.Unmarshal(data, &envData)
 	if err != nil {
 		// we didn't got correct response from backend but we can return our inputs
-		return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())
+		return printer.SmartPrint(p, nil, err, "failed to repond env", printer.Options{}, cmd.OutOrStdout())
 	}
 
 	return printer.SmartPrint(p, common.UseCaseToFormInput(envData, false), err, "", printer.Options{}, cmd.OutOrStdout())
