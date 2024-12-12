@@ -33,6 +33,7 @@ type Middleware interface {
 	ListCredentials(org, cType string) ([]*models.CredentialSimple, error)
 
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error
+	ListEvents(org string, eventType, eventSeverity []string, begin, end uint64) ([]*models.Event, error)
 
 	DeleteExternalBackend(org string, externalBackend uint32) error
 	CreateExternalBackends(org, project, env, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
