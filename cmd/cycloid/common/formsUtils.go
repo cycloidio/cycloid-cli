@@ -1,7 +1,5 @@
 package common
 
-import "strings"
-
 // Define what we need to extract only
 type Widget struct {
 	Widget      string      `json:"widget,omitempty"`
@@ -43,19 +41,19 @@ func UseCaseToFormInput(useCase UseCase, useDefaults bool) map[string]map[string
 	result := make(map[string]map[string]map[string]interface{})
 
 	for _, useCase := range useCase.Sections {
-		useCaseName := strings.ToLower(useCase.Name)
+		useCaseName := useCase.Name
 		if result[useCaseName] == nil {
 			result[useCaseName] = make(map[string]map[string]interface{})
 		}
 
 		for _, group := range useCase.Groups {
-			groupName := strings.ToLower(group.Name)
+			groupName := group.Name
 			if result[useCaseName][groupName] == nil {
 				result[useCaseName][groupName] = make(map[string]interface{})
 			}
 
 			for _, widget := range group.Vars {
-				widgetName := strings.ToLower(widget.Name)
+				widgetName := widget.Key
 				result[useCaseName][groupName][widgetName] = widget.GetValue(useDefaults)
 			}
 		}

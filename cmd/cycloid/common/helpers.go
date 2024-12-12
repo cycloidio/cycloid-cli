@@ -1,10 +1,12 @@
 package common
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/url"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/go-openapi/runtime"
@@ -15,7 +17,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cycloidio/cycloid-cli/client/client"
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/config"
 )
 
@@ -161,11 +162,13 @@ func NewAPI(opts ...APIOptions) *APIClient {
 }
 
 func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
-	var token = a.Config.Token
+	var token string
+	var ok bool
+
+	token = a.Config.Token
 
 	// we first try to get the token from the env variable
 	if token == "" {
-		var ok = false
 		for _, env_var := range []string{"CY_API_KEY", "CY_API_TOKEN", "TOKEN"} {
 			token, ok = os.LookupEnv(env_var)
 
@@ -193,13 +196,11 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 		// we try to find a token for this `org`
 		if t, ok := config.Organizations[*org]; ok {
 			token = t.Token
-		} else {
-			return nil
 		}
 	}
 
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
-		if token == "" {
+		if len(token) == 0 {
 			return errors.New("No API_KEY was provided, please provide one by CY_API_KEY env var or using cy login.")
 		}
 
@@ -223,121 +224,12 @@ func GenerateCanonical(name string) string {
 	return strings.ToLower(canonical)
 }
 
-// From a *models.FormEntity, retrieve a value associated with its type
-// if getCurrent is true, we return the current value in priority
-// otherwise, we get the default value
-// if no default is set, we get a zeroed value of the correct type
-// Return nil if the type is invalid.
-// TODO: Could this be better with generics ?
-func EntityGetValue(entity *models.FormEntity, getCurrent bool) any {
-	switch *entity.Type {
-	case "string":
-		if getCurrent { // Try to get current value if asked.
-			value, ok := entity.Current.(string)
-			if ok {
-				return value
-			}
-		}
-
-		// Try to get the default value
-		value, ok := entity.Default.(string)
-		if ok {
-			return value
-		}
-
-		// Else return a valid typed zeroed value
-		return ""
-	case "integer":
-		if getCurrent { // Try to get current value if asked.
-			value, ok := entity.Current.(int64)
-			if ok {
-				return value
-			}
-		}
-
-		// Try to get the default value
-		value, ok := entity.Default.(int64)
-		if ok {
-			return value
-		}
-
-		// Else return a valid typed zeroed value
-		return 0
-	case "float":
-		if getCurrent { // Try to get current value if asked.
-			value, ok := entity.Current.(float64)
-			if ok {
-				return value
-			}
-		}
-
-		// Try to get the default value
-		value, ok := entity.Default.(float64)
-		if ok {
-			return value
-		}
-
-		// Else return a valid typed zeroed value
-		return 0
-	case "boolean":
-		if getCurrent { // Try to get current value if asked.
-			value, ok := entity.Current.(bool)
-			if ok {
-				return value
-			}
-		}
-
-		// Try to get the default value
-		value, ok := entity.Default.(bool)
-		if ok {
-			return value
-		}
-
-		// Else return a valid typed zeroed value
-		return false
-	case "array":
-		if getCurrent { // Try to get current value if asked.
-			value, ok := entity.Current.([]any)
-			if ok {
-				return value
-			}
-		}
-
-		// Try to get the default value
-		value, ok := entity.Default.([]any)
-		if ok {
-			return value
-		}
-
-		// Else return a valid typed zeroed value
-		return []any{}
-	case "map":
-		if getCurrent { // Try to get current value if asked.
-			value, ok := entity.Current.(map[string]any)
-			if ok {
-				return value
-			}
-		}
-
-		// Try to get the default value
-		value, ok := entity.Default.(map[string]any)
-		if ok {
-			return value
-		}
-
-		// Else return a valid typed zeroed value
-		return make(map[string]any)
-	default:
-		return nil
-	}
-}
-
 // Update map 'm' with field 'field' to 'value'
 // the field must be in dot notation
 // e.g. field='one.nested.key' value='myValue'
 // If the map is nil, it will be created
-func UpdateMapField(field string, value interface{}, m map[string]map[string]map[string]interface{}) error {
-	keys := strings.Split(strings.ToLower(field), ".")
+func UpdateMapField(field string, value string, m map[string]map[string]map[string]interface{}) error {
+	keys := strings.Split(field, ".")
 
 	if len(keys) != 3 {
 		return errors.New("key=val update failed, you can only update a value using `section.group.var=value` syntax")
@@ -347,7 +239,43 @@ func UpdateMapField(field string, value interface{}, m map[string]map[string]map
 		m = make(map[string]map[string]map[string]any)
 	}
 
-	m[keys[0]][keys[1]][keys[2]] = value
+	// Try to detect JSON first
+	// we strip value for space and newline in begin/end of the string
+	trimmedValue := strings.TrimSpace(value)
+	if strings.HasPrefix(trimmedValue, "[") && strings.HasSuffix(trimmedValue, "]") || strings.HasPrefix(trimmedValue, "{") && strings.HasSuffix(trimmedValue, "}") {
+		var data interface{}
+		err := json.Unmarshal([]byte(trimmedValue), &data)
+		if err != nil {
+			return errors.Wrapf(err, "invalid JSON value in key=val update with value '%s'", trimmedValue)
+		}
 
+		m[keys[0]][keys[1]][keys[2]] = data
+		return nil
+	}
+
+	// Detect standard types
+	// numbers, we do all as float since JSON doesn't care
+	// Important! We parse number firsts, since 1 and 0 are considered bools by strconv.ParseBool
+	float, err := strconv.ParseFloat(value, 64)
+	if err == nil {
+		m[keys[0]][keys[1]][keys[2]] = float
+		return nil
+	}
+
+	// bools
+	boolean, err := strconv.ParseBool(value)
+	if err == nil {
+		m[keys[0]][keys[1]][keys[2]] = boolean
+		return nil
+	}
+
+	// null
+	if strings.ToLower(value) == "null" {
+		m[keys[0]][keys[1]][keys[2]] = nil
+		return nil
+	}
+
+	// if all type conversion failed, consider the value as string
+	m[keys[0]][keys[1]][keys[2]] = value
 	return nil
 }
