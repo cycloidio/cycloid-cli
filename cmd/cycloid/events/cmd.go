@@ -14,7 +14,10 @@ func NewCommands() *cobra.Command {
 		Short: "Manage the events",
 	}
 
-	cmd.AddCommand(NewSendCommand())
+	cmd.AddCommand(
+		NewSendCommand(),
+		NewListCommand(),
+	)
 
 	return cmd
 }
