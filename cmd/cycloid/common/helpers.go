@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"os"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/go-openapi/runtime"
@@ -15,7 +16,6 @@ import (
 	"github.com/spf13/viper"
 
 	"github.com/cycloidio/cycloid-cli/client/client"
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/config"
 )
 
@@ -237,7 +237,29 @@ func UpdateMapField(field string, value string, m map[string]map[string]map[stri
 		m = make(map[string]map[string]map[string]any)
 	}
 
-	m[keys[0]][keys[1]][keys[2]] = value
+	// Detect standard types
+	// numbers, we do all as float since JSON doesn't care
+	// Important! We parse number firsts, since 1 and 0 are considered bools by strconv.ParseBool
+	float, err := strconv.ParseFloat(value, 64)
+	if err == nil {
+		m[keys[0]][keys[1]][keys[2]] = float
+		return nil
+	}
 
+	// bools
+	boolean, err := strconv.ParseBool(value)
+	if err == nil {
+		m[keys[0]][keys[1]][keys[2]] = boolean
+		return nil
+	}
+
+	// null
+	if strings.ToLower(value) == "null" {
+		m[keys[0]][keys[1]][keys[2]] = nil
+		return nil
+	}
+
+	// if all type conversion failed, consider the value as string
+	m[keys[0]][keys[1]][keys[2]] = value
 	return nil
 }
