@@ -37,9 +37,8 @@ The output object will be the same format required as input for 'cy project crea
 
 The values are generated as following:
 
-- First we get the current env value if exists (unless you set --default)
 - If no current value is present, we get the default
-- If no default is set, we set a zeroed value in the correct type: ("", 0, [], {})`,
+`,
 		Example: `# Get the configuration as json (default)
 cy --org my-org project get-env-config -p my-project-canonical -e my-env-canonical
 
@@ -52,7 +51,6 @@ cy --org my-org project get-env-config my-project my-project use_case -o yaml`,
 
 	cmd.Flags().StringP("project", "p", "", "specify the project")
 	cmd.Flags().StringP("env", "e", "", "specify the env")
-	cmd.Flags().BoolP("default", "d", false, "if set, will fetch the default value from the stack instead of the current ones.")
 
 	// This will display flag in the order declared above
 	cmd.Flags().SortFlags = false
@@ -74,11 +72,6 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 		env = args[1]
 	} else if env == "" {
 		return fmt.Errorf("missing use case argument")
-	}
-
-	useDefaults, err := cmd.Flags().GetBool("default")
-	if err != nil {
-		return err
 	}
 
 	internal.Debug("project:", project, "| env:", env)
@@ -112,6 +105,7 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, fmt.Sprint("failed to fetch project '", project, "' config for env '", env, "' in org '", org, "'"), printer.Options{}, cmd.OutOrStderr())
 	}
 
+	// Yes, it's always one -_o_-
 	data, err := json.Marshal(resp.Forms.UseCases[0])
 	if err != nil {
 		return errors.New("failed to marshall API response.")
@@ -120,6 +114,6 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 	var useCase common.UseCase
 	err = json.Unmarshal(data, &useCase)
 
-	// Yes, it's always one -_o_-
-	return printer.SmartPrint(p, common.UseCaseToFormInput(useCase, useDefaults), err, "failed to get stack config", printer.Options{}, cmd.OutOrStdout())
+	vars := common.UseCaseToFormInput(useCase, true)
+	return printer.SmartPrint(p, vars, err, "failed to get stack config", printer.Options{}, cmd.OutOrStdout())
 }
