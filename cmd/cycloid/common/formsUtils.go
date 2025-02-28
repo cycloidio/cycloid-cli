@@ -54,7 +54,10 @@ func UseCaseToFormInput(useCase UseCase, useDefaults bool) map[string]map[string
 
 			for _, widget := range group.Vars {
 				widgetName := widget.Key
-				result[useCaseName][groupName][widgetName] = widget.GetValue(useDefaults)
+				value := widget.GetValue(useDefaults)
+				if value != nil {
+					result[useCaseName][groupName][widgetName] = value
+				}
 			}
 		}
 	}
