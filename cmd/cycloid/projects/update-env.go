@@ -233,5 +233,5 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "failed to repond env", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	return printer.SmartPrint(p, common.UseCaseToFormInput(envData, false), err, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, common.UseCaseToFormInput(envData, true), err, "", printer.Options{}, cmd.OutOrStdout())
 }

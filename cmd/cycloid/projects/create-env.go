@@ -390,9 +390,8 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 	var formsUseCase common.UseCase
 	err = json.Unmarshal(data, &formsUseCase)
 	if err != nil {
-		// we didn't got correct response from backend but we can return our inputs
 		return printer.SmartPrint(p, nil, err, "fail to get env config", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	return printer.SmartPrint(p, common.UseCaseToFormInput(formsUseCase, false), nil, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, common.UseCaseToFormInput(formsUseCase, true), nil, "", printer.Options{}, cmd.OutOrStdout())
 }
