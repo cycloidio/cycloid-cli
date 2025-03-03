@@ -38,6 +38,7 @@ You can use the following ways to fill in the stackforms configuration (in the o
 2. CY_STACKFORMS_VARS env var  -> accept any valid JSON string (can be multiple json objects)
 3. --json-vars (-j) flag      -> accept any valid JSON string (can be set multiple times)
 4. --var (-V) flag            -> update a variable using a field=value syntax (e.g. -V section.group.key=value)
+																for string types, add quotes like: 'section.group.string="mystring"'
 
 The output will be the generated configuration of the project.`,
 		Example: `
@@ -65,7 +66,7 @@ cy project update \
 
 	cmd.Flags().StringArrayVarP(&varFiles, "var-file", "f", []string{}, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
 	cmd.Flags().StringArrayVarP(&jsonVars, "json-vars", "j", []string{}, "JSON string containing variables, can be set multiple times.")
-	cmd.Flags().StringArrayVarP(&extraVars, "var", "V", []string{}, `update a variable using a section.group.var=value syntax - JSON values aren't supported for this flag.`)
+	cmd.Flags().StringArrayVarP(&extraVars, "var", "V", []string{}, `update a variable using a section.group.var=value syntax - Add quotes for strings values`)
 
 	cmd.PersistentFlags().Bool("no-fetch-defaults", false, "disable the fetching of the stacks default values")
 	return cmd

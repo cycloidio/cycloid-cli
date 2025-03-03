@@ -34,7 +34,8 @@ You can use the following ways to fill in the stackforms configuration (in the o
 1. --var-file (-f) flag       -> accept any valid JSON file, if the filename is "-", read from stdin (can be set multiple times)
 2. CY_STACKFORMS_VAR env var  -> accept any valid JSON string (can be multiple json objects)
 3. --json-vars (-j) flag      -> accept any valid JSON string (can be set multiple times)
-4. --var (-V) flag            -> update a variable using a field=value syntax (e.g. -V section.group.key=value)
+4. --var (-V) flag            -> update a variable using a field=value syntax (e.g. -V section.group.key=value).
+																for string types, add quotes like: 'section.group.string="mystring"'
 
 The output will be the generated configuration of the project.`,
 		Example: `
@@ -46,7 +47,7 @@ cy project create-env \
   --use-case usecase-1 \
   --var-file vars.yml \
   --json-vars '{"myRaw": "vars"}' \
-  --var section.group.key=value
+  --var section.group.string="value"
 
 # Update a project with some values from another environement
 # using -V to override some variables.
@@ -68,7 +69,7 @@ cy project get-env-config --org my-org --project my-project --env prod \
 	cmd.MarkFlagRequired("use-case")
 	cmd.PersistentFlags().StringArrayP("var-file", "f", nil, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
 	cmd.PersistentFlags().StringArrayP("json-vars", "j", nil, "JSON string containing variables, can be set multiple times.")
-	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a section.group.var=value syntax - JSON values aren't supported for this flag.`)
+	cmd.PersistentFlags().StringToStringP("var", "V", nil, `update a variable using a section.group.var=value syntax - Add quotes on the value for strings.`)
 	cmd.PersistentFlags().Bool("update", false, "allow to override existing environment")
 	cmd.PersistentFlags().Bool("no-fetch-defaults", false, "disable the fetching of the stacks default values")
 
