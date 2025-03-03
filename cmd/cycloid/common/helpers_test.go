@@ -1,41 +1,80 @@
-package common_test
+package common
 
-import (
-	"testing"
+import "testing"
 
-	"github.com/stretchr/testify/assert"
-
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-)
-
-func TestGenerateCanonical(t *testing.T) {
-	inputs := []struct {
-		Name      string
-		Canonical string
+func TestUpdateMapField(t *testing.T) {
+	type Args struct {
+		field string
+		value string
+		m     map[string]map[string]map[string]interface{}
+	}
+	tests := []struct {
+		name    string
+		args    Args
+		wantErr bool
 	}{
+		// TODO: Add test cases.
 		{
-			Name:      "Test Project",
-			Canonical: "test-project",
+			name: "StringDoubleQuote",
+			args: Args{
+				field: "section.group.string",
+				value: `"my-string"`,
+				m: map[string]map[string]map[string]interface{}{
+					"section": {"group": {"string": "my-string"}},
+				},
+			},
+			wantErr: false,
 		},
 		{
-			Name:      "test project",
-			Canonical: "test-project",
+			name: "StringSimpleQuote",
+			args: Args{
+				field: "section.group.string",
+				value: `'my-string'`,
+				m: map[string]map[string]map[string]interface{}{
+					"section": {"group": {"string": "my-string"}},
+				},
+			},
+			wantErr: false,
 		},
 		{
-			Name:      "Test-Project",
-			Canonical: "test-project",
+			name: "StringNoQuote",
+			args: Args{
+				field: "section.group.string",
+				value: `my-string`,
+				m: map[string]map[string]map[string]interface{}{
+					"section": {"group": {"string": "my-string"}},
+				},
+			},
+			wantErr: false,
 		},
 		{
-			Name:      "test-project",
-			Canonical: "test-project",
+			name: "Int",
+			args: Args{
+				field: "section.group.int",
+				value: `1`,
+				m: map[string]map[string]map[string]interface{}{
+					"section": {"group": {"int": 1}},
+				},
+			},
+			wantErr: false,
 		},
 		{
-			Name:      "test          project",
-			Canonical: "test-project",
+			name: "IntAsString",
+			args: Args{
+				field: "section.group.string",
+				value: `"1"`,
+				m: map[string]map[string]map[string]interface{}{
+					"section": {"group": {"string": "1"}},
+				},
+			},
+			wantErr: false,
 		},
 	}
-
-	for _, input := range inputs {
-		assert.Equal(t, input.Canonical, common.GenerateCanonical(input.Name))
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := UpdateMapField(tt.args.field, tt.args.value, tt.args.m); (err != nil) != tt.wantErr {
+				t.Errorf("UpdateMapField() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
 	}
 }

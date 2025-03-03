@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -37,6 +38,7 @@ You can use the following ways to fill in the stackforms configuration (in the o
 2. CY_STACKFORMS_VARS env var  -> accept any valid JSON string (can be multiple json objects)
 3. --json-vars (-j) flag      -> accept any valid JSON string (can be set multiple times)
 4. --var (-V) flag            -> update a variable using a field=value syntax (e.g. -V section.group.key=value)
+																for string types, add quotes like: 'section.group.string="mystring"'
 
 The output will be the generated configuration of the project.`,
 		Example: `
@@ -64,7 +66,7 @@ cy project update \
 
 	cmd.Flags().StringArrayVarP(&varFiles, "var-file", "f", []string{}, "path to a JSON file containing variables, can be '-' for stdin, can be set multiple times.")
 	cmd.Flags().StringArrayVarP(&jsonVars, "json-vars", "j", []string{}, "JSON string containing variables, can be set multiple times.")
-	cmd.Flags().StringArrayVarP(&extraVars, "var", "V", []string{}, `update a variable using a section.group.var=value syntax - JSON values aren't supported for this flag.`)
+	cmd.Flags().StringArrayVarP(&extraVars, "var", "V", []string{}, `update a variable using a section.group.var=value syntax - Add quotes for strings values`)
 
 	cmd.PersistentFlags().Bool("no-fetch-defaults", false, "disable the fetching of the stacks default values")
 	return cmd
@@ -221,7 +223,17 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "fail to get current configuration ")
 	}
 
-	data, err := json.Marshal(resp.Forms.UseCases[0])
+	useCaseIndex := slices.IndexFunc(resp.Forms.UseCases, func(useCase *models.FormUseCase) bool {
+		if useCase.Name == nil || resp.UseCase == nil {
+			return false
+		}
+		return *useCase.Name == *resp.UseCase
+	})
+	if useCaseIndex == -1 {
+		return printer.SmartPrint(p, resp, errors.Errorf("Failed to find usecase '%s' for env '%s'.", *resp.UseCase, env), "", printer.Options{}, cmd.ErrOrStderr())
+	}
+
+	data, err := json.Marshal(resp.Forms.UseCases[useCaseIndex])
 	if err != nil {
 		return errors.New("failed to marshall API response.")
 	}
@@ -233,5 +245,5 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "failed to repond env", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	return printer.SmartPrint(p, common.UseCaseToFormInput(envData, false), err, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, common.UseCaseToFormInput(envData, true), err, "", printer.Options{}, cmd.OutOrStdout())
 }

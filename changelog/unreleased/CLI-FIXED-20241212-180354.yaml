@@ -1,0 +1,8 @@
+component: CLI
+kind: FIXED
+body: cy project create-env/update-env now correctly support all value update types with --var (-V) flag
+time: 2024-12-12T18:03:54.495444077+01:00
+custom:
+    DETAILS: Previously, all value would have been treated as string, we now support all native types (int, float, bool, string) and valid JSON (array and objects).
+    PR: "323"
+    TYPE: CLI
