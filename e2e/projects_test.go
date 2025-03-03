@@ -393,7 +393,7 @@ func TestProjects(t *testing.T) {
 			Keys:   []string{"types", "tests", "string"},
 			Type:   "null",
 			Input:  "null",
-			Output: nil,
+			Output: "stringValue", // Since we send nil, the forms will receive the default value.
 		},
 		{
 			Keys:  []string{"types", "tests", "map"},
@@ -426,7 +426,7 @@ func TestProjects(t *testing.T) {
 		{
 			Keys:   []string{"section spaces AND CAPS", "group spaces AND CAPS", "no_spaces_no_caps"},
 			Type:   "string",
-			Input:  `thisIsAStringYay`,
+			Input:  "thisIsAStringYay",
 			Output: "thisIsAStringYay",
 		},
 		{
@@ -438,7 +438,7 @@ func TestProjects(t *testing.T) {
 		{
 			Keys:   []string{"CAN TWO SECTIONS HAVE SAME NAME WITH DIFFERENT CAPS ?", "CAN TWO GROUPS HAVE SAME NAME WITH DIFFERENT CAPS ?", "group2"},
 			Type:   "string",
-			Input:  `SHOUT`,
+			Input:  "SHOUT",
 			Output: "SHOUT",
 		},
 	}
@@ -483,7 +483,11 @@ func TestProjects(t *testing.T) {
 				var extraFlag []string
 				switch method {
 				case "VarFlag":
-					extraFlag = []string{"-V", fmt.Sprintf("%s=%s", strings.Join(testValue.Keys, "."), testValue.Input)}
+					if testValue.Type == "string" {
+						extraFlag = []string{"-V", fmt.Sprintf(`%s=%s`, strings.Join(testValue.Keys, "."), testValue.Input)}
+					} else {
+						extraFlag = []string{"-V", fmt.Sprintf("%s=%s", strings.Join(testValue.Keys, "."), testValue.Input)}
+					}
 
 				case "JsonVars":
 					extraFlag = []string{"--json-vars", stringJsonInput}
@@ -522,7 +526,7 @@ func TestProjects(t *testing.T) {
 
 				switch testValue.Type {
 				case "string", "bool", "float", "integer", "null":
-					assert.EqualValues(t, testValue.Output, cliResult)
+					assert.EqualValues(t, testValue.Output, cliResult, fmt.Sprintf("%v", testValue))
 				case "map", "array":
 					jsonResult, err := json.MarshalIndent(cliResult, "", "  ")
 					assert.NoErrorf(t, err, "CLI JSON output, for key types.tests.%s should be json serializable", testValue.Type)
