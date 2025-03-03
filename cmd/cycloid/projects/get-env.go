@@ -3,10 +3,12 @@ package projects
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -51,6 +53,7 @@ cy --org my-org project get-env-config my-project my-project use_case -o yaml`,
 
 	cmd.Flags().StringP("project", "p", "", "specify the project")
 	cmd.Flags().StringP("env", "e", "", "specify the env")
+	cmd.Flags().BoolP("default", "d", false, "if set, will fetch the default value from the stack on top of the current ones.")
 
 	// This will display flag in the order declared above
 	cmd.Flags().SortFlags = false
@@ -72,6 +75,11 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 		env = args[1]
 	} else if env == "" {
 		return fmt.Errorf("missing use case argument")
+	}
+
+	useDefaults, err := cmd.Flags().GetBool("default")
+	if err != nil {
+		return err
 	}
 
 	internal.Debug("project:", project, "| env:", env)
@@ -105,8 +113,17 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, fmt.Sprint("failed to fetch project '", project, "' config for env '", env, "' in org '", org, "'"), printer.Options{}, cmd.OutOrStderr())
 	}
 
-	// Yes, it's always one -_o_-
-	data, err := json.Marshal(resp.Forms.UseCases[0])
+	useCaseIndex := slices.IndexFunc(resp.Forms.UseCases, func(useCase *models.FormUseCase) bool {
+		if useCase.Name == nil || resp.UseCase == nil {
+			return false
+		}
+		return *useCase.Name == *resp.UseCase
+	})
+	if useCaseIndex == -1 {
+		return printer.SmartPrint(p, resp, errors.Errorf("Failed to find usecase '%s' for env '%s'.", *resp.UseCase, env), "", printer.Options{}, cmd.ErrOrStderr())
+	}
+
+	data, err := json.Marshal(resp.Forms.UseCases[useCaseIndex])
 	if err != nil {
 		return errors.New("failed to marshall API response.")
 	}
@@ -114,6 +131,6 @@ func getEnvConfig(cmd *cobra.Command, args []string) error {
 	var useCase common.UseCase
 	err = json.Unmarshal(data, &useCase)
 
-	vars := common.UseCaseToFormInput(useCase, true)
+	vars := common.UseCaseToFormInput(useCase, useDefaults)
 	return printer.SmartPrint(p, vars, err, "failed to get stack config", printer.Options{}, cmd.OutOrStdout())
 }

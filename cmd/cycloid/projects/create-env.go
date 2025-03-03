@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"slices"
 	"strings"
 
 	"dario.cat/mergo"
@@ -381,7 +382,17 @@ func createEnv(cmd *cobra.Command, org, project, env, useCase, output string, up
 		return printer.SmartPrint(p, inputs, err, "cannot read current config for current env in backend.", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	data, err := json.Marshal(resp.Forms.UseCases[0])
+	useCaseIndex := slices.IndexFunc(resp.Forms.UseCases, func(useCase *models.FormUseCase) bool {
+		if useCase.Name == nil || resp.UseCase == nil {
+			return false
+		}
+		return *useCase.Name == *resp.UseCase
+	})
+	if useCaseIndex == -1 {
+		return printer.SmartPrint(p, resp, errors.Errorf("Failed to find usecase '%s' for env '%s'.", *resp.UseCase, env), "", printer.Options{}, cmd.ErrOrStderr())
+	}
+
+	data, err := json.Marshal(resp.Forms.UseCases[useCaseIndex])
 	if err != nil {
 		// we didn't got correct response from backend but we can return our inputs
 		return printer.SmartPrint(p, inputs, err, "", printer.Options{}, cmd.OutOrStdout())

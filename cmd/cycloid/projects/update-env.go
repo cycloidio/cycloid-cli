@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -221,7 +222,17 @@ func updateEnv(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "fail to get current configuration ")
 	}
 
-	data, err := json.Marshal(resp.Forms.UseCases[0])
+	useCaseIndex := slices.IndexFunc(resp.Forms.UseCases, func(useCase *models.FormUseCase) bool {
+		if useCase.Name == nil || resp.UseCase == nil {
+			return false
+		}
+		return *useCase.Name == *resp.UseCase
+	})
+	if useCaseIndex == -1 {
+		return printer.SmartPrint(p, resp, errors.Errorf("Failed to find usecase '%s' for env '%s'.", *resp.UseCase, env), "", printer.Options{}, cmd.ErrOrStderr())
+	}
+
+	data, err := json.Marshal(resp.Forms.UseCases[useCaseIndex])
 	if err != nil {
 		return errors.New("failed to marshall API response.")
 	}
