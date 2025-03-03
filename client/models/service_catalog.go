@@ -76,6 +76,10 @@ type ServiceCatalog struct {
 	// Required: true
 	Keywords []string `json:"keywords"`
 
+	// Indicates if the stack uses the latest version
+	// Required: true
+	Latest *bool `json:"latest"`
+
 	// name
 	// Required: true
 	Name *string `json:"name"`
@@ -172,6 +176,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateKeywords(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLatest(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -415,6 +423,15 @@ func (m *ServiceCatalog) validateImportStatus(formats strfmt.Registry) error {
 func (m *ServiceCatalog) validateKeywords(formats strfmt.Registry) error {
 
 	if err := validate.Required("keywords", "body", m.Keywords); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateLatest(formats strfmt.Registry) error {
+
+	if err := validate.Required("latest", "body", m.Latest); err != nil {
 		return err
 	}
 
