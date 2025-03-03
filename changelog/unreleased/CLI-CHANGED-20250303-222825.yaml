@@ -1,0 +1,10 @@
+component: CLI
+kind: CHANGED
+body: cy project create-env / update-env --var (-V) flag now support explicit quoting
+  of strings
+time: 2025-03-03T22:28:25.73083597Z
+custom:
+  DETAILS: Users can now use the -V `section.group.string="mystring"` to explicitely
+    quote strings that could be misinterpreted as numbers or booleans.
+  PR: "330"
+  TYPE: CLI
