@@ -11,7 +11,6 @@ import (
 )
 
 func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error) {
-
 	params := organization_credentials.NewCreateCredentialParams()
 	params.SetOrganizationCanonical(org)
 
@@ -48,7 +47,6 @@ func (m *middleware) CreateCredential(org, name, cType string, rawCred *models.C
 }
 
 func (m *middleware) UpdateCredential(org, name, cType string, rawCred *models.CredentialRaw, path, can, description string) (*models.Credential, error) {
-
 	params := organization_credentials.NewUpdateCredentialParams()
 	params.SetOrganizationCanonical(org)
 	params.SetCredentialCanonical(can)
@@ -86,7 +84,6 @@ func (m *middleware) UpdateCredential(org, name, cType string, rawCred *models.C
 }
 
 func (m *middleware) GetCredential(org, cred string) (*models.Credential, error) {
-
 	params := organization_credentials.NewGetCredentialParams()
 	params.SetOrganizationCanonical(org)
 	params.SetCredentialCanonical(cred)
@@ -103,7 +100,6 @@ func (m *middleware) GetCredential(org, cred string) (*models.Credential, error)
 }
 
 func (m *middleware) DeleteCredential(org, cred string) error {
-
 	params := organization_credentials.NewDeleteCredentialParams()
 	params.SetOrganizationCanonical(org)
 	params.SetCredentialCanonical(cred)
@@ -117,7 +113,6 @@ func (m *middleware) DeleteCredential(org, cred string) error {
 }
 
 func (m *middleware) ListCredentials(org, cType string) ([]*models.CredentialSimple, error) {
-
 	params := organization_credentials.NewListCredentialsParams()
 	params.SetOrganizationCanonical(org)
 
