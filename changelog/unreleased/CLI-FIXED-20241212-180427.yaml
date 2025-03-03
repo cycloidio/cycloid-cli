@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Fixed bugs in variable updates on environment update
-time: 2024-12-12T18:04:27.360133117+01:00
-custom:
-    DETAILS: ""
-    PR: "323"
-    TYPE: CLI
