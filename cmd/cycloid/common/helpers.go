@@ -253,6 +253,15 @@ func UpdateMapField(field string, value string, m map[string]map[string]map[stri
 		return nil
 	}
 
+	// We will prioritize the use of quotes to explicitly define strings values
+	// This allow users to circumvent issues in case of strings that could be parsed
+	// as other types
+	if strings.HasPrefix(trimmedValue, "\"") && strings.HasSuffix(trimmedValue, "\"") ||
+		strings.HasPrefix(trimmedValue, "'") && strings.HasSuffix(trimmedValue, "'") {
+		m[keys[0]][keys[1]][keys[2]] = trimmedValue[1 : len(trimmedValue)-1]
+		return nil
+	}
+
 	// Detect standard types
 	// numbers, we do all as float since JSON doesn't care
 	// Important! We parse number firsts, since 1 and 0 are considered bools by strconv.ParseBool
