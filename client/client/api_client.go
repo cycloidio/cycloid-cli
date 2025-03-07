@@ -19,11 +19,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
-	"github.com/cycloidio/cycloid-cli/client/client/organization_kpis"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
-	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs"
-	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines_jobs_build"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_roles"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
@@ -84,11 +81,8 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *API {
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 	cli.OrganizationForms = organization_forms.New(transport, formats)
 	cli.OrganizationInfrastructurePolicies = organization_infrastructure_policies.New(transport, formats)
-	cli.OrganizationKpis = organization_kpis.New(transport, formats)
 	cli.OrganizationMembers = organization_members.New(transport, formats)
 	cli.OrganizationPipelines = organization_pipelines.New(transport, formats)
-	cli.OrganizationPipelinesJobs = organization_pipelines_jobs.New(transport, formats)
-	cli.OrganizationPipelinesJobsBuild = organization_pipelines_jobs_build.New(transport, formats)
 	cli.OrganizationProjects = organization_projects.New(transport, formats)
 	cli.OrganizationRoles = organization_roles.New(transport, formats)
 	cli.OrganizationServiceCatalogSources = organization_service_catalog_sources.New(transport, formats)
@@ -158,15 +152,9 @@ type API struct {
 
 	OrganizationInfrastructurePolicies organization_infrastructure_policies.ClientService
 
-	OrganizationKpis organization_kpis.ClientService
-
 	OrganizationMembers organization_members.ClientService
 
 	OrganizationPipelines organization_pipelines.ClientService
-
-	OrganizationPipelinesJobs organization_pipelines_jobs.ClientService
-
-	OrganizationPipelinesJobsBuild organization_pipelines_jobs_build.ClientService
 
 	OrganizationProjects organization_projects.ClientService
 
@@ -197,11 +185,8 @@ func (c *API) SetTransport(transport runtime.ClientTransport) {
 	c.OrganizationExternalBackends.SetTransport(transport)
 	c.OrganizationForms.SetTransport(transport)
 	c.OrganizationInfrastructurePolicies.SetTransport(transport)
-	c.OrganizationKpis.SetTransport(transport)
 	c.OrganizationMembers.SetTransport(transport)
 	c.OrganizationPipelines.SetTransport(transport)
-	c.OrganizationPipelinesJobs.SetTransport(transport)
-	c.OrganizationPipelinesJobsBuild.SetTransport(transport)
 	c.OrganizationProjects.SetTransport(transport)
 	c.OrganizationRoles.SetTransport(transport)
 	c.OrganizationServiceCatalogSources.SetTransport(transport)

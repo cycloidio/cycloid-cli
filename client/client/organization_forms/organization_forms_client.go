@@ -103,7 +103,7 @@ func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
 
 // ClientService is the interface for Client methods
 type ClientService interface {
-	CreateFormsConfig(params *CreateFormsConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateFormsConfigOK, error)
+	InterpolateFormsConfig(params *InterpolateFormsConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*InterpolateFormsConfigOK, error)
 
 	ValidateFormsFile(params *ValidateFormsFileParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateFormsFileOK, error)
 
@@ -113,22 +113,22 @@ type ClientService interface {
 }
 
 /*
-CreateFormsConfig Generate a set of configs based on the forms inputs
+InterpolateFormsConfig Generate a set of configs based on the forms input but without creating anything
 */
-func (a *Client) CreateFormsConfig(params *CreateFormsConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateFormsConfigOK, error) {
+func (a *Client) InterpolateFormsConfig(params *InterpolateFormsConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*InterpolateFormsConfigOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewCreateFormsConfigParams()
+		params = NewInterpolateFormsConfigParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "createFormsConfig",
+		ID:                 "interpolateFormsConfig",
 		Method:             "POST",
-		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/forms/config",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/forms/config",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &CreateFormsConfigReader{formats: a.formats},
+		Reader:             &InterpolateFormsConfigReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -141,12 +141,12 @@ func (a *Client) CreateFormsConfig(params *CreateFormsConfigParams, authInfo run
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*CreateFormsConfigOK)
+	success, ok := result.(*InterpolateFormsConfigOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*CreateFormsConfigDefault)
+	unexpectedSuccess := result.(*InterpolateFormsConfigDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

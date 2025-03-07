@@ -24,6 +24,13 @@ import (
 //
 // swagger:model ExternalBackend
 type ExternalBackend struct {
+
+	// component canonical
+	// Max Length: 100
+	// Min Length: 1
+	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
+	ComponentCanonical string `json:"component_canonical,omitempty"`
+
 	configurationField ExternalBackendConfiguration
 
 	// created at
@@ -81,6 +88,8 @@ func (m *ExternalBackend) SetConfiguration(val ExternalBackendConfiguration) {
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 	var data struct {
+		ComponentCanonical string `json:"component_canonical,omitempty"`
+
 		Configuration json.RawMessage `json:"configuration"`
 
 		CreatedAt *uint64 `json:"created_at,omitempty"`
@@ -115,6 +124,9 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 	}
 
 	var result ExternalBackend
+
+	// component_canonical
+	result.ComponentCanonical = data.ComponentCanonical
 
 	// configuration
 	result.configurationField = propConfiguration
@@ -156,6 +168,8 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
+		ComponentCanonical string `json:"component_canonical,omitempty"`
+
 		CreatedAt *uint64 `json:"created_at,omitempty"`
 
 		CredentialCanonical string `json:"credential_canonical,omitempty"`
@@ -174,6 +188,8 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 
 		UpdatedAt *uint64 `json:"updated_at,omitempty"`
 	}{
+
+		ComponentCanonical: m.ComponentCanonical,
 
 		CreatedAt: m.CreatedAt,
 
@@ -212,6 +228,10 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 // Validate validates this external backend
 func (m *ExternalBackend) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateComponentCanonical(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateConfiguration(formats); err != nil {
 		res = append(res, err)
@@ -252,6 +272,26 @@ func (m *ExternalBackend) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *ExternalBackend) validateComponentCanonical(formats strfmt.Registry) error {
+	if swag.IsZero(m.ComponentCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("component_canonical", "body", m.ComponentCanonical, 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("component_canonical", "body", m.ComponentCanonical, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("component_canonical", "body", m.ComponentCanonical, `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
+		return err
+	}
+
 	return nil
 }
 

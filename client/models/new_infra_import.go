@@ -24,6 +24,10 @@ import (
 //
 // swagger:model NewInfraImport
 type NewInfraImport struct {
+
+	// component
+	Component *NewInfraImportComponent `json:"component,omitempty"`
+
 	configurationField CloudProviderConfiguration
 
 	// Credential that will be used to import from the provider
@@ -72,6 +76,8 @@ func (m *NewInfraImport) SetConfiguration(val CloudProviderConfiguration) {
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *NewInfraImport) UnmarshalJSON(raw []byte) error {
 	var data struct {
+		Component *NewInfraImportComponent `json:"component,omitempty"`
+
 		Configuration json.RawMessage `json:"configuration"`
 
 		CredentialCanonical *string `json:"credential_canonical"`
@@ -106,6 +112,9 @@ func (m *NewInfraImport) UnmarshalJSON(raw []byte) error {
 	}
 
 	var result NewInfraImport
+
+	// component
+	result.Component = data.Component
 
 	// configuration
 	result.configurationField = propConfiguration
@@ -147,6 +156,8 @@ func (m NewInfraImport) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
+		Component *NewInfraImportComponent `json:"component,omitempty"`
+
 		CredentialCanonical *string `json:"credential_canonical"`
 
 		Environment *NewEnvironment `json:"environment,omitempty"`
@@ -165,6 +176,8 @@ func (m NewInfraImport) MarshalJSON() ([]byte, error) {
 
 		Targets []string `json:"targets"`
 	}{
+
+		Component: m.Component,
 
 		CredentialCanonical: m.CredentialCanonical,
 
@@ -204,6 +217,10 @@ func (m NewInfraImport) MarshalJSON() ([]byte, error) {
 func (m *NewInfraImport) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateComponent(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateConfiguration(formats); err != nil {
 		res = append(res, err)
 	}
@@ -231,6 +248,25 @@ func (m *NewInfraImport) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *NewInfraImport) validateComponent(formats strfmt.Registry) error {
+	if swag.IsZero(m.Component) { // not required
+		return nil
+	}
+
+	if m.Component != nil {
+		if err := m.Component.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("component")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("component")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -354,6 +390,10 @@ func (m *NewInfraImport) validateStack(formats strfmt.Registry) error {
 func (m *NewInfraImport) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateComponent(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateConfiguration(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -377,6 +417,27 @@ func (m *NewInfraImport) ContextValidate(ctx context.Context, formats strfmt.Reg
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *NewInfraImport) contextValidateComponent(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Component != nil {
+
+		if swag.IsZero(m.Component) { // not required
+			return nil
+		}
+
+		if err := m.Component.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("component")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("component")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
