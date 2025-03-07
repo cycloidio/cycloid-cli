@@ -62,6 +62,12 @@ GetExternalBackendsParams contains all the parameters to send to the API endpoin
 */
 type GetExternalBackendsParams struct {
 
+	/* ComponentCanonical.
+
+	   A canonical of a component.
+	*/
+	ComponentCanonical *string
+
 	/* EnvironmentCanonical.
 
 	   A list of environments' canonical to filter from
@@ -139,6 +145,17 @@ func (o *GetExternalBackendsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithComponentCanonical adds the componentCanonical to the get external backends params
+func (o *GetExternalBackendsParams) WithComponentCanonical(componentCanonical *string) *GetExternalBackendsParams {
+	o.SetComponentCanonical(componentCanonical)
+	return o
+}
+
+// SetComponentCanonical adds the componentCanonical to the get external backends params
+func (o *GetExternalBackendsParams) SetComponentCanonical(componentCanonical *string) {
+	o.ComponentCanonical = componentCanonical
+}
+
 // WithEnvironmentCanonical adds the environmentCanonical to the get external backends params
 func (o *GetExternalBackendsParams) WithEnvironmentCanonical(environmentCanonical *string) *GetExternalBackendsParams {
 	o.SetEnvironmentCanonical(environmentCanonical)
@@ -190,6 +207,23 @@ func (o *GetExternalBackendsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		return err
 	}
 	var res []error
+
+	if o.ComponentCanonical != nil {
+
+		// query param component_canonical
+		var qrComponentCanonical string
+
+		if o.ComponentCanonical != nil {
+			qrComponentCanonical = *o.ComponentCanonical
+		}
+		qComponentCanonical := qrComponentCanonical
+		if qComponentCanonical != "" {
+
+			if err := r.SetQueryParam("component_canonical", qComponentCanonical); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.EnvironmentCanonical != nil {
 

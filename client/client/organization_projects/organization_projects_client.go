@@ -119,7 +119,7 @@ type ClientService interface {
 
 	GetProject(params *GetProjectParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectOK, error)
 
-	GetProjectConfig(params *GetProjectConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectConfigOK, error)
+	GetProjectEnvironments(params *GetProjectEnvironmentsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectEnvironmentsOK, error)
 
 	GetProjects(params *GetProjectsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectsOK, error)
 
@@ -435,22 +435,22 @@ func (a *Client) GetProject(params *GetProjectParams, authInfo runtime.ClientAut
 }
 
 /*
-GetProjectConfig Fetch the current project's environment's configuration.
+GetProjectEnvironments Get all the environments of the project
 */
-func (a *Client) GetProjectConfig(params *GetProjectConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectConfigOK, error) {
+func (a *Client) GetProjectEnvironments(params *GetProjectEnvironmentsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectEnvironmentsOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewGetProjectConfigParams()
+		params = NewGetProjectEnvironmentsParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "getProjectConfig",
+		ID:                 "getProjectEnvironments",
 		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environment/{environment_canonical}/config",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environments",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &GetProjectConfigReader{formats: a.formats},
+		Reader:             &GetProjectEnvironmentsReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -463,12 +463,12 @@ func (a *Client) GetProjectConfig(params *GetProjectConfigParams, authInfo runti
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*GetProjectConfigOK)
+	success, ok := result.(*GetProjectEnvironmentsOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*GetProjectConfigDefault)
+	unexpectedSuccess := result.(*GetProjectEnvironmentsDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

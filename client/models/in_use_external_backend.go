@@ -21,6 +21,9 @@ import (
 // swagger:model InUseExternalBackend
 type InUseExternalBackend struct {
 
+	// component
+	Component *InUseComponent `json:"component,omitempty"`
+
 	// engine
 	// Required: true
 	Engine *string `json:"engine"`
@@ -39,6 +42,10 @@ type InUseExternalBackend struct {
 // Validate validates this in use external backend
 func (m *InUseExternalBackend) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateComponent(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateEngine(formats); err != nil {
 		res = append(res, err)
@@ -59,6 +66,25 @@ func (m *InUseExternalBackend) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *InUseExternalBackend) validateComponent(formats strfmt.Registry) error {
+	if swag.IsZero(m.Component) { // not required
+		return nil
+	}
+
+	if m.Component != nil {
+		if err := m.Component.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("component")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("component")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -122,6 +148,10 @@ func (m *InUseExternalBackend) validatePurpose(formats strfmt.Registry) error {
 func (m *InUseExternalBackend) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateComponent(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -133,6 +163,27 @@ func (m *InUseExternalBackend) ContextValidate(ctx context.Context, formats strf
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *InUseExternalBackend) contextValidateComponent(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Component != nil {
+
+		if swag.IsZero(m.Component) { // not required
+			return nil
+		}
+
+		if err := m.Component.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("component")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("component")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

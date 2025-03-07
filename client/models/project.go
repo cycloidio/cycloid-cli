@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	"encoding/json"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -30,6 +29,11 @@ type Project struct {
 	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical *string `json:"canonical"`
 
+	// color
+	// Required: true
+	// Max Length: 64
+	Color *string `json:"color"`
+
 	// config repository canonical
 	// Max Length: 100
 	// Min Length: 3
@@ -51,14 +55,15 @@ type Project struct {
 	// favorite
 	Favorite bool `json:"favorite,omitempty"`
 
+	// icon
+	// Required: true
+	// Max Length: 64
+	Icon *string `json:"icon"`
+
 	// id
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
-
-	// The import process status.
-	// Enum: ["succeeded","failed","importing"]
-	ImportStatus string `json:"import_status,omitempty"`
 
 	// name
 	// Required: true
@@ -70,9 +75,6 @@ type Project struct {
 	// In the event where the user has been deleted that field might be empty.
 	//
 	Owner *User `json:"owner,omitempty"`
-
-	// The Service Catalog that was used to create project.
-	ServiceCatalog *ServiceCatalog `json:"service_catalog,omitempty"`
 
 	// The Team that was used to create project.
 	Team *SimpleTeam `json:"team,omitempty"`
@@ -91,6 +93,10 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateColor(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateConfigRepositoryCanonical(formats); err != nil {
 		res = append(res, err)
 	}
@@ -103,11 +109,11 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateID(formats); err != nil {
+	if err := m.validateIcon(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateImportStatus(formats); err != nil {
+	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -116,10 +122,6 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateOwner(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateServiceCatalog(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -152,6 +154,19 @@ func (m *Project) validateCanonical(formats strfmt.Registry) error {
 	}
 
 	if err := validate.Pattern("canonical", "body", *m.Canonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Project) validateColor(formats strfmt.Registry) error {
+
+	if err := validate.Required("color", "body", m.Color); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("color", "body", *m.Color, 64); err != nil {
 		return err
 	}
 
@@ -218,6 +233,19 @@ func (m *Project) validateEnvironments(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Project) validateIcon(formats strfmt.Registry) error {
+
+	if err := validate.Required("icon", "body", m.Icon); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("icon", "body", *m.Icon, 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Project) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
@@ -225,51 +253,6 @@ func (m *Project) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var projectTypeImportStatusPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["succeeded","failed","importing"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		projectTypeImportStatusPropEnum = append(projectTypeImportStatusPropEnum, v)
-	}
-}
-
-const (
-
-	// ProjectImportStatusSucceeded captures enum value "succeeded"
-	ProjectImportStatusSucceeded string = "succeeded"
-
-	// ProjectImportStatusFailed captures enum value "failed"
-	ProjectImportStatusFailed string = "failed"
-
-	// ProjectImportStatusImporting captures enum value "importing"
-	ProjectImportStatusImporting string = "importing"
-)
-
-// prop value enum
-func (m *Project) validateImportStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, projectTypeImportStatusPropEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *Project) validateImportStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.ImportStatus) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateImportStatusEnum("import_status", "body", m.ImportStatus); err != nil {
 		return err
 	}
 
@@ -300,25 +283,6 @@ func (m *Project) validateOwner(formats strfmt.Registry) error {
 				return ve.ValidateName("owner")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Project) validateServiceCatalog(formats strfmt.Registry) error {
-	if swag.IsZero(m.ServiceCatalog) { // not required
-		return nil
-	}
-
-	if m.ServiceCatalog != nil {
-		if err := m.ServiceCatalog.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("service_catalog")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("service_catalog")
 			}
 			return err
 		}
@@ -371,10 +335,6 @@ func (m *Project) ContextValidate(ctx context.Context, formats strfmt.Registry) 
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateServiceCatalog(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateTeam(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -423,27 +383,6 @@ func (m *Project) contextValidateOwner(ctx context.Context, formats strfmt.Regis
 				return ve.ValidateName("owner")
 			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *Project) contextValidateServiceCatalog(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.ServiceCatalog != nil {
-
-		if swag.IsZero(m.ServiceCatalog) { // not required
-			return nil
-		}
-
-		if err := m.ServiceCatalog.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("service_catalog")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("service_catalog")
 			}
 			return err
 		}

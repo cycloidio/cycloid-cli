@@ -29,6 +29,9 @@ type KPI struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical *string `json:"canonical"`
 
+	// component canonical
+	ComponentCanonical string `json:"component_canonical,omitempty"`
+
 	// The config represent some extra parameters which are required for the configuration of certain KPIs. Please refer to the documentation for more details.
 	//
 	// Required: true
@@ -47,9 +50,6 @@ type KPI struct {
 	Description *string `json:"description"`
 
 	// environment canonical
-	// Max Length: 100
-	// Min Length: 1
-	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
 
 	// If an error occurred in the last import, that field will be filled with the message of the error
@@ -75,11 +75,9 @@ type KPI struct {
 	// pipeline name
 	PipelineName string `json:"pipeline_name,omitempty"`
 
-	// project canonical
-	// Max Length: 100
-	// Min Length: 1
-	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
-	ProjectCanonical string `json:"project_canonical,omitempty"`
+	// project
+	// Required: true
+	Project *Project `json:"project"`
 
 	// type
 	// Required: true
@@ -117,10 +115,6 @@ func (m *KPI) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateEnvironmentCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateError(formats); err != nil {
 		res = append(res, err)
 	}
@@ -133,7 +127,7 @@ func (m *KPI) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateProjectCanonical(formats); err != nil {
+	if err := m.validateProject(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -207,26 +201,6 @@ func (m *KPI) validateDescription(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *KPI) validateEnvironmentCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvironmentCanonical) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("environment_canonical", "body", m.EnvironmentCanonical, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("environment_canonical", "body", m.EnvironmentCanonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("environment_canonical", "body", m.EnvironmentCanonical, `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *KPI) validateError(formats strfmt.Registry) error {
 
 	if err := validate.Required("error", "body", m.Error); err != nil {
@@ -262,21 +236,21 @@ func (m *KPI) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *KPI) validateProjectCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectCanonical) { // not required
-		return nil
-	}
+func (m *KPI) validateProject(formats strfmt.Registry) error {
 
-	if err := validate.MinLength("project_canonical", "body", m.ProjectCanonical, 1); err != nil {
+	if err := validate.Required("project", "body", m.Project); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("project_canonical", "body", m.ProjectCanonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
-		return err
+	if m.Project != nil {
+		if err := m.Project.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("project")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("project")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -405,8 +379,34 @@ func (m *KPI) validateWidget(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this k p i based on context it is used
+// ContextValidate validate this k p i based on the context it is used
 func (m *KPI) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateProject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *KPI) contextValidateProject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Project != nil {
+
+		if err := m.Project.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("project")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("project")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

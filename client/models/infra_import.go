@@ -22,6 +22,18 @@ import (
 // swagger:model InfraImport
 type InfraImport struct {
 
+	// component canonical
+	// Max Length: 100
+	// Min Length: 1
+	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
+	ComponentCanonical string `json:"component_canonical,omitempty"`
+
+	// environment canonical
+	// Max Length: 100
+	// Min Length: 1
+	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
+	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
+
 	// error
 	// Required: true
 	Error *string `json:"error"`
@@ -50,6 +62,14 @@ type InfraImport struct {
 func (m *InfraImport) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateComponentCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEnvironmentCanonical(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateError(formats); err != nil {
 		res = append(res, err)
 	}
@@ -73,6 +93,46 @@ func (m *InfraImport) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *InfraImport) validateComponentCanonical(formats strfmt.Registry) error {
+	if swag.IsZero(m.ComponentCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("component_canonical", "body", m.ComponentCanonical, 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("component_canonical", "body", m.ComponentCanonical, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("component_canonical", "body", m.ComponentCanonical, `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *InfraImport) validateEnvironmentCanonical(formats strfmt.Registry) error {
+	if swag.IsZero(m.EnvironmentCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("environment_canonical", "body", m.EnvironmentCanonical, 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("environment_canonical", "body", m.EnvironmentCanonical, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("environment_canonical", "body", m.EnvironmentCanonical, `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
+		return err
+	}
+
 	return nil
 }
 
