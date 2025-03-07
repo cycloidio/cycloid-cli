@@ -25,6 +25,10 @@ type Pipeline struct {
 	// archived
 	Archived bool `json:"archived,omitempty"`
 
+	// component
+	// Required: true
+	Component *Component `json:"component"`
+
 	// created at
 	// Required: true
 	// Minimum: 0
@@ -75,18 +79,15 @@ type Pipeline struct {
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
-
-	// use case
-	// Required: true
-	// Max Length: 100
-	// Min Length: 1
-	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
-	UseCase *string `json:"use_case"`
 }
 
 // Validate validates this pipeline
 func (m *Pipeline) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateComponent(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
@@ -132,13 +133,29 @@ func (m *Pipeline) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateUseCase(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Pipeline) validateComponent(formats strfmt.Registry) error {
+
+	if err := validate.Required("component", "body", m.Component); err != nil {
+		return err
+	}
+
+	if m.Component != nil {
+		if err := m.Component.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("component")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("component")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -306,30 +323,13 @@ func (m *Pipeline) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Pipeline) validateUseCase(formats strfmt.Registry) error {
-
-	if err := validate.Required("use_case", "body", m.UseCase); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("use_case", "body", *m.UseCase, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("use_case", "body", *m.UseCase, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("use_case", "body", *m.UseCase, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // ContextValidate validate this pipeline based on the context it is used
 func (m *Pipeline) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.contextValidateComponent(ctx, formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
 		res = append(res, err)
@@ -350,6 +350,23 @@ func (m *Pipeline) ContextValidate(ctx context.Context, formats strfmt.Registry)
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Pipeline) contextValidateComponent(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Component != nil {
+
+		if err := m.Component.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("component")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("component")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

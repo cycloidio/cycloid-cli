@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -28,42 +29,33 @@ type Environment struct {
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	Canonical *string `json:"canonical"`
 
-	// The cloud provider object that this environment is using.
-	// In the event where the cloud provider is not yet defined/supported
-	// that field might be empty.
-	//
-	CloudProvider *CloudProvider `json:"cloud_provider,omitempty"`
-
 	// color
 	// Required: true
 	// Max Length: 64
 	Color *string `json:"color"`
+
+	// components
+	Components []*Component `json:"components"`
 
 	// created at
 	// Required: true
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at"`
 
-	// icon
-	// Required: true
-	// Max Length: 64
-	Icon *string `json:"icon"`
-
 	// id
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
+	// Only available in project's context\
+	// Max Length: 100
+	// Min Length: 1
+	Name string `json:"name,omitempty"`
+
 	// updated at
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
-
-	// use case
-	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	UseCase string `json:"use_case,omitempty"`
 }
 
 // Validate validates this environment
@@ -74,11 +66,11 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCloudProvider(formats); err != nil {
+	if err := m.validateColor(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateColor(formats); err != nil {
+	if err := m.validateComponents(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -86,19 +78,15 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateIcon(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateUpdatedAt(formats); err != nil {
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateUseCase(formats); err != nil {
+	if err := m.validateUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -129,25 +117,6 @@ func (m *Environment) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateCloudProvider(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudProvider) { // not required
-		return nil
-	}
-
-	if m.CloudProvider != nil {
-		if err := m.CloudProvider.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("cloud_provider")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
 func (m *Environment) validateColor(formats strfmt.Registry) error {
 
 	if err := validate.Required("color", "body", m.Color); err != nil {
@@ -161,6 +130,32 @@ func (m *Environment) validateColor(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Environment) validateComponents(formats strfmt.Registry) error {
+	if swag.IsZero(m.Components) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Components); i++ {
+		if swag.IsZero(m.Components[i]) { // not required
+			continue
+		}
+
+		if m.Components[i] != nil {
+			if err := m.Components[i].Validate(formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("components" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("components" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *Environment) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
@@ -168,19 +163,6 @@ func (m *Environment) validateCreatedAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Environment) validateIcon(formats strfmt.Registry) error {
-
-	if err := validate.Required("icon", "body", m.Icon); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("icon", "body", *m.Icon, 64); err != nil {
 		return err
 	}
 
@@ -200,6 +182,22 @@ func (m *Environment) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Environment) validateName(formats strfmt.Registry) error {
+	if swag.IsZero(m.Name) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("name", "body", m.Name, 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("name", "body", m.Name, 100); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
@@ -213,31 +211,11 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateUseCase(formats strfmt.Registry) error {
-	if swag.IsZero(m.UseCase) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("use_case", "body", m.UseCase, 3); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("use_case", "body", m.UseCase, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("use_case", "body", m.UseCase, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // ContextValidate validate this environment based on the context it is used
 func (m *Environment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateCloudProvider(ctx, formats); err != nil {
+	if err := m.contextValidateComponents(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -247,22 +225,26 @@ func (m *Environment) ContextValidate(ctx context.Context, formats strfmt.Regist
 	return nil
 }
 
-func (m *Environment) contextValidateCloudProvider(ctx context.Context, formats strfmt.Registry) error {
+func (m *Environment) contextValidateComponents(ctx context.Context, formats strfmt.Registry) error {
 
-	if m.CloudProvider != nil {
+	for i := 0; i < len(m.Components); i++ {
 
-		if swag.IsZero(m.CloudProvider) { // not required
-			return nil
-		}
+		if m.Components[i] != nil {
 
-		if err := m.CloudProvider.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("cloud_provider")
+			if swag.IsZero(m.Components[i]) { // not required
+				return nil
 			}
-			return err
+
+			if err := m.Components[i].ContextValidate(ctx, formats); err != nil {
+				if ve, ok := err.(*errors.Validation); ok {
+					return ve.ValidateName("components" + "." + strconv.Itoa(i))
+				} else if ce, ok := err.(*errors.CompositeError); ok {
+					return ce.ValidateName("components" + "." + strconv.Itoa(i))
+				}
+				return err
+			}
 		}
+
 	}
 
 	return nil
