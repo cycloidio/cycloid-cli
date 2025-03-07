@@ -16,7 +16,7 @@ import (
 
 // Infrastructure Infrastructure
 //
-// # Holds all the Infrastructure of the project in an environment
+// # Holds all the Infrastructure of the component
 //
 // swagger:model Infrastructure
 type Infrastructure struct {

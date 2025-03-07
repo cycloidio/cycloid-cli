@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -17,46 +16,10 @@ import (
 
 // UpdateServiceCatalog UpdateServiceCatalog
 //
-// # Represents the Service Catalog item
+// # Represents the Service Catalog item to be updated
 //
 // swagger:model UpdateServiceCatalog
 type UpdateServiceCatalog struct {
-
-	// author
-	// Required: true
-	Author *string `json:"author"`
-
-	// canonical
-	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Canonical string `json:"canonical,omitempty"`
-
-	// dependencies
-	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
-
-	// description
-	// Required: true
-	Description *string `json:"description"`
-
-	// image
-	// Format: uri
-	Image strfmt.URI `json:"image,omitempty"`
-
-	// keywords
-	// Required: true
-	Keywords []string `json:"keywords"`
-
-	// name
-	// Required: true
-	Name *string `json:"name"`
-
-	// service catalog source canonical
-	// Required: true
-	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	ServiceCatalogSourceCanonical *string `json:"service_catalog_source_canonical"`
 
 	// Team responsible for the maintenance of the underlying service catalogs
 	//
@@ -65,175 +28,26 @@ type UpdateServiceCatalog struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	TeamCanonical string `json:"team_canonical,omitempty"`
 
-	// technologies
-	Technologies []*ServiceCatalogTechnology `json:"technologies"`
-
 	// visibility
-	Visibility string `json:"visibility,omitempty"`
+	// Required: true
+	Visibility *string `json:"visibility"`
 }
 
 // Validate validates this update service catalog
 func (m *UpdateServiceCatalog) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateAuthor(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDependencies(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDescription(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateImage(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateKeywords(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateServiceCatalogSourceCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateTeamCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateTechnologies(formats); err != nil {
+	if err := m.validateVisibility(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *UpdateServiceCatalog) validateAuthor(formats strfmt.Registry) error {
-
-	if err := validate.Required("author", "body", m.Author); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateServiceCatalog) validateCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.Canonical) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateServiceCatalog) validateDependencies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Dependencies) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Dependencies); i++ {
-		if swag.IsZero(m.Dependencies[i]) { // not required
-			continue
-		}
-
-		if m.Dependencies[i] != nil {
-			if err := m.Dependencies[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *UpdateServiceCatalog) validateDescription(formats strfmt.Registry) error {
-
-	if err := validate.Required("description", "body", m.Description); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateServiceCatalog) validateImage(formats strfmt.Registry) error {
-	if swag.IsZero(m.Image) { // not required
-		return nil
-	}
-
-	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateServiceCatalog) validateKeywords(formats strfmt.Registry) error {
-
-	if err := validate.Required("keywords", "body", m.Keywords); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateServiceCatalog) validateName(formats strfmt.Registry) error {
-
-	if err := validate.Required("name", "body", m.Name); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Registry) error {
-
-	if err := validate.Required("service_catalog_source_canonical", "body", m.ServiceCatalogSourceCanonical); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, 3); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
 	return nil
 }
 
@@ -257,97 +71,17 @@ func (m *UpdateServiceCatalog) validateTeamCanonical(formats strfmt.Registry) er
 	return nil
 }
 
-func (m *UpdateServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Technologies) { // not required
-		return nil
-	}
+func (m *UpdateServiceCatalog) validateVisibility(formats strfmt.Registry) error {
 
-	for i := 0; i < len(m.Technologies); i++ {
-		if swag.IsZero(m.Technologies[i]) { // not required
-			continue
-		}
-
-		if m.Technologies[i] != nil {
-			if err := m.Technologies[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("technologies" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("technologies" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
+	if err := validate.Required("visibility", "body", m.Visibility); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-// ContextValidate validate this update service catalog based on the context it is used
+// ContextValidate validates this update service catalog based on context it is used
 func (m *UpdateServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateDependencies(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.contextValidateTechnologies(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *UpdateServiceCatalog) contextValidateDependencies(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Dependencies); i++ {
-
-		if m.Dependencies[i] != nil {
-
-			if swag.IsZero(m.Dependencies[i]) { // not required
-				return nil
-			}
-
-			if err := m.Dependencies[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *UpdateServiceCatalog) contextValidateTechnologies(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Technologies); i++ {
-
-		if m.Technologies[i] != nil {
-
-			if swag.IsZero(m.Technologies[i]) { // not required
-				return nil
-			}
-
-			if err := m.Technologies[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("technologies" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("technologies" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 

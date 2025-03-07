@@ -24,6 +24,10 @@ type AppConfig struct {
 	// Configuration of available authentication methods.
 	// Required: true
 	Authentication *AuthConfig `json:"authentication"`
+
+	// Sentry status
+	// Required: true
+	SentryEnabled *bool `json:"sentry_enabled"`
 }
 
 // Validate validates this app config
@@ -31,6 +35,10 @@ func (m *AppConfig) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateAuthentication(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSentryEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -55,6 +63,15 @@ func (m *AppConfig) validateAuthentication(formats strfmt.Registry) error {
 			}
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *AppConfig) validateSentryEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("sentry_enabled", "body", m.SentryEnabled); err != nil {
+		return err
 	}
 
 	return nil

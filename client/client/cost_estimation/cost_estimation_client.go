@@ -103,7 +103,7 @@ func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
 
 // ClientService is the interface for Client methods
 type ClientService interface {
-	CostEstimateForms(params *CostEstimateFormsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CostEstimateFormsOK, error)
+	CostEstimateForm(params *CostEstimateFormParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CostEstimateFormOK, error)
 
 	CostEstimateTfPlan(params *CostEstimateTfPlanParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CostEstimateTfPlanOK, error)
 
@@ -111,22 +111,22 @@ type ClientService interface {
 }
 
 /*
-CostEstimateForms Estimates the Cost from the Froms Inputs
+CostEstimateForm Estimates the Cost from the Form Input
 */
-func (a *Client) CostEstimateForms(params *CostEstimateFormsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CostEstimateFormsOK, error) {
+func (a *Client) CostEstimateForm(params *CostEstimateFormParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CostEstimateFormOK, error) {
 	// TODO: Validate the params before sending
 	if params == nil {
-		params = NewCostEstimateFormsParams()
+		params = NewCostEstimateFormParams()
 	}
 	op := &runtime.ClientOperation{
-		ID:                 "costEstimateForms",
+		ID:                 "costEstimateForm",
 		Method:             "POST",
-		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/forms/estimate",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/forms/estimate",
 		ProducesMediaTypes: []string{"application/json"},
 		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
 		Schemes:            []string{"https"},
 		Params:             params,
-		Reader:             &CostEstimateFormsReader{formats: a.formats},
+		Reader:             &CostEstimateFormReader{formats: a.formats},
 		AuthInfo:           authInfo,
 		Context:            params.Context,
 		Client:             params.HTTPClient,
@@ -139,12 +139,12 @@ func (a *Client) CostEstimateForms(params *CostEstimateFormsParams, authInfo run
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*CostEstimateFormsOK)
+	success, ok := result.(*CostEstimateFormOK)
 	if ok {
 		return success, nil
 	}
 	// unexpected success response
-	unexpectedSuccess := result.(*CostEstimateFormsDefault)
+	unexpectedSuccess := result.(*CostEstimateFormDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

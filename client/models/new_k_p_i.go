@@ -35,12 +35,6 @@ type NewKPI struct {
 	// description
 	Description string `json:"description,omitempty"`
 
-	// environment canonical
-	// Max Length: 100
-	// Min Length: 1
-	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
-	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
-
 	// job name
 	JobName string `json:"job_name,omitempty"`
 
@@ -51,12 +45,6 @@ type NewKPI struct {
 
 	// pipeline name
 	PipelineName string `json:"pipeline_name,omitempty"`
-
-	// project canonical
-	// Max Length: 100
-	// Min Length: 1
-	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
-	ProjectCanonical string `json:"project_canonical,omitempty"`
 
 	// type
 	// Required: true
@@ -77,15 +65,7 @@ func (m *NewKPI) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateEnvironmentCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateProjectCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -123,26 +103,6 @@ func (m *NewKPI) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewKPI) validateEnvironmentCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvironmentCanonical) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("environment_canonical", "body", m.EnvironmentCanonical, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("environment_canonical", "body", m.EnvironmentCanonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("environment_canonical", "body", m.EnvironmentCanonical, `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *NewKPI) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -150,26 +110,6 @@ func (m *NewKPI) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *NewKPI) validateProjectCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectCanonical) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("project_canonical", "body", m.ProjectCanonical, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("project_canonical", "body", m.ProjectCanonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
