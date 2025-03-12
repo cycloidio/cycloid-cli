@@ -15,13 +15,13 @@ import (
 
 func NewLastUsedCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "last-used",
-		Short: "output the last use of this pipeline as a timestamp.",
-		RunE:  lastUsed,
+		Use:     "last-used",
+		Short:   "output the last trigger date of all pipelines in the selected organization.",
+		Example: `cy pipelines last-used --since-days 10`,
+		RunE:    lastUsed,
 	}
 
-	cmd.PersistentFlags().Int64P("before", "b", 0, "filter pipelines that didn't ran since x days.")
-
+	cmd.PersistentFlags().Int64P("since-days", "s", 0, "filter pipelines that didn't ran since x days.")
 	return cmd
 }
 
@@ -50,7 +50,7 @@ func lastUsed(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	before, err := cmd.Flags().GetInt64("before")
+	sinceDays, err := cmd.Flags().GetInt64("since-days")
 	if err != nil {
 		return err
 	}
@@ -108,11 +108,12 @@ func lastUsed(cmd *cobra.Command, args []string) error {
 
 		timestamp := time.Unix(int64(lastUsedTimestamp), 0)
 
-		if timestamp.Unix() < (time.Now().Unix() - (before * 60 * 60 * 24)) {
+		if timestamp.Unix() < (time.Now().Unix() - (sinceDays * 60 * 60 * 24)) {
 			result = append(result, LastUsedPipeline{
 				PipelineName: *pipeline.Name,
 				Project:      *pipeline.Project.Canonical,
 				Environment:  *pipeline.Environment.Canonical,
+				//TODO: add components
 				LastUsed: LastUsed{
 					Timestamp:   lastUsedTimestamp,
 					DateRFC3339: timestamp.Format(time.RFC3339),

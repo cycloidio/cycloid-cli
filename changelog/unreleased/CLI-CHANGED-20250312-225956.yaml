@@ -1,0 +1,9 @@
+component: CLI
+kind: CHANGED
+body: '`cy stack update` only manage visibility and team settings now.'
+time: 2025-03-12T22:59:56.998873754Z
+custom:
+  DETAILS: This is on par with our stack visibility update. see changelog for Cycloid
+    v5.1.153.
+  PR: "334"
+  TYPE: CLI

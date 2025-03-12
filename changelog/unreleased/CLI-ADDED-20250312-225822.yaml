@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: Add `cy pipeline last-used` command
+time: 2025-03-12T22:58:22.799411418Z
+custom:
+  DETAILS: This command allows you to list pipelines not triggered since x days.
+  PR: "334"
+  TYPE: CLI
