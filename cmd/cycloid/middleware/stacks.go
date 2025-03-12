@@ -46,28 +46,16 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 }
 
 func (m *middleware) UpdateStack(
-	org, ref, name, canonical, author, description, visibility, catalogRepoCanonical, teamCanonical string,
-	image strfmt.URI,
-	keywords []string,
-	technologies []*models.ServiceCatalogTechnology,
-	dependencies []*models.ServiceCatalogDependency,
+	org, ref, teamCanonical string,
+	visibility *string,
 ) (*models.ServiceCatalog, error) {
 	params := service_catalogs.NewUpdateServiceCatalogParams()
 	params.WithOrganizationCanonical(org)
 	params.WithServiceCatalogRef(ref)
 
 	body := &models.UpdateServiceCatalog{
-		Author:                        &author,
-		Canonical:                     canonical,
-		Dependencies:                  dependencies,
-		Description:                   &description,
-		Image:                         image,
-		Keywords:                      keywords,
-		Name:                          &name,
-		ServiceCatalogSourceCanonical: &catalogRepoCanonical,
-		TeamCanonical:                 teamCanonical,
-		Technologies:                  technologies,
-		Visibility:                    visibility,
+		TeamCanonical: teamCanonical,
+		Visibility:    visibility,
 	}
 
 	err := body.Validate(strfmt.Default)
