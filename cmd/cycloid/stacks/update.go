@@ -3,7 +3,6 @@ package stacks
 import (
 	"fmt"
 
-	"github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -17,21 +16,13 @@ import (
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update",
-		Short: "update a stack",
-		Long:  "The CLI will fetch the current value of the --stack-ref and update with the field you will provide",
-		Example: `# Update one stack visibility
-cy stacks update --stack-ref org:myStack --visibility shared
+		Short: "update the visibility of a stack",
+		Example: `cy stacks update --stack-ref org:myStack --visibility shared
 
 # Full args example
 cy stacks update \
 	--stack-ref my:stack-ref \
-	--name "Stack display name" \
-	--author "authorCanonical" \
-	--description "" \
-	--keyword "keyword1,keyword2" \
-	--keyword "keyword3" \
-	--image "https://url-to-img.example.com/img" \
-	--visibility "local" \
+	--visibility "hidden" \
 	--team "teamCanonical"
 `,
 		RunE:    update,
@@ -40,12 +31,6 @@ cy stacks update \
 
 	cmd.Flags().String("stack-ref", "", "stack reference, format 'org:stack-canonical'")
 	cmd.MarkFlagRequired("stack-ref")
-
-	cmd.Flags().String("name", "", "update the stack display name")
-	cmd.Flags().String("author", "", "update the stack author")
-	cmd.Flags().String("description", "", "update the stack description")
-	cmd.Flags().StringSlice("keyword", []string{}, "update the stack keywords (will replace keywords, not append them.)")
-	cmd.Flags().String("image", "", "update the stack image, must be a valid URL")
 	cmd.Flags().String("visibility", "", "update stack visibility")
 	cmd.Flags().String("team", "", "update the maintainer team canonical")
 
@@ -77,11 +62,6 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// We will make the CLI work like a PATCH request
-	// 1. we fetch the current stack values
-	// 2. we update values when the flag is set explicitly
-	// 3. we send the request
-
 	// Fetch the current stack state
 	stack, err := m.GetStack(org, stackRef)
 	if err != nil {
@@ -89,57 +69,18 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	// Manage optional parameters
-	var name, author, description, image, visibility, team string
-	var keywords []string
-
 	flagSet := cmd.Flags()
 
-	if flagSet.Changed("name") {
-		name, err = flagSet.GetString("name")
-		if err != nil {
-			return err
-		}
-	} else {
-		name = *stack.Name
-	}
-
-	if flagSet.Changed("author") {
-		author, err = flagSet.GetString("author")
-		if err != nil {
-			return err
-		}
-	} else {
-		author = *stack.Author
-	}
-
-	if flagSet.Changed("description") {
-		description, err = flagSet.GetString("description")
-		if err != nil {
-			return err
-		}
-	} else {
-		description = *stack.Description
-	}
-
-	var imageUrl strfmt.URI
-	if flagSet.Changed("image") {
-		image, err = flagSet.GetString("image")
-		if err != nil {
-			return err
-		}
-
-		imageUrl = strfmt.URI(image)
-	} else {
-		imageUrl = stack.Image
-	}
-
+	var visibility *string
+	var team string
 	if flagSet.Changed("visibility") {
-		visibility, err = flagSet.GetString("visibility")
+		visibilityStr, err := flagSet.GetString("visibility")
 		if err != nil {
 			return err
 		}
+		visibility = &visibilityStr
 	} else {
-		visibility = *stack.Visibility
+		visibility = stack.Visibility
 	}
 
 	if flagSet.Changed("team") {
@@ -153,18 +94,7 @@ func update(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if flagSet.Changed("keyword") {
-		keywords, err = flagSet.GetStringSlice("keyword")
-		if err != nil {
-			return err
-		}
-	} else {
-		if stack.Keywords != nil {
-			keywords = stack.Keywords
-		}
-	}
-
 	// Send request
-	s, err := m.UpdateStack(org, stackRef, name, *stack.Canonical, author, description, visibility, stack.ServiceCatalogSourceCanonical, team, imageUrl, keywords, stack.Technologies, stack.Dependencies)
+	s, err := m.UpdateStack(org, stackRef, team, visibility)
 	return printer.SmartPrint(p, s, err, fmt.Sprintf("fail to update stack with ref: %s", stackRef), printer.Options{}, cmd.OutOrStdout())
 }
