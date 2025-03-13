@@ -93,7 +93,7 @@ type Middleware interface {
 	ListRoles(org string) ([]*models.Role, error)
 
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
-	UpdateStack(org, ref, name, canonical, author, description, visibility, catalogRepoCanonical, teamCanonical string, image strfmt.URI, keywords []string, technologies []*models.ServiceCatalogTechnology, dependencies []*models.ServiceCatalogDependency) (*models.ServiceCatalog, error)
+	UpdateStack(org, ref, teamCanonical string, visibility *string) (*models.ServiceCatalog, error)
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
 
 	CreateKpi(name, kpiType, widget, org, project, job, env, config string) (*models.KPI, error)

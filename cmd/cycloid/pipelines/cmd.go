@@ -29,7 +29,9 @@ func NewCommands() *cobra.Command {
 		NewListCommand(),
 		NewGetCommand(),
 		NewSyncedCommand(),
-		NewPauseJobCommand())
+		NewPauseJobCommand(),
+		NewLastUsedCommand(),
+	)
 
 	return cmd
 }
