@@ -28,6 +28,10 @@ type UpdateProject struct {
 	// Enum: ["aws","google","azurerm","flexibleengine","openstack"]
 	CloudProvider string `json:"cloud_provider,omitempty"`
 
+	// color
+	// Max Length: 64
+	Color string `json:"color,omitempty"`
+
 	// The config_repository_canonical points to new Config Repository the project
 	// will be using. If this value is filled and it's different from the
 	// current one, the whole project will be migrated to new CR, meaning
@@ -50,6 +54,10 @@ type UpdateProject struct {
 	// description
 	Description string `json:"description,omitempty"`
 
+	// icon
+	// Max Length: 64
+	Icon string `json:"icon,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 1
@@ -60,11 +68,6 @@ type UpdateProject struct {
 	// of a project it has all the permission on it.
 	//
 	Owner string `json:"owner,omitempty"`
-
-	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
-	// Required: true
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+:[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	ServiceCatalogRef *string `json:"service_catalog_ref"`
 
 	// This will be used to assert that the Project is in it's last updated form
 	// because if not we could have inconsistencies with the environments. The
@@ -83,15 +86,19 @@ func (m *UpdateProject) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateColor(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateConfigRepositoryCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateName(formats); err != nil {
+	if err := m.validateIcon(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogRef(formats); err != nil {
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -156,6 +163,18 @@ func (m *UpdateProject) validateCloudProvider(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *UpdateProject) validateColor(formats strfmt.Registry) error {
+	if swag.IsZero(m.Color) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("color", "body", m.Color, 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
 	if swag.IsZero(m.ConfigRepositoryCanonical) { // not required
 		return nil
@@ -176,6 +195,18 @@ func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registr
 	return nil
 }
 
+func (m *UpdateProject) validateIcon(formats strfmt.Registry) error {
+	if swag.IsZero(m.Icon) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("icon", "body", m.Icon, 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *UpdateProject) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -183,19 +214,6 @@ func (m *UpdateProject) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateProject) validateServiceCatalogRef(formats strfmt.Registry) error {
-
-	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("service_catalog_ref", "body", *m.ServiceCatalogRef, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+:[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

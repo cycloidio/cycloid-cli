@@ -24,25 +24,15 @@ type NewPipeline struct {
 	// Validate credentials manager variables in the pipeline config.
 	CheckCredentials bool `json:"check_credentials,omitempty"`
 
-	// environment
-	// Required: true
-	Environment *NewEnvironment `json:"environment"`
-
 	// passed config
 	PassedConfig string `json:"passed_config,omitempty"`
 
 	// pipeline name
 	// Required: true
-	// Max Length: 50
+	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-._]+[a-z0-9]+$
 	PipelineName *string `json:"pipeline_name"`
-
-	// use case
-	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	UseCase string `json:"use_case,omitempty"`
 
 	// yaml vars
 	YamlVars string `json:"yaml_vars,omitempty"`
@@ -52,41 +42,13 @@ type NewPipeline struct {
 func (m *NewPipeline) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateEnvironment(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validatePipelineName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUseCase(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *NewPipeline) validateEnvironment(formats strfmt.Registry) error {
-
-	if err := validate.Required("environment", "body", m.Environment); err != nil {
-		return err
-	}
-
-	if m.Environment != nil {
-		if err := m.Environment.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("environment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("environment")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
@@ -100,7 +62,7 @@ func (m *NewPipeline) validatePipelineName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("pipeline_name", "body", *m.PipelineName, 50); err != nil {
+	if err := validate.MaxLength("pipeline_name", "body", *m.PipelineName, 100); err != nil {
 		return err
 	}
 
@@ -111,54 +73,8 @@ func (m *NewPipeline) validatePipelineName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewPipeline) validateUseCase(formats strfmt.Registry) error {
-	if swag.IsZero(m.UseCase) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("use_case", "body", m.UseCase, 3); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("use_case", "body", m.UseCase, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("use_case", "body", m.UseCase, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this new pipeline based on the context it is used
+// ContextValidate validates this new pipeline based on context it is used
 func (m *NewPipeline) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *NewPipeline) contextValidateEnvironment(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Environment != nil {
-
-		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("environment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("environment")
-			}
-			return err
-		}
-	}
-
 	return nil
 }
 
