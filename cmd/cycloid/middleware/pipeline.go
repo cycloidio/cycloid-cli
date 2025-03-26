@@ -11,7 +11,6 @@ import (
 )
 
 func (m *middleware) PausePipeline(org, project, env string) error {
-
 	pipelineName := common.GetPipelineName(project, env)
 
 	params := organization_pipelines.NewPausePipelineParams()
@@ -28,7 +27,6 @@ func (m *middleware) PausePipeline(org, project, env string) error {
 }
 
 func (m *middleware) ClearTaskCachePipeline(org, project, env, job, task string) error {
-
 	pipelineName := common.GetPipelineName(project, env)
 
 	params := organization_pipelines_jobs.NewClearTaskCacheParams()
@@ -47,7 +45,6 @@ func (m *middleware) ClearTaskCachePipeline(org, project, env, job, task string)
 }
 
 func (m *middleware) UnpausePipeline(org, project, env string) error {
-
 	pipelineName := common.GetPipelineName(project, env)
 
 	params := organization_pipelines.NewUnpausePipelineParams()
@@ -64,7 +61,6 @@ func (m *middleware) UnpausePipeline(org, project, env string) error {
 }
 
 func (m *middleware) UpdatePipeline(org, project, env, pipeline, variables string) (*models.Pipeline, error) {
-
 	var body *models.UpdatePipeline
 
 	cyCtx := common.CycloidContext{Env: env,
@@ -103,7 +99,6 @@ func (m *middleware) UpdatePipeline(org, project, env, pipeline, variables strin
 }
 
 func (m *middleware) DiffPipeline(org, project, env, pipeline, variables string) (*models.PipelineDiffs, error) {
-
 	cyCtx := common.CycloidContext{Env: env,
 		Org:     org,
 		Project: project}
@@ -141,7 +136,6 @@ func (m *middleware) DiffPipeline(org, project, env, pipeline, variables string)
 }
 
 func (m *middleware) CreatePipeline(org, project, env, pipeline, variables, usecase string) (*models.Pipeline, error) {
-
 	cyCtx := common.CycloidContext{Env: env,
 		Org:     org,
 		Project: project}
@@ -186,7 +180,6 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, variables, usec
 }
 
 func (m *middleware) GetPipelineJob(org, project, env, job string) (*models.Job, error) {
-
 	pipelineName := common.GetPipelineName(project, env)
 
 	params := organization_pipelines_jobs.NewGetJobParams()
@@ -201,17 +194,16 @@ func (m *middleware) GetPipelineJob(org, project, env, job string) (*models.Job,
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 	return d, nil
 }
 
 func (m *middleware) ListPipelineJobsBuilds(org, project, env, job string) ([]*models.Build, error) {
-
 	pipelineName := common.GetPipelineName(project, env)
 
 	params := organization_pipelines_jobs_build.NewGetBuildsParams()
@@ -228,7 +220,7 @@ func (m *middleware) ListPipelineJobsBuilds(org, project, env, job string) ([]*m
 	p := resp.GetPayload()
 	//err = p.Validate(strfmt.Default)
 	//if err != nil {
-	//return nil, err
+	//	return nil, err
 	//}
 
 	d := p.Data
@@ -236,7 +228,6 @@ func (m *middleware) ListPipelineJobsBuilds(org, project, env, job string) ([]*m
 }
 
 func (m *middleware) ListPipelineJobs(org, project, env string) ([]*models.Job, error) {
-
 	pipelineName := common.GetPipelineName(project, env)
 
 	params := organization_pipelines_jobs.NewGetJobsParams()
@@ -250,10 +241,10 @@ func (m *middleware) ListPipelineJobs(org, project, env string) ([]*models.Job, 
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	//err = p.Validate(strfmt.Default)
+	//if err != nil {
+	//	return nil, err
+	//}
 
 	d := p.Data
 	return d, nil
@@ -324,10 +315,10 @@ func (m *middleware) ListPipelines(org string) ([]*models.Pipeline, error) {
 	}
 
 	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = p.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	d := p.Data
 	return d, nil

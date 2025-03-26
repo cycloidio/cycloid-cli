@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Fixed cy project get-env command returning null or invalid config.
-time: 2025-03-03T22:26:10.485012721Z
-custom:
-  DETAILS: ""
-  PR: "330"
-  TYPE: CLI
