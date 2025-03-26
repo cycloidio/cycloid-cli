@@ -17,7 +17,7 @@ import (
 
 // InfrastructureGraph InfrastructureGraph
 //
-// # Holds all the Infrastructure of the project in an environment in Graph format
+// # Holds all the Infrastructure of the component
 //
 // swagger:model InfrastructureGraph
 type InfrastructureGraph struct {

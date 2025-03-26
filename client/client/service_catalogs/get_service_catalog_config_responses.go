@@ -15,6 +15,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
@@ -402,7 +403,7 @@ type GetServiceCatalogConfigOKBody struct {
 
 	// data
 	// Required: true
-	Data interface{} `json:"data"`
+	Data models.ServiceCatalogConfigs `json:"data"`
 }
 
 // Validate validates this get service catalog config o k body
@@ -421,15 +422,49 @@ func (o *GetServiceCatalogConfigOKBody) Validate(formats strfmt.Registry) error 
 
 func (o *GetServiceCatalogConfigOKBody) validateData(formats strfmt.Registry) error {
 
-	if o.Data == nil {
-		return errors.Required("getServiceCatalogConfigOK"+"."+"data", "body", nil)
+	if err := validate.Required("getServiceCatalogConfigOK"+"."+"data", "body", o.Data); err != nil {
+		return err
+	}
+
+	if o.Data != nil {
+		if err := o.Data.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("getServiceCatalogConfigOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("getServiceCatalogConfigOK" + "." + "data")
+			}
+			return err
+		}
 	}
 
 	return nil
 }
 
-// ContextValidate validates this get service catalog config o k body based on context it is used
+// ContextValidate validate this get service catalog config o k body based on the context it is used
 func (o *GetServiceCatalogConfigOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *GetServiceCatalogConfigOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := o.Data.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("getServiceCatalogConfigOK" + "." + "data")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("getServiceCatalogConfigOK" + "." + "data")
+		}
+		return err
+	}
+
 	return nil
 }
 

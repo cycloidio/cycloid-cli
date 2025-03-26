@@ -76,6 +76,10 @@ type ServiceCatalog struct {
 	// Required: true
 	Keywords []string `json:"keywords"`
 
+	// Indicates if the stack uses the latest version
+	// Required: true
+	Latest *bool `json:"latest"`
+
 	// name
 	// Required: true
 	Name *string `json:"name"`
@@ -117,6 +121,10 @@ type ServiceCatalog struct {
 	// updated at
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at,omitempty"`
+
+	// Version of the stack
+	// Required: true
+	Version *string `json:"version"`
 
 	// visibility
 	// Required: true
@@ -175,6 +183,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateLatest(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -208,6 +220,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVersion(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -421,6 +437,15 @@ func (m *ServiceCatalog) validateKeywords(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ServiceCatalog) validateLatest(formats strfmt.Registry) error {
+
+	if err := validate.Required("latest", "body", m.Latest); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ServiceCatalog) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -549,6 +574,15 @@ func (m *ServiceCatalog) validateUpdatedAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateVersion(formats strfmt.Registry) error {
+
+	if err := validate.Required("version", "body", m.Version); err != nil {
 		return err
 	}
 

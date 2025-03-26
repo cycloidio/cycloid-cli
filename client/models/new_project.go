@@ -27,6 +27,10 @@ type NewProject struct {
 	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical string `json:"canonical,omitempty"`
 
+	// color
+	// Max Length: 64
+	Color string `json:"color,omitempty"`
+
 	// config repository canonical
 	// Required: true
 	// Max Length: 100
@@ -39,6 +43,10 @@ type NewProject struct {
 	//
 	Description string `json:"description,omitempty"`
 
+	// icon
+	// Max Length: 64
+	Icon string `json:"icon,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 1
@@ -49,10 +57,6 @@ type NewProject struct {
 	// owner of a project it has all the permissions on it.
 	//
 	Owner string `json:"owner,omitempty"`
-
-	// It's the ref of the Service Catalog, like 'cycloidio:stack-magento'
-	// Required: true
-	ServiceCatalogRef *string `json:"service_catalog_ref"`
 
 	// Is only required when the using Quotas, it'll link the Project
 	// to the Team
@@ -71,15 +75,19 @@ func (m *NewProject) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateColor(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateConfigRepositoryCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateName(formats); err != nil {
+	if err := m.validateIcon(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogRef(formats); err != nil {
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -113,6 +121,18 @@ func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *NewProject) validateColor(formats strfmt.Registry) error {
+	if swag.IsZero(m.Color) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("color", "body", m.Color, 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Required("config_repository_canonical", "body", m.ConfigRepositoryCanonical); err != nil {
@@ -134,6 +154,18 @@ func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) 
 	return nil
 }
 
+func (m *NewProject) validateIcon(formats strfmt.Registry) error {
+	if swag.IsZero(m.Icon) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("icon", "body", m.Icon, 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *NewProject) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -141,15 +173,6 @@ func (m *NewProject) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *NewProject) validateServiceCatalogRef(formats strfmt.Registry) error {
-
-	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
 		return err
 	}
 

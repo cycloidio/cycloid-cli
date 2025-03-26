@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// NewEnvironment NewEnvironment
+// NewInfraImportComponent Create Component for the Infra Import
 //
-// # Represent an entity necessary for environment creation
+// The entity which represents the information of a new component.
 //
-// swagger:model NewEnvironment
-type NewEnvironment struct {
+// swagger:model NewInfraImportComponent
+type NewInfraImportComponent struct {
 
 	// canonical
 	// Max Length: 100
@@ -27,26 +27,28 @@ type NewEnvironment struct {
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	Canonical string `json:"canonical,omitempty"`
 
-	// color
-	// Max Length: 64
-	Color string `json:"color,omitempty"`
+	// cloud provider canonical
+	// Required: true
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	CloudProviderCanonical *string `json:"cloud_provider_canonical"`
 
 	// name
 	// Required: true
-	// Max Length: 100
 	// Min Length: 1
 	Name *string `json:"name"`
 }
 
-// Validate validates this new environment
-func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
+// Validate validates this new infra import component
+func (m *NewInfraImportComponent) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateColor(formats); err != nil {
+	if err := m.validateCloudProviderCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -60,7 +62,7 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
+func (m *NewInfraImportComponent) validateCanonical(formats strfmt.Registry) error {
 	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
@@ -80,19 +82,28 @@ func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewEnvironment) validateColor(formats strfmt.Registry) error {
-	if swag.IsZero(m.Color) { // not required
-		return nil
+func (m *NewInfraImportComponent) validateCloudProviderCanonical(formats strfmt.Registry) error {
+
+	if err := validate.Required("cloud_provider_canonical", "body", m.CloudProviderCanonical); err != nil {
+		return err
 	}
 
-	if err := validate.MaxLength("color", "body", m.Color, 64); err != nil {
+	if err := validate.MinLength("cloud_provider_canonical", "body", *m.CloudProviderCanonical, 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("cloud_provider_canonical", "body", *m.CloudProviderCanonical, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("cloud_provider_canonical", "body", *m.CloudProviderCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *NewEnvironment) validateName(formats strfmt.Registry) error {
+func (m *NewInfraImportComponent) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
@@ -102,20 +113,16 @@ func (m *NewEnvironment) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("name", "body", *m.Name, 100); err != nil {
-		return err
-	}
-
 	return nil
 }
 
-// ContextValidate validates this new environment based on context it is used
-func (m *NewEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validates this new infra import component based on context it is used
+func (m *NewInfraImportComponent) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *NewEnvironment) MarshalBinary() ([]byte, error) {
+func (m *NewInfraImportComponent) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -123,8 +130,8 @@ func (m *NewEnvironment) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *NewEnvironment) UnmarshalBinary(b []byte) error {
-	var res NewEnvironment
+func (m *NewInfraImportComponent) UnmarshalBinary(b []byte) error {
+	var res NewInfraImportComponent
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

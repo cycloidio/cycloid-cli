@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -45,10 +44,6 @@ type ProjectSimple struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
-	// The import process status.
-	// Enum: ["succeeded","failed","importing"]
-	ImportStatus string `json:"import_status,omitempty"`
-
 	// name
 	// Required: true
 	// Min Length: 1
@@ -79,10 +74,6 @@ func (m *ProjectSimple) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateImportStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -145,51 +136,6 @@ func (m *ProjectSimple) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var projectSimpleTypeImportStatusPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["succeeded","failed","importing"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		projectSimpleTypeImportStatusPropEnum = append(projectSimpleTypeImportStatusPropEnum, v)
-	}
-}
-
-const (
-
-	// ProjectSimpleImportStatusSucceeded captures enum value "succeeded"
-	ProjectSimpleImportStatusSucceeded string = "succeeded"
-
-	// ProjectSimpleImportStatusFailed captures enum value "failed"
-	ProjectSimpleImportStatusFailed string = "failed"
-
-	// ProjectSimpleImportStatusImporting captures enum value "importing"
-	ProjectSimpleImportStatusImporting string = "importing"
-)
-
-// prop value enum
-func (m *ProjectSimple) validateImportStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, projectSimpleTypeImportStatusPropEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *ProjectSimple) validateImportStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.ImportStatus) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateImportStatusEnum("import_status", "body", m.ImportStatus); err != nil {
 		return err
 	}
 
