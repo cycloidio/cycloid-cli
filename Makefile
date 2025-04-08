@@ -35,35 +35,42 @@ SWAGGER_GENERATE = swagger generate client \
 		--spec=$(SWAGGER_FILE) \
 		--default-produces="application/vnd.cycloid.io.v1+json" \
 		--target=./client \
-		--name=api \
-		--tags=Cycloid \
-		--tags="Organizations" \
-		--tags="Organization API keys" \
-		--tags="Organization Config Repositories" \
-		--tags="Organization Credentials" \
-		--tags="Organization External Backends" \
-		--tags="Organization members" \
-		--tags="Organization pipelines" \
-		--tags="Organization pipelines jobs" \
-		--tags="Organization pipelines jobs build" \
-		--tags="Organization projects" \
-		--tags="Organization Projects" \
-		--tags="Organization Roles" \
-		--tags="Organization Service Catalog Sources" \
-		--tags="Organization workers" \
-		--tags="Organization members" \
-		--tags="Organization Invitations" \
-		--tags="Organization Forms" \
-		--tags="Organization kpis" \
- 		--tags="Organization Infrastructure Policies" \
- 		--tags="Organization Children" \
-		--tags="Service catalogs" \
-		--tags="User" \
-		--tags="Cost Estimation"
+		--name=api
+# \
+# 		--tags=Cycloid \
+# 		--tags="Organizations" \
+# 		--tags="Organization API keys" \
+# 		--tags="Organization Config Repositories" \
+# 		--tags="Organization Credentials" \
+# 		--tags="Organization External Backends" \
+# 		--tags="Organization members" \
+# 		--tags="Organization pipelines" \
+# 		--tags="Environment pipelines" \
+# 		--tags="Project pipelines" \
+# 		--tags="Organization pipelines jobs" \
+# 		--tags="Organization pipelines jobs build" \
+# 		--tags="Organization projects" \
+# 		--tags="Organization Projects" \
+# 		--tags="Organization Roles" \
+# 		--tags="Organization Service Catalog Sources" \
+# 		--tags="Organization workers" \
+# 		--tags="Organization members" \
+# 		--tags="Organization Invitations" \
+# 		--tags="Organization Forms" \
+# 		--tags="Organization kpis" \
+#  		--tags="Organization Infrastructure Policies" \
+#  		--tags="Organization Children" \
+# 		--tags="Component pipelines" \
+# 		--tags="Component pipelines" \
+# 		--tags="Service catalogs" \
+# 		--tags="User" \
+# 		--tags="Cost Estimation" \
+# 		--tags="Policies" \
+# 		--tags="Code Generation"
 
 SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 	mkdir ./client; \
-	$(DOCKER_COMPOSE) run $(SWAGGER_COMMAND)
+	$(DOCKER_COMPOSE) run $(SWAGGER_COMMAND) --remove-orphan
 
 # E2E tests
 CY_API_URL         ?= http://127.0.0.1:3001

@@ -17,6 +17,7 @@ type Middleware interface {
 	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error)
 	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error)
 	UpdateCatalogRepository(org, name, url, branch, catalogRepo, cred string) (*models.ServiceCatalogSource, error)
+
 	GetStackConfig(org, ref string) (interface{}, error)
 
 	CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error)
@@ -43,7 +44,7 @@ type Middleware interface {
 	UpdateExternalBackend(org string, externalBackendID uint32, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error)
 
 	// Organization Forms
-	CreateFormsConfig(org string, project string, serviceCatalogRef string, inputs []*models.FormInput) (map[string]any, error)
+	InterpolateFormsConfig(org string, project string, serviceCatalogRef string, inputs []*models.FormVariables) (map[string]any, error)
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
 
 	DeleteMember(org string, id uint32) error
@@ -62,29 +63,45 @@ type Middleware interface {
 	ListOrganizationChildrens(org string) ([]*models.Organization, error)
 	CreateOrganizationChild(org, porg string) (*models.Organization, error)
 
-	ClearTaskCachePipeline(org, project, env, job, task string) error
-	CreatePipeline(org, project, env, pipeline, variables, usecase string) (*models.Pipeline, error)
+	// Organization pipelines
+	GetOrgPipelines(org string, concoursePipeline, project, env *string, statuses []string) ([]*models.Pipeline, error)
+
+	// Project Pipelines
+	GetProjectPipelines(org, project string) ([]*models.Pipeline, error)
+
+	// Environments pipelines
+	GetEnvPipelines(org, project, env string) ([]*models.Pipeline, error)
+
+	// Component pipelines
+	// Deprecated routes
+	// CreatePipeline(org, project, env, pipeline, variables, usecase string) (*models.Pipeline, error)
+
+	// TODO
 	DiffPipeline(org, project, env, pipeline, variables string) (*models.PipelineDiffs, error)
-	GetPipelineJob(org, project, env, job string) (*models.Job, error)
 	ListPipelineJobsBuilds(org, project, env, job string) ([]*models.Build, error)
 	ListPipelineJobs(org, project, env string) ([]*models.Job, error)
-	PausePipelineJob(org, project, env, job string) error
 	PausePipeline(org string, project string, env string) error
 	TriggerPipelineBuild(org, project, env, job string) error
-	UnpausePipelineJob(org, project, env, job string) error
 	UnpausePipeline(org string, project string, env string) error
 	UpdatePipeline(org string, project string, env string, pipeline string, variables string) (*models.Pipeline, error)
 	ListPipelines(org string) ([]*models.Pipeline, error)
-	GetPipeline(org, project, env string) (*models.Pipeline, error)
 	SyncedPipeline(org, project, env string) (*models.PipelineStatus, error)
+	// TODO
 
+	// Component pipelines jobs
+	GetJob(org, project, env, component, pipeline, job string) (*models.Job, error)
+	GetJobs(org, project, env, component, pipeline string) (*models.Job, error)
+	PauseJob(org, project, env, component, pipeline, job string) error
+	UnPauseJob(org, project, env, component, pipeline, job string) error
+	ClearTaskCace(org, project, env, component, pipeline, job, step string) (*models.ClearTaskCache, error)
+
+	// TODO from here
 	CreateProject(org, projectName, projectCanonical, description, stackRef, configRepo, owner string) (*models.Project, error)
-	CreateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) error
-	UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormInput) (*models.Environment, error)
+	CreateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormVariables) error
+	UpdateEnv(org, project, envCanonical, useCase, cloudProviderCanonical, color, icon string, inputs *models.FormVariables) (*models.Environment, error)
 	DeleteEnv(org, project, envCanonical string) error
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
-	GetProjectConfig(org string, project string, environment string) (*models.ProjectEnvironmentConfig, error)
 	ListProjects(org string) ([]*models.Project, error)
 	UpdateProject(org, projectName, projectCanonical string, description, stackRef, owner, configRepo string, updatedAt uint64) (*models.Project, error)
 
