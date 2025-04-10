@@ -25,6 +25,9 @@ type ErrorPayload struct {
 	// errors
 	// Required: true
 	Errors []*ErrorDetailsItem `json:"errors"`
+
+	// request id
+	RequestID string `json:"request_id,omitempty"`
 }
 
 // Validate validates this error payload
