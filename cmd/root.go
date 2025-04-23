@@ -96,7 +96,7 @@ func AttachCommands(cmd *cobra.Command) {
 		infrapolicies.NewCommands(),
 		members.NewCommands(),
 		organizations.NewCommands(),
-		pipelines.NewCommands(),
+		// pipelines.NewCommands(),
 		projects.NewCommands(),
 		kpis.NewCommands(),
 		roles.NewCommands(),
