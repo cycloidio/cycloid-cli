@@ -11,7 +11,6 @@ import (
 )
 
 func (m *middleware) CreateOrganization(name string) (*models.Organization, error) {
-
 	params := organizations.NewCreateOrgParams()
 
 	body := &models.NewOrganization{
@@ -36,7 +35,6 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 }
 
 func (m *middleware) UpdateOrganization(can, name string) (*models.Organization, error) {
-
 	params := organizations.NewUpdateOrgParams()
 	params.SetOrganizationCanonical(can)
 
@@ -62,7 +60,6 @@ func (m *middleware) UpdateOrganization(can, name string) (*models.Organization,
 }
 
 func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
-
 	params := organizations.NewGetOrgParams()
 	params.SetOrganizationCanonical(org)
 
@@ -72,17 +69,11 @@ func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
 	}
 
 	p := resp.GetPayload()
-	//err = p.Validate(strfmt.Default)
-	//if err != nil {
-	//return nil, err
-	//}
-
 	d := p.Data
 	return d, nil
 }
 
 func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, error) {
-
 	params := organization_workers.NewGetWorkersParams()
 	params.SetOrganizationCanonical(org)
 
@@ -102,7 +93,6 @@ func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, erro
 }
 
 func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
-
 	params := organizations.NewGetOrgsParams()
 
 	resp, err := m.api.Organizations.GetOrgs(params, m.api.Credentials(nil))
@@ -121,7 +111,6 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 }
 
 func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organization, error) {
-
 	params := organization_children.NewGetChildrenParams()
 	orderBy := "organization_canonical:asc"
 	params.SetOrderBy(&orderBy)
@@ -138,23 +127,20 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 	return d, nil
 }
 
-func (m *middleware) CreateOrganizationChild(org, porg string) (*models.Organization, error) {
-
+func (m *middleware) CreateOrganizationChild(org, childOrg string) (*models.Organization, error) {
 	params := organization_children.NewCreateChildParams()
-	//params.SetOrganizationCanonical(porg)
-
 	body := &models.NewOrganization{
-		Name: &org,
+		Name: &childOrg,
 	}
 
 	params.SetBody(body)
-	params.OrganizationCanonical = porg
+	params.OrganizationCanonical = org
 	err := body.Validate(strfmt.Default)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to validate request body")
 	}
 
-	resp, err := m.api.OrganizationChildren.CreateChild(params, m.api.Credentials(&porg))
+	resp, err := m.api.OrganizationChildren.CreateChild(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}

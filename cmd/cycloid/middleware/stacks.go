@@ -8,11 +8,12 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
-	params := service_catalogs.NewListServiceCatalogsParams()
+func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
+	params := service_catalogs.NewGetServiceCatalogParams()
 	params.SetOrganizationCanonical(org)
+	params.SetServiceCatalogRef(ref)
 
-	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, m.api.Credentials(&org))
+	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -24,12 +25,11 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	return d, nil
 }
 
-func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
-	params := service_catalogs.NewGetServiceCatalogParams()
+func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
+	params := service_catalogs.NewListServiceCatalogsParams()
 	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogRef(ref)
 
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, m.api.Credentials(&org))
+	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -81,7 +81,7 @@ func (m *middleware) UpdateStack(
 	return payload.Data, nil
 }
 
-func (m *middleware) GetStackConfig(org, ref string) (interface{}, error) {
+func (m *middleware) GetStackConfig(org, ref string) (models.ServiceCatalogConfigs, error) {
 	params := service_catalogs.NewGetServiceCatalogConfigParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogRef(ref)

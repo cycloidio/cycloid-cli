@@ -89,27 +89,27 @@ func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) e
 	return nil
 }
 
-func (m *middleware) CreateExternalBackends(org, project, env, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
+func (m *middleware) CreateExternalBackends(org, project, env, purpose, credential string, isDefault bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
 
 	params := organization_external_backends.NewCreateExternalBackendParams()
 	params.SetOrganizationCanonical(org)
 
 	var body *models.NewExternalBackend
 
-	if len(cred) != 0 {
+	if len(credential) != 0 {
 		body = &models.NewExternalBackend{
 			ProjectCanonical:     project,
 			Purpose:              &purpose,
 			EnvironmentCanonical: env,
-			CredentialCanonical:  cred,
-			Default:              def,
+			CredentialCanonical:  credential,
+			Default:              isDefault,
 		}
 	} else {
 		body = &models.NewExternalBackend{
 			ProjectCanonical:     project,
 			EnvironmentCanonical: env,
 			Purpose:              &purpose,
-			Default:              def,
+			Default:              isDefault,
 		}
 	}
 
@@ -144,23 +144,23 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose, cred str
 	return d, nil
 }
 
-func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32, purpose, cred string, def bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
+func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32, purpose, credential string, isDefault bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
 	params := organization_external_backends.NewUpdateExternalBackendParams()
 	params.SetOrganizationCanonical(org)
 	params.SetExternalBackendID(externalBackendID)
 
 	var body *models.UpdateExternalBackend
 
-	if len(cred) != 0 {
+	if len(credential) != 0 {
 		body = &models.UpdateExternalBackend{
 			Purpose:             &purpose,
-			CredentialCanonical: cred,
-			Default:             def,
+			CredentialCanonical: credential,
+			Default:             isDefault,
 		}
 	} else {
 		body = &models.UpdateExternalBackend{
 			Purpose: &purpose,
-			Default: def,
+			Default: isDefault,
 		}
 	}
 

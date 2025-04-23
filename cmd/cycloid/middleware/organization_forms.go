@@ -4,6 +4,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 )
 
@@ -30,25 +31,7 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 		return ve, nil
 	}
 
-	// We unmarchal stackforms yaml file in a generic structure FileForms.
-	// Because the yaml file format could be v1 or v2 the FileForms is based on interfaces.
-	// Unfortunately golang produce an error when you unmarchal yaml from interface, and marchal it later on into json
-	// unable validate form: json: unsupported type: map[interface {}]interface {}
-
-	var bodyFormFile interface{}
-	if len(formsfile.Data) > 0 {
-		// v1
-		datas := map[string]interface{}{}
-		for key, element := range formsfile.Data {
-			datas[key] = ConvertMapInterfaceToMapString(element)
-			// if element under Data, that means we use v1
-		}
-		bodyFormFile = datas
-	} else {
-		// v2
-		formsfile.UseCases = ConvertMapInterfaceToMapString(formsfile.UseCases)
-		bodyFormFile = formsfile
-	}
+	var bodyFormFile models.FormsFileV3
 
 	params := organization_forms.NewValidateFormsFileParams()
 	params.SetOrganizationCanonical(org)
@@ -79,7 +62,10 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	return d, nil
 }
 
-func (m *middleware) InterpolateFormsConfig(org, project, component, serviceCatalogRef, useCase string, inputs *models.FormVariables) (*models.ServiceCatalogConfig, error) {
+func (m *middleware) InterpolateFormsConfig(org, project, env, component, serviceCatalogRef, useCase string, inputs *models.FormVariables) (*models.ServiceCatalogConfig, error) {
+	if inputs == nil {
+		return nil, errors.New("form inputs for interpolateFormsConfig must not be nil")
+	}
 	body := organization_forms.InterpolateFormsConfigBody{
 		ServiceCatalogRef:  &serviceCatalogRef,
 		ComponentCanonical: &component,
@@ -90,6 +76,7 @@ func (m *middleware) InterpolateFormsConfig(org, project, component, serviceCata
 	params := organization_forms.NewInterpolateFormsConfigParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
+	params.WithEnvironmentCanonical(env)
 	params.WithBody(body)
 
 	if err := params.Body.Validate(strfmt.Default); err != nil {

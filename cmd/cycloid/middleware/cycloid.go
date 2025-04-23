@@ -15,7 +15,6 @@ func (m *middleware) GetAppVersion() (*models.AppVersion, error) {
 	}
 
 	p := resp.GetPayload()
-
 	d := p.Data
 
 	return d, nil
@@ -29,6 +28,5 @@ func (m *middleware) GetStatus() (*models.GeneralStatus, error) {
 	}
 
 	p := resp.GetPayload()
-
 	return p.Data, NewApiError(err)
 }

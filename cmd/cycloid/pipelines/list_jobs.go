@@ -7,15 +7,15 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 )
 
-func NewPauseCommand() *cobra.Command {
+func NewListJobsCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "pause",
-		Short: "pause a pipeline",
+		Use:   "list-jobs",
+		Short: "list pipeline jobs",
 		Example: `
-	# pause pipeline my-project-env
-	cy --org my-org pipeline pause --project my-project --env env
+	# list jobs in pipeline my-project-env and display it in JSON
+	cy --org my-org pp list-jobs --project my-project --env env -o json
 `,
-		// RunE:    pause,
+		// RunE:    listJobs,
 		RunE:    func(cmd *cobra.Command, args []string) error { panic("TODO: not implemented") },
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
@@ -26,7 +26,7 @@ func NewPauseCommand() *cobra.Command {
 	return cmd
 }
 
-// func pause(cmd *cobra.Command, args []string) error {
+// func listJobs(cmd *cobra.Command, args []string) error {
 // 	api := common.NewAPI()
 // 	m := middleware.NewMiddleware(api)
 //
@@ -34,6 +34,7 @@ func NewPauseCommand() *cobra.Command {
 // 	if err != nil {
 // 		return err
 // 	}
+//
 // 	project, err := cmd.Flags().GetString("project")
 // 	if err != nil {
 // 		return err
@@ -53,6 +54,6 @@ func NewPauseCommand() *cobra.Command {
 // 		return errors.Wrap(err, "unable to get printer")
 // 	}
 //
-// 	err = m.PausePipeline(org, project, env)
-// 	return printer.SmartPrint(p, nil, err, "unable to pause pipeline", printer.Options{}, cmd.OutOrStdout())
+// 	jobs, err := m.ListPipelineJobs(org, project, env)
+// 	return printer.SmartPrint(p, jobs, err, "unable to list pipeline jobs", printer.Options{}, cmd.OutOrStdout())
 // }

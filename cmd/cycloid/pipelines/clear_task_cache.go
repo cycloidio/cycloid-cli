@@ -7,26 +7,28 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 )
 
-func NewPauseCommand() *cobra.Command {
+func NewClearTaskCacheCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "pause",
-		Short: "pause a pipeline",
+		Use:   "clear-task-cache",
+		Short: "clear cache for a task",
 		Example: `
-	# pause pipeline my-project-env
-	cy --org my-org pipeline pause --project my-project --env env
+	# clean cache for task 'my-task'
+	cy --org my-org pp clear-task-cache --project my-project --job my-job --env my-env --task my-task
 `,
-		// RunE:    pause,
+		// RunE:    cleartaskCache,
 		RunE:    func(cmd *cobra.Command, args []string) error { panic("TODO: not implemented") },
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
+	common.RequiredFlag(WithFlagJob, cmd)
+	common.RequiredFlag(WithFlagTask, cmd)
 
 	return cmd
 }
 
-// func pause(cmd *cobra.Command, args []string) error {
+// func cleartaskCache(cmd *cobra.Command, args []string) error {
 // 	api := common.NewAPI()
 // 	m := middleware.NewMiddleware(api)
 //
@@ -42,6 +44,14 @@ func NewPauseCommand() *cobra.Command {
 // 	if err != nil {
 // 		return err
 // 	}
+// 	job, err := cmd.Flags().GetString("job")
+// 	if err != nil {
+// 		return err
+// 	}
+// 	task, err := cmd.Flags().GetString("task")
+// 	if err != nil {
+// 		return err
+// 	}
 // 	output, err := cmd.Flags().GetString("output")
 // 	if err != nil {
 // 		return errors.Wrap(err, "unable to get output flag")
@@ -53,6 +63,6 @@ func NewPauseCommand() *cobra.Command {
 // 		return errors.Wrap(err, "unable to get printer")
 // 	}
 //
-// 	err = m.PausePipeline(org, project, env)
-// 	return printer.SmartPrint(p, nil, err, "unable to pause pipeline", printer.Options{}, cmd.OutOrStdout())
+// 	err = m.ClearTaskCachePipeline(org, project, env, job, task)
+// 	return printer.SmartPrint(p, nil, err, "unable to clear task cache", printer.Options{}, cmd.OutOrStdout())
 // }

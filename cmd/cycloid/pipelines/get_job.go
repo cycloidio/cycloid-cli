@@ -7,26 +7,27 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 )
 
-func NewPauseCommand() *cobra.Command {
+func NewGetJobCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "pause",
-		Short: "pause a pipeline",
+		Use:   "get-job",
+		Short: "get a pipeline's job",
 		Example: `
-	# pause pipeline my-project-env
-	cy --org my-org pipeline pause --project my-project --env env
+	# get the job 'my-job' in my-project-env pipeline in JSON format
+	cy --org my-org pp get-job --project my-project --env env --job my-job -o json
 `,
-		// RunE:    pause,
+		//RunE:    getJob,
 		RunE:    func(cmd *cobra.Command, args []string) error { panic("TODO: not implemented") },
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, cmd)
+	common.RequiredFlag(WithFlagJob, cmd)
 
 	return cmd
 }
 
-// func pause(cmd *cobra.Command, args []string) error {
+// func getJob(cmd *cobra.Command, args []string) error {
 // 	api := common.NewAPI()
 // 	m := middleware.NewMiddleware(api)
 //
@@ -42,6 +43,11 @@ func NewPauseCommand() *cobra.Command {
 // 	if err != nil {
 // 		return err
 // 	}
+// 	job, err := cmd.Flags().GetString("job")
+// 	if err != nil {
+// 		return err
+// 	}
+//
 // 	output, err := cmd.Flags().GetString("output")
 // 	if err != nil {
 // 		return errors.Wrap(err, "unable to get output flag")
@@ -53,6 +59,6 @@ func NewPauseCommand() *cobra.Command {
 // 		return errors.Wrap(err, "unable to get printer")
 // 	}
 //
-// 	err = m.PausePipeline(org, project, env)
-// 	return printer.SmartPrint(p, nil, err, "unable to pause pipeline", printer.Options{}, cmd.OutOrStdout())
+// 	j, err := m.GetPipelineJob(org, project, env, job)
+// 	return printer.SmartPrint(p, j, err, "unable to get job", printer.Options{}, cmd.OutOrStdout())
 // }

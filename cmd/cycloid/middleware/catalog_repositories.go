@@ -9,7 +9,6 @@ import (
 )
 
 func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error) {
-
 	params := organization_service_catalog_sources.NewGetServiceCatalogSourcesParams()
 	params.SetOrganizationCanonical(org)
 
@@ -26,7 +25,6 @@ func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatal
 }
 
 func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error) {
-
 	params := organization_service_catalog_sources.NewGetServiceCatalogSourceParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogSourceCanonical(catalogRepo)

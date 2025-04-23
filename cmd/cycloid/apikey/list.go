@@ -18,10 +18,8 @@ func NewListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "list API keys",
-		Example: `
-# list API keys in the org my-org
-cy api-key list --org my-org
-`,
+		Example: `# list API keys in the org my-org
+cy api-key list --org my-org`,
 		RunE: list,
 	}
 	return cmd
@@ -48,6 +46,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	keys, err := m.ListAPIKey(org)
+	keys, err := m.ListAPIKeys(org)
 	return printer.SmartPrint(p, keys, err, "unable to list API keys", printer.Options{}, cmd.OutOrStdout())
 }
