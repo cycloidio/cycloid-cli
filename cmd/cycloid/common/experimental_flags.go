@@ -19,13 +19,25 @@ import (
 // Experimental helpers to add support for env var to manage cycloid context
 func GetCyContextFlagSet() *pflag.FlagSet {
 	flagSet := pflag.NewFlagSet("cycloid-context", pflag.ContinueOnError)
+	AddProjectFlag(flagSet)
+	AddEnvFlag(flagSet)
+	AddComponentFlag(flagSet)
+	return flagSet
+}
+
+func AddProjectFlag(flagSet *pflag.FlagSet) {
 	flagSet.StringP("project", "p", "", "the project canonical, can also be set with the CY_PROJECT env var")
 	viper.BindPFlag("project", flagSet.Lookup("project"))
-	flagSet.StringP("env", "e", "", "the environment canonical, can also be set with the CY_ENV env var")
+}
+
+func AddEnvFlag(flagSet *pflag.FlagSet) {
+	flagSet.StringP("env", "e", "", "the env canonical, can also be set with the CY_ENV env var")
 	viper.BindPFlag("env", flagSet.Lookup("env"))
+}
+
+func AddComponentFlag(flagSet *pflag.FlagSet) {
 	flagSet.StringP("component", "c", "", "the component canonical, can also be set with the CY_COMPONENT env var")
 	viper.BindPFlag("component", flagSet.Lookup("component"))
-	return flagSet
 }
 
 func GetCyContext(cmd *cobra.Command) (org, project, env, component string, err error) {
