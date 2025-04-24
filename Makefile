@@ -96,7 +96,10 @@ help: ## Show this help
 
 .PHONY: build
 build: ## Builds the binary
-	GO111MODULE=on CGO_ENABLED=0 GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY)-linux-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o $(BINARY)-windows-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o $(BINARY)-darwin-arm64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $(BINARY)-darwin-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 
 .PHONY: test
 test: ## Run end to end tests
@@ -134,8 +137,8 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 
-.PHONY: ecr-connect
-ecr-connect: ## Login to ecr, requires aws cli installed
+.PHONY: docker-login
+docker-login: ## Login to ecr, requires aws cli installed
 	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/youdeploy-http-api
 
 .PHONY: start-local-be
