@@ -11,6 +11,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
 	catalogRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog-repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
 	configRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/config-repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
@@ -105,5 +106,6 @@ func AttachCommands(cmd *cobra.Command) {
 		login.NewCommands(),
 		terracost.NewCommands(),
 		beta.NewCommands(),
+		components.NewCommands(),
 	)
 }
