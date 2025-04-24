@@ -22,7 +22,7 @@
             # You packages here
             gnumake
 
-            go_1_23
+            go_1_24
             go-swagger
             gci
             golangci-lint
