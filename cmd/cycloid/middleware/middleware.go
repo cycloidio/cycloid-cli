@@ -122,7 +122,7 @@ type Middleware interface {
 	GetComponent(org, project, env, component string) (*models.Component, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv string) (*models.Component, error)
 	CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars *models.FormVariables) (*models.Component, error)
-	UpdateComponent(org, project, env, description string, componentName, useCase *string, vars *models.FormVariables) (*models.Component, error)
+	UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars *models.FormVariables) (*models.Component, error)
 	DeleteComponent(org, project, env, component string) error
 
 	DeleteRole(org, role string) error

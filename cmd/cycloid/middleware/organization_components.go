@@ -87,11 +87,12 @@ func (m *middleware) CreateComponent(org, project, env, component, description s
 	return resp.GetPayload().Data, nil
 }
 
-func (m *middleware) UpdateComponent(org, project, env, description string, componentName, useCase *string, vars *models.FormVariables) (*models.Component, error) {
+func (m *middleware) UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars *models.FormVariables) (*models.Component, error) {
 	params := organization_components.NewUpdateComponentParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
 	params.WithEnvironmentCanonical(env)
+	params.WithComponentCanonical(component)
 	body := &models.UpdateComponent{
 		Name:        componentName,
 		Description: description,
