@@ -41,6 +41,9 @@ func NewCreateCommand() *cobra.Command {
 	cmd.Flags().String("usecase", "", "[deprecated] the usecase for the env creation")
 	cmd.Flags().MarkHidden("usecase")
 	cmd.Flags().String("owner", "", "the owner username")
+	cmd.Flags().String("team", "", "the team")
+	cmd.Flags().String("icon", "", "icon of the project")
+	cmd.Flags().String("color", "", "the name of the color")
 
 	WithFlagDescription(cmd)
 	WithFlagCanonical(cmd)
@@ -71,17 +74,27 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackRef, err := cmd.Flags().GetString("stack-ref")
-	if err != nil {
-		return err
-	}
-
 	configRepo, err := cmd.Flags().GetString("config-repo")
 	if err != nil {
 		return err
 	}
 
-	ownerCanonical, err := cmd.Flags().GetString("owner")
+	owner, err := cmd.Flags().GetString("owner")
+	if err != nil {
+		return err
+	}
+
+	team, err := cmd.Flags().GetString("team")
+	if err != nil {
+		return err
+	}
+
+	icon, err := cmd.Flags().GetString("icon")
+	if err != nil {
+		return err
+	}
+
+	color, err := cmd.Flags().GetString("color")
 	if err != nil {
 		return err
 	}
@@ -97,38 +110,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// Deprecated flags, we still collect them to give a correct error message to the user
-	_, err = cmd.Flags().GetStringToString("config")
-	if err != nil {
-		return err
-	}
-
-	env, err := cmd.Flags().GetString("env")
-	if err != nil {
-		return err
-	}
-
-	usecase, err := cmd.Flags().GetString("usecase")
-	if err != nil {
-		return err
-	}
-
-	varsPath, err := cmd.Flags().GetString("vars")
-	if err != nil {
-		return err
-	}
-
-	pipelinePath, err := cmd.Flags().GetString("pipeline")
-	if err != nil {
-		return err
-	}
-
-	// Handle deprecation
-	if env+usecase+varsPath+pipelinePath != "" {
-		// If any of the env provisioning vars is not empty, create the project with an env
-		return errors.New("Creating an environment when creating a project is not possible anymore. Please create your env separately using the 'cy project create-env' command.")
-	}
-
-	project, err := m.CreateProject(org, name, canonical, description, stackRef, configRepo, ownerCanonical)
+	project, err := m.CreateProject(org, name, canonical, description, configRepo, owner, team, color, icon)
 	return printer.SmartPrint(p, project, err, "", printer.Options{}, cmd.OutOrStdout())
 }

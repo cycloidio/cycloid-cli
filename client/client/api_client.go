@@ -10,22 +10,58 @@ import (
 	httptransport "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
 
+	"github.com/cycloidio/cycloid-cli/client/client/appearance"
+	"github.com/cycloidio/cycloid-cli/client/client/cloud_providers"
+	"github.com/cycloidio/cycloid-cli/client/client/code_generation"
+	"github.com/cycloidio/cycloid-cli/client/client/component_pipeline_resources"
+	"github.com/cycloidio/cycloid-cli/client/client/component_pipeline_resources_versions"
+	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines"
+	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines_jobs"
+	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines_jobs_builds"
 	"github.com/cycloidio/cycloid-cli/client/client/cost_estimation"
 	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
+	"github.com/cycloidio/cycloid-cli/client/client/environment_pipelines"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_api_keys"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_appearances"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_children"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management_accounts"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management_dashboard"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management_filter_vaules"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management_projects_dashboard"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management_provider_details"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management_provider_histograms"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management_tag_mappings"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_components"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_environments"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_infra_imports"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_inventory"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_inventory_plan"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_k_p_is"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_licence"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_logs"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_pipelines"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_quotas"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_resource_pools"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_roles"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_subscriptions"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_team_members"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_teams"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_workers"
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
+	"github.com/cycloidio/cycloid-cli/client/client/policies"
+	"github.com/cycloidio/cycloid-cli/client/client/project_k_p_is"
+	"github.com/cycloidio/cycloid-cli/client/client/project_pipelines"
+	"github.com/cycloidio/cycloid-cli/client/client/s_a_m_l2"
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 	"github.com/cycloidio/cycloid-cli/client/client/user"
 )
@@ -72,22 +108,58 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *API {
 
 	cli := new(API)
 	cli.Transport = transport
+	cli.Appearance = appearance.New(transport, formats)
+	cli.CloudProviders = cloud_providers.New(transport, formats)
+	cli.CodeGeneration = code_generation.New(transport, formats)
+	cli.ComponentPipelineResources = component_pipeline_resources.New(transport, formats)
+	cli.ComponentPipelineResourcesVersions = component_pipeline_resources_versions.New(transport, formats)
+	cli.ComponentPipelines = component_pipelines.New(transport, formats)
+	cli.ComponentPipelinesJobs = component_pipelines_jobs.New(transport, formats)
+	cli.ComponentPipelinesJobsBuilds = component_pipelines_jobs_builds.New(transport, formats)
 	cli.CostEstimation = cost_estimation.New(transport, formats)
 	cli.Cycloid = cycloid.New(transport, formats)
+	cli.EnvironmentPipelines = environment_pipelines.New(transport, formats)
 	cli.OrganizationAPIKeys = organization_api_keys.New(transport, formats)
+	cli.OrganizationAppearances = organization_appearances.New(transport, formats)
 	cli.OrganizationChildren = organization_children.New(transport, formats)
+	cli.OrganizationCloudCostManagement = organization_cloud_cost_management.New(transport, formats)
+	cli.OrganizationCloudCostManagementAccounts = organization_cloud_cost_management_accounts.New(transport, formats)
+	cli.OrganizationCloudCostManagementDashboard = organization_cloud_cost_management_dashboard.New(transport, formats)
+	cli.OrganizationCloudCostManagementFilterVaules = organization_cloud_cost_management_filter_vaules.New(transport, formats)
+	cli.OrganizationCloudCostManagementProjectsDashboard = organization_cloud_cost_management_projects_dashboard.New(transport, formats)
+	cli.OrganizationCloudCostManagementProviderDetails = organization_cloud_cost_management_provider_details.New(transport, formats)
+	cli.OrganizationCloudCostManagementProviderHistograms = organization_cloud_cost_management_provider_histograms.New(transport, formats)
+	cli.OrganizationCloudCostManagementTagMappings = organization_cloud_cost_management_tag_mappings.New(transport, formats)
+	cli.OrganizationComponents = organization_components.New(transport, formats)
 	cli.OrganizationConfigRepositories = organization_config_repositories.New(transport, formats)
 	cli.OrganizationCredentials = organization_credentials.New(transport, formats)
+	cli.OrganizationEnvironments = organization_environments.New(transport, formats)
 	cli.OrganizationExternalBackends = organization_external_backends.New(transport, formats)
 	cli.OrganizationForms = organization_forms.New(transport, formats)
+	cli.OrganizationInfraImports = organization_infra_imports.New(transport, formats)
+	cli.OrganizationInfrastructure = organization_infrastructure.New(transport, formats)
 	cli.OrganizationInfrastructurePolicies = organization_infrastructure_policies.New(transport, formats)
+	cli.OrganizationInventory = organization_inventory.New(transport, formats)
+	cli.OrganizationInventoryPlan = organization_inventory_plan.New(transport, formats)
+	cli.OrganizationkpIs = organization_k_p_is.New(transport, formats)
+	cli.OrganizationLicence = organization_licence.New(transport, formats)
+	cli.OrganizationLogs = organization_logs.New(transport, formats)
 	cli.OrganizationMembers = organization_members.New(transport, formats)
 	cli.OrganizationPipelines = organization_pipelines.New(transport, formats)
 	cli.OrganizationProjects = organization_projects.New(transport, formats)
+	cli.OrganizationQuotas = organization_quotas.New(transport, formats)
+	cli.OrganizationResourcePools = organization_resource_pools.New(transport, formats)
 	cli.OrganizationRoles = organization_roles.New(transport, formats)
 	cli.OrganizationServiceCatalogSources = organization_service_catalog_sources.New(transport, formats)
+	cli.OrganizationSubscriptions = organization_subscriptions.New(transport, formats)
+	cli.OrganizationTeamMembers = organization_team_members.New(transport, formats)
+	cli.OrganizationTeams = organization_teams.New(transport, formats)
 	cli.OrganizationWorkers = organization_workers.New(transport, formats)
 	cli.Organizations = organizations.New(transport, formats)
+	cli.Policies = policies.New(transport, formats)
+	cli.ProjectkpIs = project_k_p_is.New(transport, formats)
+	cli.ProjectPipelines = project_pipelines.New(transport, formats)
+	cli.SamL2 = s_a_m_l2.New(transport, formats)
 	cli.ServiceCatalogs = service_catalogs.New(transport, formats)
 	cli.User = user.New(transport, formats)
 	return cli
@@ -134,23 +206,77 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 
 // API is a client for API
 type API struct {
+	Appearance appearance.ClientService
+
+	CloudProviders cloud_providers.ClientService
+
+	CodeGeneration code_generation.ClientService
+
+	ComponentPipelineResources component_pipeline_resources.ClientService
+
+	ComponentPipelineResourcesVersions component_pipeline_resources_versions.ClientService
+
+	ComponentPipelines component_pipelines.ClientService
+
+	ComponentPipelinesJobs component_pipelines_jobs.ClientService
+
+	ComponentPipelinesJobsBuilds component_pipelines_jobs_builds.ClientService
+
 	CostEstimation cost_estimation.ClientService
 
 	Cycloid cycloid.ClientService
 
+	EnvironmentPipelines environment_pipelines.ClientService
+
 	OrganizationAPIKeys organization_api_keys.ClientService
 
+	OrganizationAppearances organization_appearances.ClientService
+
 	OrganizationChildren organization_children.ClientService
+
+	OrganizationCloudCostManagement organization_cloud_cost_management.ClientService
+
+	OrganizationCloudCostManagementAccounts organization_cloud_cost_management_accounts.ClientService
+
+	OrganizationCloudCostManagementDashboard organization_cloud_cost_management_dashboard.ClientService
+
+	OrganizationCloudCostManagementFilterVaules organization_cloud_cost_management_filter_vaules.ClientService
+
+	OrganizationCloudCostManagementProjectsDashboard organization_cloud_cost_management_projects_dashboard.ClientService
+
+	OrganizationCloudCostManagementProviderDetails organization_cloud_cost_management_provider_details.ClientService
+
+	OrganizationCloudCostManagementProviderHistograms organization_cloud_cost_management_provider_histograms.ClientService
+
+	OrganizationCloudCostManagementTagMappings organization_cloud_cost_management_tag_mappings.ClientService
+
+	OrganizationComponents organization_components.ClientService
 
 	OrganizationConfigRepositories organization_config_repositories.ClientService
 
 	OrganizationCredentials organization_credentials.ClientService
 
+	OrganizationEnvironments organization_environments.ClientService
+
 	OrganizationExternalBackends organization_external_backends.ClientService
 
 	OrganizationForms organization_forms.ClientService
 
+	OrganizationInfraImports organization_infra_imports.ClientService
+
+	OrganizationInfrastructure organization_infrastructure.ClientService
+
 	OrganizationInfrastructurePolicies organization_infrastructure_policies.ClientService
+
+	OrganizationInventory organization_inventory.ClientService
+
+	OrganizationInventoryPlan organization_inventory_plan.ClientService
+
+	OrganizationkpIs organization_k_p_is.ClientService
+
+	OrganizationLicence organization_licence.ClientService
+
+	OrganizationLogs organization_logs.ClientService
 
 	OrganizationMembers organization_members.ClientService
 
@@ -158,13 +284,31 @@ type API struct {
 
 	OrganizationProjects organization_projects.ClientService
 
+	OrganizationQuotas organization_quotas.ClientService
+
+	OrganizationResourcePools organization_resource_pools.ClientService
+
 	OrganizationRoles organization_roles.ClientService
 
 	OrganizationServiceCatalogSources organization_service_catalog_sources.ClientService
 
+	OrganizationSubscriptions organization_subscriptions.ClientService
+
+	OrganizationTeamMembers organization_team_members.ClientService
+
+	OrganizationTeams organization_teams.ClientService
+
 	OrganizationWorkers organization_workers.ClientService
 
 	Organizations organizations.ClientService
+
+	Policies policies.ClientService
+
+	ProjectkpIs project_k_p_is.ClientService
+
+	ProjectPipelines project_pipelines.ClientService
+
+	SamL2 s_a_m_l2.ClientService
 
 	ServiceCatalogs service_catalogs.ClientService
 
@@ -176,22 +320,58 @@ type API struct {
 // SetTransport changes the transport on the client and all its subresources
 func (c *API) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
+	c.Appearance.SetTransport(transport)
+	c.CloudProviders.SetTransport(transport)
+	c.CodeGeneration.SetTransport(transport)
+	c.ComponentPipelineResources.SetTransport(transport)
+	c.ComponentPipelineResourcesVersions.SetTransport(transport)
+	c.ComponentPipelines.SetTransport(transport)
+	c.ComponentPipelinesJobs.SetTransport(transport)
+	c.ComponentPipelinesJobsBuilds.SetTransport(transport)
 	c.CostEstimation.SetTransport(transport)
 	c.Cycloid.SetTransport(transport)
+	c.EnvironmentPipelines.SetTransport(transport)
 	c.OrganizationAPIKeys.SetTransport(transport)
+	c.OrganizationAppearances.SetTransport(transport)
 	c.OrganizationChildren.SetTransport(transport)
+	c.OrganizationCloudCostManagement.SetTransport(transport)
+	c.OrganizationCloudCostManagementAccounts.SetTransport(transport)
+	c.OrganizationCloudCostManagementDashboard.SetTransport(transport)
+	c.OrganizationCloudCostManagementFilterVaules.SetTransport(transport)
+	c.OrganizationCloudCostManagementProjectsDashboard.SetTransport(transport)
+	c.OrganizationCloudCostManagementProviderDetails.SetTransport(transport)
+	c.OrganizationCloudCostManagementProviderHistograms.SetTransport(transport)
+	c.OrganizationCloudCostManagementTagMappings.SetTransport(transport)
+	c.OrganizationComponents.SetTransport(transport)
 	c.OrganizationConfigRepositories.SetTransport(transport)
 	c.OrganizationCredentials.SetTransport(transport)
+	c.OrganizationEnvironments.SetTransport(transport)
 	c.OrganizationExternalBackends.SetTransport(transport)
 	c.OrganizationForms.SetTransport(transport)
+	c.OrganizationInfraImports.SetTransport(transport)
+	c.OrganizationInfrastructure.SetTransport(transport)
 	c.OrganizationInfrastructurePolicies.SetTransport(transport)
+	c.OrganizationInventory.SetTransport(transport)
+	c.OrganizationInventoryPlan.SetTransport(transport)
+	c.OrganizationkpIs.SetTransport(transport)
+	c.OrganizationLicence.SetTransport(transport)
+	c.OrganizationLogs.SetTransport(transport)
 	c.OrganizationMembers.SetTransport(transport)
 	c.OrganizationPipelines.SetTransport(transport)
 	c.OrganizationProjects.SetTransport(transport)
+	c.OrganizationQuotas.SetTransport(transport)
+	c.OrganizationResourcePools.SetTransport(transport)
 	c.OrganizationRoles.SetTransport(transport)
 	c.OrganizationServiceCatalogSources.SetTransport(transport)
+	c.OrganizationSubscriptions.SetTransport(transport)
+	c.OrganizationTeamMembers.SetTransport(transport)
+	c.OrganizationTeams.SetTransport(transport)
 	c.OrganizationWorkers.SetTransport(transport)
 	c.Organizations.SetTransport(transport)
+	c.Policies.SetTransport(transport)
+	c.ProjectkpIs.SetTransport(transport)
+	c.ProjectPipelines.SetTransport(transport)
+	c.SamL2.SetTransport(transport)
 	c.ServiceCatalogs.SetTransport(transport)
 	c.User.SetTransport(transport)
 }
