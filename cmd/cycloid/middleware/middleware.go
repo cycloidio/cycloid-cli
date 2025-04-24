@@ -116,6 +116,15 @@ type Middleware interface {
 	UpdateEnv(org, project, env, color string) (*models.Environment, error)
 	DeleteEnv(org, project, env string) error
 
+	// Component
+	GetComponents(org, project, env string) ([]*models.Component, error)
+	GetComponentConfig(org, project, env, component string) (*models.FormVariables, error)
+	GetComponent(org, project, env, component string) (*models.Component, error)
+	MigrateComponent(org, project, env, component, targetProject, targetEnv string) (*models.Component, error)
+	CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars *models.FormVariables) (*models.Component, error)
+	UpdateComponent(org, project, env, description string, componentName, useCase *string, vars *models.FormVariables) (*models.Component, error)
+	DeleteComponent(org, project, env, component string) error
+
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)
 	ListRoles(org string) ([]*models.Role, error)
