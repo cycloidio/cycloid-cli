@@ -34,11 +34,6 @@ cleanup-timeout: 1ms
 log-dev-mode: true
 log-level: "INFO"
 
-db-host: 172.42.0.2
-db-port: 3306
-db-user: root
-db-pwd: youdeploy
-db-name: youdeploy_public_test
 db-max-conns: 15
 db-max-idle-conns: 10
 db-max-lifetime-conn: 5m
@@ -49,14 +44,8 @@ concourse-username: yd-concourse
 concourse-team: main
 concourse-password: Oogiemaep6iebeibue5viucheePaeX7Y
 
-vault-role-id: custom-role-id
-vault-secret-id: custom-secret-id
-vault-url: http://172.42.0.7:8200
-
 frontend-base-url: "http://localhost:3000"
 backend-base-url: "http://localhost:3001"
-
-redis-uri: redis://172.42.0.10:6379
 
 email-smtp-svr-addr: 172.42.0.8:1025
 email-smtp-username: admin
@@ -68,25 +57,19 @@ crypto-signing-key: totally-random-secret-key
 jwt-keys:
   - 2f2122de-63f2-4eec-9c6f-c6abb3e1f007:7cdyHps2tYDp6e7VKPEstE5sDMQbK6WLyN3GmTsF7x7QpE6ZP5ra6yfVSkvXakbB
 local-auth-enabled: true
-azure-tenant-id: b677a6b8-f2e7-4551-8849-f45dc7b730de
-azure-client-id: b4471929-8cd4-4bc9-b534-b8315bc43d99
-saml-sp-certificate-path: services/authentication/saml/testdata/certificate.pem
-saml-sp-private-key-path: services/authentication/saml/testdata/private-key.pem
+# azure-tenant-id: b677a6b8-f2e7-4551-8849-f45dc7b730de
+# azure-client-id: b4471929-8cd4-4bc9-b534-b8315bc43d99
+# saml-sp-certificate-path: services/authentication/saml/testdata/certificate.pem
+# saml-sp-private-key-path: services/authentication/saml/testdata/private-key.pem
 # This file (docker/saml-idp.xml) is served from https://samltest.id/saml/idp
 # as alternative we can set the saml-idp-metadata-url parmeter to that URL,
 # but the server is down at the time or writing this comment.
-saml-idp-metadata-path: docker/saml-idp.xml
-google-client-id: 741192805913-s10ibou8065iofnb9rcir9269skiqts9.apps.googleusercontent.com
-github-client-id: 6a94210b44f4a612952e
-github-client-secret: 8dfd349e8f1260f3f1a3f6ebc7862b59fca36690
+# saml-idp-metadata-path: docker/saml-idp.xml
+# google-client-id: 741192805913-s10ibou8065iofnb9rcir9269skiqts9.apps.googleusercontent.com
+# github-client-id: 6a94210b44f4a612952e
+# github-client-secret: 8dfd349e8f1260f3f1a3f6ebc7862b59fca36690
 contact-us-form-url: https://www.cycloid.io/contact-us
 tell-us-why-licence-form-url: https://www.cycloid.io/contact-us
-
-cost-explorer-es-url: http://172.42.0.11:9200
-cost-explorer-es-max-bulk-bytes: 5000000
-cost-explorer-es-bulk-increase-factor: 1.5
-cost-explorer-es-bulk-decrease-factor: 0.7
-cost-explorer-es-retry-period-seconds: 3
 
 worker-queues: [emails, hubspot, cost_explorer, checks, terracost]
 worker-run-internal: true
@@ -112,6 +95,8 @@ jaeger-endpoint: "http://172.42.0.19:4318/v1/traces"
 
 func GetBackend(ctx context.Context, registry, version, dbHost, dbPort, dbName, dbUser, dbPassword, ccHost, ccPort, ccUser, ccPassword, ccTeam, redisUrl, vaultUrl, vaultRoleId, vaultSecretId string) (*testcontainers.Container, error) {
 	backendEnv := map[string]string{
+		"REDIS_URI":          redisUrl,
+		"DB_PORT":            "3306",
 		"DB_HOST":            dbHost,
 		"DB_NAME":            dbName,
 		"DB_USER":            dbUser,
@@ -121,13 +106,18 @@ func GetBackend(ctx context.Context, registry, version, dbHost, dbPort, dbName, 
 		"CONCOURSE_USERNAME": ccUser,
 		"CONCOURSE_PASSWORD": ccPassword,
 		"CONCOURSE_TEAM":     ccTeam,
+		"VAULT_ROLE_ID":      vaultRoleId,
+		"VAULT_SECRET_ID":    vaultSecretId,
+		"VAULT_URL":          vaultUrl, // "http://172.42.0.7:8200"
+		"VAULT_SKIP_VERIFY":  "true",
 	}
 	backendContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
-			Image:        fmt.Sprintf("%s:%s", registry, version),
+			Name:         "cli-backend",
+			Image:        registry + ":" + version,
 			ExposedPorts: []string{"3001"},
-			// Networks:     []string{"cli-tests"},
-			Env: backendEnv,
+			Networks:     []string{"cli-tests"},
+			Env:          backendEnv,
 			Files: []testcontainers.ContainerFile{
 				{
 					Reader:            strings.NewReader(backendBaseConfig),
@@ -142,7 +132,8 @@ func GetBackend(ctx context.Context, registry, version, dbHost, dbPort, dbName, 
 			WorkingDir:      "/go/src/github.com/cycloidio/youdeploy-http-api",
 			Entrypoint: []string{
 				"bash", "-ec", `
-echo -e "# \e[33mDB migrate ...\e[0m"
+env
+echo -e "# DB migrate ..."
 timeout 120 bash -c '
   until /go/youdeploy-http-api migrate up --config-file /ci/config.yml --migrations-dir /opt/migrations --db-name=cycloid && echo "ok"; do
     >&2 echo -e "Waiting for DB migrations"
@@ -156,5 +147,8 @@ exec /go/youdeploy-http-api server --config-file /ci/config.yml
 		},
 		Started: true,
 	})
-	return &backendContainer, err
+	if err != nil {
+		return nil, fmt.Errorf("failed to create backend container: %v", err)
+	}
+	return &backendContainer, nil
 }

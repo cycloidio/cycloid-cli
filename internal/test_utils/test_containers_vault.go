@@ -46,11 +46,12 @@ path "auth/token/renew-self" {
 			"write sys/mounts/cycloid type=kv",
 			"write sys/policy/cycloid policy=@policy.hcl",
 			"write auth/approle/role/cycloid token_ttl=20m token_max_ttl=1h policies=cycloid",
-			"write auth/approle/role/cycloid/role-id role_id=custom-role-id",
-			"write auth/approle/role/cycloid/custom-secret-id secret_id=custom-secret-id",
+			"write auth/approle/role/cycloid/role-id role_id=cycloid",
+			"write auth/approle/role/cycloid/custom-secret-id secret_id=cycloid",
 		),
 		testcontainers.CustomizeRequest(testcontainers.GenericContainerRequest{
 			ContainerRequest: testcontainers.ContainerRequest{
+				Networks: []string{"cli-tests"},
 				Files: []testcontainers.ContainerFile{
 					{
 						Reader:            strings.NewReader(vaultConfig),

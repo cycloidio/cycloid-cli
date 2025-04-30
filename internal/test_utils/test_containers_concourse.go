@@ -76,15 +76,16 @@ registry-image:
 docker-image:
   registry_mirror: 'https://registry-mirror.owl.cycloid.io'
 `
-	concoursePort = 8000
+	concoursePort = "8000"
 )
 
-func GetConcourse(ctx context.Context, version, concourseUser, concoursePassword, postgresDatabase, postgresUser, postgresPassword, postgresHost, vaultHost, vaultRootToken, vaultPathPrefix string) (*testcontainers.Container, error) {
+func GetConcourse(ctx context.Context, version,
+	concourseUser, concoursePassword, postgresDatabase, postgresUser, postgresPassword, postgresHost, vaultHost, vaultRootToken, vaultPathPrefix string) (testcontainers.Container, error) {
 	concourseEnv := map[string]string{
 		"CONCOURSE_ADD_LOCAL_USER":              concourseUser + ":" + concoursePassword,
 		"CONCOURSE_MAIN_TEAM_LOCAL_USER":        concourseUser,
-		"CONCOURSE_BIND_PORT":                   fmt.Sprintf("%v", concoursePort),
-		"CONCOURSE_EXTERNAL_URL":                "http://0.0.0.0:${TEST_CC_PORT}",
+		"CONCOURSE_BIND_PORT":                   concoursePort,
+		"CONCOURSE_EXTERNAL_URL":                "http://0.0.0.0:" + concoursePort,
 		"CONCOURSE_POSTGRES_HOST":               postgresHost,
 		"CONCOURSE_POSTGRES_USER":               postgresUser,
 		"CONCOURSE_POSTGRES_PASSWORD":           postgresPassword,
@@ -99,8 +100,13 @@ func GetConcourse(ctx context.Context, version, concourseUser, concoursePassword
 	}
 	concourseContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: testcontainers.ContainerRequest{
-			Image: "concourse/concourse:" + version,
-			Env:   concourseEnv,
+			Image:        "concourse/concourse:" + version,
+			Env:          concourseEnv,
+			ExposedPorts: []string{concoursePort},
+			Networks:     []string{"cli-tests"},
+			Tmpfs: map[string]string{
+				"/database": "rw",
+			},
 			Files: []testcontainers.ContainerFile{
 				{
 					Reader:            strings.NewReader(concourseConfig),
@@ -137,5 +143,9 @@ func GetConcourse(ctx context.Context, version, concourseUser, concoursePassword
 		Started: true,
 	})
 
-	return &concourseContainer, err
+	if err != nil {
+		return nil, fmt.Errorf("fauled to create concourse container: %v", err)
+	}
+
+	return concourseContainer, nil
 }
