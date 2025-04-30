@@ -8,6 +8,12 @@ import (
 )
 
 type Middleware interface {
+	UserLogin(email, username, org *string, password string) (*models.UserSession, error)
+	UserSignup(username, email, password, givenName, familyName string) error
+	RefreshToken(org, childOrg *string, token string) (*models.UserSession, error)
+
+	ActivateLicence(org, licence string) error
+
 	// cycloid
 	GetAppVersion() (*models.AppVersion, error)
 	GetStatus() (*models.GeneralStatus, error)
