@@ -495,6 +495,9 @@ swagger:model InterpolateFormsConfigBody
 */
 type InterpolateFormsConfigBody struct {
 
+	// component name
+	ComponentName string `json:"component-name,omitempty"`
+
 	// component canonical
 	// Required: true
 	// Max Length: 100

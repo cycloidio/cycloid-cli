@@ -66,7 +66,7 @@ type UpdateKpiParams struct {
 
 	/* Begin.
 
-	   The unix timestamp in seconds, which indicate the start of the time range.
+	   The unix timestamp in milliseconds, which indicate the start of the time range.
 
 	   Format: uint64
 	*/
@@ -80,7 +80,7 @@ type UpdateKpiParams struct {
 
 	/* End.
 
-	   The unix timestamp in seconds, which indicate the end of the time range.
+	   The unix timestamp in milliseconds, which indicate the end of the time range.
 
 	   Format: uint64
 	*/

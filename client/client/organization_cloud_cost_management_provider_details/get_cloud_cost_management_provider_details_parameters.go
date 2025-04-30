@@ -64,11 +64,11 @@ type GetCloudCostManagementProviderDetailsParams struct {
 
 	/* Begin.
 
-	   Sets the start date for retrieving AWS costs. The start date is inclusive.
+	   The unix timestamp in milliseconds, which indicate the start of the time range.
 
-	   Format: date
+	   Format: uint64
 	*/
-	Begin strfmt.Date
+	Begin *uint64
 
 	/* Categories.
 
@@ -84,11 +84,11 @@ type GetCloudCostManagementProviderDetailsParams struct {
 
 	/* End.
 
-	   Sets the end dates for retrieving AWS costs. The end date is exclusive.
+	   The unix timestamp in milliseconds, which indicate the end of the time range.
 
-	   Format: date
+	   Format: uint64
 	*/
-	End strfmt.Date
+	End *uint64
 
 	/* Environments.
 
@@ -222,13 +222,13 @@ func (o *GetCloudCostManagementProviderDetailsParams) SetHTTPClient(client *http
 }
 
 // WithBegin adds the begin to the get cloud cost management provider details params
-func (o *GetCloudCostManagementProviderDetailsParams) WithBegin(begin strfmt.Date) *GetCloudCostManagementProviderDetailsParams {
+func (o *GetCloudCostManagementProviderDetailsParams) WithBegin(begin *uint64) *GetCloudCostManagementProviderDetailsParams {
 	o.SetBegin(begin)
 	return o
 }
 
 // SetBegin adds the begin to the get cloud cost management provider details params
-func (o *GetCloudCostManagementProviderDetailsParams) SetBegin(begin strfmt.Date) {
+func (o *GetCloudCostManagementProviderDetailsParams) SetBegin(begin *uint64) {
 	o.Begin = begin
 }
 
@@ -255,13 +255,13 @@ func (o *GetCloudCostManagementProviderDetailsParams) SetCurrency(currency strin
 }
 
 // WithEnd adds the end to the get cloud cost management provider details params
-func (o *GetCloudCostManagementProviderDetailsParams) WithEnd(end strfmt.Date) *GetCloudCostManagementProviderDetailsParams {
+func (o *GetCloudCostManagementProviderDetailsParams) WithEnd(end *uint64) *GetCloudCostManagementProviderDetailsParams {
 	o.SetEnd(end)
 	return o
 }
 
 // SetEnd adds the end to the get cloud cost management provider details params
-func (o *GetCloudCostManagementProviderDetailsParams) SetEnd(end strfmt.Date) {
+func (o *GetCloudCostManagementProviderDetailsParams) SetEnd(end *uint64) {
 	o.End = end
 }
 
@@ -416,13 +416,20 @@ func (o *GetCloudCostManagementProviderDetailsParams) WriteToRequest(r runtime.C
 	}
 	var res []error
 
-	// query param begin
-	qrBegin := o.Begin
-	qBegin := qrBegin.String()
-	if qBegin != "" {
+	if o.Begin != nil {
 
-		if err := r.SetQueryParam("begin", qBegin); err != nil {
-			return err
+		// query param begin
+		var qrBegin uint64
+
+		if o.Begin != nil {
+			qrBegin = *o.Begin
+		}
+		qBegin := swag.FormatUint64(qrBegin)
+		if qBegin != "" {
+
+			if err := r.SetQueryParam("begin", qBegin); err != nil {
+				return err
+			}
 		}
 	}
 
@@ -447,13 +454,20 @@ func (o *GetCloudCostManagementProviderDetailsParams) WriteToRequest(r runtime.C
 		}
 	}
 
-	// query param end
-	qrEnd := o.End
-	qEnd := qrEnd.String()
-	if qEnd != "" {
+	if o.End != nil {
 
-		if err := r.SetQueryParam("end", qEnd); err != nil {
-			return err
+		// query param end
+		var qrEnd uint64
+
+		if o.End != nil {
+			qrEnd = *o.End
+		}
+		qEnd := swag.FormatUint64(qrEnd)
+		if qEnd != "" {
+
+			if err := r.SetQueryParam("end", qEnd); err != nil {
+				return err
+			}
 		}
 	}
 
