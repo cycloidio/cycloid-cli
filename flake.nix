@@ -27,6 +27,8 @@
             gci
             golangci-lint
             golangci-lint-langserver
+            awscli
+            docker
           ]);
         };
       });
