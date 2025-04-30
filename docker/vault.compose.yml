@@ -1,0 +1,77 @@
+services:
+  vault:
+    image: hashicorp/vault:1.18.1
+    restart: always
+    configs: [policy.hcl]
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root_token
+      VAULT_ADDR: http://0.0.0.0:8200
+      VAULT_TOKEN: root_token
+    cap_add: [IPC_LOCK]
+    tmpfs: [/vault/file]
+    networks: [tf-tests]
+
+  # Override vault entrypoint adding a post script to init our approles
+  vault-init:
+    image: hashicorp/vault:1.18.1
+    configs: [policy.hcl]
+    environment:
+      VAULT_ADDR: "http://vault:8200"
+      VAULT_TOKEN: root_token
+      VAULT_SKIP_VERIFY: true
+    entrypoint:
+    - sh
+    - -ec
+    - |
+      # This script must be idempotent
+      until vault login "$${VAULT_TOKEN}"; do
+        >&2 echo -e "# \e[36mWaiting for Vault\e[0m"
+        sleep 1
+      done
+
+      vault auth enable approle || true
+      vault write sys/mounts/cycloid type=kv >/dev/null 2>&1 || true
+      vault write sys/policy/cycloid policy=@policy.hcl >/dev/null 2>&1
+      vault write auth/approle/role/cycloid token_ttl=20m token_max_ttl=1h policies=cycloid >/dev/null 2>&1
+      vault write auth/approle/role/cycloid/role-id role_id=custom-role-id >/dev/null 2>&1
+      vault write auth/approle/role/cycloid/custom-secret-id secret_id=custom-secret-id >/dev/null 2>&1 || true
+
+    networks: [tf-tests]
+    tmpfs: [/vault/file]
+    depends_on: [vault]
+
+networks:
+  tf-tests:
+
+configs:
+  policy.hcl:
+    content: |
+      path "cycloid/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+
+      path "sys/policy/cycloid/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+
+      path "auth/approle/role/cycloid-*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+
+      path "auth/approle/role/" {
+        capabilities = ["read", "list"]
+      }
+
+      path "policies" {
+        capabilities = ["read", "list"]
+      }
+
+      path "auth/token/create" {
+        capabilities = ["create"]
+      }
+
+      path "auth/token/renew-self" {
+        capabilities = ["create"]
+      }
+
+

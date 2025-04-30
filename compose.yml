@@ -1,0 +1,181 @@
+# This is just to ensure docker compose will error if secrets are not provider.
+# Docker compose won't check it otherwise
+# x-required-env-var:
+# - ${API_LICENCE_KEY:?}
+
+include:
+- ./docker/database.compose.yml
+- ./docker/concourse.compose.yml
+- ./docker/vault.compose.yml
+- ./docker/email.compose.yml
+
+services:
+  # Override API service to create an API from a builded docker image.
+  youdeploy-api:
+    image: 661913936052.dkr.ecr.eu-west-1.amazonaws.com/youdeploy-http-api:${TEST_BACKEND_API_TAG:-staging}
+    env_file: ".ci/secrets.env"
+    healthcheck:
+      test:
+      - "CMD-SHELL"
+      - |
+        test \
+          "$(curl -s http://localhost:3001/status \
+             | jq -r '.data.checks | map(select((.canonical | contains("database", "pipeline", "secret")) and .status == "Success")) | length' \
+           )" = "3"
+      start_period: 5s
+      interval: 3s
+      timeout: 45s
+      retries: 30
+
+    ports:
+    - 3001:3001
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+
+    working_dir: /go/src/github.com/cycloidio/youdeploy-http-api
+    configs:
+    - source: "youdeploy-config"
+      target: "/ci/config.yml"
+    entrypoint:
+    - bash
+    - -ec
+    - |
+      echo -e "# \e[33mDB migrate ...\e[0m"
+      timeout 120 bash -c '
+        until /go/youdeploy-http-api migrate up --config-file /ci/config.yml --migrations-dir /opt/migrations --db-name=youdeploy_fake && echo "ok"; do
+          >&2 echo -e "\e[36mWaiting for DB migrations\e[0m"
+          sleep 1
+        done
+      '
+
+      echo -e "# \e[33mRunning Cycloid API ...\e[0m"
+      exec /go/youdeploy-http-api server \
+        --config-file /ci/config.yml
+    networks: [tf-tests]
+    depends_on:
+      database:
+        condition: service_healthy
+      redis: &service_started
+        condition: service_started
+      concourse-web: *service_started
+      concourse-db: *service_started
+
+  redis:
+    image: redis:7.4.1-alpine
+    networks: [tf-tests]
+
+  git-server:
+    image: cycloid/backend-tests-git-server:v1.0.23
+    attach: false
+    restart: always
+    networks: [tf-tests]
+    tmpfs:
+    - /git-server/repos:exec
+    - /git-server/keys
+
+networks:
+  tf-tests:
+
+# Config files sourced from backend repo
+configs:
+  youdeploy-config:
+    content: |
+      start-timeout: 10s
+      max-header-size: "1MB"
+      port: 3001
+      host: 0.0.0.0
+      schema:
+      - http
+      cleanup-timeout: 1ms
+
+      # This defines if the logger have to be run in dev-mode or not.
+      # The log-level will define the overall log being displayed.
+      # While the log-app-level, can be enabled to help debugging calls
+      # done via the various services.
+      #
+      # Possible levels are the custom "NONE" to disable logging, and:
+      # https://godoc.org/go.uber.org/zap/zapcore#Level
+      #
+      # If a wrong loglevel is given, "INFO" will be taken.
+      #
+      # For more information about the different mode, please visit:
+      # https://godoc.org/go.uber.org/zap#NewDevelopmentConfig
+      # https://godoc.org/go.uber.org/zap#NewProductionConfig
+      log-dev-mode: true
+      log-level: "DEBUG"
+      log-svc-level: "DEBUG"
+
+      db-host: database
+      db-port: 3306
+      db-user: root
+      db-pwd: ${TEST_DB_PASSWORD:-youdeploy}
+      db-name: ${TEST_DB_NAME:-youdeploy}
+      db-max-conns: 15
+      db-max-idle-conns: 10
+      db-max-lifetime-conn: 5m
+
+      concourse-url: http://concourse-web
+      concourse-port: ${TEST_CC_PORT:-8080}
+      concourse-username: ${TEST_CC_USER:-concourse}
+      concourse-team: concourse
+      concourse-password: ${TEST_CC_PASSWORD:-concourse}
+
+      vault-role-id: custom-role-id
+      vault-secret-id: custom-secret-id
+      vault-url: http://vault:8200
+
+      frontend-base-url: "http://localhost:3000"
+      backend-base-url: "http://localhost:3001"
+
+      redis-uri: redis://redis:6379
+
+      email-smtp-svr-addr: "email-smtp-no-tls-auth:1025"
+      email-smtp-username: admin
+      email-smtp-password: admin
+      email-addr-from: "Cycloid Platform <noreply@cycloid.io>"
+      email-addr-return-path: "admin+ydbounce@cycloid.io"
+      email-dev-mode: true
+      crypto-signing-key: totally-random-secret-key
+      jwt-keys: ["2f2122de-63f2-4eec-9c6f-c6abb3e1f007:7cdyHps2tYDp6e7VKPEstE5sDMQbK6WLyN3GmTsF7x7QpE6ZP5ra6yfVSkvXakbB"]
+      local-auth-enabled: true
+
+      contact-us-form-url: https://www.cycloid.io/contact-us
+      tell-us-why-licence-form-url: https://www.cycloid.io/contact-us
+
+      # cost-explorer-es-url: http://elasticsearch:9200
+      # cost-explorer-es-max-bulk-bytes: 5000000
+      # cost-explorer-es-bulk-increase-factor: 1.5
+      # cost-explorer-es-bulk-decrease-factor: 0.7
+      # cost-explorer-es-retry-period-seconds: 3
+
+      worker-queues: [emails,hubspot,cost_explorer,checks,terracost]
+      worker-run-internal: true
+      worker-run-scheduler: true
+
+  mailhog.auth:
+    content: "admin:$2y$12$9cbAZjq/uv6WzyA5sx/UpugL9qa54oUFJapYIDEPny.9h8b4Bzndy"
+
+
+# For CLI
+#
+  # yd-go:
+  #   container_name: yd-go
+  #   image: cycloid/golang:1.22.4
+  #   volumes:
+  #   - .:/go/src/github.com/cycloidio/cycloid-cli
+  #   - $GOPATH/pkg/mod:/go/pkg/mod
+  #   working_dir: /go/src/github.com/cycloidio/cycloid-cli
+
+  #swagger:
+  #  container_name: yd-swagger
+  #  image: quay.io/goswagger/swagger:v0.31.0
+  #  environment:
+  #   GOPATH: "/go"
+  #  volumes:
+  #  - .:/go/src/github.com/cycloidio/cycloid-cli
+  #  working_dir: /go/src/github.com/cycloidio/cycloid-cli
+
+

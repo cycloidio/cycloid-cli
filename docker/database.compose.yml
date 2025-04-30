@@ -1,0 +1,38 @@
+configs:
+  my.cnf:
+    content: |
+      [client]
+      default-character-set = utf8mb4
+
+      [mysql]
+      default-character-set = utf8mb4
+
+      [mysqld]
+      collation_server = utf8mb4_unicode_ci
+      character_set_server = utf8mb4
+
+x-common-options: &db_options
+  image: mysql:8.4.3
+  platform: linux/x86_64
+  configs:
+  - source: my.cnf
+    target: /etc/my.cnf
+  environment:
+    MYSQL_ROOT_PASSWORD: ${TEST_DB_PASSWORD:-youdeploy}
+    MYSQL_DATABASE: ${TEST_DB_NAME:-youdeploy}
+
+services:
+  database:
+    restart: always
+    tmpfs: [/var/lib/mysql]
+    <<: [*db_options]
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "database", "-P3306", "-p=${MYSQL_ROOT_PASSWORD:-youdeploy}"]
+      start_period: 5s
+      interval: 1s
+      timeout: 30s
+      retries: 30
+    networks: [tf-tests]
+
+volumes:
+  db:
