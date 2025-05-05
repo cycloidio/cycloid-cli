@@ -2,7 +2,6 @@ package middleware_test
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"log"
 	"os"
@@ -13,96 +12,119 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
 
-/*
-1. Start the backend / mysql / vault
-2. Init the backend
-3. Create first org / admin / apiKey
-4. Do the testing
-5. Drop the tables
-6. Repeat from 3
-*/
-
 var (
-	backendUrl = "http://127.0.0.1:3001"
-	username   = "cycloid"
-	password   = "cycloidio"
-	email      = "cycloid@example.com"
-	defaultOrg = "cycloid"
+	m                 middleware.Middleware
+	api               *common.APIClient
+	config            *TestConfig
+	configRepoName    = "CLI test config repo"
+	configRepo        = "config"
+	configRepoUrl     = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
+	configRepoBranch  = "config"
+	isDefault         = false
+	gitCred           = "github"
+	catalogRepo       = "cli-test-catalog"
+	catalogRepoName   = "CLI test catalog"
+	catalogRepoUrl    = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
+	catalogRepoBranch = "stacks"
+	// gitCredName = "CLI Git Cred"
+	// gitCredKey  = ""
 )
 
+type TestConfig struct {
+	APIKey string
+	APIUrl string
+	Org    string
+	// GitCredential models.Credential
+	ConfigRepo  models.ConfigRepository
+	CatalogRepo models.ServiceCatalogSource
+	Middleware  middleware.Middleware
+}
+
+func getTestConfig() (*TestConfig, error) {
+	var apiUrl, apiKey, org string
+	apiUrl, ok := os.LookupEnv("CY_API_URL")
+	if !ok {
+		apiUrl = "https://api-cli-test.staging.cycloid.io/"
+	}
+
+	org, ok = os.LookupEnv("CY_ORG")
+	if !ok {
+		org = "cycloid"
+	}
+
+	apiKey, ok = os.LookupEnv("CY_API_KEY")
+	if !ok {
+		return nil, fmt.Errorf("api key not set in CY_API_KEY env var.")
+	}
+
+	api = common.NewAPI(
+		common.WithURL(apiUrl),
+		common.WithInsecure(true),
+		common.WithToken(apiKey),
+	)
+
+	m = middleware.NewMiddleware(api)
+	return &TestConfig{
+		APIUrl: apiUrl,
+		APIKey: apiKey,
+		Org:    org,
+		ConfigRepo: models.ConfigRepository{
+			Name:                &configRepoName,
+			Canonical:           &configRepo,
+			Default:             &isDefault,
+			URL:                 &configRepoUrl,
+			Branch:              configRepoBranch,
+			CredentialCanonical: gitCred,
+		},
+		CatalogRepo: models.ServiceCatalogSource{
+			Name:                &catalogRepoName,
+			Canonical:           &catalogRepo,
+			URL:                 &catalogRepoUrl,
+			Branch:              catalogRepoBranch,
+			CredentialCanonical: gitCred,
+		},
+		Middleware: m,
+	}, nil
+}
+
+// Put any preparation code here so that defer() can work
 func runMain(ctx context.Context, main *testing.M) (int, error) {
 	_ = ctx
+	// Initialize global vars
+	config, err := getTestConfig()
+	if err != nil {
+		return 1, fmt.Errorf("Config setup failed: %v", err)
+	}
+
+	log.Printf("Starting tests with config:\nurl: %s\norg: %s", config.APIUrl, config.Org)
 	return main.Run(), nil
 }
 
 func TestMain(main *testing.M) {
-	// init first user/org
-	api := common.NewAPI(common.WithURL(backendUrl))
-	m := middleware.NewMiddleware(api)
-	err := m.UserSignup(username, email, password, "cycloid", "cycloid")
-	if err != nil {
-		fmt.Println(err)
-	}
-
-	session, err := m.UserLogin(&email, &username, nil, password)
-	if err != nil {
-		log.Fatal(err)
-	}
-	api.Config.Token = *session.Token
-
-	_, err = m.CreateOrganization(defaultOrg)
-	var apiErr *middleware.ApiError
-	if errors.As(err, &apiErr) && apiErr.HttpCode != "409" {
-		log.Fatal(err)
-	}
-
-	refreshedToken, err := m.RefreshToken(&defaultOrg, &defaultOrg, *session.Token)
-	if err != nil {
-		log.Fatal(err)
-	}
-	api.Config.Token = *refreshedToken.Token
-
-	licence, ok := os.LookupEnv("API_LICENCE_KEY")
-	if !ok {
-		log.Fatalf("Licence not set in API_LICENCE_KEY")
-	}
-
-	err = m.ActivateLicence(defaultOrg, licence)
+	ctx := context.Background()
+	code, err := runMain(ctx, main)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	refreshedToken, err = m.RefreshToken(&defaultOrg, &defaultOrg, *session.Token)
-	if err != nil {
-		log.Fatal(err)
-	}
-	api.Config.Token = *refreshedToken.Token
-
-	apiKey, err := m.CreateAPIKey(defaultOrg, "admin", "", username, &[]string{"hello"}[0],
-		[]*models.NewRule{{
-			Action:    &[]string{"organization:**"}[0],
-			Effect:    &[]string{"allow"}[0],
-			Resources: []string{},
-		}})
-	if err != nil {
-		log.Fatal(err)
-	}
-	api.Config.Token = apiKey.Token
-
-	file, err := os.Create("api_key")
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(apiKey.Token)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	os.Exit(main.Run())
+	os.Exit(code)
 }
 
-func TestBackend(t *testing.T) {
-	fmt.Println("cool")
+// CreateTestChildOrg is a helper function that create a suborg for a
+// specific test and return a function to defer() for its deletion.
+func CreateTestChildOrg(m middleware.Middleware, parent, child string) (func(), error) {
+	deferFunc := func() {
+		err := m.DeleteOrganization(child)
+		if err != nil {
+			log.Fatalf("Failed to delete org '%s': %v", child, err)
+			return
+		}
+	}
+
+	_, err := m.CreateOrganizationChild(parent, child, nil)
+	if err != nil {
+		return deferFunc, fmt.Errorf("Failed to create child org '%s': %v", child, err)
+	}
+
+	return deferFunc, nil
 }

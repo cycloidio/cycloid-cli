@@ -74,7 +74,7 @@ type Middleware interface {
 	ListOrganizations() ([]*models.Organization, error)
 	ListOrganizationWorkers(org string) ([]*models.Worker, error)
 	ListOrganizationChildrens(org string) ([]*models.Organization, error)
-	CreateOrganizationChild(org, childOrg string) (*models.Organization, error)
+	CreateOrganizationChild(org, childOrg string, childOrgName *string) (*models.Organization, error)
 
 	// Organization Forms
 	InterpolateFormsConfig(org, env, project, component, serviceCatalogRef, useCase string, inputs *models.FormVariables) (*models.ServiceCatalogConfig, error)
@@ -112,7 +112,7 @@ type Middleware interface {
 
 	// Project
 	CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error)
-	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt uint64) (*models.Project, error)
+	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, error)
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	ListProjects(org string) ([]*models.Project, error)
