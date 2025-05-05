@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"fmt"
-	"time"
 
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/sanity-io/litter"
@@ -99,19 +98,17 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 	return payload.Data, nil
 }
 
-func (m *middleware) UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, error) {
+func (m *middleware) UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt *uint64) (*models.Project, error) {
 	params := organization_projects.NewUpdateProjectParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
-
-	timestamp := uint64(time.Now().Unix())
 
 	body := &models.UpdateProject{
 		Name:                      &projectName,
 		Description:               description,
 		ConfigRepositoryCanonical: configRepository,
 		Owner:                     owner,
-		UpdatedAt:                 &timestamp,
+		UpdatedAt:                 updatedAt,
 		Icon:                      icon,
 		Color:                     color,
 		CloudProvider:             cloudProvider,
@@ -128,7 +125,7 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 		m.api.Credentials(&org),
 	)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewApiError(fmt.Errorf("params:\n%s\nresp:\n%s\nerr:\n%s", litter.Sdump(params), litter.Sdump(resp), err))
 	}
 
 	p := resp.GetPayload()

@@ -112,14 +112,14 @@ type Middleware interface {
 
 	// Project
 	CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error)
-	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, error)
+	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt *uint64) (*models.Project, error)
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	ListProjects(org string) ([]*models.Project, error)
 
 	// Env
-	CreateEnv(org, project, env, color string) error
-	UpdateEnv(org, project, env, color string) (*models.Environment, error)
+	CreateEnv(org, project, env, envName, color string) (*models.Environment, error)
+	UpdateEnv(org, project, env, envName, color string) (*models.Environment, error)
 	DeleteEnv(org, project, env string) error
 
 	// Component

@@ -114,7 +114,13 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 		return nil, NewApiError(err)
 	}
 
-	return resp.GetPayload(), nil
+	payload := resp.GetPayload()
+	// TODO: https://linear.app/cycloid/issue/BE-801/invalid-response-for-updatecomponent
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return resp.Payload, fmt.Errorf("API sent back an invalid payload:\nerr: %v\n%v", err, payload)
+	// }
+	return payload, nil
 }
 
 func (m *middleware) MigrateComponent(org, project, env, component, targetProject, targetEnv string) (*models.Component, error) {
