@@ -11,7 +11,8 @@ include:
 
 services:
   # Override API service to create an API from a builded docker image.
-  youdeploy-api:
+  backend:
+    container_name: backend
     image: 661913936052.dkr.ecr.eu-west-1.amazonaws.com/youdeploy-http-api:${TEST_BACKEND_API_TAG:-staging}
     env_file: ".ci/secrets.env"
     healthcheck:
@@ -54,7 +55,9 @@ services:
       echo -e "# \e[33mRunning Cycloid API ...\e[0m"
       exec /go/youdeploy-http-api server \
         --config-file /ci/config.yml
-    networks: [tf-tests]
+    networks:
+      tf-tests:
+        ipv4_address: "${SUBNET_CIDR:-192.100.100}.10"
     depends_on:
       database:
         condition: service_healthy
@@ -64,20 +67,18 @@ services:
       concourse-db: *service_started
 
   redis:
+    container_name: redis
     image: redis:7.4.1-alpine
-    networks: [tf-tests]
-
-  git-server:
-    image: cycloid/backend-tests-git-server:v1.0.23
-    attach: false
-    restart: always
-    networks: [tf-tests]
-    tmpfs:
-    - /git-server/repos:exec
-    - /git-server/keys
+    networks:
+      tf-tests:
+        ipv4_address: "${SUBNET_CIDR:-192.100.100}.2"
 
 networks:
   tf-tests:
+    driver: bridge
+    ipam:
+      config:
+      - subnet: "${SUBNET_CIDR:-192.100.100}.0/24"
 
 # Config files sourced from backend repo
 configs:
@@ -105,10 +106,10 @@ configs:
       # https://godoc.org/go.uber.org/zap#NewDevelopmentConfig
       # https://godoc.org/go.uber.org/zap#NewProductionConfig
       log-dev-mode: true
-      log-level: "DEBUG"
+      log-level: "INFO"
       log-svc-level: "DEBUG"
 
-      db-host: database
+      db-host: "${SUBNET_CIDR:-192.100.100}.5"
       db-port: 3306
       db-user: root
       db-pwd: ${TEST_DB_PASSWORD:-youdeploy}
@@ -117,22 +118,22 @@ configs:
       db-max-idle-conns: 10
       db-max-lifetime-conn: 5m
 
-      concourse-url: http://concourse-web
-      concourse-port: ${TEST_CC_PORT:-8080}
-      concourse-username: ${TEST_CC_USER:-concourse}
-      concourse-team: concourse
-      concourse-password: ${TEST_CC_PASSWORD:-concourse}
+      concourse-url: "http://${SUBNET_CIDR:-192.100.100}.4"
+      concourse-port: 8080
+      concourse-username: concourse
+      concourse-password: concourse
+      concourse-team: main
 
       vault-role-id: custom-role-id
       vault-secret-id: custom-secret-id
-      vault-url: http://vault:8200
+      vault-url: http://${SUBNET_CIDR:-192.100.100}.7:8200
 
-      frontend-base-url: "http://localhost:3000"
-      backend-base-url: "http://localhost:3001"
+      frontend-base-url: "http://${SUBNET_CIDR:-192.100.100}.10:3000"
+      backend-base-url: "http://${SUBNET_CIDR:-192.100.100}.10:3001"
 
-      redis-uri: redis://redis:6379
+      redis-uri: redis://${SUBNET_CIDR:-192.100.100}.2:6379
 
-      email-smtp-svr-addr: "email-smtp-no-tls-auth:1025"
+      email-smtp-svr-addr: "${SUBNET_CIDR:-192.100.100}.6:1025"
       email-smtp-username: admin
       email-smtp-password: admin
       email-addr-from: "Cycloid Platform <noreply@cycloid.io>"
@@ -144,12 +145,6 @@ configs:
 
       contact-us-form-url: https://www.cycloid.io/contact-us
       tell-us-why-licence-form-url: https://www.cycloid.io/contact-us
-
-      # cost-explorer-es-url: http://elasticsearch:9200
-      # cost-explorer-es-max-bulk-bytes: 5000000
-      # cost-explorer-es-bulk-increase-factor: 1.5
-      # cost-explorer-es-bulk-decrease-factor: 0.7
-      # cost-explorer-es-retry-period-seconds: 3
 
       worker-queues: [emails,hubspot,cost_explorer,checks,terracost]
       worker-run-internal: true

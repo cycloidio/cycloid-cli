@@ -23,16 +23,19 @@ x-common-options: &db_options
 
 services:
   database:
+    container_name: mysql
     restart: always
     tmpfs: [/var/lib/mysql]
     <<: [*db_options]
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "database", "-P3306", "-p=${MYSQL_ROOT_PASSWORD:-youdeploy}"]
-      start_period: 5s
+      start_period: 12s
       interval: 1s
       timeout: 30s
       retries: 30
-    networks: [tf-tests]
+    networks:
+      tf-tests:
+        ipv4_address: "${SUBNET_CIDR:-192.100.100}.5"
 
 volumes:
   db:

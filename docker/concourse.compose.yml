@@ -1,5 +1,6 @@
 services:
   concourse-db:
+    container_name: postgres
     image: postgres:15.4-alpine3.18
     attach: false
     environment:
@@ -8,15 +9,21 @@ services:
       POSTGRES_PASSWORD: concourse
       PGDATA: /database
     tmpfs: [/database]
-    networks: [tf-tests]
+    networks:
+      tf-tests:
+        ipv4_address: "${SUBNET_CIDR:-192.100.100}.3"
 
   concourse-web:
+    container_name: concourse
     image: concourse/concourse:7.9.1
-    links: [concourse-db]
     command: web
     depends_on: [concourse-db, vault, vault-init]
     attach: false
-    networks: [tf-tests]
+    networks:
+      tf-tests:
+        ipv4_address: "${SUBNET_CIDR:-192.100.100}.4"
+    ports:
+    - 8080:8080
     configs:
     - source: base_resource_types_defaults.yml
       target: /brt/base_resource_types_defaults.yml
@@ -32,11 +39,11 @@ services:
       target: /concourse-keys/tsa_host_key.pub
     restart: unless-stopped # required so that it retries until concourse-db comes up
     environment:
-      CONCOURSE_ADD_LOCAL_USER: ${TEST_CC_USER:-concourse}:${TEST_CC_PASSWORD:-concourse}
-      CONCOURSE_MAIN_TEAM_LOCAL_USER: ${TEST_CC_USER:-concourse}
-      CONCOURSE_BIND_PORT: ${TEST_CC_PORT:-8080}
+      CONCOURSE_ADD_LOCAL_USER: concourse:concourse
+      CONCOURSE_MAIN_TEAM_LOCAL_USER: concourse
+      CONCOURSE_BIND_PORT: "8080"
       # Important CF https://github.com/concourse/concourse/issues/2463 "error : named cookie not present"
-      CONCOURSE_EXTERNAL_URL: "http://localhost:${TEST_CC_PORT:-8080}"
+      CONCOURSE_EXTERNAL_URL: "http://${SUBNET_CIDR:-192.100.100}.4:8080"
       CONCOURSE_POSTGRES_HOST: concourse-db
       CONCOURSE_POSTGRES_USER: concourse
       CONCOURSE_POSTGRES_PASSWORD: concourse

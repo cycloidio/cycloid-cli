@@ -1,22 +1,26 @@
 services:
   vault:
+    container_name: vault
     image: hashicorp/vault:1.18.1
     restart: always
     configs: [policy.hcl]
     environment:
       VAULT_DEV_ROOT_TOKEN_ID: root_token
-      VAULT_ADDR: http://0.0.0.0:8200
+      VAULT_ADDR: "http://${SUBNET_CIDR:-192.100.100}.7:8200"
       VAULT_TOKEN: root_token
     cap_add: [IPC_LOCK]
     tmpfs: [/vault/file]
-    networks: [tf-tests]
+    networks:
+      tf-tests:
+        ipv4_address: "${SUBNET_CIDR:-192.100.100}.7"
 
   # Override vault entrypoint adding a post script to init our approles
   vault-init:
+    container_name: vault-init
     image: hashicorp/vault:1.18.1
     configs: [policy.hcl]
     environment:
-      VAULT_ADDR: "http://vault:8200"
+      VAULT_ADDR: "http://${SUBNET_CIDR:-192.100.100}.7:8200"
       VAULT_TOKEN: root_token
       VAULT_SKIP_VERIFY: true
     entrypoint:
@@ -36,12 +40,11 @@ services:
       vault write auth/approle/role/cycloid/role-id role_id=custom-role-id >/dev/null 2>&1
       vault write auth/approle/role/cycloid/custom-secret-id secret_id=custom-secret-id >/dev/null 2>&1 || true
 
-    networks: [tf-tests]
+    networks:
+      tf-tests:
+        ipv4_address: "${SUBNET_CIDR:-192.100.100}.8"
     tmpfs: [/vault/file]
     depends_on: [vault]
-
-networks:
-  tf-tests:
 
 configs:
   policy.hcl:

@@ -1,74 +1,13 @@
 services:
-  email-smtp:
-    image: cycloid/cy-smtp-srv:v1.0.2
-    restart: unless-stopped
-    configs: ["cert.pem", "key.pem"]
-    networks: [tf-tests]
-
   ## An email server which doesn't supports TLS but it supports authentication
   email-smtp-no-tls-auth:
+    container_name: smtp
     image: mailhog/mailhog:v1.0.0
     command: -auth-file /mailhog.auth
     configs: [mailhog.auth]
     attach: false
     restart: always
-    networks: [tf-tests]
-
-configs:
-  cert.pem:
-    content: |
-      -----BEGIN CERTIFICATE-----
-      MIID9jCCAt6gAwIBAgIQQqcSAlrGWfOq/Qbbk/klQTANBgkqhkiG9w0BAQsFADB5
-      MQswCQYDVQQGEwJGUjEOMAwGA1UECBMFUGFyaXMxDjAMBgNVBAcTBVBhcmlzMRAw
-      DgYDVQQKEwdDeWNsb2lkMQwwCgYDVQQLEwNvcHMxKjAoBgNVBAMTIVNNVFAgc2Vy
-      dmVyIGNlcnRpZmljYXRlIGF1dGhvcml0eTAeFw0xODEyMDYxODIzMDRaFw0zODEy
-      MzAxODIzMDRaMG8xCzAJBgNVBAYTAkZSMQ4wDAYDVQQIEwVQYXJpczEOMAwGA1UE
-      BxMFUGFyaXMxEDAOBgNVBAoTB0N5Y2xvaWQxDDAKBgNVBAsTA29wczEgMB4GA1UE
-      AxMXU01UUCBzZXJ2ZXIgY2VydGlmaWNhdGUwggEiMA0GCSqGSIb3DQEBAQUAA4IB
-      DwAwggEKAoIBAQCoEtaewVLA+03yQy/DMtxl9B2mf8wS5X3ZqM1hH/ZpHuwiZbHF
-      BamGoS1AmYPI83RuJMCVS/DJAohhD0I0CsHEwWB6UDDTNY35Po3JT/f+sakWtXKx
-      vEFJm8tOd+mZnquW2Pb3MoeG6nkpKMdhwYjc25nZMoA8zQA8IFQ8lxTWdU/pAyYj
-      wxbkGoajmImCtS2x7tBr5NqgSW+ATjRSJzVRt0M/CVZ7Y4Re7fEewPXlMHyjB/tr
-      kt4spoO4KVDb+2WdcRsQ1OrFrn3jtNOlITnGqIqCk6lXTofBuA/zksBOoWWoJw6H
-      ZT4qaDoN6RDTSm482+VYoADGKa0xbkpc1jcNAgMBAAGjgYMwgYAwDgYDVR0PAQH/
-      BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAdBgNVHQ4EFgQU
-      MVnTEtqajzTISq190n7yFpA0RngwHwYDVR0jBBgwFoAUnCDnnH70U7BIACFlWFqM
-      XVhdv0QwDwYDVR0RBAgwBocErCoACTANBgkqhkiG9w0BAQsFAAOCAQEAYcJuxXL4
-      QIUHvJRettUL/LTchMrMgho8boBNFkUsxPFcocylGFe9u61PZjmYumxT2HHKpmUy
-      u7REzjDS0dYT9oS8hr4AsrqrCzIgtPzw6PZGEeLOH8cG1kZCeINDo6iw/9PsQxg5
-      XeXHkFUVc7EnsCLmoZ9QmpX2acw/38i7zSIYLY+IsuNhLNsP3Nhaw9S4T80iB2nd
-      dJbfH74SXZ8VT5PYe0YkELm6NOPiclO24MJ3+rPonCzmsPVrf4g96VPiFBvBzI1v
-      djsWpSpYwORW1qqUB8chP1V+Ac7z5Ty9RiAnzluJ8Ivf924BcIJbFJA20vM9Gleg
-      l2Mp0EdhILaFAw==
-      -----END CERTIFICATE-----
-
-  key.pem:
-    content: |
-      -----BEGIN RSA PRIVATE KEY-----
-      MIIEogIBAAKCAQEAqBLWnsFSwPtN8kMvwzLcZfQdpn/MEuV92ajNYR/2aR7sImWx
-      xQWphqEtQJmDyPN0biTAlUvwyQKIYQ9CNArBxMFgelAw0zWN+T6NyU/3/rGpFrVy
-      sbxBSZvLTnfpmZ6rltj29zKHhup5KSjHYcGI3NuZ2TKAPM0APCBUPJcU1nVP6QMm
-      I8MW5BqGo5iJgrUtse7Qa+TaoElvgE40Uic1UbdDPwlWe2OEXu3xHsD15TB8owf7
-      a5LeLKaDuClQ2/tlnXEbENTqxa5947TTpSE5xqiKgpOpV06HwbgP85LATqFlqCcO
-      h2U+Kmg6DekQ00puPNvlWKAAximtMW5KXNY3DQIDAQABAoIBAEM4PZQC17kNCTCi
-      RGD6X4F7L7yekhzgogPCalm08dU7I8/iAkY9LH8GyVVz0Gw3SlKe6lMLq0KJe8ft
-      1VmBD9xERvTES7K9UYnkxcpE7Hd10J2fdj61fxsUbyxz8v6YoiHTpnpZQDDqaAjZ
-      IVzsjXNfdNmURAuNJdHmUCpndlMKs8AHB2wiVuqorv9iM6iT2bvFb3jE+nxKoHpd
-      IF8Jt+G19iIkt7MKwXnPc/Sose9zkAAOrK0gLZ/bR7UlfBf879Wyxjr2dCGdHUUz
-      aBPhce5SNvquGhZ8zsW5Ggq80S3nWjh7xpULL4pXOeCqpeMo6jlU1LQOBBU1wdHj
-      GN9LI+ECgYEAwA2WsFtXORnlPUyltA+5OU753B/9K8SF+aDb79O7jgNOmNBUr8bP
-      W9tW3jotym6NKpa+EAtOAj+voTJ5ByTZv1o+CmrvMzpWrKaYG0L3WAMMXvriikOU
-      LD/vMMQ0aKDT3oz7XLD8DSbFRFTH94ItI3OW8oSag1bqPC+Pso2dAkUCgYEA4AlD
-      CMhk9e8Dggup1euNL25c6SQFu7gD/hd+Hgy7p6nZGA4VUM7T5FXpPDSqs8JMFoXD
-      RBI2oZPwqufGkFrLgdhm/wz4be46/JJDWvhYD8S417ssIL3PRA0t0J/JbXE5L96v
-      MgoefRLYjHTnBQDrn61443dMHO96mWWZnJ7oEikCgYBdYD370O0/ng+PFk0alup/
-      qp5hIEx/kzVwgX1txYxTJ9h3BBOowwjeqG477h2FZurL4i7Wrihnf39s6JVfm9Mi
-      7kVr20IhriOmHfmmh5CrAhBpvaGXh/Pq78rj8wFoPYnFktZD4ukpm8gdyPrQpEI+
-      El053K8jXIbWbGl5btD/4QKBgF+VdAU2QmTvIccFJOPBCM6Yvok1tkB95S4uZb96
-      XUHOZHIv6AY/CAZeZRErwzzIg+AEF+heAPL1BHRWSNBj/Hmck2zz4rY8Mux5lsUk
-      OaYYn2hjUhNyCBEXsllVIwJPkT+MOaEW0iU4ui1K3xmyZ9ULlQ0vY8jgn6T8xQoe
-      fhLpAoGAfskfDAQXMMgqTsORSu8B5bkXZ+Bu2ntcLy67wt32JEKH5ZOGdKSnKAk/
-      uvPlUeREzfg2cbUgbi55jIHQAktjfnTQWoaGxOjuw5tsBFc3evF+3U6oeIPiE+gc
-      COx0PK9m5UrIor+B1bLlfY5J2hwZmJGdyAKNn0P8iNIo8brGRMk=
-      -----END RSA PRIVATE KEY-----
+    networks:
+      tf-tests:
+        ipv4_address: "${SUBNET_CIDR:-192.100.100}.6"
 
