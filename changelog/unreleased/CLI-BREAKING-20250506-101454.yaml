@@ -1,0 +1,8 @@
+component: CLI
+kind: BREAKING
+body: Remove old `cy project create-env` and `cy project update-env` commands
+time: 2025-05-06T10:14:54.043220513Z
+custom:
+  DETAILS: Use the `cy components create` and `cy components update` commands instead.
+  PR: "339"
+  TYPE: CLI
