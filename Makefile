@@ -73,10 +73,10 @@ SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 	$(DOCKER_COMPOSE) run $(SWAGGER_COMMAND) --remove-orphan
 
 # E2E tests
-CY_API_URL         ?= http://127.0.0.1:3001
-# Env list specified in file /e2e/e2e.go
-CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo.git
-CY_TEST_ROOT_ORG ?= "fake-cycloid"
+CY_API_URL         ?= "https://api-cli-test.staging.cycloid.io/"
+CY_TEST_ROOT_ORG ?= "cycloid"
+# You can get the key in the admin_api_key cred in the cli console
+CY_TEST_API_KEY       ?=
 
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
@@ -96,6 +96,7 @@ help: ## Show this help
 
 .PHONY: build
 build: ## Builds the binary
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
 	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY)-linux-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o $(BINARY)-windows-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o $(BINARY)-darwin-arm64 $(GO_LDFLAGS) $(REPO_PATH)
@@ -103,11 +104,7 @@ build: ## Builds the binary
 
 .PHONY: test
 test: ## Run end to end tests
-	@echo "Using API url: $(CY_API_URL) (from \$$CY_API_URL)"
-	@echo "Using ORG: $(CY_TEST_ROOT_ORG) (from \$$CY_TEST_ROOT_ORG)"
-	@echo "Using GIT: $(CY_TEST_GIT_CR_URL) (from \$$CY_TEST_GIT_CR_URL)"
-	@if [ -z "$$CY_TEST_ROOT_API_KEY" ]; then echo "Unable to read API KEY from \$$CY_TEST_ROOT_API_KEY"; exit 1; fi; \
-	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" go test ./... --tags e2e -v
+	CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" CY_TEST_API_KEY="$(CY_TEST_API_KEY)" go test ./... -v
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder
