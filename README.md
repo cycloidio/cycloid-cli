@@ -17,32 +17,53 @@ cy login --org my-org --api-key "<MY_API_KEY>"
 From there, you can now explore the various commands using the `--help` flag for each command / subcommand.
 
 ```shell
-$ cy help
-Cy is a CLI for Cycloid framework. Learn more at https://www.cycloid.io/.
+CLI tool to interact with Cycloid API.
+Documentation at https://docs.cycloid.io/reference/cli/
+
+Environment:
+
+CY_API_URL   -> Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
+CY_ORG       -> Set the current organization
+CY_API_KEY   -> Set the current API Key to use
+CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default warning
 
 Usage:
   cy [command]
 
 Available Commands:
   api-key            Manage organization API keys
+  beta               Experimental commands.
   catalog-repository Manage the catalog repositories
   completion         Output shell completion for the given shell (bash or zsh)
+  components         Manage components.
   config-repository  Manage the catalog repositories
   credential         Manage the credentials
   event              Manage the events
   external-backend   manage external backends
   help               Help about any command
-  infrapolicy        Manage infrapolicies
+  infrapolicy        Manage the infraPolicies
+  kpi                Manage the kpis
   login              Login against the Cycloid console
   members            Manage members from the organization
   organization       Manage the organizations
-  pipeline           Manage the pipelines
   project            Manage the projects
   roles              Manage roles from the organization
   stack              Manage the stacks
   status             Get the status of the Cycloid services
   terracost          Use terracost feature
   version            Get the version of the consumed API
+
+Flags:
+      --api-url string     Specify the HTTP url of Cycloid API to use eg https://http-api.cycloid.io. This can also be given by CY_API_URL environment variable. (default "https://http-api.cycloid.io")
+  -h, --help               help for cy
+      --insecure           Decide to skip or not TLS verification
+      --org string         Specify the org to use. override CY_ORG env var. Required for all Org scoped endpoint.
+  -o, --output string      The formatting style for command output: json|yaml|table (default "table")
+  -v, --verbosity string   Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none. (default "warning")
+      --version            version for cy
+
+Use "cy [command] --help" for more information about a command.
+
 ```
 
 ## Common actions
@@ -66,9 +87,6 @@ cy --org myorg  config-repository create --branch master --cred $GIT_CRED --name
 ADMIN_ROLE=$(cy --org $ORG  roles list -o json | jq '.[] | select( .name | contains("Admin")) | .canonical')
 cy  --org myorg  members invite --role $ADMIN_ROLE --email foo@email.com
 ```
-
-:construction:
-<!-- This is where we could add some useful examples: create a user, etc. -->
 
 ## Building from source
 
