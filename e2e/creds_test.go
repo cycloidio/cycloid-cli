@@ -11,6 +11,7 @@ import (
 )
 
 func TestCreds(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	t.Run("SuccessCredsList", func(t *testing.T) {

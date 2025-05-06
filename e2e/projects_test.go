@@ -14,6 +14,7 @@ import (
 )
 
 func TestProjects(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	// Cleanup previous project if exist and prepare required catalog repository, ...

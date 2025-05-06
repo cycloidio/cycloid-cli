@@ -1,4 +1,4 @@
-package common
+package cy_args
 
 import (
 	"encoding/json"
@@ -12,96 +12,18 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
-	"github.com/spf13/viper"
 )
 
-// Experimental helpers to add support for env var to manage cycloid context
-func GetCyContextFlagSet() *pflag.FlagSet {
-	flagSet := pflag.NewFlagSet("cycloid-context", pflag.ContinueOnError)
-	AddProjectFlag(flagSet)
-	AddEnvFlag(flagSet)
-	AddComponentFlag(flagSet)
-	return flagSet
-}
-
-func AddProjectFlag(flagSet *pflag.FlagSet) {
-	flagSet.StringP("project", "p", "", "the project canonical, can also be set with the CY_PROJECT env var")
-	viper.BindPFlag("project", flagSet.Lookup("project"))
-}
-
-func AddEnvFlag(flagSet *pflag.FlagSet) {
-	flagSet.StringP("env", "e", "", "the env canonical, can also be set with the CY_ENV env var")
-	viper.BindPFlag("env", flagSet.Lookup("env"))
-}
-
-func AddComponentFlag(flagSet *pflag.FlagSet) {
-	flagSet.StringP("component", "c", "", "the component canonical, can also be set with the CY_COMPONENT env var")
-	viper.BindPFlag("component", flagSet.Lookup("component"))
-}
-
-func GetCyContext(cmd *cobra.Command) (org, project, env, component string, err error) {
-	org, err = GetOrg(cmd)
-	if err != nil {
-		return "", "", "", "", err
-	}
-
-	project, err = GetProject(cmd)
-	if err != nil {
-		return "", "", "", "", err
-	}
-
-	env, err = GetEnv(cmd)
-	if err != nil {
-		return "", "", "", "", err
-	}
-
-	component, err = GetComponent(cmd)
-	if err != nil {
-		return "", "", "", "", err
-	}
-
-	return org, project, env, component, nil
-}
-
-func GetProject(cmd *cobra.Command) (project string, err error) {
-	project = viper.GetString("project")
-	if project == "" {
-		return "", errors.New("project is not set, use --project flag or CY_PROJECT env var")
-	}
-
-	return project, nil
-}
-
-func GetEnv(cmd *cobra.Command) (env string, err error) {
-	env = viper.GetString("env")
-	if env == "" {
-		return "", errors.New("env is not set, use --env flag or CY_ENV env var")
-	}
-
-	return env, nil
-}
-
-func GetComponent(cmd *cobra.Command) (component string, err error) {
-	component = viper.GetString("component")
-	if component == "" {
-		return "", errors.New("component is not set, use --component flag or CY_COMPONENT env var")
-	}
-
-	return component, nil
-}
-
-// Let's also make some flags to handle forms variables
-func WithStackFormsFlagSet(cmd *cobra.Command) {
+func AddStackFormsInputFlags(cmd *cobra.Command) {
 	cmd.Flags().StringArrayP("json-file", "f", []string{}, "path to a JSON file containing Stackform input. Can be '-' to read from stdin. This flag can be set multiple times.")
 	cmd.MarkFlagFilename("json-file")
 	cmd.Flags().StringArrayP("json-vars", "j", []string{}, "JSON string containing Stackform input. This flag can be set multiple times.")
 	cmd.Flags().StringToStringP("var", "V", nil, `specify a StackForms variable using a section.group.key=value notation. The value will be parsed to try to validate the type. To force a string, add double quotes " to the value`)
 }
 
-// GetStackformsVarsFromFlags wrap the flag parsing and the merge of the variables
+// GetStackformsVars wrap the flag parsing and the merge of the variables
 // set by the user.
-func GetStackformsVarsFromFlags(cmd *cobra.Command) (*models.FormVariables, error) {
+func GetStackformsVars(cmd *cobra.Command) (*models.FormVariables, error) {
 	varFiles, err := cmd.Flags().GetStringArray("json-file")
 	if err != nil {
 		return nil, err
@@ -277,5 +199,3 @@ func UpdateFormVar(field string, value string, vars models.FormVariables) error 
 	vars[keys[0]][keys[1]][keys[2]] = value
 	return nil
 }
-
-// End

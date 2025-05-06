@@ -56,7 +56,7 @@ package projects
 //
 // func updateEnv(cmd *cobra.Command, args []string) error {
 // 	fmt.Println(args)
-// 	org, err := common.GetOrg(cmd)
+// 	org, err := cy_args.GetOrg(cmd)
 // 	if err != nil {
 // 		return err
 // 	}

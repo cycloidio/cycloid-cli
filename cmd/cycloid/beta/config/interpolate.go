@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
@@ -16,15 +17,15 @@ func NewInterpolateCmd() *cobra.Command {
 		RunE:  interpolate,
 	}
 
-	cmd.Flags().AddFlagSet(common.GetCyContextFlagSet())
 	cmd.Flags().StringP("use-case", "u", "", "specify the use case canonical")
 	cmd.Flags().StringP("stack-ref", "s", "", "stack ref (sometimes called service_catalog_ref")
-	common.WithStackFormsFlagSet(cmd)
+	cy_args.AddCyContext(cmd)
+	cy_args.AddStackFormsInputFlags(cmd)
 	return cmd
 }
 
 func interpolate(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := common.GetCyContext(cmd)
+	org, project, env, component, err := cy_args.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}
@@ -49,7 +50,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 		output = "json"
 	}
 
-	inputs, err := common.GetStackformsVarsFromFlags(cmd)
+	inputs, err := cy_args.GetStackformsVars(cmd)
 	if err != nil {
 		return err
 	}

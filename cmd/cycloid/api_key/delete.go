@@ -8,6 +8,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -33,7 +34,7 @@ func NewDeleteCommand() *cobra.Command {
 // remove will send the DELETE request to the API in order to
 // delete a generated token
 func remove(cmd *cobra.Command, args []string) error {
-	org, err := common.GetOrg(cmd)
+	org, err := cy_args.GetOrg(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to get org flag: %w", err)
 	}

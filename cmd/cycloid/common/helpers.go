@@ -155,8 +155,7 @@ func NewAPI(opts ...APIOptions) *APIClient {
 	// tr.DefaultAuthentication = httptransport.BearerToken("token")
 	// api.SetTransport(tr)
 	return &APIClient{
-		API: api,
-
+		API:    api,
 		Config: acfg,
 	}
 }

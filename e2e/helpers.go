@@ -71,7 +71,7 @@ func LoginToRootOrg() {
 	cmd.SetArgs([]string{
 		"login",
 		"--org", CY_TEST_ROOT_ORG,
-		"--api-key", CY_TEST_ROOT_API_KEY,
+		"--api-key", CY_TEST_API_KEY,
 	})
 
 	err := cmd.Execute()

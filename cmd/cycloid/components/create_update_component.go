@@ -4,6 +4,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
@@ -16,25 +17,24 @@ func NewCreateComponentCommand() *cobra.Command {
 		Short: "Create a component",
 		RunE:  createComponent,
 	}
-	cmd.Flags().AddFlagSet(common.GetCyContextFlagSet())
-	addComponentNameFlag(cmd)
-	addDescriptionFlag(cmd)
-	addUseCaseFlag(cmd)
-	addCloudProviderFlag(cmd)
-	addStackRefFlag(cmd)
-	common.WithStackFormsFlagSet(cmd)
-
+	cy_args.AddCyContext(cmd)
+	cy_args.AddComponentNameFlag(cmd)
+	cy_args.AddDescriptionFlag(cmd)
+	cy_args.AddUseCaseFlag(cmd)
+	cy_args.AddCloudProviderFlag(cmd)
+	cy_args.AddStackRefFlag(cmd)
+	cy_args.AddStackFormsInputFlags(cmd)
 	cmd.Flags().Bool("update", false, "If the component exists, update it.")
 	return cmd
 }
 
 func createComponent(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := common.GetCyContext(cmd)
+	org, project, env, component, err := cy_args.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := getComponentName(cmd)
+	name, err := cy_args.GetComponentName(cmd)
 	if err != nil {
 		return err
 	}
@@ -43,22 +43,22 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		name = &component
 	}
 
-	description, err := getDescription(cmd)
+	description, err := cy_args.GetDescription(cmd)
 	if err != nil {
 		return err
 	}
 
-	useCase, err := getUseCase(cmd)
+	useCase, err := cy_args.GetUseCase(cmd)
 	if err != nil {
 		return err
 	}
 
-	stackRef, err := getStackRef(cmd)
+	stackRef, err := cy_args.GetStackRef(cmd)
 	if err != nil {
 		return err
 	}
 
-	cloudProvider, err := getCloudProvider(cmd)
+	cloudProvider, err := cy_args.GetCloudProvider(cmd)
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	inputs, err := common.GetStackformsVarsFromFlags(cmd)
+	inputs, err := cy_args.GetStackformsVars(cmd)
 	if err != nil {
 		return err
 	}
@@ -108,31 +108,31 @@ func NewUpdateComponentCommand() *cobra.Command {
 		Short: "update an existing component",
 		RunE:  updateComponent,
 	}
-	cmd.Flags().AddFlagSet(common.GetCyContextFlagSet())
-	addComponentNameFlag(cmd)
-	addDescriptionFlag(cmd)
-	addUseCaseFlag(cmd)
-	common.WithStackFormsFlagSet(cmd)
+	cy_args.AddCyContext(cmd)
+	cy_args.AddComponentNameFlag(cmd)
+	cy_args.AddDescriptionFlag(cmd)
+	cy_args.AddUseCaseFlag(cmd)
+	cy_args.AddStackFormsInputFlags(cmd)
 	return cmd
 }
 
 func updateComponent(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := common.GetCyContext(cmd)
+	org, project, env, component, err := cy_args.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := getComponentName(cmd)
+	name, err := cy_args.GetComponentName(cmd)
 	if err != nil {
 		return err
 	}
 
-	description, err := getDescription(cmd)
+	description, err := cy_args.GetDescription(cmd)
 	if err != nil {
 		return err
 	}
 
-	useCase, err := getUseCase(cmd)
+	useCase, err := cy_args.GetUseCase(cmd)
 	if err != nil {
 		return err
 	}
@@ -142,7 +142,7 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	inputs, err := common.GetStackformsVarsFromFlags(cmd)
+	inputs, err := cy_args.GetStackformsVars(cmd)
 	if err != nil {
 		return err
 	}

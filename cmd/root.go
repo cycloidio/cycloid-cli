@@ -8,14 +8,14 @@ import (
 	"github.com/spf13/viper"
 
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
+	api_key "github.com/cycloidio/cycloid-cli/cmd/cycloid/api_key"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
-	catalogRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog-repositories"
+	catalogRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog_repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
-	configRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/config-repositories"
+	configRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/config_repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
-	externalBackends "github.com/cycloidio/cycloid-cli/cmd/cycloid/external-backends"
+	externalBackends "github.com/cycloidio/cycloid-cli/cmd/cycloid/external_backends"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/infrapolicies"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
@@ -89,7 +89,7 @@ func AttachCommands(cmd *cobra.Command) {
 		root.NewVersionCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
-		apikey.NewCommands(),
+		api_key.NewCommands(),
 		catalogRepositories.NewCommands(),
 		configRepositories.NewCommands(),
 		creds.NewCommands(),

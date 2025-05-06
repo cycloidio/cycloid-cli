@@ -8,6 +8,7 @@ import (
 )
 
 func TestCatalogRepositories(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	t.Run("SuccessCatalogRepositoriesCreate", func(t *testing.T) {

@@ -47,14 +47,14 @@ func getTestConfig() (*TestConfig, error) {
 		apiUrl = "https://api-cli-test.staging.cycloid.io/"
 	}
 
-	org, ok = os.LookupEnv("CY_ORG")
+	org, ok = os.LookupEnv("CY_TEST_ROOT_ORG")
 	if !ok {
 		org = "cycloid"
 	}
 
-	apiKey, ok = os.LookupEnv("CY_API_KEY")
+	apiKey, ok = os.LookupEnv("CY_TEST_API_KEY")
 	if !ok {
-		return nil, fmt.Errorf("api key not set in CY_API_KEY env var.")
+		return nil, fmt.Errorf("api key not set in CY_TEST_API_KEY env var.")
 	}
 
 	api = common.NewAPI(

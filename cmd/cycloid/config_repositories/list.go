@@ -1,4 +1,4 @@
-package organizations
+package configRepositories
 
 import (
 	"github.com/pkg/errors"
@@ -7,32 +7,31 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewCreateChildCommand() *cobra.Command {
+func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "create-child",
-		Short:   "create a child organization",
-		RunE:    createChild,
+		Use:   "list",
+		Short: "list the config repositories",
+		Example: `
+	# list the config repositories in the org 'my-org' and display the result in JSON format
+	cy  --org my-org config-repo list -o json
+`,
+		RunE:    listConfigRepositories,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	common.RequiredPersistentFlag(WithFlagParentOrganization, cmd)
 
 	return cmd
 }
 
-func createChild(cmd *cobra.Command, args []string) error {
+func listConfigRepositories(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := common.GetOrg(cmd)
-	if err != nil {
-		return err
-	}
-
-	porg, err := cmd.Flags().GetString("parent-org")
+	org, err := cy_args.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
@@ -47,6 +46,6 @@ func createChild(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	oc, err := m.CreateOrganizationChild(org, porg)
-	return printer.SmartPrint(p, oc, err, "unable to create a child organization", printer.Options{}, cmd.OutOrStdout())
+	crs, err := m.ListConfigRepositories(org)
+	return printer.SmartPrint(p, crs, err, "unable to list config repository", printer.Options{}, cmd.OutOrStdout())
 }
