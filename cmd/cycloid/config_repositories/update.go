@@ -1,4 +1,4 @@
-package configRepositories
+package config_repositories
 
 import (
 	"github.com/pkg/errors"

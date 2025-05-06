@@ -1,4 +1,4 @@
-package catalogRepositories
+package catalog_repositories
 
 import (
 	"github.com/spf13/cobra"
