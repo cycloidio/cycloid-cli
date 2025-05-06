@@ -18,7 +18,7 @@ var (
 func init() {
 	apiKey, ok := os.LookupEnv("CY_TEST_API_KEY")
 	if !ok {
-		log.Fatal("Missing API Key, set one with CY_TEST_ROOT_API_KEY env var.")
+		log.Fatal("Missing API Key, set one with CY_TEST_API_KEY env var.")
 	}
 	CY_TEST_API_KEY = apiKey
 
