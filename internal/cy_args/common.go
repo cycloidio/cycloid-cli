@@ -18,13 +18,6 @@ var (
 	v = viper.GetViper()
 )
 
-// GetOrg will return the current org using the env_var < flag precedence
-//
-//	func AddOrgFlag(cmd *cobra.Command) {
-//		cmd.PersistentFlags().StringP("org", "o", "", "the org canonical.")
-//		v.BindPFlag("org", cmd.PersistentFlags().Lookup("org"))
-//		v.BindEnv("CY_ORG")
-//	}
 func AddProjectFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("project", "p", "", "the project canonical, can also be set with the CY_PROJECT env var")
 	v.BindPFlag("project", cmd.Flags().Lookup("project"))
