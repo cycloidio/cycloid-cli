@@ -2,19 +2,6 @@ package cy_args
 
 import "github.com/spf13/cobra"
 
-func AddComponentNameFlag(cmd *cobra.Command) {
-	cmd.Flags().StringP("name", "n", "", "set the name of the component")
-}
-
-func GetComponentName(cmd *cobra.Command) (*string, error) {
-	componentName, err := cmd.Flags().GetString("name")
-	if err != nil {
-		return nil, err
-	}
-
-	return &componentName, nil
-}
-
 func AddComponentDescriptionFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("description", "d", "", "set the description of the component")
 }

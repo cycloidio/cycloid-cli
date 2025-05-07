@@ -25,6 +25,20 @@ func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
 	return d, nil
 }
 
+func (m *middleware) ListProjectsEnv(org, project string) ([]*models.Environment, error) {
+	params := organization_projects.NewGetProjectEnvironmentsParams()
+	params.SetOrganizationCanonical(org)
+	params.SetProjectCanonical(project)
+
+	resp, err := m.api.OrganizationProjects.GetProjectEnvironments(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	p := resp.GetPayload()
+	return p.Data, nil
+}
+
 func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 	params := organization_projects.NewGetProjectParams()
 	params.SetOrganizationCanonical(org)
@@ -41,37 +55,15 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 	return d, nil
 }
 
-// TODO:
-//func (m *middleware) GetProjectConfig(org string, project string, env string) (*models.ProjectEnvironmentConfig, error) {
-//	params := organization_projects.NewGetProjectConfigParams()
-//	params.WithOrganizationCanonical(org)
-//	params.WithProjectCanonical(project)
-//	params.WithEnvironmentCanonical(env)
-//	params.WithDefaults()
-//
-//	resp, err := m.api.OrganizationProjects.GetProjectConfig(
-//		params,
-//		m.api.Credentials(&org),
-//		// organization_projects.WithContentType("application/vnd.cycloid.io.v1+json"),
-//		// organization_projects.WithAccept("application/json"),
-//	)
-//
-//	if err != nil {
-//		return nil, NewApiError(err)
-//	}
-//
-//	payload := resp.GetPayload()
-//	err = payload.Validate(strfmt.Default)
-//	if err != nil {
-//		return nil, err
-//	}
-//
-//	return payload.Data, nil
-//}
-
 func (m *middleware) CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error) {
 	params := organization_projects.NewCreateProjectParams()
 	params.WithOrganizationCanonical(org)
+
+	if projectName == "" {
+		// If name is empty, use the canonical
+		projectName = project
+	}
+
 	body := &models.NewProject{
 		Name:                      &projectName,
 		Description:               description,
@@ -125,7 +117,7 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 		m.api.Credentials(&org),
 	)
 	if err != nil {
-		return nil, NewApiError(fmt.Errorf("params:\n%s\nresp:\n%s\nerr:\n%s", litter.Sdump(params), litter.Sdump(resp), err))
+		return nil, NewApiError(err)
 	}
 
 	p := resp.GetPayload()

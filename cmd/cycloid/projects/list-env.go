@@ -11,21 +11,20 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewDeleteCommand() *cobra.Command {
+func NewListEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "delete",
-		Aliases: []string{"del", "rm"},
-		Short:   "delete a project",
-		Example: `cy --org my-org project delete --project my-project`,
-		RunE:    deleteProject,
+		Use:     "list-env",
+		Short:   "List environments in the current project",
+		Example: `cy --org my-org projects list-env -p project -o json`,
+		RunE:    listEnv,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
+	cy_args.AddProjectFlag(cmd)
 	return cmd
 }
 
-func deleteProject(cmd *cobra.Command, args []string) error {
+func listEnv(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -33,10 +32,12 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	project, err := cy_args.GetProject(cmd)
 	if err != nil {
 		return err
 	}
+
 	output, err := cy_args.GetOutput(cmd)
 	if err != nil {
 		return err
@@ -48,6 +49,6 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.DeleteProject(org, project)
-	return printer.SmartPrint(p, nil, err, "unable to delete project", printer.Options{}, cmd.OutOrStdout())
+	projects, err := m.ListProjectsEnv(org, project)
+	return printer.SmartPrint(p, projects, err, "unable to listenv project", printer.Options{}, cmd.OutOrStdout())
 }

@@ -16,10 +16,8 @@ func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
 		Short: "list the projects within the organization",
-		Example: `
-	# list projects in 'my-org' and display result in JSON
-	cy --org my-org projects list -o json
-`,
+		Example: `# list projects in 'my-org' and display result in JSON
+cy --org my-org projects list -o json`,
 		RunE:    list,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
@@ -36,15 +34,15 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get org")
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cy_args.GetOutput(cmd)
 	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+		return err
 	}
 
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
+		return err
 	}
 
 	projects, err := m.ListProjects(org)

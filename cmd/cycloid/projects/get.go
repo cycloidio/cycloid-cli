@@ -37,11 +37,11 @@ func get(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	project, err := cmd.Flags().GetString("project")
+	project, err := cy_args.GetProject(cmd)
 	if err != nil {
 		return err
 	}
-	output, err := cmd.Flags().GetString("output")
+	output, err := cy_args.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}

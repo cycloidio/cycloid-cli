@@ -12,12 +12,12 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewUpdateCommand() *cobra.Command {
+func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "update",
-		Short:   "update a project",
-		Example: `cy --org my-org project update --project "my-project" --name "NewName"`,
-		RunE:    update,
+		Use:     "create",
+		Short:   "create a project",
+		Example: `cy --org my-org project create --project "my-project"`,
+		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
@@ -28,10 +28,11 @@ func NewUpdateCommand() *cobra.Command {
 	cy_args.AddColorFlag(cmd)
 	cy_args.AddOwnerFlag(cmd)
 	cy_args.AddConfigRepositoryFlag(cmd)
+	cmd.Flags().Bool("update", false, "if set, will update the project if it exists.")
 	return cmd
 }
 
-func update(cmd *cobra.Command, args []string) error {
+func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -55,7 +56,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	owner, err := cy_args.GetOwner(cmd)
+	icon, err := cy_args.GetIcon(cmd)
 	if err != nil {
 		return err
 	}
@@ -65,12 +66,17 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	icon, err := cy_args.GetIcon(cmd)
+	owner, err := cy_args.GetOwner(cmd)
 	if err != nil {
 		return err
 	}
 
 	configRepository, err := cy_args.GetConfigRepository(cmd, org, m)
+	if err != nil {
+		return err
+	}
+
+	update, err := cmd.Flags().GetBool("update")
 	if err != nil {
 		return err
 	}
@@ -86,11 +92,14 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	projectResp, err := m.GetProject(org, project)
-	if err != nil {
-		return printer.SmartPrint(p, projectResp, err, "project not found", printer.Options{}, cmd.OutOrStdout())
+	if update {
+		exists, err := m.GetProject(org, project)
+		if err == nil {
+			resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", exists.CreatedAt)
+			return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.ErrOrStderr())
+		}
 	}
 
-	resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", projectResp.CreatedAt)
+	resp, err := m.CreateProject(org, name, project, description, configRepository, owner, "", color, icon)
 	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
 }
