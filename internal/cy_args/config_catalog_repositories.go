@@ -34,6 +34,8 @@ func GetConfigRepository(cmd *cobra.Command, org string, m middleware.Middleware
 		return "", err
 	}
 
+	// TODO: This behavior will be pushed to backend
+	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
 	if configRepository == "" {
 		catalogRepos, err := m.ListConfigRepositories(org)
 		if err != nil {
