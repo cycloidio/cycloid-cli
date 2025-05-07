@@ -67,7 +67,7 @@ func TestComponentCRUD(t *testing.T) {
 			componentName        = "Test Component " + strconv.Itoa(index)
 			component            = "test-component-" + strconv.Itoa(index)
 			componentDescription = "My cool component"
-			serviceCatalogRef    = "cycloid:stack-e2e-stackforms"
+			stackRef             = "cycloid:stack-e2e-stackforms"
 			useCase              = "default"
 			newVar               = models.FormVariables{
 				"can two sections have same name with different caps ?": {
@@ -129,7 +129,7 @@ func TestComponentCRUD(t *testing.T) {
 		)
 
 		createdComponent, err := m.CreateComponent(
-			config.Org, project, env, component, componentDescription, &componentName, &serviceCatalogRef, &useCase, nil, &formVars,
+			config.Org, project, env, component, componentDescription, &componentName, &stackRef, &useCase, nil, &formVars,
 		)
 		if err != nil {
 			t.Fatalf("Failed to create component '%s':\n%v", component, err)

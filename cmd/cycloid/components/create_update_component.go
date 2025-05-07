@@ -19,7 +19,7 @@ func NewCreateComponentCommand() *cobra.Command {
 	}
 	cy_args.AddCyContext(cmd)
 	cy_args.AddComponentNameFlag(cmd)
-	cy_args.AddDescriptionFlag(cmd)
+	cy_args.AddComponentDescriptionFlag(cmd)
 	cy_args.AddUseCaseFlag(cmd)
 	cy_args.AddCloudProviderFlag(cmd)
 	cy_args.AddStackRefFlag(cmd)
@@ -38,12 +38,12 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if name == nil && *name == "" {
+	if name == nil || *name == "" {
 		// if name is empty, use the canonical
 		name = &component
 	}
 
-	description, err := cy_args.GetDescription(cmd)
+	description, err := cy_args.GetComponentDescription(cmd)
 	if err != nil {
 		return err
 	}
@@ -110,7 +110,7 @@ func NewUpdateComponentCommand() *cobra.Command {
 	}
 	cy_args.AddCyContext(cmd)
 	cy_args.AddComponentNameFlag(cmd)
-	cy_args.AddDescriptionFlag(cmd)
+	cy_args.AddComponentDescriptionFlag(cmd)
 	cy_args.AddUseCaseFlag(cmd)
 	cy_args.AddStackFormsInputFlags(cmd)
 	return cmd
@@ -127,7 +127,7 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	description, err := cy_args.GetDescription(cmd)
+	description, err := cy_args.GetComponentDescription(cmd)
 	if err != nil {
 		return err
 	}

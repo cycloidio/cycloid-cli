@@ -3,10 +3,12 @@ package e2e
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"regexp"
+	"strings"
 	"time"
 
 	rootCmd "github.com/cycloidio/cycloid-cli/cmd"
@@ -78,6 +80,32 @@ func LoginToRootOrg() {
 	if err != nil {
 		panic(fmt.Sprintf("Test setup LoginToRootOrg, unable to login: %s", err.Error()))
 	}
+}
+
+// executeCommandStdin will execute the command with args + stdin input
+// and return stdin, stderr and err
+func executeCommandStdin(stdin string, args []string) (string, string, error) {
+	cmd := rootCmd.NewRootCommand()
+
+	stdoutBuf := new(bytes.Buffer)
+	stderrBuf := new(bytes.Buffer)
+	cmd.SetOut(stdoutBuf)
+	cmd.SetErr(stderrBuf)
+
+	cmd.SetIn(strings.NewReader(stdin))
+	cmd.SetArgs(args)
+	cmdErr := cmd.Execute()
+	stdout, err := io.ReadAll(stdoutBuf)
+	if err != nil {
+		return "", "", errors.Join(cmdErr, fmt.Errorf("failed to read stdout buffer from cli: %s", err))
+	}
+
+	stderr, err := io.ReadAll(stderrBuf)
+	if err != nil {
+		return string(stdout), "", errors.Join(cmdErr, fmt.Errorf("failed to read stderr buffer from cli: %s", err))
+	}
+
+	return string(stdout), string(stderr), cmdErr
 }
 
 func executeCommand(args []string) (string, error) {
@@ -165,38 +193,18 @@ func JsonListFindObjectValue(list []map[string]interface{}, key, value string) b
 	return false
 }
 
-// // JsonExtractField Extract a field from a json entity
-// func JsonExtractField(js []byte, field string) (interface{}, error) {
-// 		var e interface{}
-// 		err := json.Unmarshal(js, &e)
-// 		if err != nil {
-// 		    return nil, err
-// 		}
-//
-// 		data := e.(map[string]interface{})
-//
-// 		res := data[field]
-//
-// 		if res == nil {
-// 			return nil, fmt.Errorf("The field %s not found in json input", field)
-// 		}
-//
-// 		return res, nil
-// }
-//
-// // JsonExtractFieldInt Extract an int field from a json entity
-// func JsonExtractFieldInt(js []byte, field string) (*int, error) {
-// 		e, err := JsonExtractField(js, field)
-// 		if err != nil {
-// 		    return nil, err
-// 		}
-//
-// 		// As we use an interface go use the default types. The only type for int is float64
-// 		res, ok := e.(float64)
-// 		if !ok {
-// 				return nil, nil
-// 		}
-//
-// 		ires := int(res)
-// 		return &ires, nil
-// }
+// WriteTempFile will write the content to a temporary file and
+// return the file path.
+func WriteTempFile(content string) (string, error) {
+	file, err := os.CreateTemp("", "cli-test-*")
+	if err != nil {
+		return "", fmt.Errorf("failed to create temp file: %v", err)
+	}
+
+	_, err = file.WriteString(content)
+	if err != nil {
+		return "", fmt.Errorf("failed to write to temp file '%s': %v", file.Name(), err)
+	}
+
+	return file.Name(), nil
+}

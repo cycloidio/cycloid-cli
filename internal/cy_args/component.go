@@ -15,11 +15,11 @@ func GetComponentName(cmd *cobra.Command) (*string, error) {
 	return &componentName, nil
 }
 
-func AddDescriptionFlag(cmd *cobra.Command) {
+func AddComponentDescriptionFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("description", "d", "", "set the description of the component")
 }
 
-func GetDescription(cmd *cobra.Command) (*string, error) {
+func GetComponentDescription(cmd *cobra.Command) (*string, error) {
 	description, err := cmd.Flags().GetString("description")
 	if err != nil {
 		return nil, err

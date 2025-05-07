@@ -38,6 +38,14 @@ func AddComponentFlag(cmd *cobra.Command) {
 	viper.BindPFlag("component", cmd.Flags().Lookup("component"))
 }
 
+func AddColorFlag(cmd *cobra.Command) {
+	cmd.Flags().String("color", "", "set the color.")
+}
+
+func AddIconFlag(cmd *cobra.Command) {
+	cmd.Flags().String("icon", "", "set the icon.")
+}
+
 func GetCyContext(cmd *cobra.Command) (org, project, env, component string, err error) {
 	org, err = GetOrg(cmd)
 	if err != nil {
