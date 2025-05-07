@@ -96,10 +96,10 @@ func create(cmd *cobra.Command, args []string) error {
 		exists, err := m.GetProject(org, project)
 		if err == nil {
 			resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", exists.CreatedAt)
-			return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.ErrOrStderr())
+			return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStderr())
 		}
 	}
 
 	resp, err := m.CreateProject(org, name, project, description, configRepository, owner, "", color, icon)
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStderr())
 }
