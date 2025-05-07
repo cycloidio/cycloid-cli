@@ -12,7 +12,7 @@ var (
 	v = viper.GetViper()
 )
 
-func AddCyContext(cmd *cobra.Command) {
+
 	AddProjectFlag(cmd)
 	AddEnvFlag(cmd)
 	AddComponentFlag(cmd)
