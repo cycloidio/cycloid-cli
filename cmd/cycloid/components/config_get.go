@@ -16,8 +16,7 @@ func NewGetComponentConfigCommand() *cobra.Command {
 		Short: "Fetch the current Stackforms variables of a component as a JSON.",
 		RunE:  getComponentConfig,
 	}
-	cy_args.GetCyContext(cmd)
-	cy_args.AddStackFormsInputFlags(cmd)
+	cy_args.AddCyContext(cmd)
 	return cmd
 }
 
