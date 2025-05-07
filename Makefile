@@ -36,47 +36,16 @@ SWAGGER_GENERATE = swagger generate client \
 		--default-produces="application/vnd.cycloid.io.v1+json" \
 		--target=./client \
 		--name=api
-# \
-# 		--tags=Cycloid \
-# 		--tags="Organizations" \
-# 		--tags="Organization API keys" \
-# 		--tags="Organization Config Repositories" \
-# 		--tags="Organization Credentials" \
-# 		--tags="Organization External Backends" \
-# 		--tags="Organization members" \
-# 		--tags="Organization pipelines" \
-# 		--tags="Environment pipelines" \
-# 		--tags="Project pipelines" \
-# 		--tags="Organization pipelines jobs" \
-# 		--tags="Organization pipelines jobs build" \
-# 		--tags="Organization projects" \
-# 		--tags="Organization Projects" \
-# 		--tags="Organization Roles" \
-# 		--tags="Organization Service Catalog Sources" \
-# 		--tags="Organization workers" \
-# 		--tags="Organization members" \
-# 		--tags="Organization Invitations" \
-# 		--tags="Organization Forms" \
-# 		--tags="Organization kpis" \
-#  		--tags="Organization Infrastructure Policies" \
-#  		--tags="Organization Children" \
-# 		--tags="Component pipelines" \
-# 		--tags="Component pipelines" \
-# 		--tags="Service catalogs" \
-# 		--tags="User" \
-# 		--tags="Cost Estimation" \
-# 		--tags="Policies" \
-# 		--tags="Code Generation"
 
 SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
 	mkdir ./client; \
 	$(DOCKER_COMPOSE) run $(SWAGGER_COMMAND) --remove-orphan
 
 # E2E tests
-CY_API_URL         ?= http://127.0.0.1:3001
-# Env list specified in file /e2e/e2e.go
-CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo.git
-CY_TEST_ROOT_ORG ?= "fake-cycloid"
+CY_API_URL         ?= "https://api-cli-test.staging.cycloid.io/"
+CY_TEST_ROOT_ORG ?= "cycloid"
+# You can get the key in the admin_api_key cred in the cli console
+CY_TEST_API_KEY       ?=
 
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
@@ -96,15 +65,18 @@ help: ## Show this help
 
 .PHONY: build
 build: ## Builds the binary
-	GO111MODULE=on CGO_ENABLED=0 GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY)-linux-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o $(BINARY)-windows-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o $(BINARY)-darwin-arm64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $(BINARY)-darwin-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 
 .PHONY: test
 test: ## Run end to end tests
-	@echo "Using API url: $(CY_API_URL) (from \$$CY_API_URL)"
-	@echo "Using ORG: $(CY_TEST_ROOT_ORG) (from \$$CY_TEST_ROOT_ORG)"
-	@echo "Using GIT: $(CY_TEST_GIT_CR_URL) (from \$$CY_TEST_GIT_CR_URL)"
-	@if [ -z "$$CY_TEST_ROOT_API_KEY" ]; then echo "Unable to read API KEY from \$$CY_TEST_ROOT_API_KEY"; exit 1; fi; \
-	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" go test ./... --tags e2e -v
+	CY_API_URL=$(CY_API_URL) \
+	  CY_TEST_ROOT_ORG=$(CY_TEST_ROOT_ORG) \
+	  CY_TEST_API_KEY=$(CY_TEST_API_KEY) \
+		go test ./... -v
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder
@@ -134,8 +106,8 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 
-.PHONY: ecr-connect
-ecr-connect: ## Login to ecr, requires aws cli installed
+.PHONY: docker-login
+docker-login: ## Login to ecr, requires aws cli installed
 	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/youdeploy-http-api
 
 .PHONY: start-local-be

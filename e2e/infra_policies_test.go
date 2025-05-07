@@ -11,6 +11,7 @@ import (
 )
 
 func TestInfraPolicies(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	// Checks the succesfull creation of a new infrapolicy

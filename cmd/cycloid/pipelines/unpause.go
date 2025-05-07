@@ -30,7 +30,7 @@ cy --org my-org pipeline unpause --project my-project --env env
 // 	api := common.NewAPI()
 // 	m := middleware.NewMiddleware(api)
 //
-// 	org, err := common.GetOrg(cmd)
+// 	org, err := cy_args.GetOrg(cmd)
 // 	if err != nil {
 // 		return err
 // 	}

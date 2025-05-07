@@ -8,6 +8,12 @@ import (
 )
 
 type Middleware interface {
+	UserLogin(email, username, org *string, password string) (*models.UserSession, error)
+	UserSignup(username, email, password, givenName, familyName string) error
+	RefreshToken(org, childOrg *string, token string) (*models.UserSession, error)
+
+	ActivateLicence(org, licence string) error
+
 	// cycloid
 	GetAppVersion() (*models.AppVersion, error)
 	GetStatus() (*models.GeneralStatus, error)
@@ -68,7 +74,7 @@ type Middleware interface {
 	ListOrganizations() ([]*models.Organization, error)
 	ListOrganizationWorkers(org string) ([]*models.Worker, error)
 	ListOrganizationChildrens(org string) ([]*models.Organization, error)
-	CreateOrganizationChild(org, childOrg string) (*models.Organization, error)
+	CreateOrganizationChild(org, childOrg string, childOrgName *string) (*models.Organization, error)
 
 	// Organization Forms
 	InterpolateFormsConfig(org, env, project, component, serviceCatalogRef, useCase string, inputs *models.FormVariables) (*models.ServiceCatalogConfig, error)
@@ -106,15 +112,24 @@ type Middleware interface {
 
 	// Project
 	CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error)
-	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt uint64) (*models.Project, error)
+	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt *uint64) (*models.Project, error)
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	ListProjects(org string) ([]*models.Project, error)
 
 	// Env
-	CreateEnv(org, project, env, color string) error
-	UpdateEnv(org, project, env, color string) (*models.Environment, error)
+	CreateEnv(org, project, env, envName, color string) (*models.Environment, error)
+	UpdateEnv(org, project, env, envName, color string) (*models.Environment, error)
 	DeleteEnv(org, project, env string) error
+
+	// Component
+	GetComponents(org, project, env string) ([]*models.Component, error)
+	GetComponentConfig(org, project, env, component string) (*models.FormVariables, error)
+	GetComponent(org, project, env, component string) (*models.Component, error)
+	MigrateComponent(org, project, env, component, targetProject, targetEnv string) (*models.Component, error)
+	CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars *models.FormVariables) (*models.Component, error)
+	UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars *models.FormVariables) (*models.Component, error)
+	DeleteComponent(org, project, env, component string) error
 
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)

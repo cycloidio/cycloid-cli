@@ -8,13 +8,14 @@ import (
 	"github.com/spf13/viper"
 
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/api_key"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
-	catalogRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog-repositories"
-	configRepositories "github.com/cycloidio/cycloid-cli/cmd/cycloid/config-repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog_repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/config_repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
-	externalBackends "github.com/cycloidio/cycloid-cli/cmd/cycloid/external-backends"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/external_backends"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/infrapolicies"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
@@ -55,7 +56,8 @@ Environment:
 CY_API_URL   -> Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
 CY_ORG       -> Set the current organization
 CY_API_KEY   -> Set the current API Key to use
-CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default warning `,
+CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default warning.
+`,
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", "The formatting style for command output: json|yaml|table")
@@ -88,12 +90,12 @@ func AttachCommands(cmd *cobra.Command) {
 		root.NewVersionCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
-		apikey.NewCommands(),
-		catalogRepositories.NewCommands(),
-		configRepositories.NewCommands(),
+		api_key.NewCommands(),
+		catalog_repositories.NewCommands(),
+		config_repositories.NewCommands(),
 		creds.NewCommands(),
 		events.NewCommands(),
-		externalBackends.NewCommands(),
+		external_backends.NewCommands(),
 		infrapolicies.NewCommands(),
 		members.NewCommands(),
 		organizations.NewCommands(),
@@ -105,5 +107,6 @@ func AttachCommands(cmd *cobra.Command) {
 		login.NewCommands(),
 		terracost.NewCommands(),
 		beta.NewCommands(),
+		components.NewCommands(),
 	)
 }

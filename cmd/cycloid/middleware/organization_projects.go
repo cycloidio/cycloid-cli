@@ -1,8 +1,10 @@
 package middleware
 
 import (
+	"fmt"
+
 	strfmt "github.com/go-openapi/strfmt"
-	"github.com/pkg/errors"
+	"github.com/sanity-io/litter"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -70,7 +72,6 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 func (m *middleware) CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error) {
 	params := organization_projects.NewCreateProjectParams()
 	params.WithOrganizationCanonical(org)
-
 	body := &models.NewProject{
 		Name:                      &projectName,
 		Description:               description,
@@ -79,13 +80,13 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 		Owner:                     owner,
 		Icon:                      icon,
 		Color:                     color,
+		TeamCanonical:             team,
 	}
 
 	err := body.Validate(strfmt.Default)
 	if err != nil {
-		return nil, errors.Wrap(err, "failed to validate body input for createProject")
+		return nil, fmt.Errorf("failed to validate body input for createProject, payload:\n%s\n%v", litter.Sdump(body), err)
 	}
-
 	params.WithBody(body)
 
 	response, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
@@ -97,7 +98,7 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 	return payload.Data, nil
 }
 
-func (m *middleware) UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt uint64) (*models.Project, error) {
+func (m *middleware) UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt *uint64) (*models.Project, error) {
 	params := organization_projects.NewUpdateProjectParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
@@ -107,7 +108,7 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 		Description:               description,
 		ConfigRepositoryCanonical: configRepository,
 		Owner:                     owner,
-		UpdatedAt:                 &updatedAt,
+		UpdatedAt:                 updatedAt,
 		Icon:                      icon,
 		Color:                     color,
 		CloudProvider:             cloudProvider,
@@ -124,7 +125,7 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 		m.api.Credentials(&org),
 	)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewApiError(fmt.Errorf("params:\n%s\nresp:\n%s\nerr:\n%s", litter.Sdump(params), litter.Sdump(resp), err))
 	}
 
 	p := resp.GetPayload()

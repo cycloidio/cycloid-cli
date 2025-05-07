@@ -8,6 +8,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -24,7 +25,7 @@ func NewEstimateCommand() *cobra.Command {
 }
 
 func estimate(cmd *cobra.Command, args []string) error {
-	org, err := common.GetOrg(cmd)
+	org, err := cy_args.GetOrg(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to validate org flag: %w", err)
 	}

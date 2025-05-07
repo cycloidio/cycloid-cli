@@ -127,10 +127,15 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 	return d, nil
 }
 
-func (m *middleware) CreateOrganizationChild(org, childOrg string) (*models.Organization, error) {
+func (m *middleware) CreateOrganizationChild(org, childOrg string, childOrgName *string) (*models.Organization, error) {
 	params := organization_children.NewCreateChildParams()
+	if childOrgName == nil {
+		childOrgName = &childOrg
+	}
+
 	body := &models.NewOrganization{
-		Name: &childOrg,
+		Name:      childOrgName,
+		Canonical: childOrg,
 	}
 
 	params.SetBody(body)

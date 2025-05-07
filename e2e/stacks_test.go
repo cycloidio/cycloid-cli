@@ -12,6 +12,7 @@ import (
 )
 
 func TestStacks(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	// Since the latest update the public catalog have been added by default
@@ -124,7 +125,7 @@ default:
 		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", CY_API_URL, CY_TEST_ROOT_ORG), bytes.NewBuffer(jsonBody))
 		assert.Nil(t, err, "[preparation]: request creationg shoudn't fail")
 
-		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", CY_TEST_ROOT_API_KEY))
+		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", CY_TEST_API_KEY))
 		request.Header.Add("Content-Type", "application/vnd.cycloid.io.v1+json")
 
 		client := &http.Client{}

@@ -40,7 +40,7 @@ func NewCreateCommand() *cobra.Command {
 // 	api := common.NewAPI()
 // 	m := middleware.NewMiddleware(api)
 //
-// 	org, err := common.GetOrg(cmd)
+// 	org, err := cy_args.GetOrg(cmd)
 // 	if err != nil {
 // 		return err
 // 	}

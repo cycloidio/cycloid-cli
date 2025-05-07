@@ -1,33 +1,30 @@
 package e2e
 
 import (
+	"log"
 	"math/rand"
 	"os"
 )
 
 var (
-	CY_TEST_ROOT_API_KEY = "my secret api key"
-	CY_TEST_ROOT_ORG     = "fake-cycloid"
 	// Note, this url should be accessible by Cycloid API
-	CY_TEST_GIT_CR_URL    = "Url of the git repository used as config repository"
+	CY_TEST_GIT_CR_URL    = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
 	CY_TEST_GIT_CR_BRANCH = "master"
-	CY_API_URL            = "http://127.0.0.1:3001" // default for local tests
+	CY_API_URL            = "https://api-cli-test.staging.cycloid.io/"
+	CY_TEST_ROOT_ORG      = "cycloid"
+	CY_TEST_API_KEY       = ""
 )
 
 func init() {
-	apiKey := os.Getenv("CY_TEST_ROOT_API_KEY")
-	if len(apiKey) > 0 {
-		CY_TEST_ROOT_API_KEY = apiKey
+	apiKey, ok := os.LookupEnv("CY_TEST_API_KEY")
+	if !ok {
+		log.Fatal("Missing API Key, set one with CY_TEST_API_KEY env var.")
 	}
+	CY_TEST_API_KEY = apiKey
 
 	org := os.Getenv("CY_TEST_ROOT_ORG")
 	if len(org) > 0 {
 		CY_TEST_ROOT_ORG = org
-	}
-
-	gitUrl := os.Getenv("CY_TEST_GIT_CR_URL")
-	if len(gitUrl) > 0 {
-		CY_TEST_GIT_CR_URL = gitUrl
 	}
 
 	gitBranch := os.Getenv("CY_TEST_GIT_CR_BRANCH")

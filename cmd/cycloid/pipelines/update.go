@@ -33,7 +33,7 @@ func NewUpdateCommand() *cobra.Command {
 //
 // 	var err error
 //
-// 	org, err := common.GetOrg(cmd)
+// 	org, err := cy_args.GetOrg(cmd)
 // 	if err != nil {
 // 		return err
 // 	}

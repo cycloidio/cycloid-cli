@@ -48,7 +48,7 @@ func (m *middleware) CreateAPIKey(org, canonical, description, owner string, nam
 	}
 	err := body.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("invalid body for createAPIKey: %v", err)
 	}
 
 	params.SetBody(&body)
