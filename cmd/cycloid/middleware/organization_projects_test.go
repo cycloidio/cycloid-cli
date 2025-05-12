@@ -16,7 +16,7 @@ func TestProjectCrud(t *testing.T) {
 
 	var (
 		projectName = "Test CRUD Projects"
-		project     = "test-crud-project"
+		project     = randomCanonical("test-crud-project")
 		description = "My cool project description !\nWith a nexline"
 		owner       = ""
 		team        = ""

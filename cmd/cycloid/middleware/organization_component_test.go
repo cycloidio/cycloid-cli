@@ -19,7 +19,7 @@ func TestComponentCRUD(t *testing.T) {
 
 	var (
 		projectName      = "Test CRUD component"
-		project          = "test-crud-component"
+		project          = randomCanonical("test-crud-components")
 		description      = "Testing components"
 		configRepository = configRepository
 		owner            = ""
