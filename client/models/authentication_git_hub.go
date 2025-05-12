@@ -16,63 +16,61 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// GitHubOAuthConfig AppConfigGitHubOAuth
+// AuthenticationGitHub AuthenticationGitHub
 //
-// GitHub OAuth configuration.
+// # GitHub Authentication configuration
 //
-// swagger:model GitHubOAuthConfig
-type GitHubOAuthConfig struct {
-	clientIdField *string
+// swagger:model AuthenticationGitHub
+type AuthenticationGitHub struct {
+	enabledField *bool
 
-	providerField *string
+	// ID of the OAuth client.
+	ClientID string `json:"client_id,omitempty"`
+
+	// The secret of the auth client, it'll not be returned on the public calls
+	ClientSecretID string `json:"client_secret_id,omitempty"`
 
 	// GitHub host address is used to determine where the request for the token should be sent.
 	// In most cases this address will be https://api.github.com`, but it could be different
 	// for onprem clients that use GitHub Enterprise.
 	//
-	// Required: true
-	HostAddress *string `json:"host_address"`
+	HostAddress string `json:"host_address,omitempty"`
 }
 
-// ClientID gets the client id of this subtype
-func (m *GitHubOAuthConfig) ClientID() *string {
-	return m.clientIdField
+// Enabled gets the enabled of this subtype
+func (m *AuthenticationGitHub) Enabled() *bool {
+	return m.enabledField
 }
 
-// SetClientID sets the client id of this subtype
-func (m *GitHubOAuthConfig) SetClientID(val *string) {
-	m.clientIdField = val
-}
-
-// Provider gets the provider of this subtype
-func (m *GitHubOAuthConfig) Provider() *string {
-	return m.providerField
-}
-
-// SetProvider sets the provider of this subtype
-func (m *GitHubOAuthConfig) SetProvider(val *string) {
-	m.providerField = val
+// SetEnabled sets the enabled of this subtype
+func (m *AuthenticationGitHub) SetEnabled(val *bool) {
+	m.enabledField = val
 }
 
 // Type gets the type of this subtype
-func (m *GitHubOAuthConfig) Type() string {
-	return "GitHubOAuthConfig"
+func (m *AuthenticationGitHub) Type() string {
+	return "AuthenticationGitHub"
 }
 
 // SetType sets the type of this subtype
-func (m *GitHubOAuthConfig) SetType(val string) {
+func (m *AuthenticationGitHub) SetType(val string) {
 }
 
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
-func (m *GitHubOAuthConfig) UnmarshalJSON(raw []byte) error {
+func (m *AuthenticationGitHub) UnmarshalJSON(raw []byte) error {
 	var data struct {
+
+		// ID of the OAuth client.
+		ClientID string `json:"client_id,omitempty"`
+
+		// The secret of the auth client, it'll not be returned on the public calls
+		ClientSecretID string `json:"client_secret_id,omitempty"`
 
 		// GitHub host address is used to determine where the request for the token should be sent.
 		// In most cases this address will be https://api.github.com`, but it could be different
 		// for onprem clients that use GitHub Enterprise.
 		//
-		// Required: true
-		HostAddress *string `json:"host_address"`
+		HostAddress string `json:"host_address,omitempty"`
 	}
 	buf := bytes.NewBuffer(raw)
 	dec := json.NewDecoder(buf)
@@ -85,9 +83,7 @@ func (m *GitHubOAuthConfig) UnmarshalJSON(raw []byte) error {
 	var base struct {
 		/* Just the base type fields. Used for unmashalling polymorphic types.*/
 
-		ClientID *string `json:"client_id"`
-
-		Provider *string `json:"provider"`
+		Enabled *bool `json:"enabled"`
 
 		Type string `json:"type"`
 	}
@@ -99,17 +95,17 @@ func (m *GitHubOAuthConfig) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	var result GitHubOAuthConfig
+	var result AuthenticationGitHub
 
-	result.clientIdField = base.ClientID
-
-	result.providerField = base.Provider
+	result.enabledField = base.Enabled
 
 	if base.Type != result.Type() {
 		/* Not the type we're looking for. */
 		return errors.New(422, "invalid type value: %q", base.Type)
 	}
 
+	result.ClientID = data.ClientID
+	result.ClientSecretID = data.ClientSecretID
 	result.HostAddress = data.HostAddress
 
 	*m = result
@@ -118,18 +114,27 @@ func (m *GitHubOAuthConfig) UnmarshalJSON(raw []byte) error {
 }
 
 // MarshalJSON marshals this object with a polymorphic type to a JSON structure
-func (m GitHubOAuthConfig) MarshalJSON() ([]byte, error) {
+func (m AuthenticationGitHub) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
+
+		// ID of the OAuth client.
+		ClientID string `json:"client_id,omitempty"`
+
+		// The secret of the auth client, it'll not be returned on the public calls
+		ClientSecretID string `json:"client_secret_id,omitempty"`
 
 		// GitHub host address is used to determine where the request for the token should be sent.
 		// In most cases this address will be https://api.github.com`, but it could be different
 		// for onprem clients that use GitHub Enterprise.
 		//
-		// Required: true
-		HostAddress *string `json:"host_address"`
+		HostAddress string `json:"host_address,omitempty"`
 	}{
+
+		ClientID: m.ClientID,
+
+		ClientSecretID: m.ClientSecretID,
 
 		HostAddress: m.HostAddress,
 	})
@@ -137,16 +142,12 @@ func (m GitHubOAuthConfig) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	b2, err = json.Marshal(struct {
-		ClientID *string `json:"client_id"`
-
-		Provider *string `json:"provider"`
+		Enabled *bool `json:"enabled"`
 
 		Type string `json:"type"`
 	}{
 
-		ClientID: m.ClientID(),
-
-		Provider: m.Provider(),
+		Enabled: m.Enabled(),
 
 		Type: m.Type(),
 	})
@@ -157,19 +158,11 @@ func (m GitHubOAuthConfig) MarshalJSON() ([]byte, error) {
 	return swag.ConcatJSON(b1, b2, b3), nil
 }
 
-// Validate validates this git hub o auth config
-func (m *GitHubOAuthConfig) Validate(formats strfmt.Registry) error {
+// Validate validates this authentication git hub
+func (m *AuthenticationGitHub) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateClientID(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateProvider(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateHostAddress(formats); err != nil {
+	if err := m.validateEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -179,35 +172,17 @@ func (m *GitHubOAuthConfig) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *GitHubOAuthConfig) validateClientID(formats strfmt.Registry) error {
+func (m *AuthenticationGitHub) validateEnabled(formats strfmt.Registry) error {
 
-	if err := validate.Required("client_id", "body", m.ClientID()); err != nil {
+	if err := validate.Required("enabled", "body", m.Enabled()); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *GitHubOAuthConfig) validateProvider(formats strfmt.Registry) error {
-
-	if err := validate.Required("provider", "body", m.Provider()); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *GitHubOAuthConfig) validateHostAddress(formats strfmt.Registry) error {
-
-	if err := validate.Required("host_address", "body", m.HostAddress); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this git hub o auth config based on the context it is used
-func (m *GitHubOAuthConfig) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validate this authentication git hub based on the context it is used
+func (m *AuthenticationGitHub) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if len(res) > 0 {
@@ -217,7 +192,7 @@ func (m *GitHubOAuthConfig) ContextValidate(ctx context.Context, formats strfmt.
 }
 
 // MarshalBinary interface implementation
-func (m *GitHubOAuthConfig) MarshalBinary() ([]byte, error) {
+func (m *AuthenticationGitHub) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -225,8 +200,8 @@ func (m *GitHubOAuthConfig) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *GitHubOAuthConfig) UnmarshalBinary(b []byte) error {
-	var res GitHubOAuthConfig
+func (m *AuthenticationGitHub) UnmarshalBinary(b []byte) error {
+	var res AuthenticationGitHub
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

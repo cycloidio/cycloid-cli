@@ -121,6 +121,8 @@ type ClientService interface {
 
 	Login(params *LoginParams, opts ...ClientOption) (*LoginOK, error)
 
+	LoginToOrg(params *LoginToOrgParams, opts ...ClientOption) (*LoginToOrgOK, error)
+
 	PasswordResetReq(params *PasswordResetReqParams, opts ...ClientOption) (*PasswordResetReqNoContent, error)
 
 	PasswordResetUpdate(params *PasswordResetUpdateParams, opts ...ClientOption) (*PasswordResetUpdateNoContent, error)
@@ -467,6 +469,43 @@ func (a *Client) Login(params *LoginParams, opts ...ClientOption) (*LoginOK, err
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*LoginDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+LoginToOrg Authenticate a user and return a new JWT token.
+*/
+func (a *Client) LoginToOrg(params *LoginToOrgParams, opts ...ClientOption) (*LoginToOrgOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewLoginToOrgParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "loginToOrg",
+		Method:             "POST",
+		PathPattern:        "/user/login/{organization_canonical}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &LoginToOrgReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*LoginToOrgOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*LoginToOrgDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
