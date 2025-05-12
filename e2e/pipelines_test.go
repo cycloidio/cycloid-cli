@@ -18,7 +18,7 @@ func TestPipelines(t *testing.T) {
 		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"creds",
 			"create",
 			"ssh",
@@ -29,19 +29,19 @@ func TestPipelines(t *testing.T) {
 		// Create config repo
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"config-repo",
 			"create",
 			"--name", "project-config",
-			"--branch", CY_TEST_GIT_CR_BRANCH,
+			"--branch", CyTestCatalogRepoBranch,
 			"--cred", "git-project-creds",
-			"--url", CY_TEST_GIT_CR_URL,
+			"--url", CyTestCatalogRepoURL,
 		})
 
 		// Provide service catalog public
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"create",
 			"--branch", "master",
@@ -54,18 +54,18 @@ func TestPipelines(t *testing.T) {
 		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create",
 			"--name", "pipeline-test",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
 			"--config-repo", "project-config",
 		})
 
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create-env",
 			"--project", "pipeline-test",
@@ -79,7 +79,7 @@ func TestPipelines(t *testing.T) {
 		// Ensure the catalog is present
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"get",
 			"--project", "pipeline-test",
@@ -95,7 +95,7 @@ func TestPipelines(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"update",
 			"--project", "pipeline-test",
@@ -114,7 +114,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesPause", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"pause",
 			"--project", "pipeline-test",
@@ -131,7 +131,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesUnPause", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"unpause",
 			"--project", "pipeline-test",
@@ -148,7 +148,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"list",
 		})
@@ -163,7 +163,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"get",
 			"--project", "pipeline-test",
@@ -180,7 +180,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesListJobs", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"list-jobs",
 			"--project", "pipeline-test",
@@ -197,7 +197,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesGetJob", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"get-job",
 			"--project", "pipeline-test",
@@ -215,7 +215,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesPauseJob", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"pause-job",
 			"--project", "pipeline-test",
@@ -233,7 +233,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesUnpauseJob", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"unpause-job",
 			"--project", "pipeline-test",
@@ -250,7 +250,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesTriggerBuild", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"trigger-build",
 			"--project", "pipeline-test",
@@ -268,7 +268,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesListBuilds", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"list-builds",
 			"--project", "pipeline-test",
@@ -286,7 +286,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesClearTaskCache", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"clear-task-cache",
 			"--project", "pipeline-test",
@@ -305,7 +305,7 @@ func TestPipelines(t *testing.T) {
 	t.Run("SuccessPipelinesSynced", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"pipeline",
 			"synced",
 			"--project", "pipeline-test",

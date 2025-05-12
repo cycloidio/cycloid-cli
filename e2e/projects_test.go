@@ -26,7 +26,7 @@ func TestProjects(t *testing.T) {
 		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"creds",
 			"create",
 			"ssh",
@@ -37,19 +37,19 @@ func TestProjects(t *testing.T) {
 		// Create config repo
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"config-repo",
 			"create",
 			"--name", "project-config",
-			"--branch", CY_TEST_GIT_CR_BRANCH,
+			"--branch", CyTestCatalogRepoBranch,
 			"--cred", "git-project-creds",
-			"--url", CY_TEST_GIT_CR_URL,
+			"--url", CyTestCatalogRepoURL,
 		})
 
 		// Add the CLI test catalog
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"create",
 			"--branch", "stacks",
@@ -59,7 +59,7 @@ func TestProjects(t *testing.T) {
 
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"refresh",
 			"--canonical", "cli-test",
@@ -68,7 +68,7 @@ func TestProjects(t *testing.T) {
 		// Ensure the catalog is present
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"get",
 			"--canonical", "cli-test",
@@ -107,7 +107,7 @@ func TestProjects(t *testing.T) {
 		// Cleanup
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"delete",
 			"--project", "snowy-invalid",
@@ -115,12 +115,12 @@ func TestProjects(t *testing.T) {
 
 		_, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create",
 			"--name", "snowy",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
 			"--config-repo", "project-config",
 			"--env", "test",
 			"--usecase", "default",
@@ -139,7 +139,7 @@ func TestProjects(t *testing.T) {
 		// Cleanup
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"delete",
 			"--project", "snowy",
@@ -147,12 +147,12 @@ func TestProjects(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create",
 			"--name", "snowy",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
 			"--config-repo", "project-config",
 			"--output", "json",
 		})
@@ -174,7 +174,7 @@ func TestProjects(t *testing.T) {
 	t.Run("SuccessProjectsList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"list",
 		})
@@ -193,7 +193,7 @@ func TestProjects(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create-env",
 			"--project", "snowy",
@@ -215,7 +215,7 @@ func TestProjects(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project", "get-env-config",
 			"-p", "snowy", "-e", "sf-vars",
 		})
@@ -239,7 +239,7 @@ func TestProjects(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create-stackforms-env",
 			"--project", "snowy",
@@ -262,7 +262,7 @@ func TestProjects(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create-stackforms-env",
 			"--project", "snowy",
@@ -286,7 +286,7 @@ func TestProjects(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"delete",
 			"--project", "snowy",
@@ -306,7 +306,7 @@ func TestProjects(t *testing.T) {
 		// Cleanup
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"delete",
 			"--project", "snowy-legacy",
@@ -314,12 +314,12 @@ func TestProjects(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create",
 			"--name", "snowy-legacy",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
 			"--config-repo", "project-config",
 			"--output", "json",
 		})
@@ -328,7 +328,7 @@ func TestProjects(t *testing.T) {
 
 		cmdOut, cmdErr = executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create-env",
 			"--project", "snowy-legacy",
@@ -351,7 +351,7 @@ func TestProjects(t *testing.T) {
 		// Cleanup
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"delete",
 			"--project", project,
@@ -360,12 +360,12 @@ func TestProjects(t *testing.T) {
 		// Setup
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"project",
 			"create",
 			"--name", project,
 			"--description", "test of stackforms update values",
-			"--stack-ref", fmt.Sprintf("%s:stack-e2e-stackforms", CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-e2e-stackforms", TestRootOrg),
 			"--config-repo", "project-config",
 			"--output", "json",
 		})
@@ -545,7 +545,7 @@ func TestProjects(t *testing.T) {
 
 				cmd := append([]string{
 					"--output", "json",
-					"--org", CY_TEST_ROOT_ORG,
+					"--org", TestRootOrg,
 					"project",
 					"create-env",
 					"--project", project,

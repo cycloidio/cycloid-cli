@@ -68,5 +68,5 @@ func interpolate(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "failed to interpolate config", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	return printer.SmartPrint(p, config, nil, "failed to interpolate config", printer.Options{}, cmd.OutOrStderr())
+	return printer.SmartPrint(p, config, nil, "failed to interpolate config", printer.Options{}, cmd.OutOrStdout())
 }
