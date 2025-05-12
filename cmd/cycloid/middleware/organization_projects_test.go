@@ -50,7 +50,7 @@ func TestProjectCrud(t *testing.T) {
 
 	updatedProject, err := m.UpdateProject(
 		config.Org, newName, project, newDescription, configRepository,
-		owner, team, newColor, newIcon, "aws", createProjet.CreatedAt,
+		owner, team, newColor, newIcon, "aws", createProjet.UpdatedAt,
 	)
 	if err != nil {
 		t.Fatalf("Failed to update project '%s': %v", project, err)

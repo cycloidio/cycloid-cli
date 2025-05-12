@@ -91,6 +91,6 @@ func update(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, projectResp, err, "project not found", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", projectResp.CreatedAt)
+	resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", projectResp.UpdatedAt)
 	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
 }
