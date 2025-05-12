@@ -28,6 +28,45 @@ export CY_WAIT_NETWORK="${CY_WAIT_NETWORK:-false}"
 export CY_DOWNLOAD_RETRIES="${CY_DOWNLOAD_RETRIES:-1}"
 export CY_RELEASES_URL="${CY_RELEASES_URL:-https://cli-release.owl.cycloid.io/releases}"
 
+
+detect_platform() {
+  local os=$(uname -s)
+  local arch=$(uname -m)
+
+  case "$os" in
+    Darwin)
+      case "$arch" in
+        arm64)
+          echo "darwin-arm64"
+          return 0
+          ;;
+        x86_64)
+          echo "darwin-amd64"
+          return 0
+          ;;
+      esac
+      ;;
+    Linux)
+      case "$arch" in
+        aarch64 | armv7l | armv8l)
+          echo "linux-arm64"
+          return 0
+          ;;
+        x86_64)
+          echo "linux-amd64"
+          return 0
+          ;;
+      esac
+      ;;
+  esac
+
+  # Default case
+  echo "linux-amd64"
+  return 0
+}
+
+export UPSTREAM_BINARY_NAME="cy-$(detect_platform)"
+
 # Compating version, this is used when there is no CLI matching your API version.
 # We compare your version and the one released to find the closest n-1 version
 vercomp () {
@@ -113,7 +152,7 @@ get_binary () {
 
     CY_VERSION=$(format_version $CY_VERSION)
     # Download the exact CLI version
-    CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/cy"
+    CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/${UPSTREAM_BINARY_NAME}"
     wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"
     STATUS=$?
     if [ $STATUS != 0 ]; then
@@ -127,7 +166,7 @@ get_binary () {
       if [[ -f "${CY_BINARY}" ]]; then
           STATUS=0
       else
-          CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/cy"
+          CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}-rc/${UPSTREAM_BINARY_NAME}"
           wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"
           STATUS=$?
           if [ $STATUS != 0 ]; then
@@ -149,7 +188,7 @@ get_binary () {
       if [[ -f "${CY_BINARY}" ]]; then
           STATUS=0
       else
-          CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/${CY_LOWER_VERSION}/cy"
+          CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/${CY_LOWER_VERSION}/${UPSTREAM_BINARY_NAME}"
           wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"
           STATUS=$?
           if [ $STATUS != 0 ]; then
