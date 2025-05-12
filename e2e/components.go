@@ -23,9 +23,9 @@ func TestComponentCmd(t *testing.T) {
 
 	var (
 		projectName      = "Test E2E component"
-		project          = "test-e2e-componetn"
+		project          = randomCanonical("test-e2e-component")
 		description      = "Testing components"
-		configRepository = CyTestCatalogRepoURL
+		configRepository = CyTestConfigRepo
 		owner            = ""
 		team             = ""
 		color            = "blue"

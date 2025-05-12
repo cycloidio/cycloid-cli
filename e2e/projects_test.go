@@ -18,7 +18,7 @@ func TestProjects(t *testing.T) {
 
 	var (
 		projectName = "Test E2E project"
-		project     = "test-e2e-project"
+		project     = randomCanonical("test-e2e-project")
 		description = "Testing project"
 		owner       = ""
 		color       = "blue"
@@ -82,8 +82,8 @@ func TestProjects(t *testing.T) {
 	t.Run("Update", func(t *testing.T) {
 		var updateDesc = "NewDesc"
 		args := []string{
-			"-o", "json",
 			"project", "update",
+			"--output", "json",
 			"--project", project,
 			"--name", projectName,
 			"--description", updateDesc,
@@ -91,15 +91,15 @@ func TestProjects(t *testing.T) {
 			"--icon", icon,
 			"--color", color,
 		}
-		out, err := executeCommand(args)
+		jsonOut, err := executeCommand(args)
 		if err != nil {
 			t.Fatalf("failed to update project '%s': %v", project, err)
 		}
 
 		var projectResult models.Project
-		err = json.Unmarshal([]byte(out), &projectResult)
+		err = json.Unmarshal([]byte(jsonOut), &projectResult)
 		if err != nil {
-			t.Fatalf("failed to parse json output from the CLI on update: %v", err)
+			t.Fatalf("failed to parse json output from the CLI on update: %v\noutput: %s", err, jsonOut)
 		}
 
 		assert.Equal(t, updateDesc, projectResult.Description)

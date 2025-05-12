@@ -14,6 +14,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/config_repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environments"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/external_backends"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/infrapolicies"
@@ -101,12 +102,13 @@ func AttachCommands(cmd *cobra.Command) {
 		organizations.NewCommands(),
 		// pipelines.NewCommands(),
 		projects.NewCommands(),
+		environments.NewCommands(),
+		components.NewCommands(),
 		kpis.NewCommands(),
 		roles.NewCommands(),
 		stacks.NewCommands(),
 		login.NewCommands(),
 		terracost.NewCommands(),
 		beta.NewCommands(),
-		components.NewCommands(),
 	)
 }

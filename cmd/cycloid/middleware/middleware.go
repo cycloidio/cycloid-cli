@@ -119,6 +119,7 @@ type Middleware interface {
 	ListProjectsEnv(org, project string) ([]*models.Environment, error)
 
 	// Env
+	GetEnv(org, project, env string) (*models.Environment, error)
 	CreateEnv(org, project, env, envName, color string) (*models.Environment, error)
 	UpdateEnv(org, project, env, envName, color string) (*models.Environment, error)
 	DeleteEnv(org, project, env string) error
