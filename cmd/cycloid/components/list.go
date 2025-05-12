@@ -55,5 +55,5 @@ func getComponents(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "failed to fetch list of components in  '"+project+"', '"+env+"'", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	return printer.SmartPrint(p, components, nil, "", printer.Options{}, cmd.OutOrStderr())
+	return printer.SmartPrint(p, components, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

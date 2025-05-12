@@ -1,5 +1,3 @@
-// //go:build e2e
-// // +build e2e
 package e2e
 
 import (
@@ -14,9 +12,9 @@ import (
 func TestProjects(t *testing.T) {
 	t.Parallel()
 
-	os.Setenv("CY_API_URL", CY_API_URL)
-	os.Setenv("CY_API_KEY", CY_TEST_API_KEY)
-	os.Setenv("CY_ORG", CY_TEST_ROOT_ORG)
+	os.Setenv("CY_API_URL", TestAPIURL)
+	os.Setenv("CY_API_KEY", TestAPIKey)
+	os.Setenv("CY_ORG", TestRootOrg)
 
 	var (
 		projectName = "Test E2E project"

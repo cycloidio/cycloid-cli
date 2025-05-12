@@ -49,5 +49,5 @@ func getComponentConfig(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "failed to fetch config of component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	return printer.SmartPrint(p, config, nil, "", printer.Options{}, cmd.OutOrStderr())
+	return printer.SmartPrint(p, config, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

@@ -15,17 +15,16 @@ import (
 var (
 	m                 middleware.Middleware
 	api               *common.APIClient
-	config            *TestConfig
 	configRepoName    = "CLI test config repo"
-	configRepo        = "config"
-	configRepoUrl     = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
-	configRepoBranch  = "config"
+	configRepository  = "stacks-test-config"
+	configRepoURL     = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
+	configRepoBranch  = "cli-test-config"
 	isDefault         = false
 	gitCred           = "github"
-	catalogRepo       = "cli-test-catalog"
+	catalogRepo       = "cli-test-stacks"
 	catalogRepoName   = "CLI test catalog"
-	catalogRepoUrl    = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
-	catalogRepoBranch = "stacks"
+	catalogRepoURL    = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
+	catalogRepoBranch = "cli-test-stacks"
 	// gitCredName = "CLI Git Cred"
 	// gitCredKey  = ""
 )
@@ -41,10 +40,10 @@ type TestConfig struct {
 }
 
 func getTestConfig() (*TestConfig, error) {
-	var apiUrl, apiKey, org string
-	apiUrl, ok := os.LookupEnv("CY_API_URL")
+	var apiURL, apiKey, org string
+	apiURL, ok := os.LookupEnv("CY_API_URL")
 	if !ok {
-		apiUrl = "https://api-cli-test.staging.cycloid.io/"
+		apiURL = "https://api-cli-test.staging.cycloid.io/"
 	}
 
 	org, ok = os.LookupEnv("CY_TEST_ROOT_ORG")
@@ -58,28 +57,28 @@ func getTestConfig() (*TestConfig, error) {
 	}
 
 	api = common.NewAPI(
-		common.WithURL(apiUrl),
+		common.WithURL(apiURL),
 		common.WithInsecure(true),
 		common.WithToken(apiKey),
 	)
 
 	m = middleware.NewMiddleware(api)
 	return &TestConfig{
-		APIUrl: apiUrl,
+		APIUrl: apiURL,
 		APIKey: apiKey,
 		Org:    org,
 		ConfigRepo: models.ConfigRepository{
 			Name:                &configRepoName,
-			Canonical:           &configRepo,
+			Canonical:           &configRepository,
 			Default:             &isDefault,
-			URL:                 &configRepoUrl,
+			URL:                 &configRepoURL,
 			Branch:              configRepoBranch,
 			CredentialCanonical: gitCred,
 		},
 		CatalogRepo: models.ServiceCatalogSource{
 			Name:                &catalogRepoName,
 			Canonical:           &catalogRepo,
-			URL:                 &catalogRepoUrl,
+			URL:                 &catalogRepoURL,
 			Branch:              catalogRepoBranch,
 			CredentialCanonical: gitCred,
 		},

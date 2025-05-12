@@ -20,7 +20,7 @@ func TestEnvCrud(t *testing.T) {
 		projectName      = "Test CRUD ENV"
 		project          = "test-crud-env"
 		description      = "Testing env"
-		configRepository = configRepo
+		configRepository = configRepository
 		owner            = ""
 		team             = ""
 		color            = "blue"
