@@ -99,7 +99,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	return printer.SmartPrint(p, componentOutput, nil, "", printer.Options{}, cmd.OutOrStderr())
+	return printer.SmartPrint(p, componentOutput, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
 
 func NewUpdateComponentCommand() *cobra.Command {
@@ -160,5 +160,5 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	return printer.SmartPrint(p, updatedComponent, nil, "", printer.Options{}, cmd.OutOrStderr())
+	return printer.SmartPrint(p, updatedComponent, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
