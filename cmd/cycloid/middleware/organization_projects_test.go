@@ -15,14 +15,13 @@ func TestProjectCrud(t *testing.T) {
 	m := config.Middleware
 
 	var (
-		projectName      = "Test CRUD Projects"
-		project          = "test-crud-project"
-		description      = "My cool project description !\nWith a nexline"
-		configRepository = configRepo
-		owner            = ""
-		team             = ""
-		color            = "blue"
-		icon             = "planet"
+		projectName = "Test CRUD Projects"
+		project     = "test-crud-project"
+		description = "My cool project description !\nWith a nexline"
+		owner       = ""
+		team        = ""
+		color       = "blue"
+		icon        = "planet"
 	)
 
 	createProjet, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)

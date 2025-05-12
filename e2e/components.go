@@ -16,8 +16,8 @@ func TestComponentCmd(t *testing.T) {
 	t.Parallel()
 	api := common.NewAPI(
 		common.WithInsecure(true),
-		common.WithURL(CY_API_URL),
-		common.WithToken(CY_TEST_API_KEY),
+		common.WithURL(TestAPIURL),
+		common.WithToken(TestAPIKey),
 	)
 	m := middleware.NewMiddleware(api)
 
@@ -25,7 +25,7 @@ func TestComponentCmd(t *testing.T) {
 		projectName      = "Test E2E component"
 		project          = "test-e2e-componetn"
 		description      = "Testing components"
-		configRepository = CY_TEST_GIT_CR_URL
+		configRepository = CyTestCatalogRepoURL
 		owner            = ""
 		team             = ""
 		color            = "blue"
@@ -33,13 +33,13 @@ func TestComponentCmd(t *testing.T) {
 	)
 
 	defer func() {
-		err := m.DeleteProject(CY_TEST_ROOT_ORG, project)
+		err := m.DeleteProject(TestRootOrg, project)
 		if err != nil {
 			t.Fatalf("Failed to cleanup project '%s' for test '%s': %v", project, t.Name(), err)
 		}
 	}()
 
-	createdProject, err := m.CreateProject(CY_TEST_ROOT_ORG, projectName, project, description, configRepository, owner, team, color, icon)
+	createdProject, err := m.CreateProject(TestRootOrg, projectName, project, description, configRepository, owner, team, color, icon)
 	if err != nil {
 		t.Fatalf("Failed to create pre-requisite project '%s' for test '%s': %v", project, t.Name(), err)
 	}
@@ -51,13 +51,13 @@ func TestComponentCmd(t *testing.T) {
 	)
 
 	defer func() {
-		err := m.DeleteEnv(CY_TEST_ROOT_ORG, project, env)
+		err := m.DeleteEnv(TestRootOrg, project, env)
 		if err != nil {
 			t.Fatalf("Failed to delete env '%s' for test '%s': %v", env, t.Name(), err)
 		}
 	}()
 
-	_, err = m.CreateEnv(CY_TEST_ROOT_ORG, *createdProject.Canonical, env, envName, envColor)
+	_, err = m.CreateEnv(TestRootOrg, *createdProject.Canonical, env, envName, envColor)
 	if err != nil {
 		t.Fatalf("Failed to create env '%s': %v", env, err)
 	}
@@ -82,7 +82,7 @@ func TestComponentCmd(t *testing.T) {
 
 		args := []string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"components", "create",
 			"--name", componentName,
 			"-p", project,
@@ -108,7 +108,7 @@ func TestComponentCmd(t *testing.T) {
 		// delete
 		defer t.Run("DeleteCreateComp", func(t *testing.T) {
 			out, err := executeCommand([]string{
-				"--org", CY_TEST_ROOT_ORG,
+				"--org", TestRootOrg,
 				"components", "delete",
 				"-p", project,
 				"-e", env,
@@ -122,7 +122,7 @@ func TestComponentCmd(t *testing.T) {
 		// get
 		args = []string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"components", "get",
 			"-p", project,
 			"-e", env,
@@ -145,7 +145,7 @@ func TestComponentCmd(t *testing.T) {
 		// list
 		args = []string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"components", "list",
 			"-p", project,
 			"-e", env,
@@ -177,7 +177,7 @@ func TestComponentCmd(t *testing.T) {
 
 		args := []string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"components", "create",
 			"--name", componentName,
 			"-p", project,
@@ -202,7 +202,7 @@ func TestComponentCmd(t *testing.T) {
 		}
 		defer t.Run("DeleteCreateWithUpdateComp", func(t *testing.T) {
 			out, err := executeCommand([]string{
-				"--org", CY_TEST_ROOT_ORG,
+				"--org", TestRootOrg,
 				"components", "delete",
 				"-p", project,
 				"-e", env,
@@ -225,7 +225,7 @@ func TestComponentCmd(t *testing.T) {
 
 		args = []string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"components", "create",
 			"--name", componentName,
 			"-p", project,
@@ -262,7 +262,7 @@ func TestComponentCmd(t *testing.T) {
 
 		args = []string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"components", "update",
 			"--name", componentName,
 			"-p", project,
@@ -290,7 +290,7 @@ func TestComponentCmd(t *testing.T) {
 		args = []string{
 			// By default, output should be in json, we test that
 			// "--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"components", "update",
 			"--name", componentName,
 			"-p", project,

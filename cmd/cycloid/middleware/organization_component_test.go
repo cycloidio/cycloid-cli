@@ -21,7 +21,7 @@ func TestComponentCRUD(t *testing.T) {
 		projectName      = "Test CRUD component"
 		project          = "test-crud-component"
 		description      = "Testing components"
-		configRepository = configRepo
+		configRepository = configRepository
 		owner            = ""
 		team             = ""
 		color            = "blue"
