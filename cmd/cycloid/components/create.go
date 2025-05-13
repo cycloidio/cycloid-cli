@@ -1,6 +1,8 @@
 package components
 
 import (
+	"fmt"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -68,11 +70,6 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	inputs, err := cy_args.GetStackformsVars(cmd)
-	if err != nil {
-		return err
-	}
-
 	update, err := cmd.Flags().GetBool("update")
 	if err != nil {
 		return err
@@ -90,6 +87,17 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	if update {
 		_, err := m.GetComponent(org, project, env, component)
 		if err == nil {
+			// Fetch base forms value from current component
+			config, err := m.GetComponentConfig(org, project, env, component)
+			if err != nil {
+				return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
+			}
+
+			inputs, err := cy_args.GetStackformsVars(cmd, config)
+			if err != nil {
+				return err
+			}
+
 			componentOutput, err = m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
@@ -98,6 +106,21 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	// Get default to stacks
+	stackConfig, err := m.GetStackConfig(org, *stackRef)
+	if err != nil {
+		return err
+	}
+
+	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfig, *useCase)
+	if err != nil {
+		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", *stackRef, *useCase, err)
+	}
+
+	inputs, err := cy_args.GetStackformsVars(cmd, useCaseConfig)
+	if err != nil {
+		return err
+	}
 	componentOutput, err = m.CreateComponent(org, project, env, component, *description, &name, stackRef, useCase, cloudProvider, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
