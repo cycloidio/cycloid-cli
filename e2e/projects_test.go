@@ -52,7 +52,7 @@ func TestProjects(t *testing.T) {
 		}
 	})
 
-	t.Run("CreateWithUpdate", func(t *testing.T) {
+	t.Run("CreateWithUpdateExisting", func(t *testing.T) {
 		var createUpdateName = "helloUpdate"
 		args := []string{
 			"-o", "json",
@@ -77,6 +77,35 @@ func TestProjects(t *testing.T) {
 		}
 
 		assert.Equal(t, createUpdateName, *projectResult.Name)
+	})
+
+	t.Run("CreateWithUpdateNew", func(t *testing.T) {
+		var newProject = randomCanonical("e2e-new")
+		args := []string{
+			"-o", "json",
+			"project", "create",
+			"--project", newProject,
+			"--description", description,
+			"--owner", owner,
+			"--icon", icon,
+			"--color", color,
+			"--update",
+		}
+		_, err := executeCommand(args)
+		if err != nil {
+			t.Fatalf("failed to create project '%s': %v", newProject, err)
+		}
+
+		defer t.Run("DeleteCreateUpdate", func(t *testing.T) {
+			args := []string{
+				"project", "delete",
+				"--project", newProject,
+			}
+			_, err := executeCommand(args)
+			if err != nil {
+				t.Fatalf("failed to delete project '%s': %v", newProject, err)
+			}
+		})
 	})
 
 	t.Run("Update", func(t *testing.T) {

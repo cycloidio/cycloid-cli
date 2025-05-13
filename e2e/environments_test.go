@@ -105,6 +105,34 @@ func TestEnvs(t *testing.T) {
 		assert.Equal(t, createUpdateName, envResult.Name)
 	})
 
+	t.Run("CreateWithUpdateNew", func(t *testing.T) {
+		var newEnv = randomCanonical("e2e-env")
+		args := []string{
+			"-o", "json",
+			"env", "create",
+			"--project", project,
+			"--env", newEnv,
+			"--color", color,
+			"--update",
+		}
+		_, err := executeCommand(args)
+		if err != nil {
+			t.Fatalf("failed to create env '%s': %v", newEnv, err)
+		}
+
+		defer t.Run("DeleteCreateUpdate", func(t *testing.T) {
+			args := []string{
+				"env", "delete",
+				"--project", project,
+				"--env", newEnv,
+			}
+			_, err := executeCommand(args)
+			if err != nil {
+				t.Fatalf("failed to delete env '%s': %v", newEnv, err)
+			}
+		})
+	})
+
 	t.Run("Update", func(t *testing.T) {
 		var newName = "NewName"
 		args := []string{
