@@ -1,11 +1,16 @@
 package middleware
 
 import (
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
+	"strings"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_components"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
 )
 
 func (m *middleware) GetComponentConfig(org, project, env, component string) (*models.FormVariables, error) {
@@ -24,18 +29,53 @@ func (m *middleware) GetComponentConfig(org, project, env, component string) (*m
 }
 
 func (m *middleware) GetComponent(org, project, env, component string) (*models.Component, error) {
-	params := organization_components.NewGetComponentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-	params.WithComponentCanonical(component)
-
-	resp, err := m.api.OrganizationComponents.GetComponent(params, m.api.Credentials(&org))
+	apiURL := fmt.Sprintf("%s/organizations/%s/projects/%s/environments/%s/components/%s", m.api.Config.URL, org, project, env, component)
+	req, err := http.NewRequest("GET", apiURL, strings.NewReader(""))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, err
 	}
 
-	return resp.GetPayload(), nil
+	req.Header.Add("Authorization", "Bearer "+m.api.GetToken(org))
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	payload, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	var compData map[string]models.Component
+	err = json.Unmarshal(payload, &compData)
+	if err != nil {
+		return nil, err
+	}
+
+	comp, ok := compData["data"]
+	if !ok {
+		return nil, errors.New("payload from the API as changed, please contact the developper")
+	}
+	return &comp, err
+	// TODO: Uncomment and delete above when this is fixed: https://linear.app/cycloid/issue/BE-817/invalid-payload-output-for-getcomponent
+	// params := organization_components.NewGetComponentParams()
+	// params.SetOrganizationCanonical(org)
+	// params.SetProjectCanonical(project)
+	// params.SetEnvironmentCanonical(env)
+	// params.SetComponentCanonical(component)
+	//
+	// resp, err := m.api.OrganizationComponents.GetComponent(params, m.api.Credentials(&org))
+	// if err != nil {
+	// 	return nil, NewApiError(err)
+	// }
+	//
+	// err = resp.Payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, fmt.Errorf("received invalid payload from api '%v': %s", resp.Payload, err)
+	// }
+	//
+	// return resp.Payload, nil
 }
 
 func (m *middleware) GetComponents(org, project, env string) ([]*models.Component, error) {
