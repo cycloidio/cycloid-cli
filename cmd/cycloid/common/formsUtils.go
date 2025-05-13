@@ -15,7 +15,14 @@ func FormUseCaseToFormVars(stackConfig models.ServiceCatalogConfigs, useCaseName
 	output := make(models.FormVariables)
 
 	for _, section := range useCaseData.Forms.Sections {
+		if _, ok := output[*section.Name]; !ok {
+			output[*section.Name] = make(map[string]map[string]any)
+		}
 		for _, group := range section.Groups {
+			if _, ok := output[*group.Name]; !ok {
+				output[*section.Name][*group.Name] = make(map[string]any)
+			}
+
 			for _, widget := range group.Vars {
 				if widget.Default != nil {
 					output[*section.Name][*group.Name][*widget.Key] = widget.Default
@@ -24,5 +31,5 @@ func FormUseCaseToFormVars(stackConfig models.ServiceCatalogConfigs, useCaseName
 		}
 	}
 
-	return nil, nil
+	return &output, nil
 }

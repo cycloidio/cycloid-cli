@@ -21,7 +21,7 @@ func NewDeleteCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
+	cy_args.AddProjectFlag(cmd)
 	return cmd
 }
 

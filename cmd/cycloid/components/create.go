@@ -121,6 +121,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	componentOutput, err = m.CreateComponent(org, project, env, component, *description, &name, stackRef, useCase, cloudProvider, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
