@@ -1,4 +1,4 @@
-package projects
+package environments
 
 import (
 	"github.com/pkg/errors"
@@ -15,17 +15,17 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
-		Short: "get a project",
+		Short: "get a environment",
 		Example: `
-	# get a project in YAML format
-	cy --org my-org project get --project my-project -o yaml
+	# get a environment in YAML format
+	cy --org my-org environment get --environment my-environment -o yaml
 `,
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
-
+	cy_args.AddProjectFlag(cmd)
+	cy_args.AddEnvFlag(cmd)
 	return cmd
 }
 
@@ -37,10 +37,17 @@ func get(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	project, err := cy_args.GetProject(cmd)
+
+	project, err := cy_args.GetEnv(cmd)
 	if err != nil {
 		return err
 	}
+
+	env, err := cy_args.GetEnv(cmd)
+	if err != nil {
+		return err
+	}
+
 	output, err := cy_args.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
@@ -52,6 +59,6 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	proj, err := m.GetProject(org, project)
-	return printer.SmartPrint(p, proj, err, "unable to get project", printer.Options{}, cmd.OutOrStdout())
+	proj, err := m.GetEnv(org, project, env)
+	return printer.SmartPrint(p, proj, err, "unable to get environment", printer.Options{}, cmd.OutOrStdout())
 }

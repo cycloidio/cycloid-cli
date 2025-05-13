@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/rand"
 	"os"
 	"regexp"
 	"strings"
@@ -207,4 +208,16 @@ func WriteTempFile(content string) (string, error) {
 	}
 
 	return file.Name(), nil
+}
+
+// randomCanonical will add 4 random letter after the baseName
+func randomCanonical(baseName string) string {
+	var size = 4
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyz")
+
+	b := make([]rune, size)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return baseName + "-" + string(b)
 }

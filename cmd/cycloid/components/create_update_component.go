@@ -18,7 +18,7 @@ func NewCreateComponentCommand() *cobra.Command {
 		RunE:  createComponent,
 	}
 	cy_args.AddCyContext(cmd)
-	cy_args.AddComponentNameFlag(cmd)
+	cy_args.AddNameFlag(cmd)
 	cy_args.AddComponentDescriptionFlag(cmd)
 	cy_args.AddUseCaseFlag(cmd)
 	cy_args.AddCloudProviderFlag(cmd)
@@ -34,13 +34,13 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cy_args.GetComponentName(cmd)
+	name, err := cy_args.GetName(cmd)
 	if err != nil {
 		return err
 	}
-	if name == nil || *name == "" {
+	if name == "" {
 		// if name is empty, use the canonical
-		name = &component
+		name = component
 	}
 
 	description, err := cy_args.GetComponentDescription(cmd)
@@ -88,12 +88,12 @@ func createComponent(cmd *cobra.Command, args []string) error {
 
 	var componentOutput *models.Component
 	if update {
-		componentOutput, err = m.UpdateComponent(org, project, env, component, *description, name, useCase, inputs)
+		componentOutput, err = m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 		}
 	} else {
-		componentOutput, err = m.CreateComponent(org, project, env, component, *description, name, stackRef, useCase, cloudProvider, inputs)
+		componentOutput, err = m.CreateComponent(org, project, env, component, *description, &name, stackRef, useCase, cloudProvider, inputs)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, "failed to create component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 		}
@@ -109,7 +109,7 @@ func NewUpdateComponentCommand() *cobra.Command {
 		RunE:  updateComponent,
 	}
 	cy_args.AddCyContext(cmd)
-	cy_args.AddComponentNameFlag(cmd)
+	cy_args.AddNameFlag(cmd)
 	cy_args.AddComponentDescriptionFlag(cmd)
 	cy_args.AddUseCaseFlag(cmd)
 	cy_args.AddStackFormsInputFlags(cmd)
@@ -122,7 +122,7 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cy_args.GetComponentName(cmd)
+	name, err := cy_args.GetName(cmd)
 	if err != nil {
 		return err
 	}
@@ -155,7 +155,7 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	updatedComponent, err := m.UpdateComponent(org, project, env, component, *description, name, useCase, inputs)
+	updatedComponent, err := m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}

@@ -1,4 +1,4 @@
-package projects
+package environments
 
 import (
 	"github.com/spf13/cobra"
@@ -15,17 +15,18 @@ func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "delete",
 		Aliases: []string{"del", "rm"},
-		Short:   "delete a project",
-		Example: `cy --org my-org project delete --project my-project`,
-		RunE:    deleteProject,
+		Short:   "delete a environment",
+		Example: `cy --org my-org environment delete --env my-environment`,
+		RunE:    deleteEnvironment,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
+	cy_args.AddProjectFlag(cmd)
+	cy_args.AddEnvFlag(cmd)
 	return cmd
 }
 
-func deleteProject(cmd *cobra.Command, args []string) error {
+func deleteEnvironment(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -33,10 +34,17 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	project, err := cy_args.GetProject(cmd)
 	if err != nil {
 		return err
 	}
+
+	env, err := cy_args.GetEnv(cmd)
+	if err != nil {
+		return err
+	}
+
 	output, err := cy_args.GetOutput(cmd)
 	if err != nil {
 		return err
@@ -48,6 +56,6 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.DeleteProject(org, project)
-	return printer.SmartPrint(p, nil, err, "unable to delete project", printer.Options{}, cmd.OutOrStdout())
+	err = m.DeleteEnv(org, project, env)
+	return printer.SmartPrint(p, nil, err, "unable to delete environment", printer.Options{}, cmd.OutOrStdout())
 }

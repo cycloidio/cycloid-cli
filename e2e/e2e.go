@@ -10,6 +10,7 @@ var (
 	// Note, this url should be accessible by Cycloid API
 	CyTestCatalogRepoURL    = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
 	CyTestCatalogRepoBranch = "master"
+	CyTestConfigRepo        = "cycloid-template-catalog-config"
 	TestAPIURL              = "https://api-cli-test.staging.cycloid.io/"
 	TestRootOrg             = "cycloid"
 	TestAPIKey              = ""

@@ -1,4 +1,4 @@
-package projects
+package environments
 
 import (
 	"github.com/pkg/errors"
@@ -12,26 +12,24 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewUpdateCommand() *cobra.Command {
+func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "update",
-		Short:   "update a project",
-		Example: `cy --org my-org project update --project "my-project" --name "NewName"`,
-		RunE:    update,
+		Use:     "create",
+		Short:   "create a environment",
+		Example: `cy --org my-org environment create --env "my-environment"`,
+		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	cy_args.AddNameFlag(cmd)
 	cy_args.AddProjectFlag(cmd)
-	cy_args.AddDescriptionFlag(cmd)
-	cy_args.AddIconFlag(cmd)
+	cy_args.AddEnvFlag(cmd)
 	cy_args.AddColorFlag(cmd)
-	cy_args.AddOwnerFlag(cmd)
-	cy_args.AddConfigRepositoryFlag(cmd)
+	cmd.Flags().Bool("update", false, "if set, will update the environment if it exists.")
 	return cmd
 }
 
-func update(cmd *cobra.Command, args []string) error {
+func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -45,19 +43,17 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	env, err := cy_args.GetEnv(cmd)
+	if err != nil {
+		return err
+	}
+
 	name, err := cy_args.GetName(cmd)
 	if err != nil {
 		return err
 	}
-
-	description, err := cy_args.GetDescription(cmd)
-	if err != nil {
-		return err
-	}
-
-	owner, err := cy_args.GetOwner(cmd)
-	if err != nil {
-		return err
+	if name == "" {
+		name = env
 	}
 
 	color, err := cy_args.GetColor(cmd)
@@ -65,12 +61,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	icon, err := cy_args.GetIcon(cmd)
-	if err != nil {
-		return err
-	}
-
-	configRepository, err := cy_args.GetConfigRepository(cmd, org, m)
+	update, err := cmd.Flags().GetBool("update")
 	if err != nil {
 		return err
 	}
@@ -86,14 +77,17 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	projectResp, err := m.GetProject(org, project)
-	if err != nil {
-		return printer.SmartPrint(p, projectResp, err, "project not found", printer.Options{}, cmd.OutOrStderr())
+	if update {
+		_, err := m.GetEnv(org, project, env)
+		if err == nil {
+			resp, err := m.UpdateEnv(org, project, env, name, color)
+			if err != nil {
+				return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
+			}
+			return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+		}
 	}
 
-	resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", projectResp.UpdatedAt)
-	if err != nil {
-		return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStderr())
-	}
-	return printer.SmartPrint(p, resp, nil, "", printer.Options{}, cmd.OutOrStdout())
+	resp, err := m.CreateEnv(org, project, env, name, color)
+	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
 }

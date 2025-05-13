@@ -1,4 +1,4 @@
-package projects
+package environments
 
 import (
 	"github.com/spf13/cobra"
@@ -6,20 +6,21 @@ import (
 
 func NewCommands() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "project",
+		Use: "environment",
 		Aliases: []string{
-			"p",
-			"projects",
+			"e",
+			"env",
+			"environments",
 		},
-		Short: "Manage the projects",
+		Short: "Manage the environments of a project.",
 	}
 
-	cmd.AddCommand(NewDeleteCommand(),
+	cmd.AddCommand(
+		NewDeleteCommand(),
 		NewCreateCommand(),
 		NewListCommand(),
 		NewGetCommand(),
 		NewUpdateCommand(),
-		NewListEnvCommand(),
 	)
 
 	return cmd

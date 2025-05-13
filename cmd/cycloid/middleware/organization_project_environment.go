@@ -7,13 +7,27 @@ import (
 	"github.com/pkg/errors"
 )
 
+func (m *middleware) GetEnv(org, project, env string) (*models.Environment, error) {
+	params := organization_projects.NewGetEnvironmentParams()
+	params.SetOrganizationCanonical(org)
+	params.SetProjectCanonical(project)
+	params.SetEnvironmentCanonical(env)
+
+	resp, err := m.api.OrganizationProjects.GetEnvironment(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := resp.Payload
+	return payload.Data, nil
+}
+
 func (m *middleware) CreateEnv(org, project, env, envName, color string) (*models.Environment, error) {
 	params := organization_projects.NewCreateEnvironmentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
+	params.SetOrganizationCanonical(org)
+	params.SetProjectCanonical(project)
 
-	var envBody models.NewEnvironment
-	envBody = models.NewEnvironment{
+	envBody := models.NewEnvironment{
 		Name:      &envName,
 		Canonical: env,
 		Color:     color,
@@ -36,9 +50,9 @@ func (m *middleware) CreateEnv(org, project, env, envName, color string) (*model
 
 func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*models.Environment, error) {
 	params := organization_projects.NewUpdateEnvironmentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
+	params.SetOrganizationCanonical(org)
+	params.SetProjectCanonical(project)
+	params.SetEnvironmentCanonical(env)
 
 	envBody := models.UpdateEnvironment{
 		Name:  &envName,

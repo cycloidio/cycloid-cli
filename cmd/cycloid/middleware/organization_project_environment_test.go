@@ -18,7 +18,7 @@ func TestEnvCrud(t *testing.T) {
 
 	var (
 		projectName      = "Test CRUD ENV"
-		project          = "test-crud-env"
+		project          = randomCanonical("test-crud-env")
 		description      = "Testing env"
 		configRepository = configRepository
 		owner            = ""
@@ -42,8 +42,8 @@ func TestEnvCrud(t *testing.T) {
 
 	// end setup
 	var (
-		env      = "test"
-		envName  = "Test"
+		env      = "test-crud"
+		envName  = "TestCRUD"
 		envColor = "red"
 	)
 

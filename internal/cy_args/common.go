@@ -8,37 +8,14 @@ import (
 	"github.com/spf13/viper"
 )
 
-func AddCyContext(cmd *cobra.Command) {
-	AddProjectFlag(cmd)
-	AddEnvFlag(cmd)
-	AddComponentFlag(cmd)
-}
-
 var (
 	v = viper.GetViper()
 )
 
-func AddProjectFlag(cmd *cobra.Command) {
-	cmd.Flags().StringP("project", "p", "", "the project canonical, can also be set with the CY_PROJECT env var")
-	v.BindPFlag("project", cmd.Flags().Lookup("project"))
-}
-
-func AddEnvFlag(cmd *cobra.Command) {
-	cmd.Flags().StringP("env", "e", "", "the env canonical, can also be set with the CY_ENV env var")
-	v.BindPFlag("env", cmd.Flags().Lookup("env"))
-}
-
-func AddComponentFlag(cmd *cobra.Command) {
-	cmd.Flags().StringP("component", "c", "", "the component canonical, can also be set with the CY_COMPONENT env var")
-	v.BindPFlag("component", cmd.Flags().Lookup("component"))
-}
-
-func AddColorFlag(cmd *cobra.Command) {
-	cmd.Flags().String("color", "", "set the color.")
-}
-
-func AddIconFlag(cmd *cobra.Command) {
-	cmd.Flags().String("icon", "", "set the icon.")
+func AddCyContext(cmd *cobra.Command) {
+	AddProjectFlag(cmd)
+	AddEnvFlag(cmd)
+	AddComponentFlag(cmd)
 }
 
 func GetCyContext(cmd *cobra.Command) (org, project, env, component string, err error) {
@@ -65,12 +42,22 @@ func GetCyContext(cmd *cobra.Command) (org, project, env, component string, err 
 	return org, project, env, component, nil
 }
 
-func GetOrg(cmd *cobra.Command) (string, error) {
-	org := v.GetString("org")
-	if org == "" {
-		return "", fmt.Errorf("org is not set, use --org flag or CY_ORG env var, value: %s", org)
+func AddNameFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("name", "n", "", "set a human friendly name.")
+}
+
+func GetName(cmd *cobra.Command) (string, error) {
+	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		return "", err
 	}
-	return org, nil
+
+	return name, nil
+}
+
+func AddProjectFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("project", "p", "", "the project canonical, can also be set with the CY_PROJECT env var")
+	v.BindPFlag("project", cmd.Flags().Lookup("project"))
 }
 
 func GetProject(cmd *cobra.Command) (string, error) {
@@ -87,6 +74,11 @@ func GetProject(cmd *cobra.Command) (string, error) {
 	return project, nil
 }
 
+func AddEnvFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("env", "e", "", "the env canonical, can also be set with the CY_ENV env var")
+	v.BindPFlag("env", cmd.Flags().Lookup("env"))
+}
+
 func GetEnv(cmd *cobra.Command) (string, error) {
 	env, _ := cmd.Flags().GetString("env")
 	if env != "" {
@@ -101,6 +93,11 @@ func GetEnv(cmd *cobra.Command) (string, error) {
 	return env, nil
 }
 
+func AddComponentFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("component", "c", "", "the component canonical, can also be set with the CY_COMPONENT env var")
+	v.BindPFlag("component", cmd.Flags().Lookup("component"))
+}
+
 func GetComponent(cmd *cobra.Command) (string, error) {
 	component, _ := cmd.Flags().GetString("component")
 	if component != "" {
@@ -113,4 +110,64 @@ func GetComponent(cmd *cobra.Command) (string, error) {
 	}
 
 	return component, nil
+}
+
+func AddColorFlag(cmd *cobra.Command) {
+	cmd.Flags().String("color", "blue", "set the color.")
+}
+
+func GetColor(cmd *cobra.Command) (string, error) {
+	color, err := cmd.Flags().GetString("color")
+	if err != nil {
+		return "", nil
+	}
+
+	return color, nil
+}
+
+func AddIconFlag(cmd *cobra.Command) {
+	cmd.Flags().String("icon", "folder_open", "set the icon.")
+}
+
+func GetIcon(cmd *cobra.Command) (string, error) {
+	icon, err := cmd.Flags().GetString("icon")
+	if err != nil {
+		return "", nil
+	}
+
+	return icon, nil
+}
+
+func AddOwnerFlag(cmd *cobra.Command) {
+	cmd.Flags().String("owner", "", "canonical of a user to set as owner, will be the user attached to the current api key if empty.")
+}
+
+func GetOwner(cmd *cobra.Command) (string, error) {
+	owner, err := cmd.Flags().GetString("owner")
+	if err != nil {
+		return "", nil
+	}
+
+	return owner, nil
+}
+
+func AddDescriptionFlag(cmd *cobra.Command) {
+	cmd.Flags().String("description", "", "a human friendly description for your peers")
+}
+
+func GetDescription(cmd *cobra.Command) (string, error) {
+	description, err := cmd.Flags().GetString("description")
+	if err != nil {
+		return "", nil
+	}
+
+	return description, nil
+}
+
+func GetOrg(cmd *cobra.Command) (string, error) {
+	org := v.GetString("org")
+	if org == "" {
+		return "", fmt.Errorf("org is not set, use --org flag or CY_ORG env var, value: %s", org)
+	}
+	return org, nil
 }
