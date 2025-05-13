@@ -65,7 +65,7 @@ func TestComponentCmd(t *testing.T) {
 
 	var (
 		componentName        = "Test Component"
-		component            = "test-component"
+		component            = randomCanonical("e2e-component")
 		componentDescription = "My cool component"
 		stackRef             = "cycloid:stack-e2e-stackforms"
 	)
@@ -164,6 +164,40 @@ func TestComponentCmd(t *testing.T) {
 		assert.Equal(t, []models.Component{comp}, comps)
 	})
 
+	t.Run("CreateWithUpdateNew", func(t *testing.T) {
+		var newComp = randomCanonical("e2e-new")
+		args := []string{
+			"--output", "json",
+			"--org", TestRootOrg,
+			"components", "create",
+			"--name", componentName,
+			"-p", project,
+			"-e", env,
+			"-c", newComp,
+			"-d", componentDescription,
+			"-V", `section with spaces.group with spaces.no_spaces="new"`,
+			"-s", stackRef,
+			"-u", "default",
+			"--update",
+		}
+		stdout, stderr, err := executeCommandStdin("", args)
+		if err != nil {
+			t.Fatalf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+		}
+		defer t.Run("DeleteCreateWithUpdateComp", func(t *testing.T) {
+			out, err := executeCommand([]string{
+				"--org", TestRootOrg,
+				"components", "delete",
+				"-p", project,
+				"-e", env,
+				"-c", newComp,
+			})
+			if err != nil {
+				t.Fatalf("failed to delete and cleanup component '%s' from '%s' test: %v\nstdout: %s", component, t.Name(), err, out)
+			}
+		})
+	})
+
 	t.Run("CreateWithUpdateAndConfig", func(t *testing.T) {
 		// create
 		testJSON := `{"types": "tests": "map": {"hello": "world", "int": 1, "bool": true}}`
@@ -182,7 +216,7 @@ func TestComponentCmd(t *testing.T) {
 			"--name", componentName,
 			"-p", project,
 			"-e", env,
-			"-c", component + "-update",
+			"-c", component,
 			"-d", componentDescription,
 			// test raw var flag
 			"-j", testJSON,
@@ -206,7 +240,7 @@ func TestComponentCmd(t *testing.T) {
 				"components", "delete",
 				"-p", project,
 				"-e", env,
-				"-c", component + "-update",
+				"-c", component,
 			})
 			if err != nil {
 				t.Fatalf("failed to delete and cleanup component '%s' from '%s' test: %v\nstdout: %s", component, t.Name(), err, out)
@@ -230,7 +264,7 @@ func TestComponentCmd(t *testing.T) {
 			"--name", componentName,
 			"-p", project,
 			"-e", env,
-			"-c", component + "-update",
+			"-c", component,
 			"-d", description,
 			// test raw var flag
 			"-j", testJSON,
@@ -267,7 +301,7 @@ func TestComponentCmd(t *testing.T) {
 			"--name", componentName,
 			"-p", project,
 			"-e", env,
-			"-c", component + "-update",
+			"-c", component,
 			"-d", description,
 			// test raw var flag
 			"-j", testJSON,
@@ -295,11 +329,11 @@ func TestComponentCmd(t *testing.T) {
 			"--name", componentName,
 			"-p", project,
 			"-e", env,
-			"-c", component + "-update",
+			"-c", component,
 		}
 		out, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to get config from component '%s': %v", component+"-update", err)
+			t.Fatalf("failed to get config from component '%s': %v", component, err)
 		}
 
 		var outVars models.FormVariables
