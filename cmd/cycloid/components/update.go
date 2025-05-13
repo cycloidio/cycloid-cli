@@ -1,0 +1,72 @@
+package components
+
+import (
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+)
+
+func NewUpdateComponentCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update -p project -e env -c component",
+		Short: "update an existing component",
+		RunE:  updateComponent,
+	}
+	cy_args.AddCyContext(cmd)
+	cy_args.AddNameFlag(cmd)
+	cy_args.AddComponentDescriptionFlag(cmd)
+	cy_args.AddUseCaseFlag(cmd)
+	cy_args.AddStackFormsInputFlags(cmd)
+	return cmd
+}
+
+func updateComponent(cmd *cobra.Command, args []string) error {
+	org, project, env, component, err := cy_args.GetCyContext(cmd)
+	if err != nil {
+		return err
+	}
+
+	name, err := cy_args.GetName(cmd)
+	if err != nil {
+		return err
+	}
+
+	description, err := cy_args.GetComponentDescription(cmd)
+	if err != nil {
+		return err
+	}
+
+	useCase, err := cy_args.GetUseCase(cmd)
+	if err != nil {
+		return err
+	}
+
+	output, err := cmd.Flags().GetString("output")
+	if err != nil {
+		return err
+	}
+
+	inputs, err := cy_args.GetStackformsVars(cmd)
+	if err != nil {
+		return err
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	p, err := factory.GetPrinter(output)
+	if err != nil {
+		return errors.Wrap(err, "unable to get printer")
+	}
+
+	updatedComponent, err := m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, updatedComponent, nil, "", printer.Options{}, cmd.OutOrStdout())
+}
