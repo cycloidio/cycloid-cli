@@ -14,6 +14,10 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	StackformsEnvVarName = "CY_STACKFORMS_VARS"
+)
+
 func AddStackFormsInputFlags(cmd *cobra.Command) {
 	cmd.Flags().StringArrayP("json-file", "f", []string{}, "path to a JSON file containing Stackform input. Can be '-' to read from stdin. This flag can be set multiple times.")
 	cmd.MarkFlagFilename("json-file")
@@ -22,16 +26,31 @@ func AddStackFormsInputFlags(cmd *cobra.Command) {
 }
 
 // GetStackformsVars wrap the flag parsing and the merge of the variables
-// set by the user.
-func GetStackformsVars(cmd *cobra.Command) (*models.FormVariables, error) {
+// set by the user. The caller must provide the defaults values as he only knows
+// if it must be fetched from a stack or a current component.
+func GetStackformsVars(cmd *cobra.Command, defaults *models.FormVariables) (*models.FormVariables, error) {
+	if defaults == nil {
+		return nil, fmt.Errorf("default variables from a stack shouldn't be null: %s", defaults)
+	}
+
 	varFiles, err := cmd.Flags().GetStringArray("json-file")
 	if err != nil {
 		return nil, err
 	}
 
-	varJson, err := cmd.Flags().GetStringArray("json-vars")
+	varJSON, err := cmd.Flags().GetStringArray("json-vars")
 	if err != nil {
 		return nil, err
+	}
+
+	jsonFromEnv, ok := os.LookupEnv(StackformsEnvVarName)
+	var varsFromEnv = make(models.FormVariables)
+	if ok {
+		decoder := json.NewDecoder(strings.NewReader(jsonFromEnv))
+		err := decoder.Decode(&varsFromEnv)
+		if err != nil {
+			return nil, fmt.Errorf("invalid JSON variables in '%s' env var: %s", StackformsEnvVarName, err)
+		}
 	}
 
 	varField, err := cmd.Flags().GetStringToString("var")
@@ -39,44 +58,55 @@ func GetStackformsVars(cmd *cobra.Command) (*models.FormVariables, error) {
 		return nil, err
 	}
 
-	output, err := MergeStackformsVars(varFiles, varJson, varField)
+	output, err := MergeStackformsVars(defaults, &varsFromEnv, varFiles, varJSON, varField)
 	if err != nil {
 		return nil, err
 	}
 
-	return &output, nil
+	if output == nil {
+		return nil, errors.New("invalid user input: stackforms vars must not be empty.")
+	}
+	return output, nil
 }
 
 // MergeStackformsVars will parse and merge all variables inputs in the following order of
 // precedence:
 // file < jsonString < keyValueField
-func MergeStackformsVars(jsonFiles, jsonStrings []string, keyValueField map[string]string) (models.FormVariables, error) {
-	var output = make(models.FormVariables)
-	jsonFileVars, err := MergeJsonFileVars(jsonFiles)
+func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVariables, jsonFiles, jsonStrings []string, keyValueField map[string]string) (*models.FormVariables, error) {
+	if defaults == nil {
+		return nil, fmt.Errorf("default variables from a stack shouldn't be null: %s", defaults)
+	}
+
+	err := mergo.Merge(defaults, *envVars, mergo.WithOverride)
 	if err != nil {
 		return nil, err
 	}
 
-	err = mergo.Merge(&output, jsonFileVars)
+	jsonFileVars, err := MergeJSONFileVars(jsonFiles)
 	if err != nil {
 		return nil, err
 	}
 
-	jsonVars, err := MergeJsonVars(jsonStrings)
+	err = mergo.Merge(defaults, *jsonFileVars, mergo.WithOverride)
 	if err != nil {
 		return nil, err
 	}
 
-	err = mergo.Merge(&output, jsonVars)
+	jsonVars, err := MergeJSONVars(jsonStrings)
 	if err != nil {
 		return nil, err
 	}
 
-	return output, nil
+	err = mergo.Merge(defaults, *jsonVars, mergo.WithOverride)
+	if err != nil {
+		return nil, err
+	}
+
+	return defaults, nil
 }
 
-// MergeJsonFileVars will read and merge the Stackforms vars from the `json-file` arg
-func MergeJsonFileVars(jsonFiles []string) (*models.FormVariables, error) {
+// MergeJSONFileVars will read and merge the Stackforms vars from the `json-file` arg
+func MergeJSONFileVars(jsonFiles []string) (*models.FormVariables, error) {
 	var output = make(models.FormVariables)
 
 	for _, file := range jsonFiles {
@@ -88,7 +118,7 @@ func MergeJsonFileVars(jsonFiles []string) (*models.FormVariables, error) {
 		} else {
 			reader, err := os.Open(file)
 			if err != nil {
-				return nil, fmt.Errorf("Failed to open var file at path '%s': %v", file, err)
+				return nil, fmt.Errorf("failed to open var file at path '%s': %v", file, err)
 			}
 			defer reader.Close()
 
@@ -114,8 +144,8 @@ func MergeJsonFileVars(jsonFiles []string) (*models.FormVariables, error) {
 	return &output, nil
 }
 
-// MergeJsonVars expect an array of valid JSON string as stackforms input and return a models.FormVariables
-func MergeJsonVars(jsonVars []string) (*models.FormVariables, error) {
+// MergeJSONVars expect an array of valid JSON string as stackforms input and return a models.FormVariables
+func MergeJSONVars(jsonVars []string) (*models.FormVariables, error) {
 	var output = make(models.FormVariables)
 	for _, jsonString := range jsonVars {
 		if jsonString == "" {

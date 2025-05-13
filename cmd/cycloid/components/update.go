@@ -50,17 +50,23 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	inputs, err := cy_args.GetStackformsVars(cmd)
-	if err != nil {
-		return err
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	// Fetch base forms value from current component
+	config, err := m.GetComponentConfig(org, project, env, component)
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	inputs, err := cy_args.GetStackformsVars(cmd, config)
+	if err != nil {
+		return err
 	}
 
 	updatedComponent, err := m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)
