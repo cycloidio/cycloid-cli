@@ -160,16 +160,13 @@ func NewAPI(opts ...APIOptions) *APIClient {
 	}
 }
 
-func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
-	var token string
-	var ok bool
-
-	token = a.Config.Token
+func (a *APIClient) GetToken(org string) string {
+	token := a.Config.Token
 
 	// we first try to get the token from the env variable
 	if token == "" {
 		for _, env_var := range []string{"CY_API_KEY", "CY_API_TOKEN", "TOKEN"} {
-			token, ok = os.LookupEnv(env_var)
+			token, ok := os.LookupEnv(env_var)
 
 			// Still display warning for future deprecation
 			if ok && env_var == "TOKEN" {
@@ -188,15 +185,21 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 		// we fetch the running config
 		config, _ := config.Read()
 
-		if org == nil {
-			return nil
-		}
-
 		// we try to find a token for this `org`
-		if t, ok := config.Organizations[*org]; ok {
+		if t, ok := config.Organizations[org]; ok {
 			token = t.Token
 		}
 	}
+
+	return token
+}
+
+func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
+	if org == nil {
+		return nil
+	}
+
+	token := a.GetToken(*org)
 
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
 		if len(token) == 0 {

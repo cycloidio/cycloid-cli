@@ -22,7 +22,6 @@ cy --org my-org projects list -o json`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	return cmd
-
 }
 
 func list(cmd *cobra.Command, args []string) error {
