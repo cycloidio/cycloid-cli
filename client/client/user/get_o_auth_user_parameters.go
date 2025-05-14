@@ -67,6 +67,12 @@ type GetOAuthUserParams struct {
 	*/
 	OauthCode string
 
+	/* OrganizationCanonical.
+
+	   A canonical of a organization used for filtering.
+	*/
+	OrganizationCanonical *string
+
 	/* SocialType.
 
 	   The OAuth Social type
@@ -137,6 +143,17 @@ func (o *GetOAuthUserParams) SetOauthCode(oauthCode string) {
 	o.OauthCode = oauthCode
 }
 
+// WithOrganizationCanonical adds the organizationCanonical to the get o auth user params
+func (o *GetOAuthUserParams) WithOrganizationCanonical(organizationCanonical *string) *GetOAuthUserParams {
+	o.SetOrganizationCanonical(organizationCanonical)
+	return o
+}
+
+// SetOrganizationCanonical adds the organizationCanonical to the get o auth user params
+func (o *GetOAuthUserParams) SetOrganizationCanonical(organizationCanonical *string) {
+	o.OrganizationCanonical = organizationCanonical
+}
+
 // WithSocialType adds the socialType to the get o auth user params
 func (o *GetOAuthUserParams) WithSocialType(socialType string) *GetOAuthUserParams {
 	o.SetSocialType(socialType)
@@ -163,6 +180,23 @@ func (o *GetOAuthUserParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 
 		if err := r.SetQueryParam("oauth_code", qOauthCode); err != nil {
 			return err
+		}
+	}
+
+	if o.OrganizationCanonical != nil {
+
+		// query param organization_canonical
+		var qrOrganizationCanonical string
+
+		if o.OrganizationCanonical != nil {
+			qrOrganizationCanonical = *o.OrganizationCanonical
+		}
+		qOrganizationCanonical := qrOrganizationCanonical
+		if qOrganizationCanonical != "" {
+
+			if err := r.SetQueryParam("organization_canonical", qOrganizationCanonical); err != nil {
+				return err
+			}
 		}
 	}
 

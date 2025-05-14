@@ -36,9 +36,17 @@ type Organization struct {
 	// Required: true
 	CanChildrenCreateAppearance *bool `json:"can_children_create_appearance"`
 
+	// can children use dedicated authentication
+	// Required: true
+	CanChildrenUseDedicatedAuthentication *bool `json:"can_children_use_dedicated_authentication"`
+
 	// can create appearance
 	// Required: true
 	CanCreateAppearance *bool `json:"can_create_appearance"`
+
+	// can use dedicated authentication
+	// Required: true
+	CanUseDedicatedAuthentication *bool `json:"can_use_dedicated_authentication"`
 
 	// canonical
 	// Required: true
@@ -72,6 +80,14 @@ type Organization struct {
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
+
+	// Defines if this organization is the root one on the platform or not
+	// Required: true
+	IsRoot *bool `json:"is_root"`
+
+	// is using dedicated authentication
+	// Required: true
+	IsUsingDedicatedAuthentication *bool `json:"is_using_dedicated_authentication"`
 
 	// mfa enabled
 	// Required: true
@@ -115,7 +131,15 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateCanChildrenUseDedicatedAuthentication(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCanCreateAppearance(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCanUseDedicatedAuthentication(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -144,6 +168,14 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIsRoot(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIsUsingDedicatedAuthentication(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -236,9 +268,27 @@ func (m *Organization) validateCanChildrenCreateAppearance(formats strfmt.Regist
 	return nil
 }
 
+func (m *Organization) validateCanChildrenUseDedicatedAuthentication(formats strfmt.Registry) error {
+
+	if err := validate.Required("can_children_use_dedicated_authentication", "body", m.CanChildrenUseDedicatedAuthentication); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Organization) validateCanCreateAppearance(formats strfmt.Registry) error {
 
 	if err := validate.Required("can_create_appearance", "body", m.CanCreateAppearance); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateCanUseDedicatedAuthentication(formats strfmt.Registry) error {
+
+	if err := validate.Required("can_use_dedicated_authentication", "body", m.CanUseDedicatedAuthentication); err != nil {
 		return err
 	}
 
@@ -322,6 +372,24 @@ func (m *Organization) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateIsRoot(formats strfmt.Registry) error {
+
+	if err := validate.Required("is_root", "body", m.IsRoot); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateIsUsingDedicatedAuthentication(formats strfmt.Registry) error {
+
+	if err := validate.Required("is_using_dedicated_authentication", "body", m.IsUsingDedicatedAuthentication); err != nil {
 		return err
 	}
 

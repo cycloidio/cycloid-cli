@@ -46,6 +46,9 @@ type NewOAuthUser struct {
 	// Enum: ["en","fr","es"]
 	Locale string `json:"locale,omitempty"`
 
+	// organization canonical
+	OrganizationCanonical string `json:"organization_canonical,omitempty"`
+
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
