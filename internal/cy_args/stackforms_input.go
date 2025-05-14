@@ -116,16 +116,16 @@ func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVar
 func MergeJSONFileVars(jsonFiles []string) (*models.FormVariables, error) {
 	var output = make(models.FormVariables)
 
-	for _, file := range jsonFiles {
+	for _, filename := range jsonFiles {
 		var decoder *json.Decoder
 		// Check if the user specified stdin
-		if file == "-" {
-			file = "stdin" // for error msg
+		if filename == "-" {
+			filename = "stdin" // for error msg
 			decoder = json.NewDecoder(os.Stdin)
 		} else {
-			reader, err := os.Open(file)
+			reader, err := os.Open(filename)
 			if err != nil {
-				return nil, fmt.Errorf("failed to open var file at path '%s': %v", file, err)
+				return nil, fmt.Errorf("failed to open var file at path '%s': %v", filename, err)
 			}
 			defer reader.Close()
 
@@ -139,11 +139,11 @@ func MergeJSONFileVars(jsonFiles []string) (*models.FormVariables, error) {
 				break
 			}
 			if err != nil {
-				return nil, fmt.Errorf("failed to read StackForms variables from '%s': %v", file, err)
+				return nil, fmt.Errorf("failed to read StackForms variables from '%s': %v", filename, err)
 			}
 
 			if err := mergo.Merge(&output, extractedVars, mergo.WithOverride); err != nil {
-				return nil, fmt.Errorf("failed to merge variables from '%s': %v", file, err)
+				return nil, fmt.Errorf("failed to merge variables from '%s': %v", filename, err)
 			}
 		}
 	}
