@@ -275,7 +275,7 @@ func TestComponentCmd(t *testing.T) {
 			// test file flag
 			"-f", filename,
 			// Test var=value flag
-			"-V", `section with spaces.group with spaces.no_spaces="osef"`,
+			"-V", `section with spaces.group with spaces.no_spaces=osef`,
 			"-s", stackRef,
 			"-u", "default",
 			"--update",
@@ -286,10 +286,34 @@ func TestComponentCmd(t *testing.T) {
 			t.Fatalf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 
+		// get config
+		args = []string{
+			"--output", "json",
+			"components", "config", "get",
+			"-p", project,
+			"-e", env,
+			"-c", component,
+		}
+		stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
+		if err != nil {
+			t.Fatalf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+		}
+
+		var outVars models.FormVariables
+		err = json.Unmarshal([]byte(stdout), &outVars)
+		if err != nil {
+			t.Fatalf("failed to parse output of CLI as JSON:\n%s\n%s", stdout, err)
+		}
+
+		value, _ := outVars["types"]["tests"]["map"].(map[string]any)["update"].(bool)
+		assert.Equal(t, true, value)
+		assert.Equal(t, "updated", outVars["types"]["tests"]["string"])
+		assert.Equal(t, "osef", outVars["section with spaces"]["group with spaces"]["no_spaces"])
+
 		// update
-		testJSON = `{"types": {"tests": {"map": {"update": true}}}}`
-		testJSONFileContent = `{"types": {"tests": {"string": "update"}}}`
-		testJSONStdin = `{"types": {"tests": {"array": ["update"]}}}`
+		testJSON = `{"types": {"tests": {"string": "update2"}}}`
+		testJSONFileContent = `{"types": {"tests": {"integer": 14}}}`
+		testJSONStdin = `{"types": {"tests": {"float": 2.2}}}`
 		filename, err = WriteTempFile(testJSONFileContent)
 		if err != nil {
 			t.Fatalf("comp update setup failed: %v", err)
@@ -312,7 +336,8 @@ func TestComponentCmd(t *testing.T) {
 			// test file flag
 			"-f", filename,
 			// Test var=value flag
-			"-V", `section with spaces.group with spaces.no_spaces="update"`,
+			"-V", `section with spaces.group with spaces.no_spaces=update2`,
+			"-V", `types.tests.array=["update2"]`,
 			"-u", "default",
 		}
 
@@ -321,32 +346,31 @@ func TestComponentCmd(t *testing.T) {
 			t.Fatalf("component update failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 
-		// config get
+		// check config after update
 		args = []string{
-			// By default, output should be in json, we test that
-			// "--output", "json",
-			"--org", TestRootOrg,
-			"components", "update",
-			"--name", componentName,
-			"--use-case", "default",
+			"--output", "json",
+			"components", "config", "get",
 			"-p", project,
 			"-e", env,
 			"-c", component,
 		}
-		_, err = executeCommand(args)
+		stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
 		if err != nil {
-			t.Fatalf("failed to get config from component '%s': %v", component, err)
+			t.Fatalf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 
-		// TODO: fix when backend fixes output
-		// var outVars models.FormVariables
-		// err = json.Unmarshal([]byte(out), &outVars)
-		// if err != nil {
-		// 	t.Fatalf("failed to parse '%s' CLI output as JSON vars:\noutput:\n%s\nerr:\n%s", strings.Join(args, " "), out, err)
-		// }
+		outVars = make(models.FormVariables)
+		err = json.Unmarshal([]byte(stdout), &outVars)
+		if err != nil {
+			t.Fatalf("failed to parse output of CLI as JSON:\n%s\n%s", stdout, err)
+		}
 
-		// assert.Equal(t, true, outVars["types"]["tests"]["map"].(map[string]bool)["update"])
-		// assert.Equal(t, "update", outVars["types"]["tests"]["string"].(string))
-		// assert.Equal(t, []string{"update"}, outVars["types"]["tests"]["string"].([]string))
+		assert.Equal(t, "update2", outVars["types"]["tests"]["string"])
+		assert.Equal(t, 14, outVars["types"]["tests"]["integer"].(int))
+		assert.Equal(t, 2.2, outVars["types"]["tests"]["float"])
+		arrayVal, ok := outVars["types"]["test"]["array"].([]string)
+		assert.True(t, ok, "The type casting should have worked")
+		assert.Equal(t, []string{"update2"}, arrayVal)
+		assert.Equal(t, "update2", outVars["section with spaces"]["group with spaces"]["no_spaces"])
 	})
 }
