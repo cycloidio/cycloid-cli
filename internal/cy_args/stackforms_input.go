@@ -102,6 +102,13 @@ func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVar
 		return nil, err
 	}
 
+	for k, v := range keyValueField {
+		err = UpdateFormVar(k, v, *defaults)
+		if err != nil {
+			return nil, fmt.Errorf("failed to update vars '%s' with field '%s': %s", k, v, err)
+		}
+	}
+
 	return defaults, nil
 }
 
