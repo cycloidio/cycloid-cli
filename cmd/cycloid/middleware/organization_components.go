@@ -97,16 +97,18 @@ func (m *middleware) CreateComponent(org, project, env, component, description s
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
 	params.WithEnvironmentCanonical(env)
+
+	if vars == nil {
+		return nil, fmt.Errorf("forms variables should not be null")
+	}
+
 	body := &models.NewComponent{
 		Name:              componentName,
 		Canonical:         component,
 		Description:       description,
 		ServiceCatalogRef: serviceCatalogRef,
 		UseCase:           useCase,
-	}
-
-	if vars != nil {
-		body.Vars = *vars
+		Vars:              *vars,
 	}
 
 	if cloudProviderCanonical != nil {
@@ -133,14 +135,16 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 	params.WithProjectCanonical(project)
 	params.WithEnvironmentCanonical(env)
 	params.WithComponentCanonical(component)
+
+	if vars == nil {
+		return nil, fmt.Errorf("forms variables should not be null")
+	}
+
 	body := &models.UpdateComponent{
 		Name:        componentName,
 		Description: description,
 		UseCase:     useCase,
-	}
-
-	if vars != nil {
-		body.Vars = *vars
+		Vars:        *vars,
 	}
 
 	err := body.Validate(strfmt.Default)
