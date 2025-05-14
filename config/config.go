@@ -29,6 +29,15 @@ type Organization struct {
 	Token string `yaml:"token"`
 }
 
+func GetConfigPath() (string, error) {
+	configFilePath, err := xdg.ConfigFile(fmt.Sprintf("%s/%s", appName, path))
+	if err != nil {
+		return "", err
+	}
+
+	return configFilePath, nil
+}
+
 // Read will read the config from the
 // path and returns a config struct
 func Read() (*Config, error) {
