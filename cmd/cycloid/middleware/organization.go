@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
@@ -17,21 +19,24 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 		Name: &name,
 	}
 
-	params.SetBody(body)
 	err := body.Validate(strfmt.Default)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to validate request body")
 	}
+	params.SetBody(body)
 
 	resp, err := m.api.Organizations.CreateOrg(params, m.api.Credentials(nil))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) UpdateOrganization(can, name string) (*models.Organization, error) {
@@ -42,21 +47,24 @@ func (m *middleware) UpdateOrganization(can, name string) (*models.Organization,
 		Name: &name,
 	}
 
-	params.SetBody(body)
 	err := body.Validate(strfmt.Default)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to validate request body")
 	}
+	params.SetBody(body)
 
 	resp, err := m.api.Organizations.UpdateOrg(params, m.api.Credentials(&can))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
@@ -68,9 +76,13 @@ func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	d := p.Data
-	return d, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }
 
 func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, error) {
@@ -82,14 +94,13 @@ func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, erro
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
@@ -100,14 +111,13 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organization, error) {
@@ -121,39 +131,46 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) CreateOrganizationChild(org, childOrg string, childOrgName *string) (*models.Organization, error) {
-	params := organization_children.NewCreateChildParams()
 	if childOrgName == nil {
 		childOrgName = &childOrg
 	}
 
+	params := organization_children.NewCreateChildParams()
+	params.SetOrganizationCanonical(org)
 	body := &models.NewOrganization{
 		Name:      childOrgName,
 		Canonical: childOrg,
 	}
 
-	params.SetBody(body)
-	params.OrganizationCanonical = org
 	err := body.Validate(strfmt.Default)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to validate request body")
 	}
+
+	params.SetBody(body)
 
 	resp, err := m.api.OrganizationChildren.CreateChild(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) DeleteOrganization(org string) error {

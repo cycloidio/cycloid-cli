@@ -81,12 +81,17 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 	}
 	params.WithBody(body)
 
-	response, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
 
-	payload := response.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
 	return payload.Data, nil
 }
 
@@ -112,22 +117,18 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.UpdateProject(
-		params,
-		m.api.Credentials(&org),
-	)
+	resp, err := m.api.OrganizationProjects.UpdateProject(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-	return d, err
+	return payload.Data, nil
 }
 
 func (m *middleware) DeleteProject(org, project string) error {

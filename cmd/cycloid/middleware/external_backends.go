@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/go-openapi/strfmt"
 
@@ -19,18 +20,18 @@ func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBac
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	d := p.Data
-	if len(d) == 0 {
+	data := payload.Data
+	if len(data) == 0 {
 		return nil, NewApiError(errors.New("couldn't find the remote terraform backend"))
 	}
 
-	return d[0], nil
+	return data[0], nil
 }
 
 func (m *middleware) GetExternalBackend(org string, externalBackend uint32) (*models.ExternalBackend, error) {
@@ -43,19 +44,16 @@ func (m *middleware) GetExternalBackend(org string, externalBackend uint32) (*mo
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend, error) {
-
 	params := organization_external_backends.NewGetExternalBackendsParams()
 	params.SetOrganizationCanonical(org)
 
@@ -64,19 +62,16 @@ func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) error {
-
 	params := organization_external_backends.NewDeleteExternalBackendParams()
 	params.SetOrganizationCanonical(org)
 	params.SetExternalBackendID(externalBackend)
@@ -90,7 +85,6 @@ func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) e
 }
 
 func (m *middleware) CreateExternalBackends(org, project, env, purpose, credential string, isDefault bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
-
 	params := organization_external_backends.NewCreateExternalBackendParams()
 	params.SetOrganizationCanonical(org)
 
@@ -133,15 +127,13 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose, credenti
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32, purpose, credential string, isDefault bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
@@ -181,13 +173,11 @@ func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32,
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }

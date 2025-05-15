@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/user"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/go-openapi/runtime"
@@ -54,7 +56,13 @@ func (m *middleware) RefreshToken(org, childOrg *string, token string) (*models.
 		return nil, NewApiError(err)
 	}
 
-	return resp.Payload.Data, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }
 
 func (m *middleware) UserLogin(email, username, org *string, password string) (*models.UserSession, error) {
@@ -85,5 +93,11 @@ func (m *middleware) UserLogin(email, username, org *string, password string) (*
 		return nil, NewApiError(err)
 	}
 
-	return resp.Payload.Data, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }

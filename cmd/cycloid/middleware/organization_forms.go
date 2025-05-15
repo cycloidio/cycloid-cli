@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
@@ -56,10 +58,13 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) InterpolateFormsConfig(org, project, env, component, serviceCatalogRef, useCase string, inputs *models.FormVariables) (*models.ServiceCatalogConfig, error) {
@@ -88,5 +93,11 @@ func (m *middleware) InterpolateFormsConfig(org, project, env, component, servic
 		return nil, NewApiError(err)
 	}
 
-	return resp.GetPayload().Data, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }

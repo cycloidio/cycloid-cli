@@ -40,10 +40,13 @@ func (m *middleware) CreateCredential(org, name, credentialType string, rawCred 
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) UpdateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, error) {
@@ -77,10 +80,13 @@ func (m *middleware) UpdateCredential(org, name, credentialType string, rawCred 
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) GetCredential(org, credential string) (*models.Credential, error) {
@@ -93,10 +99,13 @@ func (m *middleware) GetCredential(org, credential string) (*models.Credential, 
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) DeleteCredential(org, credential string) error {
@@ -125,12 +134,11 @@ func (m *middleware) ListCredentials(org, credentialType string) ([]*models.Cred
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }

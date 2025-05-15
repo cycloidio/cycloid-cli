@@ -13,12 +13,18 @@ func (m *middleware) ListAPIKeys(org string) ([]*models.APIKey, error) {
 	params := organization_api_keys.NewGetAPIKeysParams()
 	params.SetOrganizationCanonical(org)
 
-	res, err := m.api.OrganizationAPIKeys.GetAPIKeys(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationAPIKeys.GetAPIKeys(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, fmt.Errorf("unable to list API keys: %w", NewApiError(err))
 	}
 
-	return res.GetPayload().Data, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }
 
 // GetAPIKey will request API to get a specified generated API key by its canonical
@@ -27,12 +33,18 @@ func (m *middleware) GetAPIKey(org, canonical string) (*models.APIKey, error) {
 	params.SetOrganizationCanonical(org)
 	params.SetAPIKeyCanonical(canonical)
 
-	res, err := m.api.OrganizationAPIKeys.GetAPIKey(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationAPIKeys.GetAPIKey(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, fmt.Errorf("unable to get API key: %w", NewApiError(err))
 	}
 
-	return res.GetPayload().Data, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }
 
 // GetAPIKey will request API to get a specified generated API key by its canonical
@@ -53,12 +65,18 @@ func (m *middleware) CreateAPIKey(org, canonical, description, owner string, nam
 
 	params.SetBody(&body)
 
-	res, err := m.api.OrganizationAPIKeys.CreateAPIKey(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationAPIKeys.CreateAPIKey(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
 
-	return res.GetPayload().Data, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }
 
 // DeleteAPIKey will request API to delete a specified generated API key

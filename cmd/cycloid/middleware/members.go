@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
@@ -17,16 +19,13 @@ func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) ListInvites(org string) ([]*models.MemberOrg, error) {
@@ -39,11 +38,13 @@ func (m *middleware) ListInvites(org string) ([]*models.MemberOrg, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) GetMember(org string, id uint32) (*models.MemberOrg, error) {
@@ -56,16 +57,13 @@ func (m *middleware) GetMember(org string, id uint32) (*models.MemberOrg, error)
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) DeleteMember(org string, id uint32) error {
@@ -83,7 +81,6 @@ func (m *middleware) DeleteMember(org string, id uint32) error {
 
 func (m *middleware) UpdateMember(org string, id uint32, role string) (*models.MemberOrg, error) {
 	params := organization_members.NewUpdateOrgMemberParams()
-
 	params.SetOrganizationCanonical(org)
 	params.SetMemberID(id)
 
@@ -102,17 +99,13 @@ func (m *middleware) UpdateMember(org string, id uint32, role string) (*models.M
 		return nil, NewApiError(err)
 	}
 
-	//TODO verify why getpayload no defined ?
-	p := resp.GetPayload()
-
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) InviteMember(org, email, role string) (*models.MemberOrg, error) {
@@ -136,14 +129,11 @@ func (m *middleware) InviteMember(org, email, role string) (*models.MemberOrg, e
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }

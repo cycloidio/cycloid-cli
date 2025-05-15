@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_roles"
@@ -16,16 +18,13 @@ func (m *middleware) ListRoles(org string) ([]*models.Role, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, err
+	return payload.Data, nil
 }
 
 func (m *middleware) GetRole(org, role string) (*models.Role, error) {
@@ -38,16 +37,13 @@ func (m *middleware) GetRole(org, role string) (*models.Role, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) DeleteRole(org, role string) error {

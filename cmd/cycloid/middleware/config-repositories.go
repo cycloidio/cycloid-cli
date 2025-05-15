@@ -1,70 +1,13 @@
 package middleware
 
 import (
-	"strings"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
-func (m *middleware) PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error {
-
-	cyCtx := common.CycloidContext{Env: env,
-		Org:     org,
-		Project: project}
-
-	projectData, err := m.GetProject(org, project)
-	if err != nil {
-		return NewApiError(err)
-	}
-
-	params := organization_config_repositories.NewCreateConfigRepositoryConfigParams()
-	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryCanonical(projectData.ConfigRepositoryCanonical)
-
-	var cfs []*models.ConfigFile
-
-	for rawP, rawC := range configs {
-		p := common.ReplaceCycloidVarsString(cyCtx, rawP)
-		// Ensure the path doesn't start with a / as it will not be valid for the API calls
-		p = strings.TrimLeft(p, "/")
-
-		var c strfmt.Base64
-		c = common.ReplaceCycloidVars(cyCtx, rawC)
-
-		cf := &models.ConfigFile{
-			Content: &c,
-			Path:    &p,
-		}
-		err = cf.Validate(strfmt.Default)
-		if err != nil {
-			return err
-		}
-
-		cfs = append(cfs, cf)
-	}
-
-	body := &models.SCConfig{Configs: cfs}
-
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return err
-	}
-
-	params.SetBody(body)
-	_, err = m.api.OrganizationConfigRepositories.CreateConfigRepositoryConfig(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewApiError(err)
-	}
-
-	return nil
-}
-
 func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigRepository, error) {
-
 	params := organization_config_repositories.NewListConfigRepositoriesParams()
 	params.SetOrganizationCanonical(org)
 
@@ -73,19 +16,16 @@ func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigReposit
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) GetConfigRepository(org, configRepo string) (*models.ConfigRepository, error) {
-
 	params := organization_config_repositories.NewGetConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
 	params.SetConfigRepositoryCanonical(configRepo)
@@ -96,15 +36,13 @@ func (m *middleware) GetConfigRepository(org, configRepo string) (*models.Config
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) DeleteConfigRepository(org, configRepo string) error {
@@ -120,7 +58,6 @@ func (m *middleware) DeleteConfigRepository(org, configRepo string) error {
 }
 
 func (m *middleware) CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error) {
-
 	params := organization_config_repositories.NewCreateConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
 
@@ -143,19 +80,16 @@ func (m *middleware) CreateConfigRepository(org, name, url, branch, cred string,
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, error) {
-
 	params := organization_config_repositories.NewUpdateConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
 	params.SetConfigRepositoryCanonical(configRepo)
@@ -180,13 +114,11 @@ func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, br
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }

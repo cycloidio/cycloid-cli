@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
@@ -18,11 +20,13 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
@@ -34,11 +38,13 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) UpdateStack(
@@ -61,12 +67,16 @@ func (m *middleware) UpdateStack(
 
 	params.WithBody(body)
 
-	response, err := m.api.ServiceCatalogs.UpdateServiceCatalog(params, m.api.Credentials(&org))
+	resp, err := m.api.ServiceCatalogs.UpdateServiceCatalog(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
 
-	payload := response.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
 	// TODO: This is a local fix for https://github.com/cycloidio/youdeploy-http-api/issues/5020
 	// Remove this condition when backend will be fixed
@@ -91,9 +101,11 @@ func (m *middleware) GetStackConfig(org, ref string) (models.ServiceCatalogConfi
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
