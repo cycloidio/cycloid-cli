@@ -37,10 +37,6 @@ SWAGGER_GENERATE = swagger generate client \
 		--target=./client \
 		--name=api
 
-SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
-	mkdir ./client; \
-	$(DOCKER_COMPOSE) run $(SWAGGER_COMMAND) --remove-orphan
-
 # E2E tests
 CY_API_URL         ?= "https://api-cli-test.staging.cycloid.io/"
 CY_TEST_ROOT_ORG ?= "cycloid"
@@ -90,6 +86,7 @@ generate-client: reset-old-client ## Generate client from file at SWAGGER_FILE p
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
 	echo $$SWAGGER_VERSION > client/version; \
+	go mod tidy
 
 .PHONY: generate-client-from-docs
 generate-client-from-docs: reset-old-client ## Generates client using docker and swagger from docs (version -> latest-api)
