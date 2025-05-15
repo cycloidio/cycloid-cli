@@ -97,7 +97,7 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
 	echo $$SWAGGER_VERSION > client/version; \
-	make $(SWAGGER_GENERATE) && \
+	make generate-client && \
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
