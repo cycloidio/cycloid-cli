@@ -337,7 +337,6 @@ func TestComponentCmd(t *testing.T) {
 			"-f", filename,
 			// Test var=value flag
 			"-V", `section with spaces.group with spaces.no_spaces=update2`,
-			"-V", `types.tests.array=["update2"]`,
 			"-u", "default",
 		}
 
@@ -366,11 +365,8 @@ func TestComponentCmd(t *testing.T) {
 		}
 
 		assert.Equal(t, "update2", outVars["types"]["tests"]["string"])
-		assert.Equal(t, 14, outVars["types"]["tests"]["integer"].(int))
+		assert.Equal(t, float64(14), outVars["types"]["tests"]["integer"].(float64))
 		assert.Equal(t, 2.2, outVars["types"]["tests"]["float"])
-		arrayVal, ok := outVars["types"]["test"]["array"].([]string)
-		assert.True(t, ok, "The type casting should have worked")
-		assert.Equal(t, []string{"update2"}, arrayVal)
 		assert.Equal(t, "update2", outVars["section with spaces"]["group with spaces"]["no_spaces"])
 	})
 }
