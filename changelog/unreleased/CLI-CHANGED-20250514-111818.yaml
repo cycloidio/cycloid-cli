@@ -1,8 +1,0 @@
-component: CLI
-kind: CHANGED
-body: "Update client to version v6.1.25"
-time: 2025-05-14T11:18:18.399366906+00:00
-custom:
-  DETAILS: ""
-  PR: "349"
-  TYPE: CLI
