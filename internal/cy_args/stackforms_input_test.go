@@ -41,10 +41,52 @@ func TestGetStackformsVars(t *testing.T) {
 		t.Fatalf("failed setup for test, failed to encode expected value '%v' to json: %s", expected, err)
 	}
 
-	cmd := &cobra.Command{}
-	cy_args.AddStackFormsInputFlags(cmd)
+	t.Run("VarsStdin", func(t *testing.T) {
+		cmd := &cobra.Command{}
+		cy_args.AddStackFormsInputFlags(cmd)
+
+		tempFile, err := os.CreateTemp("", "json-test")
+		if err != nil {
+			t.Fatalf("failed to setup test, cannot create temp file: %s", err)
+		}
+		defer os.Remove(tempFile.Name())
+
+		_, err = tempFile.Write(expectedJSON)
+		if err != nil {
+			t.Fatalf("failed to setup test, cannot write to test file %s: %s", tempFile.Name(), err)
+		}
+
+		_, err = tempFile.Seek(0, 0)
+		if err != nil {
+			t.Fatalf("failed to setup test, cannot change offset in file reader: %s", err)
+		}
+
+		oldStdin := os.Stdin
+		defer func() { os.Stdin = oldStdin }()
+
+		os.Stdin = tempFile
+
+		cmd.ParseFlags([]string{
+			"--json-file", "-",
+		})
+
+		var defaults = make(models.FormVariables)
+		output, err := cy_args.GetStackformsVars(cmd, &defaults)
+		if err != nil {
+			t.Fatalf("stackform var parsing failed: %s", err)
+		}
+
+		gotJSON, err := json.Marshal(output)
+		if err != nil {
+			t.Fatalf("failed to serialize json output '%v': %s", &output, err)
+		}
+		assert.Equal(t, string(expectedJSON), string(gotJSON), "should be equal")
+	})
 
 	t.Run("NilDefaultsShouldFail", func(t *testing.T) {
+		cmd := &cobra.Command{}
+		cy_args.AddStackFormsInputFlags(cmd)
+
 		_, err := cy_args.GetStackformsVars(cmd, nil)
 		if err == nil {
 			t.Fatal("Using cy_args.GetStackformsVars should fail with nil defaults")
@@ -52,6 +94,9 @@ func TestGetStackformsVars(t *testing.T) {
 	})
 
 	t.Run("EmptyDefaultsEmptyVars", func(t *testing.T) {
+		cmd := &cobra.Command{}
+		cy_args.AddStackFormsInputFlags(cmd)
+
 		var defaults = make(models.FormVariables)
 		output, err := cy_args.GetStackformsVars(cmd, &defaults)
 		if err != nil {
@@ -62,6 +107,9 @@ func TestGetStackformsVars(t *testing.T) {
 	})
 
 	t.Run("EnvVar", func(t *testing.T) {
+		cmd := &cobra.Command{}
+		cy_args.AddStackFormsInputFlags(cmd)
+
 		os.Setenv(cy_args.StackformsEnvVarName, string(expectedJSON))
 		defer os.Unsetenv(cy_args.StackformsEnvVarName)
 		var defaults = make(models.FormVariables)
@@ -78,6 +126,9 @@ func TestGetStackformsVars(t *testing.T) {
 	})
 
 	t.Run("VarsJSON", func(t *testing.T) {
+		cmd := &cobra.Command{}
+		cy_args.AddStackFormsInputFlags(cmd)
+
 		cmd.ParseFlags([]string{
 			"--json-vars", string(expectedJSON),
 		})
@@ -96,6 +147,9 @@ func TestGetStackformsVars(t *testing.T) {
 	})
 
 	t.Run("VarsFile", func(t *testing.T) {
+		cmd := &cobra.Command{}
+		cy_args.AddStackFormsInputFlags(cmd)
+
 		tempFile, err := os.CreateTemp("", "json-test")
 		if err != nil {
 			t.Fatalf("failed to setup test, cannot create temp file: %s", err)
@@ -123,4 +177,5 @@ func TestGetStackformsVars(t *testing.T) {
 		}
 		assert.Equal(t, string(expectedJSON), string(gotJSON), "should be equal")
 	})
+
 }
