@@ -87,24 +87,20 @@ reset-old-client: ## Resets old client folder
 generate-client: reset-old-client ## Generate client from file at SWAGGER_FILE path
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE)
-
-.PHONY: generate-client-from-local
-generate-client-from-local: reset-old-client ## Generates client using docker and local swagger (version -> v0.0-dev)
-	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE)
-	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
-	echo 'v0.0-dev' > client/version
+	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
+	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
+	echo $$SWAGGER_VERSION > client/version; \
 
 .PHONY: generate-client-from-docs
 generate-client-from-docs: reset-old-client ## Generates client using docker and swagger from docs (version -> latest-api)
 	@wget -O swagger.yml https://docs.cycloid.io/api/swagger.yml
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
-	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE) && \
 	echo $$SWAGGER_VERSION > client/version; \
+	make $(SWAGGER_GENERATE) && \
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
-	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 
 .PHONY: docker-login
 docker-login: ## Login to ecr, requires aws cli installed
