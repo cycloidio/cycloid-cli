@@ -309,7 +309,7 @@ type GetConfigOKBody struct {
 
 	// data
 	// Required: true
-	Data *models.AppConfig `json:"data"`
+	Data *models.AppConfiguration `json:"data"`
 }
 
 // Validate validates this get config o k body

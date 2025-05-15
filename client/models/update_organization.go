@@ -24,6 +24,12 @@ type UpdateOrganization struct {
 	// can children create appearance
 	CanChildrenCreateAppearance bool `json:"can_children_create_appearance,omitempty"`
 
+	// can children use dedicated authentication
+	CanChildrenUseDedicatedAuthentication bool `json:"can_children_use_dedicated_authentication,omitempty"`
+
+	// is using dedicated authentication
+	IsUsingDedicatedAuthentication bool `json:"is_using_dedicated_authentication,omitempty"`
+
 	// mfa enabled
 	MfaEnabled bool `json:"mfa_enabled,omitempty"`
 
