@@ -55,6 +55,15 @@ func TestGetStackformsVars(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to setup test, cannot write to test file %s: %s", tempFile.Name(), err)
 		}
+
+		_, err = tempFile.Seek(0, 0)
+		if err != nil {
+			t.Fatalf("failed to setup test, cannot change offset in file reader: %s", err)
+		}
+
+		oldStdin := os.Stdin
+		defer func() { os.Stdin = oldStdin }()
+
 		os.Stdin = tempFile
 
 		cmd.ParseFlags([]string{

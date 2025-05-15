@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -36,6 +38,35 @@ func GetStackformsVars(cmd *cobra.Command, defaults *models.FormVariables) (*mod
 	varFiles, err := cmd.Flags().GetStringArray("json-file")
 	if err != nil {
 		return nil, err
+	}
+
+	// We need to check for the '-' filename at this stage to be able to
+	// dump stdin from cmd.InOrStdin() in a temp file.
+	index := slices.Index(varFiles, "-")
+	if index != -1 {
+		tempFile, err := os.CreateTemp("", "cy-stdin-*")
+		if err != nil {
+			return nil, fmt.Errorf("failed to write temp file for stdin: %v", err)
+		}
+		defer func() {
+			closeErr := tempFile.Close()
+			rmErr := os.Remove(tempFile.Name())
+			if closeErr != nil || rmErr != nil {
+				log.Fatalf("failed to purge temp file with stdin content: %s: %s", closeErr, rmErr)
+			}
+		}()
+
+		stdin, err := io.ReadAll(cmd.InOrStdin())
+		if err != nil {
+			return nil, fmt.Errorf("failed to read from stdin: %s", err)
+		}
+
+		_, err = tempFile.Write(stdin)
+		if err != nil {
+			return nil, fmt.Errorf("failed to write stdin to temp file: %s", err)
+		}
+
+		varFiles[index] = tempFile.Name()
 	}
 
 	varJSON, err := cmd.Flags().GetStringArray("json-vars")
@@ -118,19 +149,13 @@ func MergeJSONFileVars(jsonFiles []string) (*models.FormVariables, error) {
 
 	for _, filename := range jsonFiles {
 		var decoder *json.Decoder
-		// Check if the user specified stdin
-		if filename == "-" {
-			filename = "stdin" // for error msg
-			decoder = json.NewDecoder(os.Stdin)
-		} else {
-			reader, err := os.Open(filename)
-			if err != nil {
-				return nil, fmt.Errorf("failed to open var file at path '%s': %v", filename, err)
-			}
-			defer reader.Close()
-
-			decoder = json.NewDecoder(reader)
+		reader, err := os.Open(filename)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open var file at path '%s': %v", filename, err)
 		}
+		defer reader.Close()
+
+		decoder = json.NewDecoder(reader)
 
 		for {
 			var extractedVars = make(models.FormVariables)
