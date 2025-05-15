@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"os"
+	"slices"
 	"strconv"
 	"strings"
 
@@ -36,6 +38,35 @@ func GetStackformsVars(cmd *cobra.Command, defaults *models.FormVariables) (*mod
 	varFiles, err := cmd.Flags().GetStringArray("json-file")
 	if err != nil {
 		return nil, err
+	}
+
+	// We need to check for the '-' filename at this stage to be able to
+	// dump stdin from cmd.InOrStdin() in a temp file.
+	index := slices.Index(varFiles, "-")
+	if index != -1 {
+		tempFile, err := os.CreateTemp("", "cy-stdin-*")
+		if err != nil {
+			return nil, fmt.Errorf("failed to write temp file for stdin: %v", err)
+		}
+		defer func() {
+			closeErr := tempFile.Close()
+			rmErr := os.Remove(tempFile.Name())
+			if closeErr != nil || rmErr != nil {
+				log.Fatalf("failed to purge temp file with stdin content: %s: %s", closeErr, rmErr)
+			}
+		}()
+
+		stdin, err := io.ReadAll(cmd.InOrStdin())
+		if err != nil {
+			return nil, fmt.Errorf("failed to read from stdin: %s", err)
+		}
+
+		_, err = tempFile.Write(stdin)
+		if err != nil {
+			return nil, fmt.Errorf("failed to write stdin to temp file: %s", err)
+		}
+
+		varFiles[index] = tempFile.Name()
 	}
 
 	varJSON, err := cmd.Flags().GetStringArray("json-vars")
@@ -102,6 +133,13 @@ func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVar
 		return nil, err
 	}
 
+	for k, v := range keyValueField {
+		err = UpdateFormVar(k, v, *defaults)
+		if err != nil {
+			return nil, fmt.Errorf("failed to update vars '%s' with field '%s': %s", k, v, err)
+		}
+	}
+
 	return defaults, nil
 }
 
@@ -109,21 +147,15 @@ func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVar
 func MergeJSONFileVars(jsonFiles []string) (*models.FormVariables, error) {
 	var output = make(models.FormVariables)
 
-	for _, file := range jsonFiles {
+	for _, filename := range jsonFiles {
 		var decoder *json.Decoder
-		// Check if the user specified stdin
-		if file == "-" {
-			file = "stdin" // for error msg
-			decoder = json.NewDecoder(os.Stdin)
-		} else {
-			reader, err := os.Open(file)
-			if err != nil {
-				return nil, fmt.Errorf("failed to open var file at path '%s': %v", file, err)
-			}
-			defer reader.Close()
-
-			decoder = json.NewDecoder(reader)
+		reader, err := os.Open(filename)
+		if err != nil {
+			return nil, fmt.Errorf("failed to open var file at path '%s': %v", filename, err)
 		}
+		defer reader.Close()
+
+		decoder = json.NewDecoder(reader)
 
 		for {
 			var extractedVars = make(models.FormVariables)
@@ -132,11 +164,11 @@ func MergeJSONFileVars(jsonFiles []string) (*models.FormVariables, error) {
 				break
 			}
 			if err != nil {
-				return nil, fmt.Errorf("failed to read StackForms variables from '%s': %v", file, err)
+				return nil, fmt.Errorf("failed to read StackForms variables from '%s': %v", filename, err)
 			}
 
 			if err := mergo.Merge(&output, extractedVars, mergo.WithOverride); err != nil {
-				return nil, fmt.Errorf("failed to merge variables from '%s': %v", file, err)
+				return nil, fmt.Errorf("failed to merge variables from '%s': %v", filename, err)
 			}
 		}
 	}
