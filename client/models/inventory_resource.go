@@ -27,6 +27,9 @@ type InventoryResource struct {
 	// Category of the resource type
 	Category string `json:"category,omitempty"`
 
+	// Component in which this resource is used
+	Component *ComponentSimple `json:"component,omitempty"`
+
 	// The amount of cpu that it has in units
 	// Minimum: 0
 	CPU *uint64 `json:"cpu,omitempty"`
@@ -37,9 +40,8 @@ type InventoryResource struct {
 	// Full description of the resource type documentation
 	Description string `json:"description,omitempty"`
 
-	// Environment canonical in which this resource is used
-	// Pattern: ^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$
-	EnvironmentCanonical string `json:"environment_canonical,omitempty"`
+	// Environment in which this resource is used
+	Environment *Environment `json:"environment,omitempty"`
 
 	// id
 	// Minimum: 1
@@ -69,9 +71,8 @@ type InventoryResource struct {
 	// Required: true
 	Name *string `json:"name"`
 
-	// Project canonical in which this resource is used
-	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
-	ProjectCanonical string `json:"project_canonical,omitempty"`
+	// Project in which this resource is used
+	Project *ProjectSimple `json:"project,omitempty"`
 
 	// The provider of the created Resource
 	// Required: true
@@ -93,11 +94,15 @@ type InventoryResource struct {
 func (m *InventoryResource) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateComponent(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCPU(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateEnvironmentCanonical(formats); err != nil {
+	if err := m.validateEnvironment(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -117,7 +122,7 @@ func (m *InventoryResource) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateProjectCanonical(formats); err != nil {
+	if err := m.validateProject(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -139,6 +144,25 @@ func (m *InventoryResource) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *InventoryResource) validateComponent(formats strfmt.Registry) error {
+	if swag.IsZero(m.Component) { // not required
+		return nil
+	}
+
+	if m.Component != nil {
+		if err := m.Component.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("component")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("component")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *InventoryResource) validateCPU(formats strfmt.Registry) error {
 	if swag.IsZero(m.CPU) { // not required
 		return nil
@@ -151,13 +175,20 @@ func (m *InventoryResource) validateCPU(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *InventoryResource) validateEnvironmentCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvironmentCanonical) { // not required
+func (m *InventoryResource) validateEnvironment(formats strfmt.Registry) error {
+	if swag.IsZero(m.Environment) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("environment_canonical", "body", m.EnvironmentCanonical, `^[\da-zA-Z]+(?:(?:[\da-zA-Z\-._]+)?[\da-zA-Z])?$`); err != nil {
-		return err
+	if m.Environment != nil {
+		if err := m.Environment.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("environment")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("environment")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -208,13 +239,20 @@ func (m *InventoryResource) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *InventoryResource) validateProjectCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectCanonical) { // not required
+func (m *InventoryResource) validateProject(formats strfmt.Registry) error {
+	if swag.IsZero(m.Project) { // not required
 		return nil
 	}
 
-	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
-		return err
+	if m.Project != nil {
+		if err := m.Project.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("project")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("project")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -250,8 +288,88 @@ func (m *InventoryResource) validateType(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this inventory resource based on context it is used
+// ContextValidate validate this inventory resource based on the context it is used
 func (m *InventoryResource) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateComponent(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateProject(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *InventoryResource) contextValidateComponent(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Component != nil {
+
+		if swag.IsZero(m.Component) { // not required
+			return nil
+		}
+
+		if err := m.Component.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("component")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("component")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *InventoryResource) contextValidateEnvironment(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Environment != nil {
+
+		if swag.IsZero(m.Environment) { // not required
+			return nil
+		}
+
+		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("environment")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("environment")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *InventoryResource) contextValidateProject(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Project != nil {
+
+		if swag.IsZero(m.Project) { // not required
+			return nil
+		}
+
+		if err := m.Project.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("project")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("project")
+			}
+			return err
+		}
+	}
+
 	return nil
 }
 

@@ -65,7 +65,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cy_args.GetOutput(cmd)
 	if err != nil {
 		return err
 	}

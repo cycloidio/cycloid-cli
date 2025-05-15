@@ -11,6 +11,7 @@ import (
 	"github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/client/client/appearance"
+	"github.com/cycloidio/cycloid-cli/client/client/authentications"
 	"github.com/cycloidio/cycloid-cli/client/client/cloud_providers"
 	"github.com/cycloidio/cycloid-cli/client/client/code_generation"
 	"github.com/cycloidio/cycloid-cli/client/client/component_pipeline_resources"
@@ -23,6 +24,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/client/environment_pipelines"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_api_keys"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_appearances"
+	"github.com/cycloidio/cycloid-cli/client/client/organization_authentications"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_children"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management"
 	"github.com/cycloidio/cycloid-cli/client/client/organization_cloud_cost_management_accounts"
@@ -109,6 +111,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *API {
 	cli := new(API)
 	cli.Transport = transport
 	cli.Appearance = appearance.New(transport, formats)
+	cli.Authentications = authentications.New(transport, formats)
 	cli.CloudProviders = cloud_providers.New(transport, formats)
 	cli.CodeGeneration = code_generation.New(transport, formats)
 	cli.ComponentPipelineResources = component_pipeline_resources.New(transport, formats)
@@ -121,6 +124,7 @@ func New(transport runtime.ClientTransport, formats strfmt.Registry) *API {
 	cli.EnvironmentPipelines = environment_pipelines.New(transport, formats)
 	cli.OrganizationAPIKeys = organization_api_keys.New(transport, formats)
 	cli.OrganizationAppearances = organization_appearances.New(transport, formats)
+	cli.OrganizationAuthentications = organization_authentications.New(transport, formats)
 	cli.OrganizationChildren = organization_children.New(transport, formats)
 	cli.OrganizationCloudCostManagement = organization_cloud_cost_management.New(transport, formats)
 	cli.OrganizationCloudCostManagementAccounts = organization_cloud_cost_management_accounts.New(transport, formats)
@@ -208,6 +212,8 @@ func (cfg *TransportConfig) WithSchemes(schemes []string) *TransportConfig {
 type API struct {
 	Appearance appearance.ClientService
 
+	Authentications authentications.ClientService
+
 	CloudProviders cloud_providers.ClientService
 
 	CodeGeneration code_generation.ClientService
@@ -231,6 +237,8 @@ type API struct {
 	OrganizationAPIKeys organization_api_keys.ClientService
 
 	OrganizationAppearances organization_appearances.ClientService
+
+	OrganizationAuthentications organization_authentications.ClientService
 
 	OrganizationChildren organization_children.ClientService
 
@@ -321,6 +329,7 @@ type API struct {
 func (c *API) SetTransport(transport runtime.ClientTransport) {
 	c.Transport = transport
 	c.Appearance.SetTransport(transport)
+	c.Authentications.SetTransport(transport)
 	c.CloudProviders.SetTransport(transport)
 	c.CodeGeneration.SetTransport(transport)
 	c.ComponentPipelineResources.SetTransport(transport)
@@ -333,6 +342,7 @@ func (c *API) SetTransport(transport runtime.ClientTransport) {
 	c.EnvironmentPipelines.SetTransport(transport)
 	c.OrganizationAPIKeys.SetTransport(transport)
 	c.OrganizationAppearances.SetTransport(transport)
+	c.OrganizationAuthentications.SetTransport(transport)
 	c.OrganizationChildren.SetTransport(transport)
 	c.OrganizationCloudCostManagement.SetTransport(transport)
 	c.OrganizationCloudCostManagementAccounts.SetTransport(transport)

@@ -65,15 +65,6 @@ func ReplaceCycloidVarsString(ctx CycloidContext, text string) string {
 	return text
 }
 
-func IsInList(pattern string, list []string) bool {
-	for _, x := range list {
-		if x == pattern {
-			return true
-		}
-	}
-	return false
-}
-
 func GetPipelineName(project, env string) string {
 	return fmt.Sprintf("%s-%s", project, env)
 }
@@ -131,11 +122,11 @@ func NewAPI(opts ...APIOptions) *APIClient {
 		}
 	}
 
-	apiUrl, err := url.Parse(acfg.URL)
-	if err == nil && apiUrl.Host != "" {
-		cfg = cfg.WithHost(apiUrl.Host)
-		cfg = cfg.WithSchemes([]string{apiUrl.Scheme})
-		cfg = cfg.WithBasePath(apiUrl.Path)
+	apiURL, err := url.Parse(acfg.URL)
+	if err == nil && apiURL.Host != "" {
+		cfg = cfg.WithHost(apiURL.Host)
+		cfg = cfg.WithSchemes([]string{apiURL.Scheme})
+		cfg = cfg.WithBasePath(apiURL.Path)
 	}
 
 	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
@@ -161,19 +152,21 @@ func NewAPI(opts ...APIOptions) *APIClient {
 }
 
 func (a *APIClient) GetToken(org string) string {
-	token := a.Config.Token
+	var token string
+	token = a.Config.Token
 
 	// we first try to get the token from the env variable
 	if token == "" {
-		for _, env_var := range []string{"CY_API_KEY", "CY_API_TOKEN", "TOKEN"} {
-			token, ok := os.LookupEnv(env_var)
+		for _, envVar := range []string{"CY_API_KEY", "CY_API_TOKEN", "TOKEN"} {
+			var ok bool
+			token, ok = os.LookupEnv(envVar)
 
 			// Still display warning for future deprecation
-			if ok && env_var == "TOKEN" {
+			if ok && envVar == "TOKEN" {
 				fmt.Fprintln(os.Stderr, "TOKEN env var is deprecated, please use CY_API_KEY instead")
 			}
 
-			if ok && len(token) != 0 {
+			if ok && token != "" {
 				break
 			}
 		}
@@ -182,6 +175,18 @@ func (a *APIClient) GetToken(org string) string {
 	// if the token is not set with env variable we try to fetch
 	// him from the config (if the user is logged)
 	if len(token) == 0 {
+		// Check first if the config file exists
+		filePath, err := config.GetConfigPath()
+		if err != nil {
+			return ""
+		}
+
+		_, err = os.Stat(filePath)
+		var pathErr os.PathError
+		if errors.Is(err, &pathErr) {
+			return ""
+		}
+
 		// we fetch the running config
 		config, _ := config.Read()
 
@@ -230,7 +235,7 @@ func GenerateCanonical(name string) string {
 // the field must be in dot notation
 // e.g. field='one.nested.key' value='myValue'
 // If the map is nil, it will be created
-func UpdateMapField(field string, value string, m map[string]map[string]map[string]interface{}) error {
+func UpdateMapField(field string, value string, m map[string]map[string]map[string]any) error {
 	keys := strings.Split(field, ".")
 
 	if len(keys) != 3 {
@@ -245,7 +250,7 @@ func UpdateMapField(field string, value string, m map[string]map[string]map[stri
 	// we strip value for space and newline in begin/end of the string
 	trimmedValue := strings.TrimSpace(value)
 	if strings.HasPrefix(trimmedValue, "[") && strings.HasSuffix(trimmedValue, "]") || strings.HasPrefix(trimmedValue, "{") && strings.HasSuffix(trimmedValue, "}") {
-		var data interface{}
+		var data any
 		err := json.Unmarshal([]byte(trimmedValue), &data)
 		if err != nil {
 			return errors.Wrapf(err, "invalid JSON value in key=val update with value '%s'", trimmedValue)

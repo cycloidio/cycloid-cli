@@ -1,0 +1,3 @@
+# This file is there to set ignore in ripgrep search
+# this won't affect git
+client/**
