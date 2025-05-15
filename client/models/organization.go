@@ -81,6 +81,10 @@ type Organization struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
+	// Defines if this organization is the root one on the platform or not
+	// Required: true
+	IsRoot *bool `json:"is_root"`
+
 	// is using dedicated authentication
 	// Required: true
 	IsUsingDedicatedAuthentication *bool `json:"is_using_dedicated_authentication"`
@@ -164,6 +168,10 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIsRoot(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -364,6 +372,15 @@ func (m *Organization) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateIsRoot(formats strfmt.Registry) error {
+
+	if err := validate.Required("is_root", "body", m.IsRoot); err != nil {
 		return err
 	}
 
