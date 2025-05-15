@@ -7,6 +7,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
+	"github.com/sanity-io/litter"
 	"github.com/spf13/cobra"
 )
 
@@ -75,6 +76,7 @@ func migrate(cmd *cobra.Command, args []string) error {
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
+	litter.Dump(org, project, env, component, newProject, newEnv, newComponent, newComponentName)
 	compResponse, err := m.MigrateComponent(org, project, env, component, newProject, newEnv, newComponent, newComponentName)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to migrate component", printer.Options{}, cmd.OutOrStderr())

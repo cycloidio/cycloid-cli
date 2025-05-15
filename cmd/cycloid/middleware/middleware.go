@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
-
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
@@ -30,7 +28,6 @@ type Middleware interface {
 	DeleteConfigRepository(org, configRepo string) error
 	GetConfigRepository(org, configRepo string) (*models.ConfigRepository, error)
 	ListConfigRepositories(org string) ([]*models.ConfigRepository, error)
-	PushConfig(org string, project string, env string, configs map[string]strfmt.Base64) error
 	UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, error)
 
 	// stacks (service_catalogs)

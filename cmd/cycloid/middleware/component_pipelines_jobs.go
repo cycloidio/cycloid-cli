@@ -19,13 +19,13 @@ func (m *middleware) GetJobs(org, project, env, component, pipeline string) ([]*
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	return p.Data, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) GetJob(org, project, env, component, pipeline, job string) (*models.Job, error) {
@@ -42,13 +42,13 @@ func (m *middleware) GetJob(org, project, env, component, pipeline, job string) 
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
 		return nil, err
 	}
 
-	return p.Data, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) PauseJob(org, project, env, component, pipeline, job string) error {
@@ -100,6 +100,6 @@ func (m *middleware) ClearTaskCache(org, project, env, component, pipeline, job,
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	return p.Data, nil
+	payload := resp.GetPayload()
+	return payload.Data, nil
 }

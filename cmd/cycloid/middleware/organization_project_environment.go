@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"fmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
@@ -18,7 +20,12 @@ func (m *middleware) GetEnv(org, project, env string) (*models.Environment, erro
 		return nil, NewApiError(err)
 	}
 
-	payload := resp.Payload
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
 	return payload.Data, nil
 }
 
@@ -45,7 +52,13 @@ func (m *middleware) CreateEnv(org, project, env, envName, color string) (*model
 		return nil, NewApiError(err)
 	}
 
-	return resp.Payload.Data, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }
 
 func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*models.Environment, error) {
@@ -60,12 +73,18 @@ func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*model
 	}
 	params.WithBody(&envBody)
 
-	response, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
 
-	return response.Payload.Data, nil
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, nil
 }
 
 func (m *middleware) DeleteEnv(org, project, env string) error {

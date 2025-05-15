@@ -1,8 +1,11 @@
 package middleware
 
 import (
+	"fmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
 	"github.com/cycloidio/cycloid-cli/client/models"
+	strfmt "github.com/go-openapi/strfmt"
 )
 
 // GetAppVersion returns the version of the running Cycloid server
@@ -14,10 +17,13 @@ func (m *middleware) GetAppVersion() (*models.AppVersion, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	d := p.Data
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
 
-	return d, nil
+	return payload.Data, nil
 }
 
 // GetStatus returns the status of the various Cycloid services
@@ -27,6 +33,11 @@ func (m *middleware) GetStatus() (*models.GeneralStatus, error) {
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	return p.Data, NewApiError(err)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
+	if err != nil {
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	}
+
+	return payload.Data, NewApiError(err)
 }

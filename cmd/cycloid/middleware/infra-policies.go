@@ -29,13 +29,13 @@ func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
+	d := payload.Data
 	return d, nil
 }
 
@@ -44,10 +44,11 @@ func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte
 func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, error) {
 	params := organization_infrastructure_policies.NewCreateInfraPolicyParams()
 	params.SetOrganizationCanonical(org)
+
 	// Reads file content and converts it into string
 	policyFileContent, err := os.ReadFile(policyFile)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to read rego file: %v", err)
+		return nil, fmt.Errorf("unable to read rego file: %v", err)
 	}
 	// If canonical empty,use the default one
 	if policyCanonical == "" {
@@ -76,14 +77,13 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }
 
 // DeleteInfraPolicy will delete a infraPolicy
@@ -101,7 +101,6 @@ func (m *middleware) DeleteInfraPolicy(org, policycanonical string) error {
 
 // ListInfraPolicies will list all infraPolicies in an organization
 func (m *middleware) ListInfraPolicies(org string) ([]*models.InfraPolicy, error) {
-
 	params := organization_infrastructure_policies.NewGetInfraPoliciesParams()
 	params.SetOrganizationCanonical(org)
 
@@ -110,20 +109,17 @@ func (m *middleware) ListInfraPolicies(org string) ([]*models.InfraPolicy, error
 		return nil, err
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 // GetInfraPolicy will list all infraPolicies in an organization
 func (m *middleware) GetInfraPolicy(org, infraPolicy string) (*models.InfraPolicy, error) {
-
 	params := organization_infrastructure_policies.NewGetInfraPolicyParams()
 	params.SetOrganizationCanonical(org)
 	params.SetInfraPolicyCanonical(infraPolicy)
@@ -133,20 +129,17 @@ func (m *middleware) GetInfraPolicy(org, infraPolicy string) (*models.InfraPolic
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-
-	return d, nil
+	return payload.Data, nil
 }
 
 // UpdateInfraPolicy will update an existing infrapolicy with the given params
 func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, error) {
-
 	params := organization_infrastructure_policies.NewUpdateInfraPolicyParams()
 	params.SetOrganizationCanonical(org)
 	params.SetInfraPolicyCanonical(infraPolicy)
@@ -154,7 +147,7 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 	// Reads file content and converts it into string
 	policyFileContent, err := os.ReadFile(policyFile)
 	if err != nil {
-		return nil, fmt.Errorf("Unable to read rego file: %v", err)
+		return nil, fmt.Errorf("unable to read rego file: %v", err)
 	}
 	policyBody := string(policyFileContent)
 
@@ -178,12 +171,11 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 		return nil, NewApiError(err)
 	}
 
-	p := resp.GetPayload()
-	err = p.Validate(strfmt.Default)
+	payload := resp.GetPayload()
+	err = payload.Validate(strfmt.Default)
 	if err != nil {
-		return nil, err
+		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	}
 
-	d := p.Data
-	return d, nil
+	return payload.Data, nil
 }

@@ -13,15 +13,15 @@ type ErrorPayloader interface {
 }
 
 type ApiError struct {
-	HttpMethod string
+	HTTPMethod string
 	URL        string
-	HttpCode   string
-	ApiAction  string
+	HTTPCode   string
+	APIAction  string
 
 	Payload *models.ErrorPayload
 }
 
-var reApiError = regexp.MustCompile(`\[(?P<httpmethod>\w+)\s(?P<url>.*)\]\[(?P<httpcode>\d{3})\]\s(?P<apiaction>\w+)\s`)
+var reAPIError = regexp.MustCompile(`\[(?P<httpmethod>\w+)\s(?P<url>.*)\]\[(?P<httpcode>\d{3})\]\s(?P<apiaction>\w+)\s`)
 
 // NewApiError will try to convert the err to a more standard one if possible,
 // if the err does not implement ErrorPayloader and not match the reApiError
@@ -34,7 +34,7 @@ func NewApiError(err error) error {
 		return err
 	}
 
-	match := reApiError.FindStringSubmatch(ep.Error())
+	match := reAPIError.FindStringSubmatch(ep.Error())
 	if match == nil {
 		// If even being the ErrorPayload we cannot match the string
 		// we just still return the old err
@@ -42,10 +42,10 @@ func NewApiError(err error) error {
 	}
 
 	apierr := ApiError{
-		HttpMethod: match[1],
+		HTTPMethod: match[1],
 		URL:        match[2],
-		HttpCode:   match[3],
-		ApiAction:  match[4],
+		HTTPCode:   match[3],
+		APIAction:  match[4],
 
 		Payload: ep.GetPayload(),
 	}
@@ -59,5 +59,5 @@ func (a *ApiError) Error() string {
 	if a.Payload != nil && len(a.Payload.Errors) != 0 && a.Payload.Errors[0].Message != nil {
 		msg = *a.Payload.Errors[0].Message
 	}
-	return fmt.Sprintf("A %s error was returned on %q call with message: %s", a.HttpCode, a.ApiAction, msg)
+	return fmt.Sprintf("A %s error was returned on %q call with message: %s", a.HTTPCode, a.APIAction, msg)
 }
