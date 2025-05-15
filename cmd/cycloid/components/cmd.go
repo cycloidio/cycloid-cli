@@ -18,6 +18,7 @@ func NewCommands() *cobra.Command {
 		NewCreateComponentCommand(),
 		NewUpdateComponentCommand(),
 		NewDeleteComponentCommand(),
+		NewMigrateCommand(),
 		NewConfigCommands(),
 	)
 
