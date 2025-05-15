@@ -28,6 +28,11 @@ type ProjectSimple struct {
 	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical *string `json:"canonical"`
 
+	// color
+	// Required: true
+	// Max Length: 64
+	Color *string `json:"color"`
+
 	// created at
 	// Required: true
 	// Minimum: 0
@@ -38,6 +43,11 @@ type ProjectSimple struct {
 
 	// favorite
 	Favorite bool `json:"favorite,omitempty"`
+
+	// icon
+	// Required: true
+	// Max Length: 64
+	Icon *string `json:"icon"`
 
 	// id
 	// Required: true
@@ -69,7 +79,15 @@ func (m *ProjectSimple) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateColor(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateIcon(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -116,6 +134,19 @@ func (m *ProjectSimple) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ProjectSimple) validateColor(formats strfmt.Registry) error {
+
+	if err := validate.Required("color", "body", m.Color); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("color", "body", *m.Color, 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ProjectSimple) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
@@ -123,6 +154,19 @@ func (m *ProjectSimple) validateCreatedAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ProjectSimple) validateIcon(formats strfmt.Registry) error {
+
+	if err := validate.Required("icon", "body", m.Icon); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("icon", "body", *m.Icon, 64); err != nil {
 		return err
 	}
 

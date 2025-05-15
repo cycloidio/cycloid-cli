@@ -6,6 +6,7 @@ package organization_components
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
@@ -73,7 +75,7 @@ UpdateComponentOK describes a response with status code 200, with default header
 Component
 */
 type UpdateComponentOK struct {
-	Payload *models.Component
+	Payload *UpdateComponentOKBody
 }
 
 // IsSuccess returns true when this update component o k response has a 2xx status code
@@ -116,13 +118,13 @@ func (o *UpdateComponentOK) String() string {
 	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/components/{component_canonical}][%d] updateComponentOK %s", 200, payload)
 }
 
-func (o *UpdateComponentOK) GetPayload() *models.Component {
+func (o *UpdateComponentOK) GetPayload() *UpdateComponentOKBody {
 	return o.Payload
 }
 
 func (o *UpdateComponentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Component)
+	o.Payload = new(UpdateComponentOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -484,5 +486,99 @@ func (o *UpdateComponentDefault) readResponse(response runtime.ClientResponse, c
 		return err
 	}
 
+	return nil
+}
+
+/*
+UpdateComponentOKBody update component o k body
+swagger:model UpdateComponentOKBody
+*/
+type UpdateComponentOKBody struct {
+
+	// data
+	// Required: true
+	Data *models.Component `json:"data"`
+}
+
+// Validate validates this update component o k body
+func (o *UpdateComponentOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdateComponentOKBody) validateData(formats strfmt.Registry) error {
+
+	if err := validate.Required("updateComponentOK"+"."+"data", "body", o.Data); err != nil {
+		return err
+	}
+
+	if o.Data != nil {
+		if err := o.Data.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateComponentOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updateComponentOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update component o k body based on the context it is used
+func (o *UpdateComponentOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *UpdateComponentOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("updateComponentOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("updateComponentOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *UpdateComponentOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *UpdateComponentOKBody) UnmarshalBinary(b []byte) error {
+	var res UpdateComponentOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

@@ -48,8 +48,7 @@ type ServiceCatalog struct {
 	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
 
 	// description
-	// Required: true
-	Description *string `json:"description"`
+	Description string `json:"description,omitempty"`
 
 	// Directory where the ServiceCatalog configuration is found.
 	// Required: true
@@ -152,10 +151,6 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDependencies(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDescription(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -326,15 +321,6 @@ func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *ServiceCatalog) validateDescription(formats strfmt.Registry) error {
-
-	if err := validate.Required("description", "body", m.Description); err != nil {
-		return err
 	}
 
 	return nil

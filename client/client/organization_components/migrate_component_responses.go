@@ -6,6 +6,7 @@ package organization_components
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -14,6 +15,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
@@ -73,7 +75,7 @@ MigrateComponentOK describes a response with status code 200, with default heade
 Component
 */
 type MigrateComponentOK struct {
-	Payload *models.Component
+	Payload *MigrateComponentOKBody
 }
 
 // IsSuccess returns true when this migrate component o k response has a 2xx status code
@@ -116,13 +118,13 @@ func (o *MigrateComponentOK) String() string {
 	return fmt.Sprintf("[PUT /organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/components/{component_canonical}/migrate][%d] migrateComponentOK %s", 200, payload)
 }
 
-func (o *MigrateComponentOK) GetPayload() *models.Component {
+func (o *MigrateComponentOK) GetPayload() *MigrateComponentOKBody {
 	return o.Payload
 }
 
 func (o *MigrateComponentOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
-	o.Payload = new(models.Component)
+	o.Payload = new(MigrateComponentOKBody)
 
 	// response payload
 	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
@@ -484,5 +486,99 @@ func (o *MigrateComponentDefault) readResponse(response runtime.ClientResponse, 
 		return err
 	}
 
+	return nil
+}
+
+/*
+MigrateComponentOKBody migrate component o k body
+swagger:model MigrateComponentOKBody
+*/
+type MigrateComponentOKBody struct {
+
+	// data
+	// Required: true
+	Data *models.Component `json:"data"`
+}
+
+// Validate validates this migrate component o k body
+func (o *MigrateComponentOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *MigrateComponentOKBody) validateData(formats strfmt.Registry) error {
+
+	if err := validate.Required("migrateComponentOK"+"."+"data", "body", o.Data); err != nil {
+		return err
+	}
+
+	if o.Data != nil {
+		if err := o.Data.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("migrateComponentOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("migrateComponentOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this migrate component o k body based on the context it is used
+func (o *MigrateComponentOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateData(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *MigrateComponentOKBody) contextValidateData(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Data != nil {
+
+		if err := o.Data.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("migrateComponentOK" + "." + "data")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("migrateComponentOK" + "." + "data")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *MigrateComponentOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *MigrateComponentOKBody) UnmarshalBinary(b []byte) error {
+	var res MigrateComponentOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }
