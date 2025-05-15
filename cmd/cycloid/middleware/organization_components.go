@@ -167,7 +167,7 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 	return payload, nil
 }
 
-func (m *middleware) MigrateComponent(org, project, env, component, targetProject, targetEnv string) (*models.Component, error) {
+func (m *middleware) MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical string) (*models.Component, error) {
 	params := organization_components.NewMigrateComponentParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
@@ -176,6 +176,7 @@ func (m *middleware) MigrateComponent(org, project, env, component, targetProjec
 	body := models.MigrateComponent{
 		DestinationProjectCanonical:     targetProject,
 		DestinationEnvironmentCanonical: targetEnv,
+		DestinationCanonical:            newCanonical,
 	}
 	err := body.Validate(strfmt.Default)
 	if err != nil {
