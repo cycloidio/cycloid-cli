@@ -56,8 +56,14 @@ func NewAPIError(err error) error {
 func (a *APIError) Error() string {
 	var msg string
 
-	if a.Payload != nil && len(a.Payload.Errors) != 0 && a.Payload.Errors[0].Message != nil {
-		msg = *a.Payload.Errors[0].Message
+	if a.Payload != nil && len(a.Payload.Errors) != 0 {
+		var msg string
+		for _, err := range a.Payload.Errors {
+			if err.Message != nil {
+				msg += *err.Message
+			}
+		}
 	}
+
 	return fmt.Sprintf("A %s error was returned on %q call with message: %s", a.HTTPCode, a.APIAction, msg)
 }
