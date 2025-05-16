@@ -20,7 +20,9 @@ func NewEstimateCommand() *cobra.Command {
 		Use:  "estimate",
 		RunE: estimate,
 	}
-	common.RequiredFlag(WithFlagPlanPath, cmd)
+	cmd.Flags().StringP("plan-path", "p", "", "path to the terraform plan file")
+	cmd.MarkFlagRequired("plan-path")
+	cmd.MarkFlagFilename("plan-path", "tfplan", "json")
 	return cmd
 }
 
@@ -33,7 +35,7 @@ func estimate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("unable to get plan path flag: %w", err)
 	}
-	output, err := cmd.Flags().GetString("output")
+	output, err := cy_args.GetOutput(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to get output flag: %w", err)
 	}
@@ -50,6 +52,11 @@ func estimate(cmd *cobra.Command, args []string) error {
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
+
 	res, err := m.CostEstimation(org, plan)
-	return printer.SmartPrint(p, res, err, "unable to estimate terraform plan file", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to estimate terraform plan file", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, res, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
