@@ -3,13 +3,72 @@ package cy_args
 import (
 	"errors"
 	"fmt"
+	"math/rand/v2"
+	"strings"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
 
 var (
-	v = viper.GetViper()
+	v            = viper.GetViper()
+	DefaultIcon  = ""
+	DefaultColor = ""
+	ValidIcons   = []string{
+		"folder_open",
+		"mdi-cube-outline",
+		"public",
+		"extension",
+		"science",
+		"bug_report",
+		"bolt",
+		"call_merge",
+		"commit",
+		"mdi-source-branch",
+		"traffic",
+		"mdi-clipboard-check-outline",
+		"mdi-progress-clock",
+		"visibility",
+		"vpn_key",
+		"lightbulb",
+		"favorite",
+		"star",
+		"auto_awesome",
+		"mdi-controller-classic",
+		"precision_manufacturing",
+		"tour",
+		"podcasts",
+		"inventory",
+		"save",
+		"security",
+		"mdi-lifebuoy",
+		"mdi-ab-testing",
+		"mdi-api",
+		"mdi-console",
+		"mdi-database",
+		"mdi-vpn",
+		"mdi-server",
+		"mdi-server-security",
+		"mdi-network-outline",
+		"mdi-lan",
+		"mdi-nas",
+		"mdi-ansible",
+		"mdi-aws",
+		"mdi-microsoft-azure",
+		"mdi-google-cloud",
+		"mdi-kubernetes",
+		"mdi-terraform",
+	}
+	ValidColors = []string{
+		"dev",
+		"prod",
+		"demo",
+		"success",
+		"default",
+		"error",
+		"staging",
+		"preprod",
+	}
 )
 
 func AddCyContext(cmd *cobra.Command) {
@@ -113,7 +172,17 @@ func GetComponent(cmd *cobra.Command) (string, error) {
 }
 
 func AddColorFlag(cmd *cobra.Command) {
-	cmd.Flags().String("color", "blue", "set the color.")
+	cmd.Flags().String("color", DefaultColor, "set the color.")
+	cmd.RegisterFlagCompletionFunc("color", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		var completions []string
+		for _, color := range ValidColors {
+			if strings.HasPrefix(color, toComplete) {
+				completions = append(completions, color)
+			}
+		}
+
+		return completions, cobra.ShellCompDirectiveNoFileComp
+	})
 }
 
 func GetColor(cmd *cobra.Command) (string, error) {
@@ -125,8 +194,48 @@ func GetColor(cmd *cobra.Command) (string, error) {
 	return color, nil
 }
 
+// PickRandomColor will select a random color, if you
+// fill env != nil it will try to infer the color based
+// on the env name with our convention.
+// This is define in the FE here:
+// https://github.com/cycloidio/youdeploy-frontend-web/blob/develop/src/utils/config/icons.js
+func PickRandomColor(env *string) string {
+	if env != nil {
+		switch *env {
+		case "prod", "prd":
+			return "prod"
+		case "staging", "stg":
+			return "staging"
+		case "preprod", "pp", "pre-prd":
+			return "preprod"
+		case "test", "testing", "dev", "developpement":
+			return "dev"
+		case "demo", "integration", "intg":
+			return "demo"
+		default:
+			return "success"
+		}
+	}
+
+	randomIndex := rand.IntN(len(ValidColors))
+	return ValidColors[randomIndex]
+}
+
 func AddIconFlag(cmd *cobra.Command) {
-	cmd.Flags().String("icon", "folder_open", "set the icon.")
+	cmd.Flags().String("icon", DefaultIcon, "set the icon.")
+	err := cmd.RegisterFlagCompletionFunc("icon", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		var completions []string
+		for _, icon := range ValidIcons {
+			if strings.HasPrefix(icon, toComplete) {
+				completions = append(completions, icon)
+			}
+		}
+
+		return completions, cobra.ShellCompDirectiveNoFileComp
+	})
+	if err != nil {
+		panic(err)
+	}
 }
 
 func GetIcon(cmd *cobra.Command) (string, error) {
@@ -136,6 +245,33 @@ func GetIcon(cmd *cobra.Command) (string, error) {
 	}
 
 	return icon, nil
+}
+
+// PickRandomIcon will select a random icon, if you
+// fill env != nil it will try to infer the icon based
+// on the env name with our convention.
+// This is define in the FE here:
+// https://github.com/cycloidio/youdeploy-frontend-web/blob/develop/src/utils/config/icons.js
+func PickRandomIcon(env *string) string {
+	if env != nil {
+		switch *env {
+		case "prod", "prd":
+			return "public"
+		case "staging", "stg":
+			return "science"
+		case "preprod", "pp", "pre-prd":
+			return "traffic"
+		case "test", "testing", "dev", "developpement":
+			return "commit"
+		case "demo", "integration", "intg":
+			return "auto_awesome"
+		default:
+			return "extension"
+		}
+	}
+
+	randomIndex := rand.IntN(len(ValidIcons))
+	return ValidIcons[randomIndex]
 }
 
 func AddOwnerFlag(cmd *cobra.Command) {

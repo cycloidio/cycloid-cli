@@ -76,9 +76,14 @@ func update(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, currentEnv, err, "environment not found", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	// Make the update use the current color if not explicitely set by the user
-	if color == cy_args.DefaultColor && currentEnv.Color != nil {
-		color = *currentEnv.Color
+	// Make the update use the current color if not explicitly set by the user
+	if color == cy_args.DefaultColor {
+		if currentEnv.Color != nil {
+			color = *currentEnv.Color
+		} else {
+			// Use a random one if none is set
+			color = cy_args.PickRandomColor(&env)
+		}
 	}
 
 	resp, err := m.UpdateEnv(org, project, env, name, color)

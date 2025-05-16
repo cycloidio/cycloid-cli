@@ -93,14 +93,42 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	if update {
-		exists, err := m.GetProject(org, project)
+		current, err := m.GetProject(org, project)
 		if err == nil {
-			resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", exists.CreatedAt)
+			// Make the update use the current color if not explicitly set by the user
+			if color == cy_args.DefaultColor {
+				if current.Color != nil {
+					color = *current.Color
+				} else {
+					// Use a random one if none is set
+					color = cy_args.PickRandomColor(nil)
+				}
+			}
+
+			if icon == cy_args.DefaultIcon {
+				if current.Icon != nil {
+					icon = *current.Icon
+				} else {
+					// Use a random one if none is set
+					icon = cy_args.PickRandomIcon(nil)
+				}
+			}
+
+			resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", current.UpdatedAt)
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 			}
+
 			return printer.SmartPrint(p, resp, nil, "", printer.Options{}, cmd.OutOrStdout())
 		}
+	}
+
+	if color == cy_args.DefaultColor {
+		color = cy_args.PickRandomColor(nil)
+	}
+
+	if icon == cy_args.DefaultIcon {
+		icon = cy_args.PickRandomIcon(nil)
 	}
 
 	resp, err := m.CreateProject(org, name, project, description, configRepository, owner, "", color, icon)

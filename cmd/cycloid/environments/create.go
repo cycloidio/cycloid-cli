@@ -80,9 +80,14 @@ func create(cmd *cobra.Command, args []string) error {
 	if update {
 		current, err := m.GetEnv(org, project, env)
 		if err == nil {
-			// Make the update use the current color if not explicitely set by the user
-			if color == cy_args.DefaultColor && current.Color != nil {
-				color = *current.Color
+			// Make the update use the current color if not explicitly set by the user
+			if color == cy_args.DefaultColor {
+				if current.Color != nil {
+					color = *current.Color
+				} else {
+					// Use a random one if none is set
+					color = cy_args.PickRandomColor(&env)
+				}
 			}
 
 			resp, err := m.UpdateEnv(org, project, env, name, color)
@@ -91,6 +96,10 @@ func create(cmd *cobra.Command, args []string) error {
 			}
 			return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
 		}
+	}
+
+	if color == cy_args.DefaultColor {
+		color = cy_args.PickRandomColor(&env)
 	}
 
 	resp, err := m.CreateEnv(org, project, env, name, color)
