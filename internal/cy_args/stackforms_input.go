@@ -22,7 +22,7 @@ var (
 
 func AddStackFormsInputFlags(cmd *cobra.Command) {
 	cmd.Flags().StringArrayP("json-file", "f", []string{}, "path to a JSON file containing Stackform input. Can be '-' to read from stdin. This flag can be set multiple times.")
-	cmd.MarkFlagFilename("json-file")
+	cmd.MarkFlagFilename("json-file", "json")
 	cmd.Flags().StringArrayP("json-vars", "j", []string{}, "JSON string containing Stackform input. This flag can be set multiple times. Can also be set using "+StackformsEnvVarName+" env var")
 	cmd.Flags().StringToStringP("var", "V", nil, `specify a StackForms variable using a section.group.key=value notation. The value will be parsed to try to validate the type. To force a string, add double quotes " to the value`)
 }

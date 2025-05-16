@@ -6,6 +6,8 @@ import (
 	"math/rand/v2"
 	"strings"
 
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -117,6 +119,29 @@ func GetName(cmd *cobra.Command) (string, error) {
 func AddProjectFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("project", "p", "", "the project canonical, can also be set with the CY_PROJECT env var")
 	v.BindPFlag("project", cmd.Flags().Lookup("project"))
+	cmd.RegisterFlagCompletionFunc("project", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		org, err := GetOrg(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		api := common.NewAPI()
+		m := middleware.NewMiddleware(api)
+
+		projects, err := m.ListProjects(org)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		var canonicals = make([]string, len(projects))
+		for index, project := range projects {
+			if project.Canonical != nil && strings.HasPrefix(*project.Canonical, toComplete) {
+				canonicals[index] = *project.Canonical
+			}
+		}
+
+		return canonicals, cobra.ShellCompDirectiveNoFileComp
+	})
 }
 
 func GetProject(cmd *cobra.Command) (string, error) {
@@ -136,6 +161,35 @@ func GetProject(cmd *cobra.Command) (string, error) {
 func AddEnvFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("env", "e", "", "the env canonical, can also be set with the CY_ENV env var")
 	v.BindPFlag("env", cmd.Flags().Lookup("env"))
+
+	cmd.RegisterFlagCompletionFunc("env", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		org, err := GetOrg(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		project, err := GetProject(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		api := common.NewAPI()
+		m := middleware.NewMiddleware(api)
+
+		envs, err := m.ListProjectsEnv(org, project)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		var canonicals = make([]string, len(envs))
+		for index, env := range envs {
+			if env.Canonical != nil && strings.HasPrefix(*env.Canonical, toComplete) {
+				canonicals[index] = *env.Canonical
+			}
+		}
+
+		return canonicals, cobra.ShellCompDirectiveNoFileComp
+	})
 }
 
 func GetEnv(cmd *cobra.Command) (string, error) {
@@ -155,6 +209,39 @@ func GetEnv(cmd *cobra.Command) (string, error) {
 func AddComponentFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("component", "c", "", "the component canonical, can also be set with the CY_COMPONENT env var")
 	v.BindPFlag("component", cmd.Flags().Lookup("component"))
+	cmd.RegisterFlagCompletionFunc("component", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		org, err := GetOrg(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		project, err := GetProject(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		env, err := GetEnv(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		api := common.NewAPI()
+		m := middleware.NewMiddleware(api)
+
+		components, err := m.GetComponents(org, project, env)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		var canonicals = make([]string, len(components))
+		for index, component := range components {
+			if component.Canonical != nil && strings.HasPrefix(*component.Canonical, toComplete) {
+				canonicals[index] = *component.Canonical
+			}
+		}
+
+		return canonicals, cobra.ShellCompDirectiveNoFileComp
+	})
 }
 
 func GetComponent(cmd *cobra.Command) (string, error) {
@@ -305,5 +392,6 @@ func GetOrg(cmd *cobra.Command) (string, error) {
 	if org == "" {
 		return "", fmt.Errorf("org is not set, use --org flag or CY_ORG env var, value: %s", org)
 	}
+
 	return org, nil
 }
