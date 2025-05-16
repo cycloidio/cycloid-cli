@@ -17,7 +17,7 @@ func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBac
 
 	resp, err := m.api.OrganizationExternalBackends.GetExternalBackends(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -28,7 +28,7 @@ func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBac
 
 	data := payload.Data
 	if len(data) == 0 {
-		return nil, NewApiError(errors.New("couldn't find the remote terraform backend"))
+		return nil, NewAPIError(errors.New("couldn't find the remote terraform backend"))
 	}
 
 	return data[0], nil
@@ -41,7 +41,7 @@ func (m *middleware) GetExternalBackend(org string, externalBackend uint32) (*mo
 
 	resp, err := m.api.OrganizationExternalBackends.GetExternalBackend(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -59,7 +59,7 @@ func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend
 
 	resp, err := m.api.OrganizationExternalBackends.GetExternalBackends(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -78,7 +78,7 @@ func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) e
 
 	_, err := m.api.OrganizationExternalBackends.DeleteExternalBackend(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -124,7 +124,7 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose, credenti
 
 	resp, err := m.api.OrganizationExternalBackends.CreateExternalBackend(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -170,7 +170,7 @@ func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32,
 
 	resp, err := m.api.OrganizationExternalBackends.UpdateExternalBackend(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

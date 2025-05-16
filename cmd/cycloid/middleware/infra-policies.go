@@ -26,7 +26,7 @@ func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte
 
 	resp, err := m.api.OrganizationInfrastructurePolicies.ValidateProjectInfraPolicies(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -74,7 +74,7 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 	params.SetBody(body)
 	resp, err := m.api.OrganizationInfrastructurePolicies.CreateInfraPolicy(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -94,7 +94,7 @@ func (m *middleware) DeleteInfraPolicy(org, policycanonical string) error {
 
 	_, err := m.api.OrganizationInfrastructurePolicies.DeleteInfraPolicy(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 	return nil
 }
@@ -126,7 +126,7 @@ func (m *middleware) GetInfraPolicy(org, infraPolicy string) (*models.InfraPolic
 
 	resp, err := m.api.OrganizationInfrastructurePolicies.GetInfraPolicy(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -168,7 +168,7 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 	params.SetBody(body)
 	resp, err := m.api.OrganizationInfrastructurePolicies.UpdateInfraPolicy(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

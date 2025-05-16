@@ -27,8 +27,8 @@ func TestNewApiError(t *testing.T) {
 			},
 		}
 
-		aerr := middleware.NewApiError(err)
-		apierr := aerr.(*middleware.ApiError)
+		aerr := middleware.NewAPIError(err)
+		apierr := aerr.(*middleware.APIError)
 		assert.Equal(t, "POST", apierr.HTTPMethod)
 		assert.Equal(t, "/organizations", apierr.URL)
 		assert.Equal(t, "422", apierr.HTTPCode)
@@ -38,14 +38,14 @@ func TestNewApiError(t *testing.T) {
 	})
 	t.Run("SuccessWhenNo_ErrPayloader", func(t *testing.T) {
 		err := fmt.Errorf("std error")
-		aerr := middleware.NewApiError(err)
-		_, ok := aerr.(*middleware.ApiError)
+		aerr := middleware.NewAPIError(err)
+		_, ok := aerr.(*middleware.APIError)
 		assert.False(t, ok)
 		assert.Equal(t, "std error", aerr.Error())
 	})
 	t.Run("SuccessWhenNil", func(t *testing.T) {
-		aerr := middleware.NewApiError(nil)
-		_, ok := aerr.(*middleware.ApiError)
+		aerr := middleware.NewAPIError(nil)
+		_, ok := aerr.(*middleware.APIError)
 		assert.False(t, ok)
 		assert.Nil(t, aerr)
 	})

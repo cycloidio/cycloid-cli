@@ -16,7 +16,7 @@ func (m *middleware) GetJobs(org, project, env, component, pipeline string) ([]*
 
 	resp, err := m.api.ComponentPipelinesJobs.GetJobs(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -39,7 +39,7 @@ func (m *middleware) GetJob(org, project, env, component, pipeline, job string) 
 
 	resp, err := m.api.ComponentPipelinesJobs.GetJob(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -62,7 +62,7 @@ func (m *middleware) PauseJob(org, project, env, component, pipeline, job string
 
 	_, err := m.api.ComponentPipelinesJobs.PauseJob(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -79,7 +79,7 @@ func (m *middleware) UnPauseJob(org, project, env, component, pipeline, job stri
 
 	_, err := m.api.ComponentPipelinesJobs.UnpauseJob(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -97,7 +97,7 @@ func (m *middleware) ClearTaskCache(org, project, env, component, pipeline, job,
 
 	resp, err := m.api.ComponentPipelinesJobs.ClearTaskCache(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

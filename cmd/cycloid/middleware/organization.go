@@ -27,7 +27,7 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 
 	resp, err := m.api.Organizations.CreateOrg(params, m.api.Credentials(nil))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -55,7 +55,7 @@ func (m *middleware) UpdateOrganization(can, name string) (*models.Organization,
 
 	resp, err := m.api.Organizations.UpdateOrg(params, m.api.Credentials(&can))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -73,7 +73,7 @@ func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
 
 	resp, err := m.api.Organizations.GetOrg(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -91,7 +91,7 @@ func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, erro
 
 	resp, err := m.api.OrganizationWorkers.GetWorkers(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -108,7 +108,7 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 
 	resp, err := m.api.Organizations.GetOrgs(params, m.api.Credentials(nil))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -128,7 +128,7 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 
 	resp, err := m.api.OrganizationChildren.GetChildren(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -161,7 +161,7 @@ func (m *middleware) CreateOrganizationChild(org, childOrg string, childOrgName 
 
 	resp, err := m.api.OrganizationChildren.CreateChild(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -179,7 +179,7 @@ func (m *middleware) DeleteOrganization(org string) error {
 
 	_, err := m.api.Organizations.DeleteOrg(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 	return nil
 }

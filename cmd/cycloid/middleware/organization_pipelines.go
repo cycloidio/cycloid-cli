@@ -19,7 +19,7 @@ func (m *middleware) GetOrgPipelines(org string, concoursePipeline, project, env
 
 	resp, err := m.api.OrganizationPipelines.GetPipelines(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

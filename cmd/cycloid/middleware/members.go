@@ -16,7 +16,7 @@ func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
 
 	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -35,7 +35,7 @@ func (m *middleware) ListInvites(org string) ([]*models.MemberOrg, error) {
 
 	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -54,7 +54,7 @@ func (m *middleware) GetMember(org string, id uint32) (*models.MemberOrg, error)
 
 	resp, err := m.api.OrganizationMembers.GetOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -96,7 +96,7 @@ func (m *middleware) UpdateMember(org string, id uint32, role string) (*models.M
 
 	resp, err := m.api.OrganizationMembers.UpdateOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -126,7 +126,7 @@ func (m *middleware) InviteMember(org, email, role string) (*models.MemberOrg, e
 
 	resp, err := m.api.OrganizationMembers.InviteUserToOrgMember(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

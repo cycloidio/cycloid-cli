@@ -17,7 +17,7 @@ func (m *middleware) GetComponentConfig(org, project, env, component string) (*m
 
 	resp, err := m.api.OrganizationComponents.GetComponentConfig(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -38,7 +38,7 @@ func (m *middleware) GetComponent(org, project, env, component string) (*models.
 
 	resp, err := m.api.OrganizationComponents.GetComponent(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -58,7 +58,7 @@ func (m *middleware) GetComponents(org, project, env string) ([]*models.Componen
 
 	resp, err := m.api.OrganizationComponents.GetComponents(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -101,7 +101,7 @@ func (m *middleware) CreateComponent(org, project, env, component, description s
 
 	resp, err := m.api.OrganizationComponents.CreateComponent(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -139,7 +139,7 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 
 	resp, err := m.api.OrganizationComponents.UpdateComponent(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -173,7 +173,7 @@ func (m *middleware) MigrateComponent(org, project, env, component, targetProjec
 
 	resp, err := m.api.OrganizationComponents.MigrateComponent(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -194,7 +194,7 @@ func (m *middleware) DeleteComponent(org, project, env, component string) error 
 
 	_, err := m.api.OrganizationComponents.DeleteComponent(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil

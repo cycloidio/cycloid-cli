@@ -37,7 +37,7 @@ func (m *middleware) CreateCredential(org, name, credentialType string, rawCred 
 
 	resp, err := m.api.OrganizationCredentials.CreateCredential(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -77,7 +77,7 @@ func (m *middleware) UpdateCredential(org, name, credentialType string, rawCred 
 
 	resp, err := m.api.OrganizationCredentials.UpdateCredential(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -96,7 +96,7 @@ func (m *middleware) GetCredential(org, credential string) (*models.Credential, 
 
 	resp, err := m.api.OrganizationCredentials.GetCredential(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -115,7 +115,7 @@ func (m *middleware) DeleteCredential(org, credential string) error {
 
 	_, err := m.api.OrganizationCredentials.DeleteCredential(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -131,7 +131,7 @@ func (m *middleware) ListCredentials(org, credentialType string) ([]*models.Cred
 
 	resp, err := m.api.OrganizationCredentials.ListCredentials(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

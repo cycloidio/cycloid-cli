@@ -22,7 +22,7 @@ func (m *middleware) ActivateLicence(org, licence string) error {
 	params.WithBody(&body)
 	_, err = m.api.OrganizationLicence.ActivateLicence(params)
 	if err != nil {
-		NewApiError(err)
+		NewAPIError(err)
 	}
 
 	return nil

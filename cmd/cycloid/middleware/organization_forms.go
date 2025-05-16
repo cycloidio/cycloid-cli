@@ -55,7 +55,7 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	params.SetBody(body)
 	resp, err := m.api.OrganizationForms.ValidateFormsFile(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -90,7 +90,7 @@ func (m *middleware) InterpolateFormsConfig(org, project, env, component, servic
 
 	resp, err := m.api.OrganizationForms.InterpolateFormsConfig(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

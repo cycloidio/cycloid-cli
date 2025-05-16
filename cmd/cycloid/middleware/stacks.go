@@ -17,7 +17,7 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 
 	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -35,7 +35,7 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 
 	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -69,7 +69,7 @@ func (m *middleware) UpdateStack(
 
 	resp, err := m.api.ServiceCatalogs.UpdateServiceCatalog(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -98,7 +98,7 @@ func (m *middleware) GetStackConfig(org, ref string) (models.ServiceCatalogConfi
 
 	resp, err := m.api.ServiceCatalogs.GetServiceCatalogConfig(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

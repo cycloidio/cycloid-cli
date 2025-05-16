@@ -48,7 +48,7 @@ func (m *middleware) SendEvent(org, eventType, title, message, severity string, 
 
 	_, err = m.api.Organizations.SendEvent(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -70,7 +70,7 @@ func (m *middleware) ListEvents(org string, eventType, eventSeverity []string, b
 
 	resp, err := m.api.Organizations.GetEvents(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

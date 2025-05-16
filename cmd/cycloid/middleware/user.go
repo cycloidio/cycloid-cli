@@ -28,7 +28,7 @@ func (m *middleware) UserSignup(username, email, password, givenName, familyName
 
 	_, err = m.api.User.SignUp(params)
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -53,7 +53,7 @@ func (m *middleware) RefreshToken(org, childOrg *string, token string) (*models.
 		),
 	)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -90,7 +90,7 @@ func (m *middleware) UserLogin(email, username, org *string, password string) (*
 	params.WithBody(&body)
 	resp, err := m.api.User.Login(params)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
