@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -11,6 +12,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/api_key"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog_repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/config_repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
@@ -21,6 +23,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
@@ -63,6 +66,9 @@ CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default w
 
 	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", "The formatting style for command output: json|yaml|table")
 	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
+	rootCmd.RegisterFlagCompletionFunc("output", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		return []string{"json", "table", "yaml"}, cobra.ShellCompDirectiveDefault
+	})
 
 	rootCmd.PersistentFlags().StringP("verbosity", "v", "warning", "Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none.")
 	viper.BindPFlag("verbosity", rootCmd.PersistentFlags().Lookup("verbosity"))
@@ -76,6 +82,28 @@ CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default w
 
 	rootCmd.PersistentFlags().String("org", "", "Specify the org to use. override CY_ORG env var. Required for all Org scoped endpoint.")
 	viper.BindPFlag("org", rootCmd.PersistentFlags().Lookup("org"))
+	rootCmd.RegisterFlagCompletionFunc(
+		"org", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+			token := os.Getenv("CY_API_KEY")
+			api := common.NewAPI(common.WithToken(token))
+			m := middleware.NewMiddleware(api)
+
+			orgs, err := m.ListOrganizations()
+			if err != nil {
+				// TODO: some issue with the org endpoint
+				return []string{"no_result"}, cobra.ShellCompDirectiveNoFileComp
+			}
+
+			var canonicals = make([]string, len(orgs))
+			for index, org := range orgs {
+				if org.Canonical != nil && strings.HasPrefix(*org.Canonical, toComplete) {
+					canonicals[index] = *org.Canonical
+				}
+			}
+
+			fmt.Fprintf(cmd.ErrOrStderr(), "canonicals: %v\n", canonicals)
+			return []string{"hello", "world"}, cobra.ShellCompDirectiveNoFileComp
+		})
 
 	// Remove usage on error, this is annoying in scripting
 	rootCmd.SilenceUsage = true

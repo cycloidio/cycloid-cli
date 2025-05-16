@@ -1,6 +1,12 @@
 package cy_args
 
-import "github.com/spf13/cobra"
+import (
+	"strings"
+
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/spf13/cobra"
+)
 
 func AddComponentDescriptionFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("description", "d", "", "set the description of the component")
@@ -31,6 +37,29 @@ func GetCloudProvider(cmd *cobra.Command) (*string, error) {
 func AddStackRefFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("stack-ref", "s", "", "set the stack ref of the component in format org:stack-canonical")
 	cmd.MarkFlagRequired("stack-ref")
+	cmd.RegisterFlagCompletionFunc("stack-ref", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		api := common.NewAPI()
+		m := middleware.NewMiddleware(api)
+
+		org, err := GetOrg(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		stacks, err := m.ListStacks(org)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		var stackRefs = make([]string, len(stacks))
+		for index, stack := range stacks {
+			if stack.Ref != nil && strings.HasPrefix(*stack.Ref, toComplete) {
+				stackRefs[index] = *stack.Ref
+			}
+		}
+
+		return stackRefs, cobra.ShellCompDirectiveNoFileComp
+	})
 }
 
 func GetStackRef(cmd *cobra.Command) (*string, error) {
@@ -45,6 +74,34 @@ func GetStackRef(cmd *cobra.Command) (*string, error) {
 func AddUseCaseFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("use-case", "u", "", "set the use-case of the component")
 	cmd.MarkFlagRequired("use-case")
+	cmd.RegisterFlagCompletionFunc("use-case", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		api := common.NewAPI()
+		m := middleware.NewMiddleware(api)
+
+		org, err := GetOrg(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		stackRef, err := GetStackRef(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		stackConfig, err := m.GetStackConfig(org, *stackRef)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveNoFileComp
+		}
+
+		var useCases []string
+		for useCase, _ := range stackConfig {
+			if strings.HasPrefix(useCase, toComplete) {
+				useCases = append(useCases, useCase)
+			}
+		}
+
+		return useCases, cobra.ShellCompDirectiveNoFileComp
+	})
 }
 
 func GetUseCase(cmd *cobra.Command) (*string, error) {

@@ -5,6 +5,7 @@ import (
 	"slices"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 )
@@ -18,6 +19,30 @@ func GetCatalogRepository(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return "", err
 	}
+
+	cmd.RegisterFlagCompletionFunc("catalog-repository", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		api := common.NewAPI()
+		m := middleware.NewMiddleware(api)
+
+		org, err := GetOrg(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		stacks, err := m.ListCatalogRepositories(org)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		var catalogRepositories = make([]string, len(stacks))
+		for index, catalogRepository := range stacks {
+			if catalogRepository.Canonical != nil {
+				catalogRepositories[index] = *catalogRepository.Canonical
+			}
+		}
+
+		return catalogRepositories, cobra.ShellCompDirectiveNoFileComp
+	})
 
 	return catalogRepository, err
 }
@@ -33,6 +58,30 @@ func GetConfigRepository(cmd *cobra.Command, org string, m middleware.Middleware
 	if err != nil {
 		return "", err
 	}
+
+	cmd.RegisterFlagCompletionFunc("config-repository", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+		api := common.NewAPI()
+		m := middleware.NewMiddleware(api)
+
+		org, err := GetOrg(cmd)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		stacks, err := m.ListConfigRepositories(org)
+		if err != nil {
+			return []string{}, cobra.ShellCompDirectiveError
+		}
+
+		var configRepositories = make([]string, len(stacks))
+		for index, configRepository := range stacks {
+			if configRepository.Canonical != nil {
+				configRepositories[index] = *configRepository.Canonical
+			}
+		}
+
+		return configRepositories, cobra.ShellCompDirectiveNoFileComp
+	})
 
 	// TODO: This behavior will be pushed to backend
 	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
