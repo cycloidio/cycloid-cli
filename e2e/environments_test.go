@@ -8,6 +8,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -51,7 +52,7 @@ func TestEnvs(t *testing.T) {
 	var (
 		envName = "Test E2E env"
 		env     = randomCanonical("e2e")
-		color   = "blue"
+		color   = "demo"
 	)
 
 	t.Run("Create", func(t *testing.T) {
@@ -81,14 +82,17 @@ func TestEnvs(t *testing.T) {
 	})
 
 	t.Run("CreateWithUpdate", func(t *testing.T) {
-		var createUpdateName = "helloUpdate"
+		var (
+			createUpdateName = "helloUpdate"
+			newColor         = cy_args.PickRandomColor(&env)
+		)
 		args := []string{
 			"-o", "json",
 			"env", "create",
 			"--env", env,
 			"--project", project,
 			"--name", createUpdateName,
-			"--color", projectColor,
+			"--color", newColor,
 			"--update",
 		}
 		out, err := executeCommand(args)
@@ -103,6 +107,7 @@ func TestEnvs(t *testing.T) {
 		}
 
 		assert.Equal(t, createUpdateName, envResult.Name)
+		assert.Equal(t, newColor, *envResult.Color)
 	})
 
 	t.Run("CreateWithUpdateNew", func(t *testing.T) {
