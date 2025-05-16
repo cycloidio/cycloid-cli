@@ -1,0 +1,9 @@
+component: CLI
+kind: CHANGED
+body: Make the CLI pick a random icon/color with sane defaults for envs if not set
+  by the user.
+time: 2025-05-16T19:23:41.945032536Z
+custom:
+  DETAILS: ""
+  PR: "354"
+  TYPE: CLI
