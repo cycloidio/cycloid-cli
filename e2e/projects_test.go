@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,8 +22,8 @@ func TestProjects(t *testing.T) {
 		project     = randomCanonical("test-e2e-project")
 		description = "Testing project"
 		owner       = ""
-		color       = "blue"
-		icon        = "planet"
+		color       = "demo"
+		icon        = "public"
 	)
 
 	t.Run("Create", func(t *testing.T) {
@@ -53,7 +54,11 @@ func TestProjects(t *testing.T) {
 	})
 
 	t.Run("CreateWithUpdateExisting", func(t *testing.T) {
-		var createUpdateName = "helloUpdate"
+		var (
+			createUpdateName = "helloUpdate"
+			newIcon          = cy_args.PickRandomIcon(nil)
+			newColor         = cy_args.PickRandomColor(nil)
+		)
 		args := []string{
 			"-o", "json",
 			"project", "create",
@@ -61,8 +66,8 @@ func TestProjects(t *testing.T) {
 			"--name", createUpdateName,
 			"--description", description,
 			"--owner", owner,
-			"--icon", icon,
-			"--color", color,
+			"--icon", newIcon,
+			"--color", newColor,
 			"--update",
 		}
 		out, err := executeCommand(args)
@@ -77,6 +82,8 @@ func TestProjects(t *testing.T) {
 		}
 
 		assert.Equal(t, createUpdateName, *projectResult.Name)
+		assert.Equal(t, newColor, *projectResult.Color)
+		assert.Equal(t, newIcon, *projectResult.Icon)
 	})
 
 	t.Run("CreateWithUpdateNew", func(t *testing.T) {
