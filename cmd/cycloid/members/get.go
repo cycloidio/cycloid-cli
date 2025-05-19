@@ -24,6 +24,7 @@ func NewGetCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:     "get",
+		Args:    cobra.NoArgs,
 		Example: example,
 		Short:   short,
 		Long:    long,

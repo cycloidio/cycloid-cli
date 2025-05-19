@@ -18,6 +18,7 @@ import (
 func NewListCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "list",
+		Args:  cobra.NoArgs,
 		Short: "list API keys",
 		Example: `# list API keys in the org my-org
 cy api-key list --org my-org`,

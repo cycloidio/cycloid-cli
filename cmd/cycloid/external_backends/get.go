@@ -11,6 +11,7 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "get",
+		Args:    cobra.NoArgs,
 		Hidden:  true,
 		Short:   "not implemented yet",
 		Long:    `not implemented yet`,

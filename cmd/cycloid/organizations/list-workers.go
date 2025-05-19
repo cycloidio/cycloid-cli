@@ -15,6 +15,7 @@ import (
 func NewListWorkersCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "list-workers",
+		Args:    cobra.NoArgs,
 		Short:   "list the organization workers",
 		RunE:    listWorkers,
 		PreRunE: internal.CheckAPIAndCLIVersion,

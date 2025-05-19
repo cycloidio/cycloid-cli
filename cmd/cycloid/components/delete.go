@@ -13,6 +13,7 @@ import (
 func NewDeleteComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete -p project -e env -c component",
+		Args:  cobra.NoArgs,
 		Short: "Delete a component",
 		RunE:  deleteComponent,
 	}

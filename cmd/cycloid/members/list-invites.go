@@ -24,6 +24,7 @@ func NewListInvitesCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:     "list-invites",
+		Args:    cobra.NoArgs,
 		Example: example,
 		Short:   short,
 		Long:    long,

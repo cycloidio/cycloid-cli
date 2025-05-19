@@ -15,6 +15,7 @@ import (
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
+		Args:  cobra.NoArgs,
 		Short: "list the config repositories",
 		Example: `
 	# list the config repositories in the org 'my-org' and display the result in JSON format

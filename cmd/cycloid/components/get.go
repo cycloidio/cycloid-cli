@@ -13,6 +13,7 @@ import (
 func NewGetComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get -p project -e env -c component",
+		Args:  cobra.NoArgs,
 		Short: "Get the state of a current component.",
 		RunE:  getComponent,
 	}

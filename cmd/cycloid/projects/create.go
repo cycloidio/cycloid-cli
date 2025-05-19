@@ -15,6 +15,7 @@ import (
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "create",
+		Args:    cobra.NoArgs,
 		Short:   "create a project",
 		Example: `cy --org my-org project create --project "my-project"`,
 		RunE:    create,

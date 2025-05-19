@@ -15,6 +15,7 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
+		Args:  cobra.NoArgs,
 		Short: "get a config repository",
 		Example: `
 	# get the config repository with the canonical my-config-repo and display the result in YAML

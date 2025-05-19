@@ -14,6 +14,7 @@ import (
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:    "list",
+		Args:   cobra.NoArgs,
 		Short:  "list the organizations",
 		RunE:   list,
 		Hidden: true,

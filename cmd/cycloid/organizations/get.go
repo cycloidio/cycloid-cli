@@ -15,6 +15,7 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
+		Args:  cobra.NoArgs,
 		Short: "get an organization",
 		Example: `
 	# get an organization by its canonical

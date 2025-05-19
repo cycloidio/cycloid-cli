@@ -21,6 +21,7 @@ func NewCreateCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "create",
+		Args:  cobra.NoArgs,
 		Short: "create a infrapolicy",
 		Example: `
 	# create a infrapolicy my-policy

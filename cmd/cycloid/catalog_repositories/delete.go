@@ -14,6 +14,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete a catalog repository",
 		Example: `
 	# delete a catalog repository with the canonical my-catalog-repository

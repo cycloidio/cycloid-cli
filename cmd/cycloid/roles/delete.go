@@ -24,6 +24,7 @@ func NewDeleteCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:     "delete",
+		Args:    cobra.NoArgs,
 		Example: example,
 		Short:   short,
 		Long:    long,

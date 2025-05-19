@@ -18,6 +18,7 @@ import (
 func NewGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
+		Args:  cobra.NoArgs,
 		Short: "get API key",
 		Example: `
 	# get API key 'my-key' in the org my-org

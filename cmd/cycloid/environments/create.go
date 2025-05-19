@@ -15,6 +15,7 @@ import (
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "create",
+		Args:    cobra.NoArgs,
 		Short:   "create a environment",
 		Example: `cy --org my-org environment create --env "my-environment"`,
 		RunE:    create,

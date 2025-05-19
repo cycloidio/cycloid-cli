@@ -15,6 +15,7 @@ import (
 func NewCreateChildCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "create-child",
+		Args:    cobra.NoArgs,
 		Short:   "create a child organization",
 		RunE:    createChild,
 		PreRunE: internal.CheckAPIAndCLIVersion,

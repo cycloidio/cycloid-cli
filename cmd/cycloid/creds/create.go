@@ -57,6 +57,7 @@ func NewCreateCommand() *cobra.Command {
 	// SSH
 	var ssh = &cobra.Command{
 		Use:     "ssh",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -69,6 +70,7 @@ func NewCreateCommand() *cobra.Command {
 	// Basic auth
 	var basicAuth = &cobra.Command{
 		Use:     "basic_auth",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -82,6 +84,7 @@ func NewCreateCommand() *cobra.Command {
 	// Custom
 	var custom = &cobra.Command{
 		Use:     "custom",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -95,6 +98,7 @@ func NewCreateCommand() *cobra.Command {
 	// AWS
 	var aws = &cobra.Command{
 		Use:     "aws",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -108,6 +112,7 @@ func NewCreateCommand() *cobra.Command {
 	// Azure
 	var azure = &cobra.Command{
 		Use:     "azure",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -123,6 +128,7 @@ func NewCreateCommand() *cobra.Command {
 	// Azure Storage
 	var azureStorage = &cobra.Command{
 		Use:     "azure_storage",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -136,6 +142,7 @@ func NewCreateCommand() *cobra.Command {
 	// GCP
 	var gcp = &cobra.Command{
 		Use:     "gcp",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -148,6 +155,7 @@ func NewCreateCommand() *cobra.Command {
 	// Swift
 	var swift = &cobra.Command{
 		Use:     "swift",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -164,6 +172,7 @@ func NewCreateCommand() *cobra.Command {
 	// Elasticsearch
 	var elasticsearch = &cobra.Command{
 		Use:     "elasticsearch",
+		Args:    cobra.NoArgs,
 		RunE:    create,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `

@@ -21,6 +21,7 @@ func NewUpdateCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "update",
+		Args:  cobra.NoArgs,
 		Short: "update a infrapolicy",
 		Example: `
 	# update an existent infrapolicy with canonical my_policy

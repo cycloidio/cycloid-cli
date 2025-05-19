@@ -15,6 +15,7 @@ import (
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "update",
+		Args:    cobra.NoArgs,
 		Short:   "update a environment",
 		Example: `cy --org my-org environment update --env"my-environment" --name "NewName"`,
 		RunE:    update,

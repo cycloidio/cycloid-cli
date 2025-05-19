@@ -15,6 +15,7 @@ import (
 func NewInterpolateCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   `interpolate -s service:catalog -u use_case -p project -e env -c component -v '{"section": {"group": {"var": "my_var"}}}'`,
+		Args:  cobra.NoArgs,
 		Short: "Generate a set of configs based on the forms input but without creating anything",
 		RunE:  interpolate,
 	}

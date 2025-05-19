@@ -15,6 +15,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete a config repository",
 		Example: `
 	# delete a config repository with the canonical my-config-repo

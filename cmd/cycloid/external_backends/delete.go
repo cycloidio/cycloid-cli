@@ -15,6 +15,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete an external backend configuration",
 		Example: `
 	# delete an existing external backend with ID 123

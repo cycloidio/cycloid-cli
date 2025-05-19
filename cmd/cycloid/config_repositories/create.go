@@ -15,6 +15,7 @@ import (
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
+		Args:  cobra.NoArgs,
 		Short: "create a config repository",
 		Example: `
 	# create a config repository and set up as default

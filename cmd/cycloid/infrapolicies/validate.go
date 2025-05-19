@@ -19,6 +19,7 @@ import (
 func NewValidateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "validate",
+		Args:  cobra.NoArgs,
 		Short: "validate Terraform plan against Cycloid Infrapolicy",
 		Example: `
 	# validate saved terraform plan against the infra policies rule in my-org/my-project/my-env

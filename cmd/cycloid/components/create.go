@@ -16,6 +16,7 @@ import (
 func NewCreateComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create -p project -e env -c component",
+		Args:  cobra.NoArgs,
 		Short: "Create a component",
 		RunE:  createComponent,
 	}

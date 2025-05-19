@@ -18,6 +18,7 @@ import (
 func NewEstimateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:  "estimate",
+		Args: cobra.NoArgs,
 		RunE: estimate,
 	}
 	common.RequiredFlag(WithFlagPlanPath, cmd)

@@ -17,6 +17,7 @@ var refFlag string
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
+		Args:  cobra.NoArgs,
 		Short: "get a stack",
 		Example: `
 	# get a stack in 'my-org' using its ref

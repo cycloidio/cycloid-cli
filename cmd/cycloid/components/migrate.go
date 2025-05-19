@@ -14,6 +14,7 @@ import (
 func NewMigrateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "migrate --project old-project --env old-env --component component --new-project new-project --new-env new-env --new-canonical new-comp-canonical",
+		Args:  cobra.NoArgs,
 		Short: "move a component from one project / env to another.",
 		RunE:  migrate,
 	}

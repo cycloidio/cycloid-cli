@@ -17,6 +17,7 @@ import (
 func NewValidateFormCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "validate-form",
+		Args:  cobra.NoArgs,
 		Short: "validate a .forms.yml file",
 		Example: `
 		# validate a stackforms file
