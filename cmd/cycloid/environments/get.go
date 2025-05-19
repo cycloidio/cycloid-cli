@@ -38,7 +38,7 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	project, err := cy_args.GetEnv(cmd)
+	project, err := cy_args.GetProject(cmd)
 	if err != nil {
 		return err
 	}
