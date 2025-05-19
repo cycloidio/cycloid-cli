@@ -119,10 +119,11 @@ func GetName(cmd *cobra.Command) (string, error) {
 func AddProjectFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("project", "p", "", "the project canonical, can also be set with the CY_PROJECT env var")
 	v.BindPFlag("project", cmd.Flags().Lookup("project"))
-	cmd.RegisterFlagCompletionFunc("project", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmd.RegisterFlagCompletionFunc("project", func(cmd *cobra.Command, args []cobra.Completion, toComplete string) ([]string, cobra.ShellCompDirective) {
 		org, err := GetOrg(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "missing org parameter for completion"),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		api := common.NewAPI()
@@ -130,13 +131,14 @@ func AddProjectFlag(cmd *cobra.Command) {
 
 		projects, err := m.ListProjects(org)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "failed to fetch project list for completion in org '"+org+"': "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
-		var canonicals = make([]string, len(projects))
+		var canonicals = make([]cobra.Completion, len(projects))
 		for index, project := range projects {
 			if project.Canonical != nil && strings.HasPrefix(*project.Canonical, toComplete) {
-				canonicals[index] = *project.Canonical
+				canonicals[index] = cobra.CompletionWithDesc(*project.Canonical, *project.Name)
 			}
 		}
 
@@ -162,15 +164,17 @@ func AddEnvFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("env", "e", "", "the env canonical, can also be set with the CY_ENV env var")
 	v.BindPFlag("env", cmd.Flags().Lookup("env"))
 
-	cmd.RegisterFlagCompletionFunc("env", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmd.RegisterFlagCompletionFunc("env", func(cmd *cobra.Command, args []cobra.Completion, toComplete string) ([]string, cobra.ShellCompDirective) {
 		org, err := GetOrg(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		project, err := GetProject(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "failed to fetch project list for completion in org '"+org+"': "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		api := common.NewAPI()
@@ -178,13 +182,14 @@ func AddEnvFlag(cmd *cobra.Command) {
 
 		envs, err := m.ListProjectsEnv(org, project)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "failed to list env from org '"+org+"' in project '"+project+"' for completion: "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
-		var canonicals = make([]string, len(envs))
+		var canonicals = make([]cobra.Completion, len(envs))
 		for index, env := range envs {
 			if env.Canonical != nil && strings.HasPrefix(*env.Canonical, toComplete) {
-				canonicals[index] = *env.Canonical
+				canonicals[index] = cobra.CompletionWithDesc(*env.Canonical, env.Name)
 			}
 		}
 
@@ -209,20 +214,23 @@ func GetEnv(cmd *cobra.Command) (string, error) {
 func AddComponentFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("component", "c", "", "the component canonical, can also be set with the CY_COMPONENT env var")
 	v.BindPFlag("component", cmd.Flags().Lookup("component"))
-	cmd.RegisterFlagCompletionFunc("component", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmd.RegisterFlagCompletionFunc("component", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		org, err := GetOrg(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		project, err := GetProject(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		env, err := GetEnv(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		api := common.NewAPI()
@@ -230,13 +238,14 @@ func AddComponentFlag(cmd *cobra.Command) {
 
 		components, err := m.GetComponents(org, project, env)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "failed to list components for completion in org '"+org+"' with project '"+project+"' and env '"+env+"': "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		var canonicals = make([]string, len(components))
 		for index, component := range components {
 			if component.Canonical != nil && strings.HasPrefix(*component.Canonical, toComplete) {
-				canonicals[index] = *component.Canonical
+				canonicals[index] = cobra.CompletionWithDesc(*component.Canonical, *component.Name)
 			}
 		}
 
@@ -260,8 +269,8 @@ func GetComponent(cmd *cobra.Command) (string, error) {
 
 func AddColorFlag(cmd *cobra.Command) {
 	cmd.Flags().String("color", DefaultColor, "set the color.")
-	cmd.RegisterFlagCompletionFunc("color", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		var completions []string
+	cmd.RegisterFlagCompletionFunc("color", func(cmd *cobra.Command, args []cobra.Completion, toComplete string) ([]string, cobra.ShellCompDirective) {
+		var completions []cobra.Completion
 		for _, color := range ValidColors {
 			if strings.HasPrefix(color, toComplete) {
 				completions = append(completions, color)
@@ -310,8 +319,8 @@ func PickRandomColor(env *string) string {
 
 func AddIconFlag(cmd *cobra.Command) {
 	cmd.Flags().String("icon", DefaultIcon, "set the icon.")
-	err := cmd.RegisterFlagCompletionFunc("icon", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		var completions []string
+	err := cmd.RegisterFlagCompletionFunc("icon", func(cmd *cobra.Command, args []cobra.Completion, toComplete string) ([]string, cobra.ShellCompDirective) {
+		var completions []cobra.Completion
 		for _, icon := range ValidIcons {
 			if strings.HasPrefix(icon, toComplete) {
 				completions = append(completions, icon)
