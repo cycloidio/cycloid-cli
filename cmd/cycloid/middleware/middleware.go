@@ -87,25 +87,33 @@ type Middleware interface {
 	GetEnvPipelines(org, project, env string) ([]*models.Pipeline, error)
 
 	// Component pipelines
-
-	// TODO
-	// DiffPipeline(org, project, env, pipeline, variables string) (*models.PipelineDiffs, error)
-	//ListPipelineJobsBuilds(org, project, env, job string) ([]*models.Build, error)
-	//ListPipelineJobs(org, project, env string) ([]*models.Job, error)
-	//PausePipeline(org string, project string, env string) error
-	//TriggerPipelineBuild(org, project, env, job string) error
-	//UnpausePipeline(org string, project string, env string) error
-	//UpdatePipeline(org string, project string, env string, pipeline string, variables string) (*models.Pipeline, error)
-	//ListPipelines(org string) ([]*models.Pipeline, error)
-	//SyncedPipeline(org, project, env string) (*models.PipelineStatus, error)
-	// TODO
+	PausePipeline(org, project, env, component, pipelineName string) error
+	UnpausePipeline(org, project, env, component, pipelineName string) error
+	DiffPipeline(org, project, env, component, pipelineName, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.PipelineDiffs, error)
+	CreatePipeline(org, project, env, pipeline, component, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.Pipeline, error)
+	RenamePipeline(org, project, env, component, pipeline, newName string) error
+	SyncedPipeline(org, project, env, component, pipeline string) (*models.PipelineStatus, error)
+	GetPipeline(org, project, env, component, pipeline string) (*models.Pipeline, error)
+	UpdatePipeline(org, project, env, component, pipelineName, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.Pipeline, error)
+	DeletePipeline(org, project, env, component, pipeline string) error
 
 	// Component pipelines jobs
-	GetJob(org, project, env, component, pipeline, job string) (*models.Job, error)
 	GetJobs(org, project, env, component, pipeline string) ([]*models.Job, error)
+	GetJob(org, project, env, component, pipeline, job string) (*models.Job, error)
 	PauseJob(org, project, env, component, pipeline, job string) error
 	UnPauseJob(org, project, env, component, pipeline, job string) error
 	ClearTaskCache(org, project, env, component, pipeline, job, step string) (*models.ClearTaskCache, error)
+
+	// Component pipelines jobs build
+	GetBuilds(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) ([]*models.Build, error)
+	GetBuild(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error)
+	CreateBuild(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error)
+	RerunBuild(org, project, env, component, pipeline, job, buildID string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error)
+	AbortBuild(org, project, env, component, pipeline, job, buildID string, ccPageSince, ccPageUntil, ccPageLimit *uint64) error
+	GetBuildEvents(org, project, env, component, pipeline, buildID string) (*string, error)
+	GetBuildPlan(org, project, env, component, pipeline, job, buildID string) (*models.PublicPlan, error)
+	GetBuildPreparation(org, project, env, component, pipeline, job, buildID string) (*models.Preparation, error)
+	GetBuildResources(org, project, env, component, pipeline, job, buildID string) (*models.BuildInputsOutputs, error)
 
 	// Project
 	CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error)
