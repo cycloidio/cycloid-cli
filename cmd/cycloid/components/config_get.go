@@ -13,6 +13,7 @@ import (
 func NewGetComponentConfigCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get -p project -e env -c component",
+		Args:  cobra.NoArgs,
 		Short: "Fetch the current Stackforms variables of a component as a JSON.",
 		RunE:  getComponentConfig,
 	}

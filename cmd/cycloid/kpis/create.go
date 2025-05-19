@@ -10,6 +10,7 @@ import (
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
+		Args:  cobra.NoArgs,
 		Short: "create a kpi",
 		Example: `
 	# create a build_history kpi

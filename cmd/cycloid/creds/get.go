@@ -16,6 +16,7 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
+		Args:  cobra.NoArgs,
 		Short: "get a credential",
 		Example: `
 	# get a credential by its canonical

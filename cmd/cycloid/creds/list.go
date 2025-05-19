@@ -15,6 +15,7 @@ import (
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
+		Args:  cobra.NoArgs,
 		Short: "list the credentials",
 		Example: `
 	# list the credentials with the org 'my-org' in JSON format

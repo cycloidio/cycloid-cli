@@ -18,6 +18,7 @@ func NewGetCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "get",
+		Args:  cobra.NoArgs,
 		Short: "get a infrapolicy",
 		Example: `
 	# get a infrapolicy my_policy

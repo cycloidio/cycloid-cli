@@ -13,6 +13,7 @@ import (
 func NewUpdateComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update -p project -e env -c component",
+		Args:  cobra.NoArgs,
 		Short: "update an existing component",
 		RunE:  updateComponent,
 	}

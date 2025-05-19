@@ -14,6 +14,7 @@ var hostMapping, messageMapping, timestampMapping, esIndex string
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create [log|infraview]",
+		Args:  cobra.NoArgs,
 		Short: "create an external-backend",
 		Example: `
        # create AWS external backend for logs
@@ -44,6 +45,7 @@ func newInfraViewCommand() *cobra.Command {
 	// AWSRemoteTFState
 	var aWSRemoteTFState = &cobra.Command{
 		Use:     "AWSRemoteTFState",
+		Args:    cobra.NoArgs,
 		RunE:    createInfraView,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
@@ -58,6 +60,7 @@ func newInfraViewCommand() *cobra.Command {
 
 	var gCPRemoteTFState = &cobra.Command{
 		Use:     "GCPRemoteTFState",
+		Args:    cobra.NoArgs,
 		RunE:    createInfraView,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
@@ -68,6 +71,7 @@ func newInfraViewCommand() *cobra.Command {
 
 	var swiftRemoteTFState = &cobra.Command{
 		Use:     "SwiftRemoteTFState",
+		Args:    cobra.NoArgs,
 		RunE:    createInfraView,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
@@ -95,6 +99,7 @@ func newEventsCommand() *cobra.Command {
 	// Aws CW logs
 	var eventsAWSCloudWatchLogsCmd = &cobra.Command{
 		Use:     "AWSCloudWatchLogs",
+		Args:    cobra.NoArgs,
 		RunE:    createEvents,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}

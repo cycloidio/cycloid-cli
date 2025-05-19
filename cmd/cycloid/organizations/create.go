@@ -16,6 +16,7 @@ import (
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:    "create",
+		Args:   cobra.NoArgs,
 		Short:  "create an organization",
 		Hidden: true,
 		Example: `

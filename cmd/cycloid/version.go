@@ -14,6 +14,7 @@ import (
 func NewVersionCmd() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "version",
+		Args:  cobra.NoArgs,
 		Short: "Get the version of the consumed API",
 		Example: `
 	# get the version in JSON format

@@ -17,6 +17,7 @@ import (
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "list",
+		Args:    cobra.NoArgs,
 		Aliases: []string{"ls"},
 		Short:   "list events",
 		Example: `# Get events since last week

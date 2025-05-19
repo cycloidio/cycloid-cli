@@ -15,6 +15,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete an organization (require root API_KEY)",
 		Example: `
 	# delete an organization with canonical name my-org

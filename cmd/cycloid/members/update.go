@@ -24,6 +24,7 @@ func NewUpdateCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:     "update",
+		Args:    cobra.NoArgs,
 		Example: example,
 		Short:   short,
 		Long:    long,

@@ -15,6 +15,7 @@ import (
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "update",
+		Args:    cobra.NoArgs,
 		Short:   "update a project",
 		Example: `cy --org my-org project update --project "my-project" --name "NewName"`,
 		RunE:    update,

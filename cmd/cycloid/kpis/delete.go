@@ -10,6 +10,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete a kpi",
 		Example: `
 	# delete a kpi

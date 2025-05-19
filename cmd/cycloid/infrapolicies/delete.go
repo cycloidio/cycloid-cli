@@ -18,6 +18,7 @@ func NewDeleteCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete a infrapolicy",
 		Example: `
 	# create a infrapolicy my_policy

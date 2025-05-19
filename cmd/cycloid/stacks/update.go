@@ -17,6 +17,7 @@ import (
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update",
+		Args:  cobra.NoArgs,
 		Short: "update the visibility of a stack",
 		Example: `cy stacks update --stack-ref org:myStack --visibility shared
 

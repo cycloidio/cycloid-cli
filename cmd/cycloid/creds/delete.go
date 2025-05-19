@@ -15,6 +15,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete a credential",
 		Example: `
 	# delete a credential with canonical my-cred

@@ -14,6 +14,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "delete",
+		Args:    cobra.NoArgs,
 		Aliases: []string{"del", "rm"},
 		Short:   "delete a environment",
 		Example: `cy --org my-org environment delete --env my-environment`,

@@ -11,6 +11,7 @@ import (
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "update",
+		Args:    cobra.NoArgs,
 		Hidden:  true,
 		Short:   "not implemented yet",
 		Long:    `not implemented yet`,

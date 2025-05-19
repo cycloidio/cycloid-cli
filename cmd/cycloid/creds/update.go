@@ -21,6 +21,7 @@ import (
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update [ssh|basic_auth|custom|aws|azure|azure_storage|gcp|elasticsearch|swift]",
+		Args:  cobra.NoArgs,
 		Short: "update a credential",
 		Example: `
 	# update a credential for basic authentication

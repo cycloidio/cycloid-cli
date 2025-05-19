@@ -17,6 +17,7 @@ import (
 func NewCommands() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "login",
+		Args:  cobra.NoArgs,
 		Short: "Login against the Cycloid console",
 		Example: `# Login in an org using api-key
 export CY_API_KEY=xxxx

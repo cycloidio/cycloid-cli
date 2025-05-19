@@ -15,6 +15,7 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
+		Args:  cobra.NoArgs,
 		Short: "get a environment",
 		Example: `
 	# get a environment in YAML format

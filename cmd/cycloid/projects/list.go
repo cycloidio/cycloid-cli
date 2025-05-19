@@ -15,6 +15,7 @@ import (
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
+		Args:  cobra.NoArgs,
 		Short: "list the projects within the organization",
 		Example: `# list projects in 'my-org' and display result in JSON
 cy --org my-org projects list -o json`,

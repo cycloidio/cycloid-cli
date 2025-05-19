@@ -18,6 +18,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete an API key",
 		Example: `
 	# delete the API key 'my-key' in the org my-org

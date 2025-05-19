@@ -27,6 +27,7 @@ var (
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "list",
+		Args:    cobra.NoArgs,
 		Example: example,
 		Short:   short,
 		Long:    long,

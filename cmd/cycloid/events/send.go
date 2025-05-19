@@ -29,6 +29,7 @@ var (
 func NewSendCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
+		Args:  cobra.NoArgs,
 		Short: "create an event",
 		Example: `
 	# create a custom event

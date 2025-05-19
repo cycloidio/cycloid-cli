@@ -14,6 +14,7 @@ import (
 func NewRefreshCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "refresh",
+		Args:  cobra.NoArgs,
 		Short: "refresh a catalog repository",
 		Long:  "refresh action can be used if the .cycloid.yml definition has been updated",
 		Example: `

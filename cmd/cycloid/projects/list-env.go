@@ -14,6 +14,7 @@ import (
 func NewListEnvCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "list-env",
+		Args:    cobra.NoArgs,
 		Short:   "List environments in the current project",
 		Example: `cy --org my-org projects list-env -p project -o json`,
 		RunE:    listEnv,

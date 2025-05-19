@@ -18,6 +18,7 @@ func NewListCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:   "list",
+		Args:  cobra.NoArgs,
 		Short: "list infrapolicies",
 		Example: `
 	# list all infrapolicies in an organization
