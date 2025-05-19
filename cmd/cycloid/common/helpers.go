@@ -151,7 +151,7 @@ func NewAPI(opts ...APIOptions) *APIClient {
 	}
 }
 
-func (a *APIClient) GetToken(org string) string {
+func (a *APIClient) GetToken(org *string) string {
 	var token string
 	token = a.Config.Token
 
@@ -174,7 +174,7 @@ func (a *APIClient) GetToken(org string) string {
 
 	// if the token is not set with env variable we try to fetch
 	// him from the config (if the user is logged)
-	if len(token) == 0 {
+	if len(token) == 0 && org != nil {
 		// Check first if the config file exists
 		filePath, err := config.GetConfigPath()
 		if err != nil {
@@ -191,7 +191,7 @@ func (a *APIClient) GetToken(org string) string {
 		config, _ := config.Read()
 
 		// we try to find a token for this `org`
-		if t, ok := config.Organizations[org]; ok {
+		if t, ok := config.Organizations[*org]; ok {
 			token = t.Token
 		}
 	}
@@ -204,7 +204,7 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 		return nil
 	}
 
-	token := a.GetToken(*org)
+	token := a.GetToken(org)
 
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
 		if len(token) == 0 {
