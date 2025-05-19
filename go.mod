@@ -3,18 +3,18 @@ module github.com/cycloidio/cycloid-cli
 go 1.24.1
 
 require (
-	dario.cat/mergo v1.0.1
-	github.com/adrg/xdg v0.4.0
-	github.com/go-openapi/errors v0.22.0
+	dario.cat/mergo v1.0.2
+	github.com/adrg/xdg v0.5.3
+	github.com/go-openapi/errors v0.22.1
 	github.com/go-openapi/runtime v0.28.0
 	github.com/go-openapi/strfmt v0.23.0
-	github.com/go-openapi/swag v0.23.0
+	github.com/go-openapi/swag v0.23.1
 	github.com/go-openapi/validate v0.24.0
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/errors v0.9.1
 	github.com/sanity-io/litter v1.5.8
-	github.com/spf13/cobra v1.8.0
-	github.com/spf13/viper v1.18.2
+	github.com/spf13/cobra v1.9.1
+	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	gopkg.in/yaml.v3 v3.0.1
 )

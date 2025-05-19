@@ -37,24 +37,30 @@ func GetCloudProvider(cmd *cobra.Command) (*string, error) {
 func AddStackRefFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("stack-ref", "s", "", "set the stack ref of the component in format org:stack-canonical")
 	cmd.MarkFlagRequired("stack-ref")
-	cmd.RegisterFlagCompletionFunc("stack-ref", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmd.RegisterFlagCompletionFunc("stack-ref", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
 		org, err := GetOrg(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveNoFileComp
+			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		stacks, err := m.ListStacks(org)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveNoFileComp
+			return cobra.AppendActiveHelp(nil, "failed to list stacks in org '"+org+"': "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
 		var stackRefs = make([]string, len(stacks))
 		for index, stack := range stacks {
 			if stack.Ref != nil && strings.HasPrefix(*stack.Ref, toComplete) {
-				stackRefs[index] = *stack.Ref
+				desc := *stack.Name
+				if stack.Description != "" {
+					desc = desc + " - " + stack.Description
+				}
+				stackRefs[index] = cobra.CompletionWithDesc(*stack.Ref, desc)
 			}
 		}
 
@@ -94,9 +100,13 @@ func AddUseCaseFlag(cmd *cobra.Command) {
 		}
 
 		var useCases []string
-		for useCase, _ := range stackConfig {
+		for useCase, stack := range stackConfig {
 			if strings.HasPrefix(useCase, toComplete) {
-				useCases = append(useCases, useCase)
+				desc := *stack.Name
+				if stack.Description != nil {
+					desc = desc + " - " + *stack.Description
+				}
+				useCases = append(useCases, cobra.CompletionWithDesc(useCase, desc))
 			}
 		}
 

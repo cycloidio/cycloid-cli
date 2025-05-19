@@ -20,24 +20,25 @@ func GetCatalogRepository(cmd *cobra.Command) (string, error) {
 		return "", err
 	}
 
-	cmd.RegisterFlagCompletionFunc("catalog-repository", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmd.RegisterFlagCompletionFunc("catalog-repository", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
 		org, err := GetOrg(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
 		}
 
 		stacks, err := m.ListCatalogRepositories(org)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "failed to list catalog repositories for completion in org '"+org+"': "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
 		}
 
-		var catalogRepositories = make([]string, len(stacks))
+		var catalogRepositories = make([]cobra.Completion, len(stacks))
 		for index, catalogRepository := range stacks {
 			if catalogRepository.Canonical != nil {
-				catalogRepositories[index] = *catalogRepository.Canonical
+				catalogRepositories[index] = cobra.CompletionWithDesc(*catalogRepository.Canonical, *catalogRepository.Name+" - branch: "+catalogRepository.Branch)
 			}
 		}
 
@@ -59,24 +60,24 @@ func GetConfigRepository(cmd *cobra.Command, org string, m middleware.Middleware
 		return "", err
 	}
 
-	cmd.RegisterFlagCompletionFunc("config-repository", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	cmd.RegisterFlagCompletionFunc("config-repository", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
 		org, err := GetOrg(cmd)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
 		}
 
 		stacks, err := m.ListConfigRepositories(org)
 		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveError
+			return cobra.AppendActiveHelp(nil, "failed to list config repositories for completion in org '"+org+"' :"+err.Error()), cobra.ShellCompDirectiveError
 		}
 
 		var configRepositories = make([]string, len(stacks))
 		for index, configRepository := range stacks {
 			if configRepository.Canonical != nil {
-				configRepositories[index] = *configRepository.Canonical
+				configRepositories[index] = cobra.CompletionWithDesc(*configRepository.Canonical, *configRepository.Name+" - branch: "+configRepository.Branch)
 			}
 		}
 
