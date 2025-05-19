@@ -65,10 +65,6 @@ func ReplaceCycloidVarsString(ctx CycloidContext, text string) string {
 	return text
 }
 
-func GetPipelineName(project, env string) string {
-	return fmt.Sprintf("%s-%s", project, env)
-}
-
 type APIConfig struct {
 	URL      string
 	Insecure bool
