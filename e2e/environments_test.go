@@ -81,6 +81,27 @@ func TestEnvs(t *testing.T) {
 		}
 	})
 
+	t.Run("Get", func(t *testing.T) {
+		args := []string{
+			"env", "get",
+			"--project", project,
+			"--env", env,
+			"--output", "json",
+		}
+		cmdOut, err := executeCommand(args)
+		if err != nil {
+			t.Fatalf("failed to get env '%s': %v", env, err)
+		}
+
+		var got models.Environment
+		err = json.Unmarshal([]byte(cmdOut), &got)
+		if err != nil {
+			t.Fatalf("failed to marshal json cli output: %s\nerr: %s", cmdOut, err)
+		}
+
+		assert.EqualValues(t, env, *got.Canonical)
+	})
+
 	t.Run("CreateWithUpdate", func(t *testing.T) {
 		var (
 			createUpdateName = "helloUpdate"
