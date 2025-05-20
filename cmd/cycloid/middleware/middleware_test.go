@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"math/rand"
 	"os"
 	"testing"
 
@@ -127,15 +126,4 @@ func CreateTestChildOrg(m middleware.Middleware, parent, child string) (func(), 
 	}
 
 	return deferFunc, nil
-}
-
-func randomCanonical(baseName string) string {
-	var size = 4
-	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyz")
-
-	b := make([]rune, size)
-	for i := range b {
-		b[i] = letterRunes[rand.Intn(len(letterRunes))]
-	}
-	return baseName + "-" + string(b)
 }
