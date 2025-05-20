@@ -52,9 +52,6 @@ func update(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if name == "" {
-		name = env
-	}
 
 	color, err := cy_args.GetColor(cmd)
 	if err != nil {
@@ -85,6 +82,10 @@ func update(cmd *cobra.Command, args []string) error {
 			// Use a random one if none is set
 			color = cy_args.PickRandomColor(&env)
 		}
+	}
+
+	if name == "" {
+		name = currentEnv.Name
 	}
 
 	resp, err := m.UpdateEnv(org, project, env, name, color)
