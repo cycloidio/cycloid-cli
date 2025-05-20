@@ -6,7 +6,7 @@ import (
 	strfmt "github.com/go-openapi/strfmt"
 )
 
-func (m *middleware) GetBuilds(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) ([]*models.Build, error) {
+func (m *middleware) GetBuilds(org, project, env, component, pipeline, job string) ([]*models.Build, error) {
 	params := component_pipelines_jobs_builds.NewGetBuildsParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
@@ -29,7 +29,7 @@ func (m *middleware) GetBuilds(org, project, env, component, pipeline, job strin
 	return payload.Data, nil
 }
 
-func (m *middleware) GetBuild(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error) {
+func (m *middleware) GetBuild(org, project, env, component, pipeline, job string) (*models.Build, error) {
 	params := component_pipelines_jobs_builds.NewGetBuildParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
@@ -52,7 +52,7 @@ func (m *middleware) GetBuild(org, project, env, component, pipeline, job string
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateBuild(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error) {
+func (m *middleware) CreateBuild(org, project, env, component, pipeline, job string) (*models.Build, error) {
 	params := component_pipelines_jobs_builds.NewCreateBuildParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
@@ -75,7 +75,7 @@ func (m *middleware) CreateBuild(org, project, env, component, pipeline, job str
 	return payload.Data, nil
 }
 
-func (m *middleware) RerunBuild(org, project, env, component, pipeline, job, buildID string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error) {
+func (m *middleware) RerunBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, error) {
 	params := component_pipelines_jobs_builds.NewRerunBuildParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
@@ -99,7 +99,7 @@ func (m *middleware) RerunBuild(org, project, env, component, pipeline, job, bui
 	return payload.Data, nil
 }
 
-func (m *middleware) AbortBuild(org, project, env, component, pipeline, job, buildID string, ccPageSince, ccPageUntil, ccPageLimit *uint64) error {
+func (m *middleware) AbortBuild(org, project, env, component, pipeline, job, buildID string) error {
 	params := component_pipelines_jobs_builds.NewAbortBuildParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)

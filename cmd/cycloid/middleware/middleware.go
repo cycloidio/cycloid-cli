@@ -105,11 +105,11 @@ type Middleware interface {
 	ClearTaskCache(org, project, env, component, pipeline, job, step string) (*models.ClearTaskCache, error)
 
 	// Component pipelines jobs build
-	GetBuilds(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) ([]*models.Build, error)
-	GetBuild(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error)
-	CreateBuild(org, project, env, component, pipeline, job string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error)
-	RerunBuild(org, project, env, component, pipeline, job, buildID string, ccPageSince, ccPageUntil, ccPageLimit *uint64) (*models.Build, error)
-	AbortBuild(org, project, env, component, pipeline, job, buildID string, ccPageSince, ccPageUntil, ccPageLimit *uint64) error
+	GetBuilds(org, project, env, component, pipeline, job string) ([]*models.Build, error)
+	GetBuild(org, project, env, component, pipeline, job string) (*models.Build, error)
+	CreateBuild(org, project, env, component, pipeline, job string) (*models.Build, error)
+	RerunBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, error)
+	AbortBuild(org, project, env, component, pipeline, job, buildID string) error
 	GetBuildEvents(org, project, env, component, pipeline, buildID string) (*string, error)
 	GetBuildPlan(org, project, env, component, pipeline, job, buildID string) (*models.PublicPlan, error)
 	GetBuildPreparation(org, project, env, component, pipeline, job, buildID string) (*models.Preparation, error)
