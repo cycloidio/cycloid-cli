@@ -29,7 +29,7 @@ func (m *middleware) GetBuilds(org, project, env, component, pipeline, job strin
 	return payload.Data, nil
 }
 
-func (m *middleware) GetBuild(org, project, env, component, pipeline, job string) (*models.Build, error) {
+func (m *middleware) GetBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, error) {
 	params := component_pipelines_jobs_builds.NewGetBuildParams()
 	params.SetOrganizationCanonical(org)
 	params.SetProjectCanonical(project)
@@ -37,6 +37,7 @@ func (m *middleware) GetBuild(org, project, env, component, pipeline, job string
 	params.SetComponentCanonical(component)
 	params.SetInpathPipelineName(pipeline)
 	params.SetJobName(job)
+	params.SetBuildID(buildID)
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuild(params, m.api.Credentials(&org))
 	if err != nil {
