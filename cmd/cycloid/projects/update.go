@@ -87,14 +87,39 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	projectResp, err := m.GetProject(org, project)
+	currentProject, err := m.GetProject(org, project)
 	if err != nil {
-		return printer.SmartPrint(p, projectResp, err, "project not found", printer.Options{}, cmd.OutOrStderr())
+		return printer.SmartPrint(p, currentProject, err, "project not found", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", projectResp.UpdatedAt)
+	if name == "" {
+		name = *currentProject.Name
+	}
+
+	if description == "" {
+		description = currentProject.Description
+	}
+
+	if color == "" && currentProject.Color != nil {
+		color = *currentProject.Color
+	}
+
+	if icon == "" && currentProject.Icon != nil {
+		icon = *currentProject.Icon
+	}
+
+	if owner == "" && currentProject.Owner != nil {
+		owner = *currentProject.Owner.Username
+	}
+
+	if configRepository == "" {
+		configRepository = currentProject.ConfigRepositoryCanonical
+	}
+
+	resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", currentProject.UpdatedAt)
 	if err != nil {
 		return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStderr())
 	}
+
 	return printer.SmartPrint(p, resp, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
