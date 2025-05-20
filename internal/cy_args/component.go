@@ -77,9 +77,10 @@ func GetStackRef(cmd *cobra.Command) (*string, error) {
 	return &stackRef, nil
 }
 
-func AddUseCaseFlag(cmd *cobra.Command) {
+// AddUseCaseFlag will add the use-case flag with completion and return the flag name
+func AddUseCaseFlag(cmd *cobra.Command) string {
+	flagName := "use-case"
 	cmd.Flags().StringP("use-case", "u", "", "set the use-case of the component")
-	cmd.MarkFlagRequired("use-case")
 	cmd.RegisterFlagCompletionFunc("use-case", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
@@ -112,6 +113,8 @@ func AddUseCaseFlag(cmd *cobra.Command) {
 
 		return useCases, cobra.ShellCompDirectiveNoFileComp
 	})
+
+	return flagName
 }
 
 func GetUseCase(cmd *cobra.Command) (*string, error) {
