@@ -1,6 +1,8 @@
 package components
 
 import (
+	"fmt"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cy_args"
@@ -68,6 +70,24 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 	inputs, err := cy_args.GetStackformsVars(cmd, config)
 	if err != nil {
 		return err
+	}
+
+	// fetch the current component to fill unspecified values by the user
+	current, err := m.GetComponent(org, project, env, component)
+	if err != nil {
+		return fmt.Errorf("failed to update component, target '%s' doesn't seems to exists: %s", component, err)
+	}
+
+	if name == "" {
+		name = *current.Name
+	}
+
+	if *description == "" && current.Description == "" {
+		description = &current.Description
+	}
+
+	if *useCase == "" {
+		useCase = current.UseCase
 	}
 
 	updatedComponent, err := m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)
