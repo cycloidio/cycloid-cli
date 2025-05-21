@@ -5,7 +5,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
@@ -22,28 +22,28 @@ func NewInterpolateCmd() *cobra.Command {
 
 	cmd.Flags().StringP("use-case", "u", "", "specify the use case canonical")
 	cmd.Flags().StringP("stack-ref", "s", "", "stack ref (sometimes called service_catalog_ref")
-	cy_args.AddCyContext(cmd)
-	cy_args.AddStackFormsInputFlags(cmd)
+	cyargs.AddCyContext(cmd)
+	cyargs.AddStackFormsInputFlags(cmd)
 	return cmd
 }
 
 func interpolate(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := cy_args.GetCyContext(cmd)
+	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}
 
-	useCase, err := cy_args.GetUseCase(cmd)
+	useCase, err := cyargs.GetUseCase(cmd)
 	if err != nil {
 		return err
 	}
 
-	stackRef, err := cy_args.GetStackRef(cmd)
+	stackRef, err := cyargs.GetStackRef(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cy_args.GetOutput(cmd)
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", *stackRef, *useCase, err)
 	}
 
-	inputs, err := cy_args.GetStackformsVars(cmd, useCaseConfig)
+	inputs, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
 	if err != nil {
 		return err
 	}

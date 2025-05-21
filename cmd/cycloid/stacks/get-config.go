@@ -9,7 +9,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -32,19 +32,19 @@ cy --org my-org stacks get-config my:stack-ref stack-usecase
 }
 
 func getConfig(cmd *cobra.Command, args []string) error {
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	stackRef, _ := cy_args.GetStackRef(cmd)
+	stackRef, _ := cyargs.GetStackRef(cmd)
 	if len(args) >= 1 && *stackRef == "" {
 		stackRef = &args[0]
 	} else if *stackRef == "" {
 		return fmt.Errorf("missing ref argument")
 	}
 
-	useCase, _ := cy_args.GetUseCase(cmd)
+	useCase, _ := cyargs.GetUseCase(cmd)
 	if len(args) == 2 && *useCase == "" {
 		useCase = &args[1]
 	} else if *useCase == "" {
@@ -82,7 +82,7 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", *stackRef, *useCase, err)
 	}
 
-	config, err := cy_args.GetStackformsVars(cmd, useCaseConfig)
+	config, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to fetch stack config.", printer.Options{}, cmd.OutOrStdout())
 	}

@@ -9,26 +9,26 @@ import (
 
 func TestComponentPipeline(t *testing.T) {
 	t.Parallel()
-	config, err := getTestConfig()
+	config, err := GetTestConfig()
 	if err != nil {
 		t.Errorf("failed to get test config: %s", err)
 		return
 	}
 
-	project, projectDelete, err := config.setupTestProject(t.Name())
+	project, projectDelete, err := config.SetupTestProject(t.Name())
 	defer projectDelete()
 	if err != nil {
 		t.Errorf("failed to create project for test '%s': %s", t.Name(), err)
 	}
 
-	env, envDelete, err := config.setupTestEnv(t.Name(), *project.Canonical)
+	env, envDelete, err := config.SetupTestEnv(t.Name(), *project.Canonical)
 	defer envDelete()
 	if err != nil {
 		t.Errorf("failed to setup env for test '%s': %s", t.Name(), err)
 		return
 	}
 
-	component, componentDelete, err := config.setupTestComponent(
+	component, componentDelete, err := config.SetupTestComponent(
 		*project.Canonical, *env.Canonical, t.Name(), pipelineTestStackRef, pipelineTestStackUseCase, &pipelineTestDefaultVars,
 	)
 	defer componentDelete()

@@ -7,7 +7,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/config"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -40,7 +40,7 @@ func login(cmd *cobra.Command, args []string) error {
 	conf, _ := config.Read()
 	// If err != nil, the file does not exist, we create it anyway
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get org flag")
 	}

@@ -7,7 +7,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -22,13 +22,13 @@ func NewUpdateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	cy_args.AddNameFlag(cmd)
-	cy_args.AddProjectFlag(cmd)
-	cy_args.AddDescriptionFlag(cmd)
-	cy_args.AddIconFlag(cmd)
-	cy_args.AddColorFlag(cmd)
-	cy_args.AddOwnerFlag(cmd)
-	cy_args.AddConfigRepositoryFlag(cmd)
+	cyargs.AddNameFlag(cmd)
+	cyargs.AddProjectFlag(cmd)
+	cyargs.AddDescriptionFlag(cmd)
+	cyargs.AddIconFlag(cmd)
+	cyargs.AddColorFlag(cmd)
+	cyargs.AddOwnerFlag(cmd)
+	cyargs.AddConfigRepositoryFlag(cmd)
 	return cmd
 }
 
@@ -36,47 +36,47 @@ func update(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	project, err := cy_args.GetProject(cmd)
+	project, err := cyargs.GetProject(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := cy_args.GetName(cmd)
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
 
-	description, err := cy_args.GetDescription(cmd)
+	description, err := cyargs.GetDescription(cmd)
 	if err != nil {
 		return err
 	}
 
-	owner, err := cy_args.GetOwner(cmd)
+	owner, err := cyargs.GetOwner(cmd)
 	if err != nil {
 		return err
 	}
 
-	color, err := cy_args.GetColor(cmd)
+	color, err := cyargs.GetColor(cmd)
 	if err != nil {
 		return err
 	}
 
-	icon, err := cy_args.GetIcon(cmd)
+	icon, err := cyargs.GetIcon(cmd)
 	if err != nil {
 		return err
 	}
 
-	configRepository, err := cy_args.GetConfigRepository(cmd, org, m)
+	configRepository, err := cyargs.GetConfigRepository(cmd, org, m)
 	if err != nil {
 		return err
 	}
 
-	output, err := cy_args.GetOutput(cmd)
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}

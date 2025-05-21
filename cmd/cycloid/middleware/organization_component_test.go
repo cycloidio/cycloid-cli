@@ -11,7 +11,7 @@ import (
 func TestComponentCRUD(t *testing.T) {
 	// setup
 	t.Parallel()
-	config, err := getTestConfig()
+	config, err := GetTestConfig()
 	if err != nil {
 		t.Fatalf("Config setup failed: %v", err)
 	}
@@ -19,7 +19,7 @@ func TestComponentCRUD(t *testing.T) {
 
 	var (
 		projectName      = "Test CRUD component"
-		project          = randomCanonical("test-crud-components")
+		project          = RandomCanonical("test-crud-components")
 		description      = "Testing components"
 		configRepository = configRepository
 		owner            = ""

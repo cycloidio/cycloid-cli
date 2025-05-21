@@ -7,7 +7,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -22,10 +22,10 @@ func NewCreateCommand() *cobra.Command {
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	cy_args.AddNameFlag(cmd)
-	cy_args.AddProjectFlag(cmd)
-	cy_args.AddEnvFlag(cmd)
-	cy_args.AddColorFlag(cmd)
+	cyargs.AddNameFlag(cmd)
+	cyargs.AddProjectFlag(cmd)
+	cyargs.AddEnvFlag(cmd)
+	cyargs.AddColorFlag(cmd)
 	cmd.Flags().Bool("update", false, "if set, will update the environment if it exists.")
 	return cmd
 }
@@ -34,22 +34,22 @@ func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	project, err := cy_args.GetProject(cmd)
+	project, err := cyargs.GetProject(cmd)
 	if err != nil {
 		return err
 	}
 
-	env, err := cy_args.GetEnv(cmd)
+	env, err := cyargs.GetEnv(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := cy_args.GetName(cmd)
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func create(cmd *cobra.Command, args []string) error {
 		name = env
 	}
 
-	color, err := cy_args.GetColor(cmd)
+	color, err := cyargs.GetColor(cmd)
 	if err != nil {
 		return err
 	}
@@ -67,7 +67,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cy_args.GetOutput(cmd)
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -82,12 +82,12 @@ func create(cmd *cobra.Command, args []string) error {
 		current, err := m.GetEnv(org, project, env)
 		if err == nil {
 			// Make the update use the current color if not explicitly set by the user
-			if color == cy_args.DefaultColor {
+			if color == cyargs.DefaultColor {
 				if current.Color != nil {
 					color = *current.Color
 				} else {
 					// Use a random one if none is set
-					color = cy_args.PickRandomColor(&env)
+					color = cyargs.PickRandomColor(&env)
 				}
 			}
 
@@ -99,8 +99,8 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	if color == cy_args.DefaultColor {
-		color = cy_args.PickRandomColor(&env)
+	if color == cyargs.DefaultColor {
+		color = cyargs.PickRandomColor(&env)
 	}
 
 	resp, err := m.CreateEnv(org, project, env, name, color)

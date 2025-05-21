@@ -1,4 +1,4 @@
-package cy_args
+package cyargs
 
 import (
 	"errors"
