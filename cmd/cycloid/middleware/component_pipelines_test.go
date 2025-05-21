@@ -5,40 +5,23 @@ import (
 	"reflect"
 	"strconv"
 	"testing"
+	"time"
 )
 
 func TestComponentPipeline(t *testing.T) {
 	t.Parallel()
-	config, err := GetTestConfig()
-	if err != nil {
-		t.Errorf("failed to get test config: %s", err)
-		return
-	}
+	m := config.Middleware
 
-	project, projectDelete, err := config.SetupTestProject(t.Name())
-	defer projectDelete()
-	if err != nil {
-		t.Errorf("failed to create project for test '%s': %s", t.Name(), err)
-	}
-
-	env, envDelete, err := config.SetupTestEnv(t.Name(), *project.Canonical)
-	defer envDelete()
-	if err != nil {
-		t.Errorf("failed to setup env for test '%s': %s", t.Name(), err)
-		return
-	}
-
-	component, componentDelete, err := config.SetupTestComponent(
-		*project.Canonical, *env.Canonical, t.Name(), pipelineTestStackRef, pipelineTestStackUseCase, &pipelineTestDefaultVars,
+	component, err := config.NewTestComponent(
+		*config.Project.Canonical, *config.Environment.Canonical, t.Name(), pipelineTestStackRef, pipelineTestStackUseCase, &pipelineTestDefaultVars,
 	)
-	defer componentDelete()
 	if err != nil {
 		t.Errorf("failed to setup base component for test '%s': %s", t.Name(), err)
 	}
 
 	t.Run("GetPipeline", func(t *testing.T) {
-		pipelineName := fmt.Sprintf("%s-%s-%s", *project.Canonical, *env.Canonical, *component.Canonical)
-		got, err := m.GetPipeline(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, pipelineName)
+		pipelineName := fmt.Sprintf("%s-%s-%s", *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical)
+		got, err := m.GetPipeline(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, pipelineName)
 		if err != nil {
 			t.Errorf("middleware.GetComponentPipelines() error = %v", err)
 			return
@@ -50,8 +33,8 @@ func TestComponentPipeline(t *testing.T) {
 	})
 
 	t.Run("PausePipeline", func(t *testing.T) {
-		pipelineName := fmt.Sprintf("%s-%s-%s", *project.Canonical, *env.Canonical, *component.Canonical)
-		err := m.PausePipeline(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, pipelineName)
+		pipelineName := fmt.Sprintf("%s-%s-%s", *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical)
+		err := m.PausePipeline(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, pipelineName)
 		if err != nil {
 			t.Errorf("%s error = %v", t.Name(), err)
 			return
@@ -59,8 +42,8 @@ func TestComponentPipeline(t *testing.T) {
 	})
 
 	t.Run("UnpausePipeline", func(t *testing.T) {
-		pipelineName := fmt.Sprintf("%s-%s-%s", *project.Canonical, *env.Canonical, *component.Canonical)
-		err := m.UnpausePipeline(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, pipelineName)
+		pipelineName := fmt.Sprintf("%s-%s-%s", *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical)
+		err := m.UnpausePipeline(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, pipelineName)
 		if err != nil {
 			t.Errorf("%s error = %v", t.Name(), err)
 			return
@@ -68,8 +51,8 @@ func TestComponentPipeline(t *testing.T) {
 	})
 
 	t.Run("SynchedPipelineOk", func(t *testing.T) {
-		pipelineName := fmt.Sprintf("%s-%s-%s", *project.Canonical, *env.Canonical, *component.Canonical)
-		got, err := m.SyncedPipeline(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, pipelineName)
+		pipelineName := fmt.Sprintf("%s-%s-%s", *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical)
+		got, err := m.SyncedPipeline(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, pipelineName)
 		if err != nil {
 			t.Errorf("%s error = %v", t.Name(), err)
 			return
@@ -101,8 +84,8 @@ jobs:
       params:
         MESSAGE: ((message))
 `
-		pipelineName := fmt.Sprintf("%s-%s-%s", *project.Canonical, *env.Canonical, *component.Canonical)
-		updatedPipeline, err := m.UpdatePipeline(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, pipelineName, newPipeline, "---\nmessage: hello", false)
+		pipelineName := fmt.Sprintf("%s-%s-%s", *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical)
+		updatedPipeline, err := m.UpdatePipeline(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, pipelineName, newPipeline, "---\nmessage: hello", false)
 		if err != nil {
 			t.Errorf("%s error = %v", t.Name(), err)
 			return
@@ -125,14 +108,14 @@ jobs:
 		}
 
 		t.Run("TestBuilds", func(t *testing.T) {
-			build, err := m.CreateBuild(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name)
+			build, err := m.CreateBuild(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name)
 			if err != nil {
 				t.Errorf("failed to trigger build in job '%s': %s", *pipelineJobs[0].Name, err)
 				return
 			}
 
 			buildIDStr := strconv.Itoa(int(*build.ID))
-			getBuild, err := m.GetBuild(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name, buildIDStr)
+			getBuild, err := m.GetBuild(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name, buildIDStr)
 			if err != nil {
 				t.Errorf("failed to get build in job '%s': %s", *pipelineJobs[0].Name, err)
 				return
@@ -143,12 +126,15 @@ jobs:
 				return
 			}
 
-			err = m.AbortBuild(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name, buildIDStr)
+			err = m.AbortBuild(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name, buildIDStr)
 			if err != nil {
 				t.Fatalf("failed to abort build '%s': %s", buildIDStr, err)
 			}
 
-			_, err = m.RerunBuild(config.Org, *project.Canonical, *env.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name, buildIDStr)
+			// Add a bit of time, concourse seems to not like it
+			time.Sleep(1 * time.Second)
+
+			_, err = m.RerunBuild(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name, buildIDStr)
 			if err != nil {
 				t.Fatalf("failed to re-run build '%s': %s", buildIDStr, err)
 			}

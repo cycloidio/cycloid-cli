@@ -6,26 +6,23 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 )
 
 func TestComponentCRUD(t *testing.T) {
 	// setup
 	t.Parallel()
-	config, err := GetTestConfig()
-	if err != nil {
-		t.Fatalf("Config setup failed: %v", err)
-	}
 	m := config.Middleware
 
 	var (
 		projectName      = "Test CRUD component"
-		project          = RandomCanonical("test-crud-components")
+		project          = testcfg.RandomCanonical("test-crud-components")
 		description      = "Testing components"
-		configRepository = configRepository
+		configRepository = *config.ConfigRepo.Canonical
 		owner            = ""
 		team             = ""
-		color            = "blue"
-		icon             = "planet"
+		color            = "default"
+		icon             = "world"
 	)
 
 	defer func() {
