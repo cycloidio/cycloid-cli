@@ -8,10 +8,11 @@ import (
 // We need to ensure the Child org CRUD works before kicking off tests.
 func TestChildOrgCrud(t *testing.T) {
 	t.Parallel()
-	config, err := GetTestConfig()
-	if err != nil {
-		t.Fatalf("Config setup failed: %v", err)
-	}
+	// config, err := testcfg.NewConfig()
+	// defer config.Cleanup()
+	// if err != nil {
+	// 	t.Fatalf("Config setup failed: %v", err)
+	// }
 	m := config.Middleware
 
 	var childOrg = "test-create-child-org"
@@ -23,7 +24,7 @@ func TestChildOrgCrud(t *testing.T) {
 		}
 	}()
 
-	_, err = m.CreateOrganizationChild(config.Org, childOrg, nil)
+	_, err := m.CreateOrganizationChild(config.Org, childOrg, nil)
 	if err != nil {
 		t.Fatalf("Failed to create org '%s': %v", childOrg, err)
 		return
@@ -44,6 +45,4 @@ func TestChildOrgCrud(t *testing.T) {
 		t.Fatalf("Org '%s' is not created: %v", childOrg, err)
 		return
 	}
-
-	return
 }

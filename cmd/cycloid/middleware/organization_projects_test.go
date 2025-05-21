@@ -3,28 +3,25 @@ package middleware_test
 import (
 	"testing"
 
+	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProjectCrud(t *testing.T) {
 	t.Parallel()
-	config, err := GetTestConfig()
-	if err != nil {
-		t.Fatalf("Config setup failed: %v", err)
-	}
 	m := config.Middleware
 
 	var (
 		projectName = "Test CRUD Projects"
-		project     = RandomCanonical("test-crud-project")
+		project     = testcfg.RandomCanonical("test-crud-project")
 		description = "My cool project description !\nWith a nexline"
 		owner       = ""
 		team        = ""
-		color       = "blue"
-		icon        = "planet"
+		color       = "default"
+		icon        = "world"
 	)
 
-	createProjet, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
+	createProjet, err := m.CreateProject(config.Org, projectName, project, description, *config.ConfigRepo.Canonical, owner, team, color, icon)
 	if err != nil {
 		t.Fatalf("Failed to create project '%s': %v", project, err)
 	}
@@ -49,7 +46,7 @@ func TestProjectCrud(t *testing.T) {
 	)
 
 	updatedProject, err := m.UpdateProject(
-		config.Org, newName, project, newDescription, configRepository,
+		config.Org, newName, project, newDescription, *config.ConfigRepo.Canonical,
 		owner, team, newColor, newIcon, "aws", createProjet.UpdatedAt,
 	)
 	if err != nil {
