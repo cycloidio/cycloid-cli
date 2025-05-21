@@ -9,7 +9,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func randomCanonical(baseName string) string {
+func RandomCanonical(baseName string) string {
 	var size = 4
 	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyz")
 
@@ -20,12 +20,12 @@ func randomCanonical(baseName string) string {
 	return strings.ToLower(baseName) + "-" + string(b)
 }
 
-// setupTestProject will create a project with a random canonical derived from identifier
+// SetupTestProject will create a project with a random canonical derived from identifier
 // and return the project, the function to defer for its deletion and error.
 // The func will always be returned so even if err != nil, defer the func.
-func (config *TestConfig) setupTestProject(identifier string) (*models.Project, func(), error) {
+func (config *TestConfig) SetupTestProject(identifier string) (*models.Project, func(), error) {
 	var (
-		project          = randomCanonical(identifier)
+		project          = RandomCanonical(identifier)
 		description      = "Testing project " + identifier
 		configRepository = configRepository
 		owner            = ""
@@ -55,9 +55,9 @@ func (config *TestConfig) setupTestProject(identifier string) (*models.Project, 
 // setupTestProject will create an env with a random canonical derived from identifier
 // and return the env, the function to defer for its deletion and error.
 // The func will always be returned so even if err != nil, defer the func.
-func (config *TestConfig) setupTestEnv(identifier, project string) (*models.Environment, func(), error) {
+func (config *TestConfig) SetupTestEnv(identifier, project string) (*models.Environment, func(), error) {
 	var (
-		env   = randomCanonical(identifier)
+		env   = RandomCanonical(identifier)
 		color = "default"
 	)
 
@@ -82,8 +82,8 @@ func (config *TestConfig) setupTestEnv(identifier, project string) (*models.Envi
 // setupTestProject will create an component with a random canonical derived from identifier
 // and return the component, the function to defer for its deletion and error.
 // The func will always be returned so even if err != nil, defer the func.
-func (config *TestConfig) setupTestComponent(project, env, identifier, stackRef, useCase string, inputs *models.FormVariables) (*models.Component, func(), error) {
-	component := randomCanonical(identifier)
+func (config *TestConfig) SetupTestComponent(project, env, identifier, stackRef, useCase string, inputs *models.FormVariables) (*models.Component, func(), error) {
+	component := RandomCanonical(identifier)
 	deleteFunc := func() {
 		if err := m.DeleteComponent(config.Org, project, env, component); err != nil {
 			log.Fatalf("failed to cleanup component for test '%s': %s", identifier, err)

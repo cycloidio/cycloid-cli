@@ -8,7 +8,7 @@ import (
 
 func TestProjectCrud(t *testing.T) {
 	t.Parallel()
-	config, err := getTestConfig()
+	config, err := GetTestConfig()
 	if err != nil {
 		t.Fatalf("Config setup failed: %v", err)
 	}
@@ -16,7 +16,7 @@ func TestProjectCrud(t *testing.T) {
 
 	var (
 		projectName = "Test CRUD Projects"
-		project     = randomCanonical("test-crud-project")
+		project     = RandomCanonical("test-crud-project")
 		description = "My cool project description !\nWith a nexline"
 		owner       = ""
 		team        = ""

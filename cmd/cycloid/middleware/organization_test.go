@@ -8,7 +8,7 @@ import (
 // We need to ensure the Child org CRUD works before kicking off tests.
 func TestChildOrgCrud(t *testing.T) {
 	t.Parallel()
-	config, err := getTestConfig()
+	config, err := GetTestConfig()
 	if err != nil {
 		t.Fatalf("Config setup failed: %v", err)
 	}

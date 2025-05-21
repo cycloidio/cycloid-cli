@@ -1,4 +1,4 @@
-package cy_args
+package cyargs
 
 import "github.com/spf13/cobra"
 

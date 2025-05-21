@@ -1,11 +1,11 @@
-package cy_args_test
+package cyargs_test
 
 import (
 	"os"
 	"strings"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/sanity-io/litter"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -32,7 +32,7 @@ func parseArgFunc(t *testing.T, cmd *cobra.Command, args []string) {
 		t.Fatalf("Failed to parse flags '%v' with cmd: %v", args, err)
 	}
 
-	orgArg, projectArg, envArg, componentArg, err := cy_args.GetCyContext(cmd)
+	orgArg, projectArg, envArg, componentArg, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		t.Fatal("failed to parse args for cy context:", err)
 	}
@@ -53,7 +53,7 @@ func TestCyContext(t *testing.T) {
 	cmd := cobra.Command{}
 	cmd.PersistentFlags().String("org", "", "Specify the org to use. override CY_ORG env var. Required for all Org scoped endpoint.")
 	v.BindPFlag("org", cmd.PersistentFlags().Lookup("org"))
-	cy_args.AddCyContext(&cmd)
+	cyargs.AddCyContext(&cmd)
 
 	t.Run("WithFullFlag", func(t *testing.T) {
 		parseArgFunc(t, &cmd, []string{

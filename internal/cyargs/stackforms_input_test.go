@@ -1,4 +1,4 @@
-package cy_args_test
+package cyargs_test
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
@@ -43,7 +43,7 @@ func TestGetStackformsVars(t *testing.T) {
 
 	t.Run("VarsStdin", func(t *testing.T) {
 		cmd := &cobra.Command{}
-		cy_args.AddStackFormsInputFlags(cmd)
+		cyargs.AddStackFormsInputFlags(cmd)
 
 		tempFile, err := os.CreateTemp("", "json-test")
 		if err != nil {
@@ -71,7 +71,7 @@ func TestGetStackformsVars(t *testing.T) {
 		})
 
 		var defaults = make(models.FormVariables)
-		output, err := cy_args.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, &defaults)
 		if err != nil {
 			t.Fatalf("stackform var parsing failed: %s", err)
 		}
@@ -85,9 +85,9 @@ func TestGetStackformsVars(t *testing.T) {
 
 	t.Run("NilDefaultsShouldFail", func(t *testing.T) {
 		cmd := &cobra.Command{}
-		cy_args.AddStackFormsInputFlags(cmd)
+		cyargs.AddStackFormsInputFlags(cmd)
 
-		_, err := cy_args.GetStackformsVars(cmd, nil)
+		_, err := cyargs.GetStackformsVars(cmd, nil)
 		if err == nil {
 			t.Fatal("Using cy_args.GetStackformsVars should fail with nil defaults")
 		}
@@ -95,10 +95,10 @@ func TestGetStackformsVars(t *testing.T) {
 
 	t.Run("EmptyDefaultsEmptyVars", func(t *testing.T) {
 		cmd := &cobra.Command{}
-		cy_args.AddStackFormsInputFlags(cmd)
+		cyargs.AddStackFormsInputFlags(cmd)
 
 		var defaults = make(models.FormVariables)
-		output, err := cy_args.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, &defaults)
 		if err != nil {
 			t.Fatalf("Empty default should work: %s", err)
 		}
@@ -108,12 +108,12 @@ func TestGetStackformsVars(t *testing.T) {
 
 	t.Run("EnvVar", func(t *testing.T) {
 		cmd := &cobra.Command{}
-		cy_args.AddStackFormsInputFlags(cmd)
+		cyargs.AddStackFormsInputFlags(cmd)
 
-		os.Setenv(cy_args.StackformsEnvVarName, string(expectedJSON))
-		defer os.Unsetenv(cy_args.StackformsEnvVarName)
+		os.Setenv(cyargs.StackformsEnvVarName, string(expectedJSON))
+		defer os.Unsetenv(cyargs.StackformsEnvVarName)
 		var defaults = make(models.FormVariables)
-		output, err := cy_args.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, &defaults)
 		if err != nil {
 			t.Fatalf("Empty default should work: %s", err)
 		}
@@ -127,14 +127,14 @@ func TestGetStackformsVars(t *testing.T) {
 
 	t.Run("VarsJSON", func(t *testing.T) {
 		cmd := &cobra.Command{}
-		cy_args.AddStackFormsInputFlags(cmd)
+		cyargs.AddStackFormsInputFlags(cmd)
 
 		cmd.ParseFlags([]string{
 			"--json-vars", string(expectedJSON),
 		})
 
 		var defaults = make(models.FormVariables)
-		output, err := cy_args.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, &defaults)
 		if err != nil {
 			t.Fatalf("Empty default should work: %s", err)
 		}
@@ -148,7 +148,7 @@ func TestGetStackformsVars(t *testing.T) {
 
 	t.Run("VarsFile", func(t *testing.T) {
 		cmd := &cobra.Command{}
-		cy_args.AddStackFormsInputFlags(cmd)
+		cyargs.AddStackFormsInputFlags(cmd)
 
 		tempFile, err := os.CreateTemp("", "json-test")
 		if err != nil {
@@ -166,7 +166,7 @@ func TestGetStackformsVars(t *testing.T) {
 		})
 
 		var defaults = make(models.FormVariables)
-		output, err := cy_args.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, &defaults)
 		if err != nil {
 			t.Fatalf("Empty default should work: %s", err)
 		}

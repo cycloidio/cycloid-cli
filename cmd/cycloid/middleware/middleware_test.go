@@ -39,7 +39,7 @@ type TestConfig struct {
 	Middleware  middleware.Middleware
 }
 
-func getTestConfig() (*TestConfig, error) {
+func GetTestConfig() (*TestConfig, error) {
 	var apiURL, apiKey, org string
 	apiURL, ok := os.LookupEnv("CY_API_URL")
 	if !ok {
@@ -90,7 +90,7 @@ func getTestConfig() (*TestConfig, error) {
 func runMain(ctx context.Context, main *testing.M) (int, error) {
 	_ = ctx
 	// Initialize global vars
-	config, err := getTestConfig()
+	config, err := GetTestConfig()
 	if err != nil {
 		return 1, fmt.Errorf("Config setup failed: %v", err)
 	}

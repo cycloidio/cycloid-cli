@@ -10,7 +10,7 @@ import (
 func TestEnvCrud(t *testing.T) {
 	// setup
 	t.Parallel()
-	config, err := getTestConfig()
+	config, err := GetTestConfig()
 	if err != nil {
 		t.Fatalf("Config setup failed: %v", err)
 	}
@@ -18,7 +18,7 @@ func TestEnvCrud(t *testing.T) {
 
 	var (
 		projectName      = "Test CRUD ENV"
-		project          = randomCanonical("test-crud-env")
+		project          = RandomCanonical("test-crud-env")
 		description      = "Testing env"
 		configRepository = configRepository
 		owner            = ""

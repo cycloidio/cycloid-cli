@@ -3,7 +3,7 @@ package components
 import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
@@ -19,7 +19,7 @@ func NewMigrateCommand() *cobra.Command {
 		RunE:  migrate,
 	}
 
-	cy_args.AddCyContext(cmd)
+	cyargs.AddCyContext(cmd)
 	cmd.Flags().String("new-project", "", "specify a new project, if unset, will use the previous one")
 	cmd.Flags().String("new-env", "", "specify a new env, if unset, will use the previous one")
 	cmd.Flags().String("new-canonical", "", "specify a new component canonical, if unset, will use the previous one")
@@ -28,7 +28,7 @@ func NewMigrateCommand() *cobra.Command {
 }
 
 func migrate(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := cy_args.GetCyContext(cmd)
+	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}

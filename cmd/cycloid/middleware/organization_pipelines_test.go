@@ -18,26 +18,26 @@ var (
 func TestGetOrgPipelines(t *testing.T) {
 	t.Parallel()
 	testName := "getOrgPipelines"
-	config, err := getTestConfig()
+	config, err := GetTestConfig()
 	if err != nil {
 		t.Errorf("failed to get test config: %s", err)
 		return
 	}
 
-	project, projectDelete, err := config.setupTestProject(testName)
+	project, projectDelete, err := config.SetupTestProject(testName)
 	defer projectDelete()
 	if err != nil {
 		t.Errorf("failed to create project for test '%s': %s", testName, err)
 	}
 
-	env, envDelete, err := config.setupTestEnv(testName, *project.Canonical)
+	env, envDelete, err := config.SetupTestEnv(testName, *project.Canonical)
 	defer envDelete()
 	if err != nil {
 		t.Errorf("failed to setup env for test '%s': %s", testName, err)
 		return
 	}
 
-	component, componentDelete, err := config.setupTestComponent(
+	component, componentDelete, err := config.SetupTestComponent(
 		*project.Canonical, *env.Canonical, testName, pipelineTestStackRef, pipelineTestStackUseCase, &pipelineTestDefaultVars,
 	)
 	defer componentDelete()

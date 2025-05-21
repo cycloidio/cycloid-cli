@@ -6,7 +6,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
@@ -20,25 +20,25 @@ func NewCreateComponentCommand() *cobra.Command {
 		Short: "Create a component",
 		RunE:  createComponent,
 	}
-	cy_args.AddCyContext(cmd)
-	cy_args.AddNameFlag(cmd)
-	cy_args.AddComponentDescriptionFlag(cmd)
-	useCaseFlag := cy_args.AddUseCaseFlag(cmd)
+	cyargs.AddCyContext(cmd)
+	cyargs.AddNameFlag(cmd)
+	cyargs.AddComponentDescriptionFlag(cmd)
+	useCaseFlag := cyargs.AddUseCaseFlag(cmd)
 	cmd.MarkFlagRequired(useCaseFlag)
-	cy_args.AddCloudProviderFlag(cmd)
-	cy_args.AddStackRefFlag(cmd)
-	cy_args.AddStackFormsInputFlags(cmd)
+	cyargs.AddCloudProviderFlag(cmd)
+	cyargs.AddStackRefFlag(cmd)
+	cyargs.AddStackFormsInputFlags(cmd)
 	cmd.Flags().Bool("update", false, "If the component exists, update it.")
 	return cmd
 }
 
 func createComponent(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := cy_args.GetCyContext(cmd)
+	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := cy_args.GetName(cmd)
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
@@ -47,27 +47,27 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		name = component
 	}
 
-	description, err := cy_args.GetComponentDescription(cmd)
+	description, err := cyargs.GetComponentDescription(cmd)
 	if err != nil {
 		return err
 	}
 
-	useCase, err := cy_args.GetUseCase(cmd)
+	useCase, err := cyargs.GetUseCase(cmd)
 	if err != nil {
 		return err
 	}
 
-	stackRef, err := cy_args.GetStackRef(cmd)
+	stackRef, err := cyargs.GetStackRef(cmd)
 	if err != nil {
 		return err
 	}
 
-	cloudProvider, err := cy_args.GetCloudProvider(cmd)
+	cloudProvider, err := cyargs.GetCloudProvider(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cy_args.GetOutput(cmd)
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return err
 	}
@@ -95,7 +95,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 				return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
 			}
 
-			inputs, err := cy_args.GetStackformsVars(cmd, config)
+			inputs, err := cyargs.GetStackformsVars(cmd, config)
 			if err != nil {
 				return err
 			}
@@ -119,7 +119,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", *stackRef, *useCase, err)
 	}
 
-	inputs, err := cy_args.GetStackformsVars(cmd, useCaseConfig)
+	inputs, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
 	if err != nil {
 		return err
 	}
