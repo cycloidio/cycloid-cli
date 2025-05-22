@@ -1,6 +1,3 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
@@ -11,81 +8,57 @@ import (
 )
 
 func TestConfigRepositories(t *testing.T) {
-	t.Skip()
-	LoginToRootOrg()
-
-	t.Run("SuccessConfigRepositoriesCreate", func(t *testing.T) {
-		// Cleanup just in case
-		executeCommand([]string{
+	defer t.Run("SuccessConfigRepositoriesDelete", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"config-repo",
 			"delete",
-			"--canonical", "default-config",
-		})
-
-		// Create required ssh cred
-		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
-		executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"creds",
-			"create",
-			"ssh",
-			"--name", "git-creds",
-			"--ssh-key", "/tmp/test_cli-ssh",
-		})
-
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"config-repo",
-			"create",
-			"--name", "default-config",
-			"--branch", CY_TEST_GIT_CR_BRANCH,
-			"--cred", "git-creds",
-			"--url", CY_TEST_GIT_CR_URL,
-		})
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"default-config")
-	})
-
-	t.Run("SuccessConfigRepositoriesList", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"config-repo",
-			"list",
-		})
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"default-config")
-	})
-
-	t.Run("SuccessConfigRepositoriesGet", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"config-repo",
-			"get",
-			"--canonical", "default-config",
-		})
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"default-config")
-	})
-
-	t.Run("SuccessConfigRepositoriesDelete", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"config-repo",
-			"delete",
-			"--canonical", "default-config",
+			"--canonical", "test-config",
 		})
 
 		assert.Nil(t, cmdErr)
 		require.Equal(t, "", string(cmdOut))
 	})
+	t.Run("SuccessConfigRepositoriesCreate", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"config-repo",
+			"create",
+			"--name", "test-config",
+			"--branch", "",
+			"--cred", config.ConfigRepo.CredentialCanonical,
+			"--url", *config.ConfigRepo.Canonical,
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Contains(t, cmdOut, "canonical\": \"test-config")
+	})
+
+	t.Run("SuccessConfigRepositoriesList", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"config-repo",
+			"list",
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Contains(t, cmdOut, "canonical\": \"test-config")
+	})
+
+	t.Run("SuccessConfigRepositoriesGet", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"config-repo",
+			"get",
+			"--canonical", "test-config",
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Contains(t, cmdOut, "canonical\": \"test-config")
+	})
+
 }

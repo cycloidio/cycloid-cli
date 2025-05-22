@@ -1,6 +1,3 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
@@ -11,13 +8,10 @@ import (
 )
 
 func TestCreds(t *testing.T) {
-	t.Skip()
-	LoginToRootOrg()
-
 	t.Run("SuccessCredsList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"list",
 		})
@@ -29,7 +23,7 @@ func TestCreds(t *testing.T) {
 	t.Run("SuccessCredsGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"get",
 			"--canonical", "vault",
@@ -43,7 +37,7 @@ func TestCreds(t *testing.T) {
 		// Cleanup just in case
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"delete",
 			"--canonical", "cli-custom",
@@ -51,7 +45,7 @@ func TestCreds(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"create",
 			"custom",
@@ -66,7 +60,7 @@ func TestCreds(t *testing.T) {
 		t.Run("Update", func(t *testing.T) {
 			cmdOut, cmdErr := executeCommand([]string{
 				"--output", "json",
-				"--org", CY_TEST_ROOT_ORG,
+				"--org", config.Org,
 				"creds",
 				"update",
 				"custom",
@@ -82,7 +76,7 @@ func TestCreds(t *testing.T) {
 
 			cmdOut, cmdErr = executeCommand([]string{
 				"--output", "json",
-				"--org", CY_TEST_ROOT_ORG,
+				"--org", config.Org,
 				"creds",
 				"get",
 				"--canonical", "cli-custom",
@@ -96,7 +90,7 @@ func TestCreds(t *testing.T) {
 		// Cleanup just in case
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"delete",
 			"--canonical", "cli-custom-file",
@@ -104,7 +98,7 @@ func TestCreds(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"create",
 			"custom",
@@ -121,7 +115,7 @@ func TestCreds(t *testing.T) {
 		// Cleanup just in case
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"delete",
 			"--canonical", "cli-ssh",
@@ -130,7 +124,7 @@ func TestCreds(t *testing.T) {
 		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"create",
 			"ssh",

@@ -13,7 +13,6 @@ import (
 
 func TestStacks(t *testing.T) {
 	t.Skip()
-	LoginToRootOrg()
 
 	// Since the latest update the public catalog have been added by default
 	// Here is a sample of code if we need to add a dedicated one
@@ -43,7 +42,7 @@ func TestStacks(t *testing.T) {
 	t.Run("SuccessStacksList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"stacks",
 			"list",
 		})
@@ -55,10 +54,10 @@ func TestStacks(t *testing.T) {
 	t.Run("SuccessStacksGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"stacks",
 			"get",
-			"--ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 		})
 
 		require.Nil(t, cmdErr)
@@ -83,7 +82,7 @@ default:
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"stacks",
 			"validate-form",
 			"--forms", "/tmp/test_ci_form",
@@ -96,10 +95,10 @@ default:
 	t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"stack",
 			"update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--visibility", "shared",
 		})
 
@@ -109,7 +108,7 @@ default:
 	})
 
 	t.Run("SuccessAddStackMaintainer", func(t *testing.T) {
-		t.Setenv("CY_ORG", TestRootOrg)
+		t.Setenv("CY_ORG", config.Org)
 		var teamCanonical = "test-team"
 		body := map[string]any{
 			"canonical": teamCanonical,
@@ -122,10 +121,10 @@ default:
 		assert.Nil(t, err, "[preparation]: json serialization shouldn't fail.")
 
 		// team management is not implemented on the CLI, so making the call ourselves
-		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", TestAPIURL, TestRootOrg), bytes.NewBuffer(jsonBody))
+		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", config.APIUrl, config.Org), bytes.NewBuffer(jsonBody))
 		assert.Nil(t, err, "[preparation]: request creationg shoudn't fail")
 
-		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", TestAPIKey))
+		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
 		request.Header.Add("Content-Type", "application/vnd.cycloid.io.v1+json")
 
 		client := &http.Client{}
@@ -136,7 +135,7 @@ default:
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--team", teamCanonical,
 		})
 
@@ -145,13 +144,13 @@ default:
 	})
 
 	t.Run("SuccessRemoveMaintainer", func(t *testing.T) {
-		t.Setenv("CY_ORG", TestRootOrg)
+		t.Setenv("CY_ORG", config.Org)
 		// We assume that the team exists from the previous test
 		var teamCanonical = "test-team"
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--team", "", // setting the flag with empty string should remove the maintainer
 		})
 
@@ -160,11 +159,11 @@ default:
 	})
 
 	t.Run("InvalidMaintainerShouldError", func(t *testing.T) {
-		t.Setenv("CY_ORG", TestRootOrg)
+		t.Setenv("CY_ORG", config.Org)
 		_, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--team", "invalidteam",
 		})
 

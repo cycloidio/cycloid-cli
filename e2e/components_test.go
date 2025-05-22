@@ -7,25 +7,19 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestComponentCmd(t *testing.T) {
 	t.Parallel()
-	api := common.NewAPI(
-		common.WithInsecure(true),
-		common.WithURL(TestAPIURL),
-		common.WithToken(TestAPIKey),
-	)
-	m := middleware.NewMiddleware(api)
+
+	m := config.Middleware
 
 	var (
 		projectName      = "Test E2E component"
 		project          = randomCanonical("test-e2e-component")
 		description      = "Testing components"
-		configRepository = CyTestConfigRepo
+		configRepository = *config.ConfigRepo.Canonical
 		owner            = ""
 		team             = ""
 		color            = "blue"
@@ -33,13 +27,13 @@ func TestComponentCmd(t *testing.T) {
 	)
 
 	defer func() {
-		err := m.DeleteProject(TestRootOrg, project)
+		err := m.DeleteProject(config.Org, project)
 		if err != nil {
 			t.Fatalf("Failed to cleanup project '%s' for test '%s': %v", project, t.Name(), err)
 		}
 	}()
 
-	createdProject, err := m.CreateProject(TestRootOrg, projectName, project, description, configRepository, owner, team, color, icon)
+	createdProject, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
 	if err != nil {
 		t.Fatalf("Failed to create pre-requisite project '%s' for test '%s': %v", project, t.Name(), err)
 	}
@@ -51,13 +45,13 @@ func TestComponentCmd(t *testing.T) {
 	)
 
 	defer func() {
-		err := m.DeleteEnv(TestRootOrg, project, env)
+		err := m.DeleteEnv(config.Org, project, env)
 		if err != nil {
 			t.Fatalf("Failed to delete env '%s' for test '%s': %v", env, t.Name(), err)
 		}
 	}()
 
-	_, err = m.CreateEnv(TestRootOrg, *createdProject.Canonical, env, envName, envColor)
+	_, err = m.CreateEnv(config.Org, *createdProject.Canonical, env, envName, envColor)
 	if err != nil {
 		t.Fatalf("Failed to create env '%s': %v", env, err)
 	}
@@ -82,7 +76,7 @@ func TestComponentCmd(t *testing.T) {
 
 		args := []string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"components", "create",
 			"--name", componentName,
 			"-p", project,
@@ -108,7 +102,7 @@ func TestComponentCmd(t *testing.T) {
 		// delete
 		defer t.Run("DeleteCreateComp", func(t *testing.T) {
 			out, err := executeCommand([]string{
-				"--org", TestRootOrg,
+				"--org", config.Org,
 				"components", "delete",
 				"-p", project,
 				"-e", env,
@@ -122,7 +116,7 @@ func TestComponentCmd(t *testing.T) {
 		// get
 		args = []string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"components", "get",
 			"-p", project,
 			"-e", env,
@@ -147,7 +141,7 @@ func TestComponentCmd(t *testing.T) {
 		// list
 		args = []string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"components", "list",
 			"-p", project,
 			"-e", env,
@@ -170,7 +164,7 @@ func TestComponentCmd(t *testing.T) {
 		var newComp = randomCanonical("e2e-new")
 		args := []string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"components", "create",
 			"--name", componentName,
 			"-p", project,
@@ -188,7 +182,7 @@ func TestComponentCmd(t *testing.T) {
 		}
 		defer t.Run("DeleteCreateWithUpdateComp", func(t *testing.T) {
 			out, err := executeCommand([]string{
-				"--org", TestRootOrg,
+				"--org", config.Org,
 				"components", "delete",
 				"-p", project,
 				"-e", env,
@@ -213,7 +207,7 @@ func TestComponentCmd(t *testing.T) {
 
 		args := []string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"components", "create",
 			"--name", componentName,
 			"-p", project,
@@ -238,7 +232,7 @@ func TestComponentCmd(t *testing.T) {
 		}
 		defer t.Run("DeleteCreateWithUpdateComp", func(t *testing.T) {
 			out, err := executeCommand([]string{
-				"--org", TestRootOrg,
+				"--org", config.Org,
 				"components", "delete",
 				"-p", project,
 				"-e", env,
@@ -261,7 +255,7 @@ func TestComponentCmd(t *testing.T) {
 
 		args = []string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"components", "create",
 			"--name", componentName,
 			"-p", project,
@@ -322,7 +316,7 @@ func TestComponentCmd(t *testing.T) {
 
 		args = []string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"components", "update",
 			"--name", componentName,
 			"-p", project,

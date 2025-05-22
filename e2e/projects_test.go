@@ -6,16 +6,16 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProjects(t *testing.T) {
 	t.Parallel()
 
-	os.Setenv("CY_API_URL", TestAPIURL)
-	os.Setenv("CY_API_KEY", TestAPIKey)
-	os.Setenv("CY_ORG", TestRootOrg)
+	os.Setenv("CY_API_URL", config.APIUrl)
+	os.Setenv("CY_API_KEY", config.APIKey)
+	os.Setenv("CY_ORG", config.Org)
 
 	var (
 		projectName = "Test E2E project"
@@ -56,8 +56,8 @@ func TestProjects(t *testing.T) {
 	t.Run("CreateWithUpdateExisting", func(t *testing.T) {
 		var (
 			createUpdateName = "helloUpdate"
-			newIcon          = cy_args.PickRandomIcon(nil)
-			newColor         = cy_args.PickRandomColor(nil)
+			newIcon          = cyargs.PickRandomIcon(nil)
+			newColor         = cyargs.PickRandomColor(nil)
 		)
 		args := []string{
 			"-o", "json",
