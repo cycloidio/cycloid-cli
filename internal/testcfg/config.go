@@ -31,10 +31,10 @@ type Config struct {
 
 func NewConfig() (*Config, error) {
 	var (
-		configRepoName        = "CLI test config repo"
-		configRepository      = "cycloid-template-catalog-config"
-		configRepoURL         = "git@github.com:cycloidio/catalog-repo-template.git"
-		configRepoBranch      = "cli-test-config"
+		configRepoName        = "stacks-test-config"
+		configRepository      = "stacks-test-config"
+		configRepoURL         = "git@github.com:cycloidio/cycloid-stacks-test.git"
+		configRepoBranch      = "config"
 		isDefault             = false
 		gitCred               = "github"
 		catalogRepo           = "cli-test-stacks"

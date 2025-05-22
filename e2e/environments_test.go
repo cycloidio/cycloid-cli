@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestEnvs(t *testing.T) {
-	t.Parallel()
+	
 
 	os.Setenv("CY_API_URL", config.APIKey)
 	os.Setenv("CY_API_KEY", config.APIKey)

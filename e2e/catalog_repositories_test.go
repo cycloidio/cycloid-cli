@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"testing"
@@ -8,6 +8,8 @@ import (
 )
 
 func TestCatalogRepositories(t *testing.T) {
+	
+
 	defer t.Run("SuccessCatalogRepositoriesDelete", func(t *testing.T) {
 		// Cleanup just in case
 		cmdOut, cmdErr := executeCommand([]string{
