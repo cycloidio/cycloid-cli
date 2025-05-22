@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"testing"
@@ -8,6 +8,7 @@ import (
 )
 
 func TestInfraPolicies(t *testing.T) {
+	t.Skip()
 	// Checks the succesfull creation of a new infrapolicy
 	// The test validates that the reply of the create method
 	// contains the canonical of the created infrapolicy

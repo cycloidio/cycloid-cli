@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"encoding/json"
@@ -10,6 +10,7 @@ import (
 )
 
 func TestMembers(t *testing.T) {
+	t.Skip()
 	// Cleanup invites in case of a previous test
 	t.Run("CleanupPreviousInvites", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{

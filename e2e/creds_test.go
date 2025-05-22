@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"testing"
@@ -8,6 +8,8 @@ import (
 )
 
 func TestCreds(t *testing.T) {
+	
+
 	t.Run("SuccessCredsList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",

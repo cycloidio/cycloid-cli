@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"encoding/json"
@@ -11,7 +11,7 @@ import (
 )
 
 func TestComponentCmd(t *testing.T) {
-	t.Parallel()
+	
 
 	m := config.Middleware
 
