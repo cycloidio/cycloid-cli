@@ -1,6 +1,3 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
@@ -11,9 +8,6 @@ import (
 )
 
 func TestInfraPolicies(t *testing.T) {
-	t.Skip()
-	LoginToRootOrg()
-
 	// Checks the succesfull creation of a new infrapolicy
 	// The test validates that the reply of the create method
 	// contains the canonical of the created infrapolicy
@@ -22,7 +16,7 @@ func TestInfraPolicies(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"ip",
 			"create",
 			"--policy-path", "/tmp/test-cli-ip.rego",
@@ -44,7 +38,7 @@ func TestInfraPolicies(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"ip",
 			"get",
 			"--canonical", "test",
@@ -61,7 +55,7 @@ func TestInfraPolicies(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"ip",
 			"list",
 		})
@@ -78,7 +72,7 @@ func TestInfraPolicies(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"ip",
 			"update",
 			"--canonical", "test",
@@ -101,7 +95,7 @@ func TestInfraPolicies(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"ip",
 			"delete",
 			"--canonical", "test",

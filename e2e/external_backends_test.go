@@ -1,6 +1,3 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
@@ -13,7 +10,6 @@ import (
 
 func TestExternalBackends(t *testing.T) {
 	t.Skip()
-	LoginToRootOrg()
 
 	// Prepare a running project
 	t.Run("CleanupAndPrepare", func(t *testing.T) {
@@ -21,7 +17,7 @@ func TestExternalBackends(t *testing.T) {
 		// // Clean external backends if exist
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"external-backends",
 			"list",
 		})
@@ -33,7 +29,7 @@ func TestExternalBackends(t *testing.T) {
 		for _, c := range cs {
 			executeCommand([]string{
 				"--output", "json",
-				"--org", CY_TEST_ROOT_ORG,
+				"--org", config.Org,
 				"eb",
 				"delete",
 				"--id", c,
@@ -44,7 +40,7 @@ func TestExternalBackends(t *testing.T) {
 		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"create",
 			"ssh",
@@ -53,7 +49,7 @@ func TestExternalBackends(t *testing.T) {
 		})
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"creds",
 			"create",
 			"aws",
@@ -65,19 +61,19 @@ func TestExternalBackends(t *testing.T) {
 		// Create config repo
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"config-repo",
 			"create",
 			"--name", "project-config",
-			"--branch", CY_TEST_GIT_CR_BRANCH,
+			"--branch", config.ConfigRepo.Branch,
 			"--cred", "git-project-creds",
-			"--url", CY_TEST_GIT_CR_URL,
+			"--url", *config.ConfigRepo.URL,
 		})
 
 		// Provide service catalog public
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"catalog-repository",
 			"create",
 			"--branch", "master",
@@ -90,18 +86,18 @@ func TestExternalBackends(t *testing.T) {
 		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"project",
 			"create",
 			"--name", "eb-test",
 			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", CY_TEST_ROOT_ORG),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--config-repo", "project-config",
 		})
 
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"project",
 			"create-env",
 			"--project", "eb-test",
@@ -115,7 +111,7 @@ func TestExternalBackends(t *testing.T) {
 		// Ensure the catalog is present
 		cmdOut, cmdErr = executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"project",
 			"get",
 			"--project", "eb-test",
@@ -128,7 +124,7 @@ func TestExternalBackends(t *testing.T) {
 	t.Run("SuccessExternalBackendsCreateAWSRemoteTFState", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"external-backends",
 			"create",
 			"infraview",
@@ -150,7 +146,7 @@ func TestExternalBackends(t *testing.T) {
 	t.Run("SuccessExternalBackendsCreateAWSCloudWatchLogs", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"external-backends",
 			"create",
 			"logs",
@@ -167,7 +163,7 @@ func TestExternalBackends(t *testing.T) {
 	t.Run("SuccessExternalBackendsList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"external-backends",
 			"list",
 		})

@@ -66,23 +66,6 @@ AAAEC0ryBZ1uJQ2drmjsO+WpsC2E/5SWheJD/r8+Q4LghWxfw72aGSXkICIPQ0t5Byg9/V
 `)
 )
 
-func LoginToRootOrg() {
-	buf := new(bytes.Buffer)
-	cmd := rootCmd.NewRootCommand()
-	cmd.SetOut(buf)
-	cmd.SetErr(buf)
-	cmd.SetArgs([]string{
-		"login",
-		"--org", TestRootOrg,
-		"--api-key", TestAPIKey,
-	})
-
-	err := cmd.Execute()
-	if err != nil {
-		panic(fmt.Sprintf("Test setup LoginToRootOrg, unable to login: %s", err.Error()))
-	}
-}
-
 // executeCommandStdin will execute the command with args + stdin input
 // and return stdin, stderr and err
 func executeCommandStdin(stdin string, args []string) (string, string, error) {

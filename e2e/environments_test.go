@@ -6,50 +6,19 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestEnvs(t *testing.T) {
 	t.Parallel()
 
-	os.Setenv("CY_API_URL", TestAPIURL)
-	os.Setenv("CY_API_KEY", TestAPIKey)
-	os.Setenv("CY_ORG", TestRootOrg)
-
-	// setup
-	api := common.NewAPI(
-		common.WithInsecure(true),
-		common.WithURL(TestAPIURL),
-		common.WithToken(TestAPIKey),
-	)
-	m := middleware.NewMiddleware(api)
+	os.Setenv("CY_API_URL", config.APIKey)
+	os.Setenv("CY_API_KEY", config.APIKey)
+	os.Setenv("CY_ORG", config.Org)
 
 	var (
-		projectName        = "Test E2E env"
-		project            = randomCanonical("test-e2e-env")
-		projectDescription = "Testing envs"
-		configRepository   = CyTestConfigRepo
-		projectColor       = "blue"
-		projectIcon        = "planet"
-	)
-
-	defer func() {
-		err := m.DeleteProject(TestRootOrg, project)
-		if err != nil {
-			t.Fatalf("Failed to cleanup project '%s' for test '%s': %v", project, t.Name(), err)
-		}
-	}()
-
-	_, err := m.CreateProject(TestRootOrg, projectName, project, projectDescription, configRepository, "", "", projectColor, projectIcon)
-	if err != nil {
-		t.Fatalf("Failed to create pre-requisite project '%s' for test '%s': %v", project, t.Name(), err)
-	}
-	// env setup
-
-	var (
+		project = *config.Project.Canonical
 		envName = "Test E2E env"
 		env     = randomCanonical("e2e")
 		color   = "demo"
@@ -105,7 +74,7 @@ func TestEnvs(t *testing.T) {
 	t.Run("CreateWithUpdate", func(t *testing.T) {
 		var (
 			createUpdateName = "helloUpdate"
-			newColor         = cy_args.PickRandomColor(&env)
+			newColor         = cyargs.PickRandomColor(&env)
 		)
 		args := []string{
 			"-o", "json",

@@ -1,38 +1,33 @@
-//go:build e2e
-// +build e2e
-
 package e2e
 
 import (
 	"fmt"
 	"testing"
 
+	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestOrganizations(t *testing.T) {
-	t.Skip()
-	LoginToRootOrg()
-
 	t.Run("SuccessOrganizationsGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"organization",
 			"get",
 		})
 
 		require.NoError(t, cmdErr)
-		assert.Contains(t, cmdOut, fmt.Sprintf("canonical\": \"%s", CY_TEST_ROOT_ORG))
+		assert.Contains(t, cmdOut, fmt.Sprintf("canonical\": \"%s", config.Org))
 	})
 
-	childOrg := RandStringBytes(10)
+	childOrg := testcfg.RandomCanonical(t.Name())
 	t.Run("SuccessOrganizationsCreateChild", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", childOrg,
-			"--parent-org", CY_TEST_ROOT_ORG,
+			"--parent-org", config.Org,
 			"organization",
 			"create-child",
 		})
@@ -44,7 +39,7 @@ func TestOrganizations(t *testing.T) {
 	t.Run("SuccessOrganizationsListChildrens", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"organization",
 			"list-childrens",
 		})
@@ -56,7 +51,7 @@ func TestOrganizations(t *testing.T) {
 	t.Run("SuccessOrganizationsListWorkers", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"organization",
 			"list-workers",
 		})

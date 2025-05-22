@@ -1,50 +1,38 @@
 package e2e
 
 import (
+	"context"
+	"fmt"
 	"log"
-	"math/rand"
 	"os"
+	"testing"
+
+	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 )
 
-var (
-	// Note, this url should be accessible by Cycloid API
-	CyTestCatalogRepoURL    = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
-	CyTestCatalogRepoBranch = "master"
-	CyTestConfigRepo        = "cycloid-template-catalog-config"
-	TestAPIURL              = "https://api-cli-test.staging.cycloid.io/"
-	TestRootOrg             = "cycloid"
-	TestAPIKey              = ""
-)
+var config *testcfg.Config
 
-func init() {
-	apiKey, ok := os.LookupEnv("CY_TEST_API_KEY")
-	if !ok {
-		log.Fatal("Missing API Key, set one with CY_TEST_API_KEY env var.")
-	}
-	TestAPIKey = apiKey
-
-	org := os.Getenv("CY_TEST_ROOT_ORG")
-	if len(org) > 0 {
-		TestRootOrg = org
+// Put any preparation code here so that defer() can work
+func runMain(ctx context.Context, main *testing.M) (int, error) {
+	_ = ctx
+	// Initialize global vars
+	var err error
+	config, err = testcfg.NewConfig()
+	defer config.Cleanup()
+	if err != nil {
+		return 1, fmt.Errorf("Config setup failed: %v", err)
 	}
 
-	gitBranch := os.Getenv("CY_TEST_GIT_CR_BRANCH")
-	if len(gitBranch) > 0 {
-		CyTestCatalogRepoBranch = gitBranch
-	}
-
-	apiURL, ok := os.LookupEnv("CY_API_URL")
-	if ok {
-		TestAPIURL = apiURL
-	}
+	log.Printf("Starting tests with config:\nurl: %s\norg: %s", config.APIUrl, config.Org)
+	return main.Run(), nil
 }
 
-const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-func RandStringBytes(n int) string {
-	b := make([]byte, n)
-	for i := range b {
-		b[i] = letterBytes[rand.Intn(len(letterBytes))]
+func TestMain(main *testing.M) {
+	ctx := context.Background()
+	code, err := runMain(ctx, main)
+	if err != nil {
+		log.Fatal(err)
 	}
-	return string(b)
+
+	os.Exit(code)
 }
