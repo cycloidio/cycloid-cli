@@ -1,7 +1,7 @@
 package beta
 
 import (
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/config"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/beta/config"
 	"github.com/spf13/cobra"
 )
 

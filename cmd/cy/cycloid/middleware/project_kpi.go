@@ -7,7 +7,7 @@ package middleware
 //
 // 	"github.com/cycloidio/cycloid-cli/client/client/organization_kpis"
 // 	"github.com/cycloidio/cycloid-cli/client/models"
-// 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+// 	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/common"
 // )
 //
 // func (m *middleware) CreateKpi(name, kpiType, widget, org, project, job, env, config string) (*models.KPI, error) {

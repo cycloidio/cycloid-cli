@@ -8,7 +8,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/common"
 )
 
 // ValidateInfraPolicies will validate the TF plan against

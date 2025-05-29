@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/common"
 )
 
 type Middleware interface {

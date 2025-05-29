@@ -3,8 +3,8 @@ package middleware_test
 import (
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/middleware"
 )
 
 func TestValidateFormYamlAnchors(t *testing.T) {

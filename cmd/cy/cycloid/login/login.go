@@ -5,7 +5,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/config"
 	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/cycloidio/cycloid-cli/printer"

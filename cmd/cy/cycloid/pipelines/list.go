@@ -3,7 +3,7 @@ package pipelines
 import (
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/internal"
 )
 
 func NewListCommand() *cobra.Command {

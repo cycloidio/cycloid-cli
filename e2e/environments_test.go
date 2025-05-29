@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/stretchr/testify/assert"
 )

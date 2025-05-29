@@ -8,7 +8,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cy/cycloid/middleware"
 )
 
 func ptrStr(s string) *string { return &s }
