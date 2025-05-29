@@ -16,7 +16,6 @@ swagger.yml
 # vendor/
 
 plugins/
-cy
 ./gen
 pkged.go
 
