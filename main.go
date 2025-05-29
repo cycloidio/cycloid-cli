@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/cycloidio/cycloid-cli/cmd"
+	"github.com/cycloidio/cycloid-cli/cmd/cy"
 )
 
 var (
@@ -29,7 +29,7 @@ func Execute() {
 }
 
 func main() {
-	rootCmd = cmd.NewRootCommand()
+	rootCmd = cy.NewRootCommand()
 	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
 
 	Execute()
