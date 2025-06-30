@@ -59,7 +59,7 @@ func TestComponentCmd(t *testing.T) {
 		componentName        = "Test Component"
 		component            = randomCanonical("e2e-component")
 		componentDescription = "My cool component"
-		stackRef             = "cycloid:stack-e2e-stackforms"
+		stackRef             = config.Org + ":stack-e2e-stackforms"
 	)
 
 	t.Run("CreateReadListDelete", func(t *testing.T) {
