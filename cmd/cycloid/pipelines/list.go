@@ -24,7 +24,7 @@ func NewListCommand() *cobra.Command {
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
 	cyargs.AddPipelineStatuses(cmd)
-	cyargs.AddPipelineName(cmd)
+	cyargs.AddPipeline(cmd)
 	return cmd
 }
 
@@ -41,7 +41,7 @@ func list(cmd *cobra.Command, args []string) error {
 	project, _ := cyargs.GetProject(cmd)
 	env, _ := cyargs.GetEnv(cmd)
 	statuses, _ := cyargs.GetPipelineStatuses(cmd)
-	pipelineName, _ := cyargs.GetPipelineName(cmd)
+	pipelineName, _ := cyargs.GetPipeline(cmd)
 
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {

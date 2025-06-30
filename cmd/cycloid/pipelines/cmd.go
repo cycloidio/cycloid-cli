@@ -16,21 +16,20 @@ func NewCommands() *cobra.Command {
 
 	cmd.AddCommand(NewUnpauseJobCommand(),
 		NewListCommand(),
-		// NewUpdateCommand(),
-		// NewGetJobCommand(),
+		NewGetPipelineCommand(),
+		NewLastUsedCommand(),
+		NewUpdateCommand(),
+		NewJobsCommand(),
 		// NewGetListBuildsCommand(),
-		// NewListJobsCommand(),
 		// NewDiffCommand(),
 		// NewUnpauseCommand(),
 		// NewPauseCommand(),
 		// NewGetBuildCommand(),
 		// NewTriggerBuildCommand(),
-		// NewGetCommand(),
 		// NewClearTaskCacheCommand(),
 		// NewGetCommand(),
 		// NewSyncedCommand(),
 		// NewPauseJobCommand(),
-		// NewLastUsedCommand(),
 	)
 
 	return cmd

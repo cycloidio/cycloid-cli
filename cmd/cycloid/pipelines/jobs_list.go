@@ -1,7 +1,7 @@
 package pipelines
 
 import (
-	"os"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -14,25 +14,21 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewUpdateCommand() *cobra.Command {
+func NewJobsListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "update",
-		Short: "update a running pipeline",
-		Example: `
-	# update a running pipeline
-	cy --org my-org pp update --project my-project --env my-env --vars /path/to/vars.yml --pipeline /path/to/pipeline.yml
-`,
-		RunE:    update,
+		Use:     "list",
+		Short:   "list a pipeline's jobs",
+		Example: `cy --org my-org pp list-jobs --project my-project --env env --component component -o json`,
+		RunE:    listJobs,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
+
 	cyargs.AddCyContext(cmd)
 	cyargs.AddPipeline(cmd)
-	cyargs.AddPipelineConfig(cmd)
-	cyargs.AddPipelineVars(cmd)
 	return cmd
 }
 
-func update(cmd *cobra.Command, args []string) error {
+func listJobs(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -42,16 +38,6 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	pipeline, err := cyargs.GetPipeline(cmd)
-	if err != nil {
-		return err
-	}
-
-	pipelinePath, err := cyargs.GetPipelineConfig(cmd)
-	if err != nil {
-		return err
-	}
-
-	pipelineVarsPath, err := cyargs.GetPipelineVars(cmd)
 	if err != nil {
 		return err
 	}
@@ -67,20 +53,10 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	rawPipeline, err := os.ReadFile(pipelinePath)
+	jobs, err := m.GetJobs(org, project, env, component, pipeline)
 	if err != nil {
-		return errors.Wrap(err, "unable to read pipeline file")
+		return fmt.Errorf("failed to fetch jobs for pipeline '%s': %s", pipeline, err)
 	}
 
-	rawVars, err := os.ReadFile(pipelineVarsPath)
-	if err != nil {
-		return errors.Wrap(err, "unable to read variables file")
-	}
-
-	resp, err := m.UpdatePipeline(org, project, env, component, pipeline, string(rawPipeline), string(rawVars), false)
-	if err != nil {
-		return err
-	}
-
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, jobs, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
