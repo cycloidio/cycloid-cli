@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 )
@@ -13,8 +14,10 @@ var config *testcfg.Config
 
 // Put any preparation code here so that defer() can work
 func runMain(main *testing.M) (int, error) {
-	// Initialize global vars
+	// We must wait a bit that the middleware test are done initializing the config
+	// Otherwise there will be conflcts -_-
 	var err error
+	time.Sleep(time.Duration(3) * time.Second)
 	config, err = testcfg.NewConfig()
 	defer config.Cleanup()
 	if err != nil {

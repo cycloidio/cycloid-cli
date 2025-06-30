@@ -8,8 +8,6 @@ import (
 )
 
 func TestCreds(t *testing.T) {
-	
-
 	t.Run("SuccessCredsList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",

@@ -11,9 +11,7 @@ import (
 )
 
 func TestEnvs(t *testing.T) {
-	
-
-	os.Setenv("CY_API_URL", config.APIKey)
+	os.Setenv("CY_API_URL", config.APIUrl)
 	os.Setenv("CY_API_KEY", config.APIKey)
 	os.Setenv("CY_ORG", config.Org)
 

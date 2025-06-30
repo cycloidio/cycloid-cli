@@ -11,8 +11,6 @@ import (
 )
 
 func TestComponentCmd(t *testing.T) {
-	
-
 	m := config.Middleware
 
 	var (

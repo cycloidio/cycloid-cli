@@ -10,9 +10,9 @@ import (
 )
 
 var (
-	pipelineTestStackRef     = "cycloid:stack-test-pipeline"
-	pipelineTestStackUseCase = "default"
-	pipelineTestDefaultVars  = models.FormVariables{"section": {"group": {"var": "hello"}}}
+	pipelineTestStackCanonical = "stack-test-pipeline"
+	pipelineTestStackUseCase   = "default"
+	pipelineTestDefaultVars    = models.FormVariables{"section": {"group": {"var": "hello"}}}
 )
 
 func TestGetOrgPipelines(t *testing.T) {
