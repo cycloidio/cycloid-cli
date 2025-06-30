@@ -7,7 +7,6 @@ import (
 
 // We need to ensure the Child org CRUD works before kicking off tests.
 func TestChildOrgCrud(t *testing.T) {
-	t.Parallel()
 	// config, err := testcfg.NewConfig()
 	// defer config.Cleanup()
 	// if err != nil {

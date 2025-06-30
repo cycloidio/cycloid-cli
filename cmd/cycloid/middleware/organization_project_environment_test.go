@@ -10,7 +10,6 @@ import (
 
 func TestEnvCrud(t *testing.T) {
 	// setup
-	t.Parallel()
 	m := config.Middleware
 
 	var (

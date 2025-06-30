@@ -8,7 +8,6 @@ import (
 )
 
 func TestProjectCrud(t *testing.T) {
-	t.Parallel()
 	m := config.Middleware
 
 	var (

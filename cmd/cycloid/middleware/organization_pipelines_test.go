@@ -16,8 +16,6 @@ var (
 )
 
 func TestGetOrgPipelines(t *testing.T) {
-	t.Parallel()
-
 	m := config.Middleware
 
 	pipelineName := fmt.Sprintf("%s-%s-%s", *config.Project.Canonical, *config.Environment.Canonical, *config.Component.Canonical)
