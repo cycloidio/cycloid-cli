@@ -9,7 +9,6 @@ import (
 )
 
 func TestGetProjectPipelines(t *testing.T) {
-	t.Parallel()
 	m := config.Middleware
 
 	got, err := m.GetProjectPipelines(config.Org, *config.Project.Canonical)
