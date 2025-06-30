@@ -133,7 +133,7 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 
 	err := body.Validate(strfmt.Default)
 	if err != nil {
-		return nil, fmt.Errorf("createComponent parameter validation failed, body:\n%v\nerr: %v", body, err)
+		return nil, fmt.Errorf("updateComponent parameter validation failed, body:\n%v\nerr: %v", body, err)
 	}
 	params.WithBody(body)
 

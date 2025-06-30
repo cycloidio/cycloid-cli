@@ -11,7 +11,6 @@ import (
 
 func TestComponentCRUD(t *testing.T) {
 	// setup
-	t.Parallel()
 	m := config.Middleware
 
 	var (
@@ -64,7 +63,7 @@ func TestComponentCRUD(t *testing.T) {
 			componentName        = "Test Component " + strconv.Itoa(index)
 			component            = "test-component-" + strconv.Itoa(index)
 			componentDescription = "My cool component"
-			stackRef             = "cycloid:stack-e2e-stackforms"
+			stackRef             = config.Org + ":stack-e2e-stackforms"
 			useCase              = "default"
 			newVar               = models.FormVariables{
 				"can two sections have same name with different caps ?": {

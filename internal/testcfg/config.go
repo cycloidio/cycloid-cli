@@ -40,7 +40,7 @@ func NewConfig() (*Config, error) {
 		catalogRepo           = "cli-test-stacks"
 		catalogRepoName       = "CLI test catalog"
 		catalogRepoURL        = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
-		catalogRepoBranch     = "cli-test-stacks"
+		catalogRepoBranch     = "stacks"
 		defaultStackCanonical = "stack-e2e-stackforms"
 		defaultStackUseCase   = "default"
 		// gitCredName = "CLI Git Cred"

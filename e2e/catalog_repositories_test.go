@@ -8,8 +8,6 @@ import (
 )
 
 func TestCatalogRepositories(t *testing.T) {
-	
-
 	defer t.Run("SuccessCatalogRepositoriesDelete", func(t *testing.T) {
 		// Cleanup just in case
 		cmdOut, cmdErr := executeCommand([]string{
