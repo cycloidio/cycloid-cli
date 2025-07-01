@@ -57,12 +57,17 @@ func (m *middleware) DeleteConfigRepository(org, configRepo string) error {
 	return nil
 }
 
-func (m *middleware) CreateConfigRepository(org, name, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error) {
+func (m *middleware) CreateConfigRepository(org, name, canonical, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error) {
 	params := organization_config_repositories.NewCreateConfigRepositoryParams()
 	params.SetOrganizationCanonical(org)
 
+	if name == "" {
+		name = canonical
+	}
+
 	body := &models.NewConfigRepository{
 		Branch:              &branch,
+		Canonical:           canonical,
 		CredentialCanonical: &cred,
 		Default:             &setDefault,
 		Name:                &name,

@@ -29,6 +29,7 @@ func NewCreateCommand() *cobra.Command {
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
 	common.RequiredFlag(WithFlagURL, cmd)
+	cyargs.AddConfigRepositoryFlag(cmd)
 	WithFlagDefault(cmd)
 
 	return cmd
@@ -43,9 +44,18 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	canonical, err := cyargs.GetConfigRepository(cmd, org)
+	if err != nil {
+		return err
+	}
+
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
 		return err
+	}
+
+	if name == "" {
+		name = canonical
 	}
 
 	url, err := cmd.Flags().GetString("url")
@@ -79,6 +89,6 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.CreateConfigRepository(org, name, url, branch, cred, setDefault)
+	cr, err := m.CreateConfigRepository(org, name, canonical, url, branch, cred, setDefault)
 	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, cmd.OutOrStdout())
 }
