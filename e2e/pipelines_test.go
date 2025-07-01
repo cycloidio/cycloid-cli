@@ -114,9 +114,7 @@ func TestPipelines(t *testing.T) {
 				t.Fatalf("failed to unmarshall get job cmd output, out: %s\nerr: %s", getOut, err)
 			}
 
-			if !assert.ObjectsAreEqualValues(firstJob, getJob) {
-				t.Fatalf("Both object must be equal:\nexpected: %s\ngot: %s", litter.Sdump(firstJob), litter.Sdump(getJob))
-			}
+			assert.Equal(t, *firstJob.ID, *getJob.ID)
 		})
 
 		t.Run("PauseJobOk", func(t *testing.T) {

@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -290,4 +291,14 @@ func UpdateMapField(field string, value string, m map[string]map[string]map[stri
 	// if all type conversion failed, consider the value as string
 	m[keys[0]][keys[1]][keys[2]] = value
 	return nil
+}
+
+func UnixTimestampToLocalTime(unixTime *uint64) string {
+	defaultTime := "date unknown"
+	if unixTime == nil {
+		return defaultTime
+	}
+
+	ts := time.Unix(int64(*unixTime), 0)
+	return ts.Format(time.DateTime)
 }
