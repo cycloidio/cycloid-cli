@@ -14,22 +14,21 @@ func NewCommands() *cobra.Command {
 		Short: "Manage the pipelines",
 	}
 
-	cmd.AddCommand(NewUnpauseJobCommand(),
+	cmd.AddCommand(
 		NewListCommand(),
 		NewGetPipelineCommand(),
 		NewLastUsedCommand(),
 		NewUpdateCommand(),
 		NewJobsCommand(),
+		NewBuildsCommand(),
 		// NewGetListBuildsCommand(),
 		// NewDiffCommand(),
 		// NewUnpauseCommand(),
 		// NewPauseCommand(),
 		// NewGetBuildCommand(),
-		// NewTriggerBuildCommand(),
 		// NewClearTaskCacheCommand(),
 		// NewGetCommand(),
 		// NewSyncedCommand(),
-		// NewPauseJobCommand(),
 	)
 
 	return cmd

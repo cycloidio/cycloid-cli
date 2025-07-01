@@ -67,7 +67,7 @@ func AddPipeline(cmd *cobra.Command) string {
 
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
-		pipelines, err := m.GetOrgPipelines(org, &toComplete, &project, &env, statuses)
+		pipelines, err := m.GetOrgPipelines(org, nil, &project, &env, statuses)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to fetch pipeline list for completion in org '"+org+"': "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
@@ -155,4 +155,65 @@ func AddPipelineJob(cmd *cobra.Command) string {
 
 func GetPipelineJob(cmd *cobra.Command) (string, error) {
 	return cmd.Flags().GetString("job")
+}
+
+func AddPipelineBuildID(cmd *cobra.Command) string {
+	flagName := "build-id"
+	cmd.Flags().StringP(flagName, "b", "", "the concourse build id")
+	cmd.RegisterFlagCompletionFunc(
+		flagName,
+		func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+			org, err := GetOrg(cmd)
+			if err != nil {
+				return cobra.AppendActiveHelp(nil, "missing org parameter for completion"),
+					cobra.ShellCompDirectiveNoFileComp
+			}
+
+			project, _ := GetProject(cmd)
+			env, _ := GetEnv(cmd)
+			component, _ := GetEnv(cmd)
+			pipeline, _ := GetPipeline(cmd)
+			job, _ := GetPipelineJob(cmd)
+
+			api := common.NewAPI()
+			m := middleware.NewMiddleware(api)
+
+			builds, err := m.GetBuilds(org, project, env, component, pipeline, job)
+			if err != nil {
+				return cobra.AppendActiveHelp(nil, fmt.Sprintf(
+					"failed to fetch job list for completion with context org: %s, project: %s, env: %s, component: %s, pipeline: %s, job: %s err: %s",
+					org, project, env, component, pipeline, job, err,
+				)), cobra.ShellCompDirectiveNoFileComp
+			}
+
+			buildIDs := make([]cobra.Completion, len(builds))
+			for index, build := range builds {
+				if build.ID != nil {
+					buildStr := strconv.Itoa(int(*build.ID))
+					if strings.HasPrefix(buildStr, toComplete) {
+						var buildName string
+						if build.Name != nil {
+							buildName = *build.Name
+						}
+
+						buildIDs[index] = cobra.CompletionWithDesc(
+							buildStr,
+							fmt.Sprintf(
+								"%s from %s started at %s.",
+								buildName, build.JobName, common.UnixTimestampToLocalTime(&build.StartTime),
+							),
+						)
+					}
+				}
+			}
+
+			return buildIDs, cobra.ShellCompDirectiveNoFileComp
+		},
+	)
+
+	return flagName
+}
+
+func GetPipelineBuildID(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("build-id")
 }

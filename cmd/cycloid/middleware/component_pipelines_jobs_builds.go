@@ -45,10 +45,10 @@ func (m *middleware) GetBuild(org, project, env, component, pipeline, job, build
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }
