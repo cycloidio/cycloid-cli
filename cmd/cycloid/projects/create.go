@@ -72,7 +72,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	configRepository, err := cyargs.GetConfigRepository(cmd, org, m)
+	configRepository, err := cyargs.GetConfigRepository(cmd, org)
 	if err != nil {
 		return err
 	}

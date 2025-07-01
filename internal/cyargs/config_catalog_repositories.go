@@ -54,7 +54,10 @@ func AddConfigRepositoryFlag(cmd *cobra.Command) {
 
 // GetConfigRepository return the config repository flag, if empty, will try to return
 // the current org default config repository
-func GetConfigRepository(cmd *cobra.Command, org string, m middleware.Middleware) (string, error) {
+func GetConfigRepository(cmd *cobra.Command, org string) (string, error) {
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	configRepository, err := cmd.Flags().GetString("config-repository")
 	if err != nil {
 		return "", err
