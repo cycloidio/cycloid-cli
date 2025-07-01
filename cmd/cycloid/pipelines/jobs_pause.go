@@ -14,7 +14,7 @@ import (
 
 func NewJobsPauseCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "pause-job",
+		Use:     "pause",
 		Short:   "pause a pipeline job",
 		Example: `cy pp job pause --project my-project --env env --component component --pipeline pipeline --job my-job`,
 		RunE:    pauseJob,
