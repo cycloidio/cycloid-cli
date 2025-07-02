@@ -67,13 +67,13 @@ func NewConfig() (*Config, error) {
 
 	apiURL, ok := os.LookupEnv("CY_API_URL")
 	if !ok {
-		apiURL = "https://api-cli-test.staging.cycloid.io/"
+		apiURL = "https://api.staging.cycloid.io/"
 	}
 	config.APIUrl = apiURL
 
 	org, ok = os.LookupEnv("CY_TEST_ROOT_ORG")
 	if !ok {
-		org = "cycloid"
+		org = "cli-tests"
 	}
 	config.Org = org
 
