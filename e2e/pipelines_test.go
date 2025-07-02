@@ -27,13 +27,13 @@ func TestPipelines(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to unmarshall list test output, out: %s\nerr: %s", listOut, err)
 		}
+
+		if len(pipelineList) == 0 {
+			t.Fatalf("There should be at least one pipeline in this org:\n%s", listOut)
+		}
 	})
 
 	firstPipeline := *pipelineList[0]
-	if len(pipelineList) == 0 {
-		t.Fatalf("There should be at least one pipeline in this org:\n%s", listOut)
-	}
-
 	t.Run("GetPipelineOk", func(t *testing.T) {
 		getOut, getErr := executeCommand([]string{
 			"--output", "json",
