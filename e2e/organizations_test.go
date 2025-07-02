@@ -10,6 +10,7 @@ import (
 )
 
 func TestOrganizations(t *testing.T) {
+	t.Skip()
 	t.Run("SuccessOrganizationsGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",

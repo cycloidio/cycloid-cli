@@ -114,6 +114,15 @@ func NewConfig() (*Config, error) {
 		return config, err
 	}
 
+	// Add a random value in forms to avoid git conflict
+	if vars != nil {
+		common.UpdateMapField("types.tests.string", RandomCanonical("common"), *vars)
+	} else {
+		vars = &models.FormVariables{
+			"types": {"tests": {"string": RandomCanonical("common")}},
+		}
+	}
+
 	component, err := config.NewTestComponent(
 		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, vars,
 	)
