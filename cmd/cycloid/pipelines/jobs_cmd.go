@@ -10,6 +10,7 @@ func NewJobsCommand() *cobra.Command {
 			"j",
 		},
 		Short: "Manage pipeline jobs",
+		Args:  cobra.NoArgs,
 	}
 
 	cmd.AddCommand(

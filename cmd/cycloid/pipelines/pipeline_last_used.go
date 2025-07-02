@@ -14,12 +14,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewLastUsedCommand() *cobra.Command {
+func NewPipelineLastUsedCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "last-used",
 		Short:   "output the last trigger date of all pipelines in the selected organization.",
 		Example: `cy pipelines last-used --since-days 10`,
 		RunE:    lastUsed,
+		Args:    cobra.NoArgs,
 	}
 
 	cmd.PersistentFlags().Int64P("since-days", "s", 0, "filter pipelines that didn't ran since x days.")

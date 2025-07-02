@@ -12,6 +12,7 @@ func NewBuildsCommand() *cobra.Command {
 			"build",
 		},
 		Short: "manage pipeline builds",
+		Args:  cobra.NoArgs,
 	}
 
 	cmd.AddCommand(

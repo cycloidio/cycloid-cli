@@ -1,8 +1,6 @@
 package pipelines
 
 import (
-	"fmt"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -14,22 +12,24 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewJobsListCommand() *cobra.Command {
+func NewPipelineClearTaskCacheCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "list",
-		Short:   "list a pipeline's jobs",
-		Example: `cy --org my-org pp list-jobs --project my-project --env env --component component -o json`,
-		RunE:    listJobs,
+		Use:     "clear-task-cache",
+		Short:   "clear cache for a task",
+		Example: `cy pp clear-task-cache --project my-project --job my-job --env my-env --step my-task`,
+		RunE:    cleartaskCache,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Args:    cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)
 	cyargs.AddPipeline(cmd)
+	cyargs.AddPipelineJob(cmd)
+	cyargs.AddPipelineStep(cmd)
 	return cmd
 }
 
-func listJobs(cmd *cobra.Command, args []string) error {
+func cleartaskCache(cmd *cobra.Command, args []string) error {
 	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
@@ -40,7 +40,17 @@ func listJobs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	job, err := cyargs.GetPipelineJob(cmd)
+	if err != nil {
+		return err
+	}
+
+	step, err := cyargs.GetPipelineStep(cmd)
+	if err != nil {
+		return err
+	}
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -54,10 +64,10 @@ func listJobs(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	jobs, err := m.GetJobs(org, project, env, component, pipeline)
+	out, err := m.ClearTaskCache(org, project, env, component, pipeline, job, step)
 	if err != nil {
-		return fmt.Errorf("failed to fetch jobs for pipeline '%s': %s", pipeline, err)
+		return printer.SmartPrint(p, nil, err, "unable to clear task cache", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	return printer.SmartPrint(p, jobs, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, out, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

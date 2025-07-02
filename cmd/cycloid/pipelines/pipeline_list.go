@@ -12,7 +12,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewListCommand() *cobra.Command {
+func NewPipelineListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "list all pipelines of the organization",
@@ -29,9 +29,6 @@ func NewListCommand() *cobra.Command {
 }
 
 func list(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -53,6 +50,9 @@ func list(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	pps, err := m.GetOrgPipelines(org, &pipelineName, &project, &env, statuses)
 	if err != nil {

@@ -2,6 +2,7 @@ package e2e_test
 
 import (
 	"encoding/json"
+	"strconv"
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -10,8 +11,9 @@ import (
 )
 
 func TestPipelines(t *testing.T) {
+	// Pipelines
 	var pipelineList []*models.Pipeline
-	t.Run("ListOrgPipelinesOk", func(t *testing.T) {
+	t.Run("PipelineListOk", func(t *testing.T) {
 		listOut, listErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
@@ -25,12 +27,14 @@ func TestPipelines(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to unmarshall list test output, out: %s\nerr: %s", listOut, err)
 		}
+	})
 
-		if len(pipelineList) == 0 {
-			t.Fatalf("There should be at least one pipeline in this org:\n%s", listOut)
-		}
+	firstPipeline := *pipelineList[0]
+	if len(pipelineList) == 0 {
+		t.Fatalf("There should be at least one pipeline in this org:\n%s", listOut)
+	}
 
-		firstPipeline := *pipelineList[0]
+	t.Run("GetPipelineOk", func(t *testing.T) {
 		getOut, getErr := executeCommand([]string{
 			"--output", "json",
 			"pipelines", "get",
@@ -40,11 +44,11 @@ func TestPipelines(t *testing.T) {
 			"--pipeline", *firstPipeline.Name,
 		})
 		if getErr != nil {
-			t.Fatalf("get pipeline should not err, out: %s\nerr: %s", listOut, listErr)
+			t.Fatalf("get pipeline should not err, out: %s\nerr: %s", getOut, getErr)
 		}
 
 		var getPipeline models.Pipeline
-		err = json.Unmarshal([]byte(getOut), &getPipeline)
+		err := json.Unmarshal([]byte(getOut), &getPipeline)
 		if err != nil {
 			t.Fatalf("Failed to parse json output of pipelines get cmd, out: %s\nerr: %s", getOut, err)
 		}
@@ -54,7 +58,49 @@ func TestPipelines(t *testing.T) {
 		}
 	})
 
-	t.Run("LastUsedOk", func(t *testing.T) {
+	t.Run("PipelinePauseOk", func(t *testing.T) {
+		_, pauseErr := executeCommand([]string{
+			"--output", "json",
+			"pipelines", "pause",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
+		})
+		if pauseErr != nil {
+			t.Fatalf("failed to pause pipeline '%s': %s", *firstPipeline.Name, pauseErr)
+		}
+	})
+
+	t.Run("PipelineUnpauseOk", func(t *testing.T) {
+		_, unpauseErr := executeCommand([]string{
+			"--output", "json",
+			"pipelines", "unpause",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
+		})
+		if unpauseErr != nil {
+			t.Fatalf("failed to unpause pipeline '%s': %s", *firstPipeline.Name, unpauseErr)
+		}
+	})
+
+	t.Run("PipelineSynced", func(t *testing.T) {
+		_, syncedErr := executeCommand([]string{
+			"--output", "json",
+			"pipelines", "synced",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
+		})
+		if syncedErr != nil {
+			t.Fatalf("failed to pause pipeline '%s': %s", *firstPipeline.Name, syncedErr)
+		}
+	})
+
+	t.Run("PipelineLastUsedOk", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"pipelines", "last-used",
@@ -65,6 +111,7 @@ func TestPipelines(t *testing.T) {
 		}
 	})
 
+	// Jobs
 	var jobList []*models.Job
 	t.Run("ListJobsOk", func(t *testing.T) {
 		if len(pipelineList) == 0 {
@@ -143,6 +190,64 @@ func TestPipelines(t *testing.T) {
 				})
 				if unpauseErr != nil {
 					t.Fatalf("cmd cy pp job unpause failed for pipeline '%s', out: %s, err: %s", *firstPipeline.Name, unpauseOut, unpauseErr)
+				}
+			})
+		})
+
+		var triggeredBuild *models.Build
+		// Builds
+		t.Run("CreateBuildOk", func(t *testing.T) {
+			triggerOut, triggerErr := executeCommand([]string{
+				"--output", "json",
+				"pipeline", "build", "create",
+				"--project", *firstPipeline.Project.Canonical,
+				"--env", *firstPipeline.Environment.Canonical,
+				"--component", *firstPipeline.Component.Canonical,
+				"--pipeline", *firstPipeline.Name,
+				"--job", *firstJob.Name,
+			})
+			if triggerErr != nil {
+				t.Fatalf("cmd cy pp build create failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, triggerOut, triggerErr)
+			}
+
+			err := json.Unmarshal([]byte(triggerOut), &triggeredBuild)
+			if err != nil {
+				t.Fatalf("cmd output is not a models.Build, out: %s\nerr: %s", triggerOut, triggerErr)
+			}
+
+			buildIDStr := strconv.Itoa(int(*triggeredBuild.ID))
+			if err != nil {
+				t.Fatalf("invalid build id in:\n%v\n%s", triggeredBuild, err)
+			}
+
+			t.Run("GetBuildOk", func(t *testing.T) {
+				getOut, getErr := executeCommand([]string{
+					"--output", "json",
+					"pipeline", "build", "get",
+					"--project", *firstPipeline.Project.Canonical,
+					"--env", *firstPipeline.Environment.Canonical,
+					"--component", *firstPipeline.Component.Canonical,
+					"--pipeline", *firstPipeline.Name,
+					"--job", *firstJob.Name,
+					"--build-id", buildIDStr,
+				})
+				if getErr != nil {
+					t.Fatalf("cmd cy pp build get failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, getOut, getErr)
+				}
+			})
+
+			t.Run("ListBuildOk", func(t *testing.T) {
+				listOut, listErr := executeCommand([]string{
+					"--output", "json",
+					"pipeline", "build", "list",
+					"--project", *firstPipeline.Project.Canonical,
+					"--env", *firstPipeline.Environment.Canonical,
+					"--component", *firstPipeline.Component.Canonical,
+					"--pipeline", *firstPipeline.Name,
+					"--job", *firstJob.Name,
+				})
+				if listErr != nil {
+					t.Fatalf("cmd cy pp build list failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, listOut, listErr)
 				}
 			})
 		})

@@ -19,6 +19,7 @@ func NewJobsUnpauseCommand() *cobra.Command {
 		RunE:    unpauseJob,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `cy pp job unpause --project my-project --env env --component component --pipeline pipeline --job my-job`,
+		Args:    cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)

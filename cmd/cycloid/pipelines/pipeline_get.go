@@ -14,13 +14,14 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewGetPipelineCommand() *cobra.Command {
+func NewPipelineGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "get",
 		Short:   "get a pipeline",
 		Example: `cy pipeline get --project my-project --env env --component component --pipeline pipeline_name`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    getPipeline,
+		Args:    cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)
@@ -29,9 +30,6 @@ func NewGetPipelineCommand() *cobra.Command {
 }
 
 func getPipeline(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
@@ -53,9 +51,13 @@ func getPipeline(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	outPipeline, err := m.GetPipeline(org, project, env, component, pipeline)
 	if err != nil {
 		return fmt.Errorf("failed to get pipeline '%s' in context project '%s', env '%s', component '%s': %s", pipeline, project, env, component, err)
 	}
+
 	return printer.SmartPrint(p, outPipeline, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

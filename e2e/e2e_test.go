@@ -17,7 +17,7 @@ func runMain(main *testing.M) (int, error) {
 	// We must wait a bit that the middleware test are done initializing the config
 	// Otherwise there will be conflcts -_-
 	var err error
-	time.Sleep(time.Duration(3) * time.Second)
+	time.Sleep(time.Duration(5) * time.Second)
 	config, err = testcfg.NewConfig()
 	defer config.Cleanup()
 	if err != nil {
