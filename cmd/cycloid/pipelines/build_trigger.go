@@ -16,15 +16,16 @@ import (
 
 func NewBuildCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "trigger",
+		Use: "create",
 		Aliases: []string{
-			"create",
+			"trigger",
 			"run",
 		},
 		Example: `cy --org my-org pp trigger-build --project my-project --env my-env --job my-job`,
 		Short:   "trigger a pipeline build",
 		RunE:    createBuild,
 		PreRunE: internal.CheckAPIAndCLIVersion,
+		Args:    cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)

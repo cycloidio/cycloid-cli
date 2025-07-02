@@ -21,6 +21,7 @@ func NewBuildListCommand() *cobra.Command {
 		Example: `cy --org my-org pp list-builds --project my-project --env env --component component --job my-job`,
 		RunE:    listBuilds,
 		PreRunE: internal.CheckAPIAndCLIVersion,
+		Args:    cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)
@@ -30,7 +31,7 @@ func NewBuildListCommand() *cobra.Command {
 }
 
 func listBuilds(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := cyargs.GetCyContext(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
@@ -40,10 +41,9 @@ func listBuilds(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	job, err := cyargs.GetPipelineJob(cmd)
-	if err != nil {
-		return err
-	}
+	// Those args are optional filters, we don't care about err
+	_, project, env, component, _ := cyargs.GetCyContext(cmd)
+	job, _ := cyargs.GetPipelineJob(cmd)
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)

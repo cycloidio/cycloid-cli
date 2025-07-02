@@ -19,6 +19,7 @@ func NewJobsPauseCommand() *cobra.Command {
 		Example: `cy pp job pause --project my-project --env env --component component --pipeline pipeline --job my-job`,
 		RunE:    pauseJob,
 		PreRunE: internal.CheckAPIAndCLIVersion,
+		Args:    cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)

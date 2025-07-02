@@ -53,7 +53,7 @@ func GetPipelineStatuses(cmd *cobra.Command) ([]string, error) {
 
 func AddPipeline(cmd *cobra.Command) string {
 	flagName := "pipeline"
-	cmd.Flags().String(flagName, "", "the name of a pipeline")
+	cmd.Flags().StringP(flagName, "P", "", "the name of a pipeline")
 	cmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []cobra.Completion, toComplete string) ([]string, cobra.ShellCompDirective) {
 		org, err := GetOrg(cmd)
 		if err != nil {
@@ -155,6 +155,16 @@ func AddPipelineJob(cmd *cobra.Command) string {
 
 func GetPipelineJob(cmd *cobra.Command) (string, error) {
 	return cmd.Flags().GetString("job")
+}
+
+func AddPipelineStep(cmd *cobra.Command) string {
+	flagName := "step"
+	cmd.Flags().StringP(flagName, "s", "", "step canonical.")
+	return flagName
+}
+
+func GetPipelineStep(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("step")
 }
 
 func AddPipelineBuildID(cmd *cobra.Command) string {

@@ -20,6 +20,7 @@ func NewBuildGetCommand() *cobra.Command {
 		Short:   "Get a build information.",
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    getBuild,
+		Args:    cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)

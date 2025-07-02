@@ -14,7 +14,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewUpdateCommand() *cobra.Command {
+func NewPipelineUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update",
 		Short: "update a running pipeline",
@@ -24,6 +24,7 @@ func NewUpdateCommand() *cobra.Command {
 `,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
+		Args:    cobra.NoArgs,
 	}
 	cyargs.AddCyContext(cmd)
 	cyargs.AddPipeline(cmd)

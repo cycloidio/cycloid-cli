@@ -1,9 +1,6 @@
 package pipelines
 
 import (
-	"fmt"
-
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -14,13 +11,13 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewJobsListCommand() *cobra.Command {
+func NewPipelineSyncedCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "list",
-		Short:   "list a pipeline's jobs",
-		Example: `cy --org my-org pp list-jobs --project my-project --env env --component component -o json`,
-		RunE:    listJobs,
+		Use:     "synced",
+		Short:   "Check if a pipeline is synced with its stacks.",
+		Example: `cy --org my-org pipeline synced --project my-project --env env`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE:    synced,
 		Args:    cobra.NoArgs,
 	}
 
@@ -29,7 +26,7 @@ func NewJobsListCommand() *cobra.Command {
 	return cmd
 }
 
-func listJobs(cmd *cobra.Command, args []string) error {
+func synced(cmd *cobra.Command, args []string) error {
 	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
@@ -40,24 +37,23 @@ func listJobs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+		return err
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
+		return err
 	}
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	jobs, err := m.GetJobs(org, project, env, component, pipeline)
+	pp, err := m.SyncedPipeline(org, project, env, component, pipeline)
 	if err != nil {
-		return fmt.Errorf("failed to fetch jobs for pipeline '%s': %s", pipeline, err)
+		return printer.SmartPrint(p, nil, err, "unable to pipeline sync status", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	return printer.SmartPrint(p, jobs, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, pp, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

@@ -19,6 +19,7 @@ func NewJobsGetCommand() *cobra.Command {
 		Example: `cy --org my-org pp get-job --project my-project --env env --component component --job my-job -o json`,
 		RunE:    getJob,
 		PreRunE: internal.CheckAPIAndCLIVersion,
+		Args:    cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)

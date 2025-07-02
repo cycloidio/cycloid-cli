@@ -1,8 +1,6 @@
 package pipelines
 
 import (
-	"fmt"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -14,12 +12,12 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewJobsListCommand() *cobra.Command {
+func NewPipelineUnpauseCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "list",
-		Short:   "list a pipeline's jobs",
-		Example: `cy --org my-org pp list-jobs --project my-project --env env --component component -o json`,
-		RunE:    listJobs,
+		Use:     "unpause",
+		Short:   "unpause a pipeline",
+		Example: `cy --org my-org pipeline unpause --project my-project --env env --component component --pipeline pipeline-name`,
+		RunE:    unpause,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Args:    cobra.NoArgs,
 	}
@@ -29,7 +27,7 @@ func NewJobsListCommand() *cobra.Command {
 	return cmd
 }
 
-func listJobs(cmd *cobra.Command, args []string) error {
+func unpause(cmd *cobra.Command, args []string) error {
 	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
@@ -40,7 +38,7 @@ func listJobs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -54,10 +52,10 @@ func listJobs(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	jobs, err := m.GetJobs(org, project, env, component, pipeline)
+	err = m.UnpausePipeline(org, project, env, component, pipeline)
 	if err != nil {
-		return fmt.Errorf("failed to fetch jobs for pipeline '%s': %s", pipeline, err)
+		printer.SmartPrint(p, nil, err, "failed to unpause pipeline", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	return printer.SmartPrint(p, jobs, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, nil, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
