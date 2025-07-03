@@ -38,8 +38,8 @@ SWAGGER_GENERATE = swagger generate client \
 		--name=api
 
 # E2E tests
-CY_API_URL         ?= "https://api-cli-test.staging.cycloid.io/"
-CY_TEST_ROOT_ORG ?= "cycloid"
+CY_API_URL         ?= "https://api.staging.cycloid.io/"
+CY_TEST_ROOT_ORG ?= "cli-tests"
 # You can get the key in the admin_api_key cred in the cli console
 CY_TEST_API_KEY       ?=
 
