@@ -2,9 +2,11 @@ package cyargs
 
 import (
 	"fmt"
+	"slices"
 	"strconv"
 	"strings"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
@@ -63,11 +65,10 @@ func AddPipeline(cmd *cobra.Command) string {
 
 		project, _ := GetProject(cmd)
 		env, _ := GetEnv(cmd)
-		statuses, _ := GetPipelineStatuses(cmd)
 
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
-		pipelines, err := m.GetOrgPipelines(org, nil, &project, &env, statuses)
+		pipelines, err := m.GetEnvPipelines(org, project, env)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to fetch pipeline list for completion in org '"+org+"': "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
@@ -89,7 +90,34 @@ func AddPipeline(cmd *cobra.Command) string {
 }
 
 func GetPipeline(cmd *cobra.Command) (string, error) {
-	return cmd.Flags().GetString("pipeline")
+	pipeline, err := cmd.Flags().GetString("pipeline")
+	if pipeline != "" && err != nil {
+		return pipeline, nil
+	}
+
+	// If pipeline not set, try to get it from the component
+	org, project, environment, component, err := GetCyContext(cmd)
+	if err != nil {
+		return "", fmt.Errorf("missing context to infer pipeline, set --pipeline flag or fill org/project/env/component: %s", err)
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	pipelines, err := m.GetEnvPipelines(org, project, environment)
+	if err != nil {
+		return "", fmt.Errorf("failed to infer pipeline from context: %s", err)
+	}
+
+	index := slices.IndexFunc(pipelines, func(p *models.Pipeline) bool {
+		return *p.Component.Canonical == component
+	})
+
+	if index == -1 {
+		return "", fmt.Errorf("pipeline for component '%s' in project '%s' and environment '%s' is not found, please fill --pipeline argument: %s", component, project, environment, err)
+	}
+
+	return *pipelines[index].Name, nil
 }
 
 func AddPipelineConfig(cmd *cobra.Command) string {

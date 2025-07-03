@@ -69,6 +69,7 @@ func (m *middleware) DiffPipeline(org, project, env, component, pipelineName, ya
 	}
 
 	payload := resp.GetPayload()
+	// Payload validation on pipelines is bugged, to fix later
 	// if err := payload.Validate(strfmt.Default); err != nil {
 	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
 	// }
