@@ -16,7 +16,6 @@ import (
 func NewBuildGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "get",
-		Hidden:  true,
 		Short:   "Get a build information.",
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    getBuild,
