@@ -106,7 +106,7 @@ func GetPipeline(cmd *cobra.Command) (string, error) {
 
 	pipelines, err := m.GetEnvPipelines(org, project, environment)
 	if err != nil {
-		return "", fmt.Errorf("failed to infer pipeline from context: %s", err)
+		return "", fmt.Errorf("failed to infer pipeline from context: %s", err.Error())
 	}
 
 	index := slices.IndexFunc(pipelines, func(p *models.Pipeline) bool {
