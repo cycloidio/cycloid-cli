@@ -1,0 +1,9 @@
+component: CLI
+kind: BREAKING
+body: Pipeline subcommand are renamed to follow convention
+time: 2025-07-03T09:22:24.344714026Z
+custom:
+  DETAILS: build related command are now in the subcommand `cy pipeline build` and
+    jobs are in `cy pipeline jobs` subcommand.
+  PR: "358"
+  TYPE: CLI
