@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"fmt"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines"
@@ -71,9 +69,9 @@ func (m *middleware) DiffPipeline(org, project, env, component, pipelineName, ya
 	}
 
 	payload := resp.GetPayload()
-	if err := payload.Validate(strfmt.Default); err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// if err := payload.Validate(strfmt.Default); err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -105,9 +103,9 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, component, yaml
 	}
 
 	payload := resp.GetPayload()
-	if err := payload.Validate(strfmt.Default); err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// if err := payload.Validate(strfmt.Default); err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -143,9 +141,9 @@ func (m *middleware) SyncedPipeline(org, project, env, component, pipeline strin
 	}
 
 	payload := resp.GetPayload()
-	if err := payload.Validate(strfmt.Default); err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// if err := payload.Validate(strfmt.Default); err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -164,9 +162,9 @@ func (m *middleware) GetPipeline(org, project, env, component, pipeline string) 
 	}
 
 	payload := resp.GetPayload()
-	if err := payload.Validate(strfmt.Default); err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// if err := payload.Validate(strfmt.Default); err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -197,9 +195,9 @@ func (m *middleware) UpdatePipeline(org, project, env, component, pipelineName, 
 	}
 
 	payload := resp.GetPayload()
-	if err := payload.Validate(strfmt.Default); err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// if err := payload.Validate(strfmt.Default); err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }

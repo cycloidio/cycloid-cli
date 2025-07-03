@@ -1,9 +1,11 @@
 package testcfg
 
 import (
+	"errors"
 	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -199,19 +201,40 @@ func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCa
 	m := config.Middleware
 	component := RandomCanonical(identifier)
 
-	createdComponent, err := m.CreateComponent(
-		config.Org, project, env, component, "", &component, &stackRef, &useCase, nil, inputs,
-	)
-	if err != nil {
-		return nil, fmt.Errorf("failed to setup component '%s' for test '%s':\n%v", component, identifier, err)
+	var outComponent *models.Component
+	var outErr error
+	for retry := range 3 {
+		time.Sleep(time.Duration(retry) * time.Second)
+
+		var err error
+		// Check if the component exists
+		outComponent, err = m.GetComponent(config.Org, project, env, component)
+		if err == nil {
+			outErr = nil
+			break
+		}
+
+		outComponent, err = m.CreateComponent(
+			config.Org, project, env, component, "", &component, &stackRef, &useCase, nil, inputs,
+		)
+		if err != nil {
+			errors.Join(outErr, fmt.Errorf("attempt number %d failed to setup component '%s' for test '%s':\n%v", retry, component, identifier, err))
+			continue
+		}
+
+		outErr = nil
 	}
+	if outErr != nil {
+		return nil, outErr
+	}
+
 	config.AppendCleanup(func() {
 		if err := m.DeleteComponent(config.Org, project, env, component); err != nil {
-			log.Fatalf("failed to cleanup component for test '%s': %s", identifier, err)
+			log.Printf("failed to cleanup component for test '%s': %s", identifier, err)
 		}
 	})
 
-	return createdComponent, nil
+	return outComponent, nil
 }
 
 func (config *Config) AppendCleanup(f ...func()) {

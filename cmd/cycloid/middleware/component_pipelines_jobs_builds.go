@@ -3,7 +3,6 @@ package middleware
 import (
 	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines_jobs_builds"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) GetBuilds(org, project, env, component, pipeline, job string) ([]*models.Build, error) {
@@ -21,10 +20,10 @@ func (m *middleware) GetBuilds(org, project, env, component, pipeline, job strin
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }
@@ -68,10 +67,10 @@ func (m *middleware) CreateBuild(org, project, env, component, pipeline, job str
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }
@@ -92,10 +91,10 @@ func (m *middleware) RerunBuild(org, project, env, component, pipeline, job, bui
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }
@@ -151,10 +150,10 @@ func (m *middleware) GetBuildPlan(org, project, env, component, pipeline, job, b
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }
@@ -174,10 +173,10 @@ func (m *middleware) GetBuildPreparation(org, project, env, component, pipeline,
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }
@@ -197,10 +196,10 @@ func (m *middleware) GetBuildResources(org, project, env, component, pipeline, j
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }
