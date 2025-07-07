@@ -1,8 +1,6 @@
-package api_key
+package apikey
 
 import (
-	"fmt"
-
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -37,9 +35,9 @@ func list(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
-		return fmt.Errorf("unable to get output flag: %w", err)
+		return err
 	}
 
 	// fetch the printer from the factory
@@ -49,5 +47,8 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	keys, err := m.ListAPIKeys(org)
-	return printer.SmartPrint(p, keys, err, "unable to list API keys", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to list API keys", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, keys, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

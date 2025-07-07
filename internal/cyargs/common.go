@@ -370,8 +370,39 @@ func PickRandomIcon(env *string) string {
 	return ValidIcons[randomIndex]
 }
 
-func AddOwnerFlag(cmd *cobra.Command) {
-	cmd.Flags().String("owner", "", "canonical of a user to set as owner, will be the user attached to the current api key if empty.")
+func AddOwnerFlag(cmd *cobra.Command) string {
+	flagName := "owner"
+	cmd.Flags().String(flagName, "", "canonical of a user to set as owner, will be the user attached to the current api key if empty.")
+	cmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+		api := common.NewAPI()
+		m := middleware.NewMiddleware(api)
+
+		org, err := GetOrg(cmd)
+		if err != nil {
+			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
+		}
+
+		members, err := m.ListMembers(org)
+		if err != nil {
+			return cobra.AppendActiveHelp(nil, "cannot list org members for owner completion: "+err.Error()),
+				cobra.ShellCompDirectiveNoFileComp
+		}
+
+		var owners = make([]cobra.Completion, len(members))
+		for index, member := range members {
+			if strings.HasPrefix(member.Username, toComplete) {
+				owners[index] = cobra.CompletionWithDesc(
+					member.Username,
+					fmt.Sprintf("%s %s (%s)", member.GivenName, member.FamilyName, member.Email.String()),
+				)
+			}
+		}
+
+		return owners, cobra.ShellCompDirectiveNoFileComp
+	})
+
+	return flagName
 }
 
 func GetOwner(cmd *cobra.Command) (string, error) {

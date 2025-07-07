@@ -8,7 +8,7 @@ import (
 	"github.com/spf13/viper"
 
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/api_key"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog_repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
@@ -95,7 +95,7 @@ func AttachCommands(cmd *cobra.Command) {
 		root.NewVersionCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
-		api_key.NewCommands(),
+		apikey.NewCommands(),
 		catalog_repositories.NewCommands(),
 		config_repositories.NewCommands(),
 		creds.NewCommands(),
