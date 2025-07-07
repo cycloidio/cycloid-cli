@@ -1,15 +1,7 @@
-package api_key
+package apikey
 
 import (
 	"github.com/spf13/cobra"
-)
-
-var (
-	example = `
-	# Manage API keys of my-org organization
-	cy --org my-org api-key [create|list|get|delete]
-`
-	short = "Manage organization API keys"
 )
 
 func NewCommands() *cobra.Command {
@@ -17,16 +9,18 @@ func NewCommands() *cobra.Command {
 		Use: "api-key",
 		Aliases: []string{
 			"api-keys",
-			"ak",
 		},
-		Example: example,
-		Short:   short,
+		Example: `cy api-key [create|list|get|delete]`,
+		Short:   "Manage organization API keys",
+		Args:    cobra.NoArgs,
 	}
 
 	cmd.AddCommand(
 		NewDeleteCommand(),
 		NewGetCommand(),
 		NewListCommand(),
+		NewCreateCommand(),
 	)
+
 	return cmd
 }

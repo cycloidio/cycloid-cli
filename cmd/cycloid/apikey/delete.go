@@ -1,4 +1,4 @@
-package api_key
+package apikey
 
 import (
 	"fmt"
@@ -13,37 +13,38 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-// NewGetCommand returns the cobra command holding
-// the get API key subcommand
-func NewGetCommand() *cobra.Command {
+// NewDeleteCommand returns the cobra command holding
+// the delete API key subcommand
+func NewDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get",
+		Use:   "delete",
 		Args:  cobra.NoArgs,
-		Short: "get API key",
-		Example: `
-	# get API key 'my-key' in the org my-org
-	cy api-key get --org my-org --canonical my-key
+		Short: "delete an API key",
+		Example: `# delete the API key 'my-key' in the org my-org
+	cy api-key delete --org my-org --canonical my-key
 `,
-		RunE: get,
+		RunE: remove,
 	}
 
-	WithFlagCanonical(cmd)
+	cyargs.AddAPIKeyCanonicalFlag(cmd)
 	cmd.MarkFlagRequired("canonical")
 	return cmd
 }
 
-// get will send the GET request to the API in order to
-// get the generated token
-func get(cmd *cobra.Command, args []string) error {
+// remove will send the DELETE request to the API in order to
+// delete a generated token
+func remove(cmd *cobra.Command, args []string) error {
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to get org flag: %w", err)
 	}
-	output, err := cmd.Flags().GetString("output")
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to get output flag: %w", err)
 	}
-	canonical, err := cmd.Flags().GetString("canonical")
+
+	canonical, err := cyargs.GetAPIKeyCanonical(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to get canonical flag: %w", err)
 	}
@@ -57,6 +58,6 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	key, err := m.GetAPIKey(org, canonical)
-	return printer.SmartPrint(p, key, err, "unable to get API key", printer.Options{}, cmd.OutOrStdout())
+	err = m.DeleteAPIKey(org, canonical)
+	return printer.SmartPrint(p, nil, err, "unable to delete API key", printer.Options{}, cmd.OutOrStderr())
 }
