@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: Add `cy api-key create` command
+time: 2025-07-08T11:55:45.213760631Z
+custom:
+  DETAILS: ""
+  PR: "360"
+  TYPE: CLI
