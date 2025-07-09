@@ -34,47 +34,16 @@ func GetCloudProvider(cmd *cobra.Command) (*string, error) {
 	return &cloudProvider, nil
 }
 
-func AddStackRefFlag(cmd *cobra.Command) {
-	cmd.Flags().StringP("stack-ref", "s", "", "set the stack ref of the component in format org:stack-canonical")
-	cmd.MarkFlagRequired("stack-ref")
-	cmd.RegisterFlagCompletionFunc("stack-ref", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
-
-		org, err := GetOrg(cmd)
-		if err != nil {
-			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
-				cobra.ShellCompDirectiveNoFileComp
-		}
-
-		stacks, err := m.ListStacks(org)
-		if err != nil {
-			return cobra.AppendActiveHelp(nil, "failed to list stacks in org '"+org+"': "+err.Error()),
-				cobra.ShellCompDirectiveNoFileComp
-		}
-
-		var stackRefs = make([]string, len(stacks))
-		for index, stack := range stacks {
-			if stack.Ref != nil && strings.HasPrefix(*stack.Ref, toComplete) {
-				desc := *stack.Name
-				if stack.Description != "" {
-					desc = desc + " - " + stack.Description
-				}
-				stackRefs[index] = cobra.CompletionWithDesc(*stack.Ref, desc)
-			}
-		}
-
-		return stackRefs, cobra.ShellCompDirectiveNoFileComp
-	})
+func AddComponentStackRefFlag(cmd *cobra.Command) string {
+	flagName := "stack-ref"
+	cmd.Flags().StringP(flagName, "s", "", "set the stack ref of the component in format org:stack-canonical")
+	cmd.MarkFlagRequired(flagName)
+	cmd.RegisterFlagCompletionFunc(flagName, CompleteStackRef)
+	return flagName
 }
 
-func GetStackRef(cmd *cobra.Command) (*string, error) {
-	stackRef, err := cmd.Flags().GetString("stack-ref")
-	if err != nil {
-		return nil, err
-	}
-
-	return &stackRef, nil
+func GetComponentStackRef(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("stack-ref")
 }
 
 // AddUseCaseFlag will add the use-case flag with completion and return the flag name

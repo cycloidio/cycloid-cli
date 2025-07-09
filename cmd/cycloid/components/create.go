@@ -27,7 +27,7 @@ func NewCreateComponentCommand() *cobra.Command {
 	useCaseFlag := cyargs.AddUseCaseFlag(cmd)
 	cmd.MarkFlagRequired(useCaseFlag)
 	cyargs.AddCloudProviderFlag(cmd)
-	cyargs.AddStackRefFlag(cmd)
+	cyargs.AddComponentStackRefFlag(cmd)
 	cyargs.AddStackFormsInputFlags(cmd)
 	cmd.Flags().Bool("update", false, "If the component exists, update it.")
 	return cmd
