@@ -48,22 +48,10 @@ func GetCatalogRepository(cmd *cobra.Command) (string, error) {
 	return catalogRepository, err
 }
 
-func AddConfigRepositoryFlag(cmd *cobra.Command) {
-	cmd.Flags().String("config-repository", "", "canonical of a config repository, if empty will use the default one in the current org.")
-}
-
-// GetConfigRepository return the config repository flag, if empty, will try to return
-// the current org default config repository
-func GetConfigRepository(cmd *cobra.Command, org string) (string, error) {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
-	configRepository, err := cmd.Flags().GetString("config-repository")
-	if err != nil {
-		return "", err
-	}
-
-	cmd.RegisterFlagCompletionFunc("config-repository", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+func AddConfigRepositoryFlag(cmd *cobra.Command) string {
+	flagName := "config-repository"
+	cmd.Flags().String(flagName, "", "canonical of a config repository, if empty will use the default one in the current org.")
+	cmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
@@ -86,25 +74,48 @@ func GetConfigRepository(cmd *cobra.Command, org string) (string, error) {
 
 		return configRepositories, cobra.ShellCompDirectiveNoFileComp
 	})
+	return flagName
+}
 
-	// TODO: This behavior will be pushed to backend
-	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
-	if configRepository == "" {
-		catalogRepos, err := m.ListConfigRepositories(org)
-		if err != nil {
-			return "", fmt.Errorf("failed to get the default config repository: %s", err)
-		}
-
-		index := slices.IndexFunc(catalogRepos, func(c *models.ConfigRepository) bool {
-			return *c.Default
-		})
-		if index == -1 {
-			docURL := "https://docs.cycloid.io/reference/config-and-catalog-repository/"
-			return "", fmt.Errorf("error: seems like your org '%s' does not have a default config repository, please add one using this doc: '%s'", org, docURL)
-		}
-
-		return *catalogRepos[index].Canonical, nil
+// GetConfigRepository return the config repository flag, if empty, will try to return
+// the current org default config repository
+func GetConfigRepository(cmd *cobra.Command) (string, error) {
+	configRepository, err := cmd.Flags().GetString("config-repository")
+	if err != nil {
+		return "", err
 	}
 
 	return configRepository, err
+}
+
+func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return "", fmt.Errorf("failed to get default config repository, missing org argument: %s", err)
+	}
+
+	configRepository, _ := GetConfigRepository(cmd)
+	if configRepository != "" {
+		return configRepository, nil
+	}
+
+	// TODO: This behavior will be pushed to backend
+	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
+	catalogRepos, err := m.ListConfigRepositories(org)
+	if err != nil {
+		return "", fmt.Errorf("failed to get the default config repository: %s", err)
+	}
+
+	index := slices.IndexFunc(catalogRepos, func(c *models.ConfigRepository) bool {
+		return *c.Default
+	})
+	if index == -1 {
+		docURL := "https://docs.cycloid.io/reference/config-and-catalog-repository/"
+		return "", fmt.Errorf("error: seems like your org '%s' does not have a default config repository, please add one using this doc: '%s'", org, docURL)
+	}
+
+	return *catalogRepos[index].Canonical, nil
 }

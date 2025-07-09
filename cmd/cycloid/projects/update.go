@@ -71,7 +71,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	configRepository, err := cyargs.GetConfigRepository(cmd, org)
+	configRepository, err := cyargs.GetDefaultConfigRepository(cmd)
 	if err != nil {
 		return err
 	}
