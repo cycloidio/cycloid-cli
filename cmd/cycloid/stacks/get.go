@@ -12,24 +12,17 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-var refFlag string
-
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
-		Args:  cobra.NoArgs,
-		Short: "get a stack",
-		Example: `
-	# get a stack in 'my-org' using its ref
-	cy --org my-org stacks get --ref my:stack-ref
-`,
+		Use:     "get",
+		Args:    cobra.NoArgs,
+		Short:   "get information on a stack",
+		Example: `cy --org my-org stacks get --ref my:stack-ref`,
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	cmd.Flags().StringVar(&refFlag, "ref", "", "referential of the stack")
-	cmd.MarkFlagRequired("ref")
-
+	cmd.MarkFlagRequired(cyargs.AddStackRefFlag(cmd))
 	return cmd
 }
 
@@ -42,11 +35,12 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	ref, err := cmd.Flags().GetString("ref")
+	ref, err := cyargs.GetStackRef(cmd)
 	if err != nil {
 		return err
 	}
-	output, err := cmd.Flags().GetString("output")
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -58,5 +52,9 @@ func get(cmd *cobra.Command, args []string) error {
 	}
 
 	s, err := m.GetStack(org, ref)
-	return printer.SmartPrint(p, s, err, "unable to get stack", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		printer.SmartPrint(p, nil, err, "failed to get stack from API", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, s, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

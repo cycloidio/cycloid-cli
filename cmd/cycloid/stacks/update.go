@@ -31,29 +31,24 @@ cy stacks update \
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	cmd.Flags().String("stack-ref", "", "stack reference, format 'org:stack-canonical'")
-	cmd.MarkFlagRequired("stack-ref")
-	cmd.Flags().String("visibility", "", "update stack visibility")
-	cmd.Flags().String("team", "", "update the maintainer team canonical")
-
+	cmd.MarkFlagRequired(cyargs.AddStackRefFlag(cmd))
+	cyargs.AddVisibilityFlag(cmd)
+	cyargs.AddTeamFlag(cmd)
 	return cmd
 }
 
 func update(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	stackRef, err := cmd.Flags().GetString("stack-ref")
+	stackRef, err := cyargs.GetStackRef(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -63,6 +58,9 @@ func update(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	// Fetch the current stack state
 	stack, err := m.GetStack(org, stackRef)
@@ -76,7 +74,7 @@ func update(cmd *cobra.Command, args []string) error {
 	var visibility *string
 	var team string
 	if flagSet.Changed("visibility") {
-		visibilityStr, err := flagSet.GetString("visibility")
+		visibilityStr, err := cyargs.GetVisibility(cmd)
 		if err != nil {
 			return err
 		}
@@ -86,7 +84,7 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	if flagSet.Changed("team") {
-		team, err = flagSet.GetString("team")
+		team, err = cyargs.GetTeam(cmd)
 		if err != nil {
 			return err
 		}
@@ -98,5 +96,9 @@ func update(cmd *cobra.Command, args []string) error {
 
 	// Send request
 	s, err := m.UpdateStack(org, stackRef, team, visibility)
-	return printer.SmartPrint(p, s, err, fmt.Sprintf("fail to update stack with ref: %s", stackRef), printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, fmt.Sprintf("fail to update stack with ref: %s", stackRef), printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, s, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

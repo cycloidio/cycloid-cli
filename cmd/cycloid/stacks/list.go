@@ -14,18 +14,18 @@ import (
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "list",
-		Args:  cobra.NoArgs,
-		Short: "list the stacks",
-		Example: `
-	# list the stacks in 'my-org'
-	cy --org my-org s list
-`,
+		Use: "list",
+		Aliases: []string{
+			"ls",
+		},
+		Args:    cobra.NoArgs,
+		Short:   "list the stacks",
+		Example: `cy --org my-org stack list`,
 		RunE:    list,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
-	return cmd
 
+	return cmd
 }
 
 func list(cmd *cobra.Command, args []string) error {
@@ -36,9 +36,10 @@ func list(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	output, err := cmd.Flags().GetString("output")
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+		return err
 	}
 
 	// fetch the printer from the factory
@@ -48,5 +49,9 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	stacks, err := m.ListStacks(org)
-	return printer.SmartPrint(p, stacks, err, "unable to list stacks", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "failed to list stacks from API", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	return printer.SmartPrint(p, stacks, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

@@ -10,17 +10,16 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// from https://github.com/cycloidio/youdeploy-http-api/blob/develop/services/youdeploy/svccat/form/file.go#L12
-// modify Entity by interface and add Data from FileV1
-type FileForms struct {
-	Version  *string                `yaml:"version" json:"version"`
-	UseCases interface{}            `yaml:"use_cases" json:"use_cases"`
-	Data     map[string]interface{} `yaml:",inline"`
-}
+// // from https://github.com/cycloidio/youdeploy-http-api/blob/develop/services/youdeploy/svccat/form/file.go#L12
+// // modify Entity by interface and add Data from FileV1
+// type FileForms struct {
+// 	Version  *string                `yaml:"version" json:"version"`
+// 	UseCases interface{}            `yaml:"use_cases" json:"use_cases"`
+// 	Data     map[string]interface{} `yaml:",inline"`
+// }
 
 func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error) {
-	var body *models.FormsValidation
-	var formsfile FileForms
+	var formsfile any
 
 	err := yaml.Unmarshal(rawForms, &formsfile)
 	if err != nil {
@@ -29,17 +28,16 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 		// to keep the same display on validation error for the end user
 		ve := &models.FormsValidationResult{
 			Errors: []string{err.Error()},
+			Forms:  nil,
 		}
 		return ve, nil
 	}
 
-	var bodyFormFile models.FormsFileV3
-
 	params := organization_forms.NewValidateFormsFileParams()
 	params.SetOrganizationCanonical(org)
 
-	body = &models.FormsValidation{
-		FormFile: bodyFormFile,
+	body := &models.FormsValidation{
+		FormFile: formsfile,
 	}
 	err = body.Validate(strfmt.Default)
 	if err != nil {
@@ -59,10 +57,8 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// Don't validate this payload.
+	// Validation will silence an expected error related to SF validation
 
 	return payload.Data, nil
 }

@@ -14,7 +14,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewGetConfigCommand() *cobra.Command {
+func NewConfigGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get-config <ref?> <use-case?> [flags]",
 		Short: "output a V2 stack default configuration in JSON (require stackforms)",

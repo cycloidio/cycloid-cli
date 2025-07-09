@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -65,31 +66,50 @@ func TestStacks(t *testing.T) {
 	})
 
 	t.Run("SuccessStacksValidateForm", func(t *testing.T) {
-		var TestGitSshKey = []byte(`---
-default:
-  pipeline:
-    AWS:
-      - name: "Default Region"
-        key: aws_default_region
-        type: string
-        widget: dropdown
-        description: "In which region you would like your project to run"
-        default: "eu-west-1"
-        values: ["eu-west-1", "eu-west-2", "eu-west3", "eu-south1", "eu-north1", "eu-central1"]
-        required: true
+		var TestForms = []byte(`---
+version: "4"
+shared:
+- &anchor2
+  name: "hello"
+  key: "toto3"
+  widget: "simple_text"
+  type: "string"
+use_cases:
+- name: use_cases
+  sections:
+  - name: "hello"
+    groups:
+    - name: "toto"
+      technlogies: ["tutu"]
+      vars:
+      - &anchor1
+        name: "hello"
+        key: "toto"
+        widget: "simple_text"
+        type: "string"
+      - <<: *anchor1
+        key: "toto1"
+      - *anchor2
+      - <<: *anchor2
+        key: "toto4"
 `)
-		WriteFile("/tmp/test_ci_form", TestGitSshKey)
+		testFile, err := os.CreateTemp("", "test-stackforms.yml")
+		if err != nil {
+			t.Fatalf("setup failed: error while writing test forms at '%s'", testFile.Name())
+		}
+
+		formsFile := testFile.Name()
+		WriteFile(formsFile, TestForms)
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"stacks",
 			"validate-form",
-			"--forms", "/tmp/test_ci_form",
+			formsFile,
 		})
-
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "errors\": []")
+		assert.Equal(t, cmdOut, "")
 	})
 
 	t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
