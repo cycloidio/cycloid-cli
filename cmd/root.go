@@ -48,6 +48,7 @@ func NewRootCommand() *cobra.Command {
 		Version:       versionString,
 		SilenceErrors: true,
 		SilenceUsage:  false,
+		Args:          cobra.NoArgs,
 		Use:           "cy",
 		Short:         "Cycloid CLI",
 		Long: `CLI tool to interact with Cycloid API.
@@ -83,6 +84,9 @@ CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default w
 
 	// Remove usage on error, this is annoying in scripting
 	rootCmd.SilenceUsage = true
+
+	// Disable file completion fallback by default
+	rootCmd.CompletionOptions.SetDefaultShellCompDirective(cobra.ShellCompDirectiveNoFileComp)
 
 	AttachCommands(rootCmd)
 
