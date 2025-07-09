@@ -14,11 +14,13 @@ import (
 
 func NewUpdateComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update -p project -e env -c component",
-		Args:  cobra.NoArgs,
-		Short: "update an existing component",
-		RunE:  updateComponent,
+		Use:     "update",
+		Args:    cobra.NoArgs,
+		Short:   "update an existing component",
+		Example: `cy component update -p project -e env -c component -V section.group.var="value-str" -u new-use-case`,
+		RunE:    updateComponent,
 	}
+
 	cyargs.AddCyContext(cmd)
 	cyargs.AddNameFlag(cmd)
 	cyargs.AddComponentDescriptionFlag(cmd)

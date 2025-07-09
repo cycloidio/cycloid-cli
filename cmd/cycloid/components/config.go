@@ -11,8 +11,10 @@ func NewConfigCommands() *cobra.Command {
 		},
 		Short: "Manage component config",
 	}
+
 	cmd.AddCommand(
 		NewGetComponentConfigCommand(),
 	)
+
 	return cmd
 }

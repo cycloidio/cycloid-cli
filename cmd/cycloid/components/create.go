@@ -15,10 +15,11 @@ import (
 
 func NewCreateComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "create -p project -e env -c component",
-		Args:  cobra.NoArgs,
-		Short: "Create a component",
-		RunE:  createComponent,
+		Use:     "create",
+		Args:    cobra.NoArgs,
+		Short:   "Create a component",
+		RunE:    createComponent,
+		Example: `cy component create -p project -e env -c component -V section.group.var="value-str" -s "stack:ref" -u new-use-case`,
 	}
 	cyargs.AddCyContext(cmd)
 	cyargs.AddNameFlag(cmd)
