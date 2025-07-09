@@ -44,7 +44,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	canonical, err := cyargs.GetConfigRepository(cmd, org)
+	canonical, err := cyargs.GetConfigRepository(cmd)
 	if err != nil {
 		return err
 	}
