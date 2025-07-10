@@ -49,41 +49,43 @@ func GetComponentStackRef(cmd *cobra.Command) (string, error) {
 // AddUseCaseFlag will add the use-case flag with completion and return the flag name
 func AddUseCaseFlag(cmd *cobra.Command) string {
 	flagName := "use-case"
-	cmd.Flags().StringP("use-case", "u", "", "set the use-case of the component")
-	cmd.RegisterFlagCompletionFunc("use-case", func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
-
-		org, err := GetOrg(cmd)
-		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveNoFileComp
-		}
-
-		stackRef, err := GetStackRef(cmd)
-		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveNoFileComp
-		}
-
-		stackConfig, err := m.GetStackConfig(org, *stackRef)
-		if err != nil {
-			return []string{}, cobra.ShellCompDirectiveNoFileComp
-		}
-
-		var useCases []string
-		for useCase, stack := range stackConfig {
-			if strings.HasPrefix(useCase, toComplete) {
-				desc := *stack.Name
-				if stack.Description != nil {
-					desc = desc + " - " + *stack.Description
-				}
-				useCases = append(useCases, cobra.CompletionWithDesc(useCase, desc))
-			}
-		}
-
-		return useCases, cobra.ShellCompDirectiveNoFileComp
-	})
-
+	cmd.Flags().StringP(flagName, "u", "", "set the use-case of the component")
+	cmd.RegisterFlagCompletionFunc(flagName, CompleteUseCase)
 	return flagName
+}
+
+func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return []string{}, cobra.ShellCompDirectiveNoFileComp
+	}
+
+	stackRef, err := GetStackRef(cmd)
+	if err != nil {
+		return []string{}, cobra.ShellCompDirectiveNoFileComp
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	stackConfig, err := m.GetStackConfig(org, stackRef)
+
+	if err != nil {
+		return []string{}, cobra.ShellCompDirectiveNoFileComp
+	}
+
+	var useCases []string
+	for useCase, stack := range stackConfig {
+		if strings.HasPrefix(useCase, toComplete) {
+			desc := *stack.Name
+			if stack.Description != nil {
+				desc = desc + " - " + *stack.Description
+			}
+			useCases = append(useCases, cobra.CompletionWithDesc(useCase, desc))
+		}
+	}
+
+	return useCases, cobra.ShellCompDirectiveNoFileComp
 }
 
 func GetUseCase(cmd *cobra.Command) (*string, error) {
