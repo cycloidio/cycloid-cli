@@ -69,7 +69,6 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 	m := middleware.NewMiddleware(api)
 
 	stackConfig, err := m.GetStackConfig(org, stackRef)
-
 	if err != nil {
 		return []string{}, cobra.ShellCompDirectiveNoFileComp
 	}

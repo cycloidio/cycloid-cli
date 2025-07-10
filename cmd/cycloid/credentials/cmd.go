@@ -1,4 +1,4 @@
-package creds
+package credentials
 
 import (
 	"github.com/spf13/cobra"
@@ -16,11 +16,13 @@ func NewCommands() *cobra.Command {
 		Short: "Manage the credentials",
 	}
 
-	cmd.AddCommand(NewCreateCommand(),
+	cmd.AddCommand(
+		NewCreateCommand(),
 		NewUpdateCommand(),
 		NewDeleteCommand(),
 		NewListCommand(),
-		NewGetCommand())
+		NewGetCommand(),
+	)
 
 	return cmd
 }
