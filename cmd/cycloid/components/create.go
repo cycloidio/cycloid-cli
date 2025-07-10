@@ -110,14 +110,14 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	}
 
 	// Get default to stacks
-	stackConfig, err := m.GetStackConfig(org, *stackRef)
+	stackConfig, err := m.GetStackConfig(org, stackRef)
 	if err != nil {
 		return err
 	}
 
 	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfig, *useCase)
 	if err != nil {
-		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", *stackRef, *useCase, err)
+		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", stackRef, *useCase, err)
 	}
 
 	inputs, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
@@ -125,7 +125,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	componentOutput, err = m.CreateComponent(org, project, env, component, *description, &name, stackRef, useCase, cloudProvider, inputs)
+	componentOutput, err = m.CreateComponent(org, project, env, component, *description, &name, &stackRef, useCase, cloudProvider, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}

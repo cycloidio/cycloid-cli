@@ -16,17 +16,15 @@ import (
 
 func NewConfigGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get-config <ref?> <use-case?> [flags]",
-		Short: "output a V2 stack default configuration in JSON (require stackforms)",
-		Example: `
-cy --org my-org stacks get-config my:stack-ref stack-usecase
-`,
+		Use:     "get <ref?> <use-case?> [flags]",
+		Short:   "output a V2 stack default configuration in JSON (require stackforms)",
+		Example: `cy --org my-org stacks get-config my:stack-ref stack-usecase`,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    getConfig,
 		Args:    cobra.RangeArgs(0, 2),
 	}
-	cmd.Flags().StringP("ref", "r", "", "referential of the stack")
-	cmd.Flags().StringP("use-case", "u", "", "usecase you want")
+	cyargs.AddStackRefFlag(cmd)
+	cyargs.AddUseCaseFlag(cmd)
 
 	return cmd
 }
@@ -38,9 +36,9 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	}
 
 	stackRef, _ := cyargs.GetStackRef(cmd)
-	if len(args) >= 1 && *stackRef == "" {
-		stackRef = &args[0]
-	} else if *stackRef == "" {
+	if len(args) >= 1 && stackRef == "" {
+		stackRef = args[0]
+	} else if stackRef == "" {
 		return fmt.Errorf("missing ref argument")
 	}
 
@@ -50,8 +48,6 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	} else if *useCase == "" {
 		return fmt.Errorf("missing use-case argument")
 	}
-
-	internal.Debug("ref: ", stackRef, "usecase:", useCase)
 
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
@@ -72,14 +68,14 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	stackConfigs, err := m.GetStackConfig(org, *stackRef)
+	stackConfigs, err := m.GetStackConfig(org, stackRef)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStdout())
 	}
 
 	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, *useCase)
 	if err != nil {
-		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", *stackRef, *useCase, err)
+		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", stackRef, *useCase, err)
 	}
 
 	config, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
