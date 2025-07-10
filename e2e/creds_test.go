@@ -1,6 +1,7 @@
 package e2e_test
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -96,6 +97,13 @@ func TestCreds(t *testing.T) {
 			"--canonical", "cli-custom-file",
 		})
 
+		fileContent := "hello world"
+		fileName, err := WriteTempFile(fileContent)
+		if err != nil {
+			t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
+		}
+		defer os.Remove(fileName)
+
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
@@ -104,7 +112,7 @@ func TestCreds(t *testing.T) {
 			"custom",
 			"--name", "cli-custom-file",
 			"--field", "foo=bar",
-			"--field-file", "key=/tmp/test_cli-ssh",
+			"--field-file", "key=" + fileName,
 		})
 
 		assert.Nil(t, cmdErr)
@@ -121,6 +129,13 @@ func TestCreds(t *testing.T) {
 			"--canonical", "cli-ssh",
 		})
 
+		fileContent := "hello world"
+		fileName, err := WriteTempFile(fileContent)
+		if err != nil {
+			t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
+		}
+		defer os.Remove(fileName)
+
 		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
@@ -129,7 +144,7 @@ func TestCreds(t *testing.T) {
 			"create",
 			"ssh",
 			"--name", "cli-ssh",
-			"--ssh-key", "/tmp/test_cli-ssh",
+			"--ssh-key", fileName,
 		})
 
 		assert.Nil(t, cmdErr)
