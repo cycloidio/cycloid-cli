@@ -49,6 +49,7 @@ func NewCreateCommand() *cobra.Command {
 	cyargs.AddCredentialNamePersistentFlag(cmd)
 	cyargs.AddCredentialDescriptionPersistentFlag(cmd)
 	cyargs.AddCredentialCanonicalPersistentFlag(cmd)
+	cmd.PersistentFlags().Bool("update", false, "update this credential if it already exists.")
 
 	// SSH
 	var sshCmd = &cobra.Command{
@@ -198,9 +199,6 @@ func NewCreateCommand() *cobra.Command {
 }
 
 func create(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	var err error
 	var rawCred *models.CredentialRaw
 
@@ -210,19 +208,19 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cyargs.GetCredentialName(cmd)
-	if err != nil {
-		return err
-	}
-
-	path, err := cyargs.GetCredentialPath(cmd)
-	if err != nil {
-		return err
-	}
-
 	credential, err := cyargs.GetCredentialCanonical(cmd)
 	if err != nil {
 		return err
+	}
+
+	credentialPath, _ := cyargs.GetCredentialPath(cmd)
+	if credentialPath == "" {
+		credentialPath = pathFromCanonical(credential)
+	}
+
+	name, _ := cyargs.GetCredentialName(cmd)
+	if name == "" {
+		name = credential
 	}
 
 	description, err := cyargs.GetCredentialDescription(cmd)
@@ -239,6 +237,17 @@ func create(cmd *cobra.Command, args []string) error {
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	if updateAllowed, _ := cmd.Flags().GetBool("update"); updateAllowed {
+		_, err := m.GetCredential(org, credential)
+		if err == nil {
+			// if the cred exists, forward the call to the update func.
+			return update(cmd, args)
+		}
 	}
 
 	switch credT {
@@ -441,7 +450,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	outCredential, err := m.CreateCredential(org, name, credT, rawCred, path, credential, description)
+	outCredential, err := m.CreateCredential(org, name, credT, rawCred, credentialPath, credential, description)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStderr())
 	}

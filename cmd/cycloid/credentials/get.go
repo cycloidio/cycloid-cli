@@ -1,10 +1,13 @@
 package credentials
 
 import (
+	"fmt"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/slices"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -15,18 +18,20 @@ import (
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
-		Args:  cobra.NoArgs,
-		Short: "get a credential",
-		Example: `
-	# get a credential by its canonical
-	cy --org my-org credential get --canonical my-cred
-`,
+		Use: "get [credential]",
+		Args: cobra.MatchAll(
+			cobra.OnlyValidArgs,
+			cobra.RangeArgs(0, 1),
+		),
+		ValidArgsFunction: cyargs.CompleteCredentialCanonical,
+		Short:             "get a credential",
+		Example: `# get a credential by its canonical
+	cy --org my-org credential get my-cred`,
 		RunE:    get,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredFlag(common.WithFlagCan, cmd)
+	cyargs.AddCredentialCanonicalFlag(cmd)
 	return cmd
 }
 
@@ -38,18 +43,41 @@ func get(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	can, err := cmd.Flags().GetString("canonical")
-	if err != nil {
-		return err
+
+	var credential string
+	credentialFlag, _ := cyargs.GetCredentialCanonical(cmd)
+	credentialPath, _ := cyargs.GetCredentialPath(cmd)
+	// Fill credential with precedence Canflag > PathFlag > Args
+	if credentialFlag != "" {
+		credential = credentialFlag
+	} else if credentialPath != "" && credentialFlag == "" {
+		credList, err := m.ListCredentials(org, "")
+		if err != nil {
+			return fmt.Errorf("failed to fetch cred list to match credential by path '%s': %w", credentialPath, err)
+		}
+
+		index := slices.IndexFunc(credList, func(c *models.CredentialSimple) bool {
+			if c.Path != nil {
+				return *c.Path == credentialPath
+			} else {
+				return false
+			}
+		})
+		if index == -1 || credList[index].Canonical == nil {
+			return fmt.Errorf("credential with path '%s' not found in org '%s'", credentialPath, org)
+		}
+
+		credential = *credList[index].Canonical
+	} else if credentialFlag == "" && credentialPath == "" && len(args) == 1 {
+		credential = args[0]
+	} else {
+		return errors.New("please fill --canonical or --path flags or as argument")
 	}
-	output, err := cmd.Flags().GetString("output")
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
-
-	params := organization_credentials.NewGetCredentialParams()
-	params.SetOrganizationCanonical(org)
-	params.SetCredentialCanonical(can)
 
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
@@ -57,6 +85,10 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	c, err := m.GetCredential(org, can)
-	return printer.SmartPrint(p, c, err, "unable to get credential", printer.Options{}, cmd.OutOrStdout())
+	c, err := m.GetCredential(org, credential)
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to get credential from API", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, c, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

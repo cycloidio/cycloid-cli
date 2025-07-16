@@ -39,7 +39,7 @@ func TestKpis(t *testing.T) {
 		}
 
 		// Create ssh cred
-		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
+		WriteFile("/tmp/test_cli-ssh", TestGitSSHKey)
 		executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,

@@ -2,7 +2,6 @@ package credentials
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 	"strings"
 
@@ -50,15 +49,19 @@ func NewUpdateCommand() *cobra.Command {
 `,
 	}
 
-	WithPersistentFlagDescription(cmd)
-	WithPersistentFlagName(cmd)
-	common.RequiredPersistentFlag(common.WithFlagCan, cmd)
-	common.WithPersistentFlagCan(cmd)
-	WithPersistentFlagPath(cmd)
+	cyargs.AddCredentialNamePersistentFlag(cmd)
+	cyargs.AddCredentialDescriptionPersistentFlag(cmd)
+	cyargs.AddCredentialCanonicalPersistentFlag(cmd)
+	cmd.PersistentFlags().Bool("update", false, "update this credential if it already exists.")
+	err := cmd.PersistentFlags().MarkHidden("update")
+	if err != nil {
+		panic(fmt.Sprintf("We should be able to mark this flag hidden: %s", err.Error()))
+	}
 
 	// SSH
-	var ssh = &cobra.Command{
+	var sshCmd = &cobra.Command{
 		Use:     "ssh",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -66,11 +69,12 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update ssh --name foo --ssh-key /path/to/private/key
 `,
 	}
-	common.RequiredFlag(WithFlagSSHKey, ssh)
+	sshCmd.MarkFlagRequired(cyargs.AddCredentialSSHKeyFlag(sshCmd))
 
 	// Basic auth
-	var basicAuth = &cobra.Command{
+	var basicAuthCmd = &cobra.Command{
 		Use:     "basic_auth",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -78,12 +82,13 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update basic_auth --name foo --username my-username --password my-password
 `,
 	}
-	common.RequiredFlag(WithFlagUsername, basicAuth)
-	common.RequiredFlag(WithFlagPassword, basicAuth)
+	cyargs.AddCredentialUsernameFlag(basicAuthCmd)
+	cyargs.AddCredentialPasswordFlag(basicAuthCmd)
 
 	// Custom
-	var custom = &cobra.Command{
+	var customCmd = &cobra.Command{
 		Use:     "custom",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -91,12 +96,14 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update custom --name foo --field my-key=my-value --field my-key2=my-value2 --field-file my-key3=/file/path
 `,
 	}
-	WithFlagField(custom)
-	WithFlagFieldFile(custom)
+
+	cyargs.AddCredentialFieldFlag(customCmd)
+	cyargs.AddCredentialFieldFileFlag(customCmd)
 
 	// AWS
-	var aws = &cobra.Command{
+	var awsCmd = &cobra.Command{
 		Use:     "aws",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -104,12 +111,13 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update aws --name foo --access-key foo --secret-key bar
 `,
 	}
-	common.RequiredFlag(WithFlagAccessKey, aws)
-	common.RequiredFlag(WithFlagSecretKey, aws)
+	awsCmd.MarkFlagRequired(cyargs.AddCredentialAccessKeyFlag(awsCmd))
+	awsCmd.MarkFlagRequired(cyargs.AddCredentialSecretKeyFlag(awsCmd))
 
 	// Azure
-	var azure = &cobra.Command{
+	var azureCmd = &cobra.Command{
 		Use:     "azure",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -117,14 +125,15 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update azure --name foo --client-id myid --client-secret mysec --subscription-id mysub --tenant-id mytenant
 `,
 	}
-	common.RequiredFlag(WithFlagClientID, azure)
-	common.RequiredFlag(WithFlagClientSecret, azure)
-	common.RequiredFlag(WithFlagSubscriptionID, azure)
-	common.RequiredFlag(WithFlagTenantID, azure)
+	azureCmd.MarkFlagRequired(cyargs.AddCredentialClientIDFlag(azureCmd))
+	azureCmd.MarkFlagRequired(cyargs.AddCredentialClientSecretFlag(azureCmd))
+	azureCmd.MarkFlagRequired(cyargs.AddCredentialSubscriptionIDFlag(azureCmd))
+	azureCmd.MarkFlagRequired(cyargs.AddCredentialTenantIDFlag(azureCmd))
 
 	// Azure Storage
-	var azureStorage = &cobra.Command{
+	var azureStorageCmd = &cobra.Command{
 		Use:     "azure_storage",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -132,12 +141,13 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update azure_storage --name foo --account-name myaccount --access-key mykey
 `,
 	}
-	common.RequiredFlag(WithFlagAccountName, azureStorage)
-	common.RequiredFlag(WithFlagAccessKey, azureStorage)
+	azureStorageCmd.MarkFlagRequired(cyargs.AddCredentialAccountNameFlag(azureStorageCmd))
+	azureStorageCmd.MarkFlagRequired(cyargs.AddCredentialAccessKeyFlag(azureStorageCmd))
 
 	// GCP
-	var gcp = &cobra.Command{
+	var gcpCmd = &cobra.Command{
 		Use:     "gcp",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -145,11 +155,12 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update gcp --name foo --json-key /path/to/json/key
 `,
 	}
-	common.RequiredFlag(WithFlagJsonKey, gcp)
+	gcpCmd.MarkFlagRequired(cyargs.AddCredentialJSONKeyFlag(gcpCmd))
 
 	// Swift
-	var swift = &cobra.Command{
+	var swiftCmd = &cobra.Command{
 		Use:     "swift",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -157,15 +168,16 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update swift --name foo --username foo --password bar --tenant-id mytenant --auth-url url --domain-id mydomain
 `,
 	}
-	common.RequiredFlag(WithFlagUsername, swift)
-	common.RequiredFlag(WithFlagPassword, swift)
-	common.RequiredFlag(WithFlagTenantID, swift)
-	common.RequiredFlag(WithFlagAuthUrl, swift)
-	common.RequiredFlag(WithFlagDomainID, swift)
+	swiftCmd.MarkFlagRequired(cyargs.AddCredentialUsernameFlag(swiftCmd))
+	swiftCmd.MarkFlagRequired(cyargs.AddCredentialPasswordFlag(swiftCmd))
+	swiftCmd.MarkFlagRequired(cyargs.AddCredentialTenantIDFlag(swiftCmd))
+	swiftCmd.MarkFlagRequired(cyargs.AddCredentialAuthURLFlag(swiftCmd))
+	swiftCmd.MarkFlagRequired(cyargs.AddCredentialDomainIDFlag(swiftCmd))
 
 	// Elasticsearch
-	var elasticsearch = &cobra.Command{
+	var elasticsearchCmd = &cobra.Command{
 		Use:     "elasticsearch",
+		Args:    cobra.NoArgs,
 		RunE:    update,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `
@@ -173,12 +185,23 @@ func NewUpdateCommand() *cobra.Command {
 	cy --org my-org credential update elasticsearch --name foo --username foo --password bar --ca-cert /path/to/cert
 `,
 	}
-	WithFlagUsername(elasticsearch)
-	WithFlagPassword(elasticsearch)
-	common.RequiredFlag(WithFlagCaCert, elasticsearch)
+
+	cyargs.AddCredentialUsernameFlag(elasticsearchCmd)
+	cyargs.AddCredentialPasswordFlag(elasticsearchCmd)
+	elasticsearchCmd.MarkFlagRequired(cyargs.AddCredentialCaCertFlag(elasticsearchCmd))
 
 	// Command
-	cmd.AddCommand(custom, basicAuth, ssh, aws, azure, azureStorage, gcp, swift, elasticsearch)
+	cmd.AddCommand(
+		customCmd,
+		basicAuthCmd,
+		sshCmd,
+		awsCmd,
+		azureCmd,
+		azureStorageCmd,
+		gcpCmd,
+		swiftCmd,
+		elasticsearchCmd,
+	)
 
 	return cmd
 }
@@ -206,24 +229,28 @@ func update(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	name, err := cmd.Flags().GetString("name")
-	if err != nil {
-		return err
-	}
-	path, err := cmd.Flags().GetString("path")
-	if err != nil {
-		return err
-	}
-	can, err := cmd.Flags().GetString("canonical")
-	if err != nil {
-		return err
-	}
-	description, err := cmd.Flags().GetString("description")
+
+	credential, err := cyargs.GetCredentialCanonical(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	name, _ := cyargs.GetCredentialName(cmd)
+	if name == "" {
+		name = credential
+	}
+
+	credentialPath, _ := cyargs.GetCredentialPath(cmd)
+	if credentialPath == "" {
+		credentialPath = pathFromCanonical(credential)
+	}
+
+	description, err := cyargs.GetCredentialDescription(cmd)
+	if err != nil {
+		return err
+	}
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -236,7 +263,7 @@ func update(cmd *cobra.Command, args []string) error {
 
 	switch credT {
 	case "ssh":
-		sshKeyPath, err := cmd.Flags().GetString("ssh-key")
+		sshKeyPath, err := cyargs.GetCredentialSSHKey(cmd)
 		if err != nil {
 			return err
 		}
@@ -250,11 +277,11 @@ func update(cmd *cobra.Command, args []string) error {
 			SSHKey: string(sshKey),
 		}
 	case "basic_auth":
-		username, err := cmd.Flags().GetString("username")
+		username, err := cyargs.GetCredentialUsername(cmd)
 		if err != nil {
 			return err
 		}
-		password, err := cmd.Flags().GetString("password")
+		password, err := cyargs.GetCredentialPassword(cmd)
 		if err != nil {
 			return err
 		}
@@ -263,11 +290,11 @@ func update(cmd *cobra.Command, args []string) error {
 			Password: password,
 		}
 	case "custom":
-		fields, err := cmd.Flags().GetStringToString("field")
+		fields, err := cyargs.GetCredentialField(cmd)
 		if err != nil {
 			return err
 		}
-		fileFields, err := cmd.Flags().GetStringToString("field-file")
+		fileFields, err := cyargs.GetCredentialFieldFile(cmd)
 		if err != nil {
 			return err
 		}
@@ -279,7 +306,7 @@ func update(cmd *cobra.Command, args []string) error {
 		// Read file fields
 		if len(fileFields) > 0 {
 			for f, p := range fileFields {
-				fc, err := ioutil.ReadFile(p)
+				fc, err := os.ReadFile(p)
 				if err != nil {
 					return errors.Wrap(err, fmt.Sprintf("unable to read file path %s", p))
 				}
@@ -292,11 +319,11 @@ func update(cmd *cobra.Command, args []string) error {
 			Raw: fields,
 		}
 	case "aws":
-		accessKey, err := cmd.Flags().GetString("access-key")
+		accessKey, err := cyargs.GetCredentialAccessKey(cmd)
 		if err != nil {
 			return err
 		}
-		secretKey, err := cmd.Flags().GetString("secret-key")
+		secretKey, err := cyargs.GetCredentialSecretKey(cmd)
 		if err != nil {
 			return err
 		}
@@ -305,19 +332,19 @@ func update(cmd *cobra.Command, args []string) error {
 			SecretKey: secretKey,
 		}
 	case "azure":
-		clientID, err := cmd.Flags().GetString("client-id")
+		clientID, err := cyargs.GetCredentialClientID(cmd)
 		if err != nil {
 			return err
 		}
-		clientSecret, err := cmd.Flags().GetString("client-secret")
+		clientSecret, err := cyargs.GetCredentialClientSecret(cmd)
 		if err != nil {
 			return err
 		}
-		subscriptionID, err := cmd.Flags().GetString("subscription-id")
+		subscriptionID, err := cyargs.GetCredentialSubscriptionID(cmd)
 		if err != nil {
 			return err
 		}
-		tenantID, err := cmd.Flags().GetString("tenant-id")
+		tenantID, err := cyargs.GetCredentialTenantID(cmd)
 		if err != nil {
 			return err
 		}
@@ -328,11 +355,11 @@ func update(cmd *cobra.Command, args []string) error {
 			TenantID:       tenantID,
 		}
 	case "azure_storage":
-		accessKey, err := cmd.Flags().GetString("access-key")
+		accessKey, err := cyargs.GetCredentialAccessKey(cmd)
 		if err != nil {
 			return err
 		}
-		accountName, err := cmd.Flags().GetString("account-name")
+		accountName, err := cyargs.GetCredentialAccountName(cmd)
 		if err != nil {
 			return err
 		}
@@ -341,12 +368,12 @@ func update(cmd *cobra.Command, args []string) error {
 			AccountName: accountName,
 		}
 	case "gcp":
-		jsonKeyPath, err := cmd.Flags().GetString("json-key")
+		jsonKeyPath, err := cyargs.GetCredentialJSONKey(cmd)
 		if err != nil {
 			return err
 		}
 
-		jsonKey, err := ioutil.ReadFile(jsonKeyPath)
+		jsonKey, err := os.ReadFile(jsonKeyPath)
 		if err != nil {
 			return errors.Wrap(err, "unable to read JSON key")
 		}
@@ -355,26 +382,31 @@ func update(cmd *cobra.Command, args []string) error {
 			JSONKey: string(jsonKey),
 		}
 	case "swift":
-		username, err := cmd.Flags().GetString("username")
+		username, err := cyargs.GetCredentialUsername(cmd)
 		if err != nil {
 			return err
 		}
-		password, err := cmd.Flags().GetString("password")
+
+		password, err := cyargs.GetCredentialPassword(cmd)
 		if err != nil {
 			return err
 		}
-		authURL, err := cmd.Flags().GetString("auth-url")
+
+		authURL, err := cyargs.GetCredentialAuthURL(cmd)
 		if err != nil {
 			return err
 		}
-		domainID, err := cmd.Flags().GetString("domain-id")
+
+		domainID, err := cyargs.GetCredentialDomainID(cmd)
 		if err != nil {
 			return err
 		}
-		tenantID, err := cmd.Flags().GetString("tenant-id")
+
+		tenantID, err := cyargs.GetCredentialTenantID(cmd)
 		if err != nil {
 			return err
 		}
+
 		rawCred = &models.CredentialRaw{
 			Username: username,
 			Password: password,
@@ -382,33 +414,42 @@ func update(cmd *cobra.Command, args []string) error {
 			DomainID: domainID,
 			TenantID: tenantID,
 		}
+
 	case "elasticsearch":
-		caCertPath, err := cmd.Flags().GetString("ca-cert")
+		caCertPath, err := cyargs.GetCredentialCaCert(cmd)
 		if err != nil {
 			return err
 		}
 
-		caCert, err := ioutil.ReadFile(caCertPath)
+		caCert, err := os.ReadFile(caCertPath)
 		if err != nil {
 			return errors.Wrap(err, "unable to read CA cert file")
 		}
-		username, err := cmd.Flags().GetString("username")
+
+		username, err := cyargs.GetCredentialUsername(cmd)
 		if err != nil {
 			return err
 		}
-		password, err := cmd.Flags().GetString("password")
+
+		password, err := cyargs.GetCredentialPassword(cmd)
 		if err != nil {
 			return err
 		}
+
 		rawCred = &models.CredentialRaw{
 			Username: username,
 			Password: password,
 			CaCert:   string(caCert),
 		}
+
 	default:
 		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	_, err = m.UpdateCredential(org, name, credT, rawCred, path, can, description)
-	return printer.SmartPrint(p, nil, err, "unable to update credential", printer.Options{}, cmd.OutOrStdout())
+	outCred, err := m.UpdateCredential(org, name, credT, rawCred, credentialPath, credential, description)
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to update credential", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, outCred, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

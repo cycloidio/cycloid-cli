@@ -58,7 +58,7 @@ var (
 	now          = time.Now()
 	NowTimestamp = now.UnixNano()
 
-	TestGitSshKey = []byte(`-----BEGIN OPENSSH PRIVATE KEY-----
+	TestGitSSHKey = []byte(`-----BEGIN OPENSSH PRIVATE KEY-----
 b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW
 QyNTUxOQAAACD8O9mhkl5CAiD0NLeQcoPf1duYHImQlTjOXcCOgHmC+AAAAJjCF9jzwhfY
 8wAAAAtzc2gtZWQyNTUxOQAAACD8O9mhkl5CAiD0NLeQcoPf1duYHImQlTjOXcCOgHmC+A
