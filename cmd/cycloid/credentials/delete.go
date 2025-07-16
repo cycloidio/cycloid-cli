@@ -5,7 +5,9 @@ import (
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"golang.org/x/exp/slices"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
@@ -15,14 +17,12 @@ import (
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
-		Args:  cobra.NoArgs,
-		Short: "delete a credential",
-		Example: `
-	# delete a credential with canonical my-cred
-	cy --org my-org credential delete --canonical my-cred
-`,
-		RunE: del,
+		Use:               "delete [can1 can2 ...]",
+		Args:              cobra.OnlyValidArgs,
+		ValidArgsFunction: cyargs.CompleteCredentialCanonical,
+		Short:             "delete a credential",
+		Example:           `cy --org my-org credential delete cred1 cred2 --canonical cred3`,
+		RunE:              del,
 	}
 
 	cyargs.AddCredentialCanonicalFlag(cmd)
@@ -39,21 +39,35 @@ func del(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	credential, err := cmd.Flags().GetString("canonical")
-	if err != nil {
-		return err
+	credentialFlag, _ := cyargs.GetCredentialCanonical(cmd)
+	credentialPath, _ := cyargs.GetCredentialPath(cmd)
+	if credentialPath == "" && credentialFlag == "" && len(args) == 0 {
+		return errors.New("please fill --canonical or --path flags or pass canonicals as arguments")
 	}
 
-	path, err := cyargs.GetCredentialPath(cmd)
-	if err != nil {
-		return err
+	if credentialPath != "" && credentialFlag == "" {
+		credList, err := m.ListCredentials(org, "")
+		if err != nil {
+			return fmt.Errorf("failed to fetch cred list to match credential by path '%s': %w", credentialPath, err)
+		}
+
+		index := slices.IndexFunc(credList, func(c *models.CredentialSimple) bool {
+			if c.Path != nil {
+				return *c.Path == credentialPath
+			} else {
+				return false
+			}
+		})
+		if index == -1 || credList[index].Canonical == nil {
+			return fmt.Errorf("credential with path '%s' not found in org '%s'", credentialPath, org)
+		}
+
+		credentialFlag = *credList[index].Canonical
 	}
 
-	if path == "" && credential == "" {
-		return fmt.Errorf("please fill --canonical or --path argument.")
-	}
+	credList := append(args, credentialFlag)
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -64,8 +78,18 @@ func del(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteCredential(org, credential)
-	if err
-	// TODO: support getting cred by path
-	return printer.SmartPrint(p, nil, err, "unable to delete credential", printer.Options{}, cmd.OutOrStdout())
+	for _, credential := range credList {
+		if credential == "" {
+			continue
+		}
+
+		err := m.DeleteCredential(org, credential)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, fmt.Sprintf("unable to delete credential '%s'", credential), printer.Options{}, cmd.OutOrStderr())
+		}
+
+		fmt.Fprintf(cmd.OutOrStderr(), "successfully deleted credential '%s'\n", credential)
+	}
+
+	return printer.SmartPrint(p, nil, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

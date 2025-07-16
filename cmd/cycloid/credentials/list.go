@@ -14,18 +14,15 @@ import (
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "list",
-		Args:  cobra.NoArgs,
-		Short: "list the credentials",
-		Example: `
-	# list the credentials with the org 'my-org' in JSON format
-	cy --org my-org credentials list -o json
-`,
+		Use:     "list",
+		Args:    cobra.NoArgs,
+		Short:   "list the credentials",
+		Example: `cy --org my-org credentials list -o json`,
 		RunE:    list,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	WithFlagType(cmd)
+	cyargs.AddCredentialTypeFlag(cmd)
 	return cmd
 }
 
@@ -37,11 +34,11 @@ func list(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	credT, err := cmd.Flags().GetString("type")
+	credT, err := cyargs.GetCredentialType(cmd)
 	if err != nil {
 		return err
 	}
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -53,5 +50,9 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	creds, err := m.ListCredentials(org, credT)
-	return printer.SmartPrint(p, creds, err, "unable to list credential", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to list credential", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, creds, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
