@@ -243,9 +243,10 @@ func UpdateFormVar(field string, value string, vars models.FormVariables) error 
 	// We will prioritize the use of quotes to explicitly define strings values
 	// This allow users to circumvent issues in case of strings that could be parsed
 	// as other types
-	if strings.HasPrefix(trimmedValue, `"`) && strings.HasSuffix(trimmedValue, `"`) ||
-		strings.HasPrefix(trimmedValue, "'") && strings.HasSuffix(trimmedValue, "'") {
-		vars[section][group][key] = trimmedValue[1 : len(trimmedValue)-1]
+	// Note: cobra seems to already trim trailling quotes.
+	if strings.HasPrefix(trimmedValue, `"`) || strings.HasPrefix(trimmedValue, "'") {
+		fmt.Println(trimmedValue[1:])
+		vars[section][group][key] = trimmedValue[1:]
 		return nil
 	}
 
