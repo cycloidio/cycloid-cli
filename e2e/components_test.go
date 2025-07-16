@@ -338,4 +338,28 @@ func TestComponentCmd(t *testing.T) {
 		assert.Equal(t, 2.2, outVars["types"]["tests"]["float"])
 		assert.Equal(t, "update2", outVars["section with spaces"]["group with spaces"]["no_spaces"])
 	})
+
+	t.Run("TestVarsInvalidSectionsAndGroup", func(t *testing.T) {
+		args := []string{
+			"--output", "json",
+			"--org", config.Org,
+			"components", "create",
+			"--update",
+			"--name", componentName,
+			"-p", *config.Project.Canonical,
+			"-e", *config.Environment.Canonical,
+			"-c", component,
+			"-d", description,
+			"-s", stackRef,
+			"-u", "default",
+			"-V", `section with spaces.thisgroupdoesnotexists.no_spaces=update2`,
+			"-V", `sectiondoesnotexists.thisgroupdoesnotexists.no_spaces=true`,
+		}
+
+		cmdOut, cmdErr := executeCommand(args)
+		if cmdErr != nil {
+			// We just check that it doesn't panic for now
+			t.Fatalf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
+		}
+	})
 }
