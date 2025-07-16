@@ -23,9 +23,9 @@ func NewConfigGetCommand() *cobra.Command {
 		RunE:    getConfig,
 		Args:    cobra.RangeArgs(0, 2),
 	}
+
 	cyargs.AddStackRefFlag(cmd)
 	cyargs.AddUseCaseFlag(cmd)
-
 	return cmd
 }
 
@@ -49,7 +49,7 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("missing use-case argument")
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -70,7 +70,7 @@ func getConfig(cmd *cobra.Command, args []string) error {
 
 	stackConfigs, err := m.GetStackConfig(org, stackRef)
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStdout())
+		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, *useCase)
@@ -78,10 +78,5 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", stackRef, *useCase, err)
 	}
 
-	config, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to fetch stack config.", printer.Options{}, cmd.OutOrStdout())
-	}
-
-	return printer.SmartPrint(p, config, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, useCaseConfig, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
