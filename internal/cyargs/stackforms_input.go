@@ -207,8 +207,22 @@ func UpdateFormVar(field string, value string, vars models.FormVariables) error 
 		return errors.New("key=val update failed, you can only update a value using `section.group.var=value` syntax")
 	}
 
+	var section, group, key = keys[0], keys[1], keys[2]
+
 	if vars == nil {
-		vars = make(models.FormVariables)
+		vars = models.FormVariables{section: {group: {key: nil}}}
+	}
+
+	if vars[section] == nil {
+		vars[section] = map[string]map[string]any{
+			group: {key: nil},
+		}
+	}
+
+	if vars[section][group] == nil {
+		vars[section][group] = map[string]any{
+			key: nil,
+		}
 	}
 
 	// Try to detect JSON first
@@ -222,16 +236,16 @@ func UpdateFormVar(field string, value string, vars models.FormVariables) error 
 			return errors.Wrapf(err, "invalid JSON value in key=val update with value '%s'", trimmedValue)
 		}
 
-		vars[keys[0]][keys[1]][keys[2]] = data
+		vars[section][group][key] = data
 		return nil
 	}
 
 	// We will prioritize the use of quotes to explicitly define strings values
 	// This allow users to circumvent issues in case of strings that could be parsed
 	// as other types
-	if strings.HasPrefix(trimmedValue, "\"") && strings.HasSuffix(trimmedValue, "\"") ||
+	if strings.HasPrefix(trimmedValue, `"`) && strings.HasSuffix(trimmedValue, `"`) ||
 		strings.HasPrefix(trimmedValue, "'") && strings.HasSuffix(trimmedValue, "'") {
-		vars[keys[0]][keys[1]][keys[2]] = trimmedValue[1 : len(trimmedValue)-1]
+		vars[section][group][key] = trimmedValue[1 : len(trimmedValue)-1]
 		return nil
 	}
 
@@ -240,24 +254,24 @@ func UpdateFormVar(field string, value string, vars models.FormVariables) error 
 	// Important! We parse number firsts, since 1 and 0 are considered bools by strconv.ParseBool
 	float, err := strconv.ParseFloat(value, 64)
 	if err == nil {
-		vars[keys[0]][keys[1]][keys[2]] = float
+		vars[section][group][key] = float
 		return nil
 	}
 
 	// bools
 	boolean, err := strconv.ParseBool(value)
 	if err == nil {
-		vars[keys[0]][keys[1]][keys[2]] = boolean
+		vars[section][group][key] = boolean
 		return nil
 	}
 
 	// null
 	if strings.ToLower(value) == "null" {
-		vars[keys[0]][keys[1]][keys[2]] = nil
+		vars[section][group][key] = nil
 		return nil
 	}
 
 	// if all type conversion failed, consider the value as string
-	vars[keys[0]][keys[1]][keys[2]] = value
+	vars[section][group][key] = value
 	return nil
 }
