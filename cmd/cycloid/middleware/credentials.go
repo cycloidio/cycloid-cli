@@ -16,8 +16,7 @@ func (m *middleware) CreateCredential(org, name, credentialType string, rawCred 
 
 	if path == "" {
 		re := regexp.MustCompile(`[^a-zA-z0-9_\-./]`)
-		safePath := re.ReplaceAllString(name, "-")
-		path = fmt.Sprintf("%s_%s", credentialType, safePath)
+		path = re.ReplaceAllString(name, "-")
 	}
 
 	body := &models.NewCredential{
@@ -56,8 +55,7 @@ func (m *middleware) UpdateCredential(org, name, credentialType string, rawCred 
 
 	if path == "" {
 		re := regexp.MustCompile(`[^a-zA-z0-9_\-./]`)
-		safePath := re.ReplaceAllString(name, "-")
-		path = fmt.Sprintf("%s_%s", credentialType, safePath)
+		path = re.ReplaceAllString(name, "-")
 	}
 
 	body := &models.UpdateCredential{
