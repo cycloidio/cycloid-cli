@@ -17,12 +17,13 @@ import (
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:               "delete [can1 can2 ...]",
+		Use:               "delete [canonicals...]",
 		Args:              cobra.OnlyValidArgs,
 		ValidArgsFunction: cyargs.CompleteCredentialCanonical,
 		Short:             "delete a credential",
-		Example:           `cy --org my-org credential delete cred1 cred2 --canonical cred3`,
-		RunE:              del,
+		Example: `# Delete 3 credentials with canonical: cred1, cred2, cred3
+cy --org my-org credential delete cred1 cred2 --canonical cred3`,
+		RunE: del,
 	}
 
 	cyargs.AddCredentialCanonicalFlag(cmd)
