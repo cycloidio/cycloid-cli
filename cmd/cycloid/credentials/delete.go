@@ -21,8 +21,8 @@ func NewDeleteCommand() *cobra.Command {
 		Args:              cobra.OnlyValidArgs,
 		ValidArgsFunction: cyargs.CompleteCredentialCanonical,
 		Short:             "delete a credential",
-		Example: `# Delete 3 credentials with canonical: cred1, cred2, cred3
-cy --org my-org credential delete cred1 cred2 --canonical cred3`,
+		Example: `# Delete 3 credentials:
+cy --org my-org credential delete credential-canonical-1 credential-canonical-2 --canonical credential-canonical-3`,
 		RunE: del,
 	}
 
