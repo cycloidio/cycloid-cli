@@ -25,7 +25,7 @@ func NewGetCommand() *cobra.Command {
 		),
 		ValidArgsFunction: cyargs.CompleteCredentialCanonical,
 		Short:             "get a credential",
-		Example:           `cy --org my-org credential get my-cred-canonical`,
+		Example:           `cy --org my-org credential get credential-canonical`,
 		RunE:              get,
 		PreRunE:           internal.CheckAPIAndCLIVersion,
 	}
