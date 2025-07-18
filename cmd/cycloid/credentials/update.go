@@ -52,6 +52,7 @@ func NewUpdateCommand() *cobra.Command {
 	cyargs.AddCredentialNamePersistentFlag(cmd)
 	cyargs.AddCredentialDescriptionPersistentFlag(cmd)
 	cyargs.AddCredentialCanonicalPersistentFlag(cmd)
+	cyargs.AddCredentialPathPersistentFlag(cmd)
 	cmd.PersistentFlags().Bool("update", false, "update this credential if it already exists.")
 	err := cmd.PersistentFlags().MarkHidden("update")
 	if err != nil {

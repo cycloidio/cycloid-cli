@@ -44,6 +44,8 @@ func TestCreds(t *testing.T) {
 			"create",
 			"custom",
 			"--name", "cli-custom",
+			"--credential", "cli-custom-canonical",
+			"--path", "cli-custom-path",
 			"--field", "foo=bar",
 			"--field", "int=1",
 		})
@@ -67,6 +69,11 @@ func TestCreds(t *testing.T) {
 		if err != nil {
 			t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
 		}
+
+		// Test that the flag works
+		assert.Equal(t, "cli-custom", *outCred.Name)
+		assert.Equal(t, "cli-custom-canonical", *outCred.Canonical)
+		assert.Equal(t, "cli-custom-path", *outCred.Path)
 
 		t.Run("Update", func(t *testing.T) {
 			cmdOut, cmdErr := executeCommand([]string{
