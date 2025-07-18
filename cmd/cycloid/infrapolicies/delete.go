@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -25,8 +24,7 @@ func NewDeleteCommand() *cobra.Command {
 	cy --org my-org ip delete \
 	   --canonical my_policy 
 		`,
-		RunE:    delete,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: delete,
 	}
 	common.RequiredFlag(WithFlagcanonical, cmd)
 

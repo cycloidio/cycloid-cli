@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -19,9 +18,8 @@ func NewListChildrensCommand() *cobra.Command {
 		Aliases: []string{
 			"list-childrens",
 		},
-		Short:   "list the organization children",
-		RunE:    listChildrens,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Short: "list the organization children",
+		RunE:  listChildrens,
 	}
 
 	return cmd

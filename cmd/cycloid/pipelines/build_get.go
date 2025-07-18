@@ -6,7 +6,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -15,11 +14,10 @@ import (
 
 func NewBuildGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "get",
-		Short:   "Get a build information.",
-		PreRunE: internal.CheckAPIAndCLIVersion,
-		RunE:    getBuild,
-		Args:    cobra.NoArgs,
+		Use:   "get",
+		Short: "Get a build information.",
+		RunE:  getBuild,
+		Args:  cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)

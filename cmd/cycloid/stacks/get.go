@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -19,7 +18,6 @@ func NewGetCommand() *cobra.Command {
 		Short:   "get information on a stack",
 		Example: `cy --org my-org stacks get --ref my:stack-ref`,
 		RunE:    get,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	cmd.MarkFlagRequired(cyargs.AddStackRefFlag(cmd))

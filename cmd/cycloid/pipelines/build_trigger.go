@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -24,7 +23,6 @@ func NewBuildCreateCommand() *cobra.Command {
 		Example: `cy --org my-org pp trigger-build --project my-project --env my-env --job my-job`,
 		Short:   "trigger a pipeline build",
 		RunE:    createBuild,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 		Args:    cobra.NoArgs,
 	}
 

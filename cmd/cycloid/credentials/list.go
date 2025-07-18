@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -19,7 +18,6 @@ func NewListCommand() *cobra.Command {
 		Short:   "list the credentials",
 		Example: `cy --org my-org credentials list -o json`,
 		RunE:    list,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	cyargs.AddCredentialTypeFlag(cmd)

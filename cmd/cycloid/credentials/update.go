@@ -10,7 +10,6 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -61,10 +60,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// SSH
 	var sshCmd = &cobra.Command{
-		Use:     "ssh",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "ssh",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for SSH
 	cy --org my-org credential update ssh --name foo --ssh-key /path/to/private/key
@@ -74,10 +72,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// Basic auth
 	var basicAuthCmd = &cobra.Command{
-		Use:     "basic_auth",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "basic_auth",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for basic authentication
 	cy --org my-org credential update basic_auth --name foo --username my-username --password my-password
@@ -88,10 +85,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// Custom
 	var customCmd = &cobra.Command{
-		Use:     "custom",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "custom",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for custom type
 	cy --org my-org credential update custom --name foo --field my-key=my-value --field my-key2=my-value2 --field-file my-key3=/file/path
@@ -103,10 +99,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// AWS
 	var awsCmd = &cobra.Command{
-		Use:     "aws",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "aws",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for AWS
 	cy --org my-org credential update aws --name foo --access-key foo --secret-key bar
@@ -117,10 +112,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// Azure
 	var azureCmd = &cobra.Command{
-		Use:     "azure",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "azure",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for Azure
 	cy --org my-org credential update azure --name foo --client-id myid --client-secret mysec --subscription-id mysub --tenant-id mytenant
@@ -133,10 +127,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// Azure Storage
 	var azureStorageCmd = &cobra.Command{
-		Use:     "azure_storage",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "azure_storage",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for Azure storage
 	cy --org my-org credential update azure_storage --name foo --account-name myaccount --access-key mykey
@@ -147,10 +140,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// GCP
 	var gcpCmd = &cobra.Command{
-		Use:     "gcp",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "gcp",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for GCP
 	cy --org my-org credential update gcp --name foo --json-key /path/to/json/key
@@ -160,10 +152,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// Swift
 	var swiftCmd = &cobra.Command{
-		Use:     "swift",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "swift",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for Swift
 	cy --org my-org credential update swift --name foo --username foo --password bar --tenant-id mytenant --auth-url url --domain-id mydomain
@@ -177,10 +168,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	// Elasticsearch
 	var elasticsearchCmd = &cobra.Command{
-		Use:     "elasticsearch",
-		Args:    cobra.NoArgs,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "elasticsearch",
+		Args: cobra.NoArgs,
+		RunE: update,
 		Example: `
 	# update a credential for Elasticsearch
 	cy --org my-org credential update elasticsearch --name foo --username foo --password bar --ca-cert /path/to/cert

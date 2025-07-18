@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -17,7 +16,6 @@ func NewJobsUnpauseCommand() *cobra.Command {
 		Use:     "unpause",
 		Short:   "unpause a pipeline job",
 		RunE:    unpauseJob,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 		Example: `cy pp job unpause --project my-project --env env --component component --pipeline pipeline --job my-job`,
 		Args:    cobra.NoArgs,
 	}

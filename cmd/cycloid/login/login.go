@@ -22,8 +22,7 @@ func NewCommands() *cobra.Command {
 		Example: `# Login in an org using api-key
 export CY_API_KEY=xxxx
 cy login --org my-org`,
-		PreRunE: internal.CheckAPIAndCLIVersion,
-		RunE:    login,
+		RunE: login,
 	}
 
 	cmd.Flags().String("api-key", "", "[deprecated] set the API key, use CY_API_KEY env var instead.")

@@ -9,7 +9,6 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -27,7 +26,6 @@ func NewGetCommand() *cobra.Command {
 		Short:             "get a credential",
 		Example:           `cy --org my-org credential get credential-canonical`,
 		RunE:              get,
-		PreRunE:           internal.CheckAPIAndCLIVersion,
 	}
 
 	cyargs.AddCredentialCanonicalFlag(cmd)

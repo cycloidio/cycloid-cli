@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
@@ -23,8 +22,7 @@ func NewCreateCommand() *cobra.Command {
 	# create an organization foo
 	cy organization create --name foo
 `,
-		RunE:    create,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: create,
 	}
 
 	common.RequiredFlag(WithFlagName, cmd)

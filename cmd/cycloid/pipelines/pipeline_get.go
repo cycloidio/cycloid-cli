@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -19,7 +18,6 @@ func NewPipelineGetCommand() *cobra.Command {
 		Use:     "get",
 		Short:   "get a pipeline",
 		Example: `cy pipeline get --project my-project --env env --component component --pipeline pipeline_name`,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    getPipeline,
 		Args:    cobra.NoArgs,
 	}

@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -20,7 +19,6 @@ func NewBuildListCommand() *cobra.Command {
 		Short:   "list builds of a pipeline",
 		Example: `cy --org my-org pp list-builds --project my-project --env env --component component --job my-job`,
 		RunE:    listBuilds,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 		Args:    cobra.NoArgs,
 	}
 

@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -25,8 +24,7 @@ func NewValidateCommand() *cobra.Command {
 	# validate saved terraform plan against the infra policies rule in my-org/my-project/my-env
 	cy --org my-org --project my-project --env my-env ip validate --plan-path terraform-plan.json
 `,
-		RunE:    validate,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: validate,
 	}
 	common.RequiredFlag(WithFlagPlanPath, cmd)
 	common.RequiredFlag(common.WithFlagProject, cmd)

@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -19,7 +18,6 @@ func NewConfigGetCommand() *cobra.Command {
 		Use:     "get <ref?> <use-case?> [flags]",
 		Short:   "output a V2 stack default configuration in JSON (require stackforms)",
 		Example: `cy --org my-org stacks get-config my:stack-ref stack-usecase`,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    getConfig,
 		Args:    cobra.RangeArgs(0, 2),
 	}

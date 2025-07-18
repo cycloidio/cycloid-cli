@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -17,11 +16,10 @@ import (
 
 func NewPipelineDiffCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "diff",
-		Short:   "diff the remote pipeline with a local config",
-		RunE:    diff,
-		PreRunE: internal.CheckAPIAndCLIVersion,
-		Args:    cobra.NoArgs,
+		Use:   "diff",
+		Short: "diff the remote pipeline with a local config",
+		RunE:  diff,
+		Args:  cobra.NoArgs,
 	}
 
 	cyargs.AddCyContext(cmd)
