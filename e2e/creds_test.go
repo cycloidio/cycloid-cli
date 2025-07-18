@@ -44,7 +44,7 @@ func TestCreds(t *testing.T) {
 			"create",
 			"custom",
 			"--name", "cli-custom",
-			"--credential", "cli-custom-canonical",
+			"--canonical", "cli-custom-canonical",
 			"--path", "cli-custom-path",
 			"--field", "foo=bar",
 			"--field", "int=1",
@@ -56,7 +56,7 @@ func TestCreds(t *testing.T) {
 				"--org", config.Org,
 				"creds",
 				"delete",
-				"--canonical", "cli-custom",
+				"--canonical", "cli-custom-canonical",
 			})
 			if err != nil {
 				t.Fatalf("failed to delete cred cli-custom: %s", err.Error())
@@ -71,6 +71,10 @@ func TestCreds(t *testing.T) {
 		}
 
 		// Test that the flag works
+		assert.NotNil(t, outCred, "cli output should contain a credential:", cmdOut, cmdErr)
+		assert.NotNil(t, outCred.Name, "cli output should contain a name:", cmdOut, cmdErr, outCred)
+		assert.NotNil(t, outCred.Canonical, "cli output should contain a canonical:", cmdOut, cmdErr, outCred)
+		assert.NotNil(t, outCred.Path, "cli output should contain a path:", cmdOut, cmdErr, outCred)
 		assert.Equal(t, "cli-custom", *outCred.Name)
 		assert.Equal(t, "cli-custom-canonical", *outCred.Canonical)
 		assert.Equal(t, "cli-custom-path", *outCred.Path)
@@ -82,7 +86,7 @@ func TestCreds(t *testing.T) {
 				"creds",
 				"update",
 				"custom",
-				"--canonical", "cli-custom",
+				"--canonical", "cli-custom-canonical",
 				"--name", "cli-custom",
 				"--field", "foo=bar",
 				"--field", "int=1",
@@ -101,27 +105,13 @@ func TestCreds(t *testing.T) {
 				"--org", config.Org,
 				"creds",
 				"get",
-				"--canonical", "cli-custom",
+				"--canonical", "cli-custom-canonical",
 			})
-
 			assert.Nil(t, cmdErr)
 			require.Contains(t, cmdOut, "new\": \"field")
 		})
 
 		t.Run("SuccessCredsCreateCustomWithFile", func(t *testing.T) {
-			defer t.Run("SuccessDelete", func(t *testing.T) {
-				_, err := executeCommand([]string{
-					"--output", "json",
-					"--org", config.Org,
-					"creds",
-					"delete",
-					"--canonical", "cli-custom-file",
-				})
-				if err != nil {
-					t.Fatalf("failed to delete cred 'cli-custom-file'")
-				}
-			})
-
 			fileContent := "hello world"
 			fileName, err := WriteTempFile(fileContent)
 			if err != nil {
@@ -139,8 +129,21 @@ func TestCreds(t *testing.T) {
 				"--field", "foo=bar",
 				"--field-file", "key=" + fileName,
 			})
-
 			assert.Nil(t, cmdErr)
+
+			defer t.Run("SuccessDelete", func(t *testing.T) {
+				_, err := executeCommand([]string{
+					"--output", "json",
+					"--org", config.Org,
+					"creds",
+					"delete",
+					"--canonical", "cli-custom-file",
+				})
+				if err != nil {
+					t.Fatalf("failed to delete cred 'cli-custom-file'")
+				}
+			})
+
 			var outCred *models.Credential
 			err = json.Unmarshal([]byte(cmdOut), &outCred)
 			if err != nil {
