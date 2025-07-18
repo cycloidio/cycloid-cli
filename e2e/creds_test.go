@@ -217,7 +217,11 @@ func TestCreds(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Equal(t, "", cmdOut)
+		var outCred *models.Credential
+		err = json.Unmarshal([]byte(cmdOut), &outCred)
+		if err != nil {
+			t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
+		}
 	})
 
 	t.Run("SuccessCredsCreateSSH", func(t *testing.T) {
@@ -246,7 +250,11 @@ func TestCreds(t *testing.T) {
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Equal(t, "", cmdOut)
+		var outCred *models.Credential
+		err = json.Unmarshal([]byte(cmdOut), &outCred)
+		if err != nil {
+			t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
+		}
 	})
 
 }
