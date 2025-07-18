@@ -49,6 +49,7 @@ func NewCreateCommand() *cobra.Command {
 	cyargs.AddCredentialNamePersistentFlag(cmd)
 	cyargs.AddCredentialDescriptionPersistentFlag(cmd)
 	cyargs.AddCredentialCanonicalPersistentFlag(cmd)
+	cyargs.AddCredentialPathPersistentFlag(cmd)
 	cmd.PersistentFlags().Bool("update", false, "update this credential if it already exists.")
 
 	// SSH

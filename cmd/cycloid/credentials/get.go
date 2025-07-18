@@ -31,6 +31,7 @@ func NewGetCommand() *cobra.Command {
 	}
 
 	cyargs.AddCredentialCanonicalFlag(cmd)
+	cyargs.AddCredentialPathFlag(cmd)
 	return cmd
 }
 
