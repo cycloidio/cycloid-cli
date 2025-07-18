@@ -1,8 +1,0 @@
-component: CLI
-kind: CHANGED
-body: Updated project / env command to the new component layer
-time: 2025-05-06T10:13:17.906599216Z
-custom:
-  DETAILS: As with components, what used to be env creation become components.
-  PR: "339"
-  TYPE: CLI
