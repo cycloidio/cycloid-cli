@@ -24,7 +24,7 @@ func NewBuildListCommand() *cobra.Command {
 
 	cyargs.AddCyContext(cmd)
 	cyargs.AddPipeline(cmd)
-	cyargs.AddPipelineJob(cmd)
+	cmd.MarkFlagRequired(cyargs.AddPipelineJob(cmd))
 	return cmd
 }
 
