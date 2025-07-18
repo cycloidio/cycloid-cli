@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -25,8 +24,7 @@ func NewGetCommand() *cobra.Command {
 	cy --org my-org ip get \
 	   --canonical my_policy 
 		`,
-		RunE:    get,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: get,
 	}
 	common.RequiredFlag(WithFlagcanonical, cmd)
 

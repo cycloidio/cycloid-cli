@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -14,11 +13,10 @@ import (
 
 func NewListWorkersCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "list-workers",
-		Args:    cobra.NoArgs,
-		Short:   "list the organization workers",
-		RunE:    listWorkers,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:   "list-workers",
+		Args:  cobra.NoArgs,
+		Short: "list the organization workers",
+		RunE:  listWorkers,
 	}
 
 	return cmd

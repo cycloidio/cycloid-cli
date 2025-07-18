@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
@@ -21,7 +20,6 @@ func NewStatusCmd() *cobra.Command {
 	# show the status of Cycloid services
 	cy status
 `,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			output, err := cmd.Flags().GetString("output")
 			if err != nil {

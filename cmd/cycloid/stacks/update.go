@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -27,8 +26,7 @@ cy stacks update \
 	--visibility "hidden" \
 	--team "teamCanonical"
 `,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: update,
 	}
 
 	cmd.MarkFlagRequired(cyargs.AddStackRefFlag(cmd))

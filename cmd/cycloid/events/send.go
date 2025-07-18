@@ -8,7 +8,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -35,8 +34,7 @@ func NewSendCommand() *cobra.Command {
 	# create a custom event
 	cy --org my-org event create --tag env=staging --title success --message "successful deployment"
 `,
-		RunE:    send,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: send,
 	}
 
 	cmd.Flags().StringToStringVar(&tagsFlag, "tag", nil, "tags of the event (key=value)")

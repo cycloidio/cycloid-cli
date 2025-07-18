@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -23,8 +22,7 @@ func NewListCommand() *cobra.Command {
 		Example: `# Get events since last week
 cy --org my-org event list --begin 0 --end "$(date --date "last week" +"%s")" --severity info,warn,err,crit --type Cycloid,AWS,Monitoring,Custom
 `,
-		RunE:    list,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: list,
 	}
 
 	now := time.Now().Unix()

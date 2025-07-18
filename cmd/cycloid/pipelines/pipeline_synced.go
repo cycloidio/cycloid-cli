@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -16,7 +15,6 @@ func NewPipelineSyncedCommand() *cobra.Command {
 		Use:     "synced",
 		Short:   "Check if a pipeline is synced with its stacks.",
 		Example: `cy --org my-org pipeline synced --project my-project --env env`,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 		RunE:    synced,
 		Args:    cobra.NoArgs,
 	}

@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
@@ -22,7 +21,6 @@ func NewListCommand() *cobra.Command {
 	# list the organizations
 	cy o list --output json
 `,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 	return cmd
 

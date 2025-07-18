@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 )
 
 func NewListCommand() *cobra.Command {
@@ -17,8 +16,7 @@ func NewListCommand() *cobra.Command {
 	cy --org my-org kpi list
 `,
 		// RunE:    list,
-		RunE:    func(cmd *cobra.Command, args []string) error { panic("Not implemented") }, //create,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: func(cmd *cobra.Command, args []string) error { panic("Not implemented") }, //create,
 	}
 
 	common.WithFlagProject(cmd)

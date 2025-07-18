@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -21,8 +20,7 @@ func NewGetCommand() *cobra.Command {
 	# get the config repository with the canonical my-config-repo and display the result in YAML
 	cy  --org my-org config-repo get --canonical my-config-repo -o yaml
 `,
-		RunE:    getConfigRepository,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: getConfigRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagCan, cmd)

@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -23,8 +22,7 @@ func NewUpdateCommand() *cobra.Command {
 	# update an organization foo
 	cy organization update --org org --name foo
 `,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: update,
 	}
 
 	common.RequiredFlag(WithFlagName, cmd)

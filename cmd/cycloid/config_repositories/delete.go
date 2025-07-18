@@ -5,7 +5,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -21,8 +20,7 @@ func NewDeleteCommand() *cobra.Command {
 	# delete a config repository with the canonical my-config-repo
 	cy  --org my-org config-repository delete --canonical my-config-repo
 `,
-		RunE:    deleteConfigRepository,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: deleteConfigRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagCan, cmd)

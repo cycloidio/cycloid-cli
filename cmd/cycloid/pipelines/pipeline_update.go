@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -22,9 +21,8 @@ func NewPipelineUpdateCommand() *cobra.Command {
 	# update a running pipeline
 	cy --org my-org pp update --project my-project --env my-env --vars /path/to/vars.yml --pipeline /path/to/pipeline.yml
 `,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
-		Args:    cobra.NoArgs,
+		RunE: update,
+		Args: cobra.NoArgs,
 	}
 	cyargs.AddCyContext(cmd)
 	cyargs.AddPipeline(cmd)
