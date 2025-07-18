@@ -21,7 +21,6 @@ func NewCommands() *cobra.Command {
 		NewPipelineClearTaskCacheCommand(),
 		NewPipelineDiffCommand(),
 		NewPipelineGetCommand(),
-		NewPipelineGetCommand(),
 		NewPipelineLastUsedCommand(),
 		NewPipelineListCommand(),
 		NewPipelinePauseCommand(),
