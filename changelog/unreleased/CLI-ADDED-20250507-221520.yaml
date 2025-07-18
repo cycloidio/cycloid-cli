@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add cy project list-env command.
-time: 2025-05-07T22:15:20.195241817Z
-custom:
-  DETAILS: This allow to list the envs linked to a project.
-  PR: "342"
-  TYPE: CLI

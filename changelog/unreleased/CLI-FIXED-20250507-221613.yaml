@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Migrated all project commands to component layer
-time: 2025-05-07T22:16:13.447040411Z
-custom:
-  DETAILS: ""
-  PR: "342"
-  TYPE: CLI
