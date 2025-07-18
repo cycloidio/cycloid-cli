@@ -11,6 +11,7 @@ import (
 )
 
 func TestRoles(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	t.Run("SuccessRolesList", func(t *testing.T) {

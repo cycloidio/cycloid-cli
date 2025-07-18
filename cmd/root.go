@@ -1,0 +1,114 @@
+package cmd
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
+	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/api_key"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog_repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/config_repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environments"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/external_backends"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/infrapolicies"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
+	"github.com/cycloidio/cycloid-cli/internal/version"
+)
+
+var (
+	versionString = fmt.Sprintf("%s, revision %s, branch %s, date %s; go %s", version.Version, version.Revision, version.Branch, version.BuildDate, version.GoVersion)
+
+	// Used for flags.
+	userOutput string
+)
+
+func init() {
+	viper.SetEnvPrefix("CY")
+	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
+	viper.AutomaticEnv()
+}
+
+func NewRootCommand() *cobra.Command {
+	rootCmd := &cobra.Command{
+		Version:       versionString,
+		SilenceErrors: true,
+		SilenceUsage:  false,
+		Use:           "cy",
+		Short:         "Cycloid CLI",
+		Long: `CLI tool to interact with Cycloid API.
+Documentation at https://docs.beta.cycloid.io/reference/cli/
+
+Environment:
+
+CY_API_URL   -> Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
+CY_ORG       -> Set the current organization
+CY_API_KEY   -> Set the current API Key to use
+CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default warning.
+`,
+	}
+
+	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", "The formatting style for command output: json|yaml|table")
+	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
+
+	rootCmd.PersistentFlags().StringP("verbosity", "v", "warning", "Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none.")
+	viper.BindPFlag("verbosity", rootCmd.PersistentFlags().Lookup("verbosity"))
+	viper.SetDefault("verbosity", "warning")
+
+	rootCmd.PersistentFlags().String("api-url", "https://http-api.cycloid.io", "Specify the HTTP url of Cycloid API to use eg https://http-api.cycloid.io. This can also be given by CY_API_URL environment variable.")
+	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
+
+	rootCmd.PersistentFlags().Bool("insecure", false, "Decide to skip or not TLS verification")
+	viper.BindPFlag("insecure", rootCmd.PersistentFlags().Lookup("insecure"))
+
+	rootCmd.PersistentFlags().String("org", "", "Specify the org to use. override CY_ORG env var. Required for all Org scoped endpoint.")
+	viper.BindPFlag("org", rootCmd.PersistentFlags().Lookup("org"))
+
+	// Remove usage on error, this is annoying in scripting
+	rootCmd.SilenceUsage = true
+
+	AttachCommands(rootCmd)
+
+	return rootCmd
+}
+
+func AttachCommands(cmd *cobra.Command) {
+	cmd.AddCommand(
+		// Root
+		root.NewVersionCmd(),
+		root.NewStatusCmd(),
+		root.NewCompletionCmd(),
+		api_key.NewCommands(),
+		catalog_repositories.NewCommands(),
+		config_repositories.NewCommands(),
+		creds.NewCommands(),
+		events.NewCommands(),
+		external_backends.NewCommands(),
+		infrapolicies.NewCommands(),
+		members.NewCommands(),
+		organizations.NewCommands(),
+		// pipelines.NewCommands(),
+		projects.NewCommands(),
+		environments.NewCommands(),
+		components.NewCommands(),
+		kpis.NewCommands(),
+		roles.NewCommands(),
+		stacks.NewCommands(),
+		login.NewCommands(),
+		terracost.NewCommands(),
+		beta.NewCommands(),
+	)
+}

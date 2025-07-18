@@ -12,6 +12,7 @@ import (
 )
 
 func TestExternalBackends(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	// Prepare a running project

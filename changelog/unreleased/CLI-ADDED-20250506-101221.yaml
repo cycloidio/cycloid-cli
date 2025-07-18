@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: Add support for components CRUD in the CLI
+time: 2025-05-06T10:12:21.203019296Z
+custom:
+  DETAILS: This allows you to manipulate components using the CLI
+  PR: "339"
+  TYPE: CLI

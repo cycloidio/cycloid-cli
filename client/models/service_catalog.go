@@ -48,8 +48,7 @@ type ServiceCatalog struct {
 	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
 
 	// description
-	// Required: true
-	Description *string `json:"description"`
+	Description string `json:"description,omitempty"`
 
 	// Directory where the ServiceCatalog configuration is found.
 	// Required: true
@@ -75,6 +74,10 @@ type ServiceCatalog struct {
 	// keywords
 	// Required: true
 	Keywords []string `json:"keywords"`
+
+	// Indicates if the stack uses the latest version
+	// Required: true
+	Latest *bool `json:"latest"`
 
 	// name
 	// Required: true
@@ -118,6 +121,10 @@ type ServiceCatalog struct {
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 
+	// Version of the stack
+	// Required: true
+	Version *string `json:"version"`
+
 	// visibility
 	// Required: true
 	Visibility *string `json:"visibility"`
@@ -147,10 +154,6 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateDescription(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateDirectory(formats); err != nil {
 		res = append(res, err)
 	}
@@ -172,6 +175,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateKeywords(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLatest(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -208,6 +215,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVersion(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -315,15 +326,6 @@ func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ServiceCatalog) validateDescription(formats strfmt.Registry) error {
-
-	if err := validate.Required("description", "body", m.Description); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *ServiceCatalog) validateDirectory(formats strfmt.Registry) error {
 
 	if err := validate.Required("directory", "body", m.Directory); err != nil {
@@ -415,6 +417,15 @@ func (m *ServiceCatalog) validateImportStatus(formats strfmt.Registry) error {
 func (m *ServiceCatalog) validateKeywords(formats strfmt.Registry) error {
 
 	if err := validate.Required("keywords", "body", m.Keywords); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateLatest(formats strfmt.Registry) error {
+
+	if err := validate.Required("latest", "body", m.Latest); err != nil {
 		return err
 	}
 
@@ -549,6 +560,15 @@ func (m *ServiceCatalog) validateUpdatedAt(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) validateVersion(formats strfmt.Registry) error {
+
+	if err := validate.Required("version", "body", m.Version); err != nil {
 		return err
 	}
 

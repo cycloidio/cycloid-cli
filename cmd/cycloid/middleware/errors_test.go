@@ -18,7 +18,7 @@ func TestNewApiError(t *testing.T) {
 		err := &organizations.CreateOrgUnprocessableEntity{
 			Payload: &models.ErrorPayload{
 				Errors: []*models.ErrorDetailsItem{
-					&models.ErrorDetailsItem{
+					{
 						Code:    ptrStr("code"),
 						Details: []string{"some", "details"},
 						Message: ptrStr("the error that actually returned the BE"),
@@ -29,10 +29,10 @@ func TestNewApiError(t *testing.T) {
 
 		aerr := middleware.NewApiError(err)
 		apierr := aerr.(*middleware.ApiError)
-		assert.Equal(t, "POST", apierr.HttpMethod)
+		assert.Equal(t, "POST", apierr.HTTPMethod)
 		assert.Equal(t, "/organizations", apierr.URL)
-		assert.Equal(t, "422", apierr.HttpCode)
-		assert.Equal(t, "createOrgUnprocessableEntity", apierr.ApiAction)
+		assert.Equal(t, "422", apierr.HTTPCode)
+		assert.Equal(t, "createOrgUnprocessableEntity", apierr.APIAction)
 
 		assert.Equal(t, "A 422 error was returned on \"createOrgUnprocessableEntity\" call with message: the error that actually returned the BE", aerr.Error())
 	})

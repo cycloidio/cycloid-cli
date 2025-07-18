@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	"encoding/json"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -29,6 +28,11 @@ type ProjectSimple struct {
 	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	Canonical *string `json:"canonical"`
 
+	// color
+	// Required: true
+	// Max Length: 64
+	Color *string `json:"color"`
+
 	// created at
 	// Required: true
 	// Minimum: 0
@@ -40,14 +44,15 @@ type ProjectSimple struct {
 	// favorite
 	Favorite bool `json:"favorite,omitempty"`
 
+	// icon
+	// Required: true
+	// Max Length: 64
+	Icon *string `json:"icon"`
+
 	// id
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
-
-	// The import process status.
-	// Enum: ["succeeded","failed","importing"]
-	ImportStatus string `json:"import_status,omitempty"`
 
 	// name
 	// Required: true
@@ -74,15 +79,19 @@ func (m *ProjectSimple) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateColor(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateCreatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateID(formats); err != nil {
+	if err := m.validateIcon(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateImportStatus(formats); err != nil {
+	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -125,6 +134,19 @@ func (m *ProjectSimple) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ProjectSimple) validateColor(formats strfmt.Registry) error {
+
+	if err := validate.Required("color", "body", m.Color); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("color", "body", *m.Color, 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ProjectSimple) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
@@ -138,6 +160,19 @@ func (m *ProjectSimple) validateCreatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ProjectSimple) validateIcon(formats strfmt.Registry) error {
+
+	if err := validate.Required("icon", "body", m.Icon); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("icon", "body", *m.Icon, 64); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *ProjectSimple) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
@@ -145,51 +180,6 @@ func (m *ProjectSimple) validateID(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var projectSimpleTypeImportStatusPropEnum []interface{}
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["succeeded","failed","importing"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		projectSimpleTypeImportStatusPropEnum = append(projectSimpleTypeImportStatusPropEnum, v)
-	}
-}
-
-const (
-
-	// ProjectSimpleImportStatusSucceeded captures enum value "succeeded"
-	ProjectSimpleImportStatusSucceeded string = "succeeded"
-
-	// ProjectSimpleImportStatusFailed captures enum value "failed"
-	ProjectSimpleImportStatusFailed string = "failed"
-
-	// ProjectSimpleImportStatusImporting captures enum value "importing"
-	ProjectSimpleImportStatusImporting string = "importing"
-)
-
-// prop value enum
-func (m *ProjectSimple) validateImportStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, projectSimpleTypeImportStatusPropEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *ProjectSimple) validateImportStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.ImportStatus) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateImportStatusEnum("import_status", "body", m.ImportStatus); err != nil {
 		return err
 	}
 

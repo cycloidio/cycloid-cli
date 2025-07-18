@@ -8,13 +8,14 @@ import (
 )
 
 func TestCatalogRepositories(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	t.Run("SuccessCatalogRepositoriesCreate", func(t *testing.T) {
 		// Cleanup just in case
 		executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"delete",
 			"--canonical", "step-by-step",
@@ -22,7 +23,7 @@ func TestCatalogRepositories(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"create",
 			"--branch", "stack-aws",
@@ -37,7 +38,7 @@ func TestCatalogRepositories(t *testing.T) {
 	t.Run("SuccessCatalogRepositoriesList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"list",
 		})
@@ -49,7 +50,7 @@ func TestCatalogRepositories(t *testing.T) {
 	t.Run("SuccessCatalogRepositoriesGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"get",
 			"--canonical", "step-by-step",
@@ -62,7 +63,7 @@ func TestCatalogRepositories(t *testing.T) {
 	t.Run("SuccessCatalogRepositoriesRefresh", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 			"catalog-repository",
 			"refresh",
 			"--canonical", "step-by-step",

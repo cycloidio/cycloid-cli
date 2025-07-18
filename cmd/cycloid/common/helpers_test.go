@@ -6,7 +6,7 @@ func TestUpdateMapField(t *testing.T) {
 	type Args struct {
 		field string
 		value string
-		m     map[string]map[string]map[string]interface{}
+		m     map[string]map[string]map[string]any
 	}
 	tests := []struct {
 		name    string
@@ -19,7 +19,7 @@ func TestUpdateMapField(t *testing.T) {
 			args: Args{
 				field: "section.group.string",
 				value: `"my-string"`,
-				m: map[string]map[string]map[string]interface{}{
+				m: map[string]map[string]map[string]any{
 					"section": {"group": {"string": "my-string"}},
 				},
 			},
@@ -30,7 +30,7 @@ func TestUpdateMapField(t *testing.T) {
 			args: Args{
 				field: "section.group.string",
 				value: `'my-string'`,
-				m: map[string]map[string]map[string]interface{}{
+				m: map[string]map[string]map[string]any{
 					"section": {"group": {"string": "my-string"}},
 				},
 			},
@@ -41,7 +41,7 @@ func TestUpdateMapField(t *testing.T) {
 			args: Args{
 				field: "section.group.string",
 				value: `my-string`,
-				m: map[string]map[string]map[string]interface{}{
+				m: map[string]map[string]map[string]any{
 					"section": {"group": {"string": "my-string"}},
 				},
 			},
@@ -52,7 +52,7 @@ func TestUpdateMapField(t *testing.T) {
 			args: Args{
 				field: "section.group.int",
 				value: `1`,
-				m: map[string]map[string]map[string]interface{}{
+				m: map[string]map[string]map[string]any{
 					"section": {"group": {"int": 1}},
 				},
 			},
@@ -63,8 +63,41 @@ func TestUpdateMapField(t *testing.T) {
 			args: Args{
 				field: "section.group.string",
 				value: `"1"`,
-				m: map[string]map[string]map[string]interface{}{
+				m: map[string]map[string]map[string]any{
 					"section": {"group": {"string": "1"}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Array",
+			args: Args{
+				field: "section.group.array",
+				value: `["hello", "world"]`,
+				m: map[string]map[string]map[string]any{
+					"section": {"group": {"array": []string{"hello", "world"}}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "ArraySingleValue",
+			args: Args{
+				field: "section.group.array",
+				value: `["hi"]`,
+				m: map[string]map[string]map[string]any{
+					"section": {"group": {"array": []string{"hi"}}},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "Map",
+			args: Args{
+				field: "section.group.array",
+				value: `{"hello": "world"}`,
+				m: map[string]map[string]map[string]any{
+					"section": {"group": {"array": map[string]string{"hello": "world"}}},
 				},
 			},
 			wantErr: false,

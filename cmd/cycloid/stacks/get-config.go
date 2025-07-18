@@ -1,7 +1,6 @@
 package stacks
 
 import (
-	"encoding/json"
 	"fmt"
 
 	"github.com/pkg/errors"
@@ -10,6 +9,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -32,26 +32,26 @@ cy --org my-org stacks get-config my:stack-ref stack-usecase
 }
 
 func getConfig(cmd *cobra.Command, args []string) error {
-	org, err := common.GetOrg(cmd)
+	org, err := cy_args.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	ref, _ := cmd.Flags().GetString("ref")
-	if len(args) >= 1 && ref == "" {
-		ref = args[0]
-	} else if ref == "" {
-		return fmt.Errorf("missing ref argument.")
+	stackRef, _ := cy_args.GetStackRef(cmd)
+	if len(args) >= 1 && *stackRef == "" {
+		stackRef = &args[0]
+	} else if *stackRef == "" {
+		return fmt.Errorf("missing ref argument")
 	}
 
-	useCase, _ := cmd.Flags().GetString("use-case")
-	if len(args) == 2 && useCase == "" {
-		useCase = args[1]
-	} else if useCase == "" {
-		return fmt.Errorf("missing use-case argument.")
+	useCase, _ := cy_args.GetUseCase(cmd)
+	if len(args) == 2 && *useCase == "" {
+		useCase = &args[1]
+	} else if *useCase == "" {
+		return fmt.Errorf("missing use-case argument")
 	}
 
-	internal.Debug("ref: ", ref, "usecase:", useCase)
+	internal.Debug("ref: ", stackRef, "usecase:", useCase)
 
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
@@ -72,27 +72,20 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	data, err := m.GetStackConfig(org, ref)
+	stackConfigs, err := m.GetStackConfig(org, *stackRef)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	var mappedData map[string]struct {
-		Forms common.UseCase `json:"forms"`
-	}
-
-	// Type casting is not working but marshall/unmashall works
-	// TODO: Clean this or ask backend to return a typed response
-	jsonData, err := json.Marshal(data)
+	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, *useCase)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse config from API.")
+		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", *stackRef, *useCase, err)
 	}
 
-	err = json.Unmarshal(jsonData, &mappedData)
+	config, err := cy_args.GetStackformsVars(cmd, useCaseConfig)
 	if err != nil {
-		return errors.Wrap(err, "failed to parse forms usecase from API.")
+		return printer.SmartPrint(p, nil, err, "failed to fetch stack config.", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	formConfig := common.UseCaseToFormInput(mappedData[useCase].Forms, true)
-	return printer.SmartPrint(p, formConfig, err, "unable to get stack config", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, config, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

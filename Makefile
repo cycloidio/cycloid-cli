@@ -35,41 +35,13 @@ SWAGGER_GENERATE = swagger generate client \
 		--spec=$(SWAGGER_FILE) \
 		--default-produces="application/vnd.cycloid.io.v1+json" \
 		--target=./client \
-		--name=api \
-		--tags=Cycloid \
-		--tags="Organizations" \
-		--tags="Organization API keys" \
-		--tags="Organization Config Repositories" \
-		--tags="Organization Credentials" \
-		--tags="Organization External Backends" \
-		--tags="Organization members" \
-		--tags="Organization pipelines" \
-		--tags="Organization pipelines jobs" \
-		--tags="Organization pipelines jobs build" \
-		--tags="Organization projects" \
-		--tags="Organization Projects" \
-		--tags="Organization Roles" \
-		--tags="Organization Service Catalog Sources" \
-		--tags="Organization workers" \
-		--tags="Organization members" \
-		--tags="Organization Invitations" \
-		--tags="Organization Forms" \
-		--tags="Organization kpis" \
- 		--tags="Organization Infrastructure Policies" \
- 		--tags="Organization Children" \
-		--tags="Service catalogs" \
-		--tags="User" \
-		--tags="Cost Estimation"
-
-SWAGGER_DOCKER_GENERATE = rm -rf ./client; \
-	mkdir ./client; \
-	$(DOCKER_COMPOSE) run $(SWAGGER_COMMAND)
+		--name=api
 
 # E2E tests
-CY_API_URL         ?= http://127.0.0.1:3001
-# Env list specified in file /e2e/e2e.go
-CY_TEST_GIT_CR_URL ?= git@172.42.0.14:/git-server/repos/backend-test-config-repo.git
-CY_TEST_ROOT_ORG ?= "fake-cycloid"
+CY_API_URL         ?= "https://api-cli-test.staging.cycloid.io/"
+CY_TEST_ROOT_ORG ?= "cycloid"
+# You can get the key in the admin_api_key cred in the cli console
+CY_TEST_API_KEY       ?=
 
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
@@ -89,15 +61,18 @@ help: ## Show this help
 
 .PHONY: build
 build: ## Builds the binary
-	GO111MODULE=on CGO_ENABLED=0 GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY)-linux-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o $(BINARY)-windows-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o $(BINARY)-darwin-arm64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $(BINARY)-darwin-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 
 .PHONY: test
 test: ## Run end to end tests
-	@echo "Using API url: $(CY_API_URL) (from \$$CY_API_URL)"
-	@echo "Using ORG: $(CY_TEST_ROOT_ORG) (from \$$CY_TEST_ROOT_ORG)"
-	@echo "Using GIT: $(CY_TEST_GIT_CR_URL) (from \$$CY_TEST_GIT_CR_URL)"
-	@if [ -z "$$CY_TEST_ROOT_API_KEY" ]; then echo "Unable to read API KEY from \$$CY_TEST_ROOT_API_KEY"; exit 1; fi; \
-	CY_TEST_GIT_CR_URL="$(CY_TEST_GIT_CR_URL)" CY_API_URL="$(CY_API_URL)" CY_TEST_ROOT_ORG="$(CY_TEST_ROOT_ORG)" go test ./... --tags e2e -v
+	CY_API_URL=$(CY_API_URL) \
+	  CY_TEST_ROOT_ORG=$(CY_TEST_ROOT_ORG) \
+	  CY_TEST_API_KEY=$(CY_TEST_API_KEY) \
+		go test ./... -v
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder
@@ -108,27 +83,24 @@ reset-old-client: ## Resets old client folder
 generate-client: reset-old-client ## Generate client from file at SWAGGER_FILE path
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE)
-
-.PHONY: generate-client-from-local
-generate-client-from-local: reset-old-client ## Generates client using docker and local swagger (version -> v0.0-dev)
-	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE)
-	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
-	echo 'v0.0-dev' > client/version
+	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
+	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
+	echo $$SWAGGER_VERSION > client/version; \
+	go mod tidy
 
 .PHONY: generate-client-from-docs
 generate-client-from-docs: reset-old-client ## Generates client using docker and swagger from docs (version -> latest-api)
 	@wget -O swagger.yml https://docs.cycloid.io/api/swagger.yml
 	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
-	$(DOCKER_COMPOSE) run $(SWAGGER_GENERATE) && \
 	echo $$SWAGGER_VERSION > client/version; \
+	make generate-client && \
 	echo "Please run the following git commands:"; \
 	echo "git add client" && \
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
-	$(DOCKER_COMPOSE) run --entrypoint /bin/sh swagger -c "chown -R $(shell id -u):$(shell id -g) ./client"
 
-.PHONY: ecr-connect
-ecr-connect: ## Login to ecr, requires aws cli installed
+.PHONY: docker-login
+docker-login: ## Login to ecr, requires aws cli installed
 	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/youdeploy-http-api
 
 .PHONY: start-local-be

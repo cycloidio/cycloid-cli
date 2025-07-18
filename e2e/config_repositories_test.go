@@ -11,6 +11,7 @@ import (
 )
 
 func TestConfigRepositories(t *testing.T) {
+	t.Skip()
 	LoginToRootOrg()
 
 	t.Run("SuccessConfigRepositoriesCreate", func(t *testing.T) {

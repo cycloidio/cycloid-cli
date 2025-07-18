@@ -17,7 +17,7 @@ import (
 
 // NewServiceCatalog NewServiceCatalog
 //
-// # Represents the Service Catalog item
+// # Represents all information needed to create a new Service Catalog item
 //
 // swagger:model NewServiceCatalog
 type NewServiceCatalog struct {
@@ -36,8 +36,7 @@ type NewServiceCatalog struct {
 	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
 
 	// description
-	// Required: true
-	Description *string `json:"description"`
+	Description string `json:"description,omitempty"`
 
 	// image
 	// Format: uri
@@ -85,10 +84,6 @@ func (m *NewServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDependencies(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDescription(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -172,15 +167,6 @@ func (m *NewServiceCatalog) validateDependencies(formats strfmt.Registry) error 
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *NewServiceCatalog) validateDescription(formats strfmt.Registry) error {
-
-	if err := validate.Required("description", "body", m.Description); err != nil {
-		return err
 	}
 
 	return nil

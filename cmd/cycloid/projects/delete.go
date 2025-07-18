@@ -1,29 +1,27 @@
 package projects
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cy_args"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
-		Short: "delete a project",
-		Example: `
-	# delete a project in 'my-org' organization
-	cy --org my-org project delete --project my-project
-`,
+		Use:     "delete",
+		Aliases: []string{"del", "rm"},
+		Short:   "delete a project",
+		Example: `cy --org my-org project delete --project my-project`,
 		RunE:    deleteProject,
 		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
-	common.RequiredPersistentFlag(common.WithFlagProject, cmd)
+	cy_args.AddProjectFlag(cmd)
 	return cmd
 }
 
@@ -31,23 +29,23 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := common.GetOrg(cmd)
+	org, err := cy_args.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
-	project, err := cmd.Flags().GetString("project")
+	project, err := cy_args.GetProject(cmd)
 	if err != nil {
 		return err
 	}
-	output, err := cmd.Flags().GetString("output")
+	output, err := cy_args.GetOutput(cmd)
 	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+		return err
 	}
 
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
+		return err
 	}
 
 	err = m.DeleteProject(org, project)

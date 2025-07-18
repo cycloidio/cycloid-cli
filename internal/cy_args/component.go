@@ -1,0 +1,57 @@
+package cy_args
+
+import "github.com/spf13/cobra"
+
+func AddComponentDescriptionFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("description", "d", "", "set the description of the component")
+}
+
+func GetComponentDescription(cmd *cobra.Command) (*string, error) {
+	description, err := cmd.Flags().GetString("description")
+	if err != nil {
+		return nil, err
+	}
+
+	return &description, nil
+}
+
+func AddCloudProviderFlag(cmd *cobra.Command) {
+	cmd.Flags().String("cloud-provider", "", "set the cloud provider of the component")
+}
+
+func GetCloudProvider(cmd *cobra.Command) (*string, error) {
+	cloudProvider, err := cmd.Flags().GetString("cloud-provider")
+	if err != nil {
+		return nil, err
+	}
+
+	return &cloudProvider, nil
+}
+
+func AddStackRefFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("stack-ref", "s", "", "set the stack ref of the component in format org:stack-canonical")
+	cmd.MarkFlagRequired("stack-ref")
+}
+
+func GetStackRef(cmd *cobra.Command) (*string, error) {
+	stackRef, err := cmd.Flags().GetString("stack-ref")
+	if err != nil {
+		return nil, err
+	}
+
+	return &stackRef, nil
+}
+
+func AddUseCaseFlag(cmd *cobra.Command) {
+	cmd.Flags().StringP("use-case", "u", "", "set the use-case of the component")
+	cmd.MarkFlagRequired("use-case")
+}
+
+func GetUseCase(cmd *cobra.Command) (*string, error) {
+	useCase, err := cmd.Flags().GetString("use-case")
+	if err != nil {
+		return nil, err
+	}
+
+	return &useCase, nil
+}

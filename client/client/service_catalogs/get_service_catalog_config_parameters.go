@@ -61,6 +61,18 @@ GetServiceCatalogConfigParams contains all the parameters to send to the API end
 */
 type GetServiceCatalogConfigParams struct {
 
+	/* ComponentCanonical.
+
+	   A canonical of a component.
+	*/
+	ComponentCanonical *string
+
+	/* ComponentName.
+
+	   A name of a component.
+	*/
+	ComponentName *string
+
 	/* EnvironmentCanonical.
 
 	   A list of environments' canonical to filter from
@@ -144,6 +156,28 @@ func (o *GetServiceCatalogConfigParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithComponentCanonical adds the componentCanonical to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) WithComponentCanonical(componentCanonical *string) *GetServiceCatalogConfigParams {
+	o.SetComponentCanonical(componentCanonical)
+	return o
+}
+
+// SetComponentCanonical adds the componentCanonical to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) SetComponentCanonical(componentCanonical *string) {
+	o.ComponentCanonical = componentCanonical
+}
+
+// WithComponentName adds the componentName to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) WithComponentName(componentName *string) *GetServiceCatalogConfigParams {
+	o.SetComponentName(componentName)
+	return o
+}
+
+// SetComponentName adds the componentName to the get service catalog config params
+func (o *GetServiceCatalogConfigParams) SetComponentName(componentName *string) {
+	o.ComponentName = componentName
+}
+
 // WithEnvironmentCanonical adds the environmentCanonical to the get service catalog config params
 func (o *GetServiceCatalogConfigParams) WithEnvironmentCanonical(environmentCanonical *string) *GetServiceCatalogConfigParams {
 	o.SetEnvironmentCanonical(environmentCanonical)
@@ -206,6 +240,40 @@ func (o *GetServiceCatalogConfigParams) WriteToRequest(r runtime.ClientRequest, 
 		return err
 	}
 	var res []error
+
+	if o.ComponentCanonical != nil {
+
+		// query param component_canonical
+		var qrComponentCanonical string
+
+		if o.ComponentCanonical != nil {
+			qrComponentCanonical = *o.ComponentCanonical
+		}
+		qComponentCanonical := qrComponentCanonical
+		if qComponentCanonical != "" {
+
+			if err := r.SetQueryParam("component_canonical", qComponentCanonical); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.ComponentName != nil {
+
+		// query param component_name
+		var qrComponentName string
+
+		if o.ComponentName != nil {
+			qrComponentName = *o.ComponentName
+		}
+		qComponentName := qrComponentName
+		if qComponentName != "" {
+
+			if err := r.SetQueryParam("component_name", qComponentName); err != nil {
+				return err
+			}
+		}
+	}
 
 	if o.EnvironmentCanonical != nil {
 

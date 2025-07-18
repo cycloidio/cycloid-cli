@@ -22,11 +22,13 @@
             # You packages here
             gnumake
 
-            go_1_22
+            go_1_24
             go-swagger
             gci
             golangci-lint
             golangci-lint-langserver
+            awscli
+            docker
           ]);
         };
       });

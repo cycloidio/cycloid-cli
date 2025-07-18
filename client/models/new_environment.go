@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -23,36 +22,20 @@ import (
 type NewEnvironment struct {
 
 	// canonical
-	// Required: true
 	// Max Length: 100
 	// Min Length: 1
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
-	Canonical *string `json:"canonical"`
-
-	// cloud provider canonical
-	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	CloudProviderCanonical string `json:"cloud_provider_canonical,omitempty"`
+	Canonical string `json:"canonical,omitempty"`
 
 	// color
 	// Max Length: 64
 	Color string `json:"color,omitempty"`
 
-	// icon
-	// Max Length: 64
-	Icon string `json:"icon,omitempty"`
-
-	// The variables set within a form with the corresponding environment
-	// canonical and use case
-	//
-	Inputs []*FormInput `json:"inputs"`
-
-	// use case
+	// name
+	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	UseCase string `json:"use_case,omitempty"`
+	// Min Length: 1
+	Name *string `json:"name"`
 }
 
 // Validate validates this new environment
@@ -63,23 +46,11 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCloudProviderCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateColor(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateIcon(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateInputs(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUseCase(formats); err != nil {
+	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -90,40 +61,19 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
-
-	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *NewEnvironment) validateCloudProviderCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudProviderCanonical) { // not required
+	if swag.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
-	if err := validate.MinLength("cloud_provider_canonical", "body", m.CloudProviderCanonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("cloud_provider_canonical", "body", m.CloudProviderCanonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", m.Canonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("cloud_provider_canonical", "body", m.CloudProviderCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$`); err != nil {
 		return err
 	}
 
@@ -142,100 +92,25 @@ func (m *NewEnvironment) validateColor(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewEnvironment) validateIcon(formats strfmt.Registry) error {
-	if swag.IsZero(m.Icon) { // not required
-		return nil
+func (m *NewEnvironment) validateName(formats strfmt.Registry) error {
+
+	if err := validate.Required("name", "body", m.Name); err != nil {
+		return err
 	}
 
-	if err := validate.MaxLength("icon", "body", m.Icon, 64); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("name", "body", *m.Name, 100); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *NewEnvironment) validateInputs(formats strfmt.Registry) error {
-	if swag.IsZero(m.Inputs) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Inputs); i++ {
-		if swag.IsZero(m.Inputs[i]) { // not required
-			continue
-		}
-
-		if m.Inputs[i] != nil {
-			if err := m.Inputs[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *NewEnvironment) validateUseCase(formats strfmt.Registry) error {
-	if swag.IsZero(m.UseCase) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("use_case", "body", m.UseCase, 3); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("use_case", "body", m.UseCase, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("use_case", "body", m.UseCase, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// ContextValidate validate this new environment based on the context it is used
+// ContextValidate validates this new environment based on context it is used
 func (m *NewEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateInputs(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *NewEnvironment) contextValidateInputs(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Inputs); i++ {
-
-		if m.Inputs[i] != nil {
-
-			if swag.IsZero(m.Inputs[i]) { // not required
-				return nil
-			}
-
-			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
-					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
-					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 

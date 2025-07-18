@@ -12,8 +12,8 @@ func TestLogin(t *testing.T) {
 	t.Run("SuccessOrgLoginLegacy", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"login",
-			"--org", CY_TEST_ROOT_ORG,
-			"--api-key", CY_TEST_ROOT_API_KEY,
+			"--org", TestRootOrg,
+			"--api-key", TestAPIKey,
 		})
 
 		require.Nil(t, cmdErr)
@@ -21,12 +21,12 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("SuccessOrgLogin", func(t *testing.T) {
-		err := os.Setenv("CY_API_KEY", CY_TEST_ROOT_API_KEY)
+		err := os.Setenv("CY_API_KEY", TestAPIKey)
 		require.Nil(t, err)
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"login",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", TestRootOrg,
 		})
 
 		require.Nil(t, cmdErr)
