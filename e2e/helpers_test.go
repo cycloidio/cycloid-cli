@@ -143,7 +143,7 @@ func executeCommand(args []string) (string, error) {
 	cmdErr := cmd.Execute()
 	cmdOut, err := io.ReadAll(buf)
 	if err != nil {
-		panic(fmt.Sprintf("Unable to read command output buffer"))
+		panic("Unable to read command output buffer")
 	}
 	return string(cmdOut), cmdErr
 }
@@ -161,7 +161,7 @@ func WriteFile(path string, data []byte) {
 }
 
 // toString convert interface from default json unmarchal to string
-func toString(value interface{}) string {
+func toString(value any) string {
 	out := ""
 	// Handle the value conversion based on unmarchal default types
 	switch v := value.(type) {
@@ -177,7 +177,7 @@ func toString(value interface{}) string {
 
 // JsonListExtractFields Extract a field from a json entity
 func JsonListExtractFields(js string, field, filterField, filterRegex string) ([]string, error) {
-	var es []interface{}
+	var es []any
 	var out []string
 
 	err := json.Unmarshal([]byte(js), &es)
@@ -187,7 +187,7 @@ func JsonListExtractFields(js string, field, filterField, filterRegex string) ([
 
 	for _, e := range es {
 		// Cast our map from default json unmarchal
-		m := e.(map[string]interface{})
+		m := e.(map[string]any)
 
 		value := toString(m[field])
 
@@ -206,7 +206,7 @@ func JsonListExtractFields(js string, field, filterField, filterRegex string) ([
 	return out, nil
 }
 
-func JsonListFindObjectValue(list []map[string]interface{}, key, value string) bool {
+func JsonListFindObjectValue(list []map[string]any, key, value string) bool {
 	for _, item := range list {
 		if item[key] == value {
 			return true
