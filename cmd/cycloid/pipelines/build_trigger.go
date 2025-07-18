@@ -15,13 +15,13 @@ import (
 
 func NewBuildCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "create",
+		Use: "trigger",
 		Aliases: []string{
-			"trigger",
+			"create",
 			"run",
 		},
-		Example: `cy --org my-org pp trigger-build --project my-project --env my-env --job my-job`,
 		Short:   "trigger a pipeline build",
+		Example: `cy pipeline build trigger --project my-project --env my-env --component my-component --job my-job`,
 		RunE:    createBuild,
 		Args:    cobra.NoArgs,
 	}

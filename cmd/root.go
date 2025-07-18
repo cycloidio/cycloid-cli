@@ -51,15 +51,22 @@ func NewRootCommand() *cobra.Command {
 		Args:          cobra.NoArgs,
 		Use:           "cy",
 		Short:         "Cycloid CLI",
-		Long: `CLI tool to interact with Cycloid API.
+		Long: `--- CLI tool to interact with Cycloid API. ---
 Documentation at https://docs.beta.cycloid.io/reference/cli/
 
-Environment:
+-- Environment variables --
+Some environment variables can be set to ease context setting in Cycloid.
+Those variables will be overridden by related flags.
 
-CY_API_URL   -> Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
-CY_ORG       -> Set the current organization
-CY_API_KEY   -> Set the current API Key to use
-CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default warning.
+Name         |  Desctiption
+-------------|-----------------
+CY_API_URL   | Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
+CY_ORG       | Set the current organization
+CY_PROJECT   | Set the current project
+CY_ENV       | (or CY_ENVIRONMENT) Set the current environment
+CY_COMPONENT | Set the current component
+CY_API_KEY   | Set the current API Key to use
+CY_VERBOSITY | Set the verbosity level (debug, info, warning, error), default warning.
 `,
 	}
 
@@ -95,7 +102,6 @@ CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default w
 
 func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(
-		// Root
 		root.NewVersionCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
