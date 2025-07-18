@@ -185,4 +185,65 @@ func TestCreds(t *testing.T) {
 			}
 		})
 	})
+	t.Run("SuccessCredsCreateCustomWithFile", func(t *testing.T) {
+		// Cleanup just in case
+		executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"creds",
+			"delete",
+			"--canonical", "cli-custom-file",
+		})
+
+		fileContent := "hello world"
+		fileName, err := WriteTempFile(fileContent)
+		if err != nil {
+			t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
+		}
+		defer os.Remove(fileName)
+
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"creds",
+			"create",
+			"custom",
+			"--name", "cli-custom-file",
+			"--field", "foo=bar",
+			"--field-file", "key=" + fileName,
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Equal(t, "", cmdOut)
+	})
+
+	t.Run("SuccessCredsCreateSSH", func(t *testing.T) {
+		// Cleanup just in case
+		executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"creds",
+			"delete",
+			"--canonical", "cli-ssh",
+		})
+
+		fileName, err := WriteTempFile(string(TestGitSshKey))
+		if err != nil {
+			t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
+		}
+		defer os.Remove(fileName)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"creds",
+			"create",
+			"ssh",
+			"--name", "cli-ssh",
+			"--ssh-key", fileName,
+		})
+
+		assert.Nil(t, cmdErr)
+		require.Equal(t, "", cmdOut)
+	})
+
 }
