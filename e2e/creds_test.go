@@ -230,7 +230,7 @@ func TestCreds(t *testing.T) {
 			"--canonical", "cli-ssh",
 		})
 
-		fileName, err := WriteTempFile(string(TestGitSshKey))
+		fileName, err := WriteTempFile(string(TestGitSSHKey))
 		if err != nil {
 			t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
 		}
