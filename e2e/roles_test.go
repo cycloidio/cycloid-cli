@@ -1,7 +1,4 @@
-//go:build e2e
-// +build e2e
-
-package e2e
+package e2e_test
 
 import (
 	"testing"
@@ -11,13 +8,10 @@ import (
 )
 
 func TestRoles(t *testing.T) {
-	t.Skip()
-	LoginToRootOrg()
-
 	t.Run("SuccessRolesList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"roles",
 			"list",
 		})
@@ -29,7 +23,7 @@ func TestRoles(t *testing.T) {
 	t.Run("SuccessRolesGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"roles",
 			"get",
 			"--canonical", "organization-member",

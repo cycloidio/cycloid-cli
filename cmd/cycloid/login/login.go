@@ -7,7 +7,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/config"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -17,12 +17,12 @@ import (
 func NewCommands() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "login",
+		Args:  cobra.NoArgs,
 		Short: "Login against the Cycloid console",
 		Example: `# Login in an org using api-key
 export CY_API_KEY=xxxx
 cy login --org my-org`,
-		PreRunE: internal.CheckAPIAndCLIVersion,
-		RunE:    login,
+		RunE: login,
 	}
 
 	cmd.Flags().String("api-key", "", "[deprecated] set the API key, use CY_API_KEY env var instead.")
@@ -39,7 +39,7 @@ func login(cmd *cobra.Command, args []string) error {
 	conf, _ := config.Read()
 	// If err != nil, the file does not exist, we create it anyway
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get org flag")
 	}

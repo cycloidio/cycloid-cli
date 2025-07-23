@@ -52,7 +52,7 @@ type NewAWSMarketplaceUserAccount struct {
 
 	// password
 	// Required: true
-	// Min Length: 8
+	// Min Length: 12
 	// Format: password
 	Password *strfmt.Password `json:"password"`
 
@@ -221,7 +221,7 @@ func (m *NewAWSMarketplaceUserAccount) validatePassword(formats strfmt.Registry)
 		return err
 	}
 
-	if err := validate.MinLength("password", "body", m.Password.String(), 8); err != nil {
+	if err := validate.MinLength("password", "body", m.Password.String(), 12); err != nil {
 		return err
 	}
 

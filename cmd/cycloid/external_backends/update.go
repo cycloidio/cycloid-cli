@@ -4,17 +4,15 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 )
 
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "update",
-		Hidden:  true,
-		Short:   "not implemented yet",
-		Long:    `not implemented yet`,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:    "update",
+		Args:   cobra.NoArgs,
+		Hidden: true,
+		Short:  "not implemented yet",
+		Long:   `not implemented yet`,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			fmt.Println("not implemented yet")
 			return nil

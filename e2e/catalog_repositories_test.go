@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"testing"
@@ -8,14 +8,24 @@ import (
 )
 
 func TestCatalogRepositories(t *testing.T) {
-	t.Skip()
-	LoginToRootOrg()
+	defer t.Run("SuccessCatalogRepositoriesDelete", func(t *testing.T) {
+		// Cleanup just in case
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"catalog-repository",
+			"delete",
+			"--canonical", "step-by-step",
+		})
+
+		assert.Nil(t, cmdErr, "failed to delete test catalog repo:", cmdOut)
+	})
 
 	t.Run("SuccessCatalogRepositoriesCreate", func(t *testing.T) {
 		// Cleanup just in case
 		executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"catalog-repository",
 			"delete",
 			"--canonical", "step-by-step",
@@ -23,7 +33,7 @@ func TestCatalogRepositories(t *testing.T) {
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"catalog-repository",
 			"create",
 			"--branch", "stack-aws",
@@ -32,13 +42,14 @@ func TestCatalogRepositories(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
+
 		assert.Contains(t, cmdOut, "canonical\": \"stack-aws-sample")
 	})
 
 	t.Run("SuccessCatalogRepositoriesList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"catalog-repository",
 			"list",
 		})
@@ -50,7 +61,7 @@ func TestCatalogRepositories(t *testing.T) {
 	t.Run("SuccessCatalogRepositoriesGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"catalog-repository",
 			"get",
 			"--canonical", "step-by-step",
@@ -63,7 +74,7 @@ func TestCatalogRepositories(t *testing.T) {
 	t.Run("SuccessCatalogRepositoriesRefresh", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"catalog-repository",
 			"refresh",
 			"--canonical", "step-by-step",

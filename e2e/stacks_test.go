@@ -1,10 +1,11 @@
-package e2e
+package e2e_test
 
 import (
 	"bytes"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +14,6 @@ import (
 
 func TestStacks(t *testing.T) {
 	t.Skip()
-	LoginToRootOrg()
 
 	// Since the latest update the public catalog have been added by default
 	// Here is a sample of code if we need to add a dedicated one
@@ -43,7 +43,7 @@ func TestStacks(t *testing.T) {
 	t.Run("SuccessStacksList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"stacks",
 			"list",
 		})
@@ -55,10 +55,10 @@ func TestStacks(t *testing.T) {
 	t.Run("SuccessStacksGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"stacks",
 			"get",
-			"--ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 		})
 
 		require.Nil(t, cmdErr)
@@ -66,40 +66,59 @@ func TestStacks(t *testing.T) {
 	})
 
 	t.Run("SuccessStacksValidateForm", func(t *testing.T) {
-		var TestGitSshKey = []byte(`---
-default:
-  pipeline:
-    AWS:
-      - name: "Default Region"
-        key: aws_default_region
-        type: string
-        widget: dropdown
-        description: "In which region you would like your project to run"
-        default: "eu-west-1"
-        values: ["eu-west-1", "eu-west-2", "eu-west3", "eu-south1", "eu-north1", "eu-central1"]
-        required: true
+		var TestForms = []byte(`---
+version: "4"
+shared:
+- &anchor2
+  name: "hello"
+  key: "toto3"
+  widget: "simple_text"
+  type: "string"
+use_cases:
+- name: use_cases
+  sections:
+  - name: "hello"
+    groups:
+    - name: "toto"
+      technlogies: ["tutu"]
+      vars:
+      - &anchor1
+        name: "hello"
+        key: "toto"
+        widget: "simple_text"
+        type: "string"
+      - <<: *anchor1
+        key: "toto1"
+      - *anchor2
+      - <<: *anchor2
+        key: "toto4"
 `)
-		WriteFile("/tmp/test_ci_form", TestGitSshKey)
+		testFile, err := os.CreateTemp("", "test-stackforms.yml")
+		if err != nil {
+			t.Fatalf("setup failed: error while writing test forms at '%s'", testFile.Name())
+		}
+
+		formsFile := testFile.Name()
+		WriteFile(formsFile, TestForms)
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"stacks",
 			"validate-form",
-			"--forms", "/tmp/test_ci_form",
+			formsFile,
 		})
-
 		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "errors\": []")
+		assert.Equal(t, cmdOut, "")
 	})
 
 	t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"stack",
 			"update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--visibility", "shared",
 		})
 
@@ -109,7 +128,7 @@ default:
 	})
 
 	t.Run("SuccessAddStackMaintainer", func(t *testing.T) {
-		t.Setenv("CY_ORG", TestRootOrg)
+		t.Setenv("CY_ORG", config.Org)
 		var teamCanonical = "test-team"
 		body := map[string]any{
 			"canonical": teamCanonical,
@@ -122,10 +141,10 @@ default:
 		assert.Nil(t, err, "[preparation]: json serialization shouldn't fail.")
 
 		// team management is not implemented on the CLI, so making the call ourselves
-		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", TestAPIURL, TestRootOrg), bytes.NewBuffer(jsonBody))
+		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", config.APIUrl, config.Org), bytes.NewBuffer(jsonBody))
 		assert.Nil(t, err, "[preparation]: request creationg shoudn't fail")
 
-		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", TestAPIKey))
+		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
 		request.Header.Add("Content-Type", "application/vnd.cycloid.io.v1+json")
 
 		client := &http.Client{}
@@ -136,7 +155,7 @@ default:
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--team", teamCanonical,
 		})
 
@@ -145,13 +164,13 @@ default:
 	})
 
 	t.Run("SuccessRemoveMaintainer", func(t *testing.T) {
-		t.Setenv("CY_ORG", TestRootOrg)
+		t.Setenv("CY_ORG", config.Org)
 		// We assume that the team exists from the previous test
 		var teamCanonical = "test-team"
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--team", "", // setting the flag with empty string should remove the maintainer
 		})
 
@@ -160,11 +179,11 @@ default:
 	})
 
 	t.Run("InvalidMaintainerShouldError", func(t *testing.T) {
-		t.Setenv("CY_ORG", TestRootOrg)
+		t.Setenv("CY_ORG", config.Org)
 		_, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
+			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
 			"--team", "invalidteam",
 		})
 

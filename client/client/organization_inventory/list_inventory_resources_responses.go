@@ -407,7 +407,8 @@ type ListInventoryResourcesOKBody struct {
 	Data []*models.InventoryResource `json:"data"`
 
 	// filters
-	Filters models.Filters `json:"filters,omitempty"`
+	// Required: true
+	Filters models.Filters `json:"filters"`
 
 	// pagination
 	// Required: true
@@ -419,6 +420,10 @@ func (o *ListInventoryResourcesOKBody) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := o.validateData(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateFilters(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -454,6 +459,15 @@ func (o *ListInventoryResourcesOKBody) validateData(formats strfmt.Registry) err
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (o *ListInventoryResourcesOKBody) validateFilters(formats strfmt.Registry) error {
+
+	if o.Filters == nil {
+		return errors.Required("listInventoryResourcesOK"+"."+"filters", "body", nil)
 	}
 
 	return nil

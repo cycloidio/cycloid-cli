@@ -5,9 +5,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -17,13 +16,13 @@ import (
 func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update",
+		Args:  cobra.NoArgs,
 		Short: "update an organization",
 		Example: `
 	# update an organization foo
 	cy organization update --org org --name foo
 `,
-		RunE:    update,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: update,
 	}
 
 	common.RequiredFlag(WithFlagName, cmd)
@@ -40,7 +39,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable get org flag")
 	}

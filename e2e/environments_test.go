@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"encoding/json"
@@ -6,52 +6,20 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestEnvs(t *testing.T) {
-	t.Parallel()
-
-	os.Setenv("CY_API_URL", TestAPIURL)
-	os.Setenv("CY_API_KEY", TestAPIKey)
-	os.Setenv("CY_ORG", TestRootOrg)
-
-	// setup
-	api := common.NewAPI(
-		common.WithInsecure(true),
-		common.WithURL(TestAPIURL),
-		common.WithToken(TestAPIKey),
-	)
-	m := middleware.NewMiddleware(api)
+	os.Setenv("CY_API_URL", config.APIUrl)
+	os.Setenv("CY_API_KEY", config.APIKey)
+	os.Setenv("CY_ORG", config.Org)
 
 	var (
-		projectName        = "Test E2E env"
-		project            = randomCanonical("test-e2e-env")
-		projectDescription = "Testing envs"
-		configRepository   = CyTestConfigRepo
-		projectColor       = "blue"
-		projectIcon        = "planet"
-	)
-
-	defer func() {
-		err := m.DeleteProject(TestRootOrg, project)
-		if err != nil {
-			t.Fatalf("Failed to cleanup project '%s' for test '%s': %v", project, t.Name(), err)
-		}
-	}()
-
-	_, err := m.CreateProject(TestRootOrg, projectName, project, projectDescription, configRepository, "", "", projectColor, projectIcon)
-	if err != nil {
-		t.Fatalf("Failed to create pre-requisite project '%s' for test '%s': %v", project, t.Name(), err)
-	}
-	// env setup
-
-	var (
+		project = *config.Project.Canonical
 		envName = "Test E2E env"
 		env     = randomCanonical("e2e")
-		color   = "blue"
+		color   = "demo"
 	)
 
 	t.Run("Create", func(t *testing.T) {
@@ -80,15 +48,39 @@ func TestEnvs(t *testing.T) {
 		}
 	})
 
+	t.Run("Get", func(t *testing.T) {
+		args := []string{
+			"env", "get",
+			"--project", project,
+			"--env", env,
+			"--output", "json",
+		}
+		cmdOut, err := executeCommand(args)
+		if err != nil {
+			t.Fatalf("failed to get env '%s': %v", env, err)
+		}
+
+		var got models.Environment
+		err = json.Unmarshal([]byte(cmdOut), &got)
+		if err != nil {
+			t.Fatalf("failed to marshal json cli output: %s\nerr: %s", cmdOut, err)
+		}
+
+		assert.EqualValues(t, env, *got.Canonical)
+	})
+
 	t.Run("CreateWithUpdate", func(t *testing.T) {
-		var createUpdateName = "helloUpdate"
+		var (
+			createUpdateName = "helloUpdate"
+			newColor         = cyargs.PickRandomColor(&env)
+		)
 		args := []string{
 			"-o", "json",
 			"env", "create",
 			"--env", env,
 			"--project", project,
 			"--name", createUpdateName,
-			"--color", projectColor,
+			"--color", newColor,
 			"--update",
 		}
 		out, err := executeCommand(args)
@@ -103,6 +95,7 @@ func TestEnvs(t *testing.T) {
 		}
 
 		assert.Equal(t, createUpdateName, envResult.Name)
+		assert.Equal(t, newColor, *envResult.Color)
 	})
 
 	t.Run("CreateWithUpdateNew", func(t *testing.T) {

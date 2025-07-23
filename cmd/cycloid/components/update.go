@@ -1,9 +1,11 @@
 package components
 
 import (
+	"fmt"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
@@ -12,35 +14,38 @@ import (
 
 func NewUpdateComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "update -p project -e env -c component",
-		Short: "update an existing component",
-		RunE:  updateComponent,
+		Use:     "update",
+		Args:    cobra.NoArgs,
+		Short:   "update an existing component",
+		Example: `cy component update -p project -e env -c component -V section.group.var="value-str" -u new-use-case`,
+		RunE:    updateComponent,
 	}
-	cy_args.AddCyContext(cmd)
-	cy_args.AddNameFlag(cmd)
-	cy_args.AddComponentDescriptionFlag(cmd)
-	cy_args.AddUseCaseFlag(cmd)
-	cy_args.AddStackFormsInputFlags(cmd)
+
+	cyargs.AddCyContext(cmd)
+	cyargs.AddNameFlag(cmd)
+	cyargs.AddComponentDescriptionFlag(cmd)
+	cyargs.AddUseCaseFlag(cmd)
+	cyargs.AddStackFormsInputFlags(cmd)
 	return cmd
 }
 
 func updateComponent(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := cy_args.GetCyContext(cmd)
+	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := cy_args.GetName(cmd)
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
 
-	description, err := cy_args.GetComponentDescription(cmd)
+	description, err := cyargs.GetComponentDescription(cmd)
 	if err != nil {
 		return err
 	}
 
-	useCase, err := cy_args.GetUseCase(cmd)
+	useCase, err := cyargs.GetUseCase(cmd)
 	if err != nil {
 		return err
 	}
@@ -64,9 +69,27 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	inputs, err := cy_args.GetStackformsVars(cmd, config)
+	inputs, err := cyargs.GetStackformsVars(cmd, config)
 	if err != nil {
 		return err
+	}
+
+	// fetch the current component to fill unspecified values by the user
+	current, err := m.GetComponent(org, project, env, component)
+	if err != nil {
+		return fmt.Errorf("failed to update component, target '%s' doesn't seems to exists: %s", component, err)
+	}
+
+	if name == "" {
+		name = *current.Name
+	}
+
+	if *description == "" && current.Description == "" {
+		description = &current.Description
+	}
+
+	if *useCase == "" {
+		useCase = current.UseCase
 	}
 
 	updatedComponent, err := m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)

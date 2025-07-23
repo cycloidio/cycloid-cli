@@ -1,324 +1,255 @@
-package e2e
+package e2e_test
 
 import (
-	"fmt"
+	"encoding/json"
+	"strconv"
 	"testing"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/sanity-io/litter"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestPipelines(t *testing.T) {
-	t.Skip()
-	LoginToRootOrg()
-
-	// Prepare a running project
-	t.Run("CleanupAndPrepare", func(t *testing.T) {
-		// Create ssh cred
-		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
-		executeCommand([]string{
+	// Pipelines
+	var pipelineList []*models.Pipeline
+	t.Run("PipelineListOk", func(t *testing.T) {
+		listOut, listErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
-			"creds",
-			"create",
-			"ssh",
-			"--name", "git-project-creds",
-			"--ssh-key", "/tmp/test_cli-ssh",
+			"--org", config.Org,
+			"pipelines", "list",
 		})
+		if listErr != nil {
+			t.Fatalf("List org pipeline should not err, out: %s\nerr: %s", listOut, listErr)
+		}
 
-		// Create config repo
-		executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"config-repo",
-			"create",
-			"--name", "project-config",
-			"--branch", CyTestCatalogRepoBranch,
-			"--cred", "git-project-creds",
-			"--url", CyTestCatalogRepoURL,
-		})
+		err := json.Unmarshal([]byte(listOut), &pipelineList)
+		if err != nil {
+			t.Fatalf("failed to unmarshall list test output, out: %s\nerr: %s", listOut, err)
+		}
 
-		// Provide service catalog public
-		executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"catalog-repository",
-			"create",
-			"--branch", "master",
-			"--url", "https://github.com/cycloid-community-catalog/stack-dummy.git",
-			"--name", "dummy",
-		})
-
-		// Create project
-		WriteFile("/tmp/test_cli-pp-vars", TestPipelineVariables)
-		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
-		executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"project",
-			"create",
-			"--name", "pipeline-test",
-			"--description", "this is a test project",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", TestRootOrg),
-			"--config-repo", "project-config",
-		})
-
-		executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"project",
-			"create-env",
-			"--project", "pipeline-test",
-			"--env", "test",
-			"--use-case", "default",
-			"--vars", "/tmp/test_cli-pp-vars",
-			"--pipeline", "/tmp/test_cli-pp",
-			"--config", "/tmp/test_cli-pp=/snowy/test/test_cli-pp",
-		})
-
-		// Ensure the catalog is present
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"project",
-			"get",
-			"--project", "pipeline-test",
-		})
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"pipeline-test")
+		if len(pipelineList) == 0 {
+			t.Fatalf("There should be at least one pipeline in this org:\n%s", listOut)
+		}
 	})
 
-	t.Run("SuccessPipelinesUpdate", func(t *testing.T) {
-		WriteFile("/tmp/test_cli-pp-vars", TestPipelineVariables)
-		WriteFile("/tmp/test_cli-pp", TestPipelineSample)
-
-		cmdOut, cmdErr := executeCommand([]string{
+	firstPipeline := *pipelineList[0]
+	t.Run("GetPipelineOk", func(t *testing.T) {
+		getOut, getErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"update",
-			"--project", "pipeline-test",
-			"--env", "test",
-			"--vars", "/tmp/test_cli-pp-vars",
-			"--pipeline", "/tmp/test_cli-pp",
+			"pipelines", "get",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
 		})
+		if getErr != nil {
+			t.Fatalf("get pipeline should not err, out: %s\nerr: %s", getOut, getErr)
+		}
 
-		// TODO: Fix tests when components are implemented
-		t.Skip()
+		var getPipeline models.Pipeline
+		err := json.Unmarshal([]byte(getOut), &getPipeline)
+		if err != nil {
+			t.Fatalf("Failed to parse json output of pipelines get cmd, out: %s\nerr: %s", getOut, err)
+		}
 
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"pipeline-test")
+		if assert.ObjectsAreEqualValues(firstPipeline, getPipeline) {
+			t.Fatalf("both pipelines should be equal:\nexpect: %v\ngot: %v", firstPipeline, getPipeline)
+		}
 	})
 
-	t.Run("SuccessPipelinesPause", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
+	t.Run("PipelinePauseOk", func(t *testing.T) {
+		_, pauseErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"pause",
-			"--project", "pipeline-test",
-			"--env", "test",
+			"pipelines", "pause",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Equal(t, "", cmdOut)
+		if pauseErr != nil {
+			t.Fatalf("failed to pause pipeline '%s': %s", *firstPipeline.Name, pauseErr)
+		}
 	})
 
-	t.Run("SuccessPipelinesUnPause", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
+	t.Run("PipelineUnpauseOk", func(t *testing.T) {
+		_, unpauseErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"unpause",
-			"--project", "pipeline-test",
-			"--env", "test",
+			"pipelines", "unpause",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Equal(t, "", cmdOut)
+		if unpauseErr != nil {
+			t.Fatalf("failed to unpause pipeline '%s': %s", *firstPipeline.Name, unpauseErr)
+		}
 	})
 
-	t.Run("SuccessPipelinesList", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
+	t.Run("PipelineSynced", func(t *testing.T) {
+		_, syncedErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"list",
+			"pipelines", "synced",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "name\": \"pipeline-test-test")
+		if syncedErr != nil {
+			t.Fatalf("failed to pause pipeline '%s': %s", *firstPipeline.Name, syncedErr)
+		}
 	})
 
-	t.Run("SuccessPipelinesGet", func(t *testing.T) {
+	t.Run("PipelineLastUsedOk", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"get",
-			"--project", "pipeline-test",
-			"--env", "test",
+			"pipelines", "last-used",
+			"--since-days", "99",
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "name\": \"pipeline-test-test")
+		if cmdErr != nil {
+			t.Fatalf("failed to list last-used pipelines, out: %s\nerr: %s", cmdOut, cmdErr)
+		}
 	})
 
-	t.Run("SuccessPipelinesListJobs", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
+	// Jobs
+	var jobList []*models.Job
+	t.Run("ListJobsOk", func(t *testing.T) {
+		if len(pipelineList) == 0 {
+			t.Fatal("Test setup error: pipeline list length should not be 0.")
+		}
+
+		firstPipeline := pipelineList[0]
+		listOut, listErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"list-jobs",
-			"--project", "pipeline-test",
-			"--env", "test",
+			"pipeline", "jobs", "list",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
+		})
+		if listErr != nil {
+			t.Fatalf("List job in pipeline '%s' should not err, out: %s\nerr: %s", *firstPipeline.Name, listOut, listErr)
+		}
+
+		err := json.Unmarshal([]byte(listOut), &jobList)
+		if err != nil {
+			t.Fatalf("failed to marshal output of cy pp job list, out: %s\nerr: %s", listOut, err)
+		}
+
+		if len(jobList) == 0 {
+			t.Fatalf("job list should not be empty:\n%s", litter.Sdump(jobList))
+		}
+
+		firstJob := jobList[0]
+		t.Run("JobGetOk", func(t *testing.T) {
+			getOut, getErr := executeCommand([]string{
+				"--output", "json",
+				"pipeline", "job", "get",
+				"--project", *firstPipeline.Project.Canonical,
+				"--env", *firstPipeline.Environment.Canonical,
+				"--component", *firstPipeline.Component.Canonical,
+				"--pipeline", *firstPipeline.Name,
+				"--job", *firstJob.Name,
+			})
+			if getErr != nil {
+				t.Fatalf("cy get job in pipeline '%s' should not fail, out: %s\nerr: %s", *firstJob.Name, getOut, getErr)
+			}
+
+			var getJob *models.Job
+			err := json.Unmarshal([]byte(getOut), &getJob)
+			if err != nil {
+				t.Fatalf("failed to unmarshall get job cmd output, out: %s\nerr: %s", getOut, err)
+			}
+
+			assert.Equal(t, *firstJob.ID, *getJob.ID)
 		})
 
-		// TODO: Fix tests when components are implemented
-		t.Skip()
+		t.Run("PauseJobOk", func(t *testing.T) {
+			pauseOut, pauseErr := executeCommand([]string{
+				"--output", "json",
+				"pipeline", "job", "pause",
+				"--project", *firstPipeline.Project.Canonical,
+				"--env", *firstPipeline.Environment.Canonical,
+				"--component", *firstPipeline.Component.Canonical,
+				"--pipeline", *firstPipeline.Name,
+				"--job", *firstJob.Name,
+			})
+			if pauseErr != nil {
+				t.Fatalf("cmd cy pp job pause failed for pipeline '%s', out: %s, err: %s", *firstPipeline.Name, pauseOut, pauseErr)
+			}
 
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "name\": \"job-hello-world")
-	})
-
-	t.Run("SuccessPipelinesGetJob", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"get-job",
-			"--project", "pipeline-test",
-			"--env", "test",
-			"--job", "job-hello-world",
+			t.Run("UnpauseJobOk", func(t *testing.T) {
+				unpauseOut, unpauseErr := executeCommand([]string{
+					"--output", "json",
+					"pipeline", "job", "unpause",
+					"--project", *firstPipeline.Project.Canonical,
+					"--env", *firstPipeline.Environment.Canonical,
+					"--component", *firstPipeline.Component.Canonical,
+					"--pipeline", *firstPipeline.Name,
+					"--job", *firstJob.Name,
+				})
+				if unpauseErr != nil {
+					t.Fatalf("cmd cy pp job unpause failed for pipeline '%s', out: %s, err: %s", *firstPipeline.Name, unpauseOut, unpauseErr)
+				}
+			})
 		})
 
-		// TODO: Fix tests when components are implemented
-		t.Skip()
+		var triggeredBuild *models.Build
+		// Builds
+		t.Run("CreateBuildOk", func(t *testing.T) {
+			triggerOut, triggerErr := executeCommand([]string{
+				"--output", "json",
+				"pipeline", "build", "create",
+				"--project", *firstPipeline.Project.Canonical,
+				"--env", *firstPipeline.Environment.Canonical,
+				"--component", *firstPipeline.Component.Canonical,
+				"--pipeline", *firstPipeline.Name,
+				"--job", *firstJob.Name,
+			})
+			if triggerErr != nil {
+				t.Fatalf("cmd cy pp build create failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, triggerOut, triggerErr)
+			}
 
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "name\": \"job-hello-world")
-	})
+			err := json.Unmarshal([]byte(triggerOut), &triggeredBuild)
+			if err != nil {
+				t.Fatalf("cmd output is not a models.Build, out: %s\nerr: %s", triggerOut, triggerErr)
+			}
 
-	t.Run("SuccessPipelinesPauseJob", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"pause-job",
-			"--project", "pipeline-test",
-			"--env", "test",
-			"--job", "job-hello-world",
+			buildIDStr := strconv.Itoa(int(*triggeredBuild.ID))
+			if err != nil {
+				t.Fatalf("invalid build id in:\n%v\n%s", triggeredBuild, err)
+			}
+
+			t.Run("GetBuildOk", func(t *testing.T) {
+				getOut, getErr := executeCommand([]string{
+					"--output", "json",
+					"pipeline", "build", "get",
+					"--project", *firstPipeline.Project.Canonical,
+					"--env", *firstPipeline.Environment.Canonical,
+					"--component", *firstPipeline.Component.Canonical,
+					"--pipeline", *firstPipeline.Name,
+					"--job", *firstJob.Name,
+					"--build-id", buildIDStr,
+				})
+				if getErr != nil {
+					t.Fatalf("cmd cy pp build get failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, getOut, getErr)
+				}
+			})
+
+			t.Run("ListBuildOk", func(t *testing.T) {
+				listOut, listErr := executeCommand([]string{
+					"--output", "json",
+					"pipeline", "build", "list",
+					"--project", *firstPipeline.Project.Canonical,
+					"--env", *firstPipeline.Environment.Canonical,
+					"--component", *firstPipeline.Component.Canonical,
+					"--pipeline", *firstPipeline.Name,
+					"--job", *firstJob.Name,
+				})
+				if listErr != nil {
+					t.Fatalf("cmd cy pp build list failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, listOut, listErr)
+				}
+			})
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Equal(t, "", cmdOut)
-	})
-
-	t.Run("SuccessPipelinesUnpauseJob", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"unpause-job",
-			"--project", "pipeline-test",
-			"--env", "test",
-			"--job", "job-hello-world",
-		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Equal(t, "", cmdOut)
-	})
-	t.Run("SuccessPipelinesTriggerBuild", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"trigger-build",
-			"--project", "pipeline-test",
-			"--env", "test",
-			"--job", "job-hello-world",
-		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Equal(t, "", cmdOut)
-	})
-
-	t.Run("SuccessPipelinesListBuilds", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"list-builds",
-			"--project", "pipeline-test",
-			"--env", "test",
-			"--job", "job-hello-world",
-		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "job_name\": \"job-hello-world")
-	})
-
-	t.Run("SuccessPipelinesClearTaskCache", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"clear-task-cache",
-			"--project", "pipeline-test",
-			"--env", "test",
-			"--job", "job-hello-world",
-			"--task", "hello-world",
-		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		require.Equal(t, "", cmdOut)
-	})
-
-	t.Run("SuccessPipelinesSynced", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", TestRootOrg,
-			"pipeline",
-			"synced",
-			"--project", "pipeline-test",
-			"--env", "test",
-		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
-		assert.Nil(t, cmdErr)
-		// Note: we expect no diff because the pipeline from helpers.go is the same as the dummy-stack.
-		// This mean if someone change the code from the dummy stack, this test could fail because the helper
-		// pipeline will differ from the one in the dummy stack
-		require.Contains(t, cmdOut, "jobs\": null")
 	})
 }

@@ -76,6 +76,12 @@ type GetCloudCostManagementFilterVaulesParams struct {
 	*/
 	Categories []string
 
+	/* Components.
+
+	   The names of the components that you can use to filter your results
+	*/
+	Components []string
+
 	/* Dashboard.
 
 	   Specifies if the filter values are for the dashboard
@@ -234,6 +240,17 @@ func (o *GetCloudCostManagementFilterVaulesParams) WithCategories(categories []s
 // SetCategories adds the categories to the get cloud cost management filter vaules params
 func (o *GetCloudCostManagementFilterVaulesParams) SetCategories(categories []string) {
 	o.Categories = categories
+}
+
+// WithComponents adds the components to the get cloud cost management filter vaules params
+func (o *GetCloudCostManagementFilterVaulesParams) WithComponents(components []string) *GetCloudCostManagementFilterVaulesParams {
+	o.SetComponents(components)
+	return o
+}
+
+// SetComponents adds the components to the get cloud cost management filter vaules params
+func (o *GetCloudCostManagementFilterVaulesParams) SetComponents(components []string) {
+	o.Components = components
 }
 
 // WithDashboard adds the dashboard to the get cloud cost management filter vaules params
@@ -404,6 +421,17 @@ func (o *GetCloudCostManagementFilterVaulesParams) WriteToRequest(r runtime.Clie
 		}
 	}
 
+	if o.Components != nil {
+
+		// binding items for components
+		joinedComponents := o.bindParamComponents(reg)
+
+		// query array param components
+		if err := r.SetQueryParam("components", joinedComponents...); err != nil {
+			return err
+		}
+	}
+
 	if o.Dashboard != nil {
 
 		// query param dashboard
@@ -569,6 +597,23 @@ func (o *GetCloudCostManagementFilterVaulesParams) bindParamCategories(formats s
 	categoriesIS := swag.JoinByFormat(categoriesIC, "multi")
 
 	return categoriesIS
+}
+
+// bindParamGetCloudCostManagementFilterVaules binds the parameter components
+func (o *GetCloudCostManagementFilterVaulesParams) bindParamComponents(formats strfmt.Registry) []string {
+	componentsIR := o.Components
+
+	var componentsIC []string
+	for _, componentsIIR := range componentsIR { // explode []string
+
+		componentsIIV := componentsIIR // string as string
+		componentsIC = append(componentsIC, componentsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	componentsIS := swag.JoinByFormat(componentsIC, "multi")
+
+	return componentsIS
 }
 
 // bindParamGetCloudCostManagementFilterVaules binds the parameter environments

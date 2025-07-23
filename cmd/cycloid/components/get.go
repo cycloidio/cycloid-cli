@@ -3,7 +3,7 @@ package components
 import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
@@ -13,15 +13,16 @@ import (
 func NewGetComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get -p project -e env -c component",
+		Args:  cobra.NoArgs,
 		Short: "Get the state of a current component.",
 		RunE:  getComponent,
 	}
-	cy_args.AddCyContext(cmd)
+	cyargs.AddCyContext(cmd)
 	return cmd
 }
 
 func getComponent(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := cy_args.GetCyContext(cmd)
+	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}

@@ -6,7 +6,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -14,6 +14,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete a catalog repository",
 		Example: `
 	# delete a catalog repository with the canonical my-catalog-repository
@@ -31,7 +32,7 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

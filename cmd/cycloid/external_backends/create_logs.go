@@ -10,7 +10,7 @@ import (
 	models "github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -30,7 +30,7 @@ func createLogs(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

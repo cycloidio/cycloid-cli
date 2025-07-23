@@ -8,6 +8,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
@@ -63,10 +64,6 @@ func ReplaceCycloidVarsString(ctx CycloidContext, text string) string {
 		text = projRe.ReplaceAllString(text, ctx.Project)
 	}
 	return text
-}
-
-func GetPipelineName(project, env string) string {
-	return fmt.Sprintf("%s-%s", project, env)
 }
 
 type APIConfig struct {
@@ -151,7 +148,7 @@ func NewAPI(opts ...APIOptions) *APIClient {
 	}
 }
 
-func (a *APIClient) GetToken(org string) string {
+func (a *APIClient) GetToken(org *string) string {
 	var token string
 	token = a.Config.Token
 
@@ -174,7 +171,7 @@ func (a *APIClient) GetToken(org string) string {
 
 	// if the token is not set with env variable we try to fetch
 	// him from the config (if the user is logged)
-	if len(token) == 0 {
+	if len(token) == 0 && org != nil {
 		// Check first if the config file exists
 		filePath, err := config.GetConfigPath()
 		if err != nil {
@@ -191,7 +188,7 @@ func (a *APIClient) GetToken(org string) string {
 		config, _ := config.Read()
 
 		// we try to find a token for this `org`
-		if t, ok := config.Organizations[org]; ok {
+		if t, ok := config.Organizations[*org]; ok {
 			token = t.Token
 		}
 	}
@@ -204,7 +201,7 @@ func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 		return nil
 	}
 
-	token := a.GetToken(*org)
+	token := a.GetToken(org)
 
 	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
 		if len(token) == 0 {
@@ -294,4 +291,14 @@ func UpdateMapField(field string, value string, m map[string]map[string]map[stri
 	// if all type conversion failed, consider the value as string
 	m[keys[0]][keys[1]][keys[2]] = value
 	return nil
+}
+
+func UnixTimestampToLocalTime(unixTime *uint64) string {
+	defaultTime := "date unknown"
+	if unixTime == nil {
+		return defaultTime
+	}
+
+	ts := time.Unix(int64(*unixTime), 0)
+	return ts.Format(time.DateTime)
 }

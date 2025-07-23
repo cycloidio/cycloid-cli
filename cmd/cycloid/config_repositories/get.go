@@ -5,9 +5,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -15,13 +14,13 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
+		Args:  cobra.NoArgs,
 		Short: "get a config repository",
 		Example: `
 	# get the config repository with the canonical my-config-repo and display the result in YAML
 	cy  --org my-org config-repo get --canonical my-config-repo -o yaml
 `,
-		RunE:    getConfigRepository,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: getConfigRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagCan, cmd)
@@ -33,7 +32,7 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

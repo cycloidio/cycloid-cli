@@ -5,9 +5,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -24,11 +23,11 @@ func NewListCommand() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:     "list",
+		Args:    cobra.NoArgs,
 		Example: example,
 		Short:   short,
 		Long:    long,
 		RunE:    listMembers,
-		PreRunE: internal.CheckAPIAndCLIVersion,
 	}
 
 	return cmd
@@ -43,7 +42,7 @@ func listMembers(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

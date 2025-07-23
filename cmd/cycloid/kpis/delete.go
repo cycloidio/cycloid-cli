@@ -4,12 +4,12 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 )
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "delete",
+		Args:  cobra.NoArgs,
 		Short: "delete a kpi",
 		Example: `
 	# delete a kpi
@@ -17,8 +17,7 @@ func NewDeleteCommand() *cobra.Command {
 		--canonical kpi
 `,
 		// RunE:    delete,
-		RunE:    func(cmd *cobra.Command, args []string) error { panic("Not implemented") }, //create,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: func(cmd *cobra.Command, args []string) error { panic("Not implemented") }, //create,
 	}
 
 	common.RequiredFlag(common.WithFlagCan, cmd)

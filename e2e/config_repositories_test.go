@@ -1,91 +1,106 @@
-//go:build e2e
-// +build e2e
-
-package e2e
+package e2e_test
 
 import (
+	"encoding/json"
+	"slices"
 	"testing"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestConfigRepositories(t *testing.T) {
+	// Bug: https://linear.app/cycloid/issue/BE-981/catalog-repository-creation-fail-on-staging
 	t.Skip()
-	LoginToRootOrg()
+	//
 
-	t.Run("SuccessConfigRepositoriesCreate", func(t *testing.T) {
-		// Cleanup just in case
-		executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"config-repo",
-			"delete",
-			"--canonical", "default-config",
-		})
+	var (
+		CRUrl       = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
+		CRBranch    = "config-e2e"
+		CRCanonical = "config-repo-e2e"
+		CRCred      = config.ConfigRepo.CredentialCanonical
+	)
 
-		// Create required ssh cred
-		WriteFile("/tmp/test_cli-ssh", TestGitSshKey)
-		executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"creds",
-			"create",
-			"ssh",
-			"--name", "git-creds",
-			"--ssh-key", "/tmp/test_cli-ssh",
-		})
-
+	defer t.Run("SuccessConfigRepositoriesDelete", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"config-repo",
-			"create",
-			"--name", "default-config",
-			"--branch", CY_TEST_GIT_CR_BRANCH,
-			"--cred", "git-creds",
-			"--url", CY_TEST_GIT_CR_URL,
+			"delete",
+			"--canonical", CRCanonical,
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"default-config")
+		require.Empty(t, cmdOut)
+	})
+
+	t.Run("SuccessConfigRepositoriesCreate", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"config-repo",
+			"create",
+			"--name", CRCanonical,
+			"--branch", CRBranch,
+			"--cred", CRCanonical,
+			"--url", CRUrl,
+		})
+
+		assert.Nil(t, cmdErr)
+
+		var result models.ConfigRepository
+		err := json.Unmarshal([]byte(cmdOut), &result)
+		assert.NoError(t, err)
+		assert.Equal(t, CRUrl, *result.URL)
+		assert.Equal(t, CRBranch, result.Branch)
+		assert.Equal(t, CRCanonical, *result.Canonical)
+		assert.Equal(t, CRCred, result.CredentialCanonical)
 	})
 
 	t.Run("SuccessConfigRepositoriesList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"config-repo",
 			"list",
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"default-config")
+		var list []models.ConfigRepository
+		err := json.Unmarshal([]byte(cmdOut), &list)
+		assert.NoError(t, err)
+
+		if index := slices.IndexFunc(list, func(cr models.ConfigRepository) bool {
+			return *cr.Canonical == CRCanonical
+		}); index != -1 {
+			result := list[index]
+			assert.Equal(t, CRUrl, *result.URL)
+			assert.Equal(t, CRBranch, result.Branch)
+			assert.Equal(t, CRCanonical, *result.Canonical)
+			assert.Equal(t, CRCred, result.CredentialCanonical)
+		} else {
+			t.Fatal("did not found our config repo in cmd output: " + cmdOut)
+		}
 	})
 
 	t.Run("SuccessConfigRepositoriesGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"config-repo",
 			"get",
-			"--canonical", "default-config",
+			"--canonical", CRCanonical,
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"default-config")
-	})
 
-	t.Run("SuccessConfigRepositoriesDelete", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
-			"config-repo",
-			"delete",
-			"--canonical", "default-config",
-		})
-
-		assert.Nil(t, cmdErr)
-		require.Equal(t, "", string(cmdOut))
+		var result models.ConfigRepository
+		err := json.Unmarshal([]byte(cmdOut), &result)
+		assert.NoError(t, err)
+		assert.Equal(t, CRUrl, *result.URL)
+		assert.Equal(t, CRBranch, result.Branch)
+		assert.Equal(t, CRCanonical, *result.Canonical)
+		assert.Equal(t, CRCred, result.CredentialCanonical)
 	})
 }

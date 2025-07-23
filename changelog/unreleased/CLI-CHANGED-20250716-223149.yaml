@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: cy credential get|delete accept now cred canonicals as argument.
+time: 2025-07-16T22:31:49.777542182Z
+custom:
+  DETAILS: flags have the priority on precedence.
+  PR: "367"
+  TYPE: CLI

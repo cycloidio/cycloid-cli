@@ -76,6 +76,12 @@ type GetCloudCostManagementProviderDetailsParams struct {
 	*/
 	Categories []string
 
+	/* Components.
+
+	   The names of the components that you can use to filter your results
+	*/
+	Components []string
+
 	/* Currency.
 
 	   The currency required for the results.
@@ -241,6 +247,17 @@ func (o *GetCloudCostManagementProviderDetailsParams) WithCategories(categories 
 // SetCategories adds the categories to the get cloud cost management provider details params
 func (o *GetCloudCostManagementProviderDetailsParams) SetCategories(categories []string) {
 	o.Categories = categories
+}
+
+// WithComponents adds the components to the get cloud cost management provider details params
+func (o *GetCloudCostManagementProviderDetailsParams) WithComponents(components []string) *GetCloudCostManagementProviderDetailsParams {
+	o.SetComponents(components)
+	return o
+}
+
+// SetComponents adds the components to the get cloud cost management provider details params
+func (o *GetCloudCostManagementProviderDetailsParams) SetComponents(components []string) {
+	o.Components = components
 }
 
 // WithCurrency adds the currency to the get cloud cost management provider details params
@@ -444,6 +461,17 @@ func (o *GetCloudCostManagementProviderDetailsParams) WriteToRequest(r runtime.C
 		}
 	}
 
+	if o.Components != nil {
+
+		// binding items for components
+		joinedComponents := o.bindParamComponents(reg)
+
+		// query array param components
+		if err := r.SetQueryParam("components", joinedComponents...); err != nil {
+			return err
+		}
+	}
+
 	// query param currency
 	qrCurrency := o.Currency
 	qCurrency := qrCurrency
@@ -628,6 +656,23 @@ func (o *GetCloudCostManagementProviderDetailsParams) bindParamCategories(format
 	categoriesIS := swag.JoinByFormat(categoriesIC, "multi")
 
 	return categoriesIS
+}
+
+// bindParamGetCloudCostManagementProviderDetails binds the parameter components
+func (o *GetCloudCostManagementProviderDetailsParams) bindParamComponents(formats strfmt.Registry) []string {
+	componentsIR := o.Components
+
+	var componentsIC []string
+	for _, componentsIIR := range componentsIR { // explode []string
+
+		componentsIIV := componentsIIR // string as string
+		componentsIC = append(componentsIC, componentsIIV)
+	}
+
+	// items.CollectionFormat: "multi"
+	componentsIS := swag.JoinByFormat(componentsIC, "multi")
+
+	return componentsIS
 }
 
 // bindParamGetCloudCostManagementProviderDetails binds the parameter environments

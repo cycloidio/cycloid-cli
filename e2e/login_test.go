@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"os"
@@ -12,8 +12,8 @@ func TestLogin(t *testing.T) {
 	t.Run("SuccessOrgLoginLegacy", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"login",
-			"--org", TestRootOrg,
-			"--api-key", TestAPIKey,
+			"--org", config.Org,
+			"--api-key", config.APIKey,
 		})
 
 		require.Nil(t, cmdErr)
@@ -21,12 +21,12 @@ func TestLogin(t *testing.T) {
 	})
 
 	t.Run("SuccessOrgLogin", func(t *testing.T) {
-		err := os.Setenv("CY_API_KEY", TestAPIKey)
+		err := os.Setenv("CY_API_KEY", config.APIKey)
 		require.Nil(t, err)
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"login",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 		})
 
 		require.Nil(t, cmdErr)

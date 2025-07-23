@@ -8,9 +8,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -29,13 +28,13 @@ var (
 func NewSendCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
+		Args:  cobra.NoArgs,
 		Short: "create an event",
 		Example: `
 	# create a custom event
 	cy --org my-org event create --tag env=staging --title success --message "successful deployment"
 `,
-		RunE:    send,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: send,
 	}
 
 	cmd.Flags().StringToStringVar(&tagsFlag, "tag", nil, "tags of the event (key=value)")
@@ -59,7 +58,7 @@ func send(cmd *cobra.Command, args []string) error {
 
 	var err error
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}

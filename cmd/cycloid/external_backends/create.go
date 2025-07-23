@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 )
 
 const noDefault = false
@@ -14,6 +13,7 @@ var hostMapping, messageMapping, timestampMapping, esIndex string
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create [log|infraview]",
+		Args:  cobra.NoArgs,
 		Short: "create an external-backend",
 		Example: `
        # create AWS external backend for logs
@@ -43,9 +43,9 @@ func newInfraViewCommand() *cobra.Command {
 
 	// AWSRemoteTFState
 	var aWSRemoteTFState = &cobra.Command{
-		Use:     "AWSRemoteTFState",
-		RunE:    createInfraView,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "AWSRemoteTFState",
+		Args: cobra.NoArgs,
+		RunE: createInfraView,
 	}
 	WithFlagAwsRegion(aWSRemoteTFState)
 	common.RequiredFlag(common.WithFlagCred, aWSRemoteTFState)
@@ -57,9 +57,9 @@ func newInfraViewCommand() *cobra.Command {
 	WithFlagDefault(aWSRemoteTFState)
 
 	var gCPRemoteTFState = &cobra.Command{
-		Use:     "GCPRemoteTFState",
-		RunE:    createInfraView,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "GCPRemoteTFState",
+		Args: cobra.NoArgs,
+		RunE: createInfraView,
 	}
 	common.RequiredFlag(common.WithFlagCred, gCPRemoteTFState)
 	WithFlagBucketName(gCPRemoteTFState)
@@ -67,9 +67,9 @@ func newInfraViewCommand() *cobra.Command {
 	WithFlagDefault(gCPRemoteTFState)
 
 	var swiftRemoteTFState = &cobra.Command{
-		Use:     "SwiftRemoteTFState",
-		RunE:    createInfraView,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "SwiftRemoteTFState",
+		Args: cobra.NoArgs,
+		RunE: createInfraView,
 	}
 	common.RequiredFlag(common.WithFlagCred, swiftRemoteTFState)
 	WithFlagBucketName(swiftRemoteTFState)
@@ -94,9 +94,9 @@ func newEventsCommand() *cobra.Command {
 
 	// Aws CW logs
 	var eventsAWSCloudWatchLogsCmd = &cobra.Command{
-		Use:     "AWSCloudWatchLogs",
-		RunE:    createEvents,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "AWSCloudWatchLogs",
+		Args: cobra.NoArgs,
+		RunE: createEvents,
 	}
 	WithFlagAwsRegion(eventsAWSCloudWatchLogsCmd)
 	common.RequiredFlag(common.WithFlagCred, eventsAWSCloudWatchLogsCmd)
@@ -112,9 +112,8 @@ func newLogsCommand() *cobra.Command {
 
 	// Aws CW logs
 	var logsAWSCloudWatchLogsCmd = &cobra.Command{
-		Use:     "AWSCloudWatchLogs",
-		RunE:    createLogs,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "AWSCloudWatchLogs",
+		RunE: createLogs,
 	}
 	WithFlagAwsRegion(logsAWSCloudWatchLogsCmd)
 	common.RequiredPersistentFlag(common.WithFlagProject, logsAWSCloudWatchLogsCmd)
@@ -122,10 +121,9 @@ func newLogsCommand() *cobra.Command {
 
 	// Elasticsearch
 	var logsElasticsearchLogsCmd = &cobra.Command{
-		Use:     "ElasticsearchLogs [SourceName]",
-		Args:    cobra.ExactArgs(1),
-		RunE:    createLogs,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		Use:  "ElasticsearchLogs [SourceName]",
+		Args: cobra.ExactArgs(1),
+		RunE: createLogs,
 	}
 	common.RequiredPersistentFlag(common.WithFlagProject, logsElasticsearchLogsCmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, logsElasticsearchLogsCmd)

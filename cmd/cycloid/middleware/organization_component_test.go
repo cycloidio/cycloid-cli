@@ -1,6 +1,7 @@
 package middleware_test
 
 import (
+	"errors"
 	"log"
 	"strconv"
 	"testing"
@@ -10,55 +11,50 @@ import (
 
 func TestComponentCRUD(t *testing.T) {
 	// setup
-	t.Parallel()
-	config, err := getTestConfig()
-	if err != nil {
-		t.Fatalf("Config setup failed: %v", err)
-	}
 	m := config.Middleware
 
-	var (
-		projectName      = "Test CRUD component"
-		project          = randomCanonical("test-crud-components")
-		description      = "Testing components"
-		configRepository = configRepository
-		owner            = ""
-		team             = ""
-		color            = "blue"
-		icon             = "planet"
-	)
-
-	defer func() {
-		err := m.DeleteProject(config.Org, project)
-		if err != nil {
-			log.Fatalf("Failed to decomission project '%s' from CRUD tests: %v", project, err)
-			return
-		}
-	}()
-
-	createdProject, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
-	if err != nil {
-		t.Fatalf("Failed to create pre-requisite project, create project CRUD tests: %v", err)
-	}
-
-	var (
-		env      = "test"
-		envName  = "Test"
-		envColor = "red"
-	)
-
-	defer func() {
-		err := m.DeleteEnv(config.Org, project, env)
-		if err != nil {
-			log.Fatalf("Failed to delete env '%s': %v", env, err)
-			return
-		}
-	}()
-
-	_, err = m.CreateEnv(config.Org, *createdProject.Canonical, env, envName, envColor)
-	if err != nil {
-		t.Fatalf("Failed to create env '%s': %v", env, err)
-	}
+	// var (
+	// 	projectName      = "Test CRUD component"
+	// 	project          = testcfg.RandomCanonical("test-crud-components")
+	// 	description      = "Testing components"
+	// 	configRepository = *config.ConfigRepo.Canonical
+	// 	owner            = ""
+	// 	team             = ""
+	// 	color            = "default"
+	// 	icon             = "world"
+	// )
+	//
+	// defer func() {
+	// 	err := m.DeleteProject(config.Org, project)
+	// 	if err != nil {
+	// 		log.Fatalf("Failed to decomission project '%s' from CRUD tests: %v", project, err)
+	// 		return
+	// 	}
+	// }()
+	//
+	// createdProject, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
+	// if err != nil {
+	// 	t.Fatalf("Failed to create pre-requisite project, create project CRUD tests: %v", err)
+	// }
+	//
+	// var (
+	// 	env      = "test"
+	// 	envName  = "Test"
+	// 	envColor = "red"
+	// )
+	//
+	// defer func() {
+	// 	err := m.DeleteEnv(config.Org, project, env)
+	// 	if err != nil {
+	// 		log.Fatalf("Failed to delete env '%s': %v", env, err)
+	// 		return
+	// 	}
+	// }()
+	//
+	// _, err = m.CreateEnv(config.Org, *createdProject.Canonical, env, envName, envColor)
+	// if err != nil {
+	// 	t.Fatalf("Failed to create env '%s': %v", env, err)
+	// }
 	// end setup
 
 	// update
@@ -67,7 +63,7 @@ func TestComponentCRUD(t *testing.T) {
 			componentName        = "Test Component " + strconv.Itoa(index)
 			component            = "test-component-" + strconv.Itoa(index)
 			componentDescription = "My cool component"
-			stackRef             = "cycloid:stack-e2e-stackforms"
+			stackRef             = config.Org + ":stack-e2e-stackforms"
 			useCase              = "default"
 			newVar               = models.FormVariables{
 				"can two sections have same name with different caps ?": {
@@ -128,14 +124,33 @@ func TestComponentCRUD(t *testing.T) {
 			}
 		)
 
-		createdComponent, err := m.CreateComponent(
-			config.Org, project, env, component, componentDescription, &componentName, &stackRef, &useCase, nil, &formVars,
-		)
-		if err != nil {
+		var createdComponent *models.Component
+		var err, errList error
+		for range 3 { // retries due to concurenccy bug in backend
+			createdComponent, err = m.GetComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, component)
+			if err == nil {
+				errList = nil
+				break
+			}
+
+			createdComponent, err = m.CreateComponent(
+				config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, &componentName, &stackRef, &useCase, nil, &formVars,
+			)
+			if err != nil {
+				errList = errors.Join(errList, err)
+				continue
+			}
+
+			errList = nil
+			break
+		}
+
+		if errList != nil {
 			t.Fatalf("Failed to create component '%s':\n%v", component, err)
 		}
+
 		defer func() {
-			err := m.DeleteComponent(config.Org, project, env, *createdComponent.Canonical)
+			err := m.DeleteComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical)
 			if err != nil {
 				log.Fatalf("Failed to delete component '%s': %v", *createdComponent.Canonical, err)
 				return
@@ -146,8 +161,18 @@ func TestComponentCRUD(t *testing.T) {
 			newDescription   = "New desc"
 			newComponentName = "New name" + strconv.Itoa(index)
 		)
-		_, err = m.UpdateComponent(config.Org, project, env, *createdComponent.Canonical, newDescription, &newComponentName, &useCase, &newVar)
-		if err != nil {
+		errList, err = nil, nil
+		for range 3 {
+			_, err = m.UpdateComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, &newComponentName, &useCase, &newVar)
+			if err != nil {
+				errList = errors.Join(errList, err)
+				continue
+			}
+
+			errList = nil
+			break
+		}
+		if errList != nil {
 			t.Fatalf("Failed to update component '%s':\n%v", *createdComponent.Canonical, err)
 		}
 
@@ -158,8 +183,8 @@ func TestComponentCRUD(t *testing.T) {
 		// assert.Equal(t, newDescription, *updatedComponent.Canonical)
 	}
 
-	_, err = m.GetComponents(config.Org, project, env)
+	_, err := m.GetComponents(config.Org, *config.Project.Canonical, *config.Environment.Canonical)
 	if err != nil {
-		t.Fatalf("Failed to list components in project '%s':\n%v", project, err)
+		t.Fatalf("Failed to list components in project '%s':\n%v", *config.Project.Canonical, err)
 	}
 }

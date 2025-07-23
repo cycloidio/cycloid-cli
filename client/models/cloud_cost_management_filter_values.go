@@ -23,6 +23,9 @@ type CloudCostManagementFilterValues struct {
 	// categories
 	Categories []string `json:"categories"`
 
+	// components
+	Components []string `json:"components"`
+
 	// currencies
 	Currencies []string `json:"currencies"`
 

@@ -7,9 +7,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -19,13 +18,13 @@ import (
 func NewValidateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "validate",
+		Args:  cobra.NoArgs,
 		Short: "validate Terraform plan against Cycloid Infrapolicy",
 		Example: `
 	# validate saved terraform plan against the infra policies rule in my-org/my-project/my-env
 	cy --org my-org --project my-project --env my-env ip validate --plan-path terraform-plan.json
 `,
-		RunE:    validate,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: validate,
 	}
 	common.RequiredFlag(WithFlagPlanPath, cmd)
 	common.RequiredFlag(common.WithFlagProject, cmd)
@@ -36,7 +35,7 @@ func NewValidateCommand() *cobra.Command {
 // validate will send the GET request to the API in order to
 // validate the terraform Plan located in planPath
 func validate(cmd *cobra.Command, args []string) error {
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to validate org flag: %w", err)
 	}

@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"encoding/json"
@@ -6,23 +6,24 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestProjects(t *testing.T) {
-	t.Parallel()
+	
 
-	os.Setenv("CY_API_URL", TestAPIURL)
-	os.Setenv("CY_API_KEY", TestAPIKey)
-	os.Setenv("CY_ORG", TestRootOrg)
+	os.Setenv("CY_API_URL", config.APIUrl)
+	os.Setenv("CY_API_KEY", config.APIKey)
+	os.Setenv("CY_ORG", config.Org)
 
 	var (
 		projectName = "Test E2E project"
 		project     = randomCanonical("test-e2e-project")
 		description = "Testing project"
 		owner       = ""
-		color       = "blue"
-		icon        = "planet"
+		color       = "demo"
+		icon        = "public"
 	)
 
 	t.Run("Create", func(t *testing.T) {
@@ -53,7 +54,11 @@ func TestProjects(t *testing.T) {
 	})
 
 	t.Run("CreateWithUpdateExisting", func(t *testing.T) {
-		var createUpdateName = "helloUpdate"
+		var (
+			createUpdateName = "helloUpdate"
+			newIcon          = cyargs.PickRandomIcon(nil)
+			newColor         = cyargs.PickRandomColor(nil)
+		)
 		args := []string{
 			"-o", "json",
 			"project", "create",
@@ -61,8 +66,8 @@ func TestProjects(t *testing.T) {
 			"--name", createUpdateName,
 			"--description", description,
 			"--owner", owner,
-			"--icon", icon,
-			"--color", color,
+			"--icon", newIcon,
+			"--color", newColor,
 			"--update",
 		}
 		out, err := executeCommand(args)
@@ -77,6 +82,8 @@ func TestProjects(t *testing.T) {
 		}
 
 		assert.Equal(t, createUpdateName, *projectResult.Name)
+		assert.Equal(t, newColor, *projectResult.Color)
+		assert.Equal(t, newIcon, *projectResult.Icon)
 	})
 
 	t.Run("CreateWithUpdateNew", func(t *testing.T) {

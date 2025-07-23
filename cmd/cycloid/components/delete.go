@@ -3,7 +3,7 @@ package components
 import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 	"github.com/pkg/errors"
@@ -13,15 +13,16 @@ import (
 func NewDeleteComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "delete -p project -e env -c component",
+		Args:  cobra.NoArgs,
 		Short: "Delete a component",
 		RunE:  deleteComponent,
 	}
-	cy_args.AddCyContext(cmd)
+	cyargs.AddCyContext(cmd)
 	return cmd
 }
 
 func deleteComponent(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := cy_args.GetCyContext(cmd)
+	org, project, env, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-package e2e
+package e2e_test
 
 import (
 	"encoding/json"
@@ -11,13 +11,11 @@ import (
 
 func TestMembers(t *testing.T) {
 	t.Skip()
-	LoginToRootOrg()
-
 	// Cleanup invites in case of a previous test
 	t.Run("CleanupPreviousInvites", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"members",
 			"list-invites",
 		})
@@ -29,7 +27,7 @@ func TestMembers(t *testing.T) {
 		for _, id := range ids {
 			executeCommand([]string{
 				"--output", "json",
-				"--org", TestRootOrg,
+				"--org", config.Org,
 				"members",
 				"delete-invite",
 				"--invite", id,
@@ -40,7 +38,7 @@ func TestMembers(t *testing.T) {
 	t.Run("SuccessMembersList", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"members",
 			"list",
 		})
@@ -58,7 +56,7 @@ func TestMembers(t *testing.T) {
 	t.Run("SuccessMembersGet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"members",
 			"get",
 			"--id", "1",
@@ -77,7 +75,7 @@ func TestMembers(t *testing.T) {
 	t.Run("SuccessMembersInvite", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"members",
 			"invite",
 			"--email", "foo@bli.fr",
@@ -92,7 +90,7 @@ func TestMembers(t *testing.T) {
 	t.Run("SuccessMembersListInvite", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", TestRootOrg,
+			"--org", config.Org,
 			"members",
 			"list-invites",
 		})

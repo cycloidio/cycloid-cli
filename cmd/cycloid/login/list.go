@@ -16,6 +16,7 @@ import (
 func NewListCommand() *cobra.Command {
 	return &cobra.Command{
 		Use:   "list",
+		Args:  cobra.NoArgs,
 		Short: "list the current logged organizations",
 		Example: `
 	# list the organizations where the user is logged in

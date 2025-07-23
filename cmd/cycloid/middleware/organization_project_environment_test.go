@@ -4,23 +4,19 @@ import (
 	"log"
 	"testing"
 
+	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestEnvCrud(t *testing.T) {
 	// setup
-	t.Parallel()
-	config, err := getTestConfig()
-	if err != nil {
-		t.Fatalf("Config setup failed: %v", err)
-	}
 	m := config.Middleware
 
 	var (
 		projectName      = "Test CRUD ENV"
-		project          = randomCanonical("test-crud-env")
+		project          = testcfg.RandomCanonical("test-crud-env")
 		description      = "Testing env"
-		configRepository = configRepository
+		configRepository = *config.ConfigRepo.Canonical
 		owner            = ""
 		team             = ""
 		color            = "blue"

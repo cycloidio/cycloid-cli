@@ -3,7 +3,6 @@ package middleware
 import (
 	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines_jobs"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) GetJobs(org, project, env, component, pipeline string) ([]*models.Job, error) {
@@ -20,10 +19,10 @@ func (m *middleware) GetJobs(org, project, env, component, pipeline string) ([]*
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }
@@ -43,10 +42,10 @@ func (m *middleware) GetJob(org, project, env, component, pipeline, job string) 
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	return payload.Data, nil
 }

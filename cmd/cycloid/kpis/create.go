@@ -4,12 +4,12 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 )
 
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
+		Args:  cobra.NoArgs,
 		Short: "create a kpi",
 		Example: `
 	# create a build_history kpi
@@ -21,8 +21,7 @@ func NewCreateCommand() *cobra.Command {
 		--env environment-name \
 		--job hello
 `,
-		RunE:    func(cmd *cobra.Command, args []string) error { panic("Not implemented") }, //create,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: func(cmd *cobra.Command, args []string) error { panic("Not implemented") }, //create,
 	}
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagType, cmd)

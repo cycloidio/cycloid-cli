@@ -5,9 +5,8 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/cy_args"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -15,19 +14,20 @@ import (
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "create",
+		Args:  cobra.NoArgs,
 		Short: "create a config repository",
 		Example: `
 	# create a config repository and set up as default
 	cy --org my-org config-repo create --branch config --cred my-cred --url "git@github.com:my/repo.git" --name default-config --default
 `,
-		RunE:    createConfigRepository,
-		PreRunE: internal.CheckAPIAndCLIVersion,
+		RunE: createConfigRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagCred, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
 	common.RequiredFlag(WithFlagURL, cmd)
+	cyargs.AddConfigRepositoryFlag(cmd)
 	WithFlagDefault(cmd)
 
 	return cmd
@@ -37,7 +37,12 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cy_args.GetOrg(cmd)
+	org, err := cyargs.GetOrg(cmd)
+	if err != nil {
+		return err
+	}
+
+	canonical, err := cyargs.GetConfigRepository(cmd)
 	if err != nil {
 		return err
 	}
@@ -45,6 +50,10 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
 		return err
+	}
+
+	if name == "" {
+		name = canonical
 	}
 
 	url, err := cmd.Flags().GetString("url")
@@ -78,6 +87,6 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.CreateConfigRepository(org, name, url, branch, cred, setDefault)
+	cr, err := m.CreateConfigRepository(org, name, canonical, url, branch, cred, setDefault)
 	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, cmd.OutOrStdout())
 }

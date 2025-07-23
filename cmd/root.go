@@ -8,12 +8,12 @@ import (
 	"github.com/spf13/viper"
 
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/api_key"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog_repositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/config_repositories"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/creds"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/credentials"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environments"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/external_backends"
@@ -22,6 +22,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
@@ -47,22 +48,33 @@ func NewRootCommand() *cobra.Command {
 		Version:       versionString,
 		SilenceErrors: true,
 		SilenceUsage:  false,
+		Args:          cobra.NoArgs,
 		Use:           "cy",
 		Short:         "Cycloid CLI",
-		Long: `CLI tool to interact with Cycloid API.
+		Long: `--- CLI tool to interact with Cycloid API. ---
 Documentation at https://docs.beta.cycloid.io/reference/cli/
 
-Environment:
+-- Environment variables --
+Some environment variables can be set to ease context setting in Cycloid.
+Those variables will be overridden by related flags.
 
-CY_API_URL   -> Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
-CY_ORG       -> Set the current organization
-CY_API_KEY   -> Set the current API Key to use
-CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default warning.
+Name         |  Desctiption
+-------------|-----------------
+CY_API_URL   | Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
+CY_ORG       | Set the current organization
+CY_PROJECT   | Set the current project
+CY_ENV       | (or CY_ENVIRONMENT) Set the current environment
+CY_COMPONENT | Set the current component
+CY_API_KEY   | Set the current API Key to use
+CY_VERBOSITY | Set the verbosity level (debug, info, warning, error), default warning.
 `,
 	}
 
 	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", "The formatting style for command output: json|yaml|table")
 	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
+	rootCmd.RegisterFlagCompletionFunc("output", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+		return []cobra.Completion{"json", "table", "yaml"}, cobra.ShellCompDirectiveDefault
+	})
 
 	rootCmd.PersistentFlags().StringP("verbosity", "v", "warning", "Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none.")
 	viper.BindPFlag("verbosity", rootCmd.PersistentFlags().Lookup("verbosity"))
@@ -80,6 +92,9 @@ CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default w
 	// Remove usage on error, this is annoying in scripting
 	rootCmd.SilenceUsage = true
 
+	// Disable file completion fallback by default
+	rootCmd.CompletionOptions.SetDefaultShellCompDirective(cobra.ShellCompDirectiveNoFileComp)
+
 	AttachCommands(rootCmd)
 
 	return rootCmd
@@ -87,20 +102,19 @@ CY_VERBOSITY -> Set the verbosity level (debug, info, warning, error), default w
 
 func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(
-		// Root
 		root.NewVersionCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
-		api_key.NewCommands(),
+		apikey.NewCommands(),
 		catalog_repositories.NewCommands(),
 		config_repositories.NewCommands(),
-		creds.NewCommands(),
+		credentials.NewCommands(),
 		events.NewCommands(),
 		external_backends.NewCommands(),
 		infrapolicies.NewCommands(),
 		members.NewCommands(),
 		organizations.NewCommands(),
-		// pipelines.NewCommands(),
+		pipelines.NewCommands(),
 		projects.NewCommands(),
 		environments.NewCommands(),
 		components.NewCommands(),

@@ -1,7 +1,4 @@
-//go:build e2e
-// +build e2e
-
-package e2e
+package e2e_test
 
 import (
 	"testing"
@@ -11,12 +8,10 @@ import (
 )
 
 func TestEvents(t *testing.T) {
-	LoginToRootOrg()
-
 	t.Run("SuccessEventsSend", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", CY_TEST_ROOT_ORG,
+			"--org", config.Org,
 			"events",
 			"create",
 			"--tag", "foo=bar",
