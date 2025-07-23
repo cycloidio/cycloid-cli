@@ -105,7 +105,15 @@ func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
 type ClientService interface {
 	CreateOAuthUser(params *CreateOAuthUserParams, opts ...ClientOption) (*CreateOAuthUserOK, error)
 
+	CreateWatchRule(params *CreateWatchRuleParams, opts ...ClientOption) (*CreateWatchRuleOK, error)
+
+	DeleteAllNotifications(params *DeleteAllNotificationsParams, opts ...ClientOption) (*DeleteAllNotificationsNoContent, error)
+
+	DeleteNotification(params *DeleteNotificationParams, opts ...ClientOption) (*DeleteNotificationNoContent, error)
+
 	DeleteUserAccount(params *DeleteUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUserAccountNoContent, error)
+
+	DeleteWatchRule(params *DeleteWatchRuleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteWatchRuleOK, error)
 
 	EmailAuthenticationVerification(params *EmailAuthenticationVerificationParams, opts ...ClientOption) (*EmailAuthenticationVerificationOK, error)
 
@@ -113,15 +121,31 @@ type ClientService interface {
 
 	EmailVerificationResend(params *EmailVerificationResendParams, opts ...ClientOption) (*EmailVerificationResendNoContent, error)
 
+	GetNotification(params *GetNotificationParams, opts ...ClientOption) (*GetNotificationOK, error)
+
+	GetNotificationSettings(params *GetNotificationSettingsParams, opts ...ClientOption) (*GetNotificationSettingsOK, error)
+
 	GetOAuthUser(params *GetOAuthUserParams, opts ...ClientOption) (*GetOAuthUserOK, error)
 
 	GetUserAccount(params *GetUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserAccountOK, error)
 
+	GetWatchRule(params *GetWatchRuleParams, opts ...ClientOption) (*GetWatchRuleOK, error)
+
 	HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplaceUserEntitlementParams, opts ...ClientOption) error
+
+	ListNotifications(params *ListNotificationsParams, opts ...ClientOption) (*ListNotificationsOK, error)
+
+	ListWatchRules(params *ListWatchRulesParams, opts ...ClientOption) (*ListWatchRulesOK, error)
 
 	Login(params *LoginParams, opts ...ClientOption) (*LoginOK, error)
 
 	LoginToOrg(params *LoginToOrgParams, opts ...ClientOption) (*LoginToOrgOK, error)
+
+	MarkAllNotificationAsRead(params *MarkAllNotificationAsReadParams, opts ...ClientOption) (*MarkAllNotificationAsReadOK, error)
+
+	MarkNotificationAsRead(params *MarkNotificationAsReadParams, opts ...ClientOption) (*MarkNotificationAsReadOK, error)
+
+	MarkNotificationAsUnread(params *MarkNotificationAsUnreadParams, opts ...ClientOption) (*MarkNotificationAsUnreadOK, error)
 
 	PasswordResetReq(params *PasswordResetReqParams, opts ...ClientOption) (*PasswordResetReqNoContent, error)
 
@@ -133,9 +157,13 @@ type ClientService interface {
 
 	SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams, opts ...ClientOption) (*SignUpAWSMarketplaceNoContent, error)
 
+	UpdateNotificationSettings(params *UpdateNotificationSettingsParams, opts ...ClientOption) (*UpdateNotificationSettingsNoContent, error)
+
 	UpdateUserAccount(params *UpdateUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateUserAccountOK, error)
 
 	UpdateUserGuide(params *UpdateUserGuideParams, opts ...ClientOption) (*UpdateUserGuideNoContent, error)
+
+	UpdateWatchRule(params *UpdateWatchRuleParams, opts ...ClientOption) (*UpdateWatchRuleOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
 }
@@ -178,6 +206,117 @@ func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams, opts ...ClientOp
 }
 
 /*
+CreateWatchRule Create a new watch rule for the user.
+*/
+func (a *Client) CreateWatchRule(params *CreateWatchRuleParams, opts ...ClientOption) (*CreateWatchRuleOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateWatchRuleParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "createWatchRule",
+		Method:             "POST",
+		PathPattern:        "/user/watch_rules",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CreateWatchRuleReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CreateWatchRuleOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*CreateWatchRuleDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+DeleteAllNotifications Delete all the notifications for the user at once.
+*/
+func (a *Client) DeleteAllNotifications(params *DeleteAllNotificationsParams, opts ...ClientOption) (*DeleteAllNotificationsNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteAllNotificationsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "deleteAllNotifications",
+		Method:             "DELETE",
+		PathPattern:        "/user/notifications",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteAllNotificationsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteAllNotificationsNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*DeleteAllNotificationsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+DeleteNotification Delete the notification for the user.
+*/
+func (a *Client) DeleteNotification(params *DeleteNotificationParams, opts ...ClientOption) (*DeleteNotificationNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteNotificationParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "deleteNotification",
+		Method:             "DELETE",
+		PathPattern:        "/user/notifications/{notification_id}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteNotificationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteNotificationNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*DeleteNotificationDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 DeleteUserAccount The authenticated user delete itself from the system.
 */
 func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUserAccountNoContent, error) {
@@ -212,6 +351,44 @@ func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo run
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*DeleteUserAccountDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+DeleteWatchRule Delete the watch rule for the user.
+*/
+func (a *Client) DeleteWatchRule(params *DeleteWatchRuleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteWatchRuleOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewDeleteWatchRuleParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "deleteWatchRule",
+		Method:             "DELETE",
+		PathPattern:        "/user/watch_rules/{watch_rule_canonical}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteWatchRuleReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*DeleteWatchRuleOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*DeleteWatchRuleDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -327,6 +504,80 @@ func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams, 
 }
 
 /*
+GetNotification Get the notification for the user.
+*/
+func (a *Client) GetNotification(params *GetNotificationParams, opts ...ClientOption) (*GetNotificationOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetNotificationParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getNotification",
+		Method:             "GET",
+		PathPattern:        "/user/notifications/{notification_id}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetNotificationReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetNotificationOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetNotificationDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetNotificationSettings Get the notification settings for the user.
+*/
+func (a *Client) GetNotificationSettings(params *GetNotificationSettingsParams, opts ...ClientOption) (*GetNotificationSettingsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetNotificationSettingsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getNotificationSettings",
+		Method:             "GET",
+		PathPattern:        "/user/notification_settings",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetNotificationSettingsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetNotificationSettingsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetNotificationSettingsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 GetOAuthUser Used to know if a user from the platform exists on that 'social_type'. If it exists we'll return the JWT 'token', if it does not we'll return the data of that user on the 'user' so it can be confirmed and created
 */
 func (a *Client) GetOAuthUser(params *GetOAuthUserParams, opts ...ClientOption) (*GetOAuthUserOK, error) {
@@ -402,6 +653,43 @@ func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.C
 }
 
 /*
+GetWatchRule Get the watch rule for the user.
+*/
+func (a *Client) GetWatchRule(params *GetWatchRuleParams, opts ...ClientOption) (*GetWatchRuleOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetWatchRuleParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getWatchRule",
+		Method:             "GET",
+		PathPattern:        "/user/watch_rules/{watch_rule_canonical}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetWatchRuleReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetWatchRuleOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetWatchRuleDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 	HandleAWSMarketplaceUserEntitlement This endpoint handles redirections from AWS Marketplace to our system.
 
 If user doesn't exist, he'll be redirected to registration page.
@@ -433,6 +721,80 @@ func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplac
 		return err
 	}
 	return nil
+}
+
+/*
+ListNotifications List all the notifications for the user.
+*/
+func (a *Client) ListNotifications(params *ListNotificationsParams, opts ...ClientOption) (*ListNotificationsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewListNotificationsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "listNotifications",
+		Method:             "GET",
+		PathPattern:        "/user/notifications",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ListNotificationsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ListNotificationsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ListNotificationsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ListWatchRules List all the watch rules for the user.
+*/
+func (a *Client) ListWatchRules(params *ListWatchRulesParams, opts ...ClientOption) (*ListWatchRulesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewListWatchRulesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "listWatchRules",
+		Method:             "GET",
+		PathPattern:        "/user/watch_rules",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ListWatchRulesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ListWatchRulesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ListWatchRulesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
@@ -506,6 +868,117 @@ func (a *Client) LoginToOrg(params *LoginToOrgParams, opts ...ClientOption) (*Lo
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*LoginToOrgDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+MarkAllNotificationAsRead Mark the all notification as read for the user.
+*/
+func (a *Client) MarkAllNotificationAsRead(params *MarkAllNotificationAsReadParams, opts ...ClientOption) (*MarkAllNotificationAsReadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMarkAllNotificationAsReadParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "markAllNotificationAsRead",
+		Method:             "POST",
+		PathPattern:        "/user/notifications/read_all",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &MarkAllNotificationAsReadReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*MarkAllNotificationAsReadOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*MarkAllNotificationAsReadDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+MarkNotificationAsRead Mark the notification as read for the user.
+*/
+func (a *Client) MarkNotificationAsRead(params *MarkNotificationAsReadParams, opts ...ClientOption) (*MarkNotificationAsReadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMarkNotificationAsReadParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "markNotificationAsRead",
+		Method:             "POST",
+		PathPattern:        "/user/notifications/{notification_id}/read",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &MarkNotificationAsReadReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*MarkNotificationAsReadOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*MarkNotificationAsReadDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+MarkNotificationAsUnread Mark the notification as unread for the user.
+*/
+func (a *Client) MarkNotificationAsUnread(params *MarkNotificationAsUnreadParams, opts ...ClientOption) (*MarkNotificationAsUnreadOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewMarkNotificationAsUnreadParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "markNotificationAsUnread",
+		Method:             "POST",
+		PathPattern:        "/user/notifications/{notification_id}/unread",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &MarkNotificationAsUnreadReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*MarkNotificationAsUnreadOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*MarkNotificationAsUnreadDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -696,6 +1169,43 @@ func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams, opts .
 }
 
 /*
+UpdateNotificationSettings A user's notification settings.
+*/
+func (a *Client) UpdateNotificationSettings(params *UpdateNotificationSettingsParams, opts ...ClientOption) (*UpdateNotificationSettingsNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUpdateNotificationSettingsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "updateNotificationSettings",
+		Method:             "POST",
+		PathPattern:        "/user/notification_settings",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &UpdateNotificationSettingsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*UpdateNotificationSettingsNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*UpdateNotificationSettingsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 UpdateUserAccount Update the information of the account of the authenticated user.
 */
 func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateUserAccountOK, error) {
@@ -767,6 +1277,43 @@ func (a *Client) UpdateUserGuide(params *UpdateUserGuideParams, opts ...ClientOp
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*UpdateUserGuideDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+UpdateWatchRule Update the watch rule for the user.
+*/
+func (a *Client) UpdateWatchRule(params *UpdateWatchRuleParams, opts ...ClientOption) (*UpdateWatchRuleOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewUpdateWatchRuleParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "updateWatchRule",
+		Method:             "PUT",
+		PathPattern:        "/user/watch_rules/{watch_rule_canonical}",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &UpdateWatchRuleReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*UpdateWatchRuleOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*UpdateWatchRuleDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

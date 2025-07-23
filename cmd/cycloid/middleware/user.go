@@ -71,11 +71,7 @@ func (m *middleware) UserLogin(email, username, org *string, password string) (*
 		Password: (*strfmt.Password)(&password),
 	}
 	if email != nil {
-		body.Email = strfmt.Email(*email)
-	}
-
-	if username != nil {
-		body.Username = *username
+		body.Email = (*strfmt.Email)(email)
 	}
 
 	if org != nil {

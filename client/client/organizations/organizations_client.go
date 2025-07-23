@@ -115,6 +115,8 @@ type ClientService interface {
 
 	GetEvents(params *GetEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEventsOK, error)
 
+	GetEventsCount(params *GetEventsCountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEventsCountOK, error)
+
 	GetEventsTags(params *GetEventsTagsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEventsTagsOK, error)
 
 	GetOrg(params *GetOrgParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrgOK, error)
@@ -321,6 +323,44 @@ func (a *Client) GetEvents(params *GetEventsParams, authInfo runtime.ClientAuthI
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetEventsDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetEventsCount Retrieve a count of events for given parameters
+*/
+func (a *Client) GetEventsCount(params *GetEventsCountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetEventsCountOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetEventsCountParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getEventsCount",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/events/count",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetEventsCountReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetEventsCountOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetEventsCountDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

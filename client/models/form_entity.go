@@ -95,7 +95,7 @@ type FormEntity struct {
 
 	// The widget used to display the data in the most suitable way
 	// Required: true
-	// Enum: ["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","hidden"]
+	// Enum: ["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","hidden"]
 	Widget *string `json:"widget"`
 
 	// Some specific configuration that could be applied to that widget. Currently only a few widgets can be configured:
@@ -105,6 +105,7 @@ type FormEntity struct {
 	//   * radio
 	//     * 'orientation' (string): whether you want to display it in an 'horizontal' or 'vertical' way
 	//   * cy_inventory_resource
+	//     * 'attribute' (string): REQUIRED The path to the attribute to actually use as value
 	//     * 'provider' (string): The provider like '"provider[\"registry.terraform.io/hashicorp/aws\"]"'
 	//     * 'type'  (string): The type of the resource like 'aws_vpc'
 	//     * 'name' (string): The name of the resource like 'front'
@@ -112,7 +113,17 @@ type FormEntity struct {
 	//     * 'label' (string): The label of the resource, this only applies for resources created directly from the API/FE
 	//     * 'attributes' (string): The query string to filter the attributes like 'ingress[0].protocol[eq]=tcp'
 	//     * 'custom_attributes' (string): The query string to filter the custom_attributes like 'ingress[0].protocol[eq]=tcp'
-	//     * 'attribute' (string): The path to the attribute to actually use as value
+	//     * 'project' (string): Linked project canonical
+	//     * 'environment' (string): Linked environment canonical
+	//     * 'component' (string): Linked component canonical
+	//   * cy_inventory_output
+	//     * 'attribute' (string): Path to the output's attribute, which value will be used
+	//     * 'attributes' (string): The query string to filter the attributes like 'ingress[0].protocol[eq]=tcp'
+	//     * 'keys' (list(string)): List of output keys to select from
+	//     * 'project' (string): Linked project canonical
+	//     * 'environment' (string): Linked environment canonical
+	//     * 'component' (string): Linked component canonical
+	//     * 'service_catalogs' (list(string)): Linked service catalog (stack) canonicals
 	WidgetConfig interface{} `json:"widget_config,omitempty"`
 }
 
@@ -219,7 +230,7 @@ var formEntityTypeWidgetPropEnum []interface{}
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","hidden"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","hidden"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -270,6 +281,9 @@ const (
 
 	// FormEntityWidgetCyInventoryResource captures enum value "cy_inventory_resource"
 	FormEntityWidgetCyInventoryResource string = "cy_inventory_resource"
+
+	// FormEntityWidgetCyInventoryOutput captures enum value "cy_inventory_output"
+	FormEntityWidgetCyInventoryOutput string = "cy_inventory_output"
 
 	// FormEntityWidgetHidden captures enum value "hidden"
 	FormEntityWidgetHidden string = "hidden"
