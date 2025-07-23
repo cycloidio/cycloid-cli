@@ -1,9 +1,0 @@
-component: CLI
-kind: FIXED
-body: Project and env updates will persist current icon / color instead of using the
-  default one if not set by the user.
-time: 2025-05-16T19:22:48.442691415Z
-custom:
-  DETAILS: ""
-  PR: "354"
-  TYPE: CLI

@@ -1,9 +1,0 @@
-component: CLI
-kind: ADDED
-body: Added flag completion to the CLI
-time: 2025-05-19T13:31:19.586216694Z
-custom:
-  DETAILS: The CLI is now able to complete most arguments, fetching resources from
-    the API still requires auth.
-  PR: "356"
-  TYPE: CLI

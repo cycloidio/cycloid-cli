@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add completion for --color and --icon flags
-time: 2025-05-16T19:25:35.525786938Z
-custom:
-  DETAILS: ""
-  PR: "354"
-  TYPE: CLI

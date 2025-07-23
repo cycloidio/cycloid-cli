@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add `cy credential create --update` flag
-time: 2025-07-16T22:32:54.456405522Z
-custom:
-  DETAILS: ""
-  PR: "367"
-  TYPE: CLI

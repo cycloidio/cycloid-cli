@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Update pipelines commands to work with components layer
-time: 2025-07-03T09:19:33.076857355Z
-custom:
-  DETAILS: ""
-  PR: "358"
-  TYPE: CLI
