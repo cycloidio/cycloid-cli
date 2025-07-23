@@ -1,8 +1,0 @@
-component: CLI
-kind: REMOVED
-body: Removed the version warning on each commands
-time: 2025-07-10T20:57:58.139462013Z
-custom:
-  DETAILS: ""
-  PR: "364"
-  TYPE: CLI
