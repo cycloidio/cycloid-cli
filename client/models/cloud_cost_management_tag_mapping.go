@@ -27,6 +27,12 @@ type CloudCostManagementTagMapping struct {
 	// This is a list of all the tag keys in the DB for the Org
 	AllTags []string `json:"all_tags"`
 
+	// component regex
+	ComponentRegex string `json:"component_regex,omitempty"`
+
+	// component tags
+	ComponentTags []string `json:"component_tags"`
+
 	// created at
 	// Required: true
 	// Minimum: 0

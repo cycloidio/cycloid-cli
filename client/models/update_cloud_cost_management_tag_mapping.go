@@ -19,6 +19,12 @@ import (
 // swagger:model UpdateCloudCostManagementTagMapping
 type UpdateCloudCostManagementTagMapping struct {
 
+	// component regex
+	ComponentRegex string `json:"component_regex,omitempty"`
+
+	// component tags
+	ComponentTags []string `json:"component_tags"`
+
 	// environment regex
 	EnvironmentRegex string `json:"environment_regex,omitempty"`
 

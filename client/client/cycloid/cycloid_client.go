@@ -111,6 +111,8 @@ type ClientService interface {
 
 	GetCountries(params *GetCountriesParams, opts ...ClientOption) (*GetCountriesOK, error)
 
+	GetEventsActionsAndEntities(params *GetEventsActionsAndEntitiesParams, opts ...ClientOption) (*GetEventsActionsAndEntitiesOK, error)
+
 	GetServiceStatus(params *GetServiceStatusParams, opts ...ClientOption) (*GetServiceStatusOK, error)
 
 	GetStatus(params *GetStatusParams, opts ...ClientOption) (*GetStatusOK, error)
@@ -226,6 +228,43 @@ func (a *Client) GetCountries(params *GetCountriesParams, opts ...ClientOption) 
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetCountriesDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetEventsActionsAndEntities Get the Cycloid possible actions and entities for the events
+*/
+func (a *Client) GetEventsActionsAndEntities(params *GetEventsActionsAndEntitiesParams, opts ...ClientOption) (*GetEventsActionsAndEntitiesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetEventsActionsAndEntitiesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getEventsActionsAndEntities",
+		Method:             "GET",
+		PathPattern:        "/events/actions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetEventsActionsAndEntitiesReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetEventsActionsAndEntitiesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetEventsActionsAndEntitiesDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

@@ -113,6 +113,8 @@ type ClientService interface {
 
 	GetState(params *GetStateParams, opts ...ClientOption) (*GetStateOK, error)
 
+	ListInventoryOutputs(params *ListInventoryOutputsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListInventoryOutputsOK, error)
+
 	ListInventoryResources(params *ListInventoryResourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListInventoryResourcesOK, error)
 
 	ListResourceLabels(params *ListResourceLabelsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListResourceLabelsOK, error)
@@ -313,6 +315,44 @@ func (a *Client) GetState(params *GetStateParams, opts ...ClientOption) (*GetSta
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetStateDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ListInventoryOutputs List the outputs of terraform states of an organization. Can be filtered by: * output_key * output_attribute * project_canonical * environment_canonical * component_canonical * service_catalog_canonical
+*/
+func (a *Client) ListInventoryOutputs(params *ListInventoryOutputsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListInventoryOutputsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewListInventoryOutputsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "listInventoryOutputs",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/inventory/outputs",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ListInventoryOutputsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ListInventoryOutputsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ListInventoryOutputsDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

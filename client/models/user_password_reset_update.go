@@ -23,7 +23,7 @@ type UserPasswordResetUpdate struct {
 
 	// password
 	// Required: true
-	// Min Length: 8
+	// Min Length: 12
 	// Format: password
 	Password *strfmt.Password `json:"password"`
 
@@ -57,7 +57,7 @@ func (m *UserPasswordResetUpdate) validatePassword(formats strfmt.Registry) erro
 		return err
 	}
 
-	if err := validate.MinLength("password", "body", m.Password.String(), 8); err != nil {
+	if err := validate.MinLength("password", "body", m.Password.String(), 12); err != nil {
 		return err
 	}
 

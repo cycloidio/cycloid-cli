@@ -96,7 +96,7 @@ type GetInfraPoliciesParams struct {
 
 	/* OrderBy.
 
-	   Allows to order the list of items. Example usage: field_name:asc
+	   Allows to order the list of items. Example usage: field_name:asc. Multiple order_by parameters are allowed, applied in the order they are specified.
 
 	*/
 	OrderBy *string

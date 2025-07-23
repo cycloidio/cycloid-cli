@@ -67,6 +67,12 @@ type GetEventsTagsParams struct {
 	*/
 	OrganizationCanonical string
 
+	/* ProjectCanonical.
+
+	   A list of projects' canonical to filter from
+	*/
+	ProjectCanonical *string
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -131,6 +137,17 @@ func (o *GetEventsTagsParams) SetOrganizationCanonical(organizationCanonical str
 	o.OrganizationCanonical = organizationCanonical
 }
 
+// WithProjectCanonical adds the projectCanonical to the get events tags params
+func (o *GetEventsTagsParams) WithProjectCanonical(projectCanonical *string) *GetEventsTagsParams {
+	o.SetProjectCanonical(projectCanonical)
+	return o
+}
+
+// SetProjectCanonical adds the projectCanonical to the get events tags params
+func (o *GetEventsTagsParams) SetProjectCanonical(projectCanonical *string) {
+	o.ProjectCanonical = projectCanonical
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetEventsTagsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -142,6 +159,23 @@ func (o *GetEventsTagsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 	// path param organization_canonical
 	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
 		return err
+	}
+
+	if o.ProjectCanonical != nil {
+
+		// query param project_canonical
+		var qrProjectCanonical string
+
+		if o.ProjectCanonical != nil {
+			qrProjectCanonical = *o.ProjectCanonical
+		}
+		qProjectCanonical := qrProjectCanonical
+		if qProjectCanonical != "" {
+
+			if err := r.SetQueryParam("project_canonical", qProjectCanonical); err != nil {
+				return err
+			}
+		}
 	}
 
 	if len(res) > 0 {
