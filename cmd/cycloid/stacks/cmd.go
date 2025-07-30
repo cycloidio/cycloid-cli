@@ -19,6 +19,7 @@ func NewCommands() *cobra.Command {
 		NewGetCommand(),
 		NewUpdateCommand(),
 		NewConfigGetCommand(),
+		NewCreateFromBlueprintCommand(),
 		NewFormsCommands(),
 		NewConfigCommands(),
 	)
