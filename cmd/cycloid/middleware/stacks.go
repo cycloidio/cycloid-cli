@@ -14,6 +14,11 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
+// skipValidationForBlueprint skips validation for blueprints since they may contain templating strings
+func (m *middleware) skipValidationForBlueprint(data *models.ServiceCatalog) bool {
+	return data.Blueprint
+}
+
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	params := service_catalogs.NewGetServiceCatalogParams()
 	params.SetOrganizationCanonical(org)
@@ -55,25 +60,25 @@ func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error
 	// Create a custom request with the correct query parameter for blueprint filtering
 	// The frontend uses: service_catalog_blueprint[eq]=true
 	// We need to add this as a custom query parameter
-	
+
 	// Build the URL with the correct query parameter using the configured API URL
 	baseURL := m.api.Config.URL
-	url := fmt.Sprintf("%s/organizations/%s/service_catalogs?organization_canonical=%s&service_catalog_blueprint%%5Beq%%5D=true", 
+	url := fmt.Sprintf("%s/organizations/%s/service_catalogs?organization_canonical=%s&service_catalog_blueprint%%5Beq%%5D=true",
 		baseURL, org, org)
-	
+
 	// Create HTTP request
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Add authentication headers
 	token := m.api.GetToken(&org)
 	if token != "" {
 		req.Header.Set("Authorization", "Bearer "+token)
 	}
 	req.Header.Set("Content-Type", "application/json")
-	
+
 	// Make the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -81,23 +86,23 @@ func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error
 		return nil, err
 	}
 	defer resp.Body.Close()
-	
+
 	// Read response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
-	
+
 	// Parse the response
 	var response struct {
 		Data []*models.ServiceCatalog `json:"data"`
 	}
-	
+
 	err = json.Unmarshal(body, &response)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse response: %v", err)
 	}
-	
+
 	// For blueprints, we skip validation entirely since they may contain templating strings
 	var validBlueprints []*models.ServiceCatalog
 	for _, catalog := range response.Data {
@@ -134,15 +139,17 @@ func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, canonical
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+
+	// Skip validation for blueprints since they may contain templating strings
+	if !m.skipValidationForBlueprint(payload.Data) {
+		err = payload.Validate(strfmt.Default)
+		if err != nil {
+			return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+		}
 	}
 
 	return payload.Data, nil
 }
-
-
 
 func (m *middleware) UpdateStack(
 	org, ref, teamCanonical string,

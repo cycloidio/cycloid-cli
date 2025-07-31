@@ -132,11 +132,6 @@ type ServiceCatalog struct {
 
 // Validate validates this service catalog
 func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
-	// Skip validation for blueprints entirely since they may contain templating strings
-	if m.Blueprint {
-		return nil
-	}
-
 	var res []error
 
 	if err := m.validateAuthor(formats); err != nil {
