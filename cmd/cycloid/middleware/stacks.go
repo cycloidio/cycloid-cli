@@ -52,43 +52,39 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 }
 
 func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error) {
-	// Create a custom request with the correct query parameter for blueprint filtering
-	// The frontend uses: service_catalog_blueprint[eq]=true
-	// We need to add this as a custom query parameter
+	// ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
+	// TODO: Merge this route with ListStack once we find a way to add LHS filter params to the client.
+	// This method use a custom request because we use the (undocumented)
+	//LHS filter param like the frontend does: `service_catalog_blueprint[eq]=true`
 
-	// Build the URL with the correct query parameter using the configured API URL
-	baseURL := m.api.Config.URL
-	url := fmt.Sprintf("%s/organizations/%s/service_catalogs?organization_canonical=%s&service_catalog_blueprint%%5Beq%%5D=true",
-		baseURL, org, org)
-
-	// Create HTTP request
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	// Add authentication headers
 	token := m.api.GetToken(&org)
-	if token != "" {
-		req.Header.Set("Authorization", "Bearer "+token)
+	if token == "" {
+		return nil, errors.New("missing API key, please provide valid authentication using CY_API_KEY env var")
 	}
+	req.Header.Set("Authorization", "Bearer "+token)
 	req.Header.Set("Content-Type", "application/json")
 
-	// Make the request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	if token == "" {
+		return nil, errors.New("missing API key, please provide valid authentication using CY_API_KEY env var")
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
 
-	// Read response body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	// Parse the response
 	var response struct {
 		Data []*models.ServiceCatalog `json:"data"`
 	}
@@ -98,14 +94,13 @@ func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error
 		return nil, fmt.Errorf("failed to parse response: %v", err)
 	}
 
-	// For blueprints, we skip validation entirely since they may contain templating strings
 	var validBlueprints []*models.ServiceCatalog
 	for _, catalog := range response.Data {
 		if catalog.Blueprint {
 			validBlueprints = append(validBlueprints, catalog)
 		}
 	}
-
+	// Don't validate payload on this route, now supported atm.
 	return validBlueprints, nil
 }
 
@@ -113,7 +108,6 @@ func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, canonical
 	params := service_catalogs.NewCreateServiceCatalogFromTemplateParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogRef(blueprintRef)
-
 	body := &models.NewServiceCatalogFromTemplate{
 		Name:                          ptr.Ptr(name),
 		Canonical:                     ptr.Ptr(canonical),
@@ -125,14 +119,12 @@ func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, canonical
 	if err != nil {
 		return nil, errors.Wrap(err, "validation failed for createServiceCatalogFromTemplate input")
 	}
-
 	params.WithBody(body)
 
 	resp, err := m.api.ServiceCatalogs.CreateServiceCatalogFromTemplate(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
-
 	payload := resp.GetPayload()
 
 	return payload.Data, nil
