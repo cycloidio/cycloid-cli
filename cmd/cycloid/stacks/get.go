@@ -25,9 +25,6 @@ func NewGetCommand() *cobra.Command {
 }
 
 func get(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -42,6 +39,10 @@ func get(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
+
+	// Initialize middleware after all arguments are collected
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)

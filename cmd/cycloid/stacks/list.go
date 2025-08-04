@@ -34,11 +34,11 @@ func NewListCommand() *cobra.Command {
 		Aliases: []string{
 			"ls",
 		},
-		Args:    cobra.NoArgs,
-		Short:   "list the stacks",
+		Args:  cobra.NoArgs,
+		Short: "list the stacks",
 		Example: `cy --org my-org stack list
 cy --org my-org stack list --blueprint`,
-		RunE:    list,
+		RunE: list,
 	}
 
 	cmd.Flags().Bool("blueprint", false, "list only blueprint stacks (templates)")
@@ -47,9 +47,6 @@ cy --org my-org stack list --blueprint`,
 }
 
 func list(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -64,6 +61,10 @@ func list(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
+	// Initialize middleware after all arguments are collected
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
