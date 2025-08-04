@@ -25,6 +25,7 @@ func NewCreateFromBlueprintCommand() *cobra.Command {
 		Short:   "create a new stack from a blueprint",
 		Example: `cy --org my-org stack create-from-blueprint --blueprint-ref repo:blueprint-canonical --name "My Stack" --canonical my-stack --service-catalog-source-canonical my-catalog --use-case production`,
 		RunE:    createFromBlueprint,
+		Args:    cobra.NoArgs,
 	}
 
 	cmd.Flags().String("blueprint-ref", "", "Blueprint reference to use as template (required)")
@@ -46,9 +47,6 @@ func NewCreateFromBlueprintCommand() *cobra.Command {
 }
 
 func createFromBlueprint(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -85,6 +83,10 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	// Initialize middleware after all arguments are collected
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
@@ -111,4 +113,4 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 	}
 
 	return printer.SmartPrint(p, formattedOutput, nil, "", printer.Options{}, cmd.OutOrStdout())
-} 
+}
