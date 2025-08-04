@@ -131,3 +131,35 @@ func GetTeam(cmd *cobra.Command) (string, error) {
 func CompleteTeam(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 	return []cobra.Completion{}, cobra.ShellCompDirectiveNoFileComp
 }
+
+// Blueprint-related functions
+
+func AddBlueprintRefFlag(cmd *cobra.Command) string {
+	flagName := "blueprint-ref"
+	cmd.Flags().String(flagName, "", "Blueprint reference to use as template")
+	return flagName
+}
+
+func GetBlueprintRef(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("blueprint-ref")
+}
+
+func AddServiceCatalogSourceCanonicalFlag(cmd *cobra.Command) string {
+	flagName := "service-catalog-source-canonical"
+	cmd.Flags().String(flagName, "", "Service catalog source canonical")
+	return flagName
+}
+
+func GetServiceCatalogSourceCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("service-catalog-source-canonical")
+}
+
+func AddCanonicalFlag(cmd *cobra.Command) string {
+	flagName := "canonical"
+	cmd.Flags().String(flagName, "", "Canonical name (slug)")
+	return flagName
+}
+
+func GetCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("canonical")
+}

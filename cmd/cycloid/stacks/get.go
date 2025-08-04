@@ -52,7 +52,7 @@ func get(cmd *cobra.Command, args []string) error {
 
 	s, err := m.GetStack(org, ref)
 	if err != nil {
-		printer.SmartPrint(p, nil, err, "failed to get stack from API", printer.Options{}, cmd.OutOrStderr())
+		return printer.SmartPrint(p, nil, err, "failed to get stack from API", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	return printer.SmartPrint(p, s, nil, "", printer.Options{}, cmd.OutOrStdout())

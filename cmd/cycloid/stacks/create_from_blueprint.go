@@ -7,17 +7,10 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
-
-// CreateFromBlueprintOutput represents the formatted output for create-from-blueprint command
-type CreateFromBlueprintOutput struct {
-	Canonical   string `json:"canonical"`
-	Name        string `json:"name"`
-	Ref         string `json:"ref"`
-	Description string `json:"description"`
-}
 
 func NewCreateFromBlueprintCommand() *cobra.Command {
 	var cmd = &cobra.Command{
@@ -28,20 +21,16 @@ func NewCreateFromBlueprintCommand() *cobra.Command {
 		Args:    cobra.NoArgs,
 	}
 
-	cmd.Flags().String("blueprint-ref", "", "Blueprint reference to use as template (required)")
-	cmd.MarkFlagRequired("blueprint-ref")
+	cmd.MarkFlagRequired(cyargs.AddBlueprintRefFlag(cmd))
 
-	cmd.Flags().String("name", "", "Name of the new stack (required)")
+	cyargs.AddNameFlag(cmd)
 	cmd.MarkFlagRequired("name")
 
-	cmd.Flags().String("canonical", "", "Canonical name (slug) of the new stack (required)")
-	cmd.MarkFlagRequired("canonical")
+	cmd.MarkFlagRequired(cyargs.AddCanonicalFlag(cmd))
 
-	cmd.Flags().String("service-catalog-source-canonical", "", "Service catalog source canonical (required)")
-	cmd.MarkFlagRequired("service-catalog-source-canonical")
+	cmd.MarkFlagRequired(cyargs.AddServiceCatalogSourceCanonicalFlag(cmd))
 
-	cmd.Flags().String("use-case", "", "Use case canonical to apply from the blueprint (required)")
-	cmd.MarkFlagRequired("use-case")
+	cmd.MarkFlagRequired(cyargs.AddUseCaseFlag(cmd))
 
 	return cmd
 }
@@ -57,31 +46,32 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// Get required flags
-	blueprintRef, err := cmd.Flags().GetString("blueprint-ref")
+	// Get required flags using cyargs functions
+	blueprintRef, err := cyargs.GetBlueprintRef(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := cmd.Flags().GetString("name")
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
 
-	canonical, err := cmd.Flags().GetString("canonical")
+	canonical, err := cyargs.GetCanonical(cmd)
 	if err != nil {
 		return err
 	}
 
-	serviceCatalogSourceCanonical, err := cmd.Flags().GetString("service-catalog-source-canonical")
+	serviceCatalogSourceCanonical, err := cyargs.GetServiceCatalogSourceCanonical(cmd)
 	if err != nil {
 		return err
 	}
 
-	useCase, err := cmd.Flags().GetString("use-case")
+	useCasePtr, err := cyargs.GetUseCase(cmd)
 	if err != nil {
 		return err
 	}
+	useCase := *useCasePtr
 
 	// Initialize middleware after all arguments are collected
 	api := common.NewAPI()
@@ -96,7 +86,7 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 	// Create the stack from blueprint
 	stack, err := m.CreateStackFromBlueprint(org, blueprintRef, name, canonical, serviceCatalogSourceCanonical, useCase)
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to create stack from blueprint", printer.Options{}, cmd.OutOrStdout())
+		return printer.SmartPrint(p, nil, err, "failed to create stack from blueprint", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	// For JSON output, return all fields; for table output, return only specific fields
@@ -105,10 +95,17 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 	}
 
 	// For table output, format to show only the requested fields
-	formattedOutput := &CreateFromBlueprintOutput{
-		Canonical:   getStringValue(stack.Canonical),
-		Name:        getStringValue(stack.Name),
-		Ref:         getStringValue(stack.Ref),
+	type createFromBlueprintOutput struct {
+		Canonical   string `json:"canonical"`
+		Name        string `json:"name"`
+		Ref         string `json:"ref"`
+		Description string `json:"description"`
+	}
+
+	formattedOutput := &createFromBlueprintOutput{
+		Canonical:   ptr.Value(stack.Canonical),
+		Name:        ptr.Value(stack.Name),
+		Ref:         ptr.Value(stack.Ref),
 		Description: stack.Description,
 	}
 

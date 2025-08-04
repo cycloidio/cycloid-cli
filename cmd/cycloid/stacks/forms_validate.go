@@ -53,7 +53,7 @@ func validateForm(cmd *cobra.Command, args []string) error {
 
 	validation, err := m.ValidateForm(org, rawForm)
 	if err != nil {
-		return printer.SmartPrint(p, validation, err, "form validation failed", printer.Options{}, cmd.OutOrStdout())
+		return printer.SmartPrint(p, validation, err, "form validation failed", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	if len(validation.Errors) == 0 {
