@@ -14,11 +14,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
-// skipValidationForBlueprint skips validation for blueprints since they may contain templating strings
-func (m *middleware) skipValidationForBlueprint(data *models.ServiceCatalog) bool {
-	return data.Blueprint
-}
-
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	params := service_catalogs.NewGetServiceCatalogParams()
 	params.SetOrganizationCanonical(org)
@@ -139,14 +134,6 @@ func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, canonical
 	}
 
 	payload := resp.GetPayload()
-
-	// Skip validation for blueprints since they may contain templating strings
-	if !m.skipValidationForBlueprint(payload.Data) {
-		err = payload.Validate(strfmt.Default)
-		if err != nil {
-			return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-		}
-	}
 
 	return payload.Data, nil
 }
