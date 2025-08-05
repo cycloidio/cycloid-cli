@@ -31,10 +31,10 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -112,10 +112,10 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -132,10 +132,10 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -165,10 +165,10 @@ func (m *middleware) CreateOrganizationChild(org, childOrg string, childOrgName 
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -181,5 +181,6 @@ func (m *middleware) DeleteOrganization(org string) error {
 	if err != nil {
 		return NewApiError(err)
 	}
+
 	return nil
 }

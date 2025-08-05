@@ -21,7 +21,7 @@ func NewCompletionCmd() *cobra.Command {
 			}
 			return cobra.OnlyValidArgs(cmd, args)
 		},
-		ValidArgs: []string{"bash", "zsh"},
+		ValidArgs: []string{"bash", "zsh", "fish", "powershell", "pwsh"},
 		Short:     "Output shell completion for the given shell (bash or zsh)",
 		RunE:      completion,
 		Example: `# generate completion for ZSH
