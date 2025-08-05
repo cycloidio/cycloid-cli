@@ -10,8 +10,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func AddCatalogRepositoryFlag(cmd *cobra.Command) {
-	cmd.Flags().String("catalog-repository", "", "canonical of a catalog repository")
+func AddCatalogRepositoryFlag(cmd *cobra.Command) string {
+	flagName := "catalog-repository"
+	cmd.Flags().String(flagName, "", "canonical of a catalog repository")
+	cmd.RegisterFlagCompletionFunc("catalog-repository", CompleteCatalogRepository)
+	return flagName
 }
 
 func GetCatalogRepository(cmd *cobra.Command) (string, error) {
@@ -19,33 +22,32 @@ func GetCatalogRepository(cmd *cobra.Command) (string, error) {
 	if err != nil {
 		return "", err
 	}
-
-	cmd.RegisterFlagCompletionFunc("catalog-repository", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
-
-		org, err := GetOrg(cmd)
-		if err != nil {
-			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
-		}
-
-		stacks, err := m.ListCatalogRepositories(org)
-		if err != nil {
-			return cobra.AppendActiveHelp(nil, "failed to list catalog repositories for completion in org '"+org+"': "+err.Error()),
-				cobra.ShellCompDirectiveNoFileComp
-		}
-
-		var catalogRepositories = make([]cobra.Completion, len(stacks))
-		for index, catalogRepository := range stacks {
-			if catalogRepository.Canonical != nil {
-				catalogRepositories[index] = cobra.CompletionWithDesc(*catalogRepository.Canonical, *catalogRepository.Name+" - branch: "+catalogRepository.Branch)
-			}
-		}
-
-		return catalogRepositories, cobra.ShellCompDirectiveNoFileComp
-	})
-
 	return catalogRepository, err
+}
+
+func CompleteCatalogRepository(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	stacks, err := m.ListCatalogRepositories(org)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to list catalog repositories for completion in org '"+org+"': "+err.Error()),
+			cobra.ShellCompDirectiveNoFileComp
+	}
+
+	var catalogRepositories = make([]cobra.Completion, len(stacks))
+	for index, catalogRepository := range stacks {
+		if catalogRepository.Canonical != nil {
+			catalogRepositories[index] = cobra.CompletionWithDesc(*catalogRepository.Canonical, *catalogRepository.Name+" - branch: "+catalogRepository.Branch)
+		}
+	}
+
+	return catalogRepositories, cobra.ShellCompDirectiveNoFileComp
 }
 
 func AddConfigRepositoryFlag(cmd *cobra.Command) string {

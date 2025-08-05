@@ -7,31 +7,24 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateFromBlueprintCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "create-from-blueprint",
+		Use:     "create",
 		Short:   "create a new stack from a blueprint",
-		Example: `cy --org my-org stack create-from-blueprint --blueprint-ref repo:blueprint-canonical --name "My Stack" --canonical my-stack --service-catalog-source-canonical my-catalog --use-case production`,
+		Example: `cy stack create --name "My Stack" --stack my-stack --catalog-repository my-catalog --blueprint-ref org:blueprint --use-case production`,
 		RunE:    createFromBlueprint,
 		Args:    cobra.NoArgs,
 	}
 
+	cmd.MarkFlagRequired(cyargs.AddStackNameFlag(cmd))
 	cmd.MarkFlagRequired(cyargs.AddBlueprintRefFlag(cmd))
-
-	cyargs.AddNameFlag(cmd)
-	cmd.MarkFlagRequired("name")
-
-	cmd.MarkFlagRequired(cyargs.AddCanonicalFlag(cmd))
-
-	cmd.MarkFlagRequired(cyargs.AddServiceCatalogSourceCanonicalFlag(cmd))
-
+	cmd.MarkFlagRequired(cyargs.AddStackFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddCatalogRepositoryFlag(cmd))
 	cmd.MarkFlagRequired(cyargs.AddUseCaseFlag(cmd))
-
 	return cmd
 }
 
@@ -57,12 +50,12 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	canonical, err := cyargs.GetCanonical(cmd)
+	stack, err := cyargs.GetStack(cmd)
 	if err != nil {
 		return err
 	}
 
-	serviceCatalogSourceCanonical, err := cyargs.GetServiceCatalogSourceCanonical(cmd)
+	catalogRepository, err := cyargs.GetCatalogRepository(cmd)
 	if err != nil {
 		return err
 	}
@@ -73,41 +66,35 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 	}
 	useCase := *useCasePtr
 
-	// Initialize middleware after all arguments are collected
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	// Create the stack from blueprint
-	stack, err := m.CreateStackFromBlueprint(org, blueprintRef, name, canonical, serviceCatalogSourceCanonical, useCase)
+	createdStack, err := m.CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create stack from blueprint", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	// For JSON output, return all fields; for table output, return only specific fields
 	if output == "json" {
-		return printer.SmartPrint(p, stack, nil, "", printer.Options{}, cmd.OutOrStdout())
+		return printer.SmartPrint(p, createdStack, nil, "", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	// For table output, format to show only the requested fields
-	type createFromBlueprintOutput struct {
-		Canonical   string `json:"canonical"`
-		Name        string `json:"name"`
-		Ref         string `json:"ref"`
-		Description string `json:"description"`
+	// For table output, format to show only the relevant fields
+	formattedOutput := &struct {
+		Name        string
+		Ref         string
+		Canonical   string
+		Description string
+	}{
+		Name:        *createdStack.Name,
+		Ref:         *createdStack.Ref,
+		Canonical:   *createdStack.Canonical,
+		Description: createdStack.Description,
 	}
-
-	formattedOutput := &createFromBlueprintOutput{
-		Canonical:   ptr.Value(stack.Canonical),
-		Name:        ptr.Value(stack.Name),
-		Ref:         ptr.Value(stack.Ref),
-		Description: stack.Description,
-	}
-
 	return printer.SmartPrint(p, formattedOutput, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
