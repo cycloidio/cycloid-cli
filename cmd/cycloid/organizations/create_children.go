@@ -13,10 +13,12 @@ import (
 
 func NewCreateChildCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create-child",
-		Args:  cobra.NoArgs,
-		Short: "create a child organization",
-		RunE:  createChild,
+		Use:        "create-child",
+		Args:       cobra.NoArgs,
+		Short:      "create a child organization",
+		RunE:       createChild,
+		Deprecated: "this function is replaced by `cy org create --org <org> --child-of <parent-org>`",
+		Hidden:     true,
 	}
 	common.RequiredPersistentFlag(WithFlagParentOrganization, cmd)
 
