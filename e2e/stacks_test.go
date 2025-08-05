@@ -14,7 +14,7 @@ import (
 )
 
 func TestStacks(t *testing.T) {
-	t.Run("SuccessStacksList", func(t *testing.T) {
+	t.Run("SuccessStacksListJSON", func(t *testing.T) {
 		is := is.New(t)
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
@@ -28,112 +28,111 @@ func TestStacks(t *testing.T) {
 		err := json.Unmarshal([]byte(cmdOut), &stackList)
 		is.NoErr(err)
 		is.True(len(stackList) >= 1) // We should have at least one stack in our test org
-		var testStackRef = config.Org + ":stack-e2e-stackforms"
-
-		t.Run("SuccessStacksGet", func(t *testing.T) {
-			is := is.New(t)
-			cmdOut, cmdErr := executeCommand([]string{
-				"--output", "json",
-				"--org", config.Org,
-				"stacks",
-				"get",
-				"--stack-ref", testStackRef,
-			})
-			is.NoErr(cmdErr)
-			var outStack *models.ServiceCatalog
-			err := json.Unmarshal([]byte(cmdOut), &outStack)
-			is.NoErr(err)
-		})
-
-		t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
-			is := is.New(t)
-			cmdOut, cmdErr := executeCommand([]string{
-				"--output", "json",
-				"--org", config.Org,
-				"stack",
-				"update",
-				"--stack-ref", testStackRef,
-				"--visibility", "shared",
-			})
-			is.NoErr(cmdErr)
-
-			var updatedStack *models.ServiceCatalog
-			err := json.Unmarshal([]byte(cmdOut), &updatedStack)
-			is.NoErr(err)
-			is.Equal(*updatedStack.Visibility, "shared")
-		})
-
-		t.Run("SuccessAddStackMaintainer", func(t *testing.T) {
-			var teamCanonical = "test-team"
-			body := map[string]any{
-				"canonical": teamCanonical,
-				"name":      teamCanonical,
-				"roles_canonical": []string{
-					"default-project-viewer",
-				},
-			}
-			jsonBody, err := json.Marshal(body)
-			if err != nil {
-				t.Fatalf("[preparation]: json serialization shouldn't fail: %s", err.Error())
-			}
-
-			// team management is not implemented on the CLI, so making the call ourselves
-			request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", config.APIUrl, config.Org), bytes.NewBuffer(jsonBody))
-			if err != nil {
-				t.Fatalf("[preparation]: request creationg shoudn't fail: %s", err.Error())
-			}
-
-			request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
-			request.Header.Add("Content-Type", "application/vnd.cycloid.io.v1+json")
-
-			client := &http.Client{}
-			_, err = client.Do(request)
-			if err != nil {
-				t.Fatalf("[Preparation]: request to create teams shouldn't fail: %s", err.Error())
-			}
-
-			// At this point we should have a team, I assume CR and stacks are present too
-			is := is.New(t)
-			cmdOut, cmdErr := executeCommand([]string{
-				"--output", "json",
-				"stack", "update",
-				"--stack-ref", testStackRef,
-				"--team", teamCanonical,
-			})
-			is.NoErr(cmdErr)
-			var updatedStack *models.ServiceCatalog
-			err = json.Unmarshal([]byte(cmdOut), &updatedStack)
-			is.NoErr(err)
-			is.Equal(*updatedStack.Team.Canonical, teamCanonical) // New team canonical must match
-		})
-
-		t.Run("SuccessRemoveMaintainer", func(t *testing.T) {
-			is := is.New(t)
-			cmdOut, cmdErr := executeCommand([]string{
-				"--output", "json",
-				"stack", "update",
-				"--stack-ref", testStackRef,
-				"--team", "", // setting the flag with empty string should remove the maintainer
-			})
-			is.NoErr(cmdErr) // This command must not fail
-			var updatedStack *models.ServiceCatalog
-			err := json.Unmarshal([]byte(cmdOut), &updatedStack)
-			is.NoErr(err)                    // We should be able to deserialize a valid model
-			is.Equal(updatedStack.Team, nil) // Team should be unset
-		})
-
-		t.Run("InvalidMaintainerShouldError", func(t *testing.T) {
-			is := is.New(t)
-			_, cmdErr := executeCommand([]string{
-				"--output", "json",
-				"stack", "update",
-				"--stack-ref", testStackRef,
-				"--team", "invalidteam",
-			})
-			is.True(cmdErr != nil) // CLI should output an error if we try to update a stack with a team that doesn't exists
-		})
 	})
 
+	var testStackRef = config.Org + ":stack-e2e-stackforms"
+	t.Run("SuccessStacksGet", func(t *testing.T) {
+		is := is.New(t)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"stacks",
+			"get",
+			"--stack-ref", testStackRef,
+		})
+		is.NoErr(cmdErr)
+		var outStack *models.ServiceCatalog
+		err := json.Unmarshal([]byte(cmdOut), &outStack)
+		is.NoErr(err)
+	})
+
+	t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
+		is := is.New(t)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"stack",
+			"update",
+			"--stack-ref", testStackRef,
+			"--visibility", "shared",
+		})
+		is.NoErr(cmdErr)
+
+		var updatedStack *models.ServiceCatalog
+		err := json.Unmarshal([]byte(cmdOut), &updatedStack)
+		is.NoErr(err)
+		is.Equal(*updatedStack.Visibility, "shared")
+	})
+
+	t.Run("SuccessAddStackMaintainer", func(t *testing.T) {
+		var teamCanonical = "test-team"
+		body := map[string]any{
+			"canonical": teamCanonical,
+			"name":      teamCanonical,
+			"roles_canonical": []string{
+				"default-project-viewer",
+			},
+		}
+		jsonBody, err := json.Marshal(body)
+		if err != nil {
+			t.Fatalf("[preparation]: json serialization shouldn't fail: %s", err.Error())
+		}
+
+		// team management is not implemented on the CLI, so making the call ourselves
+		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", config.APIUrl, config.Org), bytes.NewBuffer(jsonBody))
+		if err != nil {
+			t.Fatalf("[preparation]: request creationg shoudn't fail: %s", err.Error())
+		}
+
+		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
+		request.Header.Add("Content-Type", "application/vnd.cycloid.io.v1+json")
+
+		client := &http.Client{}
+		_, err = client.Do(request)
+		if err != nil {
+			t.Fatalf("[Preparation]: request to create teams shouldn't fail: %s", err.Error())
+		}
+
+		// At this point we should have a team, I assume CR and stacks are present too
+		is := is.New(t)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", testStackRef,
+			"--team", teamCanonical,
+		})
+		is.NoErr(cmdErr)
+		var updatedStack *models.ServiceCatalog
+		err = json.Unmarshal([]byte(cmdOut), &updatedStack)
+		is.NoErr(err)
+		is.Equal(*updatedStack.Team.Canonical, teamCanonical) // New team canonical must match
+	})
+
+	t.Run("SuccessRemoveMaintainer", func(t *testing.T) {
+		is := is.New(t)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", testStackRef,
+			"--team", "", // setting the flag with empty string should remove the maintainer
+		})
+		is.NoErr(cmdErr) // This command must not fail
+		var updatedStack *models.ServiceCatalog
+		err := json.Unmarshal([]byte(cmdOut), &updatedStack)
+		is.NoErr(err)                    // We should be able to deserialize a valid model
+		is.Equal(updatedStack.Team, nil) // Team should be unset
+	})
+
+	t.Run("InvalidMaintainerShouldError", func(t *testing.T) {
+		is := is.New(t)
+		_, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", testStackRef,
+			"--team", "invalidteam",
+		})
+		is.True(cmdErr != nil) // CLI should output an error if we try to update a stack with a team that doesn't exists
+	})
 	t.Run("SuccessStacksValidateForm", func(t *testing.T) {
 		is := is.New(t)
 		var TestForms = []byte(`---

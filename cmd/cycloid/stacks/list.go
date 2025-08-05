@@ -68,6 +68,17 @@ func list(cmd *cobra.Command, args []string) error {
 	}
 
 	// list --blueprints
+	// table output is broken with composed structs so we force jso
+	if output == "table" {
+		output = "json"
+	}
+
+	// Re-init the printer
+	p, err = factory.GetPrinter(output)
+	if err != nil {
+		return fmt.Errorf("unable to get printer: %w", err)
+	}
+
 	stacks, err := m.ListBlueprints(org)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to list blueprints from API", printer.Options{}, cmd.OutOrStderr())
