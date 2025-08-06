@@ -35,7 +35,7 @@ func TestOrganizations(t *testing.T) {
 			"organization",
 			"create",
 			"--name", childOrg,
-			"--child-of", config.Org,
+			"--parent-canonical", config.Org,
 		})
 		is.NoErr(cmdErr) // command should not fail
 		defer t.Run("SuccessDeleteOrg", func(t *testing.T) {
