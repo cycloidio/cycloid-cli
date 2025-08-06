@@ -35,7 +35,7 @@ type Middleware interface {
 	UpdateStack(org, ref, teamCanonical string, visibility *string) (*models.ServiceCatalog, error)
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
 	ListBlueprints(org string) ([]*models.ServiceCatalog, error)
-	CreateStackFromBlueprint(org, blueprintRef, name, canonical, serviceCatalogSourceCanonical, useCase string) (*models.ServiceCatalog, error)
+	CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, error)
 	GetStackConfig(org, ref string) (models.ServiceCatalogConfigs, error)
 
 	// organization_credentials

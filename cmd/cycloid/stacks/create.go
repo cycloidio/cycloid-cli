@@ -79,22 +79,5 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 		return printer.SmartPrint(p, nil, err, "failed to create stack from blueprint", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	// For JSON output, return all fields; for table output, return only specific fields
-	if output == "json" {
-		return printer.SmartPrint(p, createdStack, nil, "", printer.Options{}, cmd.OutOrStdout())
-	}
-
-	// For table output, format to show only the relevant fields
-	formattedOutput := &struct {
-		Name        string
-		Ref         string
-		Canonical   string
-		Description string
-	}{
-		Name:        *createdStack.Name,
-		Ref:         *createdStack.Ref,
-		Canonical:   *createdStack.Canonical,
-		Description: createdStack.Description,
-	}
-	return printer.SmartPrint(p, formattedOutput, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return printer.SmartPrint(p, createdStack, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
