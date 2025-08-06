@@ -16,15 +16,23 @@ import (
 // Advanced user still can use it passing a user token in CY_API_KEY env var during a login.
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:    "create",
-		Args:   cobra.NoArgs,
-		Short:  "create an organization",
-		Hidden: true,
+		Use:   "create",
+		Args:  cobra.NoArgs,
+		Short: "create an organization",
+		Long: `Create an organization in the Cycloid console.
+Created organization are at root level by default.
+
+If you want to create a child org, you need to specify the parent organization canonical
+using the --parent-canonical (-p) flag.
+
+Check the documentation at: https://docs.cycloid.io/reference/organizations/
+
+See examples below.`,
 		Example: `# create an organization foo
 cy organization create --name foo
 
-# create a child organization
-cy organization create --name bar --child-of foo
+# create a child organization bar with parent foo
+cy organization create --name bar --parent-canonical foo
 `,
 		RunE: create,
 	}
@@ -44,7 +52,7 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 	org := common.GenerateCanonical(name)
 
-	parentOrg, err := cyargs.GetOrgChildOf(cmd)
+	parentOrg, err := cyargs.GetOrgParentCanonical(cmd)
 	if err != nil {
 		return err
 	}
@@ -66,7 +74,7 @@ func create(cmd *cobra.Command, args []string) error {
 		outOrg, err = m.CreateOrganization(name)
 	}
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to create org named"+name, printer.Options{}, cmd.OutOrStderr())
+		return printer.SmartPrint(p, nil, err, "failed to create org named '"+name+"'", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	return printer.SmartPrint(p, outOrg, nil, "", printer.Options{}, cmd.OutOrStdout())

@@ -43,12 +43,12 @@ func CompleteOrg(cmd *cobra.Command, args []string, toComplete string) ([]cobra.
 }
 
 func AddOrgChildOfFlag(cmd *cobra.Command) string {
-	flagName := "child-of"
-	cmd.Flags().String(flagName, "", "the parent organization canonical")
+	flagName := "parent-canonical"
+	cmd.Flags().String(flagName, "p", "the parent organization canonical")
 	cmd.RegisterFlagCompletionFunc(flagName, CompleteOrg)
 	return flagName
 }
 
-func GetOrgChildOf(cmd *cobra.Command) (string, error) {
-	return cmd.Flags().GetString("child-of")
+func GetOrgParentCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("parent-canonical")
 }
