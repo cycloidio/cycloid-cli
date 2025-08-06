@@ -11,7 +11,6 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
@@ -104,20 +103,20 @@ func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error
 	return validBlueprints, nil
 }
 
-func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, canonical, serviceCatalogSourceCanonical, useCase string) (*models.ServiceCatalog, error) {
+func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, error) {
 	params := service_catalogs.NewCreateServiceCatalogFromTemplateParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogRef(blueprintRef)
 	body := &models.NewServiceCatalogFromTemplate{
-		Name:                          ptr.Ptr(name),
-		Canonical:                     ptr.Ptr(canonical),
-		ServiceCatalogSourceCanonical: ptr.Ptr(serviceCatalogSourceCanonical),
-		UseCase:                       ptr.Ptr(useCase),
+		Name:                          &name,
+		Canonical:                     &stack,
+		ServiceCatalogSourceCanonical: &catalogRepository,
+		UseCase:                       &useCase,
 	}
 
 	err := body.Validate(strfmt.Default)
 	if err != nil {
-		return nil, errors.Wrap(err, "validation failed for createServiceCatalogFromTemplate input")
+		return nil, errors.Wrap(err, "validation failed for createStackFromBlueprint input")
 	}
 	params.WithBody(body)
 

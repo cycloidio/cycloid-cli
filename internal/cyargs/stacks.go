@@ -98,7 +98,7 @@ func GetStackRef(cmd *cobra.Command) (string, error) {
 
 func AddVisibilityFlag(cmd *cobra.Command) string {
 	flagName := "visibility"
-	cmd.Flags().StringP(flagName, "v", "", "set the visibility of a stack")
+	cmd.Flags().StringP(flagName, "V", "", "set the visibility of a stack")
 	cmd.RegisterFlagCompletionFunc(flagName, CompleteVisibility)
 	return flagName
 }
