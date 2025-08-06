@@ -24,10 +24,10 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
@@ -42,20 +42,21 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
 
+// ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
+// TODO: Merge this route with ListStack once we find a way to add LHS filter params to the client.
 func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error) {
-	// ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
-	// TODO: Merge this route with ListStack once we find a way to add LHS filter params to the client.
 	// This method use a custom request because we use the (undocumented)
-	//LHS filter param like the frontend does: `service_catalog_blueprint[eq]=true`
-
+	// LHS filter param like the frontend does: `service_catalog_blueprint[eq]=true`
+	url := fmt.Sprintf("%s/organizations/%s/service_catalogs?organization_canonical=%s&service_catalog_blueprint%%5Beq%%5D=true",
+		m.api.Config.URL, org, org)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, err
@@ -73,33 +74,29 @@ func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error
 	if err != nil {
 		return nil, err
 	}
-	if token == "" {
-		return nil, errors.New("missing API key, please provide valid authentication using CY_API_KEY env var")
-	}
-	req.Header.Set("Authorization", "Bearer "+token)
-	req.Header.Set("Content-Type", "application/json")
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
-	var response struct {
+	var stacks struct {
 		Data []*models.ServiceCatalog `json:"data"`
 	}
 
-	err = json.Unmarshal(body, &response)
+	err = json.Unmarshal(body, &stacks)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse response: %v", err)
 	}
 
 	var validBlueprints []*models.ServiceCatalog
-	for _, catalog := range response.Data {
+	for _, catalog := range stacks.Data {
 		if catalog.Blueprint {
 			validBlueprints = append(validBlueprints, catalog)
 		}
 	}
-	// Don't validate payload on this route, now supported atm.
+
+	// Don't validate payload on this route, not supported atm.
 	return validBlueprints, nil
 }
 
@@ -155,10 +152,10 @@ func (m *middleware) UpdateStack(
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	// TODO: This is a local fix for https://github.com/cycloidio/youdeploy-http-api/issues/5020
 	// Remove this condition when backend will be fixed
@@ -184,10 +181,10 @@ func (m *middleware) GetStackConfig(org, ref string) (models.ServiceCatalogConfi
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
+	// err = payload.Validate(strfmt.Default)
+	// if err != nil {
+	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
+	// }
 
 	return payload.Data, nil
 }
