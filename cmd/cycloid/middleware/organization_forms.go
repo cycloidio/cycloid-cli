@@ -63,7 +63,7 @@ func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsVal
 	return payload.Data, nil
 }
 
-func (m *middleware) InterpolateFormsConfig(org, project, env, component, serviceCatalogRef, useCase string, inputs *models.FormVariables) (*models.ServiceCatalogConfig, error) {
+func (m *middleware) InterpolateFormsConfig(org, project, env, component, serviceCatalogRef, useCase string, inputs models.FormVariables) (*models.ServiceCatalogConfig, error) {
 	if inputs == nil {
 		return nil, errors.New("form inputs for interpolateFormsConfig must not be nil")
 	}
@@ -71,7 +71,7 @@ func (m *middleware) InterpolateFormsConfig(org, project, env, component, servic
 		ServiceCatalogRef:  &serviceCatalogRef,
 		ComponentCanonical: &component,
 		UseCase:            &useCase,
-		Vars:               *inputs,
+		Vars:               inputs,
 	}
 
 	params := organization_forms.NewInterpolateFormsConfigParams()
