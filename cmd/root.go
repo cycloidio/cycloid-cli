@@ -52,7 +52,7 @@ func NewRootCommand() *cobra.Command {
 		Use:           "cy",
 		Short:         "Cycloid CLI",
 		Long: `--- CLI tool to interact with Cycloid API. ---
-Documentation at https://docs.beta.cycloid.io/reference/cli/
+Documentation at https://docs.cycloid.io/reference/cli/
 
 -- Environment variables --
 Some environment variables can be set to ease context setting in Cycloid.
