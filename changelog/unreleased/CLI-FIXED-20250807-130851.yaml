@@ -1,0 +1,9 @@
+component: CLI
+kind: FIXED
+body: '`cy comp create --var`: Fixed trailling quote when forcing string type with
+  single quotes `''`'
+time: 2025-08-07T13:08:51.22765702Z
+custom:
+  DETAILS: ""
+  PR: "377"
+  TYPE: CLI
