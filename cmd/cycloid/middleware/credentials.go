@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"regexp"
 
 	strfmt "github.com/go-openapi/strfmt"
@@ -40,10 +39,6 @@ func (m *middleware) CreateCredential(org, name, credentialType string, rawCred 
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -79,10 +74,6 @@ func (m *middleware) UpdateCredential(org, name, credentialType string, rawCred 
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -98,10 +89,6 @@ func (m *middleware) GetCredential(org, credential string) (*models.Credential, 
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -133,10 +120,6 @@ func (m *middleware) ListCredentials(org, credentialType string) ([]*models.Cred
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }

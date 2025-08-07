@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"fmt"
-
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
@@ -20,10 +18,6 @@ func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatal
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -39,10 +33,6 @@ func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.Serv
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -105,10 +95,6 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred, visib
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -138,10 +124,6 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -157,10 +139,6 @@ func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }

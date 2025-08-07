@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"fmt"
-
 	strfmt "github.com/go-openapi/strfmt"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organizations"
@@ -74,10 +72,6 @@ func (m *middleware) ListEvents(org string, eventType, eventSeverity []string, b
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }

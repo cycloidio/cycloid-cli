@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"fmt"
-
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
@@ -31,10 +29,6 @@ func (m *middleware) CreateOrganization(name string) (*models.Organization, erro
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
 
 	return payload.Data, nil
 }
@@ -59,10 +53,6 @@ func (m *middleware) UpdateOrganization(can, name string) (*models.Organization,
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -77,10 +67,6 @@ func (m *middleware) GetOrganization(org string) (*models.Organization, error) {
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -95,10 +81,6 @@ func (m *middleware) ListOrganizationWorkers(org string) ([]*models.Worker, erro
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -112,10 +94,6 @@ func (m *middleware) ListOrganizations() ([]*models.Organization, error) {
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
 
 	return payload.Data, nil
 }
@@ -132,10 +110,6 @@ func (m *middleware) ListOrganizationChildrens(org string) ([]*models.Organizati
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
 
 	return payload.Data, nil
 }
@@ -165,10 +139,6 @@ func (m *middleware) CreateOrganizationChild(org, childOrg string, childOrgName 
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
 
 	return payload.Data, nil
 }

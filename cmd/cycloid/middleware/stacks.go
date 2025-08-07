@@ -24,10 +24,6 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
 
 	return payload.Data, nil
 }
@@ -42,10 +38,6 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
 
 	return payload.Data, nil
 }
@@ -152,10 +144,6 @@ func (m *middleware) UpdateStack(
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
 
 	// TODO: This is a local fix for https://github.com/cycloidio/youdeploy-http-api/issues/5020
 	// Remove this condition when backend will be fixed
@@ -181,10 +169,6 @@ func (m *middleware) GetStackConfig(org, ref string) (models.ServiceCatalogConfi
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
 
 	return payload.Data, nil
 }

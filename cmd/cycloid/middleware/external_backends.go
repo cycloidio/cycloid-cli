@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"errors"
-	"fmt"
 
 	"github.com/go-openapi/strfmt"
 
@@ -21,10 +20,6 @@ func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBac
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	data := payload.Data
 	if len(data) == 0 {
@@ -45,10 +40,6 @@ func (m *middleware) GetExternalBackend(org string, externalBackend uint32) (*mo
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	return payload.Data, nil
 }
@@ -63,10 +54,6 @@ func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -128,10 +115,6 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose, credenti
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -174,10 +157,6 @@ func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32,
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }

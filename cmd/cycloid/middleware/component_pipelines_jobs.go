@@ -19,10 +19,6 @@ func (m *middleware) GetJobs(org, project, env, component, pipeline string) ([]*
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return payload.Data, nil
 }
@@ -42,10 +38,6 @@ func (m *middleware) GetJob(org, project, env, component, pipeline, job string) 
 	}
 
 	payload := resp.GetPayload()
-	// err = payload.Validate(strfmt.Default)
-	// if err != nil {
-	// 	return nil, err
-	// }
 
 	return payload.Data, nil
 }

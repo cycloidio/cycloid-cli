@@ -1,8 +1,6 @@
 package middleware
 
 import (
-	"fmt"
-
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
@@ -21,10 +19,6 @@ func (m *middleware) GetEnv(org, project, env string) (*models.Environment, erro
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -53,10 +47,6 @@ func (m *middleware) CreateEnv(org, project, env, envName, color string) (*model
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -79,10 +69,6 @@ func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*model
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }

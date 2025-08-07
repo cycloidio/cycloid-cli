@@ -19,10 +19,6 @@ func (m *middleware) ListAPIKeys(org string) ([]*models.APIKey, error) {
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -39,10 +35,6 @@ func (m *middleware) GetAPIKey(org, canonical string) (*models.APIKey, error) {
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -71,10 +63,6 @@ func (m *middleware) CreateAPIKey(org, canonical, description, owner string, nam
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
