@@ -1,0 +1,10 @@
+component: CLI
+kind: CHANGED
+body: Move child org creation to the `cy org create --name <child_org> --parent-canonical
+  <parent_org>`
+time: 2025-08-07T09:06:50.605903602Z
+custom:
+  DETAILS: This will give more clarity to the child org creation process. Deprecating
+    the `cy org create-child` command.
+  PR: "375"
+  TYPE: CLI
