@@ -2,11 +2,14 @@ package cyargs_test
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
+	"reflect"
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/sanity-io/litter"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
 )
@@ -71,7 +74,7 @@ func TestGetStackformsVars(t *testing.T) {
 		})
 
 		var defaults = make(models.FormVariables)
-		output, err := cyargs.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
 			t.Fatalf("stackform var parsing failed: %s", err)
 		}
@@ -83,27 +86,17 @@ func TestGetStackformsVars(t *testing.T) {
 		assert.Equal(t, string(expectedJSON), string(gotJSON), "should be equal")
 	})
 
-	t.Run("NilDefaultsShouldFail", func(t *testing.T) {
-		cmd := &cobra.Command{}
-		cyargs.AddStackFormsInputFlags(cmd)
-
-		_, err := cyargs.GetStackformsVars(cmd, nil)
-		if err == nil {
-			t.Fatal("Using cy_args.GetStackformsVars should fail with nil defaults")
-		}
-	})
-
 	t.Run("EmptyDefaultsEmptyVars", func(t *testing.T) {
 		cmd := &cobra.Command{}
 		cyargs.AddStackFormsInputFlags(cmd)
 
 		var defaults = make(models.FormVariables)
-		output, err := cyargs.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
 			t.Fatalf("Empty default should work: %s", err)
 		}
 
-		assert.Equal(t, defaults, *output, "should be empty")
+		assert.Equal(t, defaults, output, "should be empty")
 	})
 
 	t.Run("EnvVar", func(t *testing.T) {
@@ -113,7 +106,7 @@ func TestGetStackformsVars(t *testing.T) {
 		os.Setenv(cyargs.StackformsEnvVarName, string(expectedJSON))
 		defer os.Unsetenv(cyargs.StackformsEnvVarName)
 		var defaults = make(models.FormVariables)
-		output, err := cyargs.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
 			t.Fatalf("Empty default should work: %s", err)
 		}
@@ -134,7 +127,7 @@ func TestGetStackformsVars(t *testing.T) {
 		})
 
 		var defaults = make(models.FormVariables)
-		output, err := cyargs.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
 			t.Fatalf("Empty default should work: %s", err)
 		}
@@ -166,7 +159,7 @@ func TestGetStackformsVars(t *testing.T) {
 		})
 
 		var defaults = make(models.FormVariables)
-		output, err := cyargs.GetStackformsVars(cmd, &defaults)
+		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
 			t.Fatalf("Empty default should work: %s", err)
 		}
@@ -178,4 +171,49 @@ func TestGetStackformsVars(t *testing.T) {
 		assert.Equal(t, string(expectedJSON), string(gotJSON), "should be equal")
 	})
 
+	t.Run("VarFlag", func(t *testing.T) {
+		cmd := &cobra.Command{}
+		cyargs.AddStackFormsInputFlags(cmd)
+
+		cmd.ParseFlags([]string{
+			"--var", `types.string.double_quote="1"`,
+			"--var", `types.string.single_quote='1'`,
+			"--var", `types.float.no_quote=1`,
+			"--var", `types.boolean.no_quote=true`,
+			"--var", `types.array.no_quote=["string", "hello_there"]`,
+			"--var", `types.map.no_quote={"string": "hello_there"}`,
+		})
+
+		var defaults = make(models.FormVariables)
+		parsedVars, err := cyargs.GetStackformsVars(cmd, defaults)
+		if err != nil {
+			t.Fatalf("Empty default should work: %s", err)
+		}
+
+		litter.Dump(parsedVars)
+		value, ok := parsedVars["types"]["string"]["double_quote"].(string)
+		assert.True(t, ok, "type cast to string should be okay")
+		assert.Equal(t, "1", value, "the output should be a string 1 with no quotes")
+
+		value, ok = parsedVars["types"]["string"]["single_quote"].(string)
+		assert.True(t, ok, "type cast to string should be okay")
+		assert.Equal(t, "1", value, "the output should be a string 1 with no quotes")
+
+		valueFloat, ok := parsedVars["types"]["float"]["no_quote"].(float64)
+		assert.True(t, ok, "type cast to float should be okay")
+		assert.Equal(t, 1.0, valueFloat, "the output should be a float")
+
+		valueBool, ok := parsedVars["types"]["boolean"]["no_quote"].(bool)
+		assert.True(t, ok, "type cast to boolean should be okay")
+		assert.Equal(t, true, valueBool, "the output should be a bool")
+
+		fmt.Println(reflect.TypeOf(parsedVars["types"]["array"]["no_quote"]))
+		valueArray, ok := parsedVars["types"]["array"]["no_quote"]
+		assert.True(t, ok, "type cast to array should be okay")
+		assert.Equal(t, []any{"string", "hello_there"}, valueArray, "the output should be a array")
+
+		valueMap, ok := parsedVars["types"]["map"]["no_quote"]
+		assert.True(t, ok, "type cast to map should be okay")
+		assert.Equal(t, map[string]any{"string": "hello_there"}, valueMap, "the output should be a map")
+	})
 }

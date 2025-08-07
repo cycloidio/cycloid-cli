@@ -30,9 +30,9 @@ func AddStackFormsInputFlags(cmd *cobra.Command) {
 // GetStackformsVars wrap the flag parsing and the merge of the variables
 // set by the user. The caller must provide the defaults values as he only knows
 // if it must be fetched from a stack or a current component.
-func GetStackformsVars(cmd *cobra.Command, defaults *models.FormVariables) (*models.FormVariables, error) {
+func GetStackformsVars(cmd *cobra.Command, defaults models.FormVariables) (models.FormVariables, error) {
 	if defaults == nil {
-		return nil, fmt.Errorf("default variables from a stack shouldn't be null: %s", defaults)
+		defaults = make(models.FormVariables)
 	}
 
 	varFiles, err := cmd.Flags().GetStringArray("json-file")
@@ -89,7 +89,7 @@ func GetStackformsVars(cmd *cobra.Command, defaults *models.FormVariables) (*mod
 		return nil, err
 	}
 
-	output, err := MergeStackformsVars(defaults, &varsFromEnv, varFiles, varJSON, varField)
+	output, err := MergeStackformsVars(defaults, varsFromEnv, varFiles, varJSON, varField)
 	if err != nil {
 		return nil, err
 	}
@@ -97,20 +97,21 @@ func GetStackformsVars(cmd *cobra.Command, defaults *models.FormVariables) (*mod
 	if output == nil {
 		return nil, errors.New("invalid user input: stackforms vars must not be empty.")
 	}
+
 	return output, nil
 }
 
 // MergeStackformsVars will parse and merge all variables inputs in the following order of
 // precedence:
 // file < jsonString < keyValueField
-func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVariables, jsonFiles, jsonStrings []string, keyValueField map[string]string) (*models.FormVariables, error) {
+func MergeStackformsVars(defaults models.FormVariables, envVars models.FormVariables, jsonFiles, jsonStrings []string, keyValueField map[string]string) (models.FormVariables, error) {
 	if defaults == nil {
-		return nil, fmt.Errorf("default variables from a stack shouldn't be null: %s", defaults)
+		defaults = make(models.FormVariables)
 	}
 
-	err := mergo.Merge(defaults, *envVars, mergo.WithOverride)
+	err := mergo.Merge(&defaults, envVars, mergo.WithOverride)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to merge JSON from env var: %w", err)
 	}
 
 	jsonFileVars, err := MergeJSONFileVars(jsonFiles)
@@ -118,9 +119,9 @@ func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVar
 		return nil, err
 	}
 
-	err = mergo.Merge(defaults, *jsonFileVars, mergo.WithOverride)
+	err = mergo.Merge(&defaults, jsonFileVars, mergo.WithOverride)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to merge JSON vars files: %w", err)
 	}
 
 	jsonVars, err := MergeJSONVars(jsonStrings)
@@ -128,13 +129,13 @@ func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVar
 		return nil, err
 	}
 
-	err = mergo.Merge(defaults, *jsonVars, mergo.WithOverride)
+	err = mergo.Merge(&defaults, jsonVars, mergo.WithOverride)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to merge JSON Vars: %w", err)
 	}
 
 	for k, v := range keyValueField {
-		err = UpdateFormVar(k, v, *defaults)
+		err = UpdateFormVar(k, v, defaults)
 		if err != nil {
 			return nil, fmt.Errorf("failed to update vars '%s' with field '%s': %s", k, v, err)
 		}
@@ -144,7 +145,7 @@ func MergeStackformsVars(defaults *models.FormVariables, envVars *models.FormVar
 }
 
 // MergeJSONFileVars will read and merge the Stackforms vars from the `json-file` arg
-func MergeJSONFileVars(jsonFiles []string) (*models.FormVariables, error) {
+func MergeJSONFileVars(jsonFiles []string) (models.FormVariables, error) {
 	var output = make(models.FormVariables)
 
 	for _, filename := range jsonFiles {
@@ -173,11 +174,11 @@ func MergeJSONFileVars(jsonFiles []string) (*models.FormVariables, error) {
 		}
 	}
 
-	return &output, nil
+	return output, nil
 }
 
 // MergeJSONVars expect an array of valid JSON string as stackforms input and return a models.FormVariables
-func MergeJSONVars(jsonVars []string) (*models.FormVariables, error) {
+func MergeJSONVars(jsonVars []string) (models.FormVariables, error) {
 	var output = make(models.FormVariables)
 	for _, jsonString := range jsonVars {
 		if jsonString == "" {
@@ -196,7 +197,7 @@ func MergeJSONVars(jsonVars []string) (*models.FormVariables, error) {
 		}
 	}
 
-	return &output, nil
+	return output, nil
 }
 
 // UpdateFormVar will take a Stackform variable ref in the format section.group.var
@@ -243,10 +244,12 @@ func UpdateFormVar(field string, value string, vars models.FormVariables) error 
 	// We will prioritize the use of quotes to explicitly define strings values
 	// This allow users to circumvent issues in case of strings that could be parsed
 	// as other types
-	// Note: cobra seems to already trim trailling quotes.
-	if strings.HasPrefix(trimmedValue, `"`) || strings.HasPrefix(trimmedValue, "'") {
-		fmt.Println(trimmedValue[1:])
+	// Note: cobra seems to already trim trailling double quotes.
+	if strings.HasPrefix(trimmedValue, `"`) {
 		vars[section][group][key] = trimmedValue[1:]
+		return nil
+	} else if strings.HasPrefix(trimmedValue, "'") && strings.HasSuffix(trimmedValue, "'") {
+		vars[section][group][key] = trimmedValue[1 : len(trimmedValue)-1] // single quote won't be trimmed by cobra
 		return nil
 	}
 
