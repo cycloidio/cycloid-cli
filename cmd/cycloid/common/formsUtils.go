@@ -6,7 +6,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func FormUseCaseToFormVars(stackConfig models.ServiceCatalogConfigs, useCaseName string) (*models.FormVariables, error) {
+func FormUseCaseToFormVars(stackConfig models.ServiceCatalogConfigs, useCaseName string) (models.FormVariables, error) {
 	useCaseData, ok := stackConfig[useCaseName]
 	if !ok {
 		return nil, fmt.Errorf("cannot find usecase named '%s' in stack config", useCaseName)
@@ -31,5 +31,5 @@ func FormUseCaseToFormVars(stackConfig models.ServiceCatalogConfigs, useCaseName
 		}
 	}
 
-	return &output, nil
+	return output, nil
 }

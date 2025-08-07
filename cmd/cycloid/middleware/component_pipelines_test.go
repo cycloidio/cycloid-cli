@@ -12,7 +12,7 @@ func TestComponentPipeline(t *testing.T) {
 	m := config.Middleware
 
 	component, err := config.NewTestComponent(
-		*config.Project.Canonical, *config.Environment.Canonical, t.Name(), config.Org+":"+pipelineTestStackCanonical, pipelineTestStackUseCase, &pipelineTestDefaultVars,
+		*config.Project.Canonical, *config.Environment.Canonical, t.Name(), config.Org+":"+pipelineTestStackCanonical, pipelineTestStackUseCase, pipelineTestDefaultVars,
 	)
 	if err != nil {
 		t.Errorf("failed to setup base component for test '%s': %s", t.Name(), err)
