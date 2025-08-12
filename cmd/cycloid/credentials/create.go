@@ -47,7 +47,7 @@ func NewCreateCommand() *cobra.Command {
 	}
 	cyargs.AddCredentialNamePersistentFlag(cmd)
 	cyargs.AddCredentialDescriptionPersistentFlag(cmd)
-	cyargs.AddCredentialCanonicalPersistentFlag(cmd)
+	cmd.MarkFlagRequired(cyargs.AddCredentialCanonicalPersistentFlag(cmd))
 	cyargs.AddCredentialPathPersistentFlag(cmd)
 	cmd.PersistentFlags().Bool("update", false, "update this credential if it already exists.")
 
@@ -193,7 +193,7 @@ func create(cmd *cobra.Command, args []string) error {
 	var err error
 	var rawCred *models.CredentialRaw
 
-	credT := cmd.CalledAs()
+	credentialTypes := cmd.CalledAs()
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -233,7 +233,7 @@ func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	if updateAllowed, _ := cmd.Flags().GetBool("update"); updateAllowed {
+	if allowUpdate, _ := cmd.Flags().GetBool("update"); allowUpdate {
 		_, err := m.GetCredential(org, credential)
 		if err == nil {
 			// if the cred exists, forward the call to the update func.
@@ -241,7 +241,7 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	switch credT {
+	switch credentialTypes {
 	case "ssh":
 		sshKeyPath, err := cyargs.GetCredentialSSHKey(cmd)
 		if err != nil {
@@ -438,10 +438,10 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 
 	default:
-		return fmt.Errorf("unsupported credential type: %s", credT)
+		return fmt.Errorf("unsupported credential type: %s", credentialTypes)
 	}
 
-	outCredential, err := m.CreateCredential(org, name, credT, rawCred, credentialPath, credential, description)
+	outCredential, err := m.CreateCredential(org, name, credentialTypes, rawCred, credentialPath, credential, description)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStderr())
 	}
