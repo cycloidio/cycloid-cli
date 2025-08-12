@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: '`cy credential create` now requires the `--canonical` flag'
+time: 2025-08-12T14:36:38.670003466Z
+custom:
+  DETAILS: ""
+  PR: "380"
+  TYPE: CLI
