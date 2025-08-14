@@ -3,6 +3,7 @@ package credentials
 import (
 	"fmt"
 	"os"
+	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -233,10 +234,15 @@ func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	if allowUpdate, _ := cmd.Flags().GetBool("update"); allowUpdate {
-		_, err := m.GetCredential(org, credential)
-		if err == nil {
-			// if the cred exists, forward the call to the update func.
+	if updateAllowed, _ := cmd.Flags().GetBool("update"); updateAllowed {
+		credentials, err := m.ListCredentials(org, credentialTypes)
+		if err != nil {
+			return fmt.Errorf("failed to create --update credential, cannot check for existing credential '%s': %s", credential, err.Error())
+		}
+
+		if slices.IndexFunc(credentials, func(c *models.CredentialSimple) bool {
+			return *c.Canonical == credential
+		}) != -1 {
 			return update(cmd, args)
 		}
 	}

@@ -1,9 +1,13 @@
 package environments
 
 import (
+	"fmt"
+	"slices"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
@@ -77,8 +81,14 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	if update {
-		current, err := m.GetEnv(org, project, env)
-		if err == nil {
+		environments, err := m.ListProjectsEnv(org, project)
+		if err != nil {
+			return fmt.Errorf("failed to create --update environment, cannot check for existing environment '%s': %s", env, err.Error())
+		}
+
+		currentIndex := slices.IndexFunc(environments, func(e *models.Environment) bool { return *e.Canonical == env })
+		if currentIndex != -1 {
+			current := environments[currentIndex]
 			// Make the update use the current color if not explicitly set by the user
 			if color == cyargs.DefaultColor {
 				if current.Color != nil {
@@ -93,6 +103,7 @@ func create(cmd *cobra.Command, args []string) error {
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 			}
+
 			return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
 		}
 	}
@@ -102,5 +113,9 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	resp, err := m.CreateEnv(org, project, env, name, color)
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "failed to create environment", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, resp, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
