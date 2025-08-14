@@ -183,7 +183,7 @@ func TestComponentCRUD(t *testing.T) {
 		// assert.Equal(t, newDescription, *updatedComponent.Canonical)
 	}
 
-	_, err := m.GetComponents(config.Org, *config.Project.Canonical, *config.Environment.Canonical)
+	_, err := m.ListComponents(config.Org, *config.Project.Canonical, *config.Environment.Canonical)
 	if err != nil {
 		t.Fatalf("Failed to list components in project '%s':\n%v", *config.Project.Canonical, err)
 	}

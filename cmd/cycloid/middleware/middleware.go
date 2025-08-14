@@ -132,7 +132,7 @@ type Middleware interface {
 	DeleteEnv(org, project, env string) error
 
 	// Component
-	GetComponents(org, project, env string) ([]*models.Component, error)
+	ListComponents(org, project, env string) ([]*models.Component, error)
 	GetComponentConfig(org, project, env, component string) (models.FormVariables, error)
 	GetComponent(org, project, env, component string) (*models.Component, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, error)
