@@ -236,7 +236,7 @@ func AddComponentFlag(cmd *cobra.Command) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
-		components, err := m.GetComponents(org, project, env)
+		components, err := m.ListComponents(org, project, env)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to list components for completion in org '"+org+"' with project '"+project+"' and env '"+env+"': "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp

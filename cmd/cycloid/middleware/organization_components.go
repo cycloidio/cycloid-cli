@@ -42,7 +42,7 @@ func (m *middleware) GetComponent(org, project, env, component string) (*models.
 	return payload.Data, nil
 }
 
-func (m *middleware) GetComponents(org, project, env string) ([]*models.Component, error) {
+func (m *middleware) ListComponents(org, project, env string) ([]*models.Component, error) {
 	params := organization_components.NewGetComponentsParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
