@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add `cy stack create`
-time: 2025-08-07T08:57:42.14207877Z
-custom:
-  DETAILS: 'This command allow you to create a stack with our Blueprint feature: https://docs.cycloid.io/reference/stack-blueprint/#using-a-blueprint'
-  PR: "373"
-  TYPE: CLI
