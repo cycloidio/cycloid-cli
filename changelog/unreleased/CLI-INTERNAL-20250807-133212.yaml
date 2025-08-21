@@ -1,8 +1,0 @@
-component: CLI
-kind: INTERNAL
-body: Removed payload validation
-time: 2025-08-07T13:32:12.185109684Z
-custom:
-  DETAILS: ""
-  PR: "378"
-  TYPE: CLI

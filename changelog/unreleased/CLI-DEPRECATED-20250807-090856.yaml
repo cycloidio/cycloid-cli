@@ -1,9 +1,0 @@
-component: CLI
-kind: DEPRECATED
-body: '`cy org create-child` command is officially deprecated, replaced by `cy org
-  create --name <new_org> --parent-canonical <parent_org>`'
-time: 2025-08-07T09:08:56.246590054Z
-custom:
-  DETAILS: This command was confusing and non standard.
-  PR: "375"
-  TYPE: CLI
