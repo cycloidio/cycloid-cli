@@ -8,7 +8,7 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
-func (m *middleware) GetComponentConfig(org, project, env, component string) (*models.FormVariables, error) {
+func (m *middleware) GetComponentConfig(org, project, env, component string) (models.FormVariables, error) {
 	params := organization_components.NewGetComponentConfigParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
@@ -21,12 +21,8 @@ func (m *middleware) GetComponentConfig(org, project, env, component string) (*m
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return &payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
-	return &payload.Data, nil
+	return payload.Data, nil
 }
 
 func (m *middleware) GetComponent(org, project, env, component string) (*models.Component, error) {
@@ -42,15 +38,11 @@ func (m *middleware) GetComponent(org, project, env, component string) (*models.
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
 
-func (m *middleware) GetComponents(org, project, env string) ([]*models.Component, error) {
+func (m *middleware) ListComponents(org, project, env string) ([]*models.Component, error) {
 	params := organization_components.NewGetComponentsParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
@@ -62,15 +54,11 @@ func (m *middleware) GetComponents(org, project, env string) ([]*models.Componen
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars *models.FormVariables) (*models.Component, error) {
+func (m *middleware) CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars models.FormVariables) (*models.Component, error) {
 	params := organization_components.NewCreateComponentParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
@@ -86,7 +74,7 @@ func (m *middleware) CreateComponent(org, project, env, component, description s
 		Description:       description,
 		ServiceCatalogRef: serviceCatalogRef,
 		UseCase:           useCase,
-		Vars:              *vars,
+		Vars:              vars,
 	}
 
 	if cloudProviderCanonical != nil {
@@ -105,15 +93,11 @@ func (m *middleware) CreateComponent(org, project, env, component, description s
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
 
-func (m *middleware) UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars *models.FormVariables) (*models.Component, error) {
+func (m *middleware) UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars models.FormVariables) (*models.Component, error) {
 	params := organization_components.NewUpdateComponentParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
@@ -128,7 +112,7 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 		Name:        componentName,
 		Description: description,
 		UseCase:     useCase,
-		Vars:        *vars,
+		Vars:        vars,
 	}
 
 	err := body.Validate(strfmt.Default)
@@ -143,10 +127,6 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -177,10 +157,6 @@ func (m *middleware) MigrateComponent(org, project, env, component, targetProjec
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }

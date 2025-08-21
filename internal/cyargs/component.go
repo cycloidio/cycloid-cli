@@ -57,12 +57,16 @@ func AddUseCaseFlag(cmd *cobra.Command) string {
 func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	org, err := GetOrg(cmd)
 	if err != nil {
-		return []string{}, cobra.ShellCompDirectiveNoFileComp
+		return cobra.AppendActiveHelp(nil, "missing org for completion: "+err.Error()), cobra.ShellCompDirectiveError
 	}
 
-	stackRef, err := GetStackRef(cmd)
-	if err != nil {
-		return []string{}, cobra.ShellCompDirectiveNoFileComp
+	var stackRef string
+	stackRef, _ = GetStackRef(cmd)
+	if stackRef == "" { // Check for blueprint ref in case of cy stack create
+		stackRef, err = GetBlueprintRef(cmd)
+		if err != nil {
+			return cobra.AppendActiveHelp(nil, "missing stack-ref or blueprint ref for completion: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
+		}
 	}
 
 	api := common.NewAPI()
@@ -70,7 +74,8 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 
 	stackConfig, err := m.GetStackConfig(org, stackRef)
 	if err != nil {
-		return []string{}, cobra.ShellCompDirectiveNoFileComp
+		return cobra.AppendActiveHelp(nil, "cannot find stack or blueprint with ref: "+stackRef+", err: "+err.Error()),
+			cobra.ShellCompDirectiveNoFileComp
 	}
 
 	var useCases []string

@@ -118,9 +118,9 @@ func NewConfig() (*Config, error) {
 
 	// Add a random value in forms to avoid git conflict
 	if vars != nil {
-		common.UpdateMapField("types.tests.string", RandomCanonical("common"), *vars)
+		common.UpdateMapField("types.tests.string", RandomCanonical("common"), vars)
 	} else {
-		vars = &models.FormVariables{
+		vars = models.FormVariables{
 			"types": {"tests": {"string": RandomCanonical("common")}},
 		}
 	}
@@ -197,7 +197,7 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 // setupTestProject will create an component with a random canonical derived from identifier
 // and return the component, the function to defer for its deletion and error.
 // The func will always be returned so even if err != nil, defer the func.
-func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCase string, inputs *models.FormVariables) (*models.Component, error) {
+func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCase string, inputs models.FormVariables) (*models.Component, error) {
 	m := config.Middleware
 	component := RandomCanonical(identifier)
 

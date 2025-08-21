@@ -25,9 +25,6 @@ func NewGetCommand() *cobra.Command {
 }
 
 func get(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -43,6 +40,10 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
+	// Initialize middleware after all arguments are collected
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
@@ -51,7 +52,7 @@ func get(cmd *cobra.Command, args []string) error {
 
 	s, err := m.GetStack(org, ref)
 	if err != nil {
-		printer.SmartPrint(p, nil, err, "failed to get stack from API", printer.Options{}, cmd.OutOrStderr())
+		return printer.SmartPrint(p, nil, err, "failed to get stack from API", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	return printer.SmartPrint(p, s, nil, "", printer.Options{}, cmd.OutOrStdout())

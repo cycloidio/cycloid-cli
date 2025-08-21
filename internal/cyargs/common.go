@@ -163,7 +163,6 @@ func GetProject(cmd *cobra.Command) (string, error) {
 func AddEnvFlag(cmd *cobra.Command) {
 	cmd.Flags().StringP("env", "e", "", "the env canonical, can also be set with the CY_ENV env var")
 	v.BindPFlag("env", cmd.Flags().Lookup("env"))
-	v.BindPFlag("environment", cmd.Flags().Lookup("env"))
 
 	cmd.RegisterFlagCompletionFunc("env", func(cmd *cobra.Command, args []cobra.Completion, toComplete string) ([]string, cobra.ShellCompDirective) {
 		org, err := GetOrg(cmd)
@@ -206,7 +205,7 @@ func GetEnv(cmd *cobra.Command) (string, error) {
 
 	env = v.GetString("env")
 	if env == "" {
-		return "", errors.New("env is not set, use --env flag or CY_ENV / CY_ENVIRONMENT env var")
+		return "", errors.New("env is not set, use --env flag or CY_ENV env var")
 	}
 
 	return env, nil
@@ -237,7 +236,7 @@ func AddComponentFlag(cmd *cobra.Command) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
-		components, err := m.GetComponents(org, project, env)
+		components, err := m.ListComponents(org, project, env)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to list components for completion in org '"+org+"' with project '"+project+"' and env '"+env+"': "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp

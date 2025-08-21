@@ -2,6 +2,7 @@ package components
 
 import (
 	"fmt"
+	"slices"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -87,8 +88,14 @@ func createComponent(cmd *cobra.Command, args []string) error {
 
 	var componentOutput *models.Component
 	if update {
-		_, err := m.GetComponent(org, project, env, component)
-		if err == nil {
+		components, err := m.ListComponents(org, project, env)
+		if err != nil {
+			return fmt.Errorf("failed to create --update component, cannot check existing component '%s': %s", component, err.Error())
+		}
+
+		if slices.IndexFunc(components, func(c *models.Component) bool {
+			return *c.Canonical == component
+		}) != -1 {
 			// Fetch base forms value from current component
 			config, err := m.GetComponentConfig(org, project, env, component)
 			if err != nil {

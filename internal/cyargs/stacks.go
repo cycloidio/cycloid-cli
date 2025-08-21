@@ -98,7 +98,7 @@ func GetStackRef(cmd *cobra.Command) (string, error) {
 
 func AddVisibilityFlag(cmd *cobra.Command) string {
 	flagName := "visibility"
-	cmd.Flags().StringP(flagName, "v", "", "set the visibility of a stack")
+	cmd.Flags().StringP(flagName, "V", "", "set the visibility of a stack")
 	cmd.RegisterFlagCompletionFunc(flagName, CompleteVisibility)
 	return flagName
 }
@@ -130,4 +130,62 @@ func GetTeam(cmd *cobra.Command) (string, error) {
 // This may disappear
 func CompleteTeam(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 	return []cobra.Completion{}, cobra.ShellCompDirectiveNoFileComp
+}
+
+// Blueprint-related functions
+func AddBlueprintRefFlag(cmd *cobra.Command) string {
+	flagName := "blueprint-ref"
+	cmd.Flags().StringP(flagName, "", "", "Blueprint reference to use")
+	cmd.RegisterFlagCompletionFunc(flagName, CompleteBlueprint)
+	return flagName
+}
+
+func CompleteBlueprint(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
+			cobra.ShellCompDirectiveNoFileComp
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	blueprints, err := m.ListBlueprints(org)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to list stacks in org '"+org+"': "+err.Error()),
+			cobra.ShellCompDirectiveNoFileComp
+	}
+
+	var completions = make([]cobra.Completion, len(blueprints))
+	for index, blueprint := range blueprints {
+		if blueprint.Ref != nil && strings.HasPrefix(*blueprint.Ref, toComplete) {
+			completions[index] = cobra.CompletionWithDesc(*blueprint.Ref, *blueprint.Name+" - "+blueprint.Description)
+		}
+	}
+
+	return completions, cobra.ShellCompDirectiveNoFileComp
+}
+
+func GetBlueprintRef(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("blueprint-ref")
+}
+
+func AddStackNameFlag(cmd *cobra.Command) string {
+	flagName := "name"
+	cmd.Flags().StringP(flagName, "n", "", "name of the stack")
+	return flagName
+}
+
+func GetStackName(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("name")
+}
+
+func AddStackFlag(cmd *cobra.Command) string {
+	flagStack := "stack"
+	cmd.Flags().StringP(flagStack, "s", "", "canonical of the stack")
+	return flagStack
+}
+
+func GetStack(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("stack")
 }

@@ -1,9 +1,13 @@
 package projects
 
 import (
+	"fmt"
+	"slices"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
@@ -92,9 +96,15 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	if update {
-		current, err := m.GetProject(org, project)
-		if err == nil {
+		projects, err := m.ListProjects(org)
+		if err != nil {
+			return fmt.Errorf("failed to create --update project, cannot check is project '%s' exists: %s", project, err.Error())
+		}
+
+		currentIndex := slices.IndexFunc(projects, func(p *models.Project) bool { return *p.Canonical == project })
+		if currentIndex != -1 {
 			// Make the update use the current color if not explicitly set by the user
+			current := projects[currentIndex]
 			if color == cyargs.DefaultColor {
 				if current.Color != nil {
 					color = *current.Color
@@ -134,5 +144,6 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 	}
+
 	return printer.SmartPrint(p, resp, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

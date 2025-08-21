@@ -30,10 +30,6 @@ func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	d := payload.Data
 	return d, nil
@@ -78,10 +74,6 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -110,10 +102,6 @@ func (m *middleware) ListInfraPolicies(org string) ([]*models.InfraPolicy, error
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -130,10 +118,6 @@ func (m *middleware) GetInfraPolicy(org, infraPolicy string) (*models.InfraPolic
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
@@ -172,10 +156,6 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }

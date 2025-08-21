@@ -17,10 +17,6 @@ func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigReposit
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	return payload.Data, nil
 }
@@ -37,10 +33,6 @@ func (m *middleware) GetConfigRepository(org, configRepo string) (*models.Config
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	return payload.Data, nil
 }
@@ -86,10 +78,6 @@ func (m *middleware) CreateConfigRepository(org, name, canonical, url, branch, c
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	return payload.Data, nil
 }
@@ -120,10 +108,6 @@ func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, br
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
 
 	return payload.Data, nil
 }

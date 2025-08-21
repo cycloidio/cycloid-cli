@@ -134,7 +134,7 @@ func TestComponentCRUD(t *testing.T) {
 			}
 
 			createdComponent, err = m.CreateComponent(
-				config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, &componentName, &stackRef, &useCase, nil, &formVars,
+				config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, &componentName, &stackRef, &useCase, nil, formVars,
 			)
 			if err != nil {
 				errList = errors.Join(errList, err)
@@ -163,7 +163,7 @@ func TestComponentCRUD(t *testing.T) {
 		)
 		errList, err = nil, nil
 		for range 3 {
-			_, err = m.UpdateComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, &newComponentName, &useCase, &newVar)
+			_, err = m.UpdateComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, &newComponentName, &useCase, newVar)
 			if err != nil {
 				errList = errors.Join(errList, err)
 				continue
@@ -183,7 +183,7 @@ func TestComponentCRUD(t *testing.T) {
 		// assert.Equal(t, newDescription, *updatedComponent.Canonical)
 	}
 
-	_, err := m.GetComponents(config.Org, *config.Project.Canonical, *config.Environment.Canonical)
+	_, err := m.ListComponents(config.Org, *config.Project.Canonical, *config.Environment.Canonical)
 	if err != nil {
 		t.Fatalf("Failed to list components in project '%s':\n%v", *config.Project.Canonical, err)
 	}

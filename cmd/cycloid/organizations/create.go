@@ -4,8 +4,10 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -14,19 +16,29 @@ import (
 // Advanced user still can use it passing a user token in CY_API_KEY env var during a login.
 func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:    "create",
-		Args:   cobra.NoArgs,
-		Short:  "create an organization",
-		Hidden: true,
-		Example: `
-	# create an organization foo
-	cy organization create --name foo
+		Use:   "create",
+		Args:  cobra.NoArgs,
+		Short: "create an organization",
+		Long: `Create an organization in the Cycloid console.
+Created organization are at root level by default.
+
+If you want to create a child org, you need to specify the parent organization canonical
+using the --parent-canonical (-p) flag.
+
+Check the documentation at: https://docs.cycloid.io/reference/organizations/
+
+See examples below.`,
+		Example: `# create an organization foo
+cy organization create --name foo
+
+# create a child organization bar with parent foo
+cy organization create --name bar --parent-canonical foo
 `,
 		RunE: create,
 	}
 
-	common.RequiredFlag(WithFlagName, cmd)
-
+	cmd.MarkFlagRequired(cyargs.AddOrgNameFlag(cmd))
+	cyargs.AddOrgChildOfFlag(cmd)
 	return cmd
 }
 
@@ -34,22 +46,36 @@ func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	name, err := cmd.Flags().GetString("name")
+	name, err := cyargs.GetOrgName(cmd)
+	if err != nil {
+		return err
+	}
+	org := common.GenerateCanonical(name)
+
+	parentOrg, err := cyargs.GetOrgParentCanonical(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	o, err := m.CreateOrganization(name)
-	return printer.SmartPrint(p, o, err, "unable to create organization", printer.Options{}, cmd.OutOrStdout())
+	var outOrg *models.Organization
+	if parentOrg != "" {
+		outOrg, err = m.CreateOrganizationChild(parentOrg, org, &name)
+	} else {
+		outOrg, err = m.CreateOrganization(name)
+	}
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "failed to create org named '"+name+"'", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, outOrg, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

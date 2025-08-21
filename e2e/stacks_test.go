@@ -8,39 +8,14 @@ import (
 	"os"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/internal/custommodels"
+	"github.com/matryer/is"
 )
 
 func TestStacks(t *testing.T) {
-	t.Skip()
-
-	// Since the latest update the public catalog have been added by default
-	// Here is a sample of code if we need to add a dedicated one
-	// t.Run("InitPublicCatalog", func(t *testing.T) {
-	// 	executeCommand([]string{
-	// 		"--output", "json",
-	// 		"--org", CY_TEST_ROOT_ORG,
-	// 		"catalog-repository",
-	// 		"create",
-	// 		"--branch", "master",
-	// 		"--url", "https://github.com/cycloid-community-catalog/stack-magento.git",
-	// 		"--name", "magento",
-	// 	})
-	//
-	// 	// Ensure the catalog is present
-	// 	cmdOut, _ := executeCommand([]string{
-	// 		"--output", "json",
-	// 		"--org", CY_TEST_ROOT_ORG,
-	// 		"catalog-repository",
-	// 		"get",
-	// 		"--canonical", "magento",
-	// 	})
-	//
-	// 	require.Contains(t, cmdOut, "canonical\": \"magento")
-	// })
-
-	t.Run("SuccessStacksList", func(t *testing.T) {
+	t.Run("SuccessStacksListJSON", func(t *testing.T) {
+		is := is.New(t)
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
@@ -48,24 +23,118 @@ func TestStacks(t *testing.T) {
 			"list",
 		})
 
-		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
+		is.NoErr(cmdErr)
+		var stackList []*models.ServiceCatalog
+		err := json.Unmarshal([]byte(cmdOut), &stackList)
+		is.NoErr(err)
+		is.True(len(stackList) >= 1) // We should have at least one stack in our test org
 	})
 
+	var testStackRef = config.Org + ":stack-e2e-stackforms"
 	t.Run("SuccessStacksGet", func(t *testing.T) {
+		is := is.New(t)
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"stacks",
 			"get",
-			"--ref", fmt.Sprintf("%s:stack-dummy", config.Org),
+			"--stack-ref", testStackRef,
 		})
-
-		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
+		is.NoErr(cmdErr)
+		var outStack *models.ServiceCatalog
+		err := json.Unmarshal([]byte(cmdOut), &outStack)
+		is.NoErr(err)
 	})
 
+	t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
+		is := is.New(t)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"stack",
+			"update",
+			"--stack-ref", testStackRef,
+			"--visibility", "shared",
+		})
+		is.NoErr(cmdErr)
+
+		var updatedStack *models.ServiceCatalog
+		err := json.Unmarshal([]byte(cmdOut), &updatedStack)
+		is.NoErr(err)
+		is.Equal(*updatedStack.Visibility, "shared")
+	})
+
+	t.Run("SuccessAddStackMaintainer", func(t *testing.T) {
+		var teamCanonical = "test-team"
+		body := map[string]any{
+			"canonical": teamCanonical,
+			"name":      teamCanonical,
+			"roles_canonical": []string{
+				"default-project-viewer",
+			},
+		}
+		jsonBody, err := json.Marshal(body)
+		if err != nil {
+			t.Fatalf("[preparation]: json serialization shouldn't fail: %s", err.Error())
+		}
+
+		// team management is not implemented on the CLI, so making the call ourselves
+		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", config.APIUrl, config.Org), bytes.NewBuffer(jsonBody))
+		if err != nil {
+			t.Fatalf("[preparation]: request creationg shoudn't fail: %s", err.Error())
+		}
+
+		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
+		request.Header.Add("Content-Type", "application/vnd.cycloid.io.v1+json")
+
+		client := &http.Client{}
+		_, err = client.Do(request)
+		if err != nil {
+			t.Fatalf("[Preparation]: request to create teams shouldn't fail: %s", err.Error())
+		}
+
+		// At this point we should have a team, I assume CR and stacks are present too
+		is := is.New(t)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", testStackRef,
+			"--team", teamCanonical,
+		})
+		is.NoErr(cmdErr)
+		var updatedStack *models.ServiceCatalog
+		err = json.Unmarshal([]byte(cmdOut), &updatedStack)
+		is.NoErr(err)
+		is.Equal(*updatedStack.Team.Canonical, teamCanonical) // New team canonical must match
+	})
+
+	t.Run("SuccessRemoveMaintainer", func(t *testing.T) {
+		is := is.New(t)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", testStackRef,
+			"--team", "", // setting the flag with empty string should remove the maintainer
+		})
+		is.NoErr(cmdErr) // This command must not fail
+		var updatedStack *models.ServiceCatalog
+		err := json.Unmarshal([]byte(cmdOut), &updatedStack)
+		is.NoErr(err)                    // We should be able to deserialize a valid model
+		is.Equal(updatedStack.Team, nil) // Team should be unset
+	})
+
+	t.Run("InvalidMaintainerShouldError", func(t *testing.T) {
+		is := is.New(t)
+		_, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"stack", "update",
+			"--stack-ref", testStackRef,
+			"--team", "invalidteam",
+		})
+		is.True(cmdErr != nil) // CLI should output an error if we try to update a stack with a team that doesn't exists
+	})
 	t.Run("SuccessStacksValidateForm", func(t *testing.T) {
+		is := is.New(t)
 		var TestForms = []byte(`---
 version: "4"
 shared:
@@ -93,100 +162,40 @@ use_cases:
       - <<: *anchor2
         key: "toto4"
 `)
-		testFile, err := os.CreateTemp("", "test-stackforms.yml")
+		testForms, err := os.CreateTemp("", "test-stackforms.yml")
 		if err != nil {
-			t.Fatalf("setup failed: error while writing test forms at '%s'", testFile.Name())
+			t.Fatalf("setup failed: error while writing test forms at '%s'", testForms.Name())
 		}
-
-		formsFile := testFile.Name()
-		WriteFile(formsFile, TestForms)
+		testFormsPath := testForms.Name()
+		WriteFile(testFormsPath, TestForms)
+		defer os.Remove(testFormsPath)
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", config.Org,
 			"stacks",
-			"validate-form",
-			formsFile,
+			"forms", "validate",
+			testFormsPath,
 		})
-		require.Nil(t, cmdErr)
-		assert.Equal(t, cmdOut, "")
+		is.NoErr(cmdErr)
+		is.Equal(cmdOut, "")
 	})
 
-	t.Run("SuccessStacksUpdateVisibilty", func(t *testing.T) {
+	t.Run("SuccessStacksListWithBlueprintFlag", func(t *testing.T) {
+		is := is.New(t)
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
-			"--org", config.Org,
-			"stack",
-			"update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
-			"--visibility", "shared",
+			"stacks",
+			"list",
+			"--blueprint",
 		})
+		is.NoErr(cmdErr) // cmd should not fail
 
-		require.Nil(t, cmdErr)
-		assert.Contains(t, cmdOut, "canonical\": \"stack-dummy")
-		assert.Contains(t, cmdOut, "visibility\": \"shared")
+		var blueprints []*custommodels.Blueprint
+		err := json.Unmarshal([]byte(cmdOut), &blueprints)
+		is.NoErr(err) // json output should be deserializable
 	})
 
-	t.Run("SuccessAddStackMaintainer", func(t *testing.T) {
-		t.Setenv("CY_ORG", config.Org)
-		var teamCanonical = "test-team"
-		body := map[string]any{
-			"canonical": teamCanonical,
-			"name":      teamCanonical,
-			"roles_canonical": []string{
-				"default-project-viewer",
-			},
-		}
-		jsonBody, err := json.Marshal(body)
-		assert.Nil(t, err, "[preparation]: json serialization shouldn't fail.")
-
-		// team management is not implemented on the CLI, so making the call ourselves
-		request, err := http.NewRequest("POST", fmt.Sprintf("%s/organizations/%s/teams", config.APIUrl, config.Org), bytes.NewBuffer(jsonBody))
-		assert.Nil(t, err, "[preparation]: request creationg shoudn't fail")
-
-		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", config.APIKey))
-		request.Header.Add("Content-Type", "application/vnd.cycloid.io.v1+json")
-
-		client := &http.Client{}
-		_, err = client.Do(request)
-		assert.Nil(t, err, "[Preparation]: request to create teams shouldn't fail")
-
-		// At this point we should have a team, I assume CR and stacks are present too
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
-			"--team", teamCanonical,
-		})
-
-		assert.Nil(t, cmdErr, "CLI should be able to update the correct team without error")
-		assert.Contains(t, cmdOut, teamCanonical, "team canonical should be in the JSON response.")
-	})
-
-	t.Run("SuccessRemoveMaintainer", func(t *testing.T) {
-		t.Setenv("CY_ORG", config.Org)
-		// We assume that the team exists from the previous test
-		var teamCanonical = "test-team"
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
-			"--team", "", // setting the flag with empty string should remove the maintainer
-		})
-
-		assert.Nil(t, cmdErr, "CLI should be able to update the correct team without error")
-		assert.NotContains(t, cmdOut, teamCanonical, "team canonical should not be in json response")
-	})
-
-	t.Run("InvalidMaintainerShouldError", func(t *testing.T) {
-		t.Setenv("CY_ORG", config.Org)
-		_, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"stack", "update",
-			"--stack-ref", fmt.Sprintf("%s:stack-dummy", config.Org),
-			"--team", "invalidteam",
-		})
-
-		assert.Error(t, cmdErr, "CLI should output an error if we try to update a stack with a team that doesn't exists")
+	t.Run("SuccessCreateStackFromBlueprint", func(t *testing.T) {
+		t.Skip("Skipping due to missing way to cleanup stack afterwards")
 	})
 }

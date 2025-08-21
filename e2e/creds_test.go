@@ -130,7 +130,6 @@ func TestCreds(t *testing.T) {
 				"--field-file", "key=" + fileName,
 			})
 			assert.Nil(t, cmdErr)
-
 			defer t.Run("SuccessDelete", func(t *testing.T) {
 				_, err := executeCommand([]string{
 					"--output", "json",
@@ -152,19 +151,6 @@ func TestCreds(t *testing.T) {
 		})
 
 		t.Run("SuccessCredsCreateSSH", func(t *testing.T) {
-			defer t.Run("SuccessDelete", func(t *testing.T) {
-				_, err := executeCommand([]string{
-					"--output", "json",
-					"--org", config.Org,
-					"creds",
-					"delete",
-					"--canonical", "cli-ssh",
-				})
-				if err != nil {
-					t.Fatalf("failed to delete cred 'cli-ssh'")
-				}
-			})
-
 			fileName, err := WriteTempFile(string(TestGitSSHKey))
 			if err != nil {
 				t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
@@ -179,8 +165,20 @@ func TestCreds(t *testing.T) {
 				"--name", "cli-ssh",
 				"--ssh-key", fileName,
 			})
-
 			assert.Nil(t, cmdErr)
+			defer t.Run("SuccessDelete", func(t *testing.T) {
+				_, err := executeCommand([]string{
+					"--output", "json",
+					"--org", config.Org,
+					"creds",
+					"delete",
+					"--canonical", "cli-ssh",
+				})
+				if err != nil {
+					t.Fatalf("failed to delete cred 'cli-ssh'")
+				}
+			})
+
 			var outCred *models.Credential
 			err = json.Unmarshal([]byte(cmdOut), &outCred)
 			if err != nil {
@@ -188,73 +186,4 @@ func TestCreds(t *testing.T) {
 			}
 		})
 	})
-	t.Run("SuccessCredsCreateCustomWithFile", func(t *testing.T) {
-		// Cleanup just in case
-		executeCommand([]string{
-			"--output", "json",
-			"--org", config.Org,
-			"creds",
-			"delete",
-			"--canonical", "cli-custom-file",
-		})
-
-		fileContent := "hello world"
-		fileName, err := WriteTempFile(fileContent)
-		if err != nil {
-			t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
-		}
-		defer os.Remove(fileName)
-
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", config.Org,
-			"creds",
-			"create",
-			"custom",
-			"--name", "cli-custom-file",
-			"--field", "foo=bar",
-			"--field-file", "key=" + fileName,
-		})
-
-		assert.Nil(t, cmdErr)
-		var outCred *models.Credential
-		err = json.Unmarshal([]byte(cmdOut), &outCred)
-		if err != nil {
-			t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
-		}
-	})
-
-	t.Run("SuccessCredsCreateSSH", func(t *testing.T) {
-		// Cleanup just in case
-		executeCommand([]string{
-			"--output", "json",
-			"--org", config.Org,
-			"creds",
-			"delete",
-			"--canonical", "cli-ssh",
-		})
-
-		fileName, err := WriteTempFile(string(TestGitSSHKey))
-		if err != nil {
-			t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
-		}
-		defer os.Remove(fileName)
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", config.Org,
-			"creds",
-			"create",
-			"ssh",
-			"--name", "cli-ssh",
-			"--ssh-key", fileName,
-		})
-
-		assert.Nil(t, cmdErr)
-		var outCred *models.Credential
-		err = json.Unmarshal([]byte(cmdOut), &outCred)
-		if err != nil {
-			t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
-		}
-	})
-
 }

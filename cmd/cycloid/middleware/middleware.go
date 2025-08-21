@@ -34,6 +34,8 @@ type Middleware interface {
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
 	UpdateStack(org, ref, teamCanonical string, visibility *string) (*models.ServiceCatalog, error)
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
+	ListBlueprints(org string) ([]*models.ServiceCatalog, error)
+	CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, error)
 	GetStackConfig(org, ref string) (models.ServiceCatalogConfigs, error)
 
 	// organization_credentials
@@ -74,7 +76,7 @@ type Middleware interface {
 	CreateOrganizationChild(org, childOrg string, childOrgName *string) (*models.Organization, error)
 
 	// Organization Forms
-	InterpolateFormsConfig(org, env, project, component, serviceCatalogRef, useCase string, inputs *models.FormVariables) (*models.ServiceCatalogConfig, error)
+	InterpolateFormsConfig(org, env, project, component, serviceCatalogRef, useCase string, inputs models.FormVariables) (*models.ServiceCatalogConfig, error)
 	ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error)
 
 	// Organization pipelines
@@ -130,12 +132,12 @@ type Middleware interface {
 	DeleteEnv(org, project, env string) error
 
 	// Component
-	GetComponents(org, project, env string) ([]*models.Component, error)
-	GetComponentConfig(org, project, env, component string) (*models.FormVariables, error)
+	ListComponents(org, project, env string) ([]*models.Component, error)
+	GetComponentConfig(org, project, env, component string) (models.FormVariables, error)
 	GetComponent(org, project, env, component string) (*models.Component, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, error)
-	CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars *models.FormVariables) (*models.Component, error)
-	UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars *models.FormVariables) (*models.Component, error)
+	CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars models.FormVariables) (*models.Component, error)
+	UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars models.FormVariables) (*models.Component, error)
 	DeleteComponent(org, project, env, component string) error
 
 	DeleteRole(org, role string) error

@@ -5,7 +5,6 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/client/cost_estimation"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 // CostEstimation will consume the backend API endpoint for cost estimation
@@ -24,10 +23,6 @@ func (m *middleware) CostEstimation(org string, plan []byte) (*models.CostEstima
 	}
 
 	payload := resp.GetPayload()
-	err = payload.Validate(strfmt.Default)
-	if err != nil {
-		return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	}
 
 	return payload.Data, nil
 }
