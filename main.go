@@ -23,7 +23,6 @@ func inRed(msg string) string {
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		rootCmd.PrintErrln(inRed("Error:"), err.Error())
-		// rootCmd.PrintErrf("Run '%v --help' for usage.\n", rootCmd.CommandPath())
 		os.Exit(1)
 	}
 }

@@ -117,6 +117,23 @@ func executeCommandStdin(stdin string, args []string) (string, string, error) {
 	cmd.SetErr(stderrBuf)
 
 	cmd.SetIn(strings.NewReader(stdin))
+	oldStdin := os.Stdin
+	defer func() {
+		os.Stdin = oldStdin
+	}()
+	file, err := os.CreateTemp("", "stdin")
+	if err != nil {
+		return "", "", fmt.Errorf("test setup failed: %w", err)
+	}
+	defer file.Close()
+	defer os.Remove(file.Name())
+
+	err = os.WriteFile(file.Name(), []byte(stdin), 0666)
+	if err != nil {
+		return "", "", fmt.Errorf("test setup failed: %w", err)
+	}
+	os.Stdin = file
+
 	cmd.SetArgs(args)
 	cmdErr := cmd.Execute()
 	stdout, err := io.ReadAll(stdoutBuf)
