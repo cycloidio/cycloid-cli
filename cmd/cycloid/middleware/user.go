@@ -1,10 +1,11 @@
 package middleware
 
 import (
+	"github.com/go-openapi/runtime"
+	"github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/user"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/go-openapi/runtime"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) UserSignup(username, email, password, givenName, familyName string) error {

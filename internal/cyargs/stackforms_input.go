@@ -11,9 +11,10 @@ import (
 	"strings"
 
 	"dario.cat/mergo"
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 var (

@@ -4,14 +4,15 @@ import (
 	"fmt"
 	"slices"
 
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
 func NewCreateComponentCommand() *cobra.Command {
@@ -43,6 +44,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	if name == "" {
 		// if name is empty, use the canonical
 		name = component
@@ -86,7 +88,6 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	var componentOutput *models.Component
 	if update {
 		components, err := m.ListComponents(org, project, env)
 		if err != nil {
@@ -107,33 +108,29 @@ func createComponent(cmd *cobra.Command, args []string) error {
 				return err
 			}
 
-			componentOutput, err = m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)
+			// ConfigureComponent will reconfigure the component
+			componentOutput, err := m.CreateAndConfigureComponent(org, project, env, component, *description, &name, stackRef, *useCase, *cloudProvider, inputs)
 			if err != nil {
-				return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
+				return printer.SmartPrint(p, nil, err, "failed to configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 			}
+
 			return printer.SmartPrint(p, componentOutput, nil, "", printer.Options{}, cmd.OutOrStdout())
 		}
 	}
 
-	// Get default to stacks
-	stackConfig, err := m.GetStackConfig(org, stackRef)
+	componentEntity, err := m.GetComponent(org, project, env, component)
+	if err == nil {
+		return printer.SmartPrint(p, componentEntity, fmt.Errorf("component %q already exists, to update it, use the --update flag", component), "failed to create component", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	inputs, err := cyargs.GetStackformsVars(cmd, nil)
 	if err != nil {
 		return err
 	}
 
-	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfig, *useCase)
+	componentOutput, err := m.CreateAndConfigureComponent(org, project, env, component, *description, &name, stackRef, *useCase, *cloudProvider, inputs)
 	if err != nil {
-		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", stackRef, *useCase, err)
-	}
-
-	inputs, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
-	if err != nil {
-		return err
-	}
-
-	componentOutput, err = m.CreateComponent(org, project, env, component, *description, &name, &stackRef, useCase, cloudProvider, inputs)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to create component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
+		return printer.SmartPrint(p, nil, err, "failed to create and configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	return printer.SmartPrint(p, componentOutput, nil, "", printer.Options{}, cmd.OutOrStdout())

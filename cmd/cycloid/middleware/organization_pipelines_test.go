@@ -5,8 +5,9 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/sanity-io/litter"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 var (

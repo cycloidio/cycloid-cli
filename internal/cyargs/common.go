@@ -6,10 +6,11 @@ import (
 	"math/rand/v2"
 	"strings"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
 
 var (

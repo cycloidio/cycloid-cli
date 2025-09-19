@@ -7,8 +7,9 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func TestComponentCmd(t *testing.T) {

@@ -3,8 +3,9 @@ package middleware_test
 import (
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 )
 
 func TestProjectCrud(t *testing.T) {

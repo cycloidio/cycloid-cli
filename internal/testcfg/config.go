@@ -106,7 +106,16 @@ func NewConfig() (*Config, error) {
 	config.Environment = environment
 
 	stackRef := org + ":" + defaultStackCanonical
-	stackConfig, err := m.GetStackConfig(org, stackRef)
+
+	component, err := config.NewTestComponent(
+		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, nil,
+	)
+	if err != nil {
+		return config, err
+	}
+	config.Component = component
+
+	stackConfig, err := m.GetComponentStackConfig(org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase)
 	if err != nil {
 		return config, err
 	}
@@ -124,14 +133,6 @@ func NewConfig() (*Config, error) {
 			"types": {"tests": {"string": RandomCanonical("common")}},
 		}
 	}
-
-	component, err := config.NewTestComponent(
-		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, vars,
-	)
-	if err != nil {
-		return config, err
-	}
-	config.Component = component
 
 	return config, nil
 }
@@ -214,8 +215,8 @@ func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCa
 			break
 		}
 
-		outComponent, err = m.CreateComponent(
-			config.Org, project, env, component, "", &component, &stackRef, &useCase, nil, inputs,
+		outComponent, err = m.CreateAndConfigureComponent(
+			config.Org, project, env, component, "", &component, stackRef, useCase, "", inputs,
 		)
 		if err != nil {
 			errors.Join(outErr, fmt.Errorf("attempt number %d failed to setup component '%s' for test '%s':\n%v", retry, component, identifier, err))

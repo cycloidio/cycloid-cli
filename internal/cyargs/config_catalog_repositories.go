@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"slices"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func AddCatalogRepositoryFlag(cmd *cobra.Command) string {

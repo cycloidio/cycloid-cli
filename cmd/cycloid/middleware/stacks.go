@@ -42,6 +42,21 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	return payload.Data, nil
 }
 
+func (m *middleware) ListStackUseCases(org, ref string) ([]*models.StackUseCase, error) {
+	params := service_catalogs.NewGetServiceCatalogUseCasesParams()
+	params.SetOrganizationCanonical(org)
+	params.SetServiceCatalogRef(ref)
+
+	resp, err := m.api.ServiceCatalogs.GetServiceCatalogUseCases(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := resp.GetPayload()
+
+	return payload.Data, nil
+}
+
 // ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
 // TODO: Merge this route with ListStack once we find a way to add LHS filter params to the client.
 func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error) {
@@ -156,8 +171,4 @@ func (m *middleware) UpdateStack(
 	}
 
 	return payload.Data, nil
-}
-
-func (m *middleware) GetStackConfig(org, ref string) (models.ServiceCatalogConfigs, error) {
-	panic("not implemented yet, will be implemented in https://github.com/cycloidio/cycloid-cli/pull/385")
 }

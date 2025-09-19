@@ -5,9 +5,10 @@ import (
 	"slices"
 	"testing"
 
+	"github.com/matryer/is"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/testcfg"
-	"github.com/matryer/is"
 )
 
 func TestOrganizations(t *testing.T) {

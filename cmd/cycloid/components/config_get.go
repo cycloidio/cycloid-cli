@@ -1,20 +1,21 @@
 package components
 
 import (
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
-func NewGetComponentConfigCommand() *cobra.Command {
+func NewComponentConfigGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "get",
 		Args:    cobra.NoArgs,
-		Short:   "Fetch the current Stackforms variables of a component as a JSON.",
+		Short:   "Fetch the current Stackforms variables of a component in JSON format.",
 		RunE:    getComponentConfig,
 		Example: "cy config get -p project -e env -c component",
 	}
@@ -28,7 +29,7 @@ func getComponentConfig(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return err
 	}

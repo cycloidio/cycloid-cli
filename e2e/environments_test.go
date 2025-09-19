@@ -5,9 +5,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestEnvs(t *testing.T) {

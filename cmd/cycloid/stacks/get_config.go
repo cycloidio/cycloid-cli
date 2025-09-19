@@ -7,23 +7,25 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewConfigGetCommand() *cobra.Command {
+func NewStacksGetComponentStackConfig() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "get <ref?> <use-case?> [flags]",
-		Short:   "output a V2 stack default configuration in JSON (require stackforms)",
-		Example: `cy --org my-org stacks get-config my:stack-ref stack-usecase`,
-		RunE:    getConfig,
-		Args:    cobra.RangeArgs(0, 2),
+		Use:   "get-config -p project -e env -c component <use-case?> [flags]",
+		Short: "Output a stack configuration in JSON",
+		Example: `
+cy --org my-org stacks get-config -p my-project -e my-env -c my-component my-usecase
+`,
+		RunE: getConfig,
+		Args: cobra.RangeArgs(0, 2),
 	}
-
-	cyargs.AddStackRefFlag(cmd)
 	cyargs.AddUseCaseFlag(cmd)
+
 	return cmd
 }
 
@@ -33,11 +35,19 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	stackRef, _ := cyargs.GetStackRef(cmd)
-	if len(args) >= 1 && stackRef == "" {
-		stackRef = args[0]
-	} else if stackRef == "" {
-		return fmt.Errorf("missing ref argument")
+	proj, err := cyargs.GetProject(cmd)
+	if err != nil {
+		return err
+	}
+
+	env, err := cyargs.GetEnv(cmd)
+	if err != nil {
+		return err
+	}
+
+	component, err := cyargs.GetComponent(cmd)
+	if err != nil {
+		return err
 	}
 
 	useCase, _ := cyargs.GetUseCase(cmd)
@@ -47,7 +57,9 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("missing use-case argument")
 	}
 
-	output, err := cyargs.GetOutput(cmd)
+	internal.Debug("project:", proj, "env:", env, "component:", component, "usecase:", useCase)
+
+	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
@@ -66,15 +78,20 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	stackConfigs, err := m.GetStackConfig(org, stackRef)
+	stackConfigs, err := m.GetComponentStackConfig(org, proj, env, component, *useCase)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, *useCase)
 	if err != nil {
-		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", stackRef, *useCase, err)
+		return fmt.Errorf("failed to parse default form values for component '%s' with use-case '%s': %s", component, *useCase, err)
 	}
 
-	return printer.SmartPrint(p, useCaseConfig, nil, "", printer.Options{}, cmd.OutOrStdout())
+	config, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "failed to fetch stack config.", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	return printer.SmartPrint(p, config, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

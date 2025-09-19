@@ -3,9 +3,10 @@ package cyargs
 import (
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 func AddComponentDescriptionFlag(cmd *cobra.Command) {
@@ -72,20 +73,20 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	stackConfig, err := m.GetStackConfig(org, stackRef)
+	stackUseCases, err := m.ListStackUseCases(org, stackRef)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "cannot find stack or blueprint with ref: "+stackRef+", err: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
 	var useCases []string
-	for useCase, stack := range stackConfig {
-		if strings.HasPrefix(useCase, toComplete) {
-			desc := *stack.Name
-			if stack.Description != nil {
-				desc = desc + " - " + *stack.Description
+	for _, useCase := range stackUseCases {
+		if strings.HasPrefix(*useCase.UseCase, toComplete) {
+			desc := *useCase.Name
+			if useCase.Description != "" {
+				desc = desc + " - " + useCase.Description
 			}
-			useCases = append(useCases, cobra.CompletionWithDesc(useCase, desc))
+			useCases = append(useCases, cobra.CompletionWithDesc(*useCase.UseCase, desc))
 		}
 	}
 

@@ -1,10 +1,11 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
-	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
+
+	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func (m *middleware) GetEnv(org, project, env string) (*models.Environment, error) {
