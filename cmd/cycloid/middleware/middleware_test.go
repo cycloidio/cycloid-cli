@@ -23,7 +23,9 @@ func runMain(ctx context.Context, main *testing.M) (int, error) {
 		return 1, fmt.Errorf("Config setup failed for package middleware: %v", err)
 	}
 
-	log.Printf("Starting tests with config:\nurl: %s\norg: %s", config.APIUrl, config.Org)
+	os.Setenv("CY_API_URL", config.APIUrl)
+	os.Setenv("CY_API_KEY", config.APIKey)
+	os.Setenv("CY_ORG", config.Org)
 	return main.Run(), nil
 }
 
