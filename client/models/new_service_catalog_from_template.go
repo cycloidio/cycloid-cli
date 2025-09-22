@@ -51,6 +51,9 @@ type NewServiceCatalogFromTemplate struct {
 
 	// use case
 	// Required: true
+	// Max Length: 100
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	UseCase *string `json:"use_case"`
 
 	// visibility
@@ -161,6 +164,18 @@ func (m *NewServiceCatalogFromTemplate) validateTeamCanonical(formats strfmt.Reg
 func (m *NewServiceCatalogFromTemplate) validateUseCase(formats strfmt.Registry) error {
 
 	if err := validate.Required("use_case", "body", m.UseCase); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("use_case", "body", *m.UseCase, 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("use_case", "body", *m.UseCase, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("use_case", "body", *m.UseCase, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 

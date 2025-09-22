@@ -89,7 +89,7 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 	}
 
 	if *useCase == "" {
-		useCase = current.UseCase
+		useCase = &current.UseCase
 	}
 
 	updatedComponent, err := m.UpdateComponent(org, project, env, component, *description, &name, useCase, inputs)

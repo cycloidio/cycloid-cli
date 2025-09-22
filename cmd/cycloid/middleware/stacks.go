@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
@@ -159,16 +159,5 @@ func (m *middleware) UpdateStack(
 }
 
 func (m *middleware) GetStackConfig(org, ref string) (models.ServiceCatalogConfigs, error) {
-	params := service_catalogs.NewGetServiceCatalogConfigParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogRef(ref)
-
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalogConfig(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewApiError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	panic("not implemented yet, will be implemented in https://github.com/cycloidio/cycloid-cli/pull/385")
 }

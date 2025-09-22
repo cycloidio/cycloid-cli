@@ -28,16 +28,6 @@ type UpdateComponent struct {
 	// Required: true
 	// Min Length: 1
 	Name *string `json:"name"`
-
-	// use case
-	// Required: true
-	// Max Length: 100
-	// Min Length: 1
-	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
-	UseCase *string `json:"use_case"`
-
-	// vars
-	Vars FormVariables `json:"vars,omitempty"`
 }
 
 // Validate validates this update component
@@ -45,14 +35,6 @@ func (m *UpdateComponent) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateUseCase(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVars(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -75,75 +57,8 @@ func (m *UpdateComponent) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateComponent) validateUseCase(formats strfmt.Registry) error {
-
-	if err := validate.Required("use_case", "body", m.UseCase); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("use_case", "body", *m.UseCase, 1); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("use_case", "body", *m.UseCase, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("use_case", "body", *m.UseCase, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *UpdateComponent) validateVars(formats strfmt.Registry) error {
-	if swag.IsZero(m.Vars) { // not required
-		return nil
-	}
-
-	if m.Vars != nil {
-		if err := m.Vars.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
-				return ve.ValidateName("vars")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
-				return ce.ValidateName("vars")
-			}
-			return err
-		}
-	}
-
-	return nil
-}
-
-// ContextValidate validate this update component based on the context it is used
+// ContextValidate validates this update component based on context it is used
 func (m *UpdateComponent) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateVars(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *UpdateComponent) contextValidateVars(ctx context.Context, formats strfmt.Registry) error {
-
-	if swag.IsZero(m.Vars) { // not required
-		return nil
-	}
-
-	if err := m.Vars.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
-			return ve.ValidateName("vars")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
-			return ce.ValidateName("vars")
-		}
-		return err
-	}
-
 	return nil
 }
 

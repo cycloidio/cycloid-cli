@@ -73,8 +73,6 @@ func (m *middleware) CreateComponent(org, project, env, component, description s
 		Canonical:         component,
 		Description:       description,
 		ServiceCatalogRef: serviceCatalogRef,
-		UseCase:           useCase,
-		Vars:              vars,
 	}
 
 	if cloudProviderCanonical != nil {
@@ -111,8 +109,6 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 	body := &models.UpdateComponent{
 		Name:        componentName,
 		Description: description,
-		UseCase:     useCase,
-		Vars:        vars,
 	}
 
 	err := body.Validate(strfmt.Default)
