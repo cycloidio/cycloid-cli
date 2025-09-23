@@ -11,7 +11,9 @@ endif
 
 SHELL      := /bin/sh
 
-REPO_PATH  := github.com/cycloidio/cycloid-cli
+REPO_NAME   ?= cycloid-cli
+
+MAKEFILE_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 # IMAGE BUILD
 BINARY       ?= cy
@@ -48,7 +50,7 @@ export AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycl
 export AWS_DEFAULT_REGION    ?= eu-west-1
 export AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
 
-YD_API_TAG        ?= staging
+TEST_API_TAG      ?= staging
 API_LICENCE_KEY   ?=
 
 .PHONY: help
@@ -131,3 +133,7 @@ format-go: ## format the repo
 docker-db-connect: ## Connect to the local mysql
 	$(DOCKER_COMPOSE) exec -it database mysql -uroot -pyoudeploy youdeploy
 
+.PHONY: ci-test
+.ONEFILE:
+ci-test:
+	$(MAKEFILE_DIR)/scripts/ci-tests.sh
