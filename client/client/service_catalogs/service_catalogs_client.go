@@ -113,13 +113,13 @@ type ClientService interface {
 
 	GetServiceCatalog(params *GetServiceCatalogParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogOK, error)
 
-	GetServiceCatalogConfig(params *GetServiceCatalogConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogConfigOK, error)
-
 	GetServiceCatalogTerraform(params *GetServiceCatalogTerraformParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformOK, error)
 
 	GetServiceCatalogTerraformDiagram(params *GetServiceCatalogTerraformDiagramParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformDiagramOK, error)
 
 	GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraformImageParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformImageOK, error)
+
+	GetServiceCatalogUseCases(params *GetServiceCatalogUseCasesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogUseCasesOK, error)
 
 	ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListServiceCatalogsOK, error)
 
@@ -290,44 +290,6 @@ func (a *Client) GetServiceCatalog(params *GetServiceCatalogParams, authInfo run
 }
 
 /*
-GetServiceCatalogConfig Get the config of the service catalog
-*/
-func (a *Client) GetServiceCatalogConfig(params *GetServiceCatalogConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogConfigOK, error) {
-	// TODO: Validate the params before sending
-	if params == nil {
-		params = NewGetServiceCatalogConfigParams()
-	}
-	op := &runtime.ClientOperation{
-		ID:                 "getServiceCatalogConfig",
-		Method:             "GET",
-		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/config",
-		ProducesMediaTypes: []string{"application/json"},
-		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
-		Schemes:            []string{"https"},
-		Params:             params,
-		Reader:             &GetServiceCatalogConfigReader{formats: a.formats},
-		AuthInfo:           authInfo,
-		Context:            params.Context,
-		Client:             params.HTTPClient,
-	}
-	for _, opt := range opts {
-		opt(op)
-	}
-
-	result, err := a.transport.Submit(op)
-	if err != nil {
-		return nil, err
-	}
-	success, ok := result.(*GetServiceCatalogConfigOK)
-	if ok {
-		return success, nil
-	}
-	// unexpected success response
-	unexpectedSuccess := result.(*GetServiceCatalogConfigDefault)
-	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
-}
-
-/*
 GetServiceCatalogTerraform Get the information of the service catalog Terraform config
 */
 func (a *Client) GetServiceCatalogTerraform(params *GetServiceCatalogTerraformParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformOK, error) {
@@ -438,6 +400,44 @@ func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraf
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetServiceCatalogTerraformImageDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetServiceCatalogUseCases Fetch the use cases available for a given Service Catalog
+*/
+func (a *Client) GetServiceCatalogUseCases(params *GetServiceCatalogUseCasesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogUseCasesOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetServiceCatalogUseCasesParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getServiceCatalogUseCases",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/use_cases",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetServiceCatalogUseCasesReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetServiceCatalogUseCasesOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetServiceCatalogUseCasesDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

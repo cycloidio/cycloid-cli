@@ -5,9 +5,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func TestCreds(t *testing.T) {

@@ -34,9 +34,9 @@ type Middleware interface {
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
 	UpdateStack(org, ref, teamCanonical string, visibility *string) (*models.ServiceCatalog, error)
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
+	ListStackUseCases(org, ref string) ([]*models.StackUseCase, error)
 	ListBlueprints(org string) ([]*models.ServiceCatalog, error)
 	CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, error)
-	GetStackConfig(org, ref string) (models.ServiceCatalogConfigs, error)
 
 	// organization_credentials
 	CreateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, error)
@@ -132,13 +132,16 @@ type Middleware interface {
 	DeleteEnv(org, project, env string) error
 
 	// Component
+	CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef *string, cloudProviderCanonical string) (*models.Component, error)
+	UpdateComponent(org, project, env, component, description string, componentName *string) (*models.Component, error)
+	CreateAndConfigureComponent(org, project, env, component, description string, componentName *string, serviceCatalogRef, useCase, cloudProviderCanonical string, vars models.FormVariables) (*models.Component, error)
+	ConfigureComponent(org, project, env, component, useCase string, vars models.FormVariables) error
 	ListComponents(org, project, env string) ([]*models.Component, error)
-	GetComponentConfig(org, project, env, component string) (models.FormVariables, error)
 	GetComponent(org, project, env, component string) (*models.Component, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, error)
-	CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars models.FormVariables) (*models.Component, error)
-	UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars models.FormVariables) (*models.Component, error)
 	DeleteComponent(org, project, env, component string) error
+	GetComponentConfig(org, project, env, component string) (models.FormVariables, error)
+	GetComponentStackConfig(org, project, env, component, useCase string) (models.ServiceCatalogConfigs, error)
 
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)

@@ -3,9 +3,10 @@ package middleware
 import (
 	"fmt"
 
+	"github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_api_keys"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/go-openapi/strfmt"
 )
 
 // ListAPIKey will request API to list generated API keys

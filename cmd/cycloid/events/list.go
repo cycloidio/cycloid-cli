@@ -1,6 +1,8 @@
 package events
 
 import (
+	"time"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -9,8 +11,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-
-	"time"
 )
 
 func NewListCommand() *cobra.Command {

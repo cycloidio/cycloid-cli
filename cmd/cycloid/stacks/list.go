@@ -2,9 +2,6 @@ package stacks
 
 import (
 	"fmt"
-	"maps"
-	"slices"
-
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -92,13 +89,17 @@ func list(cmd *cobra.Command, args []string) error {
 		}
 
 		if stack.Ref != nil {
-			stackConfig, err := m.GetStackConfig(org, *stack.Ref)
+			stackUseCases, err := m.ListStackUseCases(org, *stack.Ref)
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), "error: failed to fetch use cases for blueprint '%s': %s\n", *stack.Ref, err.Error())
 				continue
 			}
 
-			useCases := slices.Collect(maps.Keys(stackConfig))
+			var useCases []string
+			for _, useCase := range stackUseCases {
+				useCases = append(useCases, *useCase.UseCase)
+			}
+
 			blueprints[index].UseCases = &useCases
 		}
 	}

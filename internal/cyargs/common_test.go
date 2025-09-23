@@ -5,11 +5,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/sanity-io/litter"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 )
 
 var (

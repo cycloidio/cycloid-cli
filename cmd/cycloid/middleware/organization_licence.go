@@ -3,9 +3,10 @@ package middleware
 import (
 	"fmt"
 
+	"github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_licence"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) ActivateLicence(org, licence string) error {

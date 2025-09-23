@@ -6,7 +6,7 @@ import (
 	"io"
 	"net/http"
 
-	strfmt "github.com/go-openapi/strfmt"
+	"github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
@@ -33,6 +33,21 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	params.SetOrganizationCanonical(org)
 
 	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := resp.GetPayload()
+
+	return payload.Data, nil
+}
+
+func (m *middleware) ListStackUseCases(org, ref string) ([]*models.StackUseCase, error) {
+	params := service_catalogs.NewGetServiceCatalogUseCasesParams()
+	params.SetOrganizationCanonical(org)
+	params.SetServiceCatalogRef(ref)
+
+	resp, err := m.api.ServiceCatalogs.GetServiceCatalogUseCases(params, m.api.Credentials(&org))
 	if err != nil {
 		return nil, NewApiError(err)
 	}
@@ -154,21 +169,6 @@ func (m *middleware) UpdateStack(
 			teamCanonical, ref,
 		)
 	}
-
-	return payload.Data, nil
-}
-
-func (m *middleware) GetStackConfig(org, ref string) (models.ServiceCatalogConfigs, error) {
-	params := service_catalogs.NewGetServiceCatalogConfigParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogRef(ref)
-
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalogConfig(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewApiError(err)
-	}
-
-	payload := resp.GetPayload()
 
 	return payload.Data, nil
 }

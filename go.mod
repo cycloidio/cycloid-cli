@@ -1,6 +1,6 @@
 module github.com/cycloidio/cycloid-cli
 
-go 1.24.1
+go 1.24.6
 
 require (
 	dario.cat/mergo v1.0.2
@@ -10,10 +10,11 @@ require (
 	github.com/go-openapi/strfmt v0.23.0
 	github.com/go-openapi/swag v0.23.1
 	github.com/go-openapi/validate v0.24.0
+	github.com/matryer/is v1.4.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/errors v0.9.1
 	github.com/sanity-io/litter v1.5.8
-	github.com/spf13/cobra v1.9.2-0.20250531123604-6dec1ae26659
+	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
 	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225
@@ -48,7 +49,6 @@ require (
 	github.com/kr/pretty v0.3.1 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mailru/easyjson v0.9.0 // indirect
-	github.com/matryer/is v1.4.1 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
@@ -64,7 +64,7 @@ require (
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.14.0 // indirect
 	github.com/spf13/cast v1.8.0 // indirect
-	github.com/spf13/pflag v1.0.6 // indirect
+	github.com/spf13/pflag v1.0.9 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/toqueteos/webbrowser v1.2.0 // indirect
 	go.mongodb.org/mongo-driver v1.17.3 // indirect
@@ -81,46 +81,5 @@ require (
 	golang.org/x/tools v0.22.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
-
-// replace github.com/cycloidio/youdeploy-http-api => /home/stammfrei/projects/cycloid/youdeploy-http-api
-// // To remove the panic issue of using TF
-// //replace github.com/hashicorp/terraform => github.com/cycloidio/terraform v0.13.5-cy
-// replace github.com/hashicorp/terraform => github.com/cycloidio/terraform v1.4.6-cy.x
-//
-// replace github.com/simpleforce/simpleforce => github.com/cycloidio/simpleforce v0.0.0-20210521130438-36c1102a5fba
-//
-// replace github.com/spf13/afero v1.6.0 => github.com/spf13/afero v1.2.2
-//
-// // Terracognita replaces copied
-// // Force an specific version if not the AWS provider does not compile
-// replace github.com/hashicorp/aws-sdk-go-base v0.6.0 => github.com/hashicorp/aws-sdk-go-base v0.5.0
-//
-// // If we  go to the 1.5.0 then github.com/hashicorp/terraform-plugin-test/ will break
-// // as go-getter introduced a break from 1.4 -> 1.5
-// replace github.com/hashicorp/go-getter v1.5.0 => github.com/hashicorp/go-getter v1.4.0
-//
-// // Fork of Azurerm that has the V2 of the SDK
-// //replace github.com/terraform-providers/terraform-provider-azurerm => github.com/cycloidio/terraform-provider-azurerm v1.44.1-0.20210517111036-df0beb5af9c3
-//
-// replace github.com/hashicorp/terraform-provider-azurerm => github.com/cycloidio/terraform-provider-azurerm v1.44.1-0.20230517144901-90a36c6b8ed4
-//
-// replace github.com/hashicorp/terraform-provider-aws => github.com/cycloidio/terraform-provider-aws v1.60.1-0.20220513132327-e2dbdf90e533
-//
-// replace github.com/hashicorp/terraform-provider-google => github.com/hashicorp/terraform-provider-google v1.20.1-0.20220201002249-bc5fcb3c89a5
-//
-// replace github.com/concourse/concourse => github.com/cycloidio/concourse v1.6.1-0.20240611102233-2c09bb557bc9
-//
-// // Required by TerraCost
-// replace github.com/gruntwork-io/terragrunt => github.com/cycloidio/terragrunt v0.0.0-20230905115542-1fe1ff682fd9
-//
-// replace cloud.google.com/go/bigquery => cloud.google.com/go/bigquery v1.8.0
-//
-// replace cloud.google.com/go/storage => cloud.google.com/go/storage v1.16.0
-//
-// replace google.golang.org/api => google.golang.org/api v0.74.0
-//
-// // End of fixed versions after TerraCost upgrade
-//
-// replace github.com/aws/aws-sdk-go v1.53.21 => github.com/aws/aws-sdk-go v1.43.34
 
 tool github.com/go-swagger/go-swagger/cmd/swagger

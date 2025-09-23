@@ -86,20 +86,6 @@ type ListServiceCatalogsParams struct {
 	*/
 	PageSize *uint32
 
-	/* ServiceCatalogOwn.
-
-	   Filters the Service Catalogs to only show the ones owned by the User Organization
-
-	*/
-	ServiceCatalogOwn *bool
-
-	/* ServiceCatalogTemplate.
-
-	   Filters the Service Catalogs to only show the ones that are templates
-
-	*/
-	ServiceCatalogTemplate *bool
-
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -121,14 +107,11 @@ func (o *ListServiceCatalogsParams) SetDefaults() {
 		pageIndexDefault = uint32(1)
 
 		pageSizeDefault = uint32(1000)
-
-		serviceCatalogTemplateDefault = bool(false)
 	)
 
 	val := ListServiceCatalogsParams{
-		PageIndex:              &pageIndexDefault,
-		PageSize:               &pageSizeDefault,
-		ServiceCatalogTemplate: &serviceCatalogTemplateDefault,
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
 	}
 
 	val.timeout = o.timeout
@@ -203,28 +186,6 @@ func (o *ListServiceCatalogsParams) SetPageSize(pageSize *uint32) {
 	o.PageSize = pageSize
 }
 
-// WithServiceCatalogOwn adds the serviceCatalogOwn to the list service catalogs params
-func (o *ListServiceCatalogsParams) WithServiceCatalogOwn(serviceCatalogOwn *bool) *ListServiceCatalogsParams {
-	o.SetServiceCatalogOwn(serviceCatalogOwn)
-	return o
-}
-
-// SetServiceCatalogOwn adds the serviceCatalogOwn to the list service catalogs params
-func (o *ListServiceCatalogsParams) SetServiceCatalogOwn(serviceCatalogOwn *bool) {
-	o.ServiceCatalogOwn = serviceCatalogOwn
-}
-
-// WithServiceCatalogTemplate adds the serviceCatalogTemplate to the list service catalogs params
-func (o *ListServiceCatalogsParams) WithServiceCatalogTemplate(serviceCatalogTemplate *bool) *ListServiceCatalogsParams {
-	o.SetServiceCatalogTemplate(serviceCatalogTemplate)
-	return o
-}
-
-// SetServiceCatalogTemplate adds the serviceCatalogTemplate to the list service catalogs params
-func (o *ListServiceCatalogsParams) SetServiceCatalogTemplate(serviceCatalogTemplate *bool) {
-	o.ServiceCatalogTemplate = serviceCatalogTemplate
-}
-
 // WriteToRequest writes these params to a swagger request
 func (o *ListServiceCatalogsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -267,40 +228,6 @@ func (o *ListServiceCatalogsParams) WriteToRequest(r runtime.ClientRequest, reg 
 		if qPageSize != "" {
 
 			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.ServiceCatalogOwn != nil {
-
-		// query param service_catalog_own
-		var qrServiceCatalogOwn bool
-
-		if o.ServiceCatalogOwn != nil {
-			qrServiceCatalogOwn = *o.ServiceCatalogOwn
-		}
-		qServiceCatalogOwn := swag.FormatBool(qrServiceCatalogOwn)
-		if qServiceCatalogOwn != "" {
-
-			if err := r.SetQueryParam("service_catalog_own", qServiceCatalogOwn); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.ServiceCatalogTemplate != nil {
-
-		// query param service_catalog_template
-		var qrServiceCatalogTemplate bool
-
-		if o.ServiceCatalogTemplate != nil {
-			qrServiceCatalogTemplate = *o.ServiceCatalogTemplate
-		}
-		qServiceCatalogTemplate := swag.FormatBool(qrServiceCatalogTemplate)
-		if qServiceCatalogTemplate != "" {
-
-			if err := r.SetQueryParam("service_catalog_template", qServiceCatalogTemplate); err != nil {
 				return err
 			}
 		}
