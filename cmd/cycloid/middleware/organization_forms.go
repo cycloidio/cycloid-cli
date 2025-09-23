@@ -1,11 +1,12 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
-	"github.com/cycloidio/cycloid-cli/client/models"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
+
+	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // // from https://github.com/cycloidio/youdeploy-http-api/blob/develop/services/youdeploy/svccat/form/file.go#L12

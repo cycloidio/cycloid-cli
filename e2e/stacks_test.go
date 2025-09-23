@@ -8,9 +8,10 @@ import (
 	"os"
 	"testing"
 
+	"github.com/matryer/is"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/custommodels"
-	"github.com/matryer/is"
 )
 
 func TestStacks(t *testing.T) {

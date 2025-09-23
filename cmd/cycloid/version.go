@@ -1,4 +1,4 @@
-package root
+package cycloid
 
 import (
 	"github.com/pkg/errors"
@@ -19,13 +19,12 @@ func NewVersionCmd() *cobra.Command {
 	# get the version in JSON format
 	cy version -o json
 `,
-		RunE: version,
+		RunE: getVersion,
 	}
 	return cmd
-
 }
 
-func version(cmd *cobra.Command, args []string) error {
+func getVersion(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 

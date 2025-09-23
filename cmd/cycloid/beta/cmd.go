@@ -1,8 +1,9 @@
 package beta
 
 import (
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/config"
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/config"
 )
 
 func NewCommands() *cobra.Command {

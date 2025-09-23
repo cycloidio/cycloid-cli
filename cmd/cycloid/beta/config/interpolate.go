@@ -3,13 +3,14 @@ package config
 import (
 	"fmt"
 
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
 func NewInterpolateCmd() *cobra.Command {
@@ -57,7 +58,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	// Get default to stacks
-	stackConfig, err := m.GetStackConfig(org, stackRef)
+	stackConfig, err := m.GetComponentStackConfig(org, project, env, component, *useCase)
 	if err != nil {
 		return err
 	}

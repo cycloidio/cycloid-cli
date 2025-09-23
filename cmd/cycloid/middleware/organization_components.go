@@ -3,9 +3,10 @@ package middleware
 import (
 	"fmt"
 
+	"github.com/go-openapi/strfmt"
+
 	"github.com/cycloidio/cycloid-cli/client/client/organization_components"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/go-openapi/strfmt"
 )
 
 func (m *middleware) GetComponentConfig(org, project, env, component string) (models.FormVariables, error) {
@@ -58,25 +59,18 @@ func (m *middleware) ListComponents(org, project, env string) ([]*models.Compone
 	return payload.Data, nil
 }
 
-func (m *middleware) CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef, useCase, cloudProviderCanonical *string, vars models.FormVariables) (*models.Component, error) {
+func (m *middleware) CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef *string, cloudProviderCanonical string) (*models.Component, error) {
 	params := organization_components.NewCreateComponentParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
 	params.WithEnvironmentCanonical(env)
 
-	if vars == nil {
-		return nil, fmt.Errorf("forms variables should not be null")
-	}
-
 	body := &models.NewComponent{
-		Name:              componentName,
-		Canonical:         component,
-		Description:       description,
-		ServiceCatalogRef: serviceCatalogRef,
-	}
-
-	if cloudProviderCanonical != nil {
-		body.CloudProviderCanonical = *cloudProviderCanonical
+		Name:                   componentName,
+		Canonical:              component,
+		Description:            description,
+		ServiceCatalogRef:      serviceCatalogRef,
+		CloudProviderCanonical: cloudProviderCanonical,
 	}
 
 	err := body.Validate(strfmt.Default)
@@ -95,16 +89,46 @@ func (m *middleware) CreateComponent(org, project, env, component, description s
 	return payload.Data, nil
 }
 
-func (m *middleware) UpdateComponent(org, project, env, component, description string, componentName, useCase *string, vars models.FormVariables) (*models.Component, error) {
+func (m *middleware) CreateAndConfigureComponent(org, project, env, component, description string, componentName *string, serviceCatalogRef, useCase, cloudProviderCanonical string, vars models.FormVariables) (*models.Component, error) {
+	params := organization_components.NewCreateAndConfigureComponentParams()
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(project)
+	params.WithEnvironmentCanonical(env)
+
+	body := &models.NewAndConfiguredComponent{
+		Name:                   componentName,
+		Canonical:              component,
+		Description:            description,
+		ServiceCatalogRef:      serviceCatalogRef,
+		UseCase:                useCase,
+		Vars:                   vars,
+		CloudProviderCanonical: cloudProviderCanonical,
+	}
+
+	err := body.Validate(strfmt.Default)
+	if err != nil {
+		return nil, fmt.Errorf("createAndConfigureComponent body validation failed, body:\n%v\nerr: %v", body, err)
+	}
+
+	params.WithBody(body)
+
+	resp, err := m.api.OrganizationComponents.CreateAndConfigureComponent(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := resp.GetPayload()
+
+	return payload.Data, nil
+
+}
+
+func (m *middleware) UpdateComponent(org, project, env, component, description string, componentName *string) (*models.Component, error) {
 	params := organization_components.NewUpdateComponentParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
 	params.WithEnvironmentCanonical(env)
 	params.WithComponentCanonical(component)
-
-	if vars == nil {
-		return nil, fmt.Errorf("forms variables should not be null")
-	}
 
 	body := &models.UpdateComponent{
 		Name:        componentName,
@@ -127,6 +151,27 @@ func (m *middleware) UpdateComponent(org, project, env, component, description s
 	return payload.Data, nil
 }
 
+func (m *middleware) ConfigureComponent(org, project, env, component, useCase string, vars models.FormVariables) error {
+	params := organization_components.NewConfigureComponentParams()
+	params.WithOrganizationCanonical(org)
+	params.WithProjectCanonical(project)
+	params.WithEnvironmentCanonical(env)
+	params.WithComponentCanonical(component)
+
+	body := &models.ConfigureComponent{
+		UseCase: &useCase,
+		Vars:    vars,
+	}
+
+	params.WithBody(body)
+	_, err := m.api.OrganizationComponents.ConfigureComponent(params, m.api.Credentials(&org))
+	if err != nil {
+		return NewApiError(err)
+	}
+
+	return nil
+}
+
 func (m *middleware) MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, error) {
 	params := organization_components.NewMigrateComponentParams()
 	params.WithOrganizationCanonical(org)
@@ -138,11 +183,6 @@ func (m *middleware) MigrateComponent(org, project, env, component, targetProjec
 		DestinationEnvironmentCanonical: targetEnv,
 		DestinationComponentCanonical:   newCanonical,
 		DestinationComponentName:        newName,
-	}
-
-	err := body.Validate(strfmt.Default)
-	if err != nil {
-		return nil, fmt.Errorf("migrateComponent body validation failed, body:\n%v\nerr: %v", body, err)
 	}
 
 	params.WithBody(&body)
@@ -170,4 +210,22 @@ func (m *middleware) DeleteComponent(org, project, env, component string) error 
 	}
 
 	return nil
+}
+
+func (m *middleware) GetComponentStackConfig(org, project, env, component, useCase string) (models.ServiceCatalogConfigs, error) {
+	params := organization_components.NewGetComponentStackConfigurationParams()
+	params.SetOrganizationCanonical(org)
+	params.SetProjectCanonical(project)
+	params.SetEnvironmentCanonical(env)
+	params.SetComponentCanonical(component)
+	params.SetUseCase(&useCase)
+
+	resp, err := m.api.OrganizationComponents.GetComponentStackConfiguration(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := resp.GetPayload()
+
+	return payload.Data, nil
 }

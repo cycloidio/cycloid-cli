@@ -13,7 +13,7 @@ func NewConfigCommands() *cobra.Command {
 	}
 
 	cmd.AddCommand(
-		NewGetComponentConfigCommand(),
+		NewComponentConfigGetCommand(),
 	)
 
 	return cmd
