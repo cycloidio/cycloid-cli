@@ -72,7 +72,7 @@ func TestComponentCRUD(t *testing.T) {
 					},
 				},
 			}
-			formVars = models.FormVariables{
+			formVars = &models.FormVariables{
 				"can two sections have same name with different caps ?": {
 					"can two groups have same name with different caps ?": {
 						"group1": "osef",
@@ -133,8 +133,8 @@ func TestComponentCRUD(t *testing.T) {
 				break
 			}
 
-			createdComponent, err = m.CreateComponent(
-				config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, &componentName, &stackRef, &useCase, nil, formVars,
+			createdComponent, err = m.CreateAndConfigureComponent(
+				config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, &componentName, stackRef, useCase, "", *formVars,
 			)
 			if err != nil {
 				errList = errors.Join(errList, err)
@@ -163,7 +163,7 @@ func TestComponentCRUD(t *testing.T) {
 		)
 		errList, err = nil, nil
 		for range 3 {
-			_, err = m.UpdateComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, &newComponentName, &useCase, newVar)
+			_, err = m.CreateAndConfigureComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, &newComponentName, stackRef, useCase, "", newVar)
 			if err != nil {
 				errList = errors.Join(errList, err)
 				continue

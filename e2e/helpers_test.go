@@ -13,9 +13,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/cmd"
 	"github.com/spf13/cobra"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/cycloidio/cycloid-cli/cmd"
 )
 
 func TestExecuteCommandStdin(t *testing.T) {

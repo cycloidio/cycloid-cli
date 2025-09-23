@@ -62,8 +62,10 @@ type ComponentSimple struct {
 	UpdatedAt *uint64 `json:"updated_at"`
 
 	// use case
-	// Required: true
-	UseCase *string `json:"use_case"`
+	// Max Length: 100
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
+	UseCase string `json:"use_case,omitempty"`
 }
 
 // Validate validates this component simple
@@ -221,8 +223,19 @@ func (m *ComponentSimple) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *ComponentSimple) validateUseCase(formats strfmt.Registry) error {
+	if swag.IsZero(m.UseCase) { // not required
+		return nil
+	}
 
-	if err := validate.Required("use_case", "body", m.UseCase); err != nil {
+	if err := validate.MinLength("use_case", "body", m.UseCase, 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("use_case", "body", m.UseCase, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("use_case", "body", m.UseCase, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 

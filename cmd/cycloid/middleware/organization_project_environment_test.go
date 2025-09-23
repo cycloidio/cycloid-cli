@@ -4,8 +4,9 @@ import (
 	"log"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 )
 
 func TestEnvCrud(t *testing.T) {

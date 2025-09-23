@@ -56,6 +56,9 @@ type Component struct {
 	// Enum: ["succeeded","failed","importing"]
 	ImportStatus string `json:"import_status,omitempty"`
 
+	// The status of the component.
+	IsConfigured bool `json:"is_configured,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 1
@@ -75,11 +78,10 @@ type Component struct {
 	UpdatedAt *uint64 `json:"updated_at"`
 
 	// use case
-	// Required: true
 	// Max Length: 100
 	// Min Length: 1
 	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
-	UseCase *string `json:"use_case"`
+	UseCase string `json:"use_case,omitempty"`
 }
 
 // Validate validates this component
@@ -334,20 +336,19 @@ func (m *Component) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *Component) validateUseCase(formats strfmt.Registry) error {
+	if swag.IsZero(m.UseCase) { // not required
+		return nil
+	}
 
-	if err := validate.Required("use_case", "body", m.UseCase); err != nil {
+	if err := validate.MinLength("use_case", "body", m.UseCase, 1); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("use_case", "body", *m.UseCase, 1); err != nil {
+	if err := validate.MaxLength("use_case", "body", m.UseCase, 100); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("use_case", "body", *m.UseCase, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("use_case", "body", *m.UseCase, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
+	if err := validate.Pattern("use_case", "body", m.UseCase, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 

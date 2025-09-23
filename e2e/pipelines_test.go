@@ -5,9 +5,10 @@ import (
 	"strconv"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/sanity-io/litter"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func TestPipelines(t *testing.T) {

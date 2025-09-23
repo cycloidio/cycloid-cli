@@ -103,6 +103,10 @@ func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	ConfigureComponent(params *ConfigureComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ConfigureComponentNoContent, error)
+
+	CreateAndConfigureComponent(params *CreateAndConfigureComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateAndConfigureComponentOK, error)
+
 	CreateComponent(params *CreateComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateComponentOK, error)
 
 	DeleteComponent(params *DeleteComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteComponentNoContent, error)
@@ -113,6 +117,8 @@ type ClientService interface {
 
 	GetComponentInfrastructure(params *GetComponentInfrastructureParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentInfrastructureOK, error)
 
+	GetComponentStackConfiguration(params *GetComponentStackConfigurationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentStackConfigurationOK, error)
+
 	GetComponents(params *GetComponentsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentsOK, error)
 
 	GetOrganizationComponents(params *GetOrganizationComponentsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrganizationComponentsOK, error)
@@ -122,6 +128,82 @@ type ClientService interface {
 	UpdateComponent(params *UpdateComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateComponentOK, error)
 
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+ConfigureComponent Configure the component
+*/
+func (a *Client) ConfigureComponent(params *ConfigureComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ConfigureComponentNoContent, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewConfigureComponentParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "configureComponent",
+		Method:             "PUT",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/components/{component_canonical}/stack_config",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ConfigureComponentReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*ConfigureComponentNoContent)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*ConfigureComponentDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+CreateAndConfigureComponent Create and configure a new Component in one step
+*/
+func (a *Client) CreateAndConfigureComponent(params *CreateAndConfigureComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateAndConfigureComponentOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewCreateAndConfigureComponentParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "createAndConfigureComponent",
+		Method:             "PUT",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/components",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CreateAndConfigureComponentReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*CreateAndConfigureComponentOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*CreateAndConfigureComponentDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
@@ -239,7 +321,7 @@ func (a *Client) GetComponent(params *GetComponentParams, authInfo runtime.Clien
 }
 
 /*
-GetComponentConfig Fetch the current component infrastructure
+GetComponentConfig Fetch the current component configuration variables.
 */
 func (a *Client) GetComponentConfig(params *GetComponentConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentConfigOK, error) {
 	// TODO: Validate the params before sending
@@ -311,6 +393,47 @@ func (a *Client) GetComponentInfrastructure(params *GetComponentInfrastructurePa
 	}
 	// unexpected success response
 	unexpectedSuccess := result.(*GetComponentInfrastructureDefault)
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+	GetComponentStackConfiguration Get the configuration of the service catalog for a specific use case in component.
+
+If no use case is specified, all the use cases will be returned.
+If an use case is specified, only the configuration for that use case will be returned.
+*/
+func (a *Client) GetComponentStackConfiguration(params *GetComponentStackConfigurationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentStackConfigurationOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetComponentStackConfigurationParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getComponentStackConfiguration",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/projects/{project_canonical}/environments/{environment_canonical}/components/{component_canonical}/stack_config",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetComponentStackConfigurationReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetComponentStackConfigurationOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	unexpectedSuccess := result.(*GetComponentStackConfigurationDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

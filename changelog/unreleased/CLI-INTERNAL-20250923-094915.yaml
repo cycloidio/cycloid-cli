@@ -1,0 +1,8 @@
+component: CLI
+kind: INTERNAL
+body: Add support for new component creation logic (creation + config split + PUT)
+time: 2025-09-23T09:49:15.515895739Z
+custom:
+  DETAILS: ""
+  PR: "385"
+  TYPE: CLI
