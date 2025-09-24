@@ -91,7 +91,7 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 	return payload.Data, nil
 }
 
-func (m *middleware) UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt *uint64) (*models.Project, error) {
+func (m *middleware) UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, error) {
 	params := organization_projects.NewUpdateProjectParams()
 	params.WithOrganizationCanonical(org)
 	params.WithProjectCanonical(project)
@@ -101,7 +101,6 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 		Description:               description,
 		ConfigRepositoryCanonical: configRepository,
 		Owner:                     owner,
-		UpdatedAt:                 updatedAt,
 		Icon:                      icon,
 		Color:                     color,
 		CloudProvider:             cloudProvider,

@@ -7,11 +7,11 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/sanity-io/litter"
 )
 
 type Config struct {
@@ -175,8 +175,7 @@ func NewConfig(testName string) (*Config, error) {
 	}
 	config.Environment = environment
 
-<<<<<<< HEAD
-	stackRef := org + ":" + defaultStackCanonical
+	stackRef := config.Org + ":" + defaultStackCanonical
 
 	component, err := config.NewTestComponent(
 		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, nil,
@@ -186,11 +185,8 @@ func NewConfig(testName string) (*Config, error) {
 	}
 	config.Component = component
 
-	stackConfig, err := m.GetComponentStackConfig(org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase)
-=======
-	stackRef := config.Org + ":" + defaultStackCanonical
-	stackConfig, err := m.GetStackConfig(config.Org, stackRef)
->>>>>>> 6cd262f (func: bring back local testing)
+	litter.Dump(project, environment, component)
+	stackConfig, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase)
 	if err != nil {
 		return config, err
 	}
@@ -278,31 +274,15 @@ func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCa
 	m := config.Middleware
 	component := RandomCanonical(identifier)
 
-	var outComponent *models.Component
-	var outErr error
-	for retry := range 3 {
-		time.Sleep(time.Duration(retry) * time.Second)
-
-		var err error
-		// Check if the component exists
-		outComponent, err = m.GetComponent(config.Org, project, env, component)
-		if err == nil {
-			outErr = nil
-			break
-		}
-
-		outComponent, err = m.CreateAndConfigureComponent(
-			config.Org, project, env, component, "", &component, stackRef, useCase, "", inputs,
-		)
-		if err != nil {
-			errors.Join(outErr, fmt.Errorf("attempt number %d failed to setup component '%s' for test '%s':\n%v", retry, component, identifier, err))
-			continue
-		}
-
-		outErr = nil
+	outComponent, err := m.CreateAndConfigureComponent(
+		config.Org, project, env, component, "", &component, stackRef, useCase, "", inputs,
+	)
+	if err != nil {
+		return nil, err
 	}
-	if outErr != nil {
-		return nil, outErr
+
+	if outComponent == nil {
+		panic("empty component")
 	}
 
 	config.AppendCleanup(func() {
