@@ -123,7 +123,7 @@ func create(cmd *cobra.Command, args []string) error {
 				}
 			}
 
-			resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", current.UpdatedAt)
+			resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "")
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 			}

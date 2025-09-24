@@ -114,7 +114,7 @@ func update(cmd *cobra.Command, args []string) error {
 		configRepository = currentProject.ConfigRepositoryCanonical
 	}
 
-	resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "", currentProject.UpdatedAt)
+	resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "")
 	if err != nil {
 		return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStderr())
 	}

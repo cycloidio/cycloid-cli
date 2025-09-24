@@ -120,7 +120,7 @@ type Middleware interface {
 
 	// Project
 	CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error)
-	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt *uint64) (*models.Project, error)
+	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, error)
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	ListProjects(org string) ([]*models.Project, error)
