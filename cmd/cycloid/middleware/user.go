@@ -9,7 +9,8 @@ import (
 )
 
 func (m *middleware) UserSignup(username, email, password, givenName, familyName string) error {
-	body := models.NewUserAccount{
+	params := user.NewSignUpParams()
+	body := &models.NewUserAccount{
 		Username:   &username,
 		Email:      (*strfmt.Email)(&email),
 		Password:   (*strfmt.Password)(&password),
@@ -17,15 +18,9 @@ func (m *middleware) UserSignup(username, email, password, givenName, familyName
 		FamilyName: &familyName,
 	}
 
-	err := body.Validate(strfmt.Default)
-	if err != nil {
-		return err
-	}
+	params.WithBody(body)
 
-	params := user.NewSignUpParams()
-	params.WithBody(&body)
-
-	_, err = m.api.User.SignUp(params)
+	_, err := m.api.User.SignUp(params)
 	if err != nil {
 		return NewApiError(err)
 	}
@@ -56,26 +51,21 @@ func (m *middleware) RefreshToken(org, childOrg *string, token string) (*models.
 	}
 
 	payload := resp.GetPayload()
-
 	return payload.Data, nil
 }
 
-func (m *middleware) UserLogin(email, username, org *string, password string) (*models.UserSession, error) {
+func (m *middleware) UserLogin(org, email, username *string, password string) (*models.UserSession, error) {
 	params := user.NewLoginParams()
 	body := models.UserLogin{
 		Password: (*strfmt.Password)(&password),
 	}
+
 	if email != nil {
 		body.Email = (*strfmt.Email)(email)
 	}
 
 	if org != nil {
 		body.OrganizationCanonical = *org
-	}
-
-	err := body.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
 	}
 
 	params.WithBody(&body)
@@ -85,6 +75,24 @@ func (m *middleware) UserLogin(email, username, org *string, password string) (*
 	}
 
 	payload := resp.GetPayload()
+	return payload.Data, nil
+}
 
+func (m *middleware) UserLoginToOrg(org, email, password string) (*models.UserSession, error) {
+	params := user.NewLoginToOrgParams()
+	params.WithOrganizationCanonical(org)
+	body := models.UserLogin{
+		Email:                 (*strfmt.Email)(&email),
+		OrganizationCanonical: org,
+		Password:              (*strfmt.Password)(&password),
+	}
+	params.WithBody(&body)
+
+	resp, err := m.api.User.LoginToOrg(params)
+	if err != nil {
+		return nil, NewApiError(err)
+	}
+
+	payload := resp.GetPayload()
 	return payload.Data, nil
 }

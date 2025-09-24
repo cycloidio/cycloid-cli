@@ -1,0 +1,491 @@
+# This is just to ensure docker compose will error if secrets are not provider.
+# Docker compose won't check it otherwise
+x-required-env-var:
+- ${API_LICENCE_KEY:?"use:\n export API_LICENCE_KEY=$(cy cred get scaleway-cycloid-backend -o json | jq -r .raw.raw.licence_key)"}
+
+secrets:
+  api_licence_key:
+    environment: API_LICENCE_KEY
+
+services:
+  # Override API service to create an API from a builded docker image.
+  youdeploy-api:
+    image: 661913936052.dkr.ecr.eu-west-1.amazonaws.com/youdeploy-http-api:${TEST_BACKEND_API_TAG:-staging}
+    healthcheck:
+      test:
+      - "CMD-SHELL"
+      - |
+        test \
+          "$(curl -s http://localhost:3001/status \
+             | jq -r '.data.checks | map(select((.canonical | contains("database", "pipeline", "secret")) and .status == "Success")) | length' \
+           )" = "3"
+      start_period: 5s
+      interval: 3s
+      timeout: 45s
+      retries: 30
+
+    ports:
+    - 3001:3001
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 20000
+        hard: 40000
+
+    working_dir: /go/src/github.com/cycloidio/youdeploy-http-api
+    configs:
+    - source: youdeploy-config.yml
+      target: /ci/config.yml
+    secrets:
+    - api_licence_key
+    entrypoint:
+    - bash
+    - -ec
+    - |
+      echo -e "# \e[33mDB migrate ...\e[0m"
+      timeout 120 bash -c '
+        until /go/youdeploy-http-api migrate up --config-file /ci/config.yml --migrations-dir /opt/migrations --db-name=youdeploy_fake && echo "ok"; do
+          >&2 echo -e "\e[36mWaiting for DB migrations\e[0m"
+          sleep 1
+        done
+      '
+
+      echo -e "# \e[33mRunning Cycloid API ...\e[0m"
+      exec /go/youdeploy-http-api server --config-file /ci/config.yml
+
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.10"
+
+    depends_on:
+      database:
+        condition: service_healthy
+      redis: &service_started
+        condition: service_started
+      concourse-web: *service_started
+      concourse-db: *service_started
+
+  ## Mysql
+  database:
+    restart: always
+    image: mysql:9.3.0
+    platform: linux/x86_64
+    configs:
+    - source: my.cnf
+      target: /etc/my.cnf
+    environment:
+      MYSQL_ROOT_PASSWORD: youdeploy
+      MYSQL_DATABASE: youdeploy
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "database", "-P3306", "-p=${MYSQL_ROOT_PASSWORD:-youdeploy}"]
+      start_period: 5s
+      interval: 1s
+      timeout: 30s
+      retries: 30
+    tmpfs: [/var/lib/mysql]
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.2"
+
+  ## Email
+  email-smtp-no-tls-auth:
+    image: mailhog/mailhog:v1.0.0
+    command: -auth-file /mailhog.auth
+    configs: [mailhog.auth]
+    attach: false
+    restart: always
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.3"
+
+  ## Vault
+  vault:
+    image: hashicorp/vault:1.19
+    restart: always
+    configs: [policy.hcl]
+    environment:
+      VAULT_DEV_ROOT_TOKEN_ID: root_token
+      VAULT_ADDR: http://0.0.0.0:8200
+      VAULT_TOKEN: root_token
+    cap_add: [IPC_LOCK]
+    tmpfs: [/vault/file]
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.4"
+
+  # Override vault entrypoint adding a post script to init our approles
+  vault-init:
+    image: hashicorp/vault:1.19
+    configs: [policy.hcl]
+    tmpfs: [/vault/file]
+    depends_on: [vault]
+    environment:
+      VAULT_ADDR: "http://${DOCKER_IPAM:-192.168.10}.4:8200"
+      VAULT_TOKEN: root_token
+      VAULT_SKIP_VERIFY: true
+    entrypoint:
+    - sh
+    - -ec
+    - |
+      # This script must be idempotent
+      until vault login "$${VAULT_TOKEN:?}" ; do
+        >&2 echo -e "Waiting for Vault..."
+        sleep 1
+      done
+
+      vault auth enable approle || true
+      vault write sys/mounts/cycloid type=kv >/dev/null 2>&1 || true
+      vault write sys/policy/cycloid policy=@policy.hcl >/dev/null 2>&1
+      vault write auth/approle/role/cycloid token_ttl=20m token_max_ttl=1h policies=cycloid >/dev/null 2>&1
+      vault write auth/approle/role/cycloid/role-id role_id=custom-role-id >/dev/null 2>&1
+      vault write auth/approle/role/cycloid/custom-secret-id secret_id=custom-secret-id >/dev/null 2>&1 || true
+
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.5"
+
+
+  redis:
+    image: redis:8.0.2
+    command:
+    # Port 6379 defaults to TLS, change ports to keep tests pass
+    - --port
+    - "6379"
+    - --tls-port
+    - "6383"
+    # Provide self-signed certificate to REDIS TLS
+    - --tls-ca-cert-file
+    - /etc/redis/tls/cert
+    - --tls-cert-file
+    - /etc/redis/tls/cert
+    - --tls-key-file
+    - /etc/redis/tls/key
+    - --tls-auth-clients
+    - no
+    # Configuration Environment for REDIS with self-signed TLS
+    # Didn't found anything for that
+    # - ALLOW_EMPTY_PASSWORD=true
+    configs:
+    - source: redisTLSCert
+      target: /etc/redis/tls/cert
+    - source: redisTLSKey
+      target: /etc/redis/tls/key
+    tmpfs: [/data]
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.6"
+
+
+  git-server:
+    image: cycloid/backend-tests-git-server:latest
+    attach: false
+    restart: always
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.7"
+    tmpfs:
+    - /git-server/repos:exec
+    - /git-server/keys
+
+  ## Concourse
+  concourse-db:
+    image: postgres:17
+    attach: false
+    environment:
+      POSTGRES_DB: concourse
+      POSTGRES_USER: concourse
+      POSTGRES_PASSWORD: concourse
+    # warning: starting at version 18, change this path to /var/lib/postgresql
+    tmpfs: [/var/lib/postgresql/data]
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.8"
+
+  concourse-web:
+    image: concourse/concourse:7.9.1
+    links: [concourse-db]
+    command: web
+    depends_on: [concourse-db, vault, vault-init]
+    attach: false
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.9"
+    configs:
+    - source: base_resource_types_defaults.yml
+      target: /brt/base_resource_types_defaults.yml
+    - source: authorized_worker_keys
+      target: /concourse-keys/authorized_worker_keys
+    - source: session_signing_key
+      target: /concourse-keys/session_signing_key
+    - source: session_signing_key.pub
+      target: /concourse-keys/session_signing_key.pub
+    - source: tsa_host_key
+      target: /concourse-keys/tsa_host_key
+    - source: tsa_host_key.pub
+      target: /concourse-keys/tsa_host_key.pub
+    restart: unless-stopped # required so that it retries until concourse-db comes up
+    environment:
+      CONCOURSE_ADD_LOCAL_USER: concourse:concourse
+      CONCOURSE_MAIN_TEAM_LOCAL_USER: concourse
+      CONCOURSE_BIND_PORT: 8080
+      # Important CF https://github.com/concourse/concourse/issues/2463 "error : named cookie not present"
+      CONCOURSE_EXTERNAL_URL: "http://${DOCKER_IPAM:-192.168.10}.9:8080"
+      CONCOURSE_POSTGRES_HOST: "${DOCKER_IPAM:-192.168.10}.8"
+      CONCOURSE_POSTGRES_USER: concourse
+      CONCOURSE_POSTGRES_PASSWORD: concourse
+      CONCOURSE_POSTGRES_DATABASE: concourse
+      CONCOURSE_BASE_RESOURCE_TYPE_DEFAULTS: /brt/base_resource_types_defaults.yml
+      CONCOURSE_VAULT_URL: "http://${DOCKER_IPAM:-192.168.10}.4:8200"
+      CONCOURSE_VAULT_AUTH_BACKEND: token
+      CONCOURSE_VAULT_CLIENT_TOKEN: root_token
+      CONCOURSE_VAULT_PATH_PREFIX: /cycloid
+      CONCOURSE_VAULT_AUTH_BACKEND_MAX_TTL: 3600s
+      CONCOURSE_CLUSTER_NAME: dev
+
+configs:
+  ## Mysql
+  my.cnf:
+    content: |
+      [client]
+      default-character-set = utf8mb4
+
+      [mysql]
+      default-character-set = utf8mb4
+
+      [mysqld]
+      collation_server = utf8mb4_unicode_ci
+      character_set_server = utf8mb4
+
+  ## Concourse
+  base_resource_types_defaults.yml:
+    content: |
+      registry-image:
+        registry_mirror:
+          host: 'registry-mirror.owl.cycloid.io'
+
+      docker-image:
+        registry_mirror: 'https://registry-mirror.owl.cycloid.io'
+
+  authorized_worker_keys:
+    content: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDo7QaU+1NrYGhiE6XDnkcWYP5w/rUt32VnFemo9XyX8sPUcQwMOh+xVwlqLlSlNZGeZ7zWY+eopR+T9Un5tFILjSpsx83t8fTHBYwno2m0kHw5EixIJY3S6wBs4gm8D2IRHLjT0GDcv39sgfug4PnpIDK/WFLJrJaVbQrMpJ03tm7LjpCWk+uL3gmkU8pglNWehPcGM3KEmlgUVIsAiNXJKYEGPVSrD8TmebaNygwELV9rjuxQcmmYGhJRl01S5mZvfVs7Xj0jW6vBUZHcNkKAjHUOjS4ag1NEr5mA1SRgVKCEGlF0PpQyxgHeYW9pa05iMl1XZpGIC08up1sktNZH ugo@dragonfly
+
+  session_signing_key:
+    content: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEpQIBAAKCAQEA96VDmpRMpzaKl7D1FYsbQLi9jFr2J0EY1MPhvxM4vg8RhgXj
+      cunyepk3g2ZFFzhR6H9i/p17naDSN99eTl5MGS2HDaqZ8BLAoK/oZx7JLnAkWLIm
+      QPRfiERQmtUmmVYfdUHeJ7oSQuLuCop/5WUoPSHuqFqqc+uEixQAoF3i0ASRLmS9
+      QQg5ZKTAu3ah9j4y8SMWOcKIYe9pg1PcK9HIw6AjknyFyG5rEIylJy/6AWqekavd
+      filc1JZ8BEBGO4K+4dkXU8Z7RA4MPGA2HpKQBiz0aQCjeJg+BFmpQK1RVMSVYF2b
+      URQd7fO3mH7OfO+mtARrRDdivgWVEYI0D8x7DQIDAQABAoIBAQDHP2+iGnmF+8sM
+      ezLlb3Ow4jKXj8QHF0gcP7IM4zE/Ma5+r5Qtq+8NFuNkVE94fDbiokOK6jhAPdmF
+      XLFqylHd3BSSOVX7o4rafk21Uj65nz6PIl7G2hdW8ugLez3AF1veIu3T9tCkgiLV
+      1lNKxNXYQcncKH6GH9MXdzN906wegkkCOzBkg4QJx/HIuzSHBzlqlfEKfPYonAF1
+      PmTDR36rqPE9NUBao7NkxZKWAMfXCWYOPrK5yyNNN0PEfXML9s5ddD/79UbvBXtV
+      byY3bNpfWRXvEhhjLQ2qihxKJzvvBEFPgTcXbCevoImSiI/4XN/Bs5wD4+PYuS3S
+      4DkcHzx9AoGBAP37gUzCFrd9/l+D3aWgRqC1OA3IQAbf01S9lGHpoxqRASZFYzwj
+      ph9X4JAy4/pR+1/MAxc/1dKNS6V53IFdwOH8qmsyrIyokGJW59dwaNd+Vx3LO812
+      yKE5W4aSH3b9Eh7nYuJ3Q3Ag3W6QnOe8+F5EvBg05g2etV/eZkmO5TmvAoGBAPmc
+      31a6Fm1X6aDvmkfdNuIfzQzb/+hiGYvnT7cS8ljyo4KNFx/cqdDbrVAzuw7Ws2PE
+      37u4Ywqv4FQvRk5h6pNOeZBN4Liahw5vNF9KDWDUI6ruHAjd66ucx2fejtVMB5RM
+      T4qGq/5waJsdOXMKaxgHBPKs+ZqLyK1tzlGD+ZIDAoGBAIgbrTomVSg2ZAhp0XE+
+      CDt9gjGYm/9TGZyzD/68x0SoarZIvxpufEsVu+lq7FOsdYrr+MgP1JXGVMC0IqBN
+      Tt2MmwNhn6iteNrKeeoxem3pbeQwkrbULkaAR3VBf40zp+9ZzttQUJqZcjEbXIqv
+      8WYLbcWHK7Ym1EoxFB3dbyhPAoGAVc6QlB66UPJUtOdJEQVBtbAa7B3AtiDrCUYG
+      CDgyKVOX0+wuk9xmYA70YEq4NhymZFisVLrJCUZ2hloOACn22paygWHUK4GrhdHC
+      njM1sCCc9kiOSJoJRuBJSDKgxUAyps8o1MUA4SHBQ/li42IkeIkJMWc3EuKUpNHH
+      iAwnQgMCgYEA2eAOj9kRZE0nC2aXeU/EbhSHNVuz7OBvROMJMmYBb9DQxw5g1vcV
+      Df2ty+b+5eIl6mivv4dmp2D1YLyYyUXkI/ccfZ7fmQrjKdWywKTlTP2G+rklCSHk
+      N9aORmeB+s3V4c5lRHYslRevdIOxSd/H0Z45T8s/bEMojozG3swrXSc=
+      -----END RSA PRIVATE KEY-----
+
+  session_signing_key.pub:
+    content: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD3pUOalEynNoqXsPUVixtAuL2MWvYnQRjUw+G/Ezi+DxGGBeNy6fJ6mTeDZkUXOFHof2L+nXudoNI3315OXkwZLYcNqpnwEsCgr+hnHskucCRYsiZA9F+IRFCa1SaZVh91Qd4nuhJC4u4Kin/lZSg9Ie6oWqpz64SLFACgXeLQBJEuZL1BCDlkpMC7dqH2PjLxIxY5wohh72mDU9wr0cjDoCOSfIXIbmsQjKUnL/oBap6Rq91+KVzUlnwEQEY7gr7h2RdTxntEDgw8YDYekpAGLPRpAKN4mD4EWalArVFUxJVgXZtRFB3t87eYfs5876a0BGtEN2K+BZURgjQPzHsN ugo@dragonfly
+
+  tsa_host_key:
+    content: |
+      -----BEGIN RSA PRIVATE KEY-----
+      MIIEowIBAAKCAQEAtDaLAcvpkR79VL5M3BtYHUm1rJUSwvNGn0JxBFvjzG+Ni/pv
+      QUJ9n+CYTNVcmEcB4t0hMTNsrEp1kn1L8QWMC0oQAB796rgHp2kV87UmJuth4ezY
+      THwp2dvC/ITZ6dn3GSV6koWBEhdC8cNUtS4Zvzq/IQptLVC9twIGM6IlH8WTgTVS
+      88MbXJtrzOU5eNgxIxn+FHoh8QHT1CW1FuKdJN0XKP+HPiqzaNb+LcyuEl3bVtoQ
+      uaGEKT8/QuPLNuq/PzASwu+Kj/7U51BTlNAnLHDtS4m1xI43QLMrE5Uk9KbbCi9a
+      C/lsR26+pLt9fqevUyOc5KiiTud0OuySLTdbsQIDAQABAoIBACdT19YWh+wxlRtP
+      RDqshPgvQ8Rb6/I7YOgUedF3tCjDF2K6zlixh/TB8LqjvUdGB7VYiIvSKx8WSL4l
+      NdNtYHh+Oyurl8IHUzRHjJDYsXDA4WWKaFGYrxFqEg1FeMC93lzQfwVGuToXdXaJ
+      KA05+EhxK5CsU9MV0bEEchIGio96EmR9IWWKIfgUg597momwfeNyUKOxNJu/9rJP
+      dUFl2YuC5UDCGHPB7KKxTfw/mFOcXRp7/ARtzSuYIDlECRGGZKBuw81tgmZhsqsJ
+      yTZQ0wlI51d36xswciloxWqC/z+h8HsSpooqyqAaPsy+94W3dB9zA5lwws9bFfAi
+      Di3Nc5kCgYEA69DZNsqLljoa2pdfM28dMbIAIfJ/rMBj3kcH2DokWR963zJHw4Tz
+      k7LXr6IkeWpMD1c/LHFf0/j6FMajo/dRIzJj98UHYIT2NnVa0dNn5uCXkcxSg6p4
+      CfyzRMsaW8/qBIx2n6hiK+0rdnaTeOyDtRUq/3dWdeXCBywt0AdnewsCgYEAw6NW
+      Ylnphb1TNwft4Gz7sctiB46Yiqb+pRHbdohqlgxkddS4YyPRjfYdXbJT42gVgdfZ
+      NYn8tdsLfylMmv691ewoyQtFtemYcPeNr0pNfCaMIJnBjJ5D52yLG5nYAtcs4yVZ
+      VIaUH2a9vB26igSb3zKREJ7le4+GWNhUm7Ow2bMCgYEAhq5TQL3Rl008RRgrIT8W
+      12koNjs/vDRtVWgQDOi4Fcaq8IrQ/dQTIYoFMaRTXJzfL+vOgt2Fs5UBj5gboewA
+      hS+kdMAtBG0sCdJgunIZZ31iU7z0a4qS4HFZGbM+LK3EpDBtF6ad2ySrrA7xDyFV
+      37hlRF6uHMvKUzpiN+viqB0CgYBUY+rpdfuD001IGcWE374aza61r88hUDPcJL3U
+      fbfsjd/v7Bi1u0ezwwyb1EbXe5h7cA6kR6eZEqn86mW/Hk/pLXvSbWhetisp379g
+      c97ExSQBFBInhEWqWGoRN+W0I/ma6guEqKDQgtMpiHFlA+Pw/bERyFkZWaoMPRUS
+      LQsGfQKBgAdWOVC6Nk3gO1T6r2Lmy2mFD++g/+pmEnPVH9snsNJmh9aw4f9lptHA
+      H3Q8JR44XozKfo/874Uv5q1BoWyD0vC8mhZoDiwsJ0M1LWXS4CIKVS3gkj2mLpoE
+      Xpwf1oIKDxZfiIxWtGLbQj1aMclohJ2qvzuNnx6YnASKVHw25EUg
+      -----END RSA PRIVATE KEY-----
+
+  tsa_host_key.pub:
+    content: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQC0NosBy+mRHv1UvkzcG1gdSbWslRLC80afQnEEW+PMb42L+m9BQn2f4JhM1VyYRwHi3SExM2ysSnWSfUvxBYwLShAAHv3quAenaRXztSYm62Hh7NhMfCnZ28L8hNnp2fcZJXqShYESF0Lxw1S1Lhm/Or8hCm0tUL23AgYzoiUfxZOBNVLzwxtcm2vM5Tl42DEjGf4UeiHxAdPUJbUW4p0k3Rco/4c+KrNo1v4tzK4SXdtW2hC5oYQpPz9C48s26r8/MBLC74qP/tTnUFOU0CcscO1LibXEjjdAsysTlST0ptsKL1oL+WxHbr6ku31+p69TI5zkqKJO53Q67JItN1ux ugo@dragonfly
+
+  ## Vault
+  policy.hcl:
+    content: |
+      path "cycloid/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+
+      path "sys/policy/cycloid/*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+
+      path "auth/approle/role/cycloid-*" {
+        capabilities = ["create", "read", "update", "delete", "list"]
+      }
+
+      path "auth/approle/role/" {
+        capabilities = ["read", "list"]
+      }
+
+      path "policies" {
+        capabilities = ["read", "list"]
+      }
+
+      path "auth/token/create" {
+        capabilities = ["create"]
+      }
+
+      path "auth/token/renew-self" {
+        capabilities = ["create"]
+      }
+
+  youdeploy-config.yml:
+    content: |
+      start-timeout: 10s
+      max-header-size: "1MB"
+      port: 3001
+      host: 0.0.0.0
+      schema:
+      - http
+      cleanup-timeout: 1ms
+
+      log-dev-mode: false
+      log-level: "INFO"
+      log-svc-level: "INFO"
+
+      db-host: ${DOCKER_IPAM:-192.168.10}.2
+      db-port: 3306
+      db-user: root
+      db-pwd: youdeploy
+      db-name: youdeploy
+      db-max-conns: 15
+      db-max-idle-conns: 10
+      db-max-lifetime-conn: 5m
+
+      concourse-url: "http://${DOCKER_IPAM:-192.168.10}.9"
+      concourse-port: 8080
+      concourse-username: concourse
+      concourse-password: concourse
+      concourse-team: main
+
+      vault-role-id: custom-role-id
+      vault-secret-id: custom-secret-id
+      vault-url: "http://${DOCKER_IPAM:-192.168.10}.4:8200"
+
+      frontend-base-url: "http://localhost:3000"
+      backend-base-url: "http://${DOCKER_IPAM:-192.168.10}.10:3001"
+
+      redis-uri: "redis://${DOCKER_IPAM:-192.168.10}.6:6379"
+
+      email-smtp-svr-addr: "email-smtp-no-tls-auth:1025"
+      email-smtp-username: admin
+      email-smtp-password: admin
+      email-addr-from: "Cycloid Platform <noreply@cycloid.io>"
+      email-addr-return-path: "admin+ydbounce@cycloid.io"
+      email-dev-mode: true
+      crypto-signing-key: totally-random-secret-key
+      jwt-keys:
+      - 2f2122de-63f2-4eec-9c6f-c6abb3e1f007:7cdyHps2tYDp6e7VKPEstE5sDMQbK6WLyN3GmTsF7x7QpE6ZP5ra6yfVSkvXakbB
+      local-auth-enabled: true
+
+      contact-us-form-url: https://www.cycloid.io/contact-us
+      tell-us-why-licence-form-url: https://www.cycloid.io/contact-us
+
+      worker-queues: [emails,hubspot,cost_explorer,checks,terracost]
+      worker-run-internal: true
+      worker-run-scheduler: true
+
+  mailhog.auth:
+    content: "admin:$2y$12$9cbAZjq/uv6WzyA5sx/UpugL9qa54oUFJapYIDEPny.9h8b4Bzndy"
+
+  redisTLSCert:
+    content: |
+      -----BEGIN CERTIFICATE-----
+      MIID1TCCAr2gAwIBAgIUDFcFTeEQSIK32cpl5/Ca4gxgAKowDQYJKoZIhvcNAQEL
+      BQAwgZIxCzAJBgNVBAYTAkZSMQ4wDAYDVQQIDAVQYXJpczEOMAwGA1UEBwwFUGFy
+      aXMxFDASBgNVBAoMC0N5Y2xvaWQgU0FTMRAwDgYDVQQLDAdCYWNrZW5kMRYwFAYD
+      VQQDDA1MbGFtYSBEZWwgUmV5MSMwIQYJKoZIhvcNAQkBFhRjeWNsb2lkaW9AY3lj
+      bG9pZC5pbzAeFw0yNTAxMjkxNzA3NTZaFw0yNTAyMjgxNzA3NTZaMIGSMQswCQYD
+      VQQGEwJGUjEOMAwGA1UECAwFUGFyaXMxDjAMBgNVBAcMBVBhcmlzMRQwEgYDVQQK
+      DAtDeWNsb2lkIFNBUzEQMA4GA1UECwwHQmFja2VuZDEWMBQGA1UEAwwNTGxhbWEg
+      RGVsIFJleTEjMCEGCSqGSIb3DQEJARYUY3ljbG9pZGlvQGN5Y2xvaWQuaW8wggEi
+      MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCbqtopbLmkSf1My6SPuAZcd0rP
+      mF33XxQb3/DM0lf0HIiBy9gyaVBTvZvceIxWnUb72qHir8x52CFei9mSLUY30uVK
+      labtTwTWmaE7bylp2NGucRsB88u2SCkmepkaYugLppD908Ua9+PCQVrC34PGnIMG
+      ZjxhNtDBq/jqDoRpBuK0XwHuvQPvFWaX2OV73cHgFwtKrDdwuuhR/HLQwXwP9tts
+      wDGn0Lfr1bET0yztpeMz55SJLFcCOMn0/vfELLEIgegHOSRDAslJpAybcHDXtMUW
+      LGNZ/UXp28LVWJdNcqIKTGfsXL9R6bNfD4If3ukJwXB/DR0BquTrZK2oKxRzAgMB
+      AAGjITAfMB0GA1UdDgQWBBTo2BtkBMqcNKkwmKGTk02dgyTObTANBgkqhkiG9w0B
+      AQsFAAOCAQEAVASa88dwuyI6tNyvJGusynBW7gqcOtr+AmYTBDdSulkblaAbcSjQ
+      jEYS1dZDCzLb35mZVDcs/z3E4ZFtaXjBERrxa5sRfOqHpYPT5jx4LFP/LS+XIpqa
+      psX6rSmdO84sc14D4xXlewZ6CnA2NNSqkJbxxoTm0mqd/MV9kKXHXkKgKDOeWM3U
+      roLaJZq5QDukVrMGPUQS6D9pSrTj0oZgxnN0r5o+xy6FMVXK0vJej6x5LH7/i1nk
+      3omuCMM6iZSNbMotlK0jy5QPP1g+i+JX2PawFv0rZIDj4NfDBxHt4BIOToyZSrZa
+      RUwxOeyu4/4XTbtxnIMJwv0avllw2wpVUQ==
+      -----END CERTIFICATE-----
+
+  redisTLSKey:
+    content: |
+      -----BEGIN PRIVATE KEY-----
+      MIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCbqtopbLmkSf1M
+      y6SPuAZcd0rPmF33XxQb3/DM0lf0HIiBy9gyaVBTvZvceIxWnUb72qHir8x52CFe
+      i9mSLUY30uVKlabtTwTWmaE7bylp2NGucRsB88u2SCkmepkaYugLppD908Ua9+PC
+      QVrC34PGnIMGZjxhNtDBq/jqDoRpBuK0XwHuvQPvFWaX2OV73cHgFwtKrDdwuuhR
+      /HLQwXwP9ttswDGn0Lfr1bET0yztpeMz55SJLFcCOMn0/vfELLEIgegHOSRDAslJ
+      pAybcHDXtMUWLGNZ/UXp28LVWJdNcqIKTGfsXL9R6bNfD4If3ukJwXB/DR0BquTr
+      ZK2oKxRzAgMBAAECggEACAdDwScuW97FBZTrI85l5ZbxcMt27S8mJlniXW3rw1dF
+      YwxUViVAU1FQHIrLEhyCcLLR7pMKhK406l9kFTnoiTCDStl1BoAwy7CYtCwDgsX/
+      6nNC5VLhisEl/ioMg2Pee9tXVv/5Bm8KfBZKzAojDbc8urPDIXBmS9bGu6uMAK6Z
+      mZgGNU23CxcMF0qHiIBaXbrc26Ud+yqxdoFpalMRD1PZE9o7BLdUj8WBrVM5uBRY
+      2Tn1bIOjDSszfs+7j2zvEWNLbS/MaYJ+qyWIg/SIQ5kjTIqraL/IBnSSvz1cySir
+      OK1jwO7hPqvrjwaxH2sV/U+uJa/sO+yDVsYq4VUEIQKBgQDUDp014UeWEVJzvbOO
+      2J8BovSN63K7S6Dj2vOhLPqet3/pnSemmRxZHlhuH1Pt+EkpjajpLf6mbWKICKQ/
+      XHrjlcEe4cwjkZjlxgIwWopoXQeWh8+gOyJ6EOo5dfeObiGnMVjpjX1TExXdLbGH
+      n5iSEs/3+ooa7aBngqCskGrULQKBgQC77NRK5EMcnMUhojP4MCElknnZSAzTra9U
+      DWMbR1aDfQ3JikVQqozjkQs9SY9gCJhWdne6URm6Nw1YfiLL27C0bgedyWKUvZ1g
+      0JGGtNozfUwEA8Lc6oEP1/1CzCIEcKBTgyrnBLHQaD6cteR7GUDHopgjle0zeN6d
+      4TqjhDfPHwKBgBlQEUYQOSpZsPzt5RQlGX3phMW4GD7xPShVx4UyyEvP3a32O3hw
+      iGi+7ZFfnfYnEByssz/6ZI5bOkrAtVJ26JhoFOBp1aNdSuIKq9I3zJO+nxxB4+/d
+      fzUQ9dScF0viK5Q4mMNwR0h2W8LGJI3q6BxvsHGKb5fdS6tvdVyD9KyVAoGAQM96
+      n6F9a769Vc4k8jFXHSgZEdCBa/d4ghpj1aKSuaJFQP6IzTskf88j+y0FX29XampM
+      /Fq/7rLRzXUi9v97P566zbYIY5fJUPxdVAHHRv6tWq0ZZSsS+63X0FOqX7Gf+W1B
+      PI8n6+InxdANTk71QmRW597rAVdsHzLwEDinLq0CgYBeUrIVRQDYRqmSiI0JRXk7
+      Xn0Dx1J5cpYpCQADo6jdddcHZQsOfVqGFIq2sn/omi+Xyq/N7I5bbm09jNwtf3Zi
+      cPJlbRttQ1YxFH4KzMOdzeh2jKF8uNXW211Adk/VXNqlN95Ky4kSm7Lrpy92+uux
+      pVy90/uiPe/6CsFk7ceoDA==
+      -----END PRIVATE KEY-----
+
+networks:
+  cycloid:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: "${DOCKER_IPAM:-192.168.10}.0/24"
+
