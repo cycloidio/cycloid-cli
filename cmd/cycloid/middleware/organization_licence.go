@@ -2,29 +2,36 @@ package middleware
 
 import (
 	"fmt"
-
-	"github.com/go-openapi/strfmt"
-
-	"github.com/cycloidio/cycloid-cli/client/client/organization_licence"
-	"github.com/cycloidio/cycloid-cli/client/models"
+	"net/http"
+	"strings"
 )
 
 func (m *middleware) ActivateLicence(org, licence string) error {
-	params := organization_licence.NewActivateLicenceParams()
-	params.WithOrganizationCanonical(org)
-	body := models.NewLicence{
-		Key: &licence,
-	}
-	err := body.Validate(strfmt.Default)
+	// Request built by hand due to invalid api spec
+	body := fmt.Sprintf(`{"key": "%s"}`, licence)
+	url := fmt.Sprintf("%s/organizations/%s/licence", m.api.Config.URL, org)
+	req, err := http.NewRequest(
+		http.MethodPost,
+		url,
+		strings.NewReader(body),
+	)
 	if err != nil {
-		return fmt.Errorf("invalid body for activateLicence: %v", err)
+		return err
 	}
+	req.Header.Add("Content-Type", "application/json")
+	req.Header.Add("Authorization", "Bearer "+m.api.GetToken(&org))
 
-	params.WithBody(&body)
-	_, err = m.api.OrganizationLicence.ActivateLicence(params)
-	if err != nil {
-		NewApiError(err)
+	client := http.DefaultClient
+	resp, httpErr := client.Do(req)
+	if httpErr != nil || resp.StatusCode != 204 {
+		return &APIError{
+			HTTPMethod: http.MethodPost,
+			HTTPCode:   resp.Status,
+			URL:        url,
+			APIAction:  "activateLicence",
+			Payload:    nil,
+		}
 	}
-
+	defer resp.Body.Close()
 	return nil
 }

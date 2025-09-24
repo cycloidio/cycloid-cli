@@ -18,10 +18,10 @@ func runMain(main *testing.M) (int, error) {
 	// Otherwise there will be conflcts -_-
 	var err error
 	time.Sleep(time.Duration(5) * time.Second)
-	config, err = testcfg.NewConfig()
+	config, err = testcfg.NewConfig("e2e")
 	defer config.Cleanup()
 	if err != nil {
-		return 1, fmt.Errorf("test config setup failed: %v", err)
+		return 1, fmt.Errorf("test config setup failed for e2e tests: %w", err)
 	}
 
 	return main.Run(), nil

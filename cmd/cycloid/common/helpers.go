@@ -19,6 +19,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/client"
 	"github.com/cycloidio/cycloid-cli/config"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 var orgRe = regexp.MustCompile(`\(\$ organization_canonical \$\)`)
@@ -198,7 +199,7 @@ func (a *APIClient) GetToken(org *string) string {
 
 func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
 	if org == nil {
-		return nil
+		org = ptr.Ptr("")
 	}
 
 	token := a.GetToken(org)

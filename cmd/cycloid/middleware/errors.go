@@ -12,7 +12,7 @@ type ErrorPayloader interface {
 	GetPayload() *models.ErrorPayload
 }
 
-type ApiError struct {
+type APIError struct {
 	HTTPMethod string
 	URL        string
 	HTTPCode   string
@@ -41,7 +41,7 @@ func NewApiError(err error) error {
 		return err
 	}
 
-	apierr := ApiError{
+	apierr := APIError{
 		HTTPMethod: match[1],
 		URL:        match[2],
 		HTTPCode:   match[3],
@@ -53,7 +53,7 @@ func NewApiError(err error) error {
 	return &apierr
 }
 
-func (a *ApiError) Error() string {
+func (a *APIError) Error() string {
 	var msg string
 
 	if a.Payload != nil && len(a.Payload.Errors) != 0 && a.Payload.Errors[0].Message != nil {

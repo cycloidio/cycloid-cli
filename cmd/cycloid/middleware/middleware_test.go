@@ -17,10 +17,10 @@ func runMain(ctx context.Context, main *testing.M) (int, error) {
 	_ = ctx
 	// Initialize global vars
 	var err error
-	config, err = testcfg.NewConfig()
+	config, err = testcfg.NewConfig("middleware")
 	defer config.Cleanup()
 	if err != nil {
-		return 1, fmt.Errorf("Config setup failed: %v", err)
+		return 1, fmt.Errorf("Config setup failed for package middleware: %v", err)
 	}
 
 	log.Printf("Starting tests with config:\nurl: %s\norg: %s", config.APIUrl, config.Org)

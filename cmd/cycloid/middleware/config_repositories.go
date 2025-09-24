@@ -58,12 +58,15 @@ func (m *middleware) CreateConfigRepository(org, name, canonical, url, branch, c
 	}
 
 	body := &models.NewConfigRepository{
-		Branch:              &branch,
-		Canonical:           canonical,
-		CredentialCanonical: &cred,
-		Default:             &setDefault,
-		Name:                &name,
-		URL:                 &url,
+		Branch:    &branch,
+		Canonical: canonical,
+		Default:   &setDefault,
+		Name:      &name,
+		URL:       &url,
+	}
+
+	if cred != "" {
+		body.CredentialCanonical = &cred
 	}
 
 	params.SetBody(body)
