@@ -1,12 +1,3 @@
-# This is just to ensure docker compose will error if secrets are not provider.
-# Docker compose won't check it otherwise
-x-required-env-var:
-- ${API_LICENCE_KEY:?"use:\n export API_LICENCE_KEY=$(cy cred get scaleway-cycloid-backend -o json | jq -r .raw.raw.licence_key)"}
-
-secrets:
-  api_licence_key:
-    environment: API_LICENCE_KEY
-
 services:
   # Override API service to create an API from a builded docker image.
   youdeploy-api:
@@ -36,8 +27,6 @@ services:
     configs:
     - source: youdeploy-config.yml
       target: /ci/config.yml
-    secrets:
-    - api_licence_key
     entrypoint:
     - bash
     - -ec

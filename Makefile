@@ -50,7 +50,7 @@ export AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycl
 export AWS_DEFAULT_REGION    ?= eu-west-1
 export AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
 
-TEST_API_TAG      ?= staging
+YD_API_TAG        ?= staging
 API_LICENCE_KEY   ?=
 
 .PHONY: help
