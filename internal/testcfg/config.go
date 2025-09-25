@@ -11,7 +11,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/sanity-io/litter"
 )
 
 type Config struct {
@@ -176,7 +175,6 @@ func NewConfig(testName string) (*Config, error) {
 	config.Environment = environment
 
 	stackRef := config.Org + ":" + defaultStackCanonical
-
 	component, err := config.NewTestComponent(
 		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, nil,
 	)
@@ -185,7 +183,6 @@ func NewConfig(testName string) (*Config, error) {
 	}
 	config.Component = component
 
-	litter.Dump(project, environment, component)
 	stackConfig, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase)
 	if err != nil {
 		return config, err
@@ -279,10 +276,6 @@ func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCa
 	)
 	if err != nil {
 		return nil, err
-	}
-
-	if outComponent == nil {
-		panic("empty component")
 	}
 
 	config.AppendCleanup(func() {

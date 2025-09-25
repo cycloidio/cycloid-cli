@@ -15,6 +15,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 var (
@@ -45,6 +46,10 @@ func GetStackformsVars(cmd *cobra.Command, defaults models.FormVariables) (model
 	// dump stdin from cmd.InOrStdin() in a temp file.
 	index := slices.Index(varFiles, "-")
 	if index != -1 {
+		if !common.DetectStdinInput() {
+			return nil, fmt.Errorf("stdin looks empty, please fill stdin when using '-' argument")
+		}
+
 		tempFile, err := os.CreateTemp("", "cy-stdin-*")
 		if err != nil {
 			return nil, fmt.Errorf("failed to write temp file for stdin: %v", err)

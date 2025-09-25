@@ -23,6 +23,9 @@ func (m *middleware) ActivateLicence(org, licence string) error {
 
 	client := http.DefaultClient
 	resp, httpErr := client.Do(req)
+	if resp != nil {
+		defer resp.Body.Close()
+	}
 	if httpErr != nil || resp.StatusCode != 204 {
 		return &APIError{
 			HTTPMethod: http.MethodPost,
@@ -32,6 +35,5 @@ func (m *middleware) ActivateLicence(org, licence string) error {
 			Payload:    nil,
 		}
 	}
-	defer resp.Body.Close()
 	return nil
 }

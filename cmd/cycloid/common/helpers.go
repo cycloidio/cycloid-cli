@@ -303,3 +303,15 @@ func UnixTimestampToLocalTime(unixTime *uint64) string {
 	ts := time.Unix(int64(*unixTime), 0)
 	return ts.Format(time.DateTime)
 }
+
+// DetectStdinInput will return true if the current
+// command effectively has some kind of stdin input
+// return false otherwise
+func DetectStdinInput() bool {
+	stats, _ := os.Stdin.Stat()
+	if (stats.Mode() & os.ModeCharDevice) != 0 {
+		return false
+	}
+
+	return true
+}
