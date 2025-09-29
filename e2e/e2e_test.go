@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"testing"
-	"time"
 
 	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 )
@@ -17,12 +16,15 @@ func runMain(main *testing.M) (int, error) {
 	// We must wait a bit that the middleware test are done initializing the config
 	// Otherwise there will be conflcts -_-
 	var err error
-	time.Sleep(time.Duration(5) * time.Second)
-	config, err = testcfg.NewConfig()
+	config, err = testcfg.NewConfig("e2e")
 	defer config.Cleanup()
 	if err != nil {
-		return 1, fmt.Errorf("test config setup failed: %v", err)
+		return 1, fmt.Errorf("test config setup failed for e2e tests: %w", err)
 	}
+
+	os.Setenv("CY_API_URL", config.APIUrl)
+	os.Setenv("CY_API_KEY", config.APIKey)
+	os.Setenv("CY_ORG", config.Org)
 
 	return main.Run(), nil
 }

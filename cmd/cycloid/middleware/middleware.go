@@ -6,7 +6,8 @@ import (
 )
 
 type Middleware interface {
-	UserLogin(email, username, org *string, password string) (*models.UserSession, error)
+	UserLogin(org, email, username *string, password string) (*models.UserSession, error)
+	UserLoginToOrg(org, email, password string) (*models.UserSession, error)
 	UserSignup(username, email, password, givenName, familyName string) error
 	RefreshToken(org, childOrg *string, token string) (*models.UserSession, error)
 
@@ -119,7 +120,7 @@ type Middleware interface {
 
 	// Project
 	CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error)
-	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string, updatedAt *uint64) (*models.Project, error)
+	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, error)
 	DeleteProject(org, project string) error
 	GetProject(org string, project string) (*models.Project, error)
 	ListProjects(org string) ([]*models.Project, error)
@@ -167,6 +168,21 @@ type Middleware interface {
 
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, error)
+
+	// Extra actions out of the api
+	InitFirstOrg(org, userName, givenName, famillyName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error)
+}
+
+type FirstOrgData struct {
+	Org                 string
+	UserName            string
+	FamillyName         string
+	GivenName           string
+	Email               string
+	Password            string
+	Token               string
+	APIKey              *string
+	CredentialCanonical *string
 }
 
 type middleware struct {

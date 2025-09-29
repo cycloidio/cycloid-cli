@@ -1,3 +1,6 @@
+-include .env
+-include .api_key
+
 ifeq ($(GOCACHE),)
 	GOCACHE := $(HOME)/.cache/go-build
 endif
@@ -8,7 +11,9 @@ endif
 
 SHELL      := /bin/sh
 
-REPO_PATH  := github.com/cycloidio/cycloid-cli
+REPO_NAME   ?= cycloid-cli
+
+MAKEFILE_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 # IMAGE BUILD
 BINARY       ?= cy
@@ -37,12 +42,6 @@ SWAGGER_GENERATE = swagger generate client \
 		--target=./client \
 		--name=api
 
-# E2E tests
-CY_API_URL         ?= "https://api.staging.cycloid.io/"
-CY_TEST_ROOT_ORG ?= "cli-tests"
-# You can get the key in the admin_api_key cred in the cli console
-CY_TEST_API_KEY       ?=
-
 # Local E2E tests
 # Note! Requires access to the private cycloid BE, only acessible within the organisation
 # AWS - ECR login
@@ -50,9 +49,8 @@ export AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cyclo
 export AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
 export AWS_DEFAULT_REGION    ?= eu-west-1
 export AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
-# Local BE
-LOCAL_BE_GIT_PATH ?= ../youdeploy-http-api
-YD_API_TAG        ?= staging
+
+TEST_API_TAG      ?= staging
 API_LICENCE_KEY   ?=
 
 .PHONY: help
@@ -63,16 +61,17 @@ help: ## Show this help
 build: ## Builds the binary
 	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
 	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY)-linux-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o $(BINARY)-linux-arm64 $(GO_LDFLAGS) $(REPO_PATH)
 	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o $(BINARY)-windows-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o $(BINARY)-darwin-arm64 $(GO_LDFLAGS) $(REPO_PATH)
 	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $(BINARY)-darwin-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 
-.PHONY: test
+.PHONY: test test-clean
 test: ## Run end to end tests
-	CY_API_URL=$(CY_API_URL) \
-	  CY_TEST_ROOT_ORG=$(CY_TEST_ROOT_ORG) \
-	  CY_TEST_API_KEY=$(CY_TEST_API_KEY) \
 		go test ./...
+
+test-clean:
+		go clean -testcache
 
 .PHONY: delete-old-client
 reset-old-client: ## Resets old client folder
@@ -100,34 +99,20 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 
 .PHONY: docker-login
+.ONEFILE:
 docker-login: ## Login to ecr, requires aws cli installed
-	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) | docker login --username AWS --password-stdin $(AWS_ACCOUNT_ID).dkr.ecr.$(AWS_DEFAULT_REGION).amazonaws.com/youdeploy-http-api
+	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) \
+		| docker login --username AWS --password-stdin \
+		661913936052.dkr.ecr.eu-west-1.amazonaws.com/youdeploy-http-api
 
-.PHONY: start-local-be
-start-local-be: ## Starts local BE instance. Note! Only for cycloid developers
-	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
-	@if [ -z "$$API_LICENCE_KEY" ]; then echo "API_LICENCE_KEY is not set"; exit 1; fi; \
-	echo "Starting Local BE..."
-	@echo "Generating fake data to be used in the tests..."
-	@cd $(LOCAL_BE_GIT_PATH) && sed -i '/cost-explorer-es/d' config.yml
-	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.cli.yml up youdeploy-init
-	@echo "Running BE server with the fake data generated..."
-	@cd $(LOCAL_BE_GIT_PATH) && YD_API_TAG=${YD_API_TAG} API_LICENCE_KEY=${API_LICENCE_KEY} \
-	$(DOCKER_COMPOSE) -f docker-compose.yml -f docker-compose.cli.yml up -d youdeploy-api
+.PHONY: be-start be-stop be-reset
+be-start: ## start the local backend
+	$(DOCKER_COMPOSE) up -dV
 
-.PHONY: local-e2e-test
-local-e2e-test: ## Launches local e2e tests. Note! Only for cycloid developers
-	@if [ -z "$(shell curl -I --connect-timeout 2 "172.42.0.3:3001" 2>&1 | grep -w "500")" ]; then make start-local-be; fi;
-	@echo "Local BE is up!"
-	@echo "Running Local e2e tests!"
-	@make test CY_TEST_ROOT_API_KEY=$(shell cat ${LOCAL_BE_GIT_PATH}/API_KEY)
+be-stop: ## stop the local backend
+	$(DOCKER_COMPOSE) down -v
 
-.PHONY: delete-local-be
-delete-local-be: ## Creates local BE instance and starts e2e tests. Note! Only for cycloid developers
-	@if [ ! -d ${LOCAL_BE_GIT_PATH} ]; then echo "Unable to find BE at LOCAL_BE_GIT_PATH"; exit 1; fi;
-	@echo "Deleting local BE instances !"
-	@cd $(LOCAL_BE_GIT_PATH) && $(DOCKER_COMPOSE) down -v --remove-orphans
+be-reset: be-stop be-start ## reset the backend
 
 .PHONY: new-changelog-entry
 new-changelog-entry: ## Create a new entry for unreleased element
@@ -140,6 +125,15 @@ lint: ## Lint the source code
 	@golangci-lint run -v
 
 .PHONY: format-go
-format-go:
+format-go: ## format the repo
 	@gci write --skip-generated -s standard -s default -s "prefix(github.com/cycloidio)" . > /dev/null
 	@goimports -w -local github.com/cycloidio .
+
+.PHONY: docker-db-connect
+docker-db-connect: ## Connect to the local mysql
+	$(DOCKER_COMPOSE) exec -it database mysql -uroot -pyoudeploy youdeploy
+
+.PHONY: ci-test
+.ONEFILE:
+ci-test:
+	$(MAKEFILE_DIR)/scripts/ci-tests.sh

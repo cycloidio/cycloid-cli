@@ -5,11 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
+	"strconv"
+	"strings"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/sanity-io/litter"
 )
 
 type Config struct {
@@ -26,38 +28,49 @@ type Config struct {
 	Environment *models.Environment
 	// Common component to use for tests that require one
 	Component *models.Component
-
 	// Slice containing all functions to exec for cleaning common test resources
 	cleanupFuncs []func()
 }
 
-func NewConfig() (*Config, error) {
+func NewConfig(testName string) (*Config, error) {
+	if len(testName) < 1 {
+		return nil, fmt.Errorf("testName argument must not be empty")
+	}
+
 	var (
-		configRepoName        = "stacks-test-config"
-		configRepository      = "stacks-test-config"
-		configRepoURL         = "git@github.com:cycloidio/cycloid-stacks-test.git"
-		configRepoBranch      = "config"
-		isDefault             = false
+		localGitSSHKey = strings.Join([]string{
+			"-----BEGIN OPENSSH PRIVATE KEY-----",
+			"b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAAAMwAAAAtzc2gtZW",
+			"QyNTUxOQAAACD8O9mhkl5CAiD0NLeQcoPf1duYHImQlTjOXcCOgHmC+AAAAJjCF9jzwhfY",
+			"8wAAAAtzc2gtZWQyNTUxOQAAACD8O9mhkl5CAiD0NLeQcoPf1duYHImQlTjOXcCOgHmC+A",
+			"AAAEC0ryBZ1uJQ2drmjsO+WpsC2E/5SWheJD/r8+Q4LghWxfw72aGSXkICIPQ0t5Byg9/V",
+			"25gciZCVOM5dwI6AeYL4AAAAE2N5Y2xvaWRAZXhhbXBsZS5jb20BAg==",
+			"-----END OPENSSH PRIVATE KEY-----",
+		}, "\n")
+		localGitCredential    = "local-git"
+		dockerIPAM            = EnvDefault("DOCKER_IPAM", "192.168.10")
+		configRepoName        = "cli-test-config"
+		configRepository      = "cli-test-config"
+		configRepoURL         = fmt.Sprintf("git@%s.7:/git-server/repos/backend-test-config-repo.git", dockerIPAM)
+		configRepoBranch      = "master"
+		isDefault             = true
 		gitCred               = "github"
 		catalogRepo           = "cli-test-stacks"
 		catalogRepoName       = "CLI test catalog"
-		catalogRepoURL        = "git@github.com:cycloidio/cycloid-cli-test-catalog.git"
+		catalogRepoURL        = "https://github.com/cycloidio/cycloid-cli-test-catalog.git"
 		catalogRepoBranch     = "stacks"
 		defaultStackCanonical = "stack-e2e-stackforms"
 		defaultStackUseCase   = "default"
-		// gitCredName = "CLI Git Cred"
-		// gitCredKey  = ""
 	)
 
-	var apiURL, apiKey, org string
 	var config = &Config{}
 	config.ConfigRepo = &models.ConfigRepository{
 		Name:                &configRepoName,
 		Canonical:           &configRepository,
-		Default:             &isDefault,
 		URL:                 &configRepoURL,
 		Branch:              configRepoBranch,
 		CredentialCanonical: gitCred,
+		Default:             &isDefault,
 	}
 	config.CatalogRepo = &models.ServiceCatalogSource{
 		Name:                &catalogRepoName,
@@ -67,31 +80,88 @@ func NewConfig() (*Config, error) {
 		CredentialCanonical: gitCred,
 	}
 
-	apiURL, ok := os.LookupEnv("CY_API_URL")
-	if !ok {
-		apiURL = "https://api.staging.cycloid.io/"
+	provisionAPI, _ := strconv.ParseBool(EnvDefault("CY_TEST_PROVISION_API", "1"))
+	config.APIUrl = EnvDefault("CY_TEST_API_URL", "http://"+dockerIPAM+".10:3001")
+	config.Org = EnvDefault("CY_TEST_ROOT_ORG", "cycloid")
+	licence, ok := os.LookupEnv("API_LICENCE_KEY")
+	if !ok && provisionAPI {
+		return config, fmt.Errorf("licence required for provisionning, set it with API_LICENCE_KEY")
 	}
-	config.APIUrl = apiURL
 
-	org, ok = os.LookupEnv("CY_TEST_ROOT_ORG")
-	if !ok {
-		org = "cli-tests"
+	// If we provision the api, we will try to login first
+	if !provisionAPI {
+		apiKey, ok := os.LookupEnv("CY_TEST_API_KEY")
+		if !ok {
+			return config, fmt.Errorf("api key not set in CY_TEST_API_KEY env var")
+		}
+		config.APIKey = apiKey
 	}
-	config.Org = org
-
-	apiKey, ok = os.LookupEnv("CY_TEST_API_KEY")
-	if !ok {
-		return config, fmt.Errorf("api key not set in CY_TEST_API_KEY env var")
-	}
-	config.APIKey = apiKey
 
 	api := common.NewAPI(
-		common.WithURL(apiURL),
+		common.WithURL(config.APIUrl),
 		common.WithInsecure(true),
-		common.WithToken(apiKey),
+		common.WithToken(config.APIKey),
 	)
 	m := middleware.NewMiddleware(api)
 	config.Middleware = m
+
+	var (
+		userName        = "administrator"
+		email           = "admin@cycloid.io"
+		password        = "cycloidadmin"
+		apiKeyCanonical = "admin-" + testName
+	)
+
+	if provisionAPI {
+		// try to login, is successful, console is initialized
+		init, err := m.InitFirstOrg(config.Org, userName, userName, userName, email, password, licence, &apiKeyCanonical)
+		if err != nil {
+			return nil, fmt.Errorf("failed to init console: %w", err)
+		}
+
+		config.APIKey = *init.APIKey
+		api.Config.Token = *init.APIKey
+
+		// Write the API for the User, we'll look up a better way later
+		root, err := FindRepoRoot()
+		if err != nil {
+			return nil, err
+		}
+
+		err = os.WriteFile(root+"/.api_key", []byte("CY_API_KEY="+config.APIKey), 0666)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	_, err := m.CreateCredential(config.Org, localGitCredential, "ssh",
+		&models.CredentialRaw{SSHKey: localGitSSHKey}, "", localGitCredential, "",
+	)
+	var apiErr *middleware.APIError
+	if errors.As(err, &apiErr) {
+		if apiErr.HTTPCode != "409" {
+			return config, fmt.Errorf("failed to init config repo credential: %w", err)
+		}
+	}
+
+	_, err = m.CreateConfigRepository(config.Org,
+		*config.ConfigRepo.Canonical, *config.ConfigRepo.Canonical, *config.ConfigRepo.URL,
+		config.ConfigRepo.Branch, localGitCredential, *config.ConfigRepo.Default,
+	)
+	if errors.As(err, &apiErr) {
+		if apiErr.HTTPCode != "409" {
+			return config, fmt.Errorf("failed to setup config repo: %w", err)
+		}
+	}
+
+	_, err = m.CreateCatalogRepository(config.Org, *config.CatalogRepo.Canonical,
+		*config.CatalogRepo.URL, config.CatalogRepo.Branch, "", "local", "",
+	)
+	if errors.As(err, &apiErr) {
+		if apiErr.HTTPCode != "409" {
+			return config, fmt.Errorf("failed to setup catalog repo: %w", err)
+		}
+	}
 
 	project, err := config.NewTestProject("common")
 	if err != nil {
@@ -105,7 +175,7 @@ func NewConfig() (*Config, error) {
 	}
 	config.Environment = environment
 
-	stackRef := org + ":" + defaultStackCanonical
+	stackRef := config.Org + ":" + defaultStackCanonical
 
 	component, err := config.NewTestComponent(
 		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, nil,
@@ -115,7 +185,8 @@ func NewConfig() (*Config, error) {
 	}
 	config.Component = component
 
-	stackConfig, err := m.GetComponentStackConfig(org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase)
+	litter.Dump(project, environment, component)
+	stackConfig, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase)
 	if err != nil {
 		return config, err
 	}
@@ -184,6 +255,7 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup test environment: %s", err)
 	}
+
 	config.AppendCleanup(func() {
 		err := m.DeleteEnv(config.Org, project, env)
 		if err != nil {
@@ -202,31 +274,15 @@ func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCa
 	m := config.Middleware
 	component := RandomCanonical(identifier)
 
-	var outComponent *models.Component
-	var outErr error
-	for retry := range 3 {
-		time.Sleep(time.Duration(retry) * time.Second)
-
-		var err error
-		// Check if the component exists
-		outComponent, err = m.GetComponent(config.Org, project, env, component)
-		if err == nil {
-			outErr = nil
-			break
-		}
-
-		outComponent, err = m.CreateAndConfigureComponent(
-			config.Org, project, env, component, "", &component, stackRef, useCase, "", inputs,
-		)
-		if err != nil {
-			errors.Join(outErr, fmt.Errorf("attempt number %d failed to setup component '%s' for test '%s':\n%v", retry, component, identifier, err))
-			continue
-		}
-
-		outErr = nil
+	outComponent, err := m.CreateAndConfigureComponent(
+		config.Org, project, env, component, "", &component, stackRef, useCase, "", inputs,
+	)
+	if err != nil {
+		return nil, err
 	}
-	if outErr != nil {
-		return nil, outErr
+
+	if outComponent == nil {
+		panic("empty component")
 	}
 
 	config.AppendCleanup(func() {
@@ -243,6 +299,10 @@ func (config *Config) AppendCleanup(f ...func()) {
 }
 
 func (config *Config) Cleanup() {
+	if config == nil {
+		return
+	}
+
 	for _, f := range config.cleanupFuncs {
 		defer f()
 	}
