@@ -14,8 +14,8 @@ const (
 
 var (
 	AvailableFormats = [...]AvailableFormat{
-		JSONFormat,
 		YAMLFormat,
+		JSONFormat,
 	}
 )
 

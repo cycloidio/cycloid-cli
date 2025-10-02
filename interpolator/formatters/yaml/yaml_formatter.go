@@ -34,7 +34,6 @@ func New(params map[string][]string) *YAMLFormatter {
 			} else {
 				f.indentSize = indentSize
 			}
-			f.indent = indent
 		}
 	}
 

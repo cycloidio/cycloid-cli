@@ -11,17 +11,19 @@ import (
 
 func NewGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get [uris...]",
+		Use:   "get [uri]",
 		Short: "Get Cycloid resources by using its URI",
 		Long: strings.Join([]string{
 			"Get a cycloid resource by its URI Path.",
 			interpolator.Docs,
 		}, "\n"),
-		Args: cobra.MinimumNArgs(1),
-		Example: strings.Join([]string{
-			"Fetch a credential by its canonical as JSON\n",
-			"  cy get cy://organizations/<org>/credentials/<canonical>?format=json",
-		}, "\n"),
+		Args: cobra.ExactArgs(1),
+		Example: `Fetch a credential by its canonical as JSON
+  cy get cy://organizations/my-org/credentials/my-cred?output=json
+
+Fetch an ssh_key
+  cy get cy://organizations/my-org/credentials/my-ssh?key=.raw.ssh_key
+`,
 		RunE: get,
 	}
 
