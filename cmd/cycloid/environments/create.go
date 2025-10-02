@@ -83,7 +83,7 @@ func create(cmd *cobra.Command, args []string) error {
 	if update {
 		environments, err := m.ListProjectsEnv(org, project)
 		if err != nil {
-			return fmt.Errorf("failed to create --update environment, cannot check for existing environment '%s': %s", env, err.Error())
+			return fmt.Errorf("failed to create --update environment, cannot check for existing environment %q: %w", env, err)
 		}
 
 		currentIndex := slices.IndexFunc(environments, func(e *models.Environment) bool { return *e.Canonical == env })

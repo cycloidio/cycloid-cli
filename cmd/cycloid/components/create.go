@@ -91,7 +91,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	if update {
 		components, err := m.ListComponents(org, project, env)
 		if err != nil {
-			return fmt.Errorf("failed to create --update component, cannot check existing component '%s': %s", component, err.Error())
+			return fmt.Errorf("failed to create --update component, cannot check existing component %q: %w", component, err)
 		}
 
 		if slices.IndexFunc(components, func(c *models.Component) bool {

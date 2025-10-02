@@ -54,7 +54,7 @@ func getPipeline(cmd *cobra.Command, args []string) error {
 
 	outPipeline, err := m.GetPipeline(org, project, env, component, pipeline)
 	if err != nil {
-		return fmt.Errorf("failed to get pipeline '%s' in context project '%s', env '%s', component '%s': %s", pipeline, project, env, component, err)
+		return fmt.Errorf("failed to get pipeline %q in context project %q, env %q, component %q: %w", pipeline, project, env, component, err)
 	}
 
 	return printer.SmartPrint(p, outPipeline, nil, "", printer.Options{}, cmd.OutOrStdout())

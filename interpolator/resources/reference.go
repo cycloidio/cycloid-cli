@@ -55,12 +55,12 @@ func NewResourceReference(uri string) (*Reference, error) {
 
 	resourceURL, err := url.Parse(finalURI)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse url '%s': %s", finalURI, err.Error())
+		return nil, fmt.Errorf("failed to parse url %q: %w", finalURI, err)
 	}
 
 	query, err := url.ParseQuery(resourceURL.RawQuery)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse query parameters on '%s': %s", finalURI, err.Error())
+		return nil, fmt.Errorf("failed to parse query parameters on %q: %w", finalURI, err)
 	}
 
 	return &Reference{

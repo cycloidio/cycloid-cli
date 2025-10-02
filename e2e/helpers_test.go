@@ -138,12 +138,12 @@ func executeCommandStdin(stdin string, args []string) (string, string, error) {
 	cmdErr := cmd.Execute()
 	stdout, err := io.ReadAll(stdoutBuf)
 	if err != nil {
-		return "", "", errors.Join(cmdErr, fmt.Errorf("failed to read stdout buffer from cli: %s", err))
+		return "", "", errors.Join(cmdErr, fmt.Errorf("failed to read stdout buffer from cli: %w", err))
 	}
 
 	stderr, err := io.ReadAll(stderrBuf)
 	if err != nil {
-		return string(stdout), "", errors.Join(cmdErr, fmt.Errorf("failed to read stderr buffer from cli: %s", err))
+		return string(stdout), "", errors.Join(cmdErr, fmt.Errorf("failed to read stderr buffer from cli: %w", err))
 	}
 
 	return string(stdout), string(stderr), cmdErr
@@ -174,7 +174,7 @@ func AddNowTimestamp(txt string) string {
 func WriteFile(path string, data []byte) {
 	err := os.WriteFile(path, data, 0644)
 	if err != nil {
-		panic(fmt.Sprintf("Test setup, unable to write file %s : %s", path, err.Error()))
+		panic(fmt.Sprintf("Test setup, unable to write file %q: %v", path, err))
 	}
 }
 
@@ -193,8 +193,8 @@ func toString(value any) string {
 	return out
 }
 
-// JsonListExtractFields Extract a field from a json entity
-func JsonListExtractFields(js string, field, filterField, filterRegex string) ([]string, error) {
+// JSONListExtractFields Extract a field from a json entity
+func JSONListExtractFields(js string, field, filterField, filterRegex string) ([]string, error) {
 	var es []any
 	var out []string
 
@@ -224,7 +224,7 @@ func JsonListExtractFields(js string, field, filterField, filterRegex string) ([
 	return out, nil
 }
 
-func JsonListFindObjectValue(list []map[string]any, key, value string) bool {
+func JSONListFindObjectValue(list []map[string]any, key, value string) bool {
 	for _, item := range list {
 		if item[key] == value {
 			return true
@@ -239,12 +239,12 @@ func JsonListFindObjectValue(list []map[string]any, key, value string) bool {
 func WriteTempFile(content string) (string, error) {
 	file, err := os.CreateTemp("", "cli-test-*")
 	if err != nil {
-		return "", fmt.Errorf("failed to create temp file: %v", err)
+		return "", fmt.Errorf("failed to create temp file: %w", err)
 	}
 
 	_, err = file.WriteString(content)
 	if err != nil {
-		return "", fmt.Errorf("failed to write to temp file '%s': %v", file.Name(), err)
+		return "", fmt.Errorf("failed to write to temp file %q: %w", file.Name(), err)
 	}
 
 	return file.Name(), nil

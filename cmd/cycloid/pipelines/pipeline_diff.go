@@ -63,12 +63,12 @@ func diff(cmd *cobra.Command, args []string) error {
 
 	rawPipeline, err := os.ReadFile(pipelinePath)
 	if err != nil {
-		return fmt.Errorf("failed to open pipeline config at path '%s': %s", pipelinePath, err.Error())
+		return fmt.Errorf("failed to open pipeline config at path %q: %w", pipelinePath, err)
 	}
 
 	rawVars, err := os.ReadFile(varsPath)
 	if err != nil {
-		return fmt.Errorf("failed to read pipeline variables files at path '%s': %s", varsPath, err.Error())
+		return fmt.Errorf("failed to read pipeline variables files at path %q: %w", varsPath, err)
 	}
 
 	api := common.NewAPI()

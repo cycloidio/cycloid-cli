@@ -98,7 +98,7 @@ func create(cmd *cobra.Command, args []string) error {
 	if update {
 		projects, err := m.ListProjects(org)
 		if err != nil {
-			return fmt.Errorf("failed to create --update project, cannot check is project '%s' exists: %s", project, err.Error())
+			return fmt.Errorf("failed to create --update project, cannot check is project %q exists: %w", project, err)
 		}
 
 		currentIndex := slices.IndexFunc(projects, func(p *models.Project) bool { return *p.Canonical == project })

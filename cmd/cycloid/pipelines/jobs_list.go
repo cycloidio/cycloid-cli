@@ -54,7 +54,7 @@ func listJobs(cmd *cobra.Command, args []string) error {
 
 	jobs, err := m.GetJobs(org, project, env, component, pipeline)
 	if err != nil {
-		return fmt.Errorf("failed to fetch jobs for pipeline '%s': %s", pipeline, err)
+		return fmt.Errorf("failed to fetch jobs for pipeline %q: %w", pipeline, err)
 	}
 
 	return printer.SmartPrint(p, jobs, nil, "", printer.Options{}, cmd.OutOrStdout())
