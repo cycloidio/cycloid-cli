@@ -31,7 +31,6 @@ func TestComponentCmd(t *testing.T) {
 			t.Fatalf("comp create setup failed: %v", err)
 		}
 
-		var errList error
 		var stdout, stderr string
 		args := []string{
 			"--output", "json",
@@ -53,16 +52,10 @@ func TestComponentCmd(t *testing.T) {
 			"-s", stackRef,
 			"-u", "default",
 		}
-		for range 3 {
-			stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
-			if err != nil {
-				errList = errors.Join(errList, err)
-				continue
-			}
-			break
-		}
-		if errList != nil {
-			t.Fatalf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+		stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
+		if err != nil {
+			t.Logf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+			t.FailNow()
 		}
 
 		// delete
