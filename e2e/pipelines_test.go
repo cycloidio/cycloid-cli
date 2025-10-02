@@ -129,7 +129,7 @@ func TestPipelines(t *testing.T) {
 			"--pipeline", *firstPipeline.Name,
 		})
 		if listErr != nil {
-			t.Fatalf("List job in pipeline '%s' should not err, out: %s\nerr: %s", *firstPipeline.Name, listOut, listErr)
+			t.Fatalf("List job in pipeline %q should not err, out: %s\nerr: %s", *firstPipeline.Name, listOut, listErr)
 		}
 
 		err := json.Unmarshal([]byte(listOut), &jobList)

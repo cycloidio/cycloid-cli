@@ -7,12 +7,10 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/sanity-io/litter"
-	"github.com/spf13/cobra"
-	"github.com/stretchr/testify/assert"
-
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/spf13/cobra"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestGetStackformsVars(t *testing.T) {
@@ -191,7 +189,6 @@ func TestGetStackformsVars(t *testing.T) {
 			t.Fatalf("Empty default should work: %s", err)
 		}
 
-		litter.Dump(parsedVars)
 		value, ok := parsedVars["types"]["string"]["double_quote"].(string)
 		assert.True(t, ok, "type cast to string should be okay")
 		assert.Equal(t, "1", value, "the output should be a string 1 with no quotes")

@@ -23,5 +23,10 @@ func (r HTTPResolver) Interpolate(uri string) (string, error) {
 		return "", err
 	}
 
-	return transformers.Transform(dataStr, ref.Params), nil
+	out, err := transformers.Transform(dataStr, ref.Params)
+	if err != nil {
+		return "", err
+	}
+
+	return out, nil
 }

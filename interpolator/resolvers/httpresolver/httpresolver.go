@@ -5,10 +5,12 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strings"
+	"time"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/interpolator/resolvers"
 	"github.com/cycloidio/cycloid-cli/interpolator/resources"
-	"github.com/itchyny/gojq"
 )
 
 type HTTPResolverOption func(*HTTPResolver) error
@@ -50,6 +52,7 @@ func (r HTTPResolver) Resolve(ref *resources.Reference) ([]any, error) {
 	request.Header.Add("Authorization", "Bearer "+apiKey)
 
 	client := http.DefaultClient
+	client.Timeout = time.Second * 30
 
 	response, err := client.Do(request)
 	if err != nil {
@@ -82,46 +85,9 @@ func (r HTTPResolver) Resolve(ref *resources.Reference) ([]any, error) {
 			details[index] = apiErr.String()
 		}
 
-		return nil, fmt.Errorf("failed to request '%s' to API: %s", ref.Path, apiResponse.Errors.Error())
+		return nil, fmt.Errorf(
+			"failed to request '%s' to API: %w\ndetails: %s",
+			ref.Path, apiResponse.Errors, strings.Join(details, "\n"),
+		)
 	}
-}
-
-func (r HTTPResolver) query(params map[string][]string, data any) ([]any, error) {
-	var query *gojq.Query
-	var err error
-	if paths, ok := params["key"]; ok {
-		query, err = gojq.Parse(paths[0])
-		if err != nil {
-			return nil, fmt.Errorf("invalid key parameter '%s': %s", paths[0], err.Error())
-		}
-	} else {
-		query, err = gojq.Parse(".")
-		if err != nil {
-			return nil, fmt.Errorf("invalid key default parameter: %s", err.Error())
-		}
-	}
-
-	var outData []any
-	var queryErr error
-	iter := query.Run(data)
-	for {
-		v, ok := iter.Next()
-		if !ok {
-			break
-		}
-
-		if err, ok := v.(error); ok {
-			if err, ok := err.(*gojq.HaltError); ok && err.Value() == nil {
-				break
-			}
-			queryErr = fmt.Errorf("%s: %s", queryErr.Error(), err.Error())
-		}
-
-		outData = append(outData, v)
-	}
-	if queryErr != nil {
-		return nil, fmt.Errorf("key query has reported an error: %s", err.Error())
-	}
-
-	return outData, nil
 }

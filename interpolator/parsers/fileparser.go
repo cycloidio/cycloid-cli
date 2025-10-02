@@ -1,26 +1,35 @@
 package parsers
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 
 	"github.com/cycloidio/cycloid-cli/interpolator/resolvers"
 )
 
-func ReplaceFile(resolver resolvers.ResourceResolver, file string) (string, error) {
-	regex := `cy:\/\/[a-zA-Z0-9{}\/]+[[:graph:]]+\b`
-	re, err := regexp.Compile(regex)
-	if err != nil {
-		return "", fmt.Errorf("failed to compile regex '%s': %s", regex, err.Error())
-	}
+var re = regexp.MustCompile(`cy:\/\/[a-zA-Z0-9{}\/]+[[:graph:]]+\b`)
 
-	return re.ReplaceAllStringFunc(file, func(uri string) string {
+func ReplaceFile(resolver resolvers.ResourceResolver, file string) (string, error) {
+	var errList []error
+	output := re.ReplaceAllStringFunc(file, func(uri string) string {
 		out, err := resolver.Interpolate(uri)
 		if err != nil {
-			fmt.Println(err.Error())
-			err = nil
+			errList = append(errList, err)
 			return uri
 		}
 		return out
-	}), nil
+	})
+	err := errors.Join(errList...)
+	if err != nil {
+		return file, fmt.Errorf("failed to interpolate the whole file: %w", err)
+	}
+
+	if output == "" && file != "" {
+		// If the output is empty wile the file has content,
+		// something has got wrong, so send the original instead
+		return file, fmt.Errorf("failed to interpolate file, output is empty: %w", err)
+	}
+
+	return output, nil
 }
