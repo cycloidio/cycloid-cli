@@ -1,6 +1,6 @@
 module github.com/cycloidio/cycloid-cli
 
-go 1.24.6
+go 1.25
 
 require (
 	dario.cat/mergo v1.0.2
@@ -18,7 +18,7 @@ require (
 	github.com/spf13/cobra v1.10.1
 	github.com/spf13/viper v1.20.1
 	github.com/stretchr/testify v1.10.0
-	go.yaml.in/yaml/v4 v4.0.0-rc.1
+	go.yaml.in/yaml/v4 v4.0.0-rc.2
 	golang.org/x/exp v0.0.0-20240222234643-814bf88cf225
 	gopkg.in/yaml.v3 v3.0.1
 )
