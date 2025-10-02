@@ -431,7 +431,7 @@ func GetDescription(cmd *cobra.Command) (string, error) {
 func GetOrg(cmd *cobra.Command) (string, error) {
 	org := v.GetString("org")
 	if org == "" {
-		return "", fmt.Errorf("org is not set, use --org flag or CY_ORG env var, value: %s", org)
+		return "", fmt.Errorf("org is not set, use --org flag or CY_ORG env var, current value: %q", org)
 	}
 
 	return org, nil

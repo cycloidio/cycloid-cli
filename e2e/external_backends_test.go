@@ -23,7 +23,7 @@ func TestExternalBackends(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		cs, err := JsonListExtractFields(cmdOut, "id", "", "")
+		cs, err := JSONListExtractFields(cmdOut, "id", "", "")
 		require.Nil(t, err)
 
 		for _, c := range cs {

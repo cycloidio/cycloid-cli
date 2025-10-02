@@ -39,11 +39,11 @@ func ValidateFSArguments(cmd *cobra.Command, args []string) error {
 	for _, path := range args {
 		file, err := os.Stat(path)
 		if err != nil {
-			return fmt.Errorf("no file was found at path '%s': %s", path, err.Error())
+			return fmt.Errorf("no file was found at path %q: %w", path, err)
 		}
 
 		if file.IsDir() && !recurse {
-			return fmt.Errorf("path '%s' is a directory, add --recurse argument for walking directories", path)
+			return fmt.Errorf("path %q is a directory, add --recurse argument for walking directories", path)
 		}
 	}
 
@@ -64,4 +64,16 @@ func AddInPlaceFlag(cmd *cobra.Command) string {
 
 func GetInPlaceFlag(cmd *cobra.Command) (bool, error) {
 	return cmd.Flags().GetBool("in-place")
+}
+
+func AddOutputDirectoryFlag(cmd *cobra.Command) string {
+	flagName := "directory"
+	cmd.Flags().StringP(flagName, "d", "", "add an output directory path")
+	cmd.MarkFlagDirname(flagName)
+	cmd.MarkFlagsMutuallyExclusive("in-place")
+	return flagName
+}
+
+func GetOutputDirectoryFlag(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("directory")
 }

@@ -85,7 +85,7 @@ func getConfig(cmd *cobra.Command, args []string) error {
 
 	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, *useCase)
 	if err != nil {
-		return fmt.Errorf("failed to parse default form values for component '%s' with use-case '%s': %s", component, *useCase, err)
+		return fmt.Errorf("failed to parse default form values for component %q with use-case %q: %w", component, *useCase, err)
 	}
 
 	config, err := cyargs.GetStackformsVars(cmd, useCaseConfig)

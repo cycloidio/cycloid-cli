@@ -44,6 +44,6 @@ func completion(cmd *cobra.Command, args []string) error {
 	case "powershell", "pwsh":
 		return cmd.Root().GenPowerShellCompletionWithDesc(cmd.OutOrStdout())
 	default:
-		return fmt.Errorf("invalid shell argument '%s' valid options are: %v", args[0], supportedShells)
+		return fmt.Errorf("invalid shell argument %q valid options are: %v", args[0], supportedShells)
 	}
 }

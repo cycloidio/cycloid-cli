@@ -15,7 +15,7 @@ func TestComponentPipeline(t *testing.T) {
 		*config.Project.Canonical, *config.Environment.Canonical, t.Name(), config.Org+":"+pipelineTestStackCanonical, pipelineTestStackUseCase, pipelineTestDefaultVars,
 	)
 	if err != nil {
-		t.Errorf("failed to setup base component for test '%s': %s", t.Name(), err)
+		t.Errorf("failed to setup base component for test %q: %v", t.Name(), err)
 	}
 
 	t.Run("GetPipeline", func(t *testing.T) {

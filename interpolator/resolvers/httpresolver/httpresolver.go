@@ -23,7 +23,7 @@ func NewHTTPResolver(options ...HTTPResolverOption) (*HTTPResolver, error) {
 	for _, option := range options {
 		err := option(resolver)
 		if err != nil {
-			return nil, fmt.Errorf("failed to configure the HTTP Resolver: %s", err.Error())
+			return nil, fmt.Errorf("failed to configure the HTTP Resolver: %w", err)
 		}
 	}
 
@@ -46,7 +46,7 @@ func (r HTTPResolver) Resolve(ref *resources.Reference) ([]any, error) {
 		nil,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse API URL %q: %s", api.Config.URL, err)
+		return nil, fmt.Errorf("failed to parse API URL %q: %w", api.Config.URL, err)
 	}
 	request.Header.Add("Accept", "application/json")
 	request.Header.Add("Authorization", "Bearer "+apiKey)
@@ -56,19 +56,19 @@ func (r HTTPResolver) Resolve(ref *resources.Reference) ([]any, error) {
 
 	response, err := client.Do(request)
 	if err != nil {
-		return nil, fmt.Errorf("failed to fetch resource with ref '%s': %s", ref.Path, err.Error())
+		return nil, fmt.Errorf("failed to fetch resource with ref %q: %w", ref.Path, err)
 	}
 	defer response.Body.Close()
 
 	body, err := io.ReadAll(response.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response body: %s", err.Error())
+		return nil, fmt.Errorf("failed to read response body: %q", err)
 	}
 
 	var apiResponse *APIResponse
 	err = json.Unmarshal(body, &apiResponse)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse JSON response: %s", err.Error())
+		return nil, fmt.Errorf("failed to parse JSON response: %q", err)
 	}
 
 	switch {
@@ -86,8 +86,8 @@ func (r HTTPResolver) Resolve(ref *resources.Reference) ([]any, error) {
 		}
 
 		return nil, fmt.Errorf(
-			"failed to request '%s' to API: %w\ndetails: %s",
-			ref.Path, apiResponse.Errors, strings.Join(details, "\n"),
+			"failed to request %q to API details: %s: %w",
+			ref.Path, strings.Join(details, "\n"), apiResponse.Errors,
 		)
 	}
 }

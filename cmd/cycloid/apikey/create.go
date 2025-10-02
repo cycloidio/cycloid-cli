@@ -55,7 +55,7 @@ func create(cmd *cobra.Command, args []string) error {
 	apiKey, _ = cyargs.GetAPIKeyCanonical(cmd)
 	apiKeyName, _ = cyargs.GetAPIKeyName(cmd)
 	if apiKey == "" && apiKeyName == "" {
-		return errors.Errorf("Missing either '--%s' or '--%s' flags: %v", apiKeyFlag, apiKeyNameFlag, err)
+		return fmt.Errorf("missing either '--%s' or '--%s' flags", apiKeyFlag, apiKeyNameFlag)
 	}
 
 	if apiKey == "" {
@@ -84,7 +84,7 @@ func create(cmd *cobra.Command, args []string) error {
 	var rulesModel []*models.NewRule
 	err = json.Unmarshal([]byte(rules), &rulesModel)
 	if err != nil {
-		return fmt.Errorf("failed to read rules argument as JSON: %s", err)
+		return fmt.Errorf("failed to read rules argument as JSON: %w", err)
 	}
 
 	output, err := cyargs.GetOutput(cmd)
@@ -100,7 +100,7 @@ func create(cmd *cobra.Command, args []string) error {
 
 	key, err := m.CreateAPIKey(org, apiKey, description, owner, &apiKeyName, rulesModel)
 	if err != nil {
-		return fmt.Errorf("failed to request API Key: %s", err)
+		return fmt.Errorf("failed to request API Key: %w", err)
 	}
 
 	return printer.SmartPrint(p, key, nil, "", printer.Options{}, cmd.OutOrStdout())

@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	strfmt "github.com/go-openapi/strfmt"
-	"github.com/sanity-io/litter"
 
 	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -77,7 +76,7 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 
 	err := body.Validate(strfmt.Default)
 	if err != nil {
-		return nil, fmt.Errorf("failed to validate body input for createProject, payload:\n%s\n%v", litter.Sdump(body), err)
+		return nil, fmt.Errorf("failed to validate body input for createProject: %w", err)
 	}
 	params.WithBody(body)
 

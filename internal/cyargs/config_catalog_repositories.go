@@ -97,7 +97,7 @@ func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
 
 	org, err := GetOrg(cmd)
 	if err != nil {
-		return "", fmt.Errorf("failed to get default config repository, missing org argument: %s", err)
+		return "", fmt.Errorf("failed to get default config repository, missing org argument: %w", err)
 	}
 
 	configRepository, _ := GetConfigRepository(cmd)
@@ -109,7 +109,7 @@ func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
 	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
 	catalogRepos, err := m.ListConfigRepositories(org)
 	if err != nil {
-		return "", fmt.Errorf("failed to get the default config repository: %s", err)
+		return "", fmt.Errorf("failed to get the default config repository: %w", err)
 	}
 
 	index := slices.IndexFunc(catalogRepos, func(c *models.ConfigRepository) bool {
@@ -117,7 +117,7 @@ func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
 	})
 	if index == -1 {
 		docURL := "https://docs.cycloid.io/reference/config-and-catalog-repository/"
-		return "", fmt.Errorf("error: seems like your org '%s' does not have a default config repository, please add one using this doc: '%s'", org, docURL)
+		return "", fmt.Errorf("error: seems like your org %q does not have a default config repository, please add one using this doc: %q", org, docURL)
 	}
 
 	return *catalogRepos[index].Canonical, nil

@@ -143,15 +143,19 @@ func NewConfig(testName string) (*Config, error) {
 		}
 	}
 
-	_, err = m.CreateConfigRepository(config.Org,
+	currentConfigRepo, err := m.CreateConfigRepository(config.Org,
 		*config.ConfigRepo.Canonical, *config.ConfigRepo.Canonical, *config.ConfigRepo.URL,
 		config.ConfigRepo.Branch, localGitCredential, *config.ConfigRepo.Default,
 	)
 	if errors.As(err, &apiErr) {
-		if apiErr.HTTPCode != "409" {
-			return config, fmt.Errorf("failed to setup config repo: %w", err)
+		var getErr error
+		currentConfigRepo, getErr = m.GetConfigRepository(config.Org, configRepository)
+		if apiErr.HTTPCode != "409" || getErr != nil {
+			return config, fmt.Errorf("failed to setup config repo: %w%w", err, getErr)
 		}
 	}
+
+	config.ConfigRepo = currentConfigRepo
 
 	_, err = m.CreateCatalogRepository(config.Org, *config.CatalogRepo.Canonical,
 		*config.CatalogRepo.URL, config.CatalogRepo.Branch, "", "local", "",
@@ -223,13 +227,13 @@ func (config *Config) NewTestProject(identifier string) (*models.Project, error)
 
 	out, err := m.CreateProject(config.Org, project, project, description, configRepository, owner, team, color, icon)
 	if err != nil {
-		return nil, fmt.Errorf("failed to setup test project: %s", err)
+		return nil, fmt.Errorf("failed to setup test project: %w", err)
 	}
 
 	config.AppendCleanup(func() {
 		err := m.DeleteProject(config.Org, project)
 		if err != nil {
-			log.Fatalf("cannot cleanup projet '%s' for test '%s': %s", project, identifier, err)
+			log.Fatalf("cannot cleanup projet %q for test %q: %v", project, identifier, err)
 			return
 		}
 	})
@@ -250,13 +254,13 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 
 	out, err := m.CreateEnv(config.Org, project, env, env, color)
 	if err != nil {
-		return nil, fmt.Errorf("failed to setup test environment: %s", err)
+		return nil, fmt.Errorf("failed to setup test environment: %w", err)
 	}
 
 	config.AppendCleanup(func() {
 		err := m.DeleteEnv(config.Org, project, env)
 		if err != nil {
-			log.Fatalf("cannot cleanup env '%s' for test '%s': %s", env, identifier, err)
+			log.Fatalf("cannot cleanup env %q for test %q: %v", env, identifier, err)
 			return
 		}
 	})
@@ -280,7 +284,7 @@ func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCa
 
 	config.AppendCleanup(func() {
 		if err := m.DeleteComponent(config.Org, project, env, component); err != nil {
-			log.Printf("failed to cleanup component for test '%s': %s", identifier, err)
+			log.Printf("failed to cleanup component for test %q: %v", identifier, err)
 		}
 	})
 
@@ -308,14 +312,14 @@ func (config *Config) NewTestChildOrg(parent, child string) (func(), error) {
 	deferFunc := func() {
 		err := m.DeleteOrganization(child)
 		if err != nil {
-			log.Fatalf("Failed to delete org '%s': %v", child, err)
+			log.Fatalf("Failed to delete org %q: %v", child, err)
 			return
 		}
 	}
 
 	_, err := m.CreateOrganizationChild(parent, child, nil)
 	if err != nil {
-		return deferFunc, fmt.Errorf("failed to create child org '%s': %v", child, err)
+		return deferFunc, fmt.Errorf("failed to create child org %q: %v", child, err)
 	}
 
 	return deferFunc, nil

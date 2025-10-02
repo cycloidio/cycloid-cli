@@ -13,12 +13,12 @@ func Query(params map[string][]string, data any) ([]any, error) {
 	if paths, ok := params["key"]; ok {
 		query, err = gojq.Parse(paths[0])
 		if err != nil {
-			return nil, fmt.Errorf("invalid key parameter '%s': %s", paths[0], err.Error())
+			return nil, fmt.Errorf("invalid key parameter %q: %w", paths[0], err)
 		}
 	} else {
 		query, err = gojq.Parse(".")
 		if err != nil {
-			return nil, fmt.Errorf("invalid key default parameter: %s", err.Error())
+			return nil, fmt.Errorf("invalid key default parameter: %w", err)
 		}
 	}
 

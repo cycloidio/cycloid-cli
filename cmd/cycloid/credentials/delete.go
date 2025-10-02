@@ -49,7 +49,7 @@ func del(cmd *cobra.Command, args []string) error {
 	if credentialPath != "" && credentialFlag == "" {
 		credList, err := m.ListCredentials(org, "")
 		if err != nil {
-			return fmt.Errorf("failed to fetch cred list to match credential by path '%s': %w", credentialPath, err)
+			return fmt.Errorf("failed to fetch cred list to match credential by path %q: %w", credentialPath, err)
 		}
 
 		index := slices.IndexFunc(credList, func(c *models.CredentialSimple) bool {
@@ -60,7 +60,7 @@ func del(cmd *cobra.Command, args []string) error {
 			}
 		})
 		if index == -1 || credList[index].Canonical == nil {
-			return fmt.Errorf("credential with path '%s' not found in org '%s'", credentialPath, org)
+			return fmt.Errorf("credential with path %q not found in org %q", credentialPath, org)
 		}
 
 		credentialFlag = *credList[index].Canonical

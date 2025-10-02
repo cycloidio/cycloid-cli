@@ -65,7 +65,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 
 	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfig, *useCase)
 	if err != nil {
-		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", stackRef, *useCase, err)
+		return fmt.Errorf("failed to parse default value for stack %q with use-case %q: %w", stackRef, *useCase, err)
 	}
 
 	inputs, err := cyargs.GetStackformsVars(cmd, useCaseConfig)

@@ -25,7 +25,7 @@ func TestKpis(t *testing.T) {
 			"list",
 		})
 		require.Nil(t, cmdErr)
-		cs, err := JsonListExtractFields(cmdOut, "canonical", "canonical", "^test-.*")
+		cs, err := JSONListExtractFields(cmdOut, "canonical", "canonical", "^test-.*")
 		require.Nil(t, err)
 
 		for _, c := range cs {
