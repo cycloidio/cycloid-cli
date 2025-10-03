@@ -28,6 +28,9 @@ type ServiceCatalogConfig struct {
 	// Required: true
 	CloudProvider *string `json:"cloud_provider"`
 
+	// custom
+	Custom *SCConfigCustomConfig `json:"custom,omitempty"`
+
 	// description
 	// Required: true
 	Description *string `json:"description"`
@@ -56,6 +59,10 @@ func (m *ServiceCatalogConfig) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCloudProvider(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateCustom(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -108,6 +115,25 @@ func (m *ServiceCatalogConfig) validateCloudProvider(formats strfmt.Registry) er
 
 	if err := validate.Required("cloud_provider", "body", m.CloudProvider); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalogConfig) validateCustom(formats strfmt.Registry) error {
+	if swag.IsZero(m.Custom) { // not required
+		return nil
+	}
+
+	if m.Custom != nil {
+		if err := m.Custom.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("custom")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("custom")
+			}
+			return err
+		}
 	}
 
 	return nil
@@ -197,6 +223,10 @@ func (m *ServiceCatalogConfig) ContextValidate(ctx context.Context, formats strf
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateCustom(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateForms(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -228,6 +258,27 @@ func (m *ServiceCatalogConfig) contextValidateAnsible(ctx context.Context, forma
 			return ce.ValidateName("ansible")
 		}
 		return err
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalogConfig) contextValidateCustom(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Custom != nil {
+
+		if swag.IsZero(m.Custom) { // not required
+			return nil
+		}
+
+		if err := m.Custom.ContextValidate(ctx, formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("custom")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("custom")
+			}
+			return err
+		}
 	}
 
 	return nil
