@@ -102,6 +102,8 @@ type FormEntity struct {
 	//   * cy_cred
 	//     * 'cred_types' (list): reduce the types of credentials retrieved to that list. See supported types of credentials
 	//     * 'display_keys' (bool): to specify if the path + key have to be written or only the path
+	//     * 'format' (enum): credential format, one of: 'path' | 'uri'. Defaults to path. Only credentials in URI format can be shared between technologies.
+	//     * 'uri_parameters' (map): optional query parameters that should be encoded and added to the resulting credential URI by the client. For example, they may be used to specify the output format (e.g., JSON). Applies only if format='uri'.
 	//   * radio
 	//     * 'orientation' (string): whether you want to display it in an 'horizontal' or 'vertical' way
 	//   * cy_inventory_resource
