@@ -113,6 +113,10 @@ type ClientService interface {
 
 	GetEventsActionsAndEntities(params *GetEventsActionsAndEntitiesParams, opts ...ClientOption) (*GetEventsActionsAndEntitiesOK, error)
 
+	GetHealthCheck(params *GetHealthCheckParams, opts ...ClientOption) (*GetHealthCheckOK, error)
+
+	GetMetrics(params *GetMetricsParams, opts ...ClientOption) (*GetMetricsOK, error)
+
 	GetServiceStatus(params *GetServiceStatusParams, opts ...ClientOption) (*GetServiceStatusOK, error)
 
 	GetStatus(params *GetStatusParams, opts ...ClientOption) (*GetStatusOK, error)
@@ -266,6 +270,82 @@ func (a *Client) GetEventsActionsAndEntities(params *GetEventsActionsAndEntities
 	// unexpected success response
 	unexpectedSuccess := result.(*GetEventsActionsAndEntitiesDefault)
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetHealthCheck Returns the health status of internal services as Prometheus-formatted metrics. Each service is represented by a gauge with value 1 (up) or 0 (down).
+*/
+func (a *Client) GetHealthCheck(params *GetHealthCheckParams, opts ...ClientOption) (*GetHealthCheckOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetHealthCheckParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getHealthCheck",
+		Method:             "GET",
+		PathPattern:        "/health_check",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetHealthCheckReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetHealthCheckOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for getHealthCheck: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
+GetMetrics Exposes process, runtime, and application metrics in Prometheus text exposition format. Metrics are collected from the Prometheus registry.
+*/
+func (a *Client) GetMetrics(params *GetMetricsParams, opts ...ClientOption) (*GetMetricsOK, error) {
+	// TODO: Validate the params before sending
+	if params == nil {
+		params = NewGetMetricsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getMetrics",
+		Method:             "GET",
+		PathPattern:        "/metrics",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetMetricsReader{formats: a.formats},
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+	success, ok := result.(*GetMetricsOK)
+	if ok {
+		return success, nil
+	}
+	// unexpected success response
+	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for getMetrics: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
 }
 
 /*

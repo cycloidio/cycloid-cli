@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: "Update client to version v6.3.9"
+time: 2025-09-29T07:30:18.545114865+00:00
+custom:
+  DETAILS: ""
+  PR: "391"
+  TYPE: CLI
