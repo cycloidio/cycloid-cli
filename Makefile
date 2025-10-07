@@ -1,6 +1,7 @@
 -include .env
 -include .api_key
 
+
 ifeq ($(GOCACHE),)
 	GOCACHE := $(HOME)/.cache/go-build
 endif
