@@ -309,9 +309,5 @@ func UnixTimestampToLocalTime(unixTime *uint64) string {
 // return false otherwise
 func DetectStdinInput() bool {
 	stats, _ := os.Stdin.Stat()
-	if (stats.Mode() & os.ModeCharDevice) != 0 {
-		return false
-	}
-
-	return true
+	return (stats.Mode() & os.ModeCharDevice) != 0
 }

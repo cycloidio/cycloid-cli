@@ -1,4 +1,4 @@
-package catalog_repositories
+package configrepositories
 
 import (
 	"github.com/pkg/errors"
@@ -15,12 +15,12 @@ func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "update",
 		Args:  cobra.NoArgs,
-		Short: "update a catalog repository",
+		Short: "update a config repository",
 		Example: `
-	# update a catalog repository
-	cy  --org my-org cr update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-catalog-repository
+	# update a config repository
+	cy  --org my-org config-repo update --branch my-branch --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-config-repo
 `,
-		RunE: updateCatalogRepository,
+		RunE: updateConfigRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagCan, cmd)
@@ -28,13 +28,14 @@ func NewUpdateCommand() *cobra.Command {
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
 	common.RequiredFlag(WithFlagURL, cmd)
+	WithFlagDefault(cmd)
 
 	//TODO : dont Required flags and if not set, use value from the getConfigRepository
 
 	return cmd
 }
 
-func updateCatalogRepository(cmd *cobra.Command, args []string) error {
+func updateConfigRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -63,6 +64,11 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	setDefault, err := cmd.Flags().GetBool("default")
+	if err != nil {
+		return err
+	}
+
 	cred, err := cmd.Flags().GetString("cred")
 	if err != nil {
 		return err
@@ -79,6 +85,6 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred)
-	return printer.SmartPrint(p, cr, err, "unable to update catalog repository", printer.Options{}, cmd.OutOrStdout())
+	cr, err := m.UpdateConfigRepository(org, can, cred, name, url, branch, setDefault)
+	return printer.SmartPrint(p, cr, err, "unable to update config repository", printer.Options{}, cmd.OutOrStdout())
 }

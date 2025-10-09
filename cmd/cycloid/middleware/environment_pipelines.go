@@ -14,7 +14,7 @@ func (m *middleware) GetEnvPipelines(org, project, env string) ([]*models.Pipeli
 
 	resp, err := m.api.EnvironmentPipelines.GetEnvironmentPipelines(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

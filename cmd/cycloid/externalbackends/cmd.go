@@ -1,4 +1,4 @@
-package external_backends
+package externalbackends
 
 import (
 	"github.com/spf13/cobra"

@@ -10,13 +10,13 @@ import (
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog_repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalogrepositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/config_repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/configrepositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/credentials"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environments"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/external_backends"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/externalbackends"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/infrapolicies"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
@@ -108,11 +108,11 @@ func AttachCommands(cmd *cobra.Command) {
 		root.NewCompletionCmd(),
 		root.NewGetCommand(),
 		apikey.NewCommands(),
-		catalog_repositories.NewCommands(),
-		config_repositories.NewCommands(),
+		catalogrepositories.NewCommands(),
+		configrepositories.NewCommands(),
 		credentials.NewCommands(),
 		events.NewCommands(),
-		external_backends.NewCommands(),
+		externalbackends.NewCommands(),
 		infrapolicies.NewCommands(),
 		members.NewCommands(),
 		organizations.NewCommands(),

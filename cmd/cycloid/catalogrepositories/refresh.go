@@ -1,4 +1,4 @@
-package catalog_repositories
+package catalogrepositories
 
 import (
 	"github.com/pkg/errors"
@@ -11,16 +11,17 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewDeleteCommand() *cobra.Command {
+func NewRefreshCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
+		Use:   "refresh",
 		Args:  cobra.NoArgs,
-		Short: "delete a catalog repository",
+		Short: "refresh a catalog repository",
+		Long:  "refresh action can be used if the .cycloid.yml definition has been updated",
 		Example: `
-	# delete a catalog repository with the canonical my-catalog-repository
-	cy  --org my-org catalog-repository delete --canonical my-catalog-repository
+	# refresh a catalog repository with the canonical my-catalog-repository
+	cy --org my-org catalog-repo refresh --canonical my-catalog-repository
 `,
-		RunE: deleteCatalogRepository,
+		RunE: refreshCatalogRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagCan, cmd)
@@ -28,7 +29,7 @@ func NewDeleteCommand() *cobra.Command {
 	return cmd
 }
 
-func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
+func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -37,7 +38,7 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	canonical, err := cmd.Flags().GetString("canonical")
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -53,6 +54,6 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteCatalogRepository(org, canonical)
-	return printer.SmartPrint(p, nil, err, "unable to delete catalog repository", printer.Options{}, cmd.OutOrStdout())
+	cr, err := m.RefreshCatalogRepository(org, can)
+	return printer.SmartPrint(p, cr, err, "unable to refresh catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

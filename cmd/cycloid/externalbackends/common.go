@@ -1,4 +1,4 @@
-package external_backends
+package externalbackends
 
 import "github.com/spf13/cobra"
 
@@ -59,7 +59,7 @@ func WithFlagDefault(cmd *cobra.Command) string {
 	return flagName
 }
 
-func WithFlagUrl(cmd *cobra.Command) string {
+func WithFlagURL(cmd *cobra.Command) string {
 	flagName := "url"
 	cmd.Flags().StringSliceVar(&urls, flagName, nil, "urls")
 	return flagName

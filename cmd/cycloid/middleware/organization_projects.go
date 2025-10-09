@@ -15,7 +15,7 @@ func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
 
 	resp, err := m.api.OrganizationProjects.GetProjects(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	p := resp.GetPayload()
@@ -31,7 +31,7 @@ func (m *middleware) ListProjectsEnv(org, project string) ([]*models.Environment
 
 	resp, err := m.api.OrganizationProjects.GetProjectEnvironments(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	p := resp.GetPayload()
@@ -45,7 +45,7 @@ func (m *middleware) GetProject(org, project string) (*models.Project, error) {
 
 	resp, err := m.api.OrganizationProjects.GetProject(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	p := resp.GetPayload()
@@ -82,7 +82,7 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 
 	resp, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -113,7 +113,7 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 	params.SetBody(body)
 	resp, err := m.api.OrganizationProjects.UpdateProject(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -128,7 +128,7 @@ func (m *middleware) DeleteProject(org, project string) error {
 
 	_, err := m.api.OrganizationProjects.DeleteProject(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 	return nil
 }

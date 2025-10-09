@@ -1,4 +1,4 @@
-package config_repositories
+package catalogrepositories
 
 import (
 	"github.com/pkg/errors"
@@ -15,18 +15,18 @@ func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "list",
 		Args:  cobra.NoArgs,
-		Short: "list the config repositories",
+		Short: "list the catalog repositories",
 		Example: `
-	# list the config repositories in the org 'my-org' and display the result in JSON format
-	cy  --org my-org config-repo list -o json
+	# list the catalog repositories in the org 'my-org' and display the result in JSON format
+	cy --org my-org cr list -o json
 `,
-		RunE: listConfigRepositories,
+		RunE: listCatalogRepositories,
 	}
 
 	return cmd
 }
 
-func listConfigRepositories(cmd *cobra.Command, args []string) error {
+func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -34,6 +34,7 @@ func listConfigRepositories(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
@@ -45,6 +46,6 @@ func listConfigRepositories(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	crs, err := m.ListConfigRepositories(org)
-	return printer.SmartPrint(p, crs, err, "unable to list config repository", printer.Options{}, cmd.OutOrStdout())
+	crs, err := m.ListCatalogRepositories(org)
+	return printer.SmartPrint(p, crs, err, "unable to list catalog repositories", printer.Options{}, cmd.OutOrStdout())
 }

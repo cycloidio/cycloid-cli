@@ -16,7 +16,7 @@ func (m *middleware) GetBuilds(org, project, env, component, pipeline, job strin
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuilds(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -36,7 +36,7 @@ func (m *middleware) GetBuild(org, project, env, component, pipeline, job, build
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuild(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -55,7 +55,7 @@ func (m *middleware) CreateBuild(org, project, env, component, pipeline, job str
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.CreateBuild(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -75,7 +75,7 @@ func (m *middleware) RerunBuild(org, project, env, component, pipeline, job, bui
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.RerunBuild(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -95,7 +95,7 @@ func (m *middleware) AbortBuild(org, project, env, component, pipeline, job, bui
 
 	_, err := m.api.ComponentPipelinesJobsBuilds.AbortBuild(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -113,7 +113,7 @@ func (m *middleware) GetBuildEvents(org, project, env, component, pipeline, buil
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuildEvents(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	return &resp.ContentType, nil
@@ -130,7 +130,7 @@ func (m *middleware) GetBuildPlan(org, project, env, component, pipeline, job, b
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuildPlan(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -149,7 +149,7 @@ func (m *middleware) GetBuildPreparation(org, project, env, component, pipeline,
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuildPreparation(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -168,7 +168,7 @@ func (m *middleware) GetBuildResources(org, project, env, component, pipeline, j
 
 	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuildResources(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

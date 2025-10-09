@@ -55,7 +55,7 @@ package middleware
 // 	params.SetBody(body)
 // 	resp, err := m.api.OrganizationKpis.CreateKpi(params, m.api.Credentials(&org))
 // 	if err != nil {
-// 		return nil, NewApiError(err)
+// 		return nil, NewAPIError(err)
 // 	}
 //
 // 	p := resp.GetPayload()
@@ -76,7 +76,7 @@ package middleware
 //
 // 	resp, err := m.api.OrganizationKpis.GetKpis(params, m.api.Credentials(&org))
 // 	if err != nil {
-// 		return nil, NewApiError(err)
+// 		return nil, NewAPIError(err)
 // 	}
 //
 // 	p := resp.GetPayload()
@@ -92,7 +92,7 @@ package middleware
 //
 // 	_, err := m.api.OrganizationKpis.DeleteKpi(params, m.api.Credentials(&org))
 // 	if err != nil {
-// 		return NewApiError(err)
+// 		return NewAPIError(err)
 // 	}
 // 	return nil
 // }

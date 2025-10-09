@@ -1,4 +1,4 @@
-package config_repositories
+package catalogrepositories
 
 import (
 	"github.com/pkg/errors"
@@ -11,29 +11,30 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewCreateCommand() *cobra.Command {
+func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "create",
+		Use:   "update",
 		Args:  cobra.NoArgs,
-		Short: "create a config repository",
+		Short: "update a catalog repository",
 		Example: `
-	# create a config repository and set up as default
-	cy --org my-org config-repo create --branch config --cred my-cred --url "git@github.com:my/repo.git" --name default-config --default
+	# update a catalog repository
+	cy  --org my-org cr update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-catalog-repository
 `,
-		RunE: createConfigRepository,
+		RunE: updateCatalogRepository,
 	}
 
+	common.RequiredFlag(common.WithFlagCan, cmd)
 	common.RequiredFlag(common.WithFlagCred, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
 	common.RequiredFlag(WithFlagURL, cmd)
-	cyargs.AddConfigRepositoryFlag(cmd)
-	WithFlagDefault(cmd)
+
+	//TODO : dont Required flags and if not set, use value from the getConfigRepository
 
 	return cmd
 }
 
-func createConfigRepository(cmd *cobra.Command, args []string) error {
+func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -42,7 +43,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	canonical, err := cyargs.GetConfigRepository(cmd)
+	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -52,21 +53,12 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if name == "" {
-		name = canonical
-	}
-
 	url, err := cmd.Flags().GetString("url")
 	if err != nil {
 		return err
 	}
 
 	branch, err := cmd.Flags().GetString("branch")
-	if err != nil {
-		return err
-	}
-
-	setDefault, err := cmd.Flags().GetBool("default")
 	if err != nil {
 		return err
 	}
@@ -87,6 +79,6 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.CreateConfigRepository(org, name, canonical, url, branch, cred, setDefault)
-	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, cmd.OutOrStdout())
+	cr, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred)
+	return printer.SmartPrint(p, cr, err, "unable to update catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

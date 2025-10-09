@@ -1,4 +1,4 @@
-package config_repositories
+package configrepositories
 
 import (
 	"github.com/pkg/errors"
@@ -11,31 +11,29 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewUpdateCommand() *cobra.Command {
+func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "update",
+		Use:   "create",
 		Args:  cobra.NoArgs,
-		Short: "update a config repository",
+		Short: "create a config repository",
 		Example: `
-	# update a config repository
-	cy  --org my-org config-repo update --branch my-branch --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-config-repo
+	# create a config repository and set up as default
+	cy --org my-org config-repo create --branch config --cred my-cred --url "git@github.com:my/repo.git" --name default-config --default
 `,
-		RunE: updateConfigRepository,
+		RunE: createConfigRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagCan, cmd)
 	common.RequiredFlag(common.WithFlagCred, cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
 	common.RequiredFlag(WithFlagURL, cmd)
+	cyargs.AddConfigRepositoryFlag(cmd)
 	WithFlagDefault(cmd)
-
-	//TODO : dont Required flags and if not set, use value from the getConfigRepository
 
 	return cmd
 }
 
-func updateConfigRepository(cmd *cobra.Command, args []string) error {
+func createConfigRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -44,7 +42,7 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	can, err := cmd.Flags().GetString("canonical")
+	canonical, err := cyargs.GetConfigRepository(cmd)
 	if err != nil {
 		return err
 	}
@@ -52,6 +50,10 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 	name, err := cmd.Flags().GetString("name")
 	if err != nil {
 		return err
+	}
+
+	if name == "" {
+		name = canonical
 	}
 
 	url, err := cmd.Flags().GetString("url")
@@ -85,6 +87,6 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.UpdateConfigRepository(org, can, cred, name, url, branch, setDefault)
-	return printer.SmartPrint(p, cr, err, "unable to update config repository", printer.Options{}, cmd.OutOrStdout())
+	cr, err := m.CreateConfigRepository(org, name, canonical, url, branch, cred, setDefault)
+	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, cmd.OutOrStdout())
 }

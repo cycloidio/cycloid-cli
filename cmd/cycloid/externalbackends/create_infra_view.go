@@ -1,4 +1,4 @@
-package external_backends
+package externalbackends
 
 import (
 	"fmt"
@@ -123,7 +123,7 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 			Object: bucketpath,
 		}
 	default:
-		return fmt.Errorf("Unexpected backend name")
+		return fmt.Errorf("unexpected backend name")
 	}
 
 	// fetch the printer from the factory

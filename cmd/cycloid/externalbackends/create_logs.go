@@ -1,4 +1,4 @@
-package external_backends
+package externalbackends
 
 import (
 	"fmt"
@@ -122,7 +122,7 @@ func createLogs(cmd *cobra.Command, args []string) error {
 		}
 
 	default:
-		return fmt.Errorf("Unexpected backend name")
+		return fmt.Errorf("unexpected backend name")
 	}
 
 	// fetch the printer from the factory
