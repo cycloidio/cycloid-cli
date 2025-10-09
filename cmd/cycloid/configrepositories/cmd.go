@@ -1,4 +1,4 @@
-package config_repositories
+package configrepositories
 
 import (
 	"github.com/spf13/cobra"

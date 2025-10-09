@@ -1,4 +1,4 @@
-package catalog_repositories
+package catalogrepositories
 
 import (
 	"github.com/pkg/errors"

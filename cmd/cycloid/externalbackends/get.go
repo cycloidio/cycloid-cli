@@ -1,4 +1,4 @@
-package external_backends
+package externalbackends
 
 import (
 	"fmt"
@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func NewUpdateCommand() *cobra.Command {
+func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:    "update",
+		Use:    "get",
 		Args:   cobra.NoArgs,
 		Hidden: true,
 		Short:  "not implemented yet",
@@ -22,8 +22,6 @@ func NewUpdateCommand() *cobra.Command {
 	return cmd
 }
 
-// Update will not be available on logs, only create/delete as it's too complexe
-
 // /organizations/{organization_canonical}/external_backends/{external_backend_id}
-// put: updateExternalBackend
-// Update an External Backend
+// get: getExternalBackend
+// Get the external backend

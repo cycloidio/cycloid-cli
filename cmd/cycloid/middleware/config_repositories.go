@@ -13,7 +13,7 @@ func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigReposit
 
 	resp, err := m.api.OrganizationConfigRepositories.ListConfigRepositories(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -29,7 +29,7 @@ func (m *middleware) GetConfigRepository(org, configRepo string) (*models.Config
 	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepository(params, m.api.Credentials(&org))
 
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -44,7 +44,7 @@ func (m *middleware) DeleteConfigRepository(org, configRepo string) error {
 
 	_, err := m.api.OrganizationConfigRepositories.DeleteConfigRepository(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 	return nil
 }
@@ -77,7 +77,7 @@ func (m *middleware) CreateConfigRepository(org, name, canonical, url, branch, c
 
 	resp, err := m.api.OrganizationConfigRepositories.CreateConfigRepository(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -107,7 +107,7 @@ func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, br
 	resp, err := m.api.OrganizationConfigRepositories.UpdateConfigRepository(params, m.api.Credentials(&org))
 
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

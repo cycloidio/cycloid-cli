@@ -21,7 +21,7 @@ func (m *middleware) PausePipeline(org, project, env, component, pipelineName st
 
 	_, err := m.api.ComponentPipelines.PausePipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -37,7 +37,7 @@ func (m *middleware) UnpausePipeline(org, project, env, component, pipelineName 
 
 	_, err := m.api.ComponentPipelines.UnpausePipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -65,7 +65,7 @@ func (m *middleware) DiffPipeline(org, project, env, component, pipelineName, ya
 
 	resp, err := m.api.ComponentPipelines.DiffPipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -100,7 +100,7 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, component, yaml
 	params.SetBody(body)
 	resp, err := m.api.ComponentPipelines.CreatePipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -122,7 +122,7 @@ func (m *middleware) RenamePipeline(org, project, env, component, pipeline, newN
 
 	_, err := m.api.ComponentPipelines.RenamePipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -138,7 +138,7 @@ func (m *middleware) SyncedPipeline(org, project, env, component, pipeline strin
 
 	resp, err := m.api.ComponentPipelines.SyncedPipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -159,7 +159,7 @@ func (m *middleware) GetPipeline(org, project, env, component, pipeline string) 
 
 	resp, err := m.api.ComponentPipelines.GetPipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -192,7 +192,7 @@ func (m *middleware) UpdatePipeline(org, project, env, component, pipelineName, 
 
 	resp, err := m.api.ComponentPipelines.UpdatePipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -213,7 +213,7 @@ func (m *middleware) DeletePipeline(org, project, env, component, pipeline strin
 
 	_, err := m.api.ComponentPipelines.DeletePipeline(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil

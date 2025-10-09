@@ -16,7 +16,7 @@ func (m *middleware) GetEnv(org, project, env string) (*models.Environment, erro
 
 	resp, err := m.api.OrganizationProjects.GetEnvironment(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -44,7 +44,7 @@ func (m *middleware) CreateEnv(org, project, env, envName, color string) (*model
 
 	resp, err := m.api.OrganizationProjects.CreateEnvironment(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -66,7 +66,7 @@ func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*model
 
 	resp, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -82,7 +82,7 @@ func (m *middleware) DeleteEnv(org, project, env string) error {
 
 	_, err := m.api.OrganizationProjects.DeleteEnvironment(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil

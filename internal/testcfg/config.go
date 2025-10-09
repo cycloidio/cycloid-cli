@@ -196,15 +196,7 @@ func NewConfig(testName string) (*Config, error) {
 	if err != nil {
 		return config, err
 	}
-
-	// Add a random value in forms to avoid git conflict
-	if vars != nil {
-		common.UpdateMapField("types.tests.string", RandomCanonical("common"), vars)
-	} else {
-		vars = models.FormVariables{
-			"types": {"tests": {"string": RandomCanonical("common")}},
-		}
-	}
+	common.UpdateMapField("types.tests.string", RandomCanonical("common"), vars)
 
 	return config, nil
 }

@@ -1,4 +1,4 @@
-package external_backends
+package externalbackends
 
 import (
 	"github.com/spf13/cobra"
@@ -127,7 +127,7 @@ func newLogsCommand() *cobra.Command {
 	}
 	common.RequiredPersistentFlag(common.WithFlagProject, logsElasticsearchLogsCmd)
 	common.RequiredPersistentFlag(common.WithFlagEnv, logsElasticsearchLogsCmd)
-	common.RequiredFlag(WithFlagUrl, logsElasticsearchLogsCmd)
+	common.RequiredFlag(WithFlagURL, logsElasticsearchLogsCmd)
 	common.RequiredFlag(WithFlagPrefilter, logsElasticsearchLogsCmd)
 	common.WithFlagCred(logsElasticsearchLogsCmd)
 	logsElasticsearchLogsCmd.Flags().StringVar(&esIndex, "index", "default", "")

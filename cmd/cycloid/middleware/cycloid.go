@@ -11,7 +11,7 @@ func (m *middleware) GetAppVersion() (*models.AppVersion, error) {
 
 	resp, err := m.api.Cycloid.GetAppVersion(params)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -23,10 +23,10 @@ func (m *middleware) GetAppVersion() (*models.AppVersion, error) {
 func (m *middleware) GetStatus() (*models.GeneralStatus, error) {
 	resp, err := m.api.Cycloid.GetStatus(nil)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
 
-	return payload.Data, NewApiError(err)
+	return payload.Data, NewAPIError(err)
 }

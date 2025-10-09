@@ -1,4 +1,4 @@
-package catalog_repositories
+package externalbackends
 
 import (
 	"github.com/pkg/errors"
@@ -11,22 +11,32 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
+var (
+	example = `
+	# List all the external backends within my-org organization in JSON output format
+	cy --org my-org external-backends list --output=json
+
+	# List all the external backends within my-org organization in YAML output format
+	cy --org my-org external-backends list --output=yaml
+`
+	short = "Get the list of organization external backends"
+	long  = short
+)
+
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "list",
-		Args:  cobra.NoArgs,
-		Short: "list the catalog repositories",
-		Example: `
-	# list the catalog repositories in the org 'my-org' and display the result in JSON format
-	cy --org my-org cr list -o json
-`,
-		RunE: listCatalogRepositories,
+		Use:     "list",
+		Args:    cobra.NoArgs,
+		Example: example,
+		Short:   short,
+		Long:    long,
+		RunE:    list,
 	}
 
 	return cmd
 }
 
-func listCatalogRepositories(cmd *cobra.Command, args []string) error {
+func list(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -34,10 +44,9 @@ func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+		return err
 	}
 
 	// fetch the printer from the factory
@@ -46,6 +55,6 @@ func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	crs, err := m.ListCatalogRepositories(org)
-	return printer.SmartPrint(p, crs, err, "unable to list catalog repositories", printer.Options{}, cmd.OutOrStdout())
+	ebs, err := m.ListExternalBackends(org)
+	return printer.SmartPrint(p, ebs, err, "unable to list external backends", printer.Options{}, cmd.OutOrStdout())
 }

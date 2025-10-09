@@ -13,7 +13,7 @@ func (m *middleware) GetProjectPipelines(org, project string) ([]*models.Pipelin
 
 	resp, err := m.api.ProjectPipelines.GetProjectPipelines(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

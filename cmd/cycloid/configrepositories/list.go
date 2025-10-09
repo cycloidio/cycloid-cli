@@ -1,4 +1,4 @@
-package config_repositories
+package configrepositories
 
 import (
 	"github.com/pkg/errors"
@@ -11,33 +11,26 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewGetCommand() *cobra.Command {
+func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
+		Use:   "list",
 		Args:  cobra.NoArgs,
-		Short: "get a config repository",
+		Short: "list the config repositories",
 		Example: `
-	# get the config repository with the canonical my-config-repo and display the result in YAML
-	cy  --org my-org config-repo get --canonical my-config-repo -o yaml
+	# list the config repositories in the org 'my-org' and display the result in JSON format
+	cy  --org my-org config-repo list -o json
 `,
-		RunE: getConfigRepository,
+		RunE: listConfigRepositories,
 	}
-
-	common.RequiredFlag(common.WithFlagCan, cmd)
 
 	return cmd
 }
 
-func getConfigRepository(cmd *cobra.Command, args []string) error {
+func listConfigRepositories(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	org, err := cyargs.GetOrg(cmd)
-	if err != nil {
-		return err
-	}
-
-	can, err := cmd.Flags().GetString("canonical")
 	if err != nil {
 		return err
 	}
@@ -52,6 +45,6 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.GetConfigRepository(org, can)
-	return printer.SmartPrint(p, cr, err, "unable to get config repository", printer.Options{}, cmd.OutOrStdout())
+	crs, err := m.ListConfigRepositories(org)
+	return printer.SmartPrint(p, crs, err, "unable to list config repository", printer.Options{}, cmd.OutOrStdout())
 }

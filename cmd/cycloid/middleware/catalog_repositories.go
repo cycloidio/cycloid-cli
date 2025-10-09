@@ -14,7 +14,7 @@ func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatal
 
 	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSources(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -29,7 +29,7 @@ func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.Serv
 
 	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSource(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -44,7 +44,7 @@ func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) error {
 
 	_, err := m.api.OrganizationServiceCatalogSources.DeleteServiceCatalogSource(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 	return nil
 }
@@ -91,7 +91,7 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred, visib
 
 	resp, err := m.api.OrganizationServiceCatalogSources.CreateServiceCatalogSource(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -120,7 +120,7 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 
 	resp, err := m.api.OrganizationServiceCatalogSources.UpdateServiceCatalogSource(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -135,7 +135,7 @@ func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.
 
 	resp, err := m.api.OrganizationServiceCatalogSources.RefreshServiceCatalogSource(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

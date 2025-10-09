@@ -75,10 +75,11 @@ vercomp() {
 	# 0) =
 	# 1) >
 	# 2) <
-	if [[ $1 == $2 ]]; then
+	if [[ $1 == "$2" ]]; then
 		return 0
 	fi
 	local IFS=.
+	# shellcheck disable=SC2206
 	local i ver1=($1) ver2=($2)
 	# fill empty fields in ver1 with zeros
 	for ((i = ${#ver1[@]}; i < ${#ver2[@]}; i++)); do
@@ -101,17 +102,17 @@ vercomp() {
 
 # Remove extra prefix and suffix from version to compare them
 format_version() {
-	echo $1 | sed 's/^v//;s/-.*$//'
+	echo "$1" | sed 's/^v//;s/-.*$//'
 	return
 }
 
 # Find the closest n-1 version. This function is used only after we already check if version and version-rc are not available.
 # So we only expect to find and take the n-1 version
 find_version_below() {
-	api_version=$(format_version $1)
+	api_version=$(format_version "$1")
 
 	for cli_release in $(curl --fail --retry-all-errors --retry-delay 2 --retry 2 --silent "$CY_RELEASES_URL" | jq -r '.[] | .name'); do
-		cli_version=$(format_version $cli_release)
+		cli_version=$(format_version "$cli_release")
 		# Ignoring the dev release from github
 		if [[ "$cli_version" == "0.0-dev" ]]; then
 			continue
@@ -120,15 +121,15 @@ find_version_below() {
 		# If the API version format does not match release version like "1.0.81" (eg local dev run provide the short commit ID as version).
 		# Use the latest CLI version found
 		if ! [[ "$api_version" =~ ^[0-9]+\..+$ ]]; then
-			echo $cli_release
+			echo "$cli_release"
 			return 0
 		fi
 
 		# Take the first CLI version lower than the API version
 		# ret 1 means >
-		vercomp $api_version $cli_version
+		vercomp "$api_version" "$cli_version"
 		if [ $? -eq 1 ]; then
-			echo $cli_release
+			echo "$cli_release"
 			return 0
 		fi
 	done
@@ -143,7 +144,7 @@ get_binary() {
 		return 0
 	fi
 
-	CY_VERSION=$(format_version $CY_VERSION)
+	CY_VERSION=$(format_version "$CY_VERSION")
 	# Download the exact CLI version
 	CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/${UPSTREAM_BINARY_NAME}"
 	wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"
@@ -170,14 +171,13 @@ get_binary() {
 
 	# In case of error, fallback on latest lower version
 	if [ $STATUS != 0 ]; then
-		CY_LOWER_VERSION=$(find_version_below ${CY_VERSION})
-		if [ $? != 0 ]; then
+		if ! CY_LOWER_VERSION=$(find_version_below "${CY_VERSION}"); then
 			echo "Error: find_version_below unable to obtain closest n-1 version from $CY_RELEASES_URL" >&2
 			return 2
 		fi
 		echo "Warning: Unable to download CLI version ${CY_VERSION}-rc. Fallback to the closest n-1 version ${CY_LOWER_VERSION}" >&2
 		# Removing the v prefix as we don't let it in the binary name
-		CY_BINARY="${CY_BINARIES_PATH}/cy-$(echo $CY_LOWER_VERSION | sed 's/^v//')"
+		CY_BINARY="${CY_BINARIES_PATH}/cy-$(echo "$CY_LOWER_VERSION" | sed 's/^v//')"
 		export CY_BINARY
 		if [[ -f "${CY_BINARY}" ]]; then
 			STATUS=0

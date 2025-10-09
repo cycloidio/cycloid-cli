@@ -1,4 +1,4 @@
-package catalog_repositories
+package configrepositories
 
 import (
 	"github.com/pkg/errors"
@@ -11,17 +11,16 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-func NewRefreshCommand() *cobra.Command {
+func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "refresh",
+		Use:   "delete",
 		Args:  cobra.NoArgs,
-		Short: "refresh a catalog repository",
-		Long:  "refresh action can be used if the .cycloid.yml definition has been updated",
+		Short: "delete a config repository",
 		Example: `
-	# refresh a catalog repository with the canonical my-catalog-repository
-	cy --org my-org catalog-repo refresh --canonical my-catalog-repository
+	# delete a config repository with the canonical my-config-repo
+	cy  --org my-org config-repository delete --canonical my-config-repo
 `,
-		RunE: refreshCatalogRepository,
+		RunE: deleteConfigRepository,
 	}
 
 	common.RequiredFlag(common.WithFlagCan, cmd)
@@ -29,7 +28,7 @@ func NewRefreshCommand() *cobra.Command {
 	return cmd
 }
 
-func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
+func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -54,6 +53,6 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.RefreshCatalogRepository(org, can)
-	return printer.SmartPrint(p, cr, err, "unable to refresh catalog repository", printer.Options{}, cmd.OutOrStdout())
+	err = m.DeleteConfigRepository(org, can)
+	return printer.SmartPrint(p, nil, err, "unable to delete config repository", printer.Options{}, cmd.OutOrStdout())
 }

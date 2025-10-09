@@ -11,7 +11,7 @@ func TestValidateFormYamlAnchors(t *testing.T) {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	var org string = "cycloid-sandbox"
+	var org = "cycloid-sandbox"
 	var rawForms = []byte(
 		`---
 		shared:
