@@ -1,7 +1,3 @@
--include .env
--include .api_key
-
-
 ifeq ($(GOCACHE),)
 	GOCACHE := $(HOME)/.cache/go-build
 endif
@@ -11,9 +7,7 @@ ifneq (, $(shell which go))
 endif
 
 SHELL      := /bin/sh
-
 REPO_NAME   ?= cycloid-cli
-
 MAKEFILE_DIR := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
 
 # IMAGE BUILD
@@ -43,20 +37,27 @@ SWAGGER_GENERATE = swagger generate client \
 		--target=./client \
 		--name=api
 
-# Local E2E tests
-# Note! Requires access to the private cycloid BE, only acessible within the organisation
-# AWS - ECR login
-export AWS_ACCESS_KEY_ID 	  ?= $(shell vault read -field=access_key secret/cycloid/aws)
-export AWS_SECRET_ACCESS_KEY ?= $(shell vault read -field=secret_key secret/cycloid/aws)
-export AWS_DEFAULT_REGION    ?= eu-west-1
-export AWS_ACCOUNT_ID        ?= $(shell vault read -field=account_id secret/cycloid/aws)
+BACKEND_TAG ?= staging
 
-YD_API_TAG        ?= staging
-API_LICENCE_KEY   ?=
+ifndef CY_SAAS_API_KEY
+$(error Add a valid API KEY for the cycloid from our saas as CY_SAAS_API_KEY to use this makefile)
+endif
+
+INTERPOLATE_CMD := CY_API_KEY=$(CY_SAAS_API_KEY) cy uri interpolate .env.sample > .env
+ifndef API_LICENCE_KEY
+$(shell $(INTERPOLATE_CMD))
+endif
+
+-include .env
+-include .api_key
 
 .PHONY: help
 help: ## Show this help
 	@grep -F -h "##" $(MAKEFILE_LIST) | grep -F -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
+
+.PHONY: .env
+.env:
+	@$(INTERPOLATE_CMD)
 
 .PHONY: build
 build: ## Builds the binary
@@ -68,10 +69,10 @@ build: ## Builds the binary
 	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $(BINARY)-darwin-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 
 .PHONY: test test-clean
-test: ## Run end to end tests
+test: .env ## Run end to end tests
 		go test ./...
 
-test-clean:
+test-clean: .env
 		go clean -testcache
 
 .PHONY: delete-old-client
@@ -100,11 +101,8 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 
 .PHONY: docker-login
-.ONEFILE:
-docker-login: ## Login to ecr, requires aws cli installed
-	aws ecr get-login-password --region $(AWS_DEFAULT_REGION) \
-		| docker login --username AWS --password-stdin \
-		661913936052.dkr.ecr.eu-west-1.amazonaws.com/youdeploy-http-api
+docker-login:
+	echo "$(SECRET_ACCESS)" | docker login rg.fr-par.scw.cloud/cycloidio/cycloid-backend -u $(ACCESS_KEY) --password-stdin
 
 .PHONY: be-start be-stop be-reset
 be-start: ## start the local backend
