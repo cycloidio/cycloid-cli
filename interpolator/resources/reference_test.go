@@ -5,8 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/interpolator/resources"
 	"github.com/spf13/viper"
+
+	"github.com/cycloidio/cycloid-cli/interpolator/resources"
 )
 
 func TestParseURI(t *testing.T) {

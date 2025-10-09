@@ -7,12 +7,13 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/interpolator"
 	"github.com/cycloidio/cycloid-cli/interpolator/parsers"
 	"github.com/cycloidio/cycloid-cli/interpolator/resolvers/httpresolver"
-	"github.com/spf13/cobra"
 )
 
 func NewInterpolateCommand() *cobra.Command {

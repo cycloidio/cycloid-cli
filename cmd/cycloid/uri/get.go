@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/interpolator"
 	"github.com/cycloidio/cycloid-cli/interpolator/resolvers/httpresolver"
-	"github.com/spf13/cobra"
 )
 
 func NewGetCommand() *cobra.Command {

@@ -4,10 +4,11 @@ import (
 	"net/url"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+
 	"github.com/cycloidio/cycloid-cli/interpolator/formatters"
 	"github.com/cycloidio/cycloid-cli/interpolator/resolvers/mockresolver"
 	"github.com/cycloidio/cycloid-cli/interpolator/resources"
-	"github.com/stretchr/testify/assert"
 )
 
 func TestYAMLFormatting(t *testing.T) {
