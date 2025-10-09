@@ -1,0 +1,19 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+    - id: check-yaml
+    - id: end-of-file-fixer
+    - id: trailing-whitespace
+    - id: detect-private-key
+    - id: no-commit-to-branch
+      args: [--branch, develop, --branch, master]
+    - id: check-shebang-scripts-are-executable
+- repo: local
+  hooks:
+    - id: format-and-lint
+      name: Format and Lint
+      entry: make format lint
+      language: system
+      pass_filenames: false
+      stages: [pre-commit]

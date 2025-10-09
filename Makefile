@@ -138,3 +138,6 @@ format-sh:
 .ONEFILE:
 ci-test:
 	$(MAKEFILE_DIR)/scripts/ci-tests.sh
+
+.git/hooks/pre-commit:
+	pre-commit-install

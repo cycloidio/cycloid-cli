@@ -29,6 +29,7 @@
             golangci-lint-langserver
             awscli
             docker
+            pre-commit
           ]);
         };
       });
