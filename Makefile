@@ -39,15 +39,6 @@ SWAGGER_GENERATE = swagger generate client \
 
 BACKEND_TAG ?= staging
 
-ifndef CY_SAAS_API_KEY
-$(error Add a valid API KEY for the cycloid from our saas as CY_SAAS_API_KEY to use this makefile)
-endif
-
-INTERPOLATE_CMD := CY_API_KEY=$(CY_SAAS_API_KEY) cy uri interpolate .env.sample > .env
-ifndef API_LICENCE_KEY
-$(shell $(INTERPOLATE_CMD))
-endif
-
 -include .env
 -include .api_key
 
@@ -55,9 +46,10 @@ endif
 help: ## Show this help
 	@grep -F -h "##" $(MAKEFILE_LIST) | grep -F -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
 
-.PHONY: .env
 .env:
-	@$(INTERPOLATE_CMD)
+	@rm .env || true
+	@CY_API_KEY=$${CY_SAAS_API_KEY?A valid API key to the cycloid org in our saas is required for this target. It must be provided via the CY_SAAS_API_KEY} \
+		cy uri interpolate .env.sample > .env
 
 .PHONY: build
 build: ## Builds the binary
@@ -101,7 +93,7 @@ generate-client-from-docs: reset-old-client ## Generates client using docker and
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 
 .PHONY: docker-login
-docker-login:
+docker-login: .env
 	echo "$(SECRET_ACCESS)" | docker login rg.fr-par.scw.cloud/cycloidio/cycloid-backend -u $(ACCESS_KEY) --password-stdin
 
 .PHONY: be-start be-stop be-reset
