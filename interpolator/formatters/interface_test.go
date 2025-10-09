@@ -3,8 +3,9 @@ package formatters_test
 import (
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/interpolator/formatters"
 	"github.com/stretchr/testify/assert"
+
+	"github.com/cycloidio/cycloid-cli/interpolator/formatters"
 )
 
 func TestFormatter(t *testing.T) {

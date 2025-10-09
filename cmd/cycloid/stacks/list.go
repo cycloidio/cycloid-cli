@@ -2,6 +2,7 @@ package stacks
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"

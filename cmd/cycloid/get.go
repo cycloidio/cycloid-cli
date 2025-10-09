@@ -1,8 +1,9 @@
 package cycloid
 
 import (
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
 )
 
 func NewGetCommand() *cobra.Command {

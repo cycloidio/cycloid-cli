@@ -4,9 +4,10 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"github.com/pkg/errors"
 )
 
 // InitFirstOrg will create the first user, org and inject the licence to the
