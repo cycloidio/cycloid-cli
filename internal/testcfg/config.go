@@ -127,7 +127,12 @@ func NewConfig(testName string) (*Config, error) {
 			return nil, err
 		}
 
-		err = os.WriteFile(root+"/.api_key", []byte("CY_API_KEY="+config.APIKey), 0666)
+		apiKeyEnvFile := strings.Join([]string{
+			"CY_API_KEY=" + config.APIKey,
+			"CY_API_URL=" + config.APIUrl,
+			"CY_ORG=" + config.Org,
+		}, "\n")
+		err = os.WriteFile(root+"/.api_key", []byte(apiKeyEnvFile), 0666)
 		if err != nil {
 			return nil, err
 		}
