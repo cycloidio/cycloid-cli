@@ -10,6 +10,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"go.yaml.in/yaml/v4"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func TestGetCmd(t *testing.T) {

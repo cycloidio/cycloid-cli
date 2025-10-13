@@ -46,10 +46,16 @@ BACKEND_TAG ?= staging
 help: ## Show this help
 	@grep -F -h "##" $(MAKEFILE_LIST) | grep -F -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
 
+.PHONY: install
+install: .env .git/hooks/pre-commit ## install all pre-requisites
+
 .env: ## generate the .env files with the required secrets for this repo
 	@rm .env || true
 	@CY_API_KEY=$${CY_SAAS_API_KEY?A valid API key to the cycloid org in our saas is required for this target. It must be provided via the CY_SAAS_API_KEY} \
 		cy uri interpolate .env.sample > .env
+
+source-env: ## source the local env to use cycloid
+	while read line; do export $$line; done < .api_key
 
 .PHONY: build
 build: ## Build all the binaries
@@ -66,11 +72,11 @@ clean: test-clean
 	go clean
 
 .PHONY: test test-clean
-test: .env ## Run end to end tests
-		go test ./...
+test: ## Run end to end tests
+	go test ./...
 
-test-clean: .env ## Clean test cache
-		go clean -testcache
+test-clean: ## Clean test cache
+	go clean -testcache
 
 .PHONY: client-delete client-generate client-generate-from-docs
 client-delete: ## Resets old client folder
@@ -95,9 +101,12 @@ client-generate-from-docs: client-delete ## Generates client using docker and sw
 	echo "git add client" && \
 	echo "git commit -m 'Bump swagger client to version $$SWAGGER_VERSION'"
 
-.PHONY: docker-login
+.PHONY: docker-login docker-pull
 docker-login: .env
 	echo "$(SECRET_ACCESS)" | docker login rg.fr-par.scw.cloud/cycloidio/cycloid-backend -u $(ACCESS_KEY) --password-stdin
+
+docker-pull: .env
+	docker compose pull
 
 .PHONY: be-start be-stop be-reset
 be-start: ## start the local backend
@@ -141,3 +150,4 @@ ci-test:
 
 .git/hooks/pre-commit:
 	pre-commit-install
+
