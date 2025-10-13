@@ -46,5 +46,9 @@ func Query(params map[string][]string, data any) ([]any, error) {
 		return nil, fmt.Errorf("key query has reported an error: %w", queryErr)
 	}
 
+	if len(outData) == 0 || outData[0] == nil {
+		return nil, fmt.Errorf("output of query %q is null, base object: %v", query.String(), data)
+	}
+
 	return outData, nil
 }
