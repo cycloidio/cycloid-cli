@@ -4,13 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"go.yaml.in/yaml/v4"
-
-	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func TestGetCmd(t *testing.T) {
@@ -114,7 +113,7 @@ func TestE2e(t *testing.T) {
 
 func TestInterpolateCmd(t *testing.T) {
 	sampleContent := fmt.Sprintf("ssh_key: cy://organizations/%s/credentials/%s?key=.canonical", config.Org, config.ConfigRepo.CredentialCanonical)
-	sampleExpect := fmt.Sprintf("ssh_key: %s", config.ConfigRepo.CredentialCanonical)
+	sampleExpect := fmt.Sprintf("ssh_key: %s\n", config.ConfigRepo.CredentialCanonical)
 
 	t.Run("InPlaceInterpolationOk", func(t *testing.T) {
 		tempDir := t.TempDir()
@@ -210,7 +209,50 @@ func TestInterpolateCmd(t *testing.T) {
 		cmdOut, cmdErr, err := executeCommandStdin(sampleContent, args)
 		assert.NoError(t, err, "cmd should not err")
 		assert.Empty(t, cmdErr, "cmd should not output on stderr if no err")
-		assert.Equal(t, sampleExpect+"\n", cmdOut, "output should match interpolation")
+		assert.Equal(t, sampleExpect, cmdOut, "output should match interpolation")
 	})
 
+	t.Run("StdinNoExtraNewlineOrSpaces", func(t *testing.T) {
+		args := []string{
+			"uri", "interpolate",
+		}
+		cmdOut, cmdErr, err := executeCommandStdin(" \n \n", args)
+		assert.NoError(t, err, "cmd should not err")
+		assert.Empty(t, cmdErr, "cmd should not output on stderr if no err")
+		assert.Equal(t, "\n", cmdOut, "there should be no more than one newline and no spaces")
+	})
+
+	t.Run("FileNoExtraNewlineOrSpaces", func(t *testing.T) {
+		tempDir := t.TempDir()
+		tempFile := filepath.Join(tempDir, "testfile")
+		err := os.WriteFile(tempFile, []byte("  \n  \n"), 0640)
+		if err != nil {
+			t.Logf("failed to setup test, failed to write to file %q: %v", tempFile, err)
+			t.FailNow()
+		}
+
+		args := []string{"uri", "interpolate", tempFile}
+		cmdOut, cmdErr := executeCommand(args)
+		assert.NoError(t, cmdErr, "cmdErr should be nil")
+		assert.Equal(t, "\n", cmdOut, "output should be stripped of extra space and end with a newline.")
+	})
+
+	t.Run("FileInPlaceNoExtraNewlineOrSpaces", func(t *testing.T) {
+		tempDir := t.TempDir()
+		tempFile := filepath.Join(tempDir, "testfile")
+		err := os.WriteFile(tempFile, []byte("  \n  \n"), 0640)
+		if err != nil {
+			t.Logf("failed to setup test, failed to write to file %q: %v", tempFile, err)
+			t.FailNow()
+		}
+
+		args := []string{"uri", "interpolate", "--in-place", tempFile}
+		cmdOut, cmdErr := executeCommand(args)
+		assert.NoError(t, cmdErr, "cmdErr should be nil")
+		assert.Equal(t, "", cmdOut, "When using --in-place, output should be empty")
+
+		fileContent, err := os.ReadFile(tempFile)
+		assert.NoError(t, err, "failed to read test file %q: %w", tempFile, err)
+		assert.Equal(t, "\n", string(fileContent), "the file should not have trailling space and end with a newline")
+	})
 }

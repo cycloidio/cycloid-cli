@@ -109,8 +109,9 @@ func interpolate(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return fmt.Errorf("failed to interpolate from stdin: %w", err)
 		}
+		cleanedOut := strings.TrimRight(out, " \t\n")
 
-		_, err = fmt.Fprintln(cmd.OutOrStdout(), out)
+		_, err = fmt.Fprintln(cmd.OutOrStdout(), cleanedOut)
 		if err != nil {
 			return fmt.Errorf("failed to print result to stdout: %w", err)
 		}
@@ -137,7 +138,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 		}
 
 		if inPlace {
-			err := os.WriteFile(filename, []byte(out), stats.Mode())
+			err := os.WriteFile(filename, []byte(out+"\n"), stats.Mode())
 			if err != nil {
 				return fmt.Errorf("failed to write to file %q during interpolation, file content may be lost: %w", filename, err)
 			}
@@ -150,7 +151,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 				target = filepath.Join(targetDir, filepath.Base(filename))
 			}
 
-			err = os.WriteFile(target, []byte(out), 0640)
+			err = os.WriteFile(target, []byte(out+"\n"), 0640)
 			if err != nil {
 				return fmt.Errorf("failed to write file %q in dir %q: %w", filename, targetDir, err)
 			}

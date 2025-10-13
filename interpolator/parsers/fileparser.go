@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"strings"
 
 	"github.com/cycloidio/cycloid-cli/interpolator/resolvers"
 )
@@ -31,5 +32,6 @@ func ReplaceFile(resolver resolvers.ResourceResolver, file string) (string, erro
 		return file, fmt.Errorf("failed to interpolate file, output is empty: %w", err)
 	}
 
-	return output, nil
+	cleanedOut := strings.TrimRight(output, " \t\n")
+	return cleanedOut, nil
 }
