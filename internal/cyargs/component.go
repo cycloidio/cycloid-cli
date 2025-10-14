@@ -93,11 +93,11 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 	return useCases, cobra.ShellCompDirectiveNoFileComp
 }
 
-func GetUseCase(cmd *cobra.Command) (*string, error) {
+func GetUseCase(cmd *cobra.Command) (string, error) {
 	useCase, err := cmd.Flags().GetString("use-case")
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &useCase, nil
+	return useCase, nil
 }
