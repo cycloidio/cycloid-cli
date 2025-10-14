@@ -356,4 +356,72 @@ func TestComponentCmd(t *testing.T) {
 			t.Fatalf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
 		}
 	})
+
+	t.Run("TestCreateWithUpdateOnNonConfiguredComponentOk", func(t *testing.T) {
+		component := randomCanonical("created-not-configured")
+
+		m := config.Middleware
+		created, err := m.CreateComponent(config.Org, *config.Project.Canonical,
+			*config.Environment.Canonical, component, description, &component,
+			&stackRef, "")
+		if err != nil {
+			t.Logf("test setup failed: component creation %q reported err: %v", component, err)
+			t.FailNow()
+		}
+		defer m.DeleteComponent(config.Org, *created.Project.Canonical,
+			*created.Environment.Canonical, *created.Canonical)
+
+		args := []string{
+			"--output", "json",
+			"--org", config.Org,
+			"components", "create",
+			"--update",
+			"--name", component,
+			"-p", *config.Project.Canonical,
+			"-e", *config.Environment.Canonical,
+			"-c", component,
+			"-d", description,
+			"-s", stackRef,
+			"-u", "default",
+		}
+
+		cmdOut, cmdErr := executeCommand(args)
+		if cmdErr != nil {
+			// We just check that it doesn't panic for now
+			t.Fatalf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
+		}
+	})
+
+	t.Run("TestUpdateOnNonConfiguredComponentOk", func(t *testing.T) {
+		component := randomCanonical("created-not-configured")
+
+		m := config.Middleware
+		created, err := m.CreateComponent(config.Org, *config.Project.Canonical,
+			*config.Environment.Canonical, component, description, &component,
+			&stackRef, "")
+		if err != nil {
+			t.Logf("test setup failed: component creation %q reported err: %v", component, err)
+			t.FailNow()
+		}
+		defer m.DeleteComponent(config.Org, *created.Project.Canonical,
+			*created.Environment.Canonical, *created.Canonical)
+
+		args := []string{
+			"--output", "json",
+			"--org", config.Org,
+			"components", "update",
+			"--name", component,
+			"-p", *config.Project.Canonical,
+			"-e", *config.Environment.Canonical,
+			"-c", component,
+			"-d", description,
+			"-u", "default",
+		}
+
+		cmdOut, cmdErr := executeCommand(args)
+		if cmdErr != nil {
+			// We just check that it doesn't panic for now
+			t.Fatalf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
+		}
+	})
 }

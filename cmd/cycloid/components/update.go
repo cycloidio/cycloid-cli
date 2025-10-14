@@ -4,6 +4,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
@@ -74,28 +75,36 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	if stackRef == "" {
-		componentEntity, err := m.GetComponent(org, project, env, component)
-		if err != nil {
-			return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current component", printer.Options{}, cmd.OutOrStderr())
-		}
-
-		stackRef = *componentEntity.ServiceCatalog.Ref
-	}
-
-	// Fetch base forms value from current component
-	config, err := m.GetComponentConfig(org, project, env, component)
+	currentComponent, err := m.GetComponent(org, project, env, component)
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
+		return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current component", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	inputs, err := cyargs.GetStackformsVars(cmd, config)
+	if stackRef == "" {
+		stackRef = *currentComponent.ServiceCatalog.Ref
+	}
+
+	if useCase == "" && currentComponent.UseCase == "" {
+		return errors.New("cannot determine the use case, please fill it with -(-u)se-case flag")
+	} else if useCase == "" {
+		useCase = currentComponent.UseCase
+	}
+
+	var currentConfig = make(models.FormVariables)
+	if currentComponent.IsConfigured {
+		currentConfig, err = m.GetComponentConfig(org, project, env, component)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
+		}
+	}
+
+	inputs, err := cyargs.GetStackformsVars(cmd, currentConfig)
 	if err != nil {
 		return err
 	}
 
 	// CreateComponent will reconfigure the component if it already exists
-	updatedComponent, err := m.CreateAndConfigureComponent(org, project, env, component, *description, &name, stackRef, *useCase, *cloudProvider, inputs)
+	updatedComponent, err := m.CreateAndConfigureComponent(org, project, env, component, *description, &name, stackRef, useCase, *cloudProvider, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}

@@ -259,5 +259,5 @@ func randomCanonical(baseName string) string {
 	for i := range b {
 		b[i] = letterRunes[rand.Intn(len(letterRunes))]
 	}
-	return baseName + "-" + string(b)
+	return baseName + "-" + strings.ToLower(string(b))
 }

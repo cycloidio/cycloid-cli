@@ -51,9 +51,9 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	}
 
 	useCase, _ := cyargs.GetUseCase(cmd)
-	if len(args) == 2 && *useCase == "" {
-		useCase = &args[1]
-	} else if *useCase == "" {
+	if len(args) == 2 && useCase == "" {
+		useCase = args[1]
+	} else if useCase == "" {
 		return fmt.Errorf("missing use-case argument")
 	}
 
@@ -78,14 +78,14 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	stackConfigs, err := m.GetComponentStackConfig(org, proj, env, component, *useCase)
+	stackConfigs, err := m.GetComponentStackConfig(org, proj, env, component, useCase)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStderr())
 	}
 
-	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, *useCase)
+	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, useCase)
 	if err != nil {
-		return fmt.Errorf("failed to parse default form values for component %q with use-case %q: %w", component, *useCase, err)
+		return fmt.Errorf("failed to parse default form values for component %q with use-case %q: %w", component, useCase, err)
 	}
 
 	config, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
