@@ -124,6 +124,7 @@ func TestExternalBackends(t *testing.T) {
 	t.Run("SuccessExternalBackendsCreateAWSRemoteTFState", func(t *testing.T) {
 		// TODO: Fix tests when components are implemented
 		t.Skip()
+
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
