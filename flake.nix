@@ -2,7 +2,7 @@
   description = "A basic dev shell for nix/nixos users";
 
   inputs = {
-    nixpkgs = { url = "github:NixOs/nixpkgs/nixos-unstable"; };
+    nixpkgs = { url = "github:NixOs/nixpkgs/nixos-25.05"; };
     flake-utils = { url = "github:numtide/flake-utils"; };
   };
 
@@ -21,8 +21,9 @@
             ++ (with pkgs; [
             # You packages here
             gnumake
+            libgcc
 
-            go_1_24
+            go_1_25
             go-swagger
             gci
             golangci-lint
