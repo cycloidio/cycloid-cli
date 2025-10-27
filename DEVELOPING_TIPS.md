@@ -1,83 +1,250 @@
 # Cycloid Developer Tips
 
-**NOTE!** These are internal notes meant for cycloid develovers only since they require access to private git repositories.
+> [!NOTE] These are internal notes meant for cycloid develovers only since they
+> require access to private git repositories.
 
 This file gives some tips to how to test, change or upgrade cli, for cycloid developers.
 
 The cli pipeline is available in the [cycloid-stacks](https://github.com/cycloidio/cycloid-stacks/tree/stacks/cycloid-cli) and the prod and staging cli can be checked [here](https://console.cycloid.io/organizations/cycloid/projects/cycloid-cli).
 
+## Prepare a CLI update
 
-## Update cli client
+Right now, the CLI release process and version is tied to the backend release. 
+This will be changed once the CLI codebase will be merged in the backend, until then,
+we will have to make do.
 
-To update the cli client you can either use either:
+So the release process is as follows:
+- The backend is merged and release in staging/production
+- An automatic PR is made with the client update on [this component](https://console.cycloid.io/organizations/cycloid/projects/cycloid-cli/environments/automatic_bump/components/apibump/overview)
+- The automatic PR will contain the client update and write the version in the 
+  [`./client/version`](./client/version) file.
 
-- the **latest swagger version stored in the the [cycloid docs](https://docs.cycloid.io/api/swagger.yml)**. For that, you just need to run ```make generate-client-from-docs```, which will run a docker local swagger,generate the new client version and then commit it to the cli git repo where it will be tested in the cli pipeline. </br>
-**Note!** After running the command you should validate that the e2e testing has been succefull and then if no issue has been found, you should edit the CHANGELOG.md to add the new version of swagger.
+> [!WARNING]
+> The version tagging will occur when the PR with the updated client version with
+> the updated [`./client/version`](./client/version) file will be merged on develop
+>
+> This means that every feature PR merged after this one will not be integrated
+> in the release
 
-- a **copied swagger file**, if you wish to use another version of the swagger file, you can create a folder called /gen-swagger and copy it inside. Once that's finished you can run ```make generate-client-from-local``` that will create the new client version files. After, you should change the client/version file with the corresponding BE version.</br>
+- Once the Client update PR merged, the version is tagged the pipeline on 
+  [this component must go to completion on the release job](https://console.cycloid.io/organizations/cycloid/projects/cycloid-cli/environments/staging/components/develop/overview)
+- To release in prod, use the [`merge-develop-to-master`](https://console.cycloid.io/organizations/cycloid/projects/cycloid-cli/environments/prod/components/master/pipelines/cycloid-cli-prod-master/jobs/merge-develop-to-master/builds/465851136#all) button on the prod pipeline.
+- Then the release process will test, build and release on github.
 
-## Add nem commands to the cli
+So we advise the following workflow:
 
-To add a new command you can start by verifying the api endpoint to implement in the [docs](https://docs.cycloid.io/api/index.html). And then you should:
+1. Until a client version update occurs, you can merge any feature PR on develop
+2. Once the client PR update is created, and if you need to develop fixes and logic
+   linked to that client update, create a branch from the client update PR.
+   (basically treating the client update PR as the new develop)
+3. Once you are done with all the changes linked to this version and the test passes,
+   you can merge the client update PR and proceed to release in production.
 
-1. Define the method that implements the endpoint in ```cmd/middleware/<feature>.go```. </br>
+If you need to create the PR update yourself manually to anticipate a version not release yet,
+you can generate the client update using the `make client-generate` target.
 
-    1. In this method you start by defining the set of params required for the endpoint as defined in ```client/client/<feature>/<method_parameters>.go``` </br>
+### Make a manual client update
 
-    2. Then, you call the api equivalent method and then return the reply.</br> **Note!** The method should always return error and depending on the method you may also be required to return an object. You can check the available object structs in the folder ```client/models```.
-    Here's some general logic:
-        - delete methods -> return error only
-        - create/get methods -> return *models.object, error
-        - list methods -> return []*models.object, error</br> </br>
+- Download the correct `swagger.yml` and put it at the repository's root at `./swagger.yml`
+- Use `make client-generate`
+- Wait for the backend release and add the correct version in `./client/version`
 
+Ping devops if you have any questions or doubt on the release process.
 
-2. Once you're method is defined you should add it to the middleware interface at ```cmd/middleware/middleware.go``` that implements the api endpoints.</br>
+## Add a new commands to the cli
 
-3. Now you need to define the cobra command at ```cmd/cycloid/<feature>/``` so that the method previously defined can be used in the cli. In this folder, you find the files: ```cmd.go``` where you define the available cobra commands for the feature, the ```common.go``` where you define the flag methods to associate with the cobra commands and then a set of files, one per command of the feature.
+To add a new command you can start by verifying the api endpoint to implement in the [API docs](https://docs.cycloid.io/api/index.html).
 
-    1. You should start by adding the type of command to the set of list of available commands in ```cmd.go```
+While you can follow this guide, I advise you to look up other implemented routes.
 
-    2. Then create a new file on this folder, where you will specify the method that will return the cobra command that defines the cli command to implement with the flags possible to use. </br> **Note** You can define the flags as required or not for that you can use the methods specified in ```cmd/cycloid/common```
+### Implement the middleware method
 
-    3. Then you define a method that will be run by this cobra command that will take as argument the multiple flags and pass them to the middleware interface method that you previsouly defined in step 1.
+1. Ensure your client is up to date, if the backend version is not release yet,
+   see [the above section](#make-a-manual-client-update)
 
-4. To validate the created command you can build a local version of the cli using ```make build```and then use the generated binary to test the created commands. </br> **Tip!** Don't forget to login in the cli using ```./ci login --org cycloid-sandbox --api-key API_KEY```. You can generate a temporary key on the staging organisation of cycloid using the console.
+2. Define the method that implements the endpoint in the middleware
 
-5. Finally, create the correspond e2e tests in ```e2e/<feature>_test.go``` and add a new entry on the changelog. To see how to launch tests locally you can check the CLI local testing section.
+    1. Create the method in the middleware interface [here](./cmd/cycloid/middleware/middleware.go)
+       The naming convention of the function should reflect the naming on the API.
+       If you have a getComponent route on the API, the middleware should be a GetComponent function.
 
+> [!NOTE]
+> Only exception, if a GET route list resources, we rename it to ListResource
+> so the `getComponents` should be named `ListComponents`.
+  
+    2. The function should accept all required parameters as argument in function.
+        a. Optional argument should be a pointer, a nil value means absent value.
+        b. Required values must be plain values
+        c. If a request has a body, use `body.Validate(strfmt.Default)`
+
+    3. Implement the API call either:
+        a. By using the generated client parameters, look any other implemented
+           like [getProject](./cmd/cycloid/middleware/organization_projects.go)
+        b. If the route can't be implemented using the client, use `net/http`.
+    
+    4. All route should return either some data and error, or just an error:
+        a. Delete methods -> `return error`
+        b. Create/Get methods -> `return (*models.object, error)`
+        c. List methods -> `return ([]*models.object, error)`
+
+    5. Do not validate payload, it has generated too much issues in the past.
+
+#### Middleware testing
+
+Add in the middleware package a basic happy path test to ensure
+that given correct parameters, the API responds.
+
+This is meant mostly to detect any API dift or issues. This way it will enable
+developper to differenciate more easily server and client issues.
+
+Testing setup is done on the [TestMain function](./cmd/cycloid/middleware/middleware_test.go)
+that will use the [testcfg package](./internal/testcfg/config.go) to initialize
+the backend, provision the required tools and give you all the required context
+for testing (api key, org, api url, basic stuff like project/env/component, config
+and catalog repo, etc...).
+
+Lookup how existing test are made and follow the same logic.
+
+### Implement the actual CLI command
+
+Now you need to define the cobra command at `cmd/cycloid/<feature>/` so that
+the method previously defined can be used in the cli.
+
+   Each feature is structured as follows:
+
+```tree
+./cmd/cycloid/<featurename>/
+./cmd/cycloid/<featurename>/cmd.go # list and combine all the subcommands
+./cmd/cycloid/<featurename>/get.go # each command has its own file
+./cmd/cycloid/<featurename>/create.go
+./cmd/cycloid/<featurename>/update.go
+./cmd/cycloid/<featurename>/list.go
+./cmd/cycloid/<featurename>/common.go # add common logic specific to this series of commands
+```
+   A feature can have subcommands in that case structure it like this:
+  
+```tree
+./cmd/cycloid/<featurename>/
+./cmd/cycloid/<featurename>/cmd.go # list and combine all the subcommands
+./cmd/cycloid/<featurename>/get.go # each command has its own file
+./cmd/cycloid/<featurename>/create.go
+./cmd/cycloid/<featurename>/update.go
+./cmd/cycloid/<featurename>/list.go
+./cmd/cycloid/<featurename>/sub_command.go # add your subcommand here, it must behave like the cmd.go file
+./cmd/cycloid/<featurename>/sub_command_get.go # prefix all sub sub_command with the sub_command name
+./cmd/cycloid/<featurename>/sub_command_create.go 
+./cmd/cycloid/<featurename>/common.go # add common logic specific to this series of commands
+```
+
+Command convention is as follow:
+
+`cy <feature> <verb> <args_and_flags....>`
+
+Example for components:
+```bash
+cy component create
+cy component update
+cy component get
+cy component list
+```
+
+You should start by adding the type of command to the set of list of
+available commands in `cmd.go`
+
+Then create a new file on this folder, where you will specify the method
+that will return the cobra command that defines the cli command to implement
+with the flags possible to use.
+
+Finally you define a method that will be run by this cobra command that will
+take as argument the multiple flags and pass them to the middleware
+interface method that you previsouly created.
+
+#### Implementation directives
+
+Use and implemant **all flags, arguments and completion definitions and functions**
+in the [cyargs package](./internal/cyargs), each flag must be declared and its value
+must be retrieved using a function in the cyargs package.
+
+Only if a flag is declared on only one specific command you can declare them locally.
+
+Look up how flags and completion are implemented for example [the component flag](./internal/cyargs/component.go).
+
+The command should:
+1. Retrieve all flag
+2. Process any pre-requisite (file read, default values management, etc...)
+3. Do the action against the API.
+4. Use the [printer](./printer/printer.go) to print the output of the API to the console
+   a. If no error, with valid payload => output on stdout using `cmd.OutOrStdout()`
+   b. If any error, print error and details on stderr using `cmd.OutOrStderr()`
+
+This about the UX for the command line:
+- Add the completion
+- Try to infer values as much as you can (use env vars, context, fetching existing values)
+- Make action idempotent as much as possible
+- Implement upsert (like `cy component create --update`)
+
+### Testing commands
+
+To test commands, do it in the [e2e test packages](./e2e/e2e_test.go). It has
+all the required function an context for testing the command directly.
+
+It also uses the [testcfg package](./internal/testcfg/config.go) to initialize
+the backend, provision the required tools and give you all the required context
+for testing (api key, org, api url, basic stuff like project/env/component, config
+and catalog repo, etc...).
+
+Add tests for your command, what you should be testing:
+- All basic happy path
+- Test that all arguments, flags and env var works to configure your action
+- Test that the output match expectations
+- Try to test and catch edge cases
+
+As usual, look up other test commands for examples.
+
+Tests in CI are not executed in parallel due to some backend issues with concurrency
+around git.
+
+### Add a changelog
+
+Once your changes are done, add a changelog to it:
+
+```
+make new-changelog-entry
+```
 
 ## CLI local testing
+
 ### Requirements
 
 To perform local test you need:
-- aws installed locally ([official doc](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)), required to connect to the cycloid docker images stored in a ECR
-- [backend repo local clone](https://github.com/cycloidio/youdeploy-http-api), required to launch local be
+- Access to the Cycloid console on `cycloid` via the API
+- A valid API key on `CY_SAAS_API_KEY`
 
-### Procedure
+To start the test, login to docker to pull the backend image:
 
-In order to automate the procedure has much as possible we tried to create some Makefile targets to help making the testing easier and faster, but it still requires some manual actions.
+```bash
+make docker-login docker-pull
+```
 
-To launch the e2e tests, locally you should:
+Start the local backend:
 
-1. Connect to cycloid's ECR, by typing ```make ecr-connect```, it will configure aws cli with the cycloid credentials retrieved from vault and login to the ECR
+```bash
+make be-start
+```
 
-2. Clone BE git repository and change the variable ```LOCAL_BE_GIT_PATH``` in the makefile acordingly.
+You can start the tests using `go test ./...` or
 
-3. To run the BE infra we need to change the following variables in the Makefile:
-    1. ```YD_API_TAG```: set by default has ```staging``` in the Makefile, so no need to change it. However, you can change it to a specific version, if required. You can check the available versions in the backend repository or pipeline and as well on the AWS ECR directly. Tip: use the following command to list the available images : ```aws ecr list-images --repository-name youdeploy-http-api```
+```bash
+make test
+```
 
-    2. **[/!\ Required]** ```API_LICENCE_KEY```: you can find the e2e license to use in the cycloid console. The name can be retrieved on the [pipeline variables file](https://github.com/cycloidio/cycloid-stacks/blob/config/cycloid-cli/pipeline/staging/variables.yaml#L30) in the config repository of the cli pipeline of staging.
+You can cleanup the backend with:
 
-4. Then all you need to do is launch ```make local-e2e-test```, which will launch a local BE server using fake generated data and then launch the e2e tests using the following variables, as required and defined in [e2e/e2e.go](e2e/e2e.go):
+```bash
+make be-stop
+```
 
-    - **CY_API_URL** : corresponding to the BE API URL. You should change it in the Makefile to `http://172.42.0.3:3001`
-
-    - **CY_TEST_ROOT_API_KEY** : the cycloid API_KEY generated in the BE repository. Set by default has `cat ${LOCAL_BE_GIT_PATH}/API_KEY)`
-
-    - **CY_TEST_GIT_CR_URL** : The local git server launched in the docker-compose. You should change it in the Makefile to `git@172.42.0.14:/git-server/repos/backend-test-config-repo.git`
-
-**Note!** The default config.yaml file in the local BE git repository will be changed during the tests to remove the cost-explorer variables since they're not required for the cli testing purpose.
-
-5. To re-run the tests, you can just re-run the previous command has many times has you want.
-
-6. Once you're finished with the tests you can run ```make delete-local-be```, that will delete all the created docker instances.
+And reset it (stop + start):
+```bash
+make be-reset
+```
