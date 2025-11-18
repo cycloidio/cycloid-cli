@@ -9,7 +9,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/interpolator/resolvers"
 )
 
-var re = regexp.MustCompile(`cy:\/\/[a-zA-Z0-9{}\/]+[[:graph:]]+\b`)
+var re = regexp.MustCompile(`cy:\/\/[a-zA-Z0-9{}\/]+[[?.a-zA-Z0-9&_\-=@]*`)
 
 func ReplaceFile(resolver resolvers.ResourceResolver, file string) (string, error) {
 	var errList []error
