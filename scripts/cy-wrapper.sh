@@ -145,6 +145,12 @@ get_binary() {
 	fi
 
 	CY_VERSION=$(format_version "$CY_VERSION")
+
+	# Allow usage of version 0.0 and dev to test latest CLI version from pull requests
+	if [[ "$CY_VERSION" == "0.0" ]] || [[ "$CY_VERSION" == "dev" ]]; then
+		CY_VERSION="0.0-dev"
+	fi
+
 	# Download the exact CLI version
 	CY_URL="https://github.com/cycloidio/cycloid-cli/releases/download/v${CY_VERSION}/${UPSTREAM_BINARY_NAME}"
 	wget --retry-connrefused --wait 2 --tries 2 -q -O "${CY_BINARY}" "$CY_URL"
