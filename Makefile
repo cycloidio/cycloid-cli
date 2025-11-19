@@ -19,6 +19,7 @@ BRANCH       ?= $(shell git rev-parse --abbrev-ref HEAD 2> /dev/null  || echo 'u
 BUILD_ORIGIN ?= $(USER)@$(shell hostname -f)
 BUILD_DATE   ?= $(shell date --utc -Iseconds)
 DOCKER_COMPOSE ?= $(shell docker compose --help >/dev/null 2>&1 && echo "docker compose" || echo "docker-compose")
+REPO_PATH ?= github.com/cycloidio/cycloid-cli
 
 # GO
 # Setup the -ldflags build option for go here, interpolate the variable values
