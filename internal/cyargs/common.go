@@ -104,8 +104,10 @@ func GetCyContext(cmd *cobra.Command) (org, project, env, component string, err 
 	return org, project, env, component, nil
 }
 
-func AddNameFlag(cmd *cobra.Command) {
-	cmd.Flags().StringP("name", "n", "", "set a human friendly name.")
+func AddNameFlag(cmd *cobra.Command) string {
+	flagName := "name"
+	cmd.Flags().StringP(flagName, "n", "", "set a human friendly name.")
+	return flagName
 }
 
 func GetName(cmd *cobra.Command) (string, error) {

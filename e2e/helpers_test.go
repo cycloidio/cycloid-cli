@@ -44,12 +44,12 @@ func TestExecuteCommandStdin(t *testing.T) {
 	cmd.SetOut(stdoutBuf)
 	err = cmd.Execute()
 	if err != nil {
-		t.Fatalf("command failed: %s", err)
+		t.Errorf("command failed: %s", err)
 	}
 
 	stdout, err := io.ReadAll(stdoutBuf)
 	if err != nil {
-		t.Fatalf("failed to read cmd output: %s", err)
+		t.Errorf("failed to read cmd output: %s", err)
 	}
 
 	assert.Equal(t, expected, string(stdout))

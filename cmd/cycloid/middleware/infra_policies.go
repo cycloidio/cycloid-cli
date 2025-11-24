@@ -44,7 +44,7 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 	// Reads file content and converts it into string
 	policyFileContent, err := os.ReadFile(policyFile)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read rego file: %v", err)
+		return nil, fmt.Errorf("unable to read rego file: %w", err)
 	}
 	// If canonical empty,use the default one
 	if policyCanonical == "" {
@@ -64,7 +64,7 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 
 	err = body.Validate(strfmt.Default)
 	if err != nil {
-		return nil, fmt.Errorf("InfraPolicy invalid: %v", err)
+		return nil, fmt.Errorf("InfraPolicy invalid: %w", err)
 	}
 
 	params.SetBody(body)
@@ -131,7 +131,7 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 	// Reads file content and converts it into string
 	policyFileContent, err := os.ReadFile(policyFile)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read rego file: %v", err)
+		return nil, fmt.Errorf("unable to read rego file: %w", err)
 	}
 	policyBody := string(policyFileContent)
 
@@ -146,7 +146,7 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 
 	err = body.Validate(strfmt.Default)
 	if err != nil {
-		return nil, fmt.Errorf("InfraPolicy invalid: %v", err)
+		return nil, fmt.Errorf("InfraPolicy invalid: %w", err)
 	}
 
 	params.SetBody(body)

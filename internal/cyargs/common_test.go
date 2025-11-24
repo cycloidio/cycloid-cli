@@ -30,7 +30,7 @@ func parseArgFunc(t *testing.T, cmd *cobra.Command, args []string) {
 
 	err := cmd.ParseFlags(args)
 	if err != nil {
-		t.Fatalf("Failed to parse flags '%v' with cmd: %v", args, err)
+		t.Errorf("Failed to parse flags '%v' with cmd: %v", args, err)
 	}
 
 	orgArg, projectArg, envArg, componentArg, err := cyargs.GetCyContext(cmd)

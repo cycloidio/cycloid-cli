@@ -25,6 +25,7 @@ func NewInterpolateCmd() *cobra.Command {
 	cyargs.AddStackRefFlag(cmd)
 	cyargs.AddCyContext(cmd)
 	cyargs.AddStackFormsInputFlags(cmd)
+	cyargs.AddStackVersionFlags(cmd)
 	return cmd
 }
 
@@ -57,8 +58,14 @@ func interpolate(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
+	// Get the stack version flags
+	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	if err != nil {
+		return errors.Wrap(err, "failed to read stack version flags")
+	}
+
 	// Get default to stacks
-	stackConfig, err := m.GetComponentStackConfig(org, project, env, component, useCase)
+	stackConfig, err := m.GetComponentStackConfig(org, project, env, component, useCase, tag, branch, hash)
 	if err != nil {
 		return err
 	}

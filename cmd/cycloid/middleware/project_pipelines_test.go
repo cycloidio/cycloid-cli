@@ -23,6 +23,6 @@ func TestGetProjectPipelines(t *testing.T) {
 	})
 
 	if index == -1 {
-		t.Fatalf("failed to find created component in the list: %v\nexpected component: %v", litter.Sdump(got), litter.Sdump(config.Component))
+		t.Errorf("failed to find created component in the list: %v\nexpected component: %v", litter.Sdump(got), litter.Sdump(config.Component))
 	}
 }

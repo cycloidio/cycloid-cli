@@ -27,8 +27,9 @@ func NewCreateComponentCommand() *cobra.Command {
 	cyargs.AddNameFlag(cmd)
 	cyargs.AddComponentDescriptionFlag(cmd)
 	cmd.MarkFlagRequired(cyargs.AddUseCaseFlag(cmd))
+	cyargs.AddStackVersionFlags(cmd)
 	cyargs.AddCloudProviderFlag(cmd)
-	cyargs.AddComponentStackRefFlag(cmd)
+	cmd.MarkFlagRequired(cyargs.AddComponentStackRefFlag(cmd))
 	cyargs.AddStackFormsInputFlags(cmd)
 	cmd.Flags().Bool("update", false, "If the component exists, update it.")
 	return cmd
@@ -83,6 +84,12 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
+	// Get the stack version flags
+	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	if err != nil {
+		return errors.Wrap(err, "failed to read stack version flags")
+	}
+
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
@@ -115,7 +122,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 			}
 
 			// ConfigureComponent will reconfigure the component
-			componentOutput, err := m.CreateAndConfigureComponent(org, project, env, component, *description, &name, stackRef, useCase, *cloudProvider, inputs)
+			componentOutput, err := m.CreateAndConfigureComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "failed to configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 			}
@@ -134,7 +141,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	componentOutput, err := m.CreateAndConfigureComponent(org, project, env, component, *description, &name, stackRef, useCase, *cloudProvider, inputs)
+	componentOutput, err := m.CreateAndConfigureComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create and configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}
