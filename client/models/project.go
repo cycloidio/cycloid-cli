@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	stderrors "errors"
 	"strconv"
 
@@ -84,6 +85,9 @@ type Project struct {
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
+
+	// Aggregated value of the Environments Components Version.Status
+	VersionStatus []string `json:"version_status"`
 }
 
 // Validate validates this project
@@ -131,6 +135,10 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVersionStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -331,6 +339,42 @@ func (m *Project) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+var projectVersionStatusItemsEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["no_status","latest","active","deleted","outdated"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		projectVersionStatusItemsEnum = append(projectVersionStatusItemsEnum, v)
+	}
+}
+
+func (m *Project) validateVersionStatusItemsEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, projectVersionStatusItemsEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Project) validateVersionStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.VersionStatus) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.VersionStatus); i++ {
+
+		// value enum
+		if err := m.validateVersionStatusItemsEnum("version_status"+"."+strconv.Itoa(i), "body", m.VersionStatus[i]); err != nil {
+			return err
+		}
+
 	}
 
 	return nil

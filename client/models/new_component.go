@@ -44,6 +44,11 @@ type NewComponent struct {
 	// It's the ref of the Stack, like 'cycloidio:stack-magento'
 	// Required: true
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
+
+	// service catalog source version id
+	// Required: true
+	// Minimum: 1
+	ServiceCatalogSourceVersionID *uint32 `json:"service_catalog_source_version_id"`
 }
 
 // Validate validates this new component
@@ -63,6 +68,10 @@ func (m *NewComponent) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateServiceCatalogRef(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateServiceCatalogSourceVersionID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -128,6 +137,19 @@ func (m *NewComponent) validateName(formats strfmt.Registry) error {
 func (m *NewComponent) validateServiceCatalogRef(formats strfmt.Registry) error {
 
 	if err := validate.Required("service_catalog_ref", "body", m.ServiceCatalogRef); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewComponent) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
+
+	if err := validate.Required("service_catalog_source_version_id", "body", m.ServiceCatalogSourceVersionID); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumUint("service_catalog_source_version_id", "body", uint64(*m.ServiceCatalogSourceVersionID), 1, false); err != nil {
 		return err
 	}
 

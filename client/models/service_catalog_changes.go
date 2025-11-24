@@ -34,6 +34,9 @@ type ServiceCatalogChanges struct {
 	// updated
 	// Required: true
 	Updated []*ServiceCatalog `json:"updated"`
+
+	// versions
+	Versions []*ServiceCatalogSourceVersion `json:"versions"`
 }
 
 // Validate validates this service catalog changes
@@ -49,6 +52,10 @@ func (m *ServiceCatalogChanges) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdated(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVersions(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -151,6 +158,36 @@ func (m *ServiceCatalogChanges) validateUpdated(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ServiceCatalogChanges) validateVersions(formats strfmt.Registry) error {
+	if swag.IsZero(m.Versions) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Versions); i++ {
+		if swag.IsZero(m.Versions[i]) { // not required
+			continue
+		}
+
+		if m.Versions[i] != nil {
+			if err := m.Versions[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("versions" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("versions" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 // ContextValidate validate this service catalog changes based on the context it is used
 func (m *ServiceCatalogChanges) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -164,6 +201,10 @@ func (m *ServiceCatalogChanges) ContextValidate(ctx context.Context, formats str
 	}
 
 	if err := m.contextValidateUpdated(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVersions(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -249,6 +290,35 @@ func (m *ServiceCatalogChanges) contextValidateUpdated(ctx context.Context, form
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("updated" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalogChanges) contextValidateVersions(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Versions); i++ {
+
+		if m.Versions[i] != nil {
+
+			if swag.IsZero(m.Versions[i]) { // not required
+				return nil
+			}
+
+			if err := m.Versions[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("versions" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("versions" + "." + strconv.Itoa(i))
 				}
 
 				return err

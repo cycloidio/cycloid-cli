@@ -510,6 +510,11 @@ type InterpolateFormsConfigBody struct {
 	// Required: true
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
 
+	// Is the ID of the new SCS Version used
+	// Required: true
+	// Minimum: 1
+	ServiceCatalogSourceVersionID *uint32 `json:"service_catalog_source_version_id"`
+
 	// use case
 	// Required: true
 	// Max Length: 100
@@ -531,6 +536,10 @@ func (o *InterpolateFormsConfigBody) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := o.validateServiceCatalogRef(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateServiceCatalogSourceVersionID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -572,6 +581,19 @@ func (o *InterpolateFormsConfigBody) validateComponentCanonical(formats strfmt.R
 func (o *InterpolateFormsConfigBody) validateServiceCatalogRef(formats strfmt.Registry) error {
 
 	if err := validate.Required("body"+"."+"service_catalog_ref", "body", o.ServiceCatalogRef); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (o *InterpolateFormsConfigBody) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
+
+	if err := validate.Required("body"+"."+"service_catalog_source_version_id", "body", o.ServiceCatalogSourceVersionID); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumUint("body"+"."+"service_catalog_source_version_id", "body", uint64(*o.ServiceCatalogSourceVersionID), 1, false); err != nil {
 		return err
 	}
 

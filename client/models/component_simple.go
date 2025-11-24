@@ -67,6 +67,10 @@ type ComponentSimple struct {
 	// Min Length: 1
 	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
 	UseCase string `json:"use_case,omitempty"`
+
+	// The version used by the Component
+	// Required: true
+	Version *ServiceCatalogSourceVersion `json:"version"`
 }
 
 // Validate validates this component simple
@@ -102,6 +106,10 @@ func (m *ComponentSimple) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUseCase(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVersion(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -251,6 +259,30 @@ func (m *ComponentSimple) validateUseCase(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ComponentSimple) validateVersion(formats strfmt.Registry) error {
+
+	if err := validate.Required("version", "body", m.Version); err != nil {
+		return err
+	}
+
+	if m.Version != nil {
+		if err := m.Version.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("version")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("version")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 // ContextValidate validate this component simple based on the context it is used
 func (m *ComponentSimple) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -260,6 +292,10 @@ func (m *ComponentSimple) ContextValidate(ctx context.Context, formats strfmt.Re
 	}
 
 	if err := m.contextValidateServiceCatalog(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVersion(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -306,6 +342,27 @@ func (m *ComponentSimple) contextValidateServiceCatalog(ctx context.Context, for
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("service_catalog")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *ComponentSimple) contextValidateVersion(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Version != nil {
+
+		if err := m.Version.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("version")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("version")
 			}
 
 			return err
