@@ -30,3 +30,4 @@ gst
 # direnv
 .direnv
 
+cycloid-cli

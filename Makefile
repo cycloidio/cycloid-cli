@@ -88,14 +88,14 @@ client-generate: client-delete ## Generate client from file at SWAGGER_FILE path
 	# Used in CI, do not use docker compose here.
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE)
-	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
+	@export SWAGGER_VERSION=$$(python3 -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
 	echo $$SWAGGER_VERSION > client/version; \
 	go mod tidy
 
 client-generate-from-docs: client-delete ## Generates client using docker and swagger from docs (version -> latest-api)
 	@wget -O swagger.yml https://docs.cycloid.io/api/swagger.yml
-	@export SWAGGER_VERSION=$$(python -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
+	@export SWAGGER_VERSION=$$(python3 -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
 	echo $$SWAGGER_VERSION > client/version; \
 	make client-generate && \

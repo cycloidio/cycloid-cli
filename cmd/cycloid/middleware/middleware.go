@@ -6,9 +6,9 @@ import (
 )
 
 type Middleware interface {
-	UserLogin(org, email, username *string, password string) (*models.UserSession, error)
+	UserLogin(org, email *string, password string) (*models.UserSession, error)
 	UserLoginToOrg(org, email, password string) (*models.UserSession, error)
-	UserSignup(username, email, password, givenName, familyName string) error
+	UserSignup(username, email, password, fullName string) error
 	RefreshToken(org, childOrg *string, token string) (*models.UserSession, error)
 
 	ActivateLicence(org, licence string) error
@@ -170,14 +170,13 @@ type Middleware interface {
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, error)
 
 	// Extra actions out of the api
-	InitFirstOrg(org, userName, givenName, famillyName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error)
+	InitFirstOrg(org, username, fullName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error)
 }
 
 type FirstOrgData struct {
 	Org                 string
-	UserName            string
-	FamillyName         string
-	GivenName           string
+	Username            string
+	FullName            string
 	Email               string
 	Password            string
 	Token               string

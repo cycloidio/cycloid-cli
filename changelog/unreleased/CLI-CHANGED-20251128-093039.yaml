@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: Update user registration and login to support new API schema
+time: 2025-11-28T09:30:39.842473000Z
+custom:
+  DETAILS: User registration now uses full_name instead of separate given_name/family_name fields. Username is now optional. Login now only accepts email (username parameter removed).
+  PR: ""
+  TYPE: CLI
