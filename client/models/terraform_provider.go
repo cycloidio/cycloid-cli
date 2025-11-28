@@ -41,7 +41,7 @@ type TerraformProvider struct {
 
 	// schema
 	// Required: true
-	Schema interface{} `json:"schema"`
+	Schema any `json:"schema"`
 }
 
 // Validate validates this terraform provider

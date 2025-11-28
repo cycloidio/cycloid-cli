@@ -120,7 +120,7 @@ type ClientService interface {
 CheckResource Trigger a check for a specified resource.
 */
 func (a *Client) CheckResource(params *CheckResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CheckResourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCheckResourceParams()
 	}
@@ -140,17 +140,22 @@ func (a *Client) CheckResource(params *CheckResourceParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CheckResourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CheckResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -158,7 +163,7 @@ func (a *Client) CheckResource(params *CheckResourceParams, authInfo runtime.Cli
 GetPipelineResources Get the resources of the pipeline.
 */
 func (a *Client) GetPipelineResources(params *GetPipelineResourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineResourcesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetPipelineResourcesParams()
 	}
@@ -178,17 +183,22 @@ func (a *Client) GetPipelineResources(params *GetPipelineResourcesParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetPipelineResourcesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetPipelineResourcesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -196,7 +206,7 @@ func (a *Client) GetPipelineResources(params *GetPipelineResourcesParams, authIn
 GetResource Get a specific resource of the pipeline.
 */
 func (a *Client) GetResource(params *GetResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetResourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetResourceParams()
 	}
@@ -216,17 +226,22 @@ func (a *Client) GetResource(params *GetResourceParams, authInfo runtime.ClientA
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetResourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -234,7 +249,7 @@ func (a *Client) GetResource(params *GetResourceParams, authInfo runtime.ClientA
 ResourceSetPinComment Set pin comment on a specified resource
 */
 func (a *Client) ResourceSetPinComment(params *ResourceSetPinCommentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ResourceSetPinCommentNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewResourceSetPinCommentParams()
 	}
@@ -254,17 +269,22 @@ func (a *Client) ResourceSetPinComment(params *ResourceSetPinCommentParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ResourceSetPinCommentNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ResourceSetPinCommentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -272,7 +292,7 @@ func (a *Client) ResourceSetPinComment(params *ResourceSetPinCommentParams, auth
 UnpinResource Unpin a specified resource
 */
 func (a *Client) UnpinResource(params *UnpinResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UnpinResourceNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUnpinResourceParams()
 	}
@@ -292,17 +312,22 @@ func (a *Client) UnpinResource(params *UnpinResourceParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UnpinResourceNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UnpinResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

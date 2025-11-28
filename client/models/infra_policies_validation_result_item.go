@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -52,11 +53,15 @@ func (m *InfraPoliciesValidationResultItem) validateInfraPolicy(formats strfmt.R
 
 	if m.InfraPolicy != nil {
 		if err := m.InfraPolicy.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("infra_policy")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("infra_policy")
 			}
+
 			return err
 		}
 	}
@@ -83,11 +88,15 @@ func (m *InfraPoliciesValidationResultItem) contextValidateInfraPolicy(ctx conte
 	if m.InfraPolicy != nil {
 
 		if err := m.InfraPolicy.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("infra_policy")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("infra_policy")
 			}
+
 			return err
 		}
 	}

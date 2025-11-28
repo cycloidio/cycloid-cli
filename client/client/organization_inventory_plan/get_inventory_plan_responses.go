@@ -7,6 +7,7 @@ package organization_inventory_plan
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -24,7 +25,7 @@ type GetInventoryPlanReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetInventoryPlanReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetInventoryPlanReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetInventoryPlanOK()
@@ -67,7 +68,7 @@ GetInventoryPlanOK describes a response with status code 200, with default heade
 Get the plan of an inventory
 */
 type GetInventoryPlanOK struct {
-	Payload interface{}
+	Payload any
 }
 
 // IsSuccess returns true when this get inventory plan o k response has a 2xx status code
@@ -110,14 +111,14 @@ func (o *GetInventoryPlanOK) String() string {
 	return fmt.Sprintf("[GET /inventory-plan][%d] getInventoryPlanOK %s", 200, payload)
 }
 
-func (o *GetInventoryPlanOK) GetPayload() interface{} {
+func (o *GetInventoryPlanOK) GetPayload() any {
 	return o.Payload
 }
 
 func (o *GetInventoryPlanOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -205,7 +206,7 @@ func (o *GetInventoryPlanForbidden) readResponse(response runtime.ClientResponse
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -293,7 +294,7 @@ func (o *GetInventoryPlanNotFound) readResponse(response runtime.ClientResponse,
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -384,7 +385,7 @@ func (o *GetInventoryPlanDefault) readResponse(response runtime.ClientResponse, 
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

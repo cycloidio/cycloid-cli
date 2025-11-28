@@ -116,7 +116,7 @@ type ClientService interface {
 GetAuthentication Get the authentication available in the organization with a canonical
 */
 func (a *Client) GetAuthentication(params *GetAuthenticationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAuthenticationOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetAuthenticationParams()
 	}
@@ -136,17 +136,22 @@ func (a *Client) GetAuthentication(params *GetAuthenticationParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetAuthenticationOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetAuthenticationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -154,7 +159,7 @@ func (a *Client) GetAuthentication(params *GetAuthenticationParams, authInfo run
 ListAuthentications List of authentications available in the organization.
 */
 func (a *Client) ListAuthentications(params *ListAuthenticationsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListAuthenticationsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListAuthenticationsParams()
 	}
@@ -174,17 +179,22 @@ func (a *Client) ListAuthentications(params *ListAuthenticationsParams, authInfo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListAuthenticationsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListAuthenticationsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -192,7 +202,7 @@ func (a *Client) ListAuthentications(params *ListAuthenticationsParams, authInfo
 UpdateAuthentication Update an existing authentication in the organization.
 */
 func (a *Client) UpdateAuthentication(params *UpdateAuthenticationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateAuthenticationOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateAuthenticationParams()
 	}
@@ -212,17 +222,22 @@ func (a *Client) UpdateAuthentication(params *UpdateAuthenticationParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateAuthenticationOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateAuthenticationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

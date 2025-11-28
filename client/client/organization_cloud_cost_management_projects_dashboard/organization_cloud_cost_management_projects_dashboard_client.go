@@ -115,7 +115,7 @@ It contains one date histogram with the aggregation by project,
 and a histogram with the aggregation by project and provider.
 */
 func (a *Client) GetCloudCostManagementProjectsDashboard(params *GetCloudCostManagementProjectsDashboardParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementProjectsDashboardOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementProjectsDashboardParams()
 	}
@@ -135,17 +135,22 @@ func (a *Client) GetCloudCostManagementProjectsDashboard(params *GetCloudCostMan
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementProjectsDashboardOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementProjectsDashboardDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

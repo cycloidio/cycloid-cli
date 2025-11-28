@@ -8,6 +8,7 @@ package appearance
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type GetDefaultAppearanceReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetDefaultAppearanceReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetDefaultAppearanceReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetDefaultAppearanceOK()
@@ -109,7 +110,7 @@ func (o *GetDefaultAppearanceOK) readResponse(response runtime.ClientResponse, c
 	o.Payload = new(GetDefaultAppearanceOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -200,7 +201,7 @@ func (o *GetDefaultAppearanceDefault) readResponse(response runtime.ClientRespon
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -240,11 +241,15 @@ func (o *GetDefaultAppearanceOKBody) validateData(formats strfmt.Registry) error
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getDefaultAppearanceOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getDefaultAppearanceOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -271,11 +276,15 @@ func (o *GetDefaultAppearanceOKBody) contextValidateData(ctx context.Context, fo
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getDefaultAppearanceOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getDefaultAppearanceOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

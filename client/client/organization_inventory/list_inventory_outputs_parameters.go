@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewListInventoryOutputsParams creates a new ListInventoryOutputsParams object,
@@ -61,11 +62,36 @@ ListInventoryOutputsParams contains all the parameters to send to the API endpoi
 */
 type ListInventoryOutputsParams struct {
 
+	/* OrderBy.
+
+	   Allows to order the list of items. Example usage: field_name:asc. Multiple order_by parameters are allowed, applied in the order they are specified.
+
+	*/
+	OrderBy *string
+
 	/* OrganizationCanonical.
 
 	   A canonical of an organization.
 	*/
 	OrganizationCanonical string
+
+	/* PageIndex.
+
+	   The page number to request. The first page is 1.
+
+	   Format: uint32
+	   Default: 1
+	*/
+	PageIndex *uint32
+
+	/* PageSize.
+
+	   The number of items at most which the response can have.
+
+	   Format: uint32
+	   Default: 1000
+	*/
+	PageSize *uint32
 
 	timeout    time.Duration
 	Context    context.Context
@@ -84,7 +110,21 @@ func (o *ListInventoryOutputsParams) WithDefaults() *ListInventoryOutputsParams 
 //
 // All values with no default are reset to their zero value.
 func (o *ListInventoryOutputsParams) SetDefaults() {
-	// no default values defined for this parameter
+	var (
+		pageIndexDefault = uint32(1)
+
+		pageSizeDefault = uint32(1000)
+	)
+
+	val := ListInventoryOutputsParams{
+		PageIndex: &pageIndexDefault,
+		PageSize:  &pageSizeDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the list inventory outputs params
@@ -120,6 +160,17 @@ func (o *ListInventoryOutputsParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithOrderBy adds the orderBy to the list inventory outputs params
+func (o *ListInventoryOutputsParams) WithOrderBy(orderBy *string) *ListInventoryOutputsParams {
+	o.SetOrderBy(orderBy)
+	return o
+}
+
+// SetOrderBy adds the orderBy to the list inventory outputs params
+func (o *ListInventoryOutputsParams) SetOrderBy(orderBy *string) {
+	o.OrderBy = orderBy
+}
+
 // WithOrganizationCanonical adds the organizationCanonical to the list inventory outputs params
 func (o *ListInventoryOutputsParams) WithOrganizationCanonical(organizationCanonical string) *ListInventoryOutputsParams {
 	o.SetOrganizationCanonical(organizationCanonical)
@@ -131,6 +182,28 @@ func (o *ListInventoryOutputsParams) SetOrganizationCanonical(organizationCanoni
 	o.OrganizationCanonical = organizationCanonical
 }
 
+// WithPageIndex adds the pageIndex to the list inventory outputs params
+func (o *ListInventoryOutputsParams) WithPageIndex(pageIndex *uint32) *ListInventoryOutputsParams {
+	o.SetPageIndex(pageIndex)
+	return o
+}
+
+// SetPageIndex adds the pageIndex to the list inventory outputs params
+func (o *ListInventoryOutputsParams) SetPageIndex(pageIndex *uint32) {
+	o.PageIndex = pageIndex
+}
+
+// WithPageSize adds the pageSize to the list inventory outputs params
+func (o *ListInventoryOutputsParams) WithPageSize(pageSize *uint32) *ListInventoryOutputsParams {
+	o.SetPageSize(pageSize)
+	return o
+}
+
+// SetPageSize adds the pageSize to the list inventory outputs params
+func (o *ListInventoryOutputsParams) SetPageSize(pageSize *uint32) {
+	o.PageSize = pageSize
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *ListInventoryOutputsParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -139,9 +212,60 @@ func (o *ListInventoryOutputsParams) WriteToRequest(r runtime.ClientRequest, reg
 	}
 	var res []error
 
+	if o.OrderBy != nil {
+
+		// query param order_by
+		var qrOrderBy string
+
+		if o.OrderBy != nil {
+			qrOrderBy = *o.OrderBy
+		}
+		qOrderBy := qrOrderBy
+		if qOrderBy != "" {
+
+			if err := r.SetQueryParam("order_by", qOrderBy); err != nil {
+				return err
+			}
+		}
+	}
+
 	// path param organization_canonical
 	if err := r.SetPathParam("organization_canonical", o.OrganizationCanonical); err != nil {
 		return err
+	}
+
+	if o.PageIndex != nil {
+
+		// query param page_index
+		var qrPageIndex uint32
+
+		if o.PageIndex != nil {
+			qrPageIndex = *o.PageIndex
+		}
+		qPageIndex := swag.FormatUint32(qrPageIndex)
+		if qPageIndex != "" {
+
+			if err := r.SetQueryParam("page_index", qPageIndex); err != nil {
+				return err
+			}
+		}
+	}
+
+	if o.PageSize != nil {
+
+		// query param page_size
+		var qrPageSize uint32
+
+		if o.PageSize != nil {
+			qrPageSize = *o.PageSize
+		}
+		qPageSize := swag.FormatUint32(qrPageSize)
+		if qPageSize != "" {
+
+			if err := r.SetQueryParam("page_size", qPageSize); err != nil {
+				return err
+			}
+		}
 	}
 
 	if len(res) > 0 {

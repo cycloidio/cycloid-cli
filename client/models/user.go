@@ -21,7 +21,7 @@ import (
 // swagger:model User
 type User struct {
 
-	// Code of a country the user is from
+	// Code of a country the user is from in alpha-2 format
 	// Pattern: ^[A-Z]{2}$
 	CountryCode string `json:"country_code,omitempty"`
 
@@ -35,15 +35,9 @@ type User struct {
 	// Format: email
 	Email *strfmt.Email `json:"email"`
 
-	// family name
+	// full name
 	// Required: true
-	// Min Length: 2
-	FamilyName *string `json:"family_name"`
-
-	// given name
-	// Required: true
-	// Min Length: 2
-	GivenName *string `json:"given_name"`
+	FullName *string `json:"full_name"`
 
 	// id
 	// Required: true
@@ -95,11 +89,7 @@ func (m *User) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFamilyName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateGivenName(formats); err != nil {
+	if err := m.validateFullName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -175,26 +165,9 @@ func (m *User) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *User) validateFamilyName(formats strfmt.Registry) error {
+func (m *User) validateFullName(formats strfmt.Registry) error {
 
-	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *User) validateGivenName(formats strfmt.Registry) error {
-
-	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
+	if err := validate.Required("full_name", "body", m.FullName); err != nil {
 		return err
 	}
 

@@ -134,7 +134,7 @@ type ClientService interface {
 ConfigureComponent Configure the component
 */
 func (a *Client) ConfigureComponent(params *ConfigureComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ConfigureComponentNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewConfigureComponentParams()
 	}
@@ -154,17 +154,22 @@ func (a *Client) ConfigureComponent(params *ConfigureComponentParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ConfigureComponentNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ConfigureComponentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -172,7 +177,7 @@ func (a *Client) ConfigureComponent(params *ConfigureComponentParams, authInfo r
 CreateAndConfigureComponent Create and configure a new Component in one step
 */
 func (a *Client) CreateAndConfigureComponent(params *CreateAndConfigureComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateAndConfigureComponentOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateAndConfigureComponentParams()
 	}
@@ -192,17 +197,22 @@ func (a *Client) CreateAndConfigureComponent(params *CreateAndConfigureComponent
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateAndConfigureComponentOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateAndConfigureComponentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -210,7 +220,7 @@ func (a *Client) CreateAndConfigureComponent(params *CreateAndConfigureComponent
 CreateComponent Create a new Component
 */
 func (a *Client) CreateComponent(params *CreateComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateComponentOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateComponentParams()
 	}
@@ -230,17 +240,22 @@ func (a *Client) CreateComponent(params *CreateComponentParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateComponentOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateComponentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -248,7 +263,7 @@ func (a *Client) CreateComponent(params *CreateComponentParams, authInfo runtime
 DeleteComponent Delete the component that's part of the environment
 */
 func (a *Client) DeleteComponent(params *DeleteComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteComponentNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteComponentParams()
 	}
@@ -268,17 +283,22 @@ func (a *Client) DeleteComponent(params *DeleteComponentParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteComponentNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteComponentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -286,7 +306,7 @@ func (a *Client) DeleteComponent(params *DeleteComponentParams, authInfo runtime
 GetComponent Fetch the component that's part of the environment
 */
 func (a *Client) GetComponent(params *GetComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetComponentParams()
 	}
@@ -306,17 +326,22 @@ func (a *Client) GetComponent(params *GetComponentParams, authInfo runtime.Clien
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetComponentOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetComponentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -324,7 +349,7 @@ func (a *Client) GetComponent(params *GetComponentParams, authInfo runtime.Clien
 GetComponentConfig Fetch the current component configuration variables.
 */
 func (a *Client) GetComponentConfig(params *GetComponentConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentConfigOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetComponentConfigParams()
 	}
@@ -344,17 +369,22 @@ func (a *Client) GetComponentConfig(params *GetComponentConfigParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetComponentConfigOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetComponentConfigDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -362,7 +392,7 @@ func (a *Client) GetComponentConfig(params *GetComponentConfigParams, authInfo r
 GetComponentInfrastructure Get the infrastructure of the Component
 */
 func (a *Client) GetComponentInfrastructure(params *GetComponentInfrastructureParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentInfrastructureOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetComponentInfrastructureParams()
 	}
@@ -382,17 +412,22 @@ func (a *Client) GetComponentInfrastructure(params *GetComponentInfrastructurePa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetComponentInfrastructureOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetComponentInfrastructureDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -403,7 +438,7 @@ If no use case is specified, all the use cases will be returned.
 If an use case is specified, only the configuration for that use case will be returned.
 */
 func (a *Client) GetComponentStackConfiguration(params *GetComponentStackConfigurationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentStackConfigurationOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetComponentStackConfigurationParams()
 	}
@@ -423,17 +458,22 @@ func (a *Client) GetComponentStackConfiguration(params *GetComponentStackConfigu
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetComponentStackConfigurationOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetComponentStackConfigurationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -441,7 +481,7 @@ func (a *Client) GetComponentStackConfiguration(params *GetComponentStackConfigu
 GetComponents Fetch the components that are part of the environment
 */
 func (a *Client) GetComponents(params *GetComponentsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetComponentsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetComponentsParams()
 	}
@@ -461,17 +501,22 @@ func (a *Client) GetComponents(params *GetComponentsParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetComponentsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetComponentsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -479,7 +524,7 @@ func (a *Client) GetComponents(params *GetComponentsParams, authInfo runtime.Cli
 GetOrganizationComponents Fetch the components within the organization
 */
 func (a *Client) GetOrganizationComponents(params *GetOrganizationComponentsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrganizationComponentsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetOrganizationComponentsParams()
 	}
@@ -499,17 +544,22 @@ func (a *Client) GetOrganizationComponents(params *GetOrganizationComponentsPara
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetOrganizationComponentsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetOrganizationComponentsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -517,7 +567,7 @@ func (a *Client) GetOrganizationComponents(params *GetOrganizationComponentsPara
 MigrateComponent Migrate the component that's part of the environment
 */
 func (a *Client) MigrateComponent(params *MigrateComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*MigrateComponentOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewMigrateComponentParams()
 	}
@@ -537,17 +587,22 @@ func (a *Client) MigrateComponent(params *MigrateComponentParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*MigrateComponentOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*MigrateComponentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -555,7 +610,7 @@ func (a *Client) MigrateComponent(params *MigrateComponentParams, authInfo runti
 UpdateComponent Update the component that's part of the environment
 */
 func (a *Client) UpdateComponent(params *UpdateComponentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateComponentOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateComponentParams()
 	}
@@ -575,17 +630,22 @@ func (a *Client) UpdateComponent(params *UpdateComponentParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateComponentOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateComponentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

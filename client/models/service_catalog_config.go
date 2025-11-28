@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -99,11 +100,15 @@ func (m *ServiceCatalogConfig) validateAnsible(formats strfmt.Registry) error {
 
 	if m.Ansible != nil {
 		if err := m.Ansible.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("ansible")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("ansible")
 			}
+
 			return err
 		}
 	}
@@ -127,11 +132,15 @@ func (m *ServiceCatalogConfig) validateCustom(formats strfmt.Registry) error {
 
 	if m.Custom != nil {
 		if err := m.Custom.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("custom")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("custom")
 			}
+
 			return err
 		}
 	}
@@ -155,11 +164,15 @@ func (m *ServiceCatalogConfig) validateForms(formats strfmt.Registry) error {
 
 	if m.Forms != nil {
 		if err := m.Forms.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("forms")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("forms")
 			}
+
 			return err
 		}
 	}
@@ -184,11 +197,15 @@ func (m *ServiceCatalogConfig) validatePipeline(formats strfmt.Registry) error {
 
 	if m.Pipeline != nil {
 		if err := m.Pipeline.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("pipeline")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("pipeline")
 			}
+
 			return err
 		}
 	}
@@ -203,11 +220,15 @@ func (m *ServiceCatalogConfig) validateTerraform(formats strfmt.Registry) error 
 
 	if m.Terraform != nil {
 		if err := m.Terraform.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("terraform")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("terraform")
 			}
+
 			return err
 		}
 	}
@@ -252,11 +273,15 @@ func (m *ServiceCatalogConfig) contextValidateAnsible(ctx context.Context, forma
 	}
 
 	if err := m.Ansible.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("ansible")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("ansible")
 		}
+
 		return err
 	}
 
@@ -272,11 +297,15 @@ func (m *ServiceCatalogConfig) contextValidateCustom(ctx context.Context, format
 		}
 
 		if err := m.Custom.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("custom")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("custom")
 			}
+
 			return err
 		}
 	}
@@ -293,11 +322,15 @@ func (m *ServiceCatalogConfig) contextValidateForms(ctx context.Context, formats
 		}
 
 		if err := m.Forms.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("forms")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("forms")
 			}
+
 			return err
 		}
 	}
@@ -310,11 +343,15 @@ func (m *ServiceCatalogConfig) contextValidatePipeline(ctx context.Context, form
 	if m.Pipeline != nil {
 
 		if err := m.Pipeline.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("pipeline")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("pipeline")
 			}
+
 			return err
 		}
 	}
@@ -329,11 +366,15 @@ func (m *ServiceCatalogConfig) contextValidateTerraform(ctx context.Context, for
 	}
 
 	if err := m.Terraform.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("terraform")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("terraform")
 		}
+
 		return err
 	}
 

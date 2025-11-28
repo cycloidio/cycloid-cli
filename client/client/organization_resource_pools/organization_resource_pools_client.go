@@ -120,7 +120,7 @@ type ClientService interface {
 CreateResourcePool Create a new resource pool available in the organization.
 */
 func (a *Client) CreateResourcePool(params *CreateResourcePoolParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateResourcePoolOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateResourcePoolParams()
 	}
@@ -140,17 +140,22 @@ func (a *Client) CreateResourcePool(params *CreateResourcePoolParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateResourcePoolOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateResourcePoolDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -158,7 +163,7 @@ func (a *Client) CreateResourcePool(params *CreateResourcePoolParams, authInfo r
 DeleteResourcePool Delete an existing resource_pool in the organization.
 */
 func (a *Client) DeleteResourcePool(params *DeleteResourcePoolParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteResourcePoolNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteResourcePoolParams()
 	}
@@ -178,17 +183,22 @@ func (a *Client) DeleteResourcePool(params *DeleteResourcePoolParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteResourcePoolNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteResourcePoolDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -196,7 +206,7 @@ func (a *Client) DeleteResourcePool(params *DeleteResourcePoolParams, authInfo r
 GetResourcePool Get the resource pool available in the organization with an canonical
 */
 func (a *Client) GetResourcePool(params *GetResourcePoolParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetResourcePoolOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetResourcePoolParams()
 	}
@@ -216,17 +226,22 @@ func (a *Client) GetResourcePool(params *GetResourcePoolParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetResourcePoolOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetResourcePoolDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -234,7 +249,7 @@ func (a *Client) GetResourcePool(params *GetResourcePoolParams, authInfo runtime
 ListResourcePools List of resource pools available in the organization.
 */
 func (a *Client) ListResourcePools(params *ListResourcePoolsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListResourcePoolsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListResourcePoolsParams()
 	}
@@ -254,17 +269,22 @@ func (a *Client) ListResourcePools(params *ListResourcePoolsParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListResourcePoolsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListResourcePoolsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -272,7 +292,7 @@ func (a *Client) ListResourcePools(params *ListResourcePoolsParams, authInfo run
 UpdateResourcePool Update an existing resource_pool in the organization.
 */
 func (a *Client) UpdateResourcePool(params *UpdateResourcePoolParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateResourcePoolOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateResourcePoolParams()
 	}
@@ -292,17 +312,22 @@ func (a *Client) UpdateResourcePool(params *UpdateResourcePoolParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateResourcePoolOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateResourcePoolDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

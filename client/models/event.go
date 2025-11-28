@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -166,7 +167,7 @@ func (m *Event) validateMessage(formats strfmt.Registry) error {
 	return nil
 }
 
-var eventTypeSeverityPropEnum []interface{}
+var eventTypeSeverityPropEnum []any
 
 func init() {
 	var res []string
@@ -228,11 +229,15 @@ func (m *Event) validateTags(formats strfmt.Registry) error {
 
 		if m.Tags[i] != nil {
 			if err := m.Tags[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -264,7 +269,7 @@ func (m *Event) validateTitle(formats strfmt.Registry) error {
 	return nil
 }
 
-var eventTypeTypePropEnum []interface{}
+var eventTypeTypePropEnum []any
 
 func init() {
 	var res []string
@@ -338,11 +343,15 @@ func (m *Event) contextValidateTags(ctx context.Context, formats strfmt.Registry
 			}
 
 			if err := m.Tags[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("tags" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("tags" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

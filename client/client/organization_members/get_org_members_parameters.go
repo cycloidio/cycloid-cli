@@ -127,17 +127,11 @@ type GetOrgMembersParams struct {
 	*/
 	UserCreatedAt *uint64
 
-	/* UserFamilyName.
+	/* UserFullName.
 
-	   Search by the user's family name
+	   Search by the user's full name
 	*/
-	UserFamilyName *string
-
-	/* UserGivenName.
-
-	   Search by the user's given name
-	*/
-	UserGivenName *string
+	UserFullName *string
 
 	timeout    time.Duration
 	Context    context.Context
@@ -305,26 +299,15 @@ func (o *GetOrgMembersParams) SetUserCreatedAt(userCreatedAt *uint64) {
 	o.UserCreatedAt = userCreatedAt
 }
 
-// WithUserFamilyName adds the userFamilyName to the get org members params
-func (o *GetOrgMembersParams) WithUserFamilyName(userFamilyName *string) *GetOrgMembersParams {
-	o.SetUserFamilyName(userFamilyName)
+// WithUserFullName adds the userFullName to the get org members params
+func (o *GetOrgMembersParams) WithUserFullName(userFullName *string) *GetOrgMembersParams {
+	o.SetUserFullName(userFullName)
 	return o
 }
 
-// SetUserFamilyName adds the userFamilyName to the get org members params
-func (o *GetOrgMembersParams) SetUserFamilyName(userFamilyName *string) {
-	o.UserFamilyName = userFamilyName
-}
-
-// WithUserGivenName adds the userGivenName to the get org members params
-func (o *GetOrgMembersParams) WithUserGivenName(userGivenName *string) *GetOrgMembersParams {
-	o.SetUserGivenName(userGivenName)
-	return o
-}
-
-// SetUserGivenName adds the userGivenName to the get org members params
-func (o *GetOrgMembersParams) SetUserGivenName(userGivenName *string) {
-	o.UserGivenName = userGivenName
+// SetUserFullName adds the userFullName to the get org members params
+func (o *GetOrgMembersParams) SetUserFullName(userFullName *string) {
+	o.UserFullName = userFullName
 }
 
 // WriteToRequest writes these params to a swagger request
@@ -476,35 +459,18 @@ func (o *GetOrgMembersParams) WriteToRequest(r runtime.ClientRequest, reg strfmt
 		}
 	}
 
-	if o.UserFamilyName != nil {
+	if o.UserFullName != nil {
 
-		// query param user_family_name
-		var qrUserFamilyName string
+		// query param user_full_name
+		var qrUserFullName string
 
-		if o.UserFamilyName != nil {
-			qrUserFamilyName = *o.UserFamilyName
+		if o.UserFullName != nil {
+			qrUserFullName = *o.UserFullName
 		}
-		qUserFamilyName := qrUserFamilyName
-		if qUserFamilyName != "" {
+		qUserFullName := qrUserFullName
+		if qUserFullName != "" {
 
-			if err := r.SetQueryParam("user_family_name", qUserFamilyName); err != nil {
-				return err
-			}
-		}
-	}
-
-	if o.UserGivenName != nil {
-
-		// query param user_given_name
-		var qrUserGivenName string
-
-		if o.UserGivenName != nil {
-			qrUserGivenName = *o.UserGivenName
-		}
-		qUserGivenName := qrUserGivenName
-		if qUserGivenName != "" {
-
-			if err := r.SetQueryParam("user_given_name", qUserGivenName); err != nil {
+			if err := r.SetQueryParam("user_full_name", qUserFullName); err != nil {
 				return err
 			}
 		}

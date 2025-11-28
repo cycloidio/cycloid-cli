@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -54,11 +55,15 @@ func (m *PaginationConcourse) validateNext(formats strfmt.Registry) error {
 
 	if m.Next != nil {
 		if err := m.Next.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("next")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("next")
 			}
+
 			return err
 		}
 	}
@@ -74,11 +79,15 @@ func (m *PaginationConcourse) validatePrevious(formats strfmt.Registry) error {
 
 	if m.Previous != nil {
 		if err := m.Previous.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("previous")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("previous")
 			}
+
 			return err
 		}
 	}
@@ -109,11 +118,15 @@ func (m *PaginationConcourse) contextValidateNext(ctx context.Context, formats s
 	if m.Next != nil {
 
 		if err := m.Next.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("next")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("next")
 			}
+
 			return err
 		}
 	}
@@ -126,11 +139,15 @@ func (m *PaginationConcourse) contextValidatePrevious(ctx context.Context, forma
 	if m.Previous != nil {
 
 		if err := m.Previous.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("previous")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("previous")
 			}
+
 			return err
 		}
 	}

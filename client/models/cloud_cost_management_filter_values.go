@@ -39,13 +39,13 @@ type CloudCostManagementFilterValues struct {
 	LinkedAccounts []string `json:"linked_accounts"`
 
 	// linked accounts with cp
-	LinkedAccountsWithCp interface{} `json:"linked_accounts_with_cp,omitempty"`
+	LinkedAccountsWithCp any `json:"linked_accounts_with_cp,omitempty"`
 
 	// master accounts
 	MasterAccounts []string `json:"master_accounts"`
 
 	// master accounts with cp
-	MasterAccountsWithCp interface{} `json:"master_accounts_with_cp,omitempty"`
+	MasterAccountsWithCp any `json:"master_accounts_with_cp,omitempty"`
 
 	// projects
 	Projects []string `json:"projects"`

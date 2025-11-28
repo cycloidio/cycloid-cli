@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -217,11 +218,15 @@ func (m *Organization) validateAdmins(formats strfmt.Registry) error {
 
 		if m.Admins[i] != nil {
 			if err := m.Admins[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("admins" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("admins" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -238,11 +243,15 @@ func (m *Organization) validateAppearance(formats strfmt.Registry) error {
 
 	if m.Appearance != nil {
 		if err := m.Appearance.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("appearance")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("appearance")
 			}
+
 			return err
 		}
 	}
@@ -434,11 +443,15 @@ func (m *Organization) validateSubscription(formats strfmt.Registry) error {
 
 	if m.Subscription != nil {
 		if err := m.Subscription.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("subscription")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("subscription")
 			}
+
 			return err
 		}
 	}
@@ -492,11 +505,15 @@ func (m *Organization) contextValidateAdmins(ctx context.Context, formats strfmt
 			}
 
 			if err := m.Admins[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("admins" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("admins" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -515,11 +532,15 @@ func (m *Organization) contextValidateAppearance(ctx context.Context, formats st
 		}
 
 		if err := m.Appearance.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("appearance")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("appearance")
 			}
+
 			return err
 		}
 	}
@@ -536,11 +557,15 @@ func (m *Organization) contextValidateSubscription(ctx context.Context, formats 
 		}
 
 		if err := m.Subscription.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("subscription")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("subscription")
 			}
+
 			return err
 		}
 	}

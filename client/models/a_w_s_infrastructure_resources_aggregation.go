@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -59,7 +60,7 @@ type AWSInfrastructureResourcesAggregation struct {
 	Vpcs *InfrastructureResourcesAggregationItem `json:"vpcs,omitempty"`
 
 	// a w s infrastructure resources aggregation additional properties
-	AWSInfrastructureResourcesAggregationAdditionalProperties map[string]interface{} `json:"-"`
+	AWSInfrastructureResourcesAggregationAdditionalProperties map[string]any `json:"-"`
 }
 
 // UnmarshalJSON unmarshals this object with additional properties from JSON
@@ -142,9 +143,9 @@ func (m *AWSInfrastructureResourcesAggregation) UnmarshalJSON(data []byte) error
 	delete(stage2, "vpcs")
 	// stage 3, add additional properties values
 	if len(stage2) > 0 {
-		result := make(map[string]interface{})
+		result := make(map[string]any)
 		for k, v := range stage2 {
-			var toadd interface{}
+			var toadd any
 			if err := json.Unmarshal(v, &toadd); err != nil {
 				return err
 			}
@@ -326,11 +327,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateBuckets(formats strfmt.R
 
 	if m.Buckets != nil {
 		if err := m.Buckets.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("buckets")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("buckets")
 			}
+
 			return err
 		}
 	}
@@ -345,11 +350,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateCacheClusters(formats st
 
 	if m.CacheClusters != nil {
 		if err := m.CacheClusters.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cache_clusters")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cache_clusters")
 			}
+
 			return err
 		}
 	}
@@ -364,11 +373,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateDbInstances(formats strf
 
 	if m.DbInstances != nil {
 		if err := m.DbInstances.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("db_instances")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("db_instances")
 			}
+
 			return err
 		}
 	}
@@ -383,11 +396,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateImages(formats strfmt.Re
 
 	if m.Images != nil {
 		if err := m.Images.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("images")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("images")
 			}
+
 			return err
 		}
 	}
@@ -402,11 +419,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateInstances(formats strfmt
 
 	if m.Instances != nil {
 		if err := m.Instances.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("instances")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("instances")
 			}
+
 			return err
 		}
 	}
@@ -421,11 +442,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV1(formats 
 
 	if m.LoadBalancersV1 != nil {
 		if err := m.LoadBalancersV1.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("load_balancers_v1")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("load_balancers_v1")
 			}
+
 			return err
 		}
 	}
@@ -440,11 +465,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV2(formats 
 
 	if m.LoadBalancersV2 != nil {
 		if err := m.LoadBalancersV2.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("load_balancers_v2")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("load_balancers_v2")
 			}
+
 			return err
 		}
 	}
@@ -459,11 +488,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateSecurityGroups(formats s
 
 	if m.SecurityGroups != nil {
 		if err := m.SecurityGroups.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("security_groups")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("security_groups")
 			}
+
 			return err
 		}
 	}
@@ -478,11 +511,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateSnapshots(formats strfmt
 
 	if m.Snapshots != nil {
 		if err := m.Snapshots.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("snapshots")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("snapshots")
 			}
+
 			return err
 		}
 	}
@@ -497,11 +534,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateSubnets(formats strfmt.R
 
 	if m.Subnets != nil {
 		if err := m.Subnets.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("subnets")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("subnets")
 			}
+
 			return err
 		}
 	}
@@ -516,11 +557,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateVolumes(formats strfmt.R
 
 	if m.Volumes != nil {
 		if err := m.Volumes.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("volumes")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("volumes")
 			}
+
 			return err
 		}
 	}
@@ -535,11 +580,15 @@ func (m *AWSInfrastructureResourcesAggregation) validateVpcs(formats strfmt.Regi
 
 	if m.Vpcs != nil {
 		if err := m.Vpcs.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("vpcs")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("vpcs")
 			}
+
 			return err
 		}
 	}
@@ -614,11 +663,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateBuckets(ctx conte
 		}
 
 		if err := m.Buckets.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("buckets")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("buckets")
 			}
+
 			return err
 		}
 	}
@@ -635,11 +688,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateCacheClusters(ctx
 		}
 
 		if err := m.CacheClusters.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cache_clusters")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cache_clusters")
 			}
+
 			return err
 		}
 	}
@@ -656,11 +713,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateDbInstances(ctx c
 		}
 
 		if err := m.DbInstances.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("db_instances")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("db_instances")
 			}
+
 			return err
 		}
 	}
@@ -677,11 +738,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateImages(ctx contex
 		}
 
 		if err := m.Images.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("images")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("images")
 			}
+
 			return err
 		}
 	}
@@ -698,11 +763,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateInstances(ctx con
 		}
 
 		if err := m.Instances.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("instances")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("instances")
 			}
+
 			return err
 		}
 	}
@@ -719,11 +788,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateLoadBalancersV1(c
 		}
 
 		if err := m.LoadBalancersV1.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("load_balancers_v1")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("load_balancers_v1")
 			}
+
 			return err
 		}
 	}
@@ -740,11 +813,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateLoadBalancersV2(c
 		}
 
 		if err := m.LoadBalancersV2.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("load_balancers_v2")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("load_balancers_v2")
 			}
+
 			return err
 		}
 	}
@@ -761,11 +838,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateSecurityGroups(ct
 		}
 
 		if err := m.SecurityGroups.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("security_groups")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("security_groups")
 			}
+
 			return err
 		}
 	}
@@ -782,11 +863,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateSnapshots(ctx con
 		}
 
 		if err := m.Snapshots.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("snapshots")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("snapshots")
 			}
+
 			return err
 		}
 	}
@@ -803,11 +888,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateSubnets(ctx conte
 		}
 
 		if err := m.Subnets.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("subnets")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("subnets")
 			}
+
 			return err
 		}
 	}
@@ -824,11 +913,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateVolumes(ctx conte
 		}
 
 		if err := m.Volumes.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("volumes")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("volumes")
 			}
+
 			return err
 		}
 	}
@@ -845,11 +938,15 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateVpcs(ctx context.
 		}
 
 		if err := m.Vpcs.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("vpcs")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("vpcs")
 			}
+
 			return err
 		}
 	}

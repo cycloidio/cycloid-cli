@@ -114,7 +114,7 @@ type ClientService interface {
 GetCloudCostManagementProvider Return a histogram of the costs generated in a given period aggregated by time granularity and other terms, for a single provider.
 */
 func (a *Client) GetCloudCostManagementProvider(params *GetCloudCostManagementProviderParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementProviderOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementProviderParams()
 	}
@@ -134,17 +134,22 @@ func (a *Client) GetCloudCostManagementProvider(params *GetCloudCostManagementPr
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementProviderOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementProviderDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -152,7 +157,7 @@ func (a *Client) GetCloudCostManagementProvider(params *GetCloudCostManagementPr
 GetCloudCostManagementProviders Return a histogram of the costs generated in a given period aggregated by time granularity and other terms, for a single provider.
 */
 func (a *Client) GetCloudCostManagementProviders(params *GetCloudCostManagementProvidersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementProvidersOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementProvidersParams()
 	}
@@ -172,17 +177,22 @@ func (a *Client) GetCloudCostManagementProviders(params *GetCloudCostManagementP
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementProvidersOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementProvidersDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

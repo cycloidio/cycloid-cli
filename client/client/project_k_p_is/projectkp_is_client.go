@@ -124,7 +124,7 @@ type ClientService interface {
 CreateKPIFavorite Add a kpi in the user favorites list.
 */
 func (a *Client) CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateKPIFavoriteNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateKPIFavoriteParams()
 	}
@@ -144,17 +144,22 @@ func (a *Client) CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateKPIFavoriteNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateKPIFavoriteDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -162,7 +167,7 @@ func (a *Client) CreateKPIFavorite(params *CreateKPIFavoriteParams, authInfo run
 CreateKpi Save information about the KPI
 */
 func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateKpiOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateKpiParams()
 	}
@@ -182,17 +187,22 @@ func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthI
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateKpiOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateKpiDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -200,7 +210,7 @@ func (a *Client) CreateKpi(params *CreateKpiParams, authInfo runtime.ClientAuthI
 DeleteKPIFavorite Remove a kpi from the user favorites list.
 */
 func (a *Client) DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteKPIFavoriteNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteKPIFavoriteParams()
 	}
@@ -220,17 +230,22 @@ func (a *Client) DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteKPIFavoriteNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteKPIFavoriteDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -238,7 +253,7 @@ func (a *Client) DeleteKPIFavorite(params *DeleteKPIFavoriteParams, authInfo run
 DeleteKpi delete a KPI
 */
 func (a *Client) DeleteKpi(params *DeleteKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteKpiNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteKpiParams()
 	}
@@ -258,17 +273,22 @@ func (a *Client) DeleteKpi(params *DeleteKpiParams, authInfo runtime.ClientAuthI
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteKpiNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteKpiDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -276,7 +296,7 @@ func (a *Client) DeleteKpi(params *DeleteKpiParams, authInfo runtime.ClientAuthI
 GetKpi Get the KPI
 */
 func (a *Client) GetKpi(params *GetKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetKpiOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetKpiParams()
 	}
@@ -296,17 +316,22 @@ func (a *Client) GetKpi(params *GetKpiParams, authInfo runtime.ClientAuthInfoWri
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetKpiOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetKpiDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -314,7 +339,7 @@ func (a *Client) GetKpi(params *GetKpiParams, authInfo runtime.ClientAuthInfoWri
 GetKpis Get the list of configured KPIs
 */
 func (a *Client) GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetKpisOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetKpisParams()
 	}
@@ -334,17 +359,22 @@ func (a *Client) GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoW
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetKpisOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetKpisDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -352,7 +382,7 @@ func (a *Client) GetKpis(params *GetKpisParams, authInfo runtime.ClientAuthInfoW
 UpdateKpi Update a KPI
 */
 func (a *Client) UpdateKpi(params *UpdateKpiParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateKpiOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateKpiParams()
 	}
@@ -372,17 +402,22 @@ func (a *Client) UpdateKpi(params *UpdateKpiParams, authInfo runtime.ClientAuthI
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateKpiOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateKpiDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

@@ -183,7 +183,7 @@ func (m *InfraImport) validateServiceCatalogRef(formats strfmt.Registry) error {
 	return nil
 }
 
-var infraImportTypeStatusPropEnum []interface{}
+var infraImportTypeStatusPropEnum []any
 
 func init() {
 	var res []string

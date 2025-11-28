@@ -25,11 +25,11 @@ type Preparation struct {
 
 	// inputs
 	// Required: true
-	Inputs interface{} `json:"inputs"`
+	Inputs any `json:"inputs"`
 
 	// inputs satisfied
 	// Required: true
-	InputsSatisfied interface{} `json:"inputs_satisfied"`
+	InputsSatisfied any `json:"inputs_satisfied"`
 
 	// max running builds
 	// Required: true
@@ -37,7 +37,7 @@ type Preparation struct {
 
 	// missing input reasons
 	// Required: true
-	MissingInputReasons interface{} `json:"missing_input_reasons"`
+	MissingInputReasons any `json:"missing_input_reasons"`
 
 	// paused job
 	// Required: true

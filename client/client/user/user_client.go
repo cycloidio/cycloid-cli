@@ -153,7 +153,7 @@ type ClientService interface {
 
 	RefreshToken(params *RefreshTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshTokenOK, error)
 
-	SignUp(params *SignUpParams, opts ...ClientOption) (*SignUpNoContent, error)
+	SignUp(params *SignUpParams, opts ...ClientOption) (*SignUpOK, error)
 
 	SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams, opts ...ClientOption) (*SignUpAWSMarketplaceNoContent, error)
 
@@ -172,7 +172,7 @@ type ClientService interface {
 CreateOAuthUser Create a user from the OAuth 'social_type'
 */
 func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams, opts ...ClientOption) (*CreateOAuthUserOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateOAuthUserParams()
 	}
@@ -191,17 +191,22 @@ func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams, opts ...ClientOp
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateOAuthUserOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateOAuthUserDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -209,7 +214,7 @@ func (a *Client) CreateOAuthUser(params *CreateOAuthUserParams, opts ...ClientOp
 CreateWatchRule Create a new watch rule for the user.
 */
 func (a *Client) CreateWatchRule(params *CreateWatchRuleParams, opts ...ClientOption) (*CreateWatchRuleOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateWatchRuleParams()
 	}
@@ -228,17 +233,22 @@ func (a *Client) CreateWatchRule(params *CreateWatchRuleParams, opts ...ClientOp
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateWatchRuleOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateWatchRuleDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -246,7 +256,7 @@ func (a *Client) CreateWatchRule(params *CreateWatchRuleParams, opts ...ClientOp
 DeleteAllNotifications Delete all the notifications for the user at once.
 */
 func (a *Client) DeleteAllNotifications(params *DeleteAllNotificationsParams, opts ...ClientOption) (*DeleteAllNotificationsNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteAllNotificationsParams()
 	}
@@ -265,17 +275,22 @@ func (a *Client) DeleteAllNotifications(params *DeleteAllNotificationsParams, op
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteAllNotificationsNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteAllNotificationsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -283,7 +298,7 @@ func (a *Client) DeleteAllNotifications(params *DeleteAllNotificationsParams, op
 DeleteNotification Delete the notification for the user.
 */
 func (a *Client) DeleteNotification(params *DeleteNotificationParams, opts ...ClientOption) (*DeleteNotificationNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteNotificationParams()
 	}
@@ -302,17 +317,22 @@ func (a *Client) DeleteNotification(params *DeleteNotificationParams, opts ...Cl
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteNotificationNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteNotificationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -320,7 +340,7 @@ func (a *Client) DeleteNotification(params *DeleteNotificationParams, opts ...Cl
 DeleteUserAccount The authenticated user delete itself from the system.
 */
 func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteUserAccountNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteUserAccountParams()
 	}
@@ -340,17 +360,22 @@ func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteUserAccountNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteUserAccountDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -358,7 +383,7 @@ func (a *Client) DeleteUserAccount(params *DeleteUserAccountParams, authInfo run
 DeleteWatchRule Delete the watch rule for the user.
 */
 func (a *Client) DeleteWatchRule(params *DeleteWatchRuleParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteWatchRuleOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteWatchRuleParams()
 	}
@@ -378,17 +403,22 @@ func (a *Client) DeleteWatchRule(params *DeleteWatchRuleParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteWatchRuleOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteWatchRuleDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -396,7 +426,7 @@ func (a *Client) DeleteWatchRule(params *DeleteWatchRuleParams, authInfo runtime
 EmailAuthenticationVerification Verify that the email address is own by the user.
 */
 func (a *Client) EmailAuthenticationVerification(params *EmailAuthenticationVerificationParams, opts ...ClientOption) (*EmailAuthenticationVerificationOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewEmailAuthenticationVerificationParams()
 	}
@@ -415,17 +445,22 @@ func (a *Client) EmailAuthenticationVerification(params *EmailAuthenticationVeri
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*EmailAuthenticationVerificationOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*EmailAuthenticationVerificationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -433,7 +468,7 @@ func (a *Client) EmailAuthenticationVerification(params *EmailAuthenticationVeri
 EmailVerification Verify that the email address is own by the user.
 */
 func (a *Client) EmailVerification(params *EmailVerificationParams, opts ...ClientOption) (*EmailVerificationNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewEmailVerificationParams()
 	}
@@ -452,17 +487,22 @@ func (a *Client) EmailVerification(params *EmailVerificationParams, opts ...Clie
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*EmailVerificationNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*EmailVerificationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -470,7 +510,7 @@ func (a *Client) EmailVerification(params *EmailVerificationParams, opts ...Clie
 EmailVerificationResend Re-send the verification user's email to the indicated address.
 */
 func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams, opts ...ClientOption) (*EmailVerificationResendNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewEmailVerificationResendParams()
 	}
@@ -489,17 +529,22 @@ func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams, 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*EmailVerificationResendNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*EmailVerificationResendDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -507,7 +552,7 @@ func (a *Client) EmailVerificationResend(params *EmailVerificationResendParams, 
 GetNotification Get the notification for the user.
 */
 func (a *Client) GetNotification(params *GetNotificationParams, opts ...ClientOption) (*GetNotificationOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetNotificationParams()
 	}
@@ -526,17 +571,22 @@ func (a *Client) GetNotification(params *GetNotificationParams, opts ...ClientOp
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetNotificationOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetNotificationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -544,7 +594,7 @@ func (a *Client) GetNotification(params *GetNotificationParams, opts ...ClientOp
 GetNotificationSettings Get the notification settings for the user.
 */
 func (a *Client) GetNotificationSettings(params *GetNotificationSettingsParams, opts ...ClientOption) (*GetNotificationSettingsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetNotificationSettingsParams()
 	}
@@ -563,17 +613,22 @@ func (a *Client) GetNotificationSettings(params *GetNotificationSettingsParams, 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetNotificationSettingsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetNotificationSettingsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -581,7 +636,7 @@ func (a *Client) GetNotificationSettings(params *GetNotificationSettingsParams, 
 GetOAuthUser Used to know if a user from the platform exists on that 'social_type'. If it exists we'll return the JWT 'token', if it does not we'll return the data of that user on the 'user' so it can be confirmed and created
 */
 func (a *Client) GetOAuthUser(params *GetOAuthUserParams, opts ...ClientOption) (*GetOAuthUserOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetOAuthUserParams()
 	}
@@ -600,17 +655,22 @@ func (a *Client) GetOAuthUser(params *GetOAuthUserParams, opts ...ClientOption) 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetOAuthUserOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetOAuthUserDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -618,7 +678,7 @@ func (a *Client) GetOAuthUser(params *GetOAuthUserParams, opts ...ClientOption) 
 GetUserAccount Get the information of the account of the authenticated user.
 */
 func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetUserAccountOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetUserAccountParams()
 	}
@@ -638,17 +698,22 @@ func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetUserAccountOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetUserAccountDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -656,7 +721,7 @@ func (a *Client) GetUserAccount(params *GetUserAccountParams, authInfo runtime.C
 GetWatchRule Get the watch rule for the user.
 */
 func (a *Client) GetWatchRule(params *GetWatchRuleParams, opts ...ClientOption) (*GetWatchRuleOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetWatchRuleParams()
 	}
@@ -675,17 +740,22 @@ func (a *Client) GetWatchRule(params *GetWatchRuleParams, opts ...ClientOption) 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetWatchRuleOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetWatchRuleDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -696,7 +766,7 @@ If user doesn't exist, he'll be redirected to registration page.
 If user exist, he'll be redirected to login page.
 */
 func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplaceUserEntitlementParams, opts ...ClientOption) error {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewHandleAWSMarketplaceUserEntitlementParams()
 	}
@@ -715,11 +785,12 @@ func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplac
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	_, err := a.transport.Submit(op)
 	if err != nil {
 		return err
 	}
+	// no success response is defined: return nil
+
 	return nil
 }
 
@@ -727,7 +798,7 @@ func (a *Client) HandleAWSMarketplaceUserEntitlement(params *HandleAWSMarketplac
 ListNotifications List all the notifications for the user.
 */
 func (a *Client) ListNotifications(params *ListNotificationsParams, opts ...ClientOption) (*ListNotificationsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListNotificationsParams()
 	}
@@ -746,17 +817,22 @@ func (a *Client) ListNotifications(params *ListNotificationsParams, opts ...Clie
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListNotificationsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListNotificationsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -764,7 +840,7 @@ func (a *Client) ListNotifications(params *ListNotificationsParams, opts ...Clie
 ListWatchRules List all the watch rules for the user.
 */
 func (a *Client) ListWatchRules(params *ListWatchRulesParams, opts ...ClientOption) (*ListWatchRulesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListWatchRulesParams()
 	}
@@ -783,17 +859,22 @@ func (a *Client) ListWatchRules(params *ListWatchRulesParams, opts ...ClientOpti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListWatchRulesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListWatchRulesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -801,7 +882,7 @@ func (a *Client) ListWatchRules(params *ListWatchRulesParams, opts ...ClientOpti
 Login Authenticate a user and return a new JWT token.
 */
 func (a *Client) Login(params *LoginParams, opts ...ClientOption) (*LoginOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewLoginParams()
 	}
@@ -820,17 +901,22 @@ func (a *Client) Login(params *LoginParams, opts ...ClientOption) (*LoginOK, err
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*LoginOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*LoginDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -838,7 +924,7 @@ func (a *Client) Login(params *LoginParams, opts ...ClientOption) (*LoginOK, err
 LoginToOrg Authenticate a user and return a new JWT token.
 */
 func (a *Client) LoginToOrg(params *LoginToOrgParams, opts ...ClientOption) (*LoginToOrgOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewLoginToOrgParams()
 	}
@@ -857,17 +943,22 @@ func (a *Client) LoginToOrg(params *LoginToOrgParams, opts ...ClientOption) (*Lo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*LoginToOrgOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*LoginToOrgDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -875,7 +966,7 @@ func (a *Client) LoginToOrg(params *LoginToOrgParams, opts ...ClientOption) (*Lo
 MarkAllNotificationAsRead Mark the all notification as read for the user.
 */
 func (a *Client) MarkAllNotificationAsRead(params *MarkAllNotificationAsReadParams, opts ...ClientOption) (*MarkAllNotificationAsReadOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewMarkAllNotificationAsReadParams()
 	}
@@ -894,17 +985,22 @@ func (a *Client) MarkAllNotificationAsRead(params *MarkAllNotificationAsReadPara
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*MarkAllNotificationAsReadOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*MarkAllNotificationAsReadDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -912,7 +1008,7 @@ func (a *Client) MarkAllNotificationAsRead(params *MarkAllNotificationAsReadPara
 MarkNotificationAsRead Mark the notification as read for the user.
 */
 func (a *Client) MarkNotificationAsRead(params *MarkNotificationAsReadParams, opts ...ClientOption) (*MarkNotificationAsReadOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewMarkNotificationAsReadParams()
 	}
@@ -931,17 +1027,22 @@ func (a *Client) MarkNotificationAsRead(params *MarkNotificationAsReadParams, op
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*MarkNotificationAsReadOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*MarkNotificationAsReadDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -949,7 +1050,7 @@ func (a *Client) MarkNotificationAsRead(params *MarkNotificationAsReadParams, op
 MarkNotificationAsUnread Mark the notification as unread for the user.
 */
 func (a *Client) MarkNotificationAsUnread(params *MarkNotificationAsUnreadParams, opts ...ClientOption) (*MarkNotificationAsUnreadOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewMarkNotificationAsUnreadParams()
 	}
@@ -968,17 +1069,22 @@ func (a *Client) MarkNotificationAsUnread(params *MarkNotificationAsUnreadParams
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*MarkNotificationAsUnreadOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*MarkNotificationAsUnreadDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -986,7 +1092,7 @@ func (a *Client) MarkNotificationAsUnread(params *MarkNotificationAsUnreadParams
 PasswordResetReq Request to reset the password. Due to security reasons, this endpoint doesn't return Not Found (404) when the email doesn't exist or belongs to a user primary email.
 */
 func (a *Client) PasswordResetReq(params *PasswordResetReqParams, opts ...ClientOption) (*PasswordResetReqNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPasswordResetReqParams()
 	}
@@ -1005,17 +1111,22 @@ func (a *Client) PasswordResetReq(params *PasswordResetReqParams, opts ...Client
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*PasswordResetReqNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*PasswordResetReqDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1023,7 +1134,7 @@ func (a *Client) PasswordResetReq(params *PasswordResetReqParams, opts ...Client
 PasswordResetUpdate Reset the user password when it has been forgotten. Due to security reasons, the endpoint doesn't return a Unprocessable Entity (422) when the token is invalid. 404 Status code is returned if the user has been deleted of the system between the user password request and this request.
 */
 func (a *Client) PasswordResetUpdate(params *PasswordResetUpdateParams, opts ...ClientOption) (*PasswordResetUpdateNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPasswordResetUpdateParams()
 	}
@@ -1042,17 +1153,22 @@ func (a *Client) PasswordResetUpdate(params *PasswordResetUpdateParams, opts ...
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*PasswordResetUpdateNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*PasswordResetUpdateDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1060,7 +1176,7 @@ func (a *Client) PasswordResetUpdate(params *PasswordResetUpdateParams, opts ...
 RefreshToken Refresh the user JWT and returns a new one if the previous is valid. The 'organization_canonical_query' has to be of an organization in which the user belongs to, and the 'child_canonical_query' of a child of the 'organization_canonical_query' in any level (could be of a grand child).
 */
 func (a *Client) RefreshToken(params *RefreshTokenParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshTokenOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRefreshTokenParams()
 	}
@@ -1080,25 +1196,30 @@ func (a *Client) RefreshToken(params *RefreshTokenParams, authInfo runtime.Clien
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RefreshTokenOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*RefreshTokenDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
 SignUp Create a new User (sign-up).
 */
-func (a *Client) SignUp(params *SignUpParams, opts ...ClientOption) (*SignUpNoContent, error) {
-	// TODO: Validate the params before sending
+func (a *Client) SignUp(params *SignUpParams, opts ...ClientOption) (*SignUpOK, error) {
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewSignUpParams()
 	}
@@ -1117,17 +1238,22 @@ func (a *Client) SignUp(params *SignUpParams, opts ...ClientOption) (*SignUpNoCo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
-	success, ok := result.(*SignUpNoContent)
+
+	// only one success response has to be checked
+	success, ok := result.(*SignUpOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*SignUpDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1135,7 +1261,7 @@ func (a *Client) SignUp(params *SignUpParams, opts ...ClientOption) (*SignUpNoCo
 SignUpAWSMarketplace Create a new AWS Marketplace User.
 */
 func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams, opts ...ClientOption) (*SignUpAWSMarketplaceNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewSignUpAWSMarketplaceParams()
 	}
@@ -1154,17 +1280,22 @@ func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams, opts .
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*SignUpAWSMarketplaceNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*SignUpAWSMarketplaceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1172,7 +1303,7 @@ func (a *Client) SignUpAWSMarketplace(params *SignUpAWSMarketplaceParams, opts .
 UpdateNotificationSettings A user's notification settings.
 */
 func (a *Client) UpdateNotificationSettings(params *UpdateNotificationSettingsParams, opts ...ClientOption) (*UpdateNotificationSettingsNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateNotificationSettingsParams()
 	}
@@ -1191,17 +1322,22 @@ func (a *Client) UpdateNotificationSettings(params *UpdateNotificationSettingsPa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateNotificationSettingsNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateNotificationSettingsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1209,7 +1345,7 @@ func (a *Client) UpdateNotificationSettings(params *UpdateNotificationSettingsPa
 UpdateUserAccount Update the information of the account of the authenticated user.
 */
 func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateUserAccountOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateUserAccountParams()
 	}
@@ -1229,17 +1365,22 @@ func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateUserAccountOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateUserAccountDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1247,7 +1388,7 @@ func (a *Client) UpdateUserAccount(params *UpdateUserAccountParams, authInfo run
 UpdateUserGuide Update user's guide progress.
 */
 func (a *Client) UpdateUserGuide(params *UpdateUserGuideParams, opts ...ClientOption) (*UpdateUserGuideNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateUserGuideParams()
 	}
@@ -1266,17 +1407,22 @@ func (a *Client) UpdateUserGuide(params *UpdateUserGuideParams, opts ...ClientOp
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateUserGuideNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateUserGuideDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -1284,7 +1430,7 @@ func (a *Client) UpdateUserGuide(params *UpdateUserGuideParams, opts ...ClientOp
 UpdateWatchRule Update the watch rule for the user.
 */
 func (a *Client) UpdateWatchRule(params *UpdateWatchRuleParams, opts ...ClientOption) (*UpdateWatchRuleOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateWatchRuleParams()
 	}
@@ -1303,17 +1449,22 @@ func (a *Client) UpdateWatchRule(params *UpdateWatchRuleParams, opts ...ClientOp
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateWatchRuleOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateWatchRuleDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

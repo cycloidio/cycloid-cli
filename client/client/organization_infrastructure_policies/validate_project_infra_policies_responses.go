@@ -8,6 +8,7 @@ package organization_infrastructure_policies
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -25,7 +26,7 @@ type ValidateProjectInfraPoliciesReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *ValidateProjectInfraPoliciesReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *ValidateProjectInfraPoliciesReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewValidateProjectInfraPoliciesOK()
@@ -126,7 +127,7 @@ func (o *ValidateProjectInfraPoliciesOK) readResponse(response runtime.ClientRes
 	o.Payload = new(ValidateProjectInfraPoliciesOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -214,7 +215,7 @@ func (o *ValidateProjectInfraPoliciesForbidden) readResponse(response runtime.Cl
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -302,7 +303,7 @@ func (o *ValidateProjectInfraPoliciesNotFound) readResponse(response runtime.Cli
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -390,7 +391,7 @@ func (o *ValidateProjectInfraPoliciesUnprocessableEntity) readResponse(response 
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -481,7 +482,7 @@ func (o *ValidateProjectInfraPoliciesDefault) readResponse(response runtime.Clie
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -519,11 +520,15 @@ func (o *ValidateProjectInfraPoliciesOKBody) validateData(formats strfmt.Registr
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("validateProjectInfraPoliciesOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("validateProjectInfraPoliciesOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -554,11 +559,15 @@ func (o *ValidateProjectInfraPoliciesOKBody) contextValidateData(ctx context.Con
 		}
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("validateProjectInfraPoliciesOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("validateProjectInfraPoliciesOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

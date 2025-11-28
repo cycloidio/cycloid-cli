@@ -122,7 +122,7 @@ type ClientService interface {
 DisableResourceVersion Disable a specified version of a resource
 */
 func (a *Client) DisableResourceVersion(params *DisableResourceVersionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DisableResourceVersionNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDisableResourceVersionParams()
 	}
@@ -142,17 +142,22 @@ func (a *Client) DisableResourceVersion(params *DisableResourceVersionParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DisableResourceVersionNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DisableResourceVersionDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -160,7 +165,7 @@ func (a *Client) DisableResourceVersion(params *DisableResourceVersionParams, au
 EnableResourceVersion Enable a specified version of a resource
 */
 func (a *Client) EnableResourceVersion(params *EnableResourceVersionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*EnableResourceVersionNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewEnableResourceVersionParams()
 	}
@@ -180,17 +185,22 @@ func (a *Client) EnableResourceVersion(params *EnableResourceVersionParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*EnableResourceVersionNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*EnableResourceVersionDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -198,7 +208,7 @@ func (a *Client) EnableResourceVersion(params *EnableResourceVersionParams, auth
 GetBuildsWithVersionAsInput Get builds that used a specified resource version as input.
 */
 func (a *Client) GetBuildsWithVersionAsInput(params *GetBuildsWithVersionAsInputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildsWithVersionAsInputOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBuildsWithVersionAsInputParams()
 	}
@@ -218,17 +228,22 @@ func (a *Client) GetBuildsWithVersionAsInput(params *GetBuildsWithVersionAsInput
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBuildsWithVersionAsInputOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetBuildsWithVersionAsInputDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -236,7 +251,7 @@ func (a *Client) GetBuildsWithVersionAsInput(params *GetBuildsWithVersionAsInput
 GetBuildsWithVersionAsOutput Get builds that used a specified resource version as output.
 */
 func (a *Client) GetBuildsWithVersionAsOutput(params *GetBuildsWithVersionAsOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildsWithVersionAsOutputOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBuildsWithVersionAsOutputParams()
 	}
@@ -256,17 +271,22 @@ func (a *Client) GetBuildsWithVersionAsOutput(params *GetBuildsWithVersionAsOutp
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBuildsWithVersionAsOutputOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetBuildsWithVersionAsOutputDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -274,7 +294,7 @@ func (a *Client) GetBuildsWithVersionAsOutput(params *GetBuildsWithVersionAsOutp
 GetResourceVersions Get versions of a pipeline's resource
 */
 func (a *Client) GetResourceVersions(params *GetResourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetResourceVersionsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetResourceVersionsParams()
 	}
@@ -294,17 +314,22 @@ func (a *Client) GetResourceVersions(params *GetResourceVersionsParams, authInfo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetResourceVersionsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetResourceVersionsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -312,7 +337,7 @@ func (a *Client) GetResourceVersions(params *GetResourceVersionsParams, authInfo
 PinResourceVersion Pin a specified version of a resource
 */
 func (a *Client) PinResourceVersion(params *PinResourceVersionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PinResourceVersionNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPinResourceVersionParams()
 	}
@@ -332,17 +357,22 @@ func (a *Client) PinResourceVersion(params *PinResourceVersionParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*PinResourceVersionNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*PinResourceVersionDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

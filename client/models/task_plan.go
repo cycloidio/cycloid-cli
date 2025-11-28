@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -41,7 +42,7 @@ type TaskPlan struct {
 	OutputMapping map[string]string `json:"output_mapping,omitempty"`
 
 	// params
-	Params map[string]interface{} `json:"params,omitempty"`
+	Params map[string]any `json:"params,omitempty"`
 
 	// privileged
 	// Required: true
@@ -83,11 +84,15 @@ func (m *TaskPlan) validateConfig(formats strfmt.Registry) error {
 
 	if m.Config != nil {
 		if err := m.Config.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("config")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("config")
 			}
+
 			return err
 		}
 	}
@@ -116,11 +121,15 @@ func (m *TaskPlan) validateVersionedResourceTypes(formats strfmt.Registry) error
 
 		if m.VersionedResourceTypes[i] != nil {
 			if err := m.VersionedResourceTypes[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("versioned_resource_types" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("versioned_resource_types" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -157,11 +166,15 @@ func (m *TaskPlan) contextValidateConfig(ctx context.Context, formats strfmt.Reg
 		}
 
 		if err := m.Config.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("config")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("config")
 			}
+
 			return err
 		}
 	}
@@ -180,11 +193,15 @@ func (m *TaskPlan) contextValidateVersionedResourceTypes(ctx context.Context, fo
 			}
 
 			if err := m.VersionedResourceTypes[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("versioned_resource_types" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("versioned_resource_types" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

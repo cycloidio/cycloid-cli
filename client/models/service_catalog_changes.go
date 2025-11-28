@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -70,11 +71,15 @@ func (m *ServiceCatalogChanges) validateCreated(formats strfmt.Registry) error {
 
 		if m.Created[i] != nil {
 			if err := m.Created[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("created" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("created" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -97,11 +102,15 @@ func (m *ServiceCatalogChanges) validateDeleted(formats strfmt.Registry) error {
 
 		if m.Deleted[i] != nil {
 			if err := m.Deleted[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("deleted" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("deleted" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -124,11 +133,15 @@ func (m *ServiceCatalogChanges) validateUpdated(formats strfmt.Registry) error {
 
 		if m.Updated[i] != nil {
 			if err := m.Updated[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("updated" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("updated" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -171,11 +184,15 @@ func (m *ServiceCatalogChanges) contextValidateCreated(ctx context.Context, form
 			}
 
 			if err := m.Created[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("created" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("created" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -196,11 +213,15 @@ func (m *ServiceCatalogChanges) contextValidateDeleted(ctx context.Context, form
 			}
 
 			if err := m.Deleted[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("deleted" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("deleted" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -221,11 +242,15 @@ func (m *ServiceCatalogChanges) contextValidateUpdated(ctx context.Context, form
 			}
 
 			if err := m.Updated[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("updated" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("updated" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

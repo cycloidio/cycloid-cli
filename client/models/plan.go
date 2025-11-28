@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -129,11 +130,15 @@ func (m *Plan) validateDo(formats strfmt.Registry) error {
 
 		if m.Do[i] != nil {
 			if err := m.Do[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("do" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("do" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -150,11 +155,15 @@ func (m *Plan) validateEnsure(formats strfmt.Registry) error {
 
 	if m.Ensure != nil {
 		if err := m.Ensure.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("ensure")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("ensure")
 			}
+
 			return err
 		}
 	}
@@ -169,11 +178,15 @@ func (m *Plan) validateGet(formats strfmt.Registry) error {
 
 	if m.Get != nil {
 		if err := m.Get.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("get")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("get")
 			}
+
 			return err
 		}
 	}
@@ -197,11 +210,15 @@ func (m *Plan) validateOnFailure(formats strfmt.Registry) error {
 
 	if m.OnFailure != nil {
 		if err := m.OnFailure.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("on_failure")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("on_failure")
 			}
+
 			return err
 		}
 	}
@@ -216,11 +233,15 @@ func (m *Plan) validateOnSuccess(formats strfmt.Registry) error {
 
 	if m.OnSuccess != nil {
 		if err := m.OnSuccess.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("on_success")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("on_success")
 			}
+
 			return err
 		}
 	}
@@ -235,11 +256,15 @@ func (m *Plan) validatePut(formats strfmt.Registry) error {
 
 	if m.Put != nil {
 		if err := m.Put.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("put")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("put")
 			}
+
 			return err
 		}
 	}
@@ -259,11 +284,15 @@ func (m *Plan) validateRetry(formats strfmt.Registry) error {
 
 		if m.Retry[i] != nil {
 			if err := m.Retry[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("retry" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("retry" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -280,11 +309,15 @@ func (m *Plan) validateTask(formats strfmt.Registry) error {
 
 	if m.Task != nil {
 		if err := m.Task.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("task")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("task")
 			}
+
 			return err
 		}
 	}
@@ -299,11 +332,15 @@ func (m *Plan) validateTimeout(formats strfmt.Registry) error {
 
 	if m.Timeout != nil {
 		if err := m.Timeout.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("timeout")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("timeout")
 			}
+
 			return err
 		}
 	}
@@ -318,11 +355,15 @@ func (m *Plan) validateTry(formats strfmt.Registry) error {
 
 	if m.Try != nil {
 		if err := m.Try.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("try")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("try")
 			}
+
 			return err
 		}
 	}
@@ -391,11 +432,15 @@ func (m *Plan) contextValidateDo(ctx context.Context, formats strfmt.Registry) e
 			}
 
 			if err := m.Do[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("do" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("do" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -414,11 +459,15 @@ func (m *Plan) contextValidateEnsure(ctx context.Context, formats strfmt.Registr
 		}
 
 		if err := m.Ensure.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("ensure")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("ensure")
 			}
+
 			return err
 		}
 	}
@@ -435,11 +484,15 @@ func (m *Plan) contextValidateGet(ctx context.Context, formats strfmt.Registry) 
 		}
 
 		if err := m.Get.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("get")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("get")
 			}
+
 			return err
 		}
 	}
@@ -456,11 +509,15 @@ func (m *Plan) contextValidateOnFailure(ctx context.Context, formats strfmt.Regi
 		}
 
 		if err := m.OnFailure.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("on_failure")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("on_failure")
 			}
+
 			return err
 		}
 	}
@@ -477,11 +534,15 @@ func (m *Plan) contextValidateOnSuccess(ctx context.Context, formats strfmt.Regi
 		}
 
 		if err := m.OnSuccess.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("on_success")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("on_success")
 			}
+
 			return err
 		}
 	}
@@ -498,11 +559,15 @@ func (m *Plan) contextValidatePut(ctx context.Context, formats strfmt.Registry) 
 		}
 
 		if err := m.Put.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("put")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("put")
 			}
+
 			return err
 		}
 	}
@@ -521,11 +586,15 @@ func (m *Plan) contextValidateRetry(ctx context.Context, formats strfmt.Registry
 			}
 
 			if err := m.Retry[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("retry" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("retry" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -544,11 +613,15 @@ func (m *Plan) contextValidateTask(ctx context.Context, formats strfmt.Registry)
 		}
 
 		if err := m.Task.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("task")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("task")
 			}
+
 			return err
 		}
 	}
@@ -565,11 +638,15 @@ func (m *Plan) contextValidateTimeout(ctx context.Context, formats strfmt.Regist
 		}
 
 		if err := m.Timeout.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("timeout")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("timeout")
 			}
+
 			return err
 		}
 	}
@@ -586,11 +663,15 @@ func (m *Plan) contextValidateTry(ctx context.Context, formats strfmt.Registry) 
 		}
 
 		if err := m.Try.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("try")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("try")
 			}
+
 			return err
 		}
 	}

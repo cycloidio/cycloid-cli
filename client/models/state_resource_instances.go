@@ -20,10 +20,10 @@ import (
 type StateResourceInstances struct {
 
 	// attributes
-	Attributes interface{} `json:"attributes,omitempty"`
+	Attributes any `json:"attributes,omitempty"`
 
 	// custom attributes
-	CustomAttributes interface{} `json:"custom_attributes,omitempty"`
+	CustomAttributes any `json:"custom_attributes,omitempty"`
 }
 
 // Validate validates this state resource instances

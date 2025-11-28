@@ -122,7 +122,7 @@ type ClientService interface {
 CreateInfraPolicy Create a new policy.
 */
 func (a *Client) CreateInfraPolicy(params *CreateInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateInfraPolicyOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateInfraPolicyParams()
 	}
@@ -142,17 +142,22 @@ func (a *Client) CreateInfraPolicy(params *CreateInfraPolicyParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateInfraPolicyOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateInfraPolicyDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -160,7 +165,7 @@ func (a *Client) CreateInfraPolicy(params *CreateInfraPolicyParams, authInfo run
 DeleteInfraPolicy Delete the InfraPolicy.
 */
 func (a *Client) DeleteInfraPolicy(params *DeleteInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteInfraPolicyNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteInfraPolicyParams()
 	}
@@ -180,17 +185,22 @@ func (a *Client) DeleteInfraPolicy(params *DeleteInfraPolicyParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteInfraPolicyNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteInfraPolicyDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -198,7 +208,7 @@ func (a *Client) DeleteInfraPolicy(params *DeleteInfraPolicyParams, authInfo run
 GetInfraPolicies Return a list of infrastructure policies which matches the scope specified by the filter.
 */
 func (a *Client) GetInfraPolicies(params *GetInfraPoliciesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraPoliciesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetInfraPoliciesParams()
 	}
@@ -218,17 +228,22 @@ func (a *Client) GetInfraPolicies(params *GetInfraPoliciesParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetInfraPoliciesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetInfraPoliciesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -236,7 +251,7 @@ func (a *Client) GetInfraPolicies(params *GetInfraPoliciesParams, authInfo runti
 GetInfraPolicy Get the information of the InfraPolicy.
 */
 func (a *Client) GetInfraPolicy(params *GetInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraPolicyOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetInfraPolicyParams()
 	}
@@ -256,17 +271,22 @@ func (a *Client) GetInfraPolicy(params *GetInfraPolicyParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetInfraPolicyOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetInfraPolicyDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -274,7 +294,7 @@ func (a *Client) GetInfraPolicy(params *GetInfraPolicyParams, authInfo runtime.C
 UpdateInfraPolicy Update an existing InfraPolicy
 */
 func (a *Client) UpdateInfraPolicy(params *UpdateInfraPolicyParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateInfraPolicyOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateInfraPolicyParams()
 	}
@@ -294,17 +314,22 @@ func (a *Client) UpdateInfraPolicy(params *UpdateInfraPolicyParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateInfraPolicyOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateInfraPolicyDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -312,7 +337,7 @@ func (a *Client) UpdateInfraPolicy(params *UpdateInfraPolicyParams, authInfo run
 ValidateProjectInfraPolicies Check the InfraPolicies assigned to the Project and the Environment to identify if some are not respected.
 */
 func (a *Client) ValidateProjectInfraPolicies(params *ValidateProjectInfraPoliciesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateProjectInfraPoliciesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewValidateProjectInfraPoliciesParams()
 	}
@@ -332,17 +357,22 @@ func (a *Client) ValidateProjectInfraPolicies(params *ValidateProjectInfraPolici
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ValidateProjectInfraPoliciesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ValidateProjectInfraPoliciesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

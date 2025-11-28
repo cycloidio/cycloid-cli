@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -62,11 +63,15 @@ func (m *SCConfigCustomConfig) validateTemplates(formats strfmt.Registry) error 
 
 		if m.Templates[i] != nil {
 			if err := m.Templates[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("templates" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("templates" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -110,11 +115,15 @@ func (m *SCConfigCustomConfig) contextValidateTemplates(ctx context.Context, for
 			}
 
 			if err := m.Templates[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("templates" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("templates" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

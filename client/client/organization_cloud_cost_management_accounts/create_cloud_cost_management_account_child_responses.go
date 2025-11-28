@@ -8,6 +8,7 @@ package organization_cloud_cost_management_accounts
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type CreateCloudCostManagementAccountChildReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *CreateCloudCostManagementAccountChildReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CreateCloudCostManagementAccountChildReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewCreateCloudCostManagementAccountChildOK()
@@ -121,7 +122,7 @@ func (o *CreateCloudCostManagementAccountChildOK) readResponse(response runtime.
 	o.Payload = new(CreateCloudCostManagementAccountChildOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -265,7 +266,7 @@ func (o *CreateCloudCostManagementAccountChildUnprocessableEntity) readResponse(
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -356,7 +357,7 @@ func (o *CreateCloudCostManagementAccountChildDefault) readResponse(response run
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -396,11 +397,15 @@ func (o *CreateCloudCostManagementAccountChildOKBody) validateData(formats strfm
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createCloudCostManagementAccountChildOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createCloudCostManagementAccountChildOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -427,11 +432,15 @@ func (o *CreateCloudCostManagementAccountChildOKBody) contextValidateData(ctx co
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createCloudCostManagementAccountChildOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createCloudCostManagementAccountChildOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

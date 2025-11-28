@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -57,7 +58,7 @@ type TerraformProviderResource struct {
 
 	// schema
 	// Required: true
-	Schema interface{} `json:"schema"`
+	Schema any `json:"schema"`
 
 	// short description
 	// Required: true
@@ -122,11 +123,15 @@ func (m *TerraformProviderResource) validateAttributes(formats strfmt.Registry) 
 
 	if m.Attributes != nil {
 		if err := m.Attributes.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("attributes")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("attributes")
 			}
+
 			return err
 		}
 	}
@@ -245,11 +250,15 @@ func (m *TerraformProviderResource) contextValidateAttributes(ctx context.Contex
 	if m.Attributes != nil {
 
 		if err := m.Attributes.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("attributes")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("attributes")
 			}
+
 			return err
 		}
 	}

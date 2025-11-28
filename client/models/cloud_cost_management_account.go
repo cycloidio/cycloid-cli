@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -197,11 +198,15 @@ func (m *CloudCostManagementAccount) validateCloudProvider(formats strfmt.Regist
 
 	if m.CloudProvider != nil {
 		if err := m.CloudProvider.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
 			}
+
 			return err
 		}
 	}
@@ -229,11 +234,15 @@ func (m *CloudCostManagementAccount) validateCredential(formats strfmt.Registry)
 
 	if m.Credential != nil {
 		if err := m.Credential.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("credential")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("credential")
 			}
+
 			return err
 		}
 	}
@@ -257,11 +266,15 @@ func (m *CloudCostManagementAccount) validateExternalBackend(formats strfmt.Regi
 
 	if m.ExternalBackend != nil {
 		if err := m.ExternalBackend.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("external_backend")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("external_backend")
 			}
+
 			return err
 		}
 	}
@@ -315,7 +328,7 @@ func (m *CloudCostManagementAccount) validateName(formats strfmt.Registry) error
 	return nil
 }
 
-var cloudCostManagementAccountTypePhasePropEnum []interface{}
+var cloudCostManagementAccountTypePhasePropEnum []any
 
 func init() {
 	var res []string
@@ -357,7 +370,7 @@ func (m *CloudCostManagementAccount) validatePhase(formats strfmt.Registry) erro
 	return nil
 }
 
-var cloudCostManagementAccountTypeStatusPropEnum []interface{}
+var cloudCostManagementAccountTypeStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -443,11 +456,15 @@ func (m *CloudCostManagementAccount) contextValidateCloudProvider(ctx context.Co
 	if m.CloudProvider != nil {
 
 		if err := m.CloudProvider.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
 			}
+
 			return err
 		}
 	}
@@ -464,11 +481,15 @@ func (m *CloudCostManagementAccount) contextValidateCredential(ctx context.Conte
 		}
 
 		if err := m.Credential.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("credential")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("credential")
 			}
+
 			return err
 		}
 	}
@@ -485,11 +506,15 @@ func (m *CloudCostManagementAccount) contextValidateExternalBackend(ctx context.
 		}
 
 		if err := m.ExternalBackend.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("external_backend")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("external_backend")
 			}
+
 			return err
 		}
 	}

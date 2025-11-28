@@ -10,4 +10,4 @@ package models
 // This object contains the items described in the ElastiCache cluster data type described in https://docs.aws.amazon.com/AmazonElastiCache/latest/APIReference/API_CacheCluster.html but it also contains its associated tags which are documented in the properties of this object definition. This object will contain a property named 'Tags' which is of the type defined by the schema definition '#/definitions/AWSTags'
 //
 // swagger:model AWSInfrastructureResourceElasticacheCluster
-type AWSInfrastructureResourceElasticacheCluster interface{}
+type AWSInfrastructureResourceElasticacheCluster any

@@ -132,7 +132,7 @@ type ClientService interface {
 	    required or not.
 */
 func (a *Client) GetProjEnvLogEntries(params *GetProjEnvLogEntriesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjEnvLogEntriesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjEnvLogEntriesParams()
 	}
@@ -152,17 +152,22 @@ func (a *Client) GetProjEnvLogEntries(params *GetProjEnvLogEntriesParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetProjEnvLogEntriesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetProjEnvLogEntriesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -170,7 +175,7 @@ func (a *Client) GetProjEnvLogEntries(params *GetProjEnvLogEntriesParams, authIn
 GetProjEnvLogSources Get the list of sources configured for the specified project's environment of the organization.
 */
 func (a *Client) GetProjEnvLogSources(params *GetProjEnvLogSourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjEnvLogSourcesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjEnvLogSourcesParams()
 	}
@@ -190,17 +195,22 @@ func (a *Client) GetProjEnvLogSources(params *GetProjEnvLogSourcesParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetProjEnvLogSourcesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetProjEnvLogSourcesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
