@@ -23,7 +23,7 @@ type TerraformProviderResourceAttributes struct {
 	Important []string `json:"important"`
 
 	// Is a KV where the K is the resource possible value and the Value is the normalized value of it. The current possible values are "unknown", "pending", "running", "stopping"
-	NormalizedStatus interface{} `json:"normalized_status,omitempty"`
+	NormalizedStatus any `json:"normalized_status,omitempty"`
 
 	// status
 	Status string `json:"status,omitempty"`

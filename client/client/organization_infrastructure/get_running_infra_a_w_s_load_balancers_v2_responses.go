@@ -8,6 +8,7 @@ package organization_infrastructure
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type GetRunningInfraAWSLoadBalancersV2Reader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetRunningInfraAWSLoadBalancersV2Reader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetRunningInfraAWSLoadBalancersV2Reader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetRunningInfraAWSLoadBalancersV2OK()
@@ -127,7 +128,7 @@ func (o *GetRunningInfraAWSLoadBalancersV2OK) readResponse(response runtime.Clie
 	o.Payload = new(GetRunningInfraAWSLoadBalancersV2OKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -215,7 +216,7 @@ func (o *GetRunningInfraAWSLoadBalancersV2Forbidden) readResponse(response runti
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -303,7 +304,7 @@ func (o *GetRunningInfraAWSLoadBalancersV2NotFound) readResponse(response runtim
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -391,7 +392,7 @@ func (o *GetRunningInfraAWSLoadBalancersV2UnprocessableEntity) readResponse(resp
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -482,7 +483,7 @@ func (o *GetRunningInfraAWSLoadBalancersV2Default) readResponse(response runtime
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -537,11 +538,15 @@ func (o *GetRunningInfraAWSLoadBalancersV2OKBody) validatePagination(formats str
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getRunningInfraAWSLoadBalancersV2OK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getRunningInfraAWSLoadBalancersV2OK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}
@@ -572,11 +577,15 @@ func (o *GetRunningInfraAWSLoadBalancersV2OKBody) contextValidatePagination(ctx 
 		}
 
 		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getRunningInfraAWSLoadBalancersV2OK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getRunningInfraAWSLoadBalancersV2OK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}

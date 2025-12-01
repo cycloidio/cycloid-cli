@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -138,11 +139,15 @@ func (m *ComponentSimple) validateCloudProvider(formats strfmt.Registry) error {
 
 	if m.CloudProvider != nil {
 		if err := m.CloudProvider.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
 			}
+
 			return err
 		}
 	}
@@ -197,11 +202,15 @@ func (m *ComponentSimple) validateServiceCatalog(formats strfmt.Registry) error 
 
 	if m.ServiceCatalog != nil {
 		if err := m.ServiceCatalog.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("service_catalog")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("service_catalog")
 			}
+
 			return err
 		}
 	}
@@ -269,11 +278,15 @@ func (m *ComponentSimple) contextValidateCloudProvider(ctx context.Context, form
 		}
 
 		if err := m.CloudProvider.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
 			}
+
 			return err
 		}
 	}
@@ -286,11 +299,15 @@ func (m *ComponentSimple) contextValidateServiceCatalog(ctx context.Context, for
 	if m.ServiceCatalog != nil {
 
 		if err := m.ServiceCatalog.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("service_catalog")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("service_catalog")
 			}
+
 			return err
 		}
 	}

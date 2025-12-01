@@ -22,7 +22,7 @@ type FormsValidation struct {
 
 	// A form's file to any given version
 	// Required: true
-	FormFile interface{} `json:"form_file"`
+	FormFile any `json:"form_file"`
 }
 
 // Validate validates this forms validation

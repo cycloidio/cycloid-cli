@@ -8,6 +8,7 @@ package organization_config_repositories
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type CreateConfigRepositoryReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *CreateConfigRepositoryReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CreateConfigRepositoryReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewCreateConfigRepositoryOK()
@@ -127,7 +128,7 @@ func (o *CreateConfigRepositoryOK) readResponse(response runtime.ClientResponse,
 	o.Payload = new(CreateConfigRepositoryOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -215,7 +216,7 @@ func (o *CreateConfigRepositoryNotFound) readResponse(response runtime.ClientRes
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -359,7 +360,7 @@ func (o *CreateConfigRepositoryUnprocessableEntity) readResponse(response runtim
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -450,7 +451,7 @@ func (o *CreateConfigRepositoryDefault) readResponse(response runtime.ClientResp
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -490,11 +491,15 @@ func (o *CreateConfigRepositoryOKBody) validateData(formats strfmt.Registry) err
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createConfigRepositoryOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createConfigRepositoryOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -521,11 +526,15 @@ func (o *CreateConfigRepositoryOKBody) contextValidateData(ctx context.Context, 
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createConfigRepositoryOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createConfigRepositoryOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

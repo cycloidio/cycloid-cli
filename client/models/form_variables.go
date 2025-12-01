@@ -39,7 +39,7 @@ import (
 // while the section and group are the one from the form's file.
 //
 // swagger:model FormVariables
-type FormVariables map[string]map[string]map[string]interface{}
+type FormVariables map[string]map[string]map[string]any
 
 // Validate validates this form variables
 func (m FormVariables) Validate(formats strfmt.Registry) error {

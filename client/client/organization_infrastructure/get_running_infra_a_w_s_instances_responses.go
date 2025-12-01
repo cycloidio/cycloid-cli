@@ -8,6 +8,7 @@ package organization_infrastructure
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type GetRunningInfraAWSInstancesReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetRunningInfraAWSInstancesReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetRunningInfraAWSInstancesReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetRunningInfraAWSInstancesOK()
@@ -127,7 +128,7 @@ func (o *GetRunningInfraAWSInstancesOK) readResponse(response runtime.ClientResp
 	o.Payload = new(GetRunningInfraAWSInstancesOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -215,7 +216,7 @@ func (o *GetRunningInfraAWSInstancesForbidden) readResponse(response runtime.Cli
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -303,7 +304,7 @@ func (o *GetRunningInfraAWSInstancesNotFound) readResponse(response runtime.Clie
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -391,7 +392,7 @@ func (o *GetRunningInfraAWSInstancesUnprocessableEntity) readResponse(response r
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -482,7 +483,7 @@ func (o *GetRunningInfraAWSInstancesDefault) readResponse(response runtime.Clien
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -537,11 +538,15 @@ func (o *GetRunningInfraAWSInstancesOKBody) validatePagination(formats strfmt.Re
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getRunningInfraAWSInstancesOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getRunningInfraAWSInstancesOK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}
@@ -572,11 +577,15 @@ func (o *GetRunningInfraAWSInstancesOKBody) contextValidatePagination(ctx contex
 		}
 
 		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getRunningInfraAWSInstancesOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getRunningInfraAWSInstancesOK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}

@@ -8,6 +8,7 @@ package organization_credentials
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -25,7 +26,7 @@ type GetCredentialOptionsReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetCredentialOptionsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetCredentialOptionsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetCredentialOptionsOK()
@@ -120,7 +121,7 @@ func (o *GetCredentialOptionsOK) readResponse(response runtime.ClientResponse, c
 	o.Payload = new(GetCredentialOptionsOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -208,7 +209,7 @@ func (o *GetCredentialOptionsForbidden) readResponse(response runtime.ClientResp
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -296,7 +297,7 @@ func (o *GetCredentialOptionsNotFound) readResponse(response runtime.ClientRespo
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -387,7 +388,7 @@ func (o *GetCredentialOptionsDefault) readResponse(response runtime.ClientRespon
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -402,7 +403,7 @@ type GetCredentialOptionsOKBody struct {
 
 	// The credential options. The shape of the items could be anything,  since each service can have very different options.
 	// Required: true
-	Data interface{} `json:"data"`
+	Data any `json:"data"`
 }
 
 // Validate validates this get credential options o k body

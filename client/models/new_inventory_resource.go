@@ -27,7 +27,7 @@ type NewInventoryResource struct {
 
 	// List of attributes (key value object) of the Resource, can be anything
 	// Example: {"another":"one","custom":"attribute"}
-	CustomAttributes interface{} `json:"custom_attributes,omitempty"`
+	CustomAttributes any `json:"custom_attributes,omitempty"`
 
 	// A way to distinguish and categorize resources
 	// Example: my-label

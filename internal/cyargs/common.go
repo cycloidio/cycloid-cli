@@ -395,7 +395,7 @@ func AddOwnerFlag(cmd *cobra.Command) string {
 			if strings.HasPrefix(member.Username, toComplete) {
 				owners[index] = cobra.CompletionWithDesc(
 					member.Username,
-					fmt.Sprintf("%s %s (%s)", member.GivenName, member.FamilyName, member.Email.String()),
+					fmt.Sprintf("%s (%s)", member.FullName, member.Email.String()),
 				)
 			}
 		}

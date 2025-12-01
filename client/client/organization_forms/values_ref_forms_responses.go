@@ -8,6 +8,7 @@ package organization_forms
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -25,7 +26,7 @@ type ValuesRefFormsReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *ValuesRefFormsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *ValuesRefFormsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewValuesRefFormsOK()
@@ -126,7 +127,7 @@ func (o *ValuesRefFormsOK) readResponse(response runtime.ClientResponse, consume
 	o.Payload = new(ValuesRefFormsOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -214,7 +215,7 @@ func (o *ValuesRefFormsForbidden) readResponse(response runtime.ClientResponse, 
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -302,7 +303,7 @@ func (o *ValuesRefFormsNotFound) readResponse(response runtime.ClientResponse, c
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -390,7 +391,7 @@ func (o *ValuesRefFormsUnprocessableEntity) readResponse(response runtime.Client
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -481,7 +482,7 @@ func (o *ValuesRefFormsDefault) readResponse(response runtime.ClientResponse, co
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -496,7 +497,7 @@ type ValuesRefFormsOKBody struct {
 
 	// data
 	// Required: true
-	Data interface{} `json:"data"`
+	Data any `json:"data"`
 }
 
 // Validate validates this values ref forms o k body

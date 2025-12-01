@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -36,15 +37,11 @@ type UserAccount struct {
 	// Min Items: 1
 	Emails []*UserAccountEmail `json:"emails"`
 
-	// family name
+	// full name
 	// Required: true
+	// Max Length: 255
 	// Min Length: 2
-	FamilyName *string `json:"family_name"`
-
-	// given name
-	// Required: true
-	// Min Length: 2
-	GivenName *string `json:"given_name"`
+	FullName *string `json:"full_name"`
 
 	// guide
 	Guide UserGuide `json:"guide,omitempty"`
@@ -96,11 +93,7 @@ func (m *UserAccount) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFamilyName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateGivenName(formats); err != nil {
+	if err := m.validateFullName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -141,11 +134,15 @@ func (m *UserAccount) validateCountry(formats strfmt.Registry) error {
 
 	if m.Country != nil {
 		if err := m.Country.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("country")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("country")
 			}
+
 			return err
 		}
 	}
@@ -185,11 +182,15 @@ func (m *UserAccount) validateEmails(formats strfmt.Registry) error {
 
 		if m.Emails[i] != nil {
 			if err := m.Emails[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("emails" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("emails" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -199,26 +200,17 @@ func (m *UserAccount) validateEmails(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UserAccount) validateFamilyName(formats strfmt.Registry) error {
+func (m *UserAccount) validateFullName(formats strfmt.Registry) error {
 
-	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
+	if err := validate.Required("full_name", "body", m.FullName); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
+	if err := validate.MinLength("full_name", "body", *m.FullName, 2); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-func (m *UserAccount) validateGivenName(formats strfmt.Registry) error {
-
-	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
+	if err := validate.MaxLength("full_name", "body", *m.FullName, 255); err != nil {
 		return err
 	}
 
@@ -238,7 +230,7 @@ func (m *UserAccount) validateLastLogin(formats strfmt.Registry) error {
 	return nil
 }
 
-var userAccountTypeLocalePropEnum []interface{}
+var userAccountTypeLocalePropEnum []any
 
 func init() {
 	var res []string
@@ -366,11 +358,15 @@ func (m *UserAccount) contextValidateCountry(ctx context.Context, formats strfmt
 		}
 
 		if err := m.Country.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("country")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("country")
 			}
+
 			return err
 		}
 	}
@@ -389,11 +385,15 @@ func (m *UserAccount) contextValidateEmails(ctx context.Context, formats strfmt.
 			}
 
 			if err := m.Emails[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("emails" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("emails" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -166,11 +167,15 @@ func (m *Component) validateCloudProvider(formats strfmt.Registry) error {
 
 	if m.CloudProvider != nil {
 		if err := m.CloudProvider.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
 			}
+
 			return err
 		}
 	}
@@ -199,11 +204,15 @@ func (m *Component) validateEnvironment(formats strfmt.Registry) error {
 
 	if m.Environment != nil {
 		if err := m.Environment.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("environment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("environment")
 			}
+
 			return err
 		}
 	}
@@ -224,7 +233,7 @@ func (m *Component) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
-var componentTypeImportStatusPropEnum []interface{}
+var componentTypeImportStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -290,11 +299,15 @@ func (m *Component) validateProject(formats strfmt.Registry) error {
 
 	if m.Project != nil {
 		if err := m.Project.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("project")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("project")
 			}
+
 			return err
 		}
 	}
@@ -310,11 +323,15 @@ func (m *Component) validateServiceCatalog(formats strfmt.Registry) error {
 
 	if m.ServiceCatalog != nil {
 		if err := m.ServiceCatalog.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("service_catalog")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("service_catalog")
 			}
+
 			return err
 		}
 	}
@@ -390,11 +407,15 @@ func (m *Component) contextValidateCloudProvider(ctx context.Context, formats st
 		}
 
 		if err := m.CloudProvider.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cloud_provider")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
 			}
+
 			return err
 		}
 	}
@@ -407,11 +428,15 @@ func (m *Component) contextValidateEnvironment(ctx context.Context, formats strf
 	if m.Environment != nil {
 
 		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("environment")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("environment")
 			}
+
 			return err
 		}
 	}
@@ -424,11 +449,15 @@ func (m *Component) contextValidateProject(ctx context.Context, formats strfmt.R
 	if m.Project != nil {
 
 		if err := m.Project.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("project")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("project")
 			}
+
 			return err
 		}
 	}
@@ -441,11 +470,15 @@ func (m *Component) contextValidateServiceCatalog(ctx context.Context, formats s
 	if m.ServiceCatalog != nil {
 
 		if err := m.ServiceCatalog.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("service_catalog")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("service_catalog")
 			}
+
 			return err
 		}
 	}

@@ -116,7 +116,7 @@ type ClientService interface {
 InterpolateFormsConfig Generate a set of configs based on the forms input but without creating anything
 */
 func (a *Client) InterpolateFormsConfig(params *InterpolateFormsConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*InterpolateFormsConfigOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewInterpolateFormsConfigParams()
 	}
@@ -136,17 +136,22 @@ func (a *Client) InterpolateFormsConfig(params *InterpolateFormsConfigParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*InterpolateFormsConfigOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*InterpolateFormsConfigDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -154,7 +159,7 @@ func (a *Client) InterpolateFormsConfig(params *InterpolateFormsConfigParams, au
 ValidateFormsFile Validate a forms file definition
 */
 func (a *Client) ValidateFormsFile(params *ValidateFormsFileParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateFormsFileOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewValidateFormsFileParams()
 	}
@@ -174,17 +179,22 @@ func (a *Client) ValidateFormsFile(params *ValidateFormsFileParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ValidateFormsFileOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ValidateFormsFileDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -192,7 +202,7 @@ func (a *Client) ValidateFormsFile(params *ValidateFormsFileParams, authInfo run
 ValuesRefForms Returns the values from the ref
 */
 func (a *Client) ValuesRefForms(params *ValuesRefFormsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValuesRefFormsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewValuesRefFormsParams()
 	}
@@ -212,17 +222,22 @@ func (a *Client) ValuesRefForms(params *ValuesRefFormsParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ValuesRefFormsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ValuesRefFormsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

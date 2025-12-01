@@ -128,7 +128,7 @@ type ClientService interface {
 CreateCloudCostManagementAccount Create a new Cloud Cost Management account.
 */
 func (a *Client) CreateCloudCostManagementAccount(params *CreateCloudCostManagementAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateCloudCostManagementAccountOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateCloudCostManagementAccountParams()
 	}
@@ -148,17 +148,22 @@ func (a *Client) CreateCloudCostManagementAccount(params *CreateCloudCostManagem
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateCloudCostManagementAccountOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateCloudCostManagementAccountDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -166,7 +171,7 @@ func (a *Client) CreateCloudCostManagementAccount(params *CreateCloudCostManagem
 CreateCloudCostManagementAccountChild Create a new Cloud Cost Management account.
 */
 func (a *Client) CreateCloudCostManagementAccountChild(params *CreateCloudCostManagementAccountChildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateCloudCostManagementAccountChildOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateCloudCostManagementAccountChildParams()
 	}
@@ -186,17 +191,22 @@ func (a *Client) CreateCloudCostManagementAccountChild(params *CreateCloudCostMa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateCloudCostManagementAccountChildOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateCloudCostManagementAccountChildDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -204,7 +214,7 @@ func (a *Client) CreateCloudCostManagementAccountChild(params *CreateCloudCostMa
 DeleteCloudCostManagementAccount Delete the CloudCostManagementAccount.
 */
 func (a *Client) DeleteCloudCostManagementAccount(params *DeleteCloudCostManagementAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteCloudCostManagementAccountNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteCloudCostManagementAccountParams()
 	}
@@ -224,17 +234,22 @@ func (a *Client) DeleteCloudCostManagementAccount(params *DeleteCloudCostManagem
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteCloudCostManagementAccountNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteCloudCostManagementAccountDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -242,7 +257,7 @@ func (a *Client) DeleteCloudCostManagementAccount(params *DeleteCloudCostManagem
 GetCloudCostManagementAccount Get the information of the CloudCostManagementAccount.
 */
 func (a *Client) GetCloudCostManagementAccount(params *GetCloudCostManagementAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementAccountOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementAccountParams()
 	}
@@ -262,17 +277,22 @@ func (a *Client) GetCloudCostManagementAccount(params *GetCloudCostManagementAcc
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementAccountOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementAccountDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -280,7 +300,7 @@ func (a *Client) GetCloudCostManagementAccount(params *GetCloudCostManagementAcc
 GetCloudCostManagementAccounts Return a list of Cloud Cost Management accounts which matches the scope specified by the filter.
 */
 func (a *Client) GetCloudCostManagementAccounts(params *GetCloudCostManagementAccountsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementAccountsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementAccountsParams()
 	}
@@ -300,17 +320,22 @@ func (a *Client) GetCloudCostManagementAccounts(params *GetCloudCostManagementAc
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementAccountsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementAccountsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -318,7 +343,7 @@ func (a *Client) GetCloudCostManagementAccounts(params *GetCloudCostManagementAc
 GetCloudCostManagementAccountsHasParent Return whether account under provided credentials is a child account
 */
 func (a *Client) GetCloudCostManagementAccountsHasParent(params *GetCloudCostManagementAccountsHasParentParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementAccountsHasParentOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementAccountsHasParentParams()
 	}
@@ -338,17 +363,22 @@ func (a *Client) GetCloudCostManagementAccountsHasParent(params *GetCloudCostMan
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementAccountsHasParentOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementAccountsHasParentDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -356,7 +386,7 @@ func (a *Client) GetCloudCostManagementAccountsHasParent(params *GetCloudCostMan
 GetCloudCostManagementLinkedAccounts Return a list of cloud provider accounts linked to a specific Cloud Cost Management account.
 */
 func (a *Client) GetCloudCostManagementLinkedAccounts(params *GetCloudCostManagementLinkedAccountsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementLinkedAccountsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementLinkedAccountsParams()
 	}
@@ -376,17 +406,22 @@ func (a *Client) GetCloudCostManagementLinkedAccounts(params *GetCloudCostManage
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementLinkedAccountsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementLinkedAccountsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -394,7 +429,7 @@ func (a *Client) GetCloudCostManagementLinkedAccounts(params *GetCloudCostManage
 UpdateCloudCostManagementAccount Update an existing CloudCostManagementAccount
 */
 func (a *Client) UpdateCloudCostManagementAccount(params *UpdateCloudCostManagementAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateCloudCostManagementAccountOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateCloudCostManagementAccountParams()
 	}
@@ -414,17 +449,22 @@ func (a *Client) UpdateCloudCostManagementAccount(params *UpdateCloudCostManagem
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateCloudCostManagementAccountOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateCloudCostManagementAccountDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -432,7 +472,7 @@ func (a *Client) UpdateCloudCostManagementAccount(params *UpdateCloudCostManagem
 UpdateCloudCostManagementLinkedAccount Update a Cloud Cost Management linked account
 */
 func (a *Client) UpdateCloudCostManagementLinkedAccount(params *UpdateCloudCostManagementLinkedAccountParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateCloudCostManagementLinkedAccountOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateCloudCostManagementLinkedAccountParams()
 	}
@@ -452,17 +492,22 @@ func (a *Client) UpdateCloudCostManagementLinkedAccount(params *UpdateCloudCostM
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateCloudCostManagementLinkedAccountOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateCloudCostManagementLinkedAccountDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

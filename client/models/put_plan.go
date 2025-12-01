@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -26,7 +27,7 @@ type PutPlan struct {
 	Name string `json:"name,omitempty"`
 
 	// params
-	Params map[string]interface{} `json:"params,omitempty"`
+	Params map[string]any `json:"params,omitempty"`
 
 	// resource
 	// Required: true
@@ -34,7 +35,7 @@ type PutPlan struct {
 
 	// source
 	// Required: true
-	Source map[string]interface{} `json:"source"`
+	Source map[string]any `json:"source"`
 
 	// tags
 	Tags []string `json:"tags"`
@@ -120,11 +121,15 @@ func (m *PutPlan) validateVersionedResourceTypes(formats strfmt.Registry) error 
 
 		if m.VersionedResourceTypes[i] != nil {
 			if err := m.VersionedResourceTypes[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("versioned_resource_types" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("versioned_resource_types" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -159,11 +164,15 @@ func (m *PutPlan) contextValidateVersionedResourceTypes(ctx context.Context, for
 			}
 
 			if err := m.VersionedResourceTypes[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("versioned_resource_types" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("versioned_resource_types" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

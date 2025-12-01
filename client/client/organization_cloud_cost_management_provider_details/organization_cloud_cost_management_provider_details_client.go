@@ -112,7 +112,7 @@ type ClientService interface {
 GetCloudCostManagementProviderDetails Return a histogram of the costs generated in a given period aggregated by time granularity and other terms, for a single provider.
 */
 func (a *Client) GetCloudCostManagementProviderDetails(params *GetCloudCostManagementProviderDetailsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementProviderDetailsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementProviderDetailsParams()
 	}
@@ -132,17 +132,22 @@ func (a *Client) GetCloudCostManagementProviderDetails(params *GetCloudCostManag
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementProviderDetailsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementProviderDetailsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

@@ -65,7 +65,7 @@ type SetInventoryPlanParams struct {
 
 	   The plan of the Inventory
 	*/
-	Body interface{}
+	Body any
 
 	/* Jwt.
 
@@ -127,13 +127,13 @@ func (o *SetInventoryPlanParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the set inventory plan params
-func (o *SetInventoryPlanParams) WithBody(body interface{}) *SetInventoryPlanParams {
+func (o *SetInventoryPlanParams) WithBody(body any) *SetInventoryPlanParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the set inventory plan params
-func (o *SetInventoryPlanParams) SetBody(body interface{}) {
+func (o *SetInventoryPlanParams) SetBody(body any) {
 	o.Body = body
 }
 

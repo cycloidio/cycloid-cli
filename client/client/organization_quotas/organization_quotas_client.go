@@ -122,7 +122,7 @@ type ClientService interface {
 CreateQuota Create a new quota available in the organization.
 */
 func (a *Client) CreateQuota(params *CreateQuotaParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateQuotaOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateQuotaParams()
 	}
@@ -142,17 +142,22 @@ func (a *Client) CreateQuota(params *CreateQuotaParams, authInfo runtime.ClientA
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateQuotaOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateQuotaDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -160,7 +165,7 @@ func (a *Client) CreateQuota(params *CreateQuotaParams, authInfo runtime.ClientA
 DeleteQuota Delete an existing quota in the organization.
 */
 func (a *Client) DeleteQuota(params *DeleteQuotaParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteQuotaNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteQuotaParams()
 	}
@@ -180,17 +185,22 @@ func (a *Client) DeleteQuota(params *DeleteQuotaParams, authInfo runtime.ClientA
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteQuotaNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteQuotaDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -198,7 +208,7 @@ func (a *Client) DeleteQuota(params *DeleteQuotaParams, authInfo runtime.ClientA
 GetQuota Get the quota available in the organization with an canonical
 */
 func (a *Client) GetQuota(params *GetQuotaParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetQuotaOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetQuotaParams()
 	}
@@ -218,17 +228,22 @@ func (a *Client) GetQuota(params *GetQuotaParams, authInfo runtime.ClientAuthInf
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetQuotaOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetQuotaDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -236,7 +251,7 @@ func (a *Client) GetQuota(params *GetQuotaParams, authInfo runtime.ClientAuthInf
 ListQuotaConsumptions Get the quota consumptions by project and environment
 */
 func (a *Client) ListQuotaConsumptions(params *ListQuotaConsumptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListQuotaConsumptionsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListQuotaConsumptionsParams()
 	}
@@ -256,17 +271,22 @@ func (a *Client) ListQuotaConsumptions(params *ListQuotaConsumptionsParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListQuotaConsumptionsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListQuotaConsumptionsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -274,7 +294,7 @@ func (a *Client) ListQuotaConsumptions(params *ListQuotaConsumptionsParams, auth
 ListQuotas List of quotas available in the organization.
 */
 func (a *Client) ListQuotas(params *ListQuotasParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListQuotasOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListQuotasParams()
 	}
@@ -294,17 +314,22 @@ func (a *Client) ListQuotas(params *ListQuotasParams, authInfo runtime.ClientAut
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListQuotasOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListQuotasDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -312,7 +337,7 @@ func (a *Client) ListQuotas(params *ListQuotasParams, authInfo runtime.ClientAut
 UpdateQuota Update an existing quota in the organization.
 */
 func (a *Client) UpdateQuota(params *UpdateQuotaParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateQuotaOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateQuotaParams()
 	}
@@ -332,17 +357,22 @@ func (a *Client) UpdateQuota(params *UpdateQuotaParams, authInfo runtime.ClientA
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateQuotaOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateQuotaDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

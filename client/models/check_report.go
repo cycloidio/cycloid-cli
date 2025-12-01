@@ -106,7 +106,7 @@ func (m *CheckReport) validateMessage(formats strfmt.Registry) error {
 	return nil
 }
 
-var checkReportTypeStatusPropEnum []interface{}
+var checkReportTypeStatusPropEnum []any
 
 func init() {
 	var res []string

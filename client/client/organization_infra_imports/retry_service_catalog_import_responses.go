@@ -7,6 +7,7 @@ package organization_infra_imports
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -24,7 +25,7 @@ type RetryServiceCatalogImportReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *RetryServiceCatalogImportReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *RetryServiceCatalogImportReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 202:
 		result := NewRetryServiceCatalogImportAccepted()
@@ -193,7 +194,7 @@ func (o *RetryServiceCatalogImportForbidden) readResponse(response runtime.Clien
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -281,7 +282,7 @@ func (o *RetryServiceCatalogImportNotFound) readResponse(response runtime.Client
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -372,7 +373,7 @@ func (o *RetryServiceCatalogImportDefault) readResponse(response runtime.ClientR
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

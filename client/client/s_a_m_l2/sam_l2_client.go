@@ -119,7 +119,7 @@ type ClientService interface {
 GetSamlMetadata Returns the Cycloid instance's SAML2 metadata that can be plugged into an Identity Provider.
 */
 func (a *Client) GetSamlMetadata(params *GetSamlMetadataParams, opts ...ClientOption) (*GetSamlMetadataOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetSamlMetadataParams()
 	}
@@ -138,17 +138,22 @@ func (a *Client) GetSamlMetadata(params *GetSamlMetadataParams, opts ...ClientOp
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetSamlMetadataOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetSamlMetadataDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -156,7 +161,7 @@ func (a *Client) GetSamlMetadata(params *GetSamlMetadataParams, opts ...ClientOp
 SamlAssertionConsumerService Assertion Consumer Service callback endpoint for the SAML2 Identity Provider.
 */
 func (a *Client) SamlAssertionConsumerService(params *SamlAssertionConsumerServiceParams, opts ...ClientOption) error {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewSamlAssertionConsumerServiceParams()
 	}
@@ -175,11 +180,12 @@ func (a *Client) SamlAssertionConsumerService(params *SamlAssertionConsumerServi
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	_, err := a.transport.Submit(op)
 	if err != nil {
 		return err
 	}
+	// no success response is defined: return nil
+
 	return nil
 }
 

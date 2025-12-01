@@ -89,7 +89,7 @@ type ClientService interface {
 GetInventoryPlan Get the terraform plan of the inventory. It uses '-' as the Concourse resource that uses it automatically adds '-plan' on it's implementation to push the plan. So to simplify the configuration we use '-' also.
 */
 func (a *Client) GetInventoryPlan(params *GetInventoryPlanParams, opts ...ClientOption) (*GetInventoryPlanOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetInventoryPlanParams()
 	}
@@ -108,17 +108,22 @@ func (a *Client) GetInventoryPlan(params *GetInventoryPlanParams, opts ...Client
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetInventoryPlanOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetInventoryPlanDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -126,7 +131,7 @@ func (a *Client) GetInventoryPlan(params *GetInventoryPlanParams, opts ...Client
 SetInventoryPlan Create or replace an Inventory plan
 */
 func (a *Client) SetInventoryPlan(params *SetInventoryPlanParams, opts ...ClientOption) (*SetInventoryPlanNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewSetInventoryPlanParams()
 	}
@@ -145,17 +150,22 @@ func (a *Client) SetInventoryPlan(params *SetInventoryPlanParams, opts ...Client
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*SetInventoryPlanNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*SetInventoryPlanDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

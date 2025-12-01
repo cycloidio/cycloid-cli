@@ -114,7 +114,7 @@ type ClientService interface {
 GetCloudCostManagementTagMapping Return the Cloud Cost Management tag mapping for the organization
 */
 func (a *Client) GetCloudCostManagementTagMapping(params *GetCloudCostManagementTagMappingParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementTagMappingOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementTagMappingParams()
 	}
@@ -134,17 +134,22 @@ func (a *Client) GetCloudCostManagementTagMapping(params *GetCloudCostManagement
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementTagMappingOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementTagMappingDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -152,7 +157,7 @@ func (a *Client) GetCloudCostManagementTagMapping(params *GetCloudCostManagement
 PutCloudCostManagementTagMapping Create or Update a Cloud Cost Management Tag Mapping.
 */
 func (a *Client) PutCloudCostManagementTagMapping(params *PutCloudCostManagementTagMappingParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PutCloudCostManagementTagMappingOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPutCloudCostManagementTagMappingParams()
 	}
@@ -172,17 +177,22 @@ func (a *Client) PutCloudCostManagementTagMapping(params *PutCloudCostManagement
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*PutCloudCostManagementTagMappingOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*PutCloudCostManagementTagMappingDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

@@ -114,7 +114,7 @@ type ClientService interface {
 ListDefaultAuthentications List of authentications available in the root organization.
 */
 func (a *Client) ListDefaultAuthentications(params *ListDefaultAuthenticationsParams, opts ...ClientOption) (*ListDefaultAuthenticationsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListDefaultAuthenticationsParams()
 	}
@@ -133,17 +133,22 @@ func (a *Client) ListDefaultAuthentications(params *ListDefaultAuthenticationsPa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListDefaultAuthenticationsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListDefaultAuthenticationsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -151,7 +156,7 @@ func (a *Client) ListDefaultAuthentications(params *ListDefaultAuthenticationsPa
 ListOrganizationDefaultAuthentications List of authentications available in the root organization.
 */
 func (a *Client) ListOrganizationDefaultAuthentications(params *ListOrganizationDefaultAuthenticationsParams, opts ...ClientOption) (*ListOrganizationDefaultAuthenticationsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListOrganizationDefaultAuthenticationsParams()
 	}
@@ -170,17 +175,22 @@ func (a *Client) ListOrganizationDefaultAuthentications(params *ListOrganization
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListOrganizationDefaultAuthenticationsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListOrganizationDefaultAuthenticationsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

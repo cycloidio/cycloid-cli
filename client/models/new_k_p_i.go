@@ -30,7 +30,7 @@ type NewKPI struct {
 
 	// The config represent some extra parameters which are required for the configuration of certain KPIs. Please refer to the documentation for more details.
 	//
-	Config interface{} `json:"config,omitempty"`
+	Config any `json:"config,omitempty"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -116,7 +116,7 @@ func (m *NewKPI) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var newKPITypeTypePropEnum []interface{}
+var newKPITypeTypePropEnum []any
 
 func init() {
 	var res []string
@@ -168,7 +168,7 @@ func (m *NewKPI) validateType(formats strfmt.Registry) error {
 	return nil
 }
 
-var newKPITypeWidgetPropEnum []interface{}
+var newKPITypeWidgetPropEnum []any
 
 func init() {
 	var res []string

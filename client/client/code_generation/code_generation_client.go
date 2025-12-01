@@ -132,7 +132,7 @@ type ClientService interface {
 GetInfraImportPresets List Infra Import Presets
 */
 func (a *Client) GetInfraImportPresets(params *GetInfraImportPresetsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraImportPresetsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetInfraImportPresetsParams()
 	}
@@ -152,17 +152,22 @@ func (a *Client) GetInfraImportPresets(params *GetInfraImportPresetsParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetInfraImportPresetsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetInfraImportPresetsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -170,7 +175,7 @@ func (a *Client) GetInfraImportPresets(params *GetInfraImportPresetsParams, auth
 GetInfraImportResource List Provider's Resource
 */
 func (a *Client) GetInfraImportResource(params *GetInfraImportResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraImportResourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetInfraImportResourceParams()
 	}
@@ -190,17 +195,22 @@ func (a *Client) GetInfraImportResource(params *GetInfraImportResourceParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetInfraImportResourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetInfraImportResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -208,7 +218,7 @@ func (a *Client) GetInfraImportResource(params *GetInfraImportResourceParams, au
 GetInfraImportResources List infrastructure import provider's resources
 */
 func (a *Client) GetInfraImportResources(params *GetInfraImportResourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraImportResourcesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetInfraImportResourcesParams()
 	}
@@ -228,17 +238,22 @@ func (a *Client) GetInfraImportResources(params *GetInfraImportResourcesParams, 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetInfraImportResourcesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetInfraImportResourcesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -246,7 +261,7 @@ func (a *Client) GetInfraImportResources(params *GetInfraImportResourcesParams, 
 GetTerraformProvider Get the information of the Provider
 */
 func (a *Client) GetTerraformProvider(params *GetTerraformProviderParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTerraformProviderOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTerraformProviderParams()
 	}
@@ -266,17 +281,22 @@ func (a *Client) GetTerraformProvider(params *GetTerraformProviderParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTerraformProviderOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetTerraformProviderDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -284,7 +304,7 @@ func (a *Client) GetTerraformProvider(params *GetTerraformProviderParams, authIn
 GetTerraformProviderDataSource Get the information of the DataSource
 */
 func (a *Client) GetTerraformProviderDataSource(params *GetTerraformProviderDataSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTerraformProviderDataSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTerraformProviderDataSourceParams()
 	}
@@ -304,17 +324,22 @@ func (a *Client) GetTerraformProviderDataSource(params *GetTerraformProviderData
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTerraformProviderDataSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetTerraformProviderDataSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -322,7 +347,7 @@ func (a *Client) GetTerraformProviderDataSource(params *GetTerraformProviderData
 GetTerraformProviderDataSources Return all the DataSources for the Provider
 */
 func (a *Client) GetTerraformProviderDataSources(params *GetTerraformProviderDataSourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTerraformProviderDataSourcesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTerraformProviderDataSourcesParams()
 	}
@@ -342,17 +367,22 @@ func (a *Client) GetTerraformProviderDataSources(params *GetTerraformProviderDat
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTerraformProviderDataSourcesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetTerraformProviderDataSourcesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -360,7 +390,7 @@ func (a *Client) GetTerraformProviderDataSources(params *GetTerraformProviderDat
 GetTerraformProviderResource Get the information of the Resource
 */
 func (a *Client) GetTerraformProviderResource(params *GetTerraformProviderResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTerraformProviderResourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTerraformProviderResourceParams()
 	}
@@ -380,17 +410,22 @@ func (a *Client) GetTerraformProviderResource(params *GetTerraformProviderResour
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTerraformProviderResourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetTerraformProviderResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -398,7 +433,7 @@ func (a *Client) GetTerraformProviderResource(params *GetTerraformProviderResour
 GetTerraformProviderResources Return all the Resources for the Provider
 */
 func (a *Client) GetTerraformProviderResources(params *GetTerraformProviderResourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTerraformProviderResourcesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTerraformProviderResourcesParams()
 	}
@@ -418,17 +453,22 @@ func (a *Client) GetTerraformProviderResources(params *GetTerraformProviderResou
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTerraformProviderResourcesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetTerraformProviderResourcesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -436,7 +476,7 @@ func (a *Client) GetTerraformProviderResources(params *GetTerraformProviderResou
 GetTerraformProviders Return all the Providers
 */
 func (a *Client) GetTerraformProviders(params *GetTerraformProvidersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTerraformProvidersOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTerraformProvidersParams()
 	}
@@ -456,17 +496,22 @@ func (a *Client) GetTerraformProviders(params *GetTerraformProvidersParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTerraformProvidersOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetTerraformProvidersDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -474,7 +519,7 @@ func (a *Client) GetTerraformProviders(params *GetTerraformProvidersParams, auth
 TerraformJSONToHCL Transforms a JSON to a HCL
 */
 func (a *Client) TerraformJSONToHCL(params *TerraformJSONToHCLParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*TerraformJSONToHCLOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewTerraformJSONToHCLParams()
 	}
@@ -494,17 +539,22 @@ func (a *Client) TerraformJSONToHCL(params *TerraformJSONToHCLParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*TerraformJSONToHCLOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*TerraformJSONToHCLDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -512,7 +562,7 @@ func (a *Client) TerraformJSONToHCL(params *TerraformJSONToHCLParams, authInfo r
 TerraformValidate Validates a TF configuration
 */
 func (a *Client) TerraformValidate(params *TerraformValidateParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*TerraformValidateOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewTerraformValidateParams()
 	}
@@ -532,17 +582,22 @@ func (a *Client) TerraformValidate(params *TerraformValidateParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*TerraformValidateOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*TerraformValidateDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

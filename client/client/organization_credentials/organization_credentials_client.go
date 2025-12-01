@@ -132,7 +132,7 @@ type ClientService interface {
 * vmware: username, password
 */
 func (a *Client) CreateCredential(params *CreateCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateCredentialOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateCredentialParams()
 	}
@@ -152,17 +152,22 @@ func (a *Client) CreateCredential(params *CreateCredentialParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateCredentialOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateCredentialDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -170,7 +175,7 @@ func (a *Client) CreateCredential(params *CreateCredentialParams, authInfo runti
 DeleteCredential Delete the Credential.
 */
 func (a *Client) DeleteCredential(params *DeleteCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteCredentialNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteCredentialParams()
 	}
@@ -190,17 +195,22 @@ func (a *Client) DeleteCredential(params *DeleteCredentialParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteCredentialNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteCredentialDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -208,7 +218,7 @@ func (a *Client) DeleteCredential(params *DeleteCredentialParams, authInfo runti
 GetCredential Get the information of the Credential.
 */
 func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCredentialOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCredentialParams()
 	}
@@ -228,17 +238,22 @@ func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCredentialOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCredentialDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -246,7 +261,7 @@ func (a *Client) GetCredential(params *GetCredentialParams, authInfo runtime.Cli
 GetCredentialOptions Get options of the Credential.
 */
 func (a *Client) GetCredentialOptions(params *GetCredentialOptionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCredentialOptionsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCredentialOptionsParams()
 	}
@@ -266,17 +281,22 @@ func (a *Client) GetCredentialOptions(params *GetCredentialOptionsParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCredentialOptionsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCredentialOptionsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -284,7 +304,7 @@ func (a *Client) GetCredentialOptions(params *GetCredentialOptionsParams, authIn
 ListCredentials Return all the Credentials, depending on the caller permissions it'll return the Raw data or not. If the caller has List and not Get it'll not return the Raw, if it has List and Read it'll return the Raw.
 */
 func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListCredentialsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListCredentialsParams()
 	}
@@ -304,17 +324,22 @@ func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListCredentialsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListCredentialsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -332,7 +357,7 @@ func (a *Client) ListCredentials(params *ListCredentialsParams, authInfo runtime
 * vmware: username, password
 */
 func (a *Client) UpdateCredential(params *UpdateCredentialParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateCredentialOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateCredentialParams()
 	}
@@ -352,17 +377,22 @@ func (a *Client) UpdateCredential(params *UpdateCredentialParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateCredentialOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateCredentialDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

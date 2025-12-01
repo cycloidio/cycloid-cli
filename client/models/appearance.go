@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -157,11 +158,15 @@ func (m *Appearance) validateColor(formats strfmt.Registry) error {
 
 	if m.Color != nil {
 		if err := m.Color.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("color")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("color")
 			}
+
 			return err
 		}
 	}
@@ -306,11 +311,15 @@ func (m *Appearance) contextValidateColor(ctx context.Context, formats strfmt.Re
 	if m.Color != nil {
 
 		if err := m.Color.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("color")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("color")
 			}
+
 			return err
 		}
 	}

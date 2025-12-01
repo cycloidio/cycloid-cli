@@ -124,7 +124,7 @@ type ClientService interface {
 GetOrgMember Get the information of a member of the organization.
 */
 func (a *Client) GetOrgMember(params *GetOrgMemberParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrgMemberOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetOrgMemberParams()
 	}
@@ -144,17 +144,22 @@ func (a *Client) GetOrgMember(params *GetOrgMemberParams, authInfo runtime.Clien
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetOrgMemberOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetOrgMemberDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -162,7 +167,7 @@ func (a *Client) GetOrgMember(params *GetOrgMemberParams, authInfo runtime.Clien
 GetOrgMembers Get the members of an organization.
 */
 func (a *Client) GetOrgMembers(params *GetOrgMembersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrgMembersOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetOrgMembersParams()
 	}
@@ -182,17 +187,22 @@ func (a *Client) GetOrgMembers(params *GetOrgMembersParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetOrgMembersOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetOrgMembersDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -200,7 +210,7 @@ func (a *Client) GetOrgMembers(params *GetOrgMembersParams, authInfo runtime.Cli
 GetPendingMemberInvitation Get the email address used for the pending member invitation
 */
 func (a *Client) GetPendingMemberInvitation(params *GetPendingMemberInvitationParams, opts ...ClientOption) (*GetPendingMemberInvitationOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetPendingMemberInvitationParams()
 	}
@@ -219,17 +229,22 @@ func (a *Client) GetPendingMemberInvitation(params *GetPendingMemberInvitationPa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetPendingMemberInvitationOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetPendingMemberInvitationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -237,7 +252,7 @@ func (a *Client) GetPendingMemberInvitation(params *GetPendingMemberInvitationPa
 InviteUserToOrgMember Invite a user to be a member of the organization.
 */
 func (a *Client) InviteUserToOrgMember(params *InviteUserToOrgMemberParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*InviteUserToOrgMemberOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewInviteUserToOrgMemberParams()
 	}
@@ -257,17 +272,22 @@ func (a *Client) InviteUserToOrgMember(params *InviteUserToOrgMemberParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*InviteUserToOrgMemberOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*InviteUserToOrgMemberDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -275,7 +295,7 @@ func (a *Client) InviteUserToOrgMember(params *InviteUserToOrgMemberParams, auth
 RemoveOrgMember Remove a member of the organization.
 */
 func (a *Client) RemoveOrgMember(params *RemoveOrgMemberParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RemoveOrgMemberNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRemoveOrgMemberParams()
 	}
@@ -295,17 +315,22 @@ func (a *Client) RemoveOrgMember(params *RemoveOrgMemberParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RemoveOrgMemberNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*RemoveOrgMemberDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -313,7 +338,7 @@ func (a *Client) RemoveOrgMember(params *RemoveOrgMemberParams, authInfo runtime
 ResendMemberInvitation Resend the email containing the verification token to accept the member Invitation.
 */
 func (a *Client) ResendMemberInvitation(params *ResendMemberInvitationParams, opts ...ClientOption) (*ResendMemberInvitationNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewResendMemberInvitationParams()
 	}
@@ -332,17 +357,22 @@ func (a *Client) ResendMemberInvitation(params *ResendMemberInvitationParams, op
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ResendMemberInvitationNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ResendMemberInvitationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -350,7 +380,7 @@ func (a *Client) ResendMemberInvitation(params *ResendMemberInvitationParams, op
 UpdateOrgMember Update member of the organization.
 */
 func (a *Client) UpdateOrgMember(params *UpdateOrgMemberParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateOrgMemberOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateOrgMemberParams()
 	}
@@ -370,17 +400,22 @@ func (a *Client) UpdateOrgMember(params *UpdateOrgMemberParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateOrgMemberOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateOrgMemberDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

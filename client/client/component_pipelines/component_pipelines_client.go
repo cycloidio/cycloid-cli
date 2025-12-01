@@ -132,7 +132,7 @@ type ClientService interface {
 CreatePipeline Create a new pipeline
 */
 func (a *Client) CreatePipeline(params *CreatePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreatePipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreatePipelineParams()
 	}
@@ -152,17 +152,22 @@ func (a *Client) CreatePipeline(params *CreatePipelineParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreatePipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreatePipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -170,7 +175,7 @@ func (a *Client) CreatePipeline(params *CreatePipelineParams, authInfo runtime.C
 DeletePipeline Delete the pipeline.
 */
 func (a *Client) DeletePipeline(params *DeletePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeletePipelineNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeletePipelineParams()
 	}
@@ -190,17 +195,22 @@ func (a *Client) DeletePipeline(params *DeletePipelineParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeletePipelineNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeletePipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -208,7 +218,7 @@ func (a *Client) DeletePipeline(params *DeletePipelineParams, authInfo runtime.C
 DiffPipeline The diff between the provided pipeline configuration and the pipeline from the given name.
 */
 func (a *Client) DiffPipeline(params *DiffPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DiffPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDiffPipelineParams()
 	}
@@ -228,17 +238,22 @@ func (a *Client) DiffPipeline(params *DiffPipelineParams, authInfo runtime.Clien
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DiffPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DiffPipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -246,7 +261,7 @@ func (a *Client) DiffPipeline(params *DiffPipelineParams, authInfo runtime.Clien
 GetPipeline Get the pipeline.
 */
 func (a *Client) GetPipeline(params *GetPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetPipelineParams()
 	}
@@ -266,17 +281,22 @@ func (a *Client) GetPipeline(params *GetPipelineParams, authInfo runtime.ClientA
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetPipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -284,7 +304,7 @@ func (a *Client) GetPipeline(params *GetPipelineParams, authInfo runtime.ClientA
 GetPipelineConfig Get the YAML configuration of the pipeline.
 */
 func (a *Client) GetPipelineConfig(params *GetPipelineConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineConfigOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetPipelineConfigParams()
 	}
@@ -304,17 +324,22 @@ func (a *Client) GetPipelineConfig(params *GetPipelineConfigParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetPipelineConfigOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetPipelineConfigDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -322,7 +347,7 @@ func (a *Client) GetPipelineConfig(params *GetPipelineConfigParams, authInfo run
 GetPipelineVariables Get the YAML variables of the pipeline.
 */
 func (a *Client) GetPipelineVariables(params *GetPipelineVariablesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetPipelineVariablesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetPipelineVariablesParams()
 	}
@@ -342,17 +367,22 @@ func (a *Client) GetPipelineVariables(params *GetPipelineVariablesParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetPipelineVariablesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetPipelineVariablesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -360,7 +390,7 @@ func (a *Client) GetPipelineVariables(params *GetPipelineVariablesParams, authIn
 PausePipeline Pause a pipeline
 */
 func (a *Client) PausePipeline(params *PausePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PausePipelineNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewPausePipelineParams()
 	}
@@ -380,17 +410,22 @@ func (a *Client) PausePipeline(params *PausePipelineParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*PausePipelineNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*PausePipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -398,7 +433,7 @@ func (a *Client) PausePipeline(params *PausePipelineParams, authInfo runtime.Cli
 RenamePipeline Rename a pipeline
 */
 func (a *Client) RenamePipeline(params *RenamePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RenamePipelineNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRenamePipelineParams()
 	}
@@ -418,17 +453,22 @@ func (a *Client) RenamePipeline(params *RenamePipelineParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RenamePipelineNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*RenamePipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -436,7 +476,7 @@ func (a *Client) RenamePipeline(params *RenamePipelineParams, authInfo runtime.C
 SyncedPipeline Will check if the pipeline from the database and the one specified in the stack are synced or not
 */
 func (a *Client) SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*SyncedPipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewSyncedPipelineParams()
 	}
@@ -456,17 +496,22 @@ func (a *Client) SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*SyncedPipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*SyncedPipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -474,7 +519,7 @@ func (a *Client) SyncedPipeline(params *SyncedPipelineParams, authInfo runtime.C
 UnpausePipeline Unpause a pipeline
 */
 func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UnpausePipelineNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUnpausePipelineParams()
 	}
@@ -494,17 +539,22 @@ func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UnpausePipelineNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UnpausePipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -512,7 +562,7 @@ func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime
 UpdatePipeline Update the configuration of the given pipeline name.
 */
 func (a *Client) UpdatePipeline(params *UpdatePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdatePipelineOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdatePipelineParams()
 	}
@@ -532,17 +582,22 @@ func (a *Client) UpdatePipeline(params *UpdatePipelineParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdatePipelineOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdatePipelineDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

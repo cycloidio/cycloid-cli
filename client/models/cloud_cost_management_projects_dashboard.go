@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -58,11 +59,15 @@ func (m *CloudCostManagementProjectsDashboard) validateProjectProviders(formats 
 
 	if m.ProjectProviders != nil {
 		if err := m.ProjectProviders.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("project_providers")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("project_providers")
 			}
+
 			return err
 		}
 	}
@@ -78,11 +83,15 @@ func (m *CloudCostManagementProjectsDashboard) validateProjects(formats strfmt.R
 
 	if m.Projects != nil {
 		if err := m.Projects.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("projects")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("projects")
 			}
+
 			return err
 		}
 	}
@@ -113,11 +122,15 @@ func (m *CloudCostManagementProjectsDashboard) contextValidateProjectProviders(c
 	if m.ProjectProviders != nil {
 
 		if err := m.ProjectProviders.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("project_providers")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("project_providers")
 			}
+
 			return err
 		}
 	}
@@ -130,11 +143,15 @@ func (m *CloudCostManagementProjectsDashboard) contextValidateProjects(ctx conte
 	if m.Projects != nil {
 
 		if err := m.Projects.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("projects")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("projects")
 			}
+
 			return err
 		}
 	}

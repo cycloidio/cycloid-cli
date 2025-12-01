@@ -136,7 +136,7 @@ type ClientService interface {
 GetRunningInfraAWS Get the number of resources classified by types, of the running AWS infrastructure of the organization and associated AWS account (credential). The parameters allow to select the scope of the request to one project of the organization and/or a set of type of resource.
 */
 func (a *Client) GetRunningInfraAWS(params *GetRunningInfraAWSParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSParams()
 	}
@@ -156,17 +156,22 @@ func (a *Client) GetRunningInfraAWS(params *GetRunningInfraAWSParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -174,7 +179,7 @@ func (a *Client) GetRunningInfraAWS(params *GetRunningInfraAWSParams, authInfo r
 GetRunningInfraAWSBuckets Get the list of S3 buckets of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSBuckets(params *GetRunningInfraAWSBucketsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSBucketsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSBucketsParams()
 	}
@@ -194,17 +199,22 @@ func (a *Client) GetRunningInfraAWSBuckets(params *GetRunningInfraAWSBucketsPara
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSBucketsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSBucketsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -212,7 +222,7 @@ func (a *Client) GetRunningInfraAWSBuckets(params *GetRunningInfraAWSBucketsPara
 GetRunningInfraAWSDBInstances Get the list of RDS DB instances of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSDBInstances(params *GetRunningInfraAWSDBInstancesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSDBInstancesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSDBInstancesParams()
 	}
@@ -232,17 +242,22 @@ func (a *Client) GetRunningInfraAWSDBInstances(params *GetRunningInfraAWSDBInsta
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSDBInstancesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSDBInstancesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -250,7 +265,7 @@ func (a *Client) GetRunningInfraAWSDBInstances(params *GetRunningInfraAWSDBInsta
 GetRunningInfraAWSElasticacheClusters Get the list of Elasticache clusters of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSElasticacheClusters(params *GetRunningInfraAWSElasticacheClustersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSElasticacheClustersOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSElasticacheClustersParams()
 	}
@@ -270,17 +285,22 @@ func (a *Client) GetRunningInfraAWSElasticacheClusters(params *GetRunningInfraAW
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSElasticacheClustersOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSElasticacheClustersDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -288,7 +308,7 @@ func (a *Client) GetRunningInfraAWSElasticacheClusters(params *GetRunningInfraAW
 GetRunningInfraAWSImages Get the list of images of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSImages(params *GetRunningInfraAWSImagesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSImagesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSImagesParams()
 	}
@@ -308,17 +328,22 @@ func (a *Client) GetRunningInfraAWSImages(params *GetRunningInfraAWSImagesParams
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSImagesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSImagesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -326,7 +351,7 @@ func (a *Client) GetRunningInfraAWSImages(params *GetRunningInfraAWSImagesParams
 GetRunningInfraAWSInstances Get the list of instances of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSInstances(params *GetRunningInfraAWSInstancesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSInstancesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSInstancesParams()
 	}
@@ -346,17 +371,22 @@ func (a *Client) GetRunningInfraAWSInstances(params *GetRunningInfraAWSInstances
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSInstancesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSInstancesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -364,7 +394,7 @@ func (a *Client) GetRunningInfraAWSInstances(params *GetRunningInfraAWSInstances
 GetRunningInfraAWSLoadBalancersV1 Get the list of load balancers (ELB) of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSLoadBalancersV1(params *GetRunningInfraAWSLoadBalancersV1Params, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSLoadBalancersV1OK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSLoadBalancersV1Params()
 	}
@@ -384,17 +414,22 @@ func (a *Client) GetRunningInfraAWSLoadBalancersV1(params *GetRunningInfraAWSLoa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSLoadBalancersV1OK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSLoadBalancersV1Default)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -402,7 +437,7 @@ func (a *Client) GetRunningInfraAWSLoadBalancersV1(params *GetRunningInfraAWSLoa
 GetRunningInfraAWSLoadBalancersV2 Get the list of load balancers (ELB v2 or a.k.a ALB)  of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSLoadBalancersV2(params *GetRunningInfraAWSLoadBalancersV2Params, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSLoadBalancersV2OK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSLoadBalancersV2Params()
 	}
@@ -422,17 +457,22 @@ func (a *Client) GetRunningInfraAWSLoadBalancersV2(params *GetRunningInfraAWSLoa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSLoadBalancersV2OK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSLoadBalancersV2Default)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -440,7 +480,7 @@ func (a *Client) GetRunningInfraAWSLoadBalancersV2(params *GetRunningInfraAWSLoa
 GetRunningInfraAWSSecurityGroups Get the list of security groups of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSSecurityGroups(params *GetRunningInfraAWSSecurityGroupsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSSecurityGroupsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSSecurityGroupsParams()
 	}
@@ -460,17 +500,22 @@ func (a *Client) GetRunningInfraAWSSecurityGroups(params *GetRunningInfraAWSSecu
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSSecurityGroupsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSSecurityGroupsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -478,7 +523,7 @@ func (a *Client) GetRunningInfraAWSSecurityGroups(params *GetRunningInfraAWSSecu
 GetRunningInfraAWSSnapshots Get the list of snapshots of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSSnapshots(params *GetRunningInfraAWSSnapshotsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSSnapshotsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSSnapshotsParams()
 	}
@@ -498,17 +543,22 @@ func (a *Client) GetRunningInfraAWSSnapshots(params *GetRunningInfraAWSSnapshots
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSSnapshotsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSSnapshotsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -516,7 +566,7 @@ func (a *Client) GetRunningInfraAWSSnapshots(params *GetRunningInfraAWSSnapshots
 GetRunningInfraAWSSubnets Get the list of subnets of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSSubnets(params *GetRunningInfraAWSSubnetsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSSubnetsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSSubnetsParams()
 	}
@@ -536,17 +586,22 @@ func (a *Client) GetRunningInfraAWSSubnets(params *GetRunningInfraAWSSubnetsPara
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSSubnetsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSSubnetsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -554,7 +609,7 @@ func (a *Client) GetRunningInfraAWSSubnets(params *GetRunningInfraAWSSubnetsPara
 GetRunningInfraAWSVPCs Get the list of VPCs of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSVPCs(params *GetRunningInfraAWSVPCsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSVPCsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSVPCsParams()
 	}
@@ -574,17 +629,22 @@ func (a *Client) GetRunningInfraAWSVPCs(params *GetRunningInfraAWSVPCsParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSVPCsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSVPCsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -592,7 +652,7 @@ func (a *Client) GetRunningInfraAWSVPCs(params *GetRunningInfraAWSVPCsParams, au
 GetRunningInfraAWSVolumes Get the list of volumes of the running AWS infrastructure and associated with the AWS account (credential). The parameters allow to select the scope of the request to one project of the organization.
 */
 func (a *Client) GetRunningInfraAWSVolumes(params *GetRunningInfraAWSVolumesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetRunningInfraAWSVolumesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetRunningInfraAWSVolumesParams()
 	}
@@ -612,17 +672,22 @@ func (a *Client) GetRunningInfraAWSVolumes(params *GetRunningInfraAWSVolumesPara
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetRunningInfraAWSVolumesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetRunningInfraAWSVolumesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

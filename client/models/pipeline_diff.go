@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -72,11 +73,15 @@ func (m *PipelineDiff) validateDiff(formats strfmt.Registry) error {
 
 		if m.Diff[i] != nil {
 			if err := m.Diff[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("diff" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("diff" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -95,7 +100,7 @@ func (m *PipelineDiff) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var pipelineDiffTypeStatusPropEnum []interface{}
+var pipelineDiffTypeStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -166,11 +171,15 @@ func (m *PipelineDiff) contextValidateDiff(ctx context.Context, formats strfmt.R
 			}
 
 			if err := m.Diff[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("diff" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("diff" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

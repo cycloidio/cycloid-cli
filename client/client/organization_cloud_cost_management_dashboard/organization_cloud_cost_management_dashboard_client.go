@@ -116,7 +116,7 @@ aggregated by cloud provider and the cost of the new resource in the
 period.
 */
 func (a *Client) GetCloudCostManagementDashboard(params *GetCloudCostManagementDashboardParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudCostManagementDashboardOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudCostManagementDashboardParams()
 	}
@@ -136,17 +136,22 @@ func (a *Client) GetCloudCostManagementDashboard(params *GetCloudCostManagementD
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudCostManagementDashboardOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudCostManagementDashboardDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

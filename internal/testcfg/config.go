@@ -105,7 +105,8 @@ func NewConfig(testName string) (*Config, error) {
 	config.Middleware = m
 
 	var (
-		userName        = "administrator"
+		username        = "administrator"
+		fullName        = "administrator"
 		email           = "admin@cycloid.io"
 		password        = "cycloidadmin"
 		apiKeyCanonical = "admin-" + testName
@@ -113,7 +114,7 @@ func NewConfig(testName string) (*Config, error) {
 
 	if provisionAPI {
 		// try to login, is successful, console is initialized
-		init, err := m.InitFirstOrg(config.Org, userName, userName, userName, email, password, licence, &apiKeyCanonical)
+		init, err := m.InitFirstOrg(config.Org, username, fullName, email, password, licence, &apiKeyCanonical)
 		if err != nil {
 			return nil, fmt.Errorf("failed to init console: %w", err)
 		}

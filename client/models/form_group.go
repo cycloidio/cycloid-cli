@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -92,11 +93,15 @@ func (m *FormGroup) validateVars(formats strfmt.Registry) error {
 
 		if m.Vars[i] != nil {
 			if err := m.Vars[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("vars" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("vars" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -131,11 +136,15 @@ func (m *FormGroup) contextValidateVars(ctx context.Context, formats strfmt.Regi
 			}
 
 			if err := m.Vars[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("vars" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("vars" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

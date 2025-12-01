@@ -23,7 +23,7 @@ import (
 type FormEntity struct {
 
 	// The current value that was previously configured for this variable upon creation or update. In case of shared variables having different values, it will be empty, and 'mismatch_values' will be filled instead.
-	Current interface{} `json:"current,omitempty"`
+	Current any `json:"current,omitempty"`
 
 	// Default can take 2 kinds of definition.
 	// The first one is simply the variable to assign if nothing is given by the user and that the variable is required.
@@ -34,7 +34,7 @@ type FormEntity struct {
 	//       default: t2.micro
 	//     - condition: "$env == 'prod'"
 	//       default: t2.large
-	Default interface{} `json:"default,omitempty"`
+	Default any `json:"default,omitempty"`
 
 	// List of keys that are required to use this entity
 	DependsOn []string `json:"depends_on"`
@@ -50,7 +50,7 @@ type FormEntity struct {
 	Key *string `json:"key"`
 
 	// This is filled only when a shared variable does not have the same values anymore. e.g. a variable 'foo' was shared between 'ansible' and 'pipeline', was set to 'bar', but now the value found for 'ansible' is 'bus', while it's still 'bar' for the pipeline. In such situation, the Forms don't know anymore which is the correct data and will return both, while unsetting the 'Current' field.
-	MismatchValues []interface{} `json:"mismatch_values"`
+	MismatchValues []any `json:"mismatch_values"`
 
 	// The name of the variable displayed to the user
 	// Required: true
@@ -77,7 +77,7 @@ type FormEntity struct {
 	//     - regexp: "^.*_awesome$"
 	//       error_message: "the value must have '_awesome' as suffix"
 	// At the moment only regexp validations are implemented but  we can expect objects with a 'type', and 'error_message' field. The type field can hold the constraint, as in the case of regexp or  hipotetically a moe complex object.
-	Validations []interface{} `json:"validations"`
+	Validations []any `json:"validations"`
 
 	// Values can take 2 kinds of definition.
 	// First one is a list of object, such as list of integer, maps, etc. Values allowed, e.g. [1, 10, 20, 50]. Note: In case of SliderRange only 2 values should be provided: [min, max], in case of providing them the other way around some validation test will fail.
@@ -88,7 +88,7 @@ type FormEntity struct {
 	//       values: [dev-ami1, dev-ami2, dev-ami3]
 	//     - condition: "$env == 'prod'"
 	//       values: [prod-ami1, prod-ami2, prod-ami3]
-	Values interface{} `json:"values,omitempty"`
+	Values any `json:"values,omitempty"`
 
 	// It's a URL in which the values have to be fetched from
 	ValuesRef string `json:"values_ref,omitempty"`
@@ -108,25 +108,27 @@ type FormEntity struct {
 	//     * 'orientation' (string): whether you want to display it in an 'horizontal' or 'vertical' way
 	//   * cy_inventory_resource
 	//     * 'attribute' (string): REQUIRED The path to the attribute to actually use as value
-	//     * 'provider' (string): The provider like '"provider[\"registry.terraform.io/hashicorp/aws\"]"'
-	//     * 'type'  (string): The type of the resource like 'aws_vpc'
-	//     * 'name' (string): The name of the resource like 'front'
-	//     * 'module' (string): The module name like 'module.lemp'
-	//     * 'label' (string): The label of the resource, this only applies for resources created directly from the API/FE
-	//     * 'attributes' (string): The query string to filter the attributes like 'ingress[0].protocol[eq]=tcp'
-	//     * 'custom_attributes' (string): The query string to filter the custom_attributes like 'ingress[0].protocol[eq]=tcp'
-	//     * 'project' (string): Linked project canonical
-	//     * 'environment' (string): Linked environment canonical
-	//     * 'component' (string): Linked component canonical
+	//     * 'filters': (object): The filters to apply, selected from the list below:
+	//       * 'provider' (string): The provider like '"provider[\"registry.terraform.io/hashicorp/aws\"]"'
+	//       * 'type'  (string): The type of the resource like 'aws_vpc'
+	//       * 'name' (string): The name of the resource like 'front'
+	//       * 'module' (string): The module name like 'module.lemp'
+	//       * 'label' (string): The label of the resource, this only applies for resources created directly from the API/FE
+	//       * 'attributes' (string): The query string to filter the attributes like 'ingress[0].protocol[eq]=tcp'
+	//       * 'custom_attributes' (string): The query string to filter the custom_attributes like 'ingress[0].protocol[eq]=tcp'
+	//       * 'project' (string): Linked project canonical
+	//       * 'environment' (string): Linked environment canonical
+	//       * 'component' (string): Linked component canonical
 	//   * cy_inventory_output
 	//     * 'attribute' (string): Path to the output's attribute, which value will be used
-	//     * 'attributes' (string): The query string to filter the attributes like 'ingress[0].protocol[eq]=tcp'
-	//     * 'keys' (list(string)): List of output keys to select from
-	//     * 'project' (string): Linked project canonical
-	//     * 'environment' (string): Linked environment canonical
-	//     * 'component' (string): Linked component canonical
-	//     * 'service_catalogs' (list(string)): Linked service catalog (stack) canonicals
-	WidgetConfig interface{} `json:"widget_config,omitempty"`
+	//     * 'filters': (object): The filters to apply, selected from the list below:
+	//       * 'attributes' (string): The query string to filter the attributes like 'ingress[0].protocol[eq]=tcp'
+	//       * 'keys' (list(string)): List of output keys to select from
+	//       * 'project' (string): Linked project canonical
+	//       * 'environment' (string): Linked environment canonical
+	//       * 'component' (string): Linked component canonical
+	//       * 'service_catalogs' (list(string)): Linked service catalog (stack) canonicals
+	WidgetConfig any `json:"widget_config,omitempty"`
 }
 
 // Validate validates this form entity
@@ -173,7 +175,7 @@ func (m *FormEntity) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-var formEntityTypeTypePropEnum []interface{}
+var formEntityTypeTypePropEnum []any
 
 func init() {
 	var res []string
@@ -228,7 +230,7 @@ func (m *FormEntity) validateType(formats strfmt.Registry) error {
 	return nil
 }
 
-var formEntityTypeWidgetPropEnum []interface{}
+var formEntityTypeWidgetPropEnum []any
 
 func init() {
 	var res []string

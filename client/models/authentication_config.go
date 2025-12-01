@@ -139,6 +139,12 @@ func unmarshalAuthenticationConfig(data []byte, consumer runtime.Consumer) (Auth
 			return nil, err
 		}
 		return &result, nil
+	case "AuthenticationOIDC":
+		var result AuthenticationOIDC
+		if err := consumer.Consume(buf2, &result); err != nil {
+			return nil, err
+		}
+		return &result, nil
 	case "AuthenticationSAML":
 		var result AuthenticationSAML
 		if err := consumer.Consume(buf2, &result); err != nil {

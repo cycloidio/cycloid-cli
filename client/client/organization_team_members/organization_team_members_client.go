@@ -118,7 +118,7 @@ type ClientService interface {
 AssignMemberToTeam Assign a user of the organization to be a member of a team.
 */
 func (a *Client) AssignMemberToTeam(params *AssignMemberToTeamParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*AssignMemberToTeamOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewAssignMemberToTeamParams()
 	}
@@ -138,17 +138,22 @@ func (a *Client) AssignMemberToTeam(params *AssignMemberToTeamParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*AssignMemberToTeamOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*AssignMemberToTeamDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -156,7 +161,7 @@ func (a *Client) AssignMemberToTeam(params *AssignMemberToTeamParams, authInfo r
 GetTeamMember Get the information of a member of the team.
 */
 func (a *Client) GetTeamMember(params *GetTeamMemberParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTeamMemberOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTeamMemberParams()
 	}
@@ -176,17 +181,22 @@ func (a *Client) GetTeamMember(params *GetTeamMemberParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTeamMemberOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetTeamMemberDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -194,7 +204,7 @@ func (a *Client) GetTeamMember(params *GetTeamMemberParams, authInfo runtime.Cli
 GetTeamMembers Get the members of a team of the organization.
 */
 func (a *Client) GetTeamMembers(params *GetTeamMembersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetTeamMembersOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetTeamMembersParams()
 	}
@@ -214,17 +224,22 @@ func (a *Client) GetTeamMembers(params *GetTeamMembersParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetTeamMembersOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetTeamMembersDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -232,7 +247,7 @@ func (a *Client) GetTeamMembers(params *GetTeamMembersParams, authInfo runtime.C
 UnassignMemberFromTeam Unassign a member of the team. After this operation, the user will not be a member of the team.
 */
 func (a *Client) UnassignMemberFromTeam(params *UnassignMemberFromTeamParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UnassignMemberFromTeamNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUnassignMemberFromTeamParams()
 	}
@@ -252,17 +267,22 @@ func (a *Client) UnassignMemberFromTeam(params *UnassignMemberFromTeamParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UnassignMemberFromTeamNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UnassignMemberFromTeamDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

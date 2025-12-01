@@ -123,7 +123,11 @@ type ClientService interface {
 
 	LockState(params *LockStateParams, opts ...ClientOption) (*LockStateOK, error)
 
+	PinInventoryOutput(params *PinInventoryOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PinInventoryOutputNoContent, error)
+
 	UnlockState(params *UnlockStateParams, opts ...ClientOption) (*UnlockStateNoContent, error)
+
+	UnpinInventoryOutput(params *UnpinInventoryOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UnpinInventoryOutputNoContent, error)
 
 	UpdateInventoryResource(params *UpdateInventoryResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateInventoryResourceOK, error)
 
@@ -134,7 +138,7 @@ type ClientService interface {
 CreateInventoryResource Create an Inventory Resource
 */
 func (a *Client) CreateInventoryResource(params *CreateInventoryResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateInventoryResourceNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateInventoryResourceParams()
 	}
@@ -154,17 +158,22 @@ func (a *Client) CreateInventoryResource(params *CreateInventoryResourceParams, 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateInventoryResourceNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateInventoryResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -172,7 +181,7 @@ func (a *Client) CreateInventoryResource(params *CreateInventoryResourceParams, 
 CreateOrUpdateState Create or update an Inventory State
 */
 func (a *Client) CreateOrUpdateState(params *CreateOrUpdateStateParams, opts ...ClientOption) (*CreateOrUpdateStateNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateOrUpdateStateParams()
 	}
@@ -191,17 +200,22 @@ func (a *Client) CreateOrUpdateState(params *CreateOrUpdateStateParams, opts ...
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateOrUpdateStateNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateOrUpdateStateDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -209,7 +223,7 @@ func (a *Client) CreateOrUpdateState(params *CreateOrUpdateStateParams, opts ...
 DeleteInventoryResource Delete an Inventory Resource
 */
 func (a *Client) DeleteInventoryResource(params *DeleteInventoryResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteInventoryResourceNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteInventoryResourceParams()
 	}
@@ -229,17 +243,22 @@ func (a *Client) DeleteInventoryResource(params *DeleteInventoryResourceParams, 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteInventoryResourceNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteInventoryResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -247,7 +266,7 @@ func (a *Client) DeleteInventoryResource(params *DeleteInventoryResourceParams, 
 GetInventoryResource Get the inventory resource by the ID
 */
 func (a *Client) GetInventoryResource(params *GetInventoryResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInventoryResourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetInventoryResourceParams()
 	}
@@ -267,17 +286,22 @@ func (a *Client) GetInventoryResource(params *GetInventoryResourceParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetInventoryResourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetInventoryResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -285,7 +309,7 @@ func (a *Client) GetInventoryResource(params *GetInventoryResourceParams, authIn
 GetState Get the state
 */
 func (a *Client) GetState(params *GetStateParams, opts ...ClientOption) (*GetStateOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetStateParams()
 	}
@@ -304,17 +328,22 @@ func (a *Client) GetState(params *GetStateParams, opts ...ClientOption) (*GetSta
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetStateOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetStateDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -322,7 +351,7 @@ func (a *Client) GetState(params *GetStateParams, opts ...ClientOption) (*GetSta
 ListInventoryOutputs List the outputs of terraform states of an organization. Can be filtered by: * output_key * output_attribute * project_canonical * environment_canonical * component_canonical * service_catalog_canonical
 */
 func (a *Client) ListInventoryOutputs(params *ListInventoryOutputsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListInventoryOutputsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListInventoryOutputsParams()
 	}
@@ -342,17 +371,22 @@ func (a *Client) ListInventoryOutputs(params *ListInventoryOutputsParams, authIn
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListInventoryOutputsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListInventoryOutputsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -360,7 +394,7 @@ func (a *Client) ListInventoryOutputs(params *ListInventoryOutputsParams, authIn
 ListInventoryResources List the inventory resources
 */
 func (a *Client) ListInventoryResources(params *ListInventoryResourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListInventoryResourcesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListInventoryResourcesParams()
 	}
@@ -380,17 +414,22 @@ func (a *Client) ListInventoryResources(params *ListInventoryResourcesParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListInventoryResourcesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListInventoryResourcesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -398,7 +437,7 @@ func (a *Client) ListInventoryResources(params *ListInventoryResourcesParams, au
 ListResourceLabels List Resource Labels
 */
 func (a *Client) ListResourceLabels(params *ListResourceLabelsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListResourceLabelsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListResourceLabelsParams()
 	}
@@ -418,17 +457,22 @@ func (a *Client) ListResourceLabels(params *ListResourceLabelsParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListResourceLabelsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListResourceLabelsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -436,7 +480,7 @@ func (a *Client) ListResourceLabels(params *ListResourceLabelsParams, authInfo r
 ListResourceTypes List Resource Types
 */
 func (a *Client) ListResourceTypes(params *ListResourceTypesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListResourceTypesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListResourceTypesParams()
 	}
@@ -456,17 +500,22 @@ func (a *Client) ListResourceTypes(params *ListResourceTypesParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListResourceTypesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListResourceTypesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -474,7 +523,7 @@ func (a *Client) ListResourceTypes(params *ListResourceTypesParams, authInfo run
 LockState Locks an Inventory State
 */
 func (a *Client) LockState(params *LockStateParams, opts ...ClientOption) (*LockStateOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewLockStateParams()
 	}
@@ -493,17 +542,65 @@ func (a *Client) LockState(params *LockStateParams, opts ...ClientOption) (*Lock
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*LockStateOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*LockStateDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+PinInventoryOutput -| Pin an Inventory Output (a terraform state output). Pinning the output will highlight it on the frontend.
+*/
+func (a *Client) PinInventoryOutput(params *PinInventoryOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*PinInventoryOutputNoContent, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewPinInventoryOutputParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "pinInventoryOutput",
+		Method:             "POST",
+		PathPattern:        "/organizations/{organization_canonical}/inventory/outputs/{inventory_output_id}/pin",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &PinInventoryOutputReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*PinInventoryOutputNoContent)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*PinInventoryOutputDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -511,7 +608,7 @@ func (a *Client) LockState(params *LockStateParams, opts ...ClientOption) (*Lock
 UnlockState unlocks an State of Inventory
 */
 func (a *Client) UnlockState(params *UnlockStateParams, opts ...ClientOption) (*UnlockStateNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUnlockStateParams()
 	}
@@ -530,17 +627,65 @@ func (a *Client) UnlockState(params *UnlockStateParams, opts ...ClientOption) (*
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UnlockStateNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UnlockStateDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+UnpinInventoryOutput -| Unpin an Inventory Output (a terraform state output). Unpinning the output will prevent it from being highlighted on the frontend.
+*/
+func (a *Client) UnpinInventoryOutput(params *UnpinInventoryOutputParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UnpinInventoryOutputNoContent, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewUnpinInventoryOutputParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "unpinInventoryOutput",
+		Method:             "POST",
+		PathPattern:        "/organizations/{organization_canonical}/inventory/outputs/{inventory_output_id}/unpin",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &UnpinInventoryOutputReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*UnpinInventoryOutputNoContent)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*UnpinInventoryOutputDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -548,7 +693,7 @@ func (a *Client) UnlockState(params *UnlockStateParams, opts ...ClientOption) (*
 UpdateInventoryResource Create an Inventory Resource
 */
 func (a *Client) UpdateInventoryResource(params *UpdateInventoryResourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateInventoryResourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateInventoryResourceParams()
 	}
@@ -568,17 +713,22 @@ func (a *Client) UpdateInventoryResource(params *UpdateInventoryResourceParams, 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateInventoryResourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateInventoryResourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
