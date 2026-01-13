@@ -14,8 +14,8 @@ import (
 // current console.
 // If apiKeyCanonical != nil, will also create an api key admin and add it to a
 // credential.
-func (m *middleware) InitFirstOrg(org, username, fullName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error) {
-	err := m.UserSignup(username, email, password, fullName)
+func (m *middleware) InitFirstOrg(org, userName, fullName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error) {
+	err := m.UserSignup(userName, email, password, fullName)
 	var signupErr *APIError
 	if errors.As(err, &signupErr) {
 		if signupErr.HTTPCode != "409" && err != nil {
@@ -50,7 +50,7 @@ func (m *middleware) InitFirstOrg(org, username, fullName, email, password, lice
 
 	output := &FirstOrgData{
 		Org:      org,
-		Username: username,
+		Username: userName,
 		FullName: fullName,
 		Email:    email,
 		Password: password,

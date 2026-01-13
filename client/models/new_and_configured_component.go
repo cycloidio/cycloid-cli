@@ -45,6 +45,16 @@ type NewAndConfiguredComponent struct {
 	// It's the ref of the Stack, like 'cycloidio:stack-magento'
 	ServiceCatalogRef string `json:"service_catalog_ref,omitempty"`
 
+	// Is the CommitHash of the version, if the component updated the version this should be the new hash. We need the ID+HASH as the ID alone we do not know if the version was updated or not (same ID could have been used with a different hash). With both we can assert if it did or did not change the version
+	//
+	// Required: true
+	ServiceCatalogSourceVersionCommitHash *string `json:"service_catalog_source_version_commit_hash"`
+
+	// Is the ID of the new SCS Version used
+	// Required: true
+	// Minimum: 1
+	ServiceCatalogSourceVersionID *uint32 `json:"service_catalog_source_version_id"`
+
 	// use case
 	// Max Length: 100
 	// Min Length: 1
@@ -68,6 +78,14 @@ func (m *NewAndConfiguredComponent) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateServiceCatalogSourceVersionCommitHash(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateServiceCatalogSourceVersionID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -132,6 +150,28 @@ func (m *NewAndConfiguredComponent) validateName(formats strfmt.Registry) error 
 	}
 
 	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewAndConfiguredComponent) validateServiceCatalogSourceVersionCommitHash(formats strfmt.Registry) error {
+
+	if err := validate.Required("service_catalog_source_version_commit_hash", "body", m.ServiceCatalogSourceVersionCommitHash); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *NewAndConfiguredComponent) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
+
+	if err := validate.Required("service_catalog_source_version_id", "body", m.ServiceCatalogSourceVersionID); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumUint("service_catalog_source_version_id", "body", uint64(*m.ServiceCatalogSourceVersionID), 1, false); err != nil {
 		return err
 	}
 

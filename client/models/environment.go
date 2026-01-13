@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	stderrors "errors"
 	"strconv"
 
@@ -57,6 +58,9 @@ type Environment struct {
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
+
+	// When the environment is returned alongside Project this will be set with the aggregated value of the Components Version.Status it has
+	VersionStatus []string `json:"version_status"`
 }
 
 // Validate validates this environment
@@ -88,6 +92,10 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVersionStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -211,6 +219,42 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+var environmentVersionStatusItemsEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["no_status","latest","active","deleted","outdated"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		environmentVersionStatusItemsEnum = append(environmentVersionStatusItemsEnum, v)
+	}
+}
+
+func (m *Environment) validateVersionStatusItemsEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, environmentVersionStatusItemsEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Environment) validateVersionStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.VersionStatus) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.VersionStatus); i++ {
+
+		// value enum
+		if err := m.validateVersionStatusItemsEnum("version_status"+"."+strconv.Itoa(i), "body", m.VersionStatus[i]); err != nil {
+			return err
+		}
+
 	}
 
 	return nil

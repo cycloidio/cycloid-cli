@@ -38,7 +38,7 @@ func TestProjects(t *testing.T) {
 		}
 		_, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to create project '%s': %v", project, err)
+			t.Errorf("failed to create project '%s': %v", project, err)
 		}
 	})
 
@@ -49,7 +49,7 @@ func TestProjects(t *testing.T) {
 		}
 		_, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to delete project '%s': %v", project, err)
+			t.Errorf("failed to delete project '%s': %v", project, err)
 		}
 	})
 
@@ -72,13 +72,13 @@ func TestProjects(t *testing.T) {
 		}
 		out, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to create project '%s': %v", project, err)
+			t.Errorf("failed to create project '%s': %v", project, err)
 		}
 
 		var projectResult models.Project
 		err = json.Unmarshal([]byte(out), &projectResult)
 		if err != nil {
-			t.Fatalf("failed to parse json output from the CLI on create --update: %v\noutput: %s", err, out)
+			t.Errorf("failed to parse json output from the CLI on create --update: %v\noutput: %s", err, out)
 		}
 
 		assert.Equal(t, createUpdateName, *projectResult.Name)
@@ -100,7 +100,7 @@ func TestProjects(t *testing.T) {
 		}
 		_, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to create project '%s': %v", newProject, err)
+			t.Errorf("failed to create project '%s': %v", newProject, err)
 		}
 
 		defer t.Run("DeleteCreateUpdate", func(t *testing.T) {
@@ -110,7 +110,7 @@ func TestProjects(t *testing.T) {
 			}
 			_, err := executeCommand(args)
 			if err != nil {
-				t.Fatalf("failed to delete project '%s': %v", newProject, err)
+				t.Errorf("failed to delete project '%s': %v", newProject, err)
 			}
 		})
 	})
@@ -129,13 +129,13 @@ func TestProjects(t *testing.T) {
 		}
 		jsonOut, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to update project '%s': %v", project, err)
+			t.Errorf("failed to update project '%s': %v", project, err)
 		}
 
 		var projectResult models.Project
 		err = json.Unmarshal([]byte(jsonOut), &projectResult)
 		if err != nil {
-			t.Fatalf("failed to parse json output from the CLI on update: %v\noutput: %s", err, jsonOut)
+			t.Errorf("failed to parse json output from the CLI on update: %v\noutput: %s", err, jsonOut)
 		}
 
 		assert.Equal(t, updateDesc, projectResult.Description)

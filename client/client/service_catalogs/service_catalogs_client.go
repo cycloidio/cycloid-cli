@@ -117,7 +117,11 @@ type ClientService interface {
 
 	GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraformImageParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogTerraformImageOK, error)
 
+	GetServiceCatalogUsage(params *GetServiceCatalogUsageParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogUsageOK, error)
+
 	GetServiceCatalogUseCases(params *GetServiceCatalogUseCasesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogUseCasesOK, error)
+
+	GetServiceCatalogVersions(params *GetServiceCatalogVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogVersionsOK, error)
 
 	ListServiceCatalogs(params *ListServiceCatalogsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListServiceCatalogsOK, error)
 
@@ -394,6 +398,50 @@ func (a *Client) GetServiceCatalogTerraformImage(params *GetServiceCatalogTerraf
 }
 
 /*
+GetServiceCatalogUsage Get the usage of the Service Catalog
+*/
+func (a *Client) GetServiceCatalogUsage(params *GetServiceCatalogUsageParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogUsageOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewGetServiceCatalogUsageParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getServiceCatalogUsage",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/usage",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetServiceCatalogUsageReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*GetServiceCatalogUsageOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
+	msg := fmt.Sprintf("unexpected success response for getServiceCatalogUsage: API contract not enforced by server. Client expected to get an error, but got: %T", result)
+	panic(msg)
+}
+
+/*
 GetServiceCatalogUseCases Fetch the use cases available for a given Service Catalog
 */
 func (a *Client) GetServiceCatalogUseCases(params *GetServiceCatalogUseCasesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogUseCasesOK, error) {
@@ -432,6 +480,49 @@ func (a *Client) GetServiceCatalogUseCases(params *GetServiceCatalogUseCasesPara
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetServiceCatalogUseCasesDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetServiceCatalogVersions Fetch the versions available for a given Service Catalog
+*/
+func (a *Client) GetServiceCatalogVersions(params *GetServiceCatalogVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogVersionsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewGetServiceCatalogVersionsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getServiceCatalogVersions",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalogs/{service_catalog_ref}/versions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetServiceCatalogVersionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*GetServiceCatalogVersionsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*GetServiceCatalogVersionsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

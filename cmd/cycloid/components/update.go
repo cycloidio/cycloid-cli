@@ -25,9 +25,11 @@ func NewUpdateComponentCommand() *cobra.Command {
 	cyargs.AddNameFlag(cmd)
 	cyargs.AddComponentDescriptionFlag(cmd)
 	cyargs.AddUseCaseFlag(cmd)
+	cyargs.AddStackVersionFlags(cmd)
 	cyargs.AddStackFormsInputFlags(cmd)
 	cyargs.AddStackRefFlag(cmd)
 	cyargs.AddCloudProviderFlag(cmd)
+
 	return cmd
 }
 
@@ -40,6 +42,11 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
+	}
+
+	if name == "" {
+		// if name is empty, use the canonical
+		name = component
 	}
 
 	description, err := cyargs.GetComponentDescription(cmd)
@@ -90,6 +97,12 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		useCase = currentComponent.UseCase
 	}
 
+	// Get the stack version flags
+	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	if err != nil {
+		return errors.Wrap(err, "failed to read stack version flags")
+	}
+
 	var currentConfig = make(models.FormVariables)
 	if currentComponent.IsConfigured {
 		currentConfig, err = m.GetComponentConfig(org, project, env, component)
@@ -104,7 +117,7 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 	}
 
 	// CreateComponent will reconfigure the component if it already exists
-	updatedComponent, err := m.CreateAndConfigureComponent(org, project, env, component, *description, &name, stackRef, useCase, *cloudProvider, inputs)
+	updatedComponent, err := m.CreateAndConfigureComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}

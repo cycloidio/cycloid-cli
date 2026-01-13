@@ -60,7 +60,7 @@ func TestCreds(t *testing.T) {
 				"--canonical", "cli-custom-canonical",
 			})
 			if err != nil {
-				t.Fatalf("failed to delete cred cli-custom: %s", err.Error())
+				t.Errorf("failed to delete cred cli-custom: %s", err.Error())
 			}
 		})
 
@@ -68,7 +68,7 @@ func TestCreds(t *testing.T) {
 		var outCred *models.Credential
 		err := json.Unmarshal([]byte(cmdOut), &outCred)
 		if err != nil {
-			t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
+			t.Errorf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
 		}
 
 		// Test that the flag works
@@ -98,7 +98,7 @@ func TestCreds(t *testing.T) {
 			var outCred *models.Credential
 			err := json.Unmarshal([]byte(cmdOut), &outCred)
 			if err != nil {
-				t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
+				t.Errorf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
 			}
 
 			cmdOut, cmdErr = executeCommand([]string{
@@ -116,7 +116,7 @@ func TestCreds(t *testing.T) {
 			fileContent := "hello world"
 			fileName, err := WriteTempFile(fileContent)
 			if err != nil {
-				t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
+				t.Errorf("failed to setup test, temp file write failed: %s", err.Error())
 			}
 			defer os.Remove(fileName)
 
@@ -140,21 +140,21 @@ func TestCreds(t *testing.T) {
 					"--canonical", "cli-custom-file",
 				})
 				if err != nil {
-					t.Fatalf("failed to delete cred 'cli-custom-file'")
+					t.Errorf("failed to delete cred 'cli-custom-file'")
 				}
 			})
 
 			var outCred *models.Credential
 			err = json.Unmarshal([]byte(cmdOut), &outCred)
 			if err != nil {
-				t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
+				t.Errorf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
 			}
 		})
 
 		t.Run("SuccessCredsCreateSSH", func(t *testing.T) {
 			fileName, err := WriteTempFile(string(TestGitSSHKey))
 			if err != nil {
-				t.Fatalf("failed to setup test, temp file write failed: %s", err.Error())
+				t.Errorf("failed to setup test, temp file write failed: %s", err.Error())
 			}
 			defer os.Remove(fileName)
 			cmdOut, cmdErr := executeCommand([]string{
@@ -176,14 +176,14 @@ func TestCreds(t *testing.T) {
 					"--canonical", "cli-ssh",
 				})
 				if err != nil {
-					t.Fatalf("failed to delete cred 'cli-ssh'")
+					t.Errorf("failed to delete cred 'cli-ssh'")
 				}
 			})
 
 			var outCred *models.Credential
 			err = json.Unmarshal([]byte(cmdOut), &outCred)
 			if err != nil {
-				t.Fatalf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
+				t.Errorf("should be able to marshal cli output to a credential, cmdOut: %s\ncmdErr: %s\nerr: %s", cmdOut, cmdErr, err.Error())
 			}
 		})
 	})

@@ -25,6 +25,7 @@ cy --org my-org stacks get-config -p my-project -e my-env -c my-component my-use
 		Args: cobra.RangeArgs(0, 2),
 	}
 	cyargs.AddUseCaseFlag(cmd)
+	cyargs.AddStackVersionFlags(cmd)
 
 	return cmd
 }
@@ -78,7 +79,13 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	stackConfigs, err := m.GetComponentStackConfig(org, proj, env, component, useCase)
+	// Get the stack version flags
+	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	if err != nil {
+		return errors.Wrap(err, "failed to read stack version flags")
+	}
+
+	stackConfigs, err := m.GetComponentStackConfig(org, proj, env, component, useCase, tag, branch, hash)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStderr())
 	}

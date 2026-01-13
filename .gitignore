@@ -7,6 +7,7 @@
 *.dll
 *.so
 *.dylib
+cycloid-cli
 
 # Test binary, built with `go test -c`
 *.test
@@ -30,4 +31,3 @@ gst
 # direnv
 .direnv
 
-cycloid-cli

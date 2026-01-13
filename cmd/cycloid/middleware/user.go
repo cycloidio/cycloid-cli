@@ -11,14 +11,10 @@ import (
 func (m *middleware) UserSignup(username, email, password, fullName string) error {
 	params := user.NewSignUpParams()
 	body := &models.NewUserAccount{
+		Username: username,
 		Email:    (*strfmt.Email)(&email),
 		Password: (*strfmt.Password)(&password),
 		FullName: &fullName,
-	}
-
-	// Username is optional
-	if username != "" {
-		body.Username = username
 	}
 
 	params.WithBody(body)

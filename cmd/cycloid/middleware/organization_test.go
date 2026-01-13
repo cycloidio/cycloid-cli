@@ -10,7 +10,7 @@ func TestChildOrgCrud(t *testing.T) {
 	// config, err := testcfg.NewConfig()
 	// defer config.Cleanup()
 	// if err != nil {
-	// 	t.Fatalf("Config setup failed: %v", err)
+	// 	t.Errorf("Config setup failed: %v", err)
 	// }
 	m := config.Middleware
 
@@ -25,23 +25,23 @@ func TestChildOrgCrud(t *testing.T) {
 
 	_, err := m.CreateOrganizationChild(config.Org, childOrg, nil)
 	if err != nil {
-		t.Fatalf("Failed to create org '%s': %v", childOrg, err)
+		t.Errorf("Failed to create org '%s': %v", childOrg, err)
 		return
 	}
 
 	var newName = "test-update-child-org"
 	newOrg, err := m.UpdateOrganization(childOrg, newName)
 	if err != nil {
-		t.Fatalf("Failed to update org '%s': %v", childOrg, err)
+		t.Errorf("Failed to update org '%s': %v", childOrg, err)
 	}
 
 	if *newOrg.Name != newName {
-		t.Fatalf("Update org failed.\nExpected: %s | Got: %s", newName, *newOrg.Name)
+		t.Errorf("Update org failed.\nExpected: %s | Got: %s", newName, *newOrg.Name)
 	}
 
 	_, err = m.GetOrganization(childOrg)
 	if err != nil {
-		t.Fatalf("Org '%s' is not created: %v", childOrg, err)
+		t.Errorf("Org '%s' is not created: %v", childOrg, err)
 		return
 	}
 }

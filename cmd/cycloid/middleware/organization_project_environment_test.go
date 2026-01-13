@@ -34,7 +34,7 @@ func TestEnvCrud(t *testing.T) {
 
 	createdProject, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
 	if err != nil {
-		t.Fatalf("Failed to create pre-requisite project, create project CRUD tests: %v", err)
+		t.Errorf("Failed to create pre-requisite project, create project CRUD tests: %v", err)
 	}
 
 	// end setup
@@ -47,7 +47,7 @@ func TestEnvCrud(t *testing.T) {
 	// create
 	createdEnv, err := m.CreateEnv(config.Org, *createdProject.Canonical, env, envName, envColor)
 	if err != nil {
-		t.Fatalf("Failed to create env '%s': %v", env, err)
+		t.Errorf("Failed to create env '%s': %v", env, err)
 	}
 
 	// delete
@@ -67,7 +67,7 @@ func TestEnvCrud(t *testing.T) {
 
 	updatedEnv, err := m.UpdateEnv(config.Org, *createdProject.Canonical, *createdEnv.Canonical, newEnvName, newEnvColor)
 	if err != nil {
-		t.Fatalf("Failed to update env '%s':\n%v", env, err)
+		t.Errorf("Failed to update env '%s':\n%v", env, err)
 	}
 
 	assert.Equal(t, newEnvName, updatedEnv.Name)

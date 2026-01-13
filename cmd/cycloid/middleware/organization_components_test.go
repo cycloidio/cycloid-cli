@@ -34,7 +34,7 @@ func TestComponentCRUD(t *testing.T) {
 	//
 	// createdProject, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
 	// if err != nil {
-	// 	t.Fatalf("Failed to create pre-requisite project, create project CRUD tests: %v", err)
+	// 	t.Errorf("Failed to create pre-requisite project, create project CRUD tests: %v", err)
 	// }
 	//
 	// var (
@@ -53,7 +53,7 @@ func TestComponentCRUD(t *testing.T) {
 	//
 	// _, err = m.CreateEnv(config.Org, *createdProject.Canonical, env, envName, envColor)
 	// if err != nil {
-	// 	t.Fatalf("Failed to create env '%s': %v", env, err)
+	// 	t.Errorf("Failed to create env '%s': %v", env, err)
 	// }
 	// end setup
 
@@ -133,9 +133,7 @@ func TestComponentCRUD(t *testing.T) {
 				break
 			}
 
-			createdComponent, err = m.CreateAndConfigureComponent(
-				config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, &componentName, stackRef, useCase, "", *formVars,
-			)
+			createdComponent, err = m.CreateAndConfigureComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, componentName, stackRef, "", "", "", useCase, "", *formVars)
 			if err != nil {
 				errList = errors.Join(errList, err)
 				continue
@@ -146,7 +144,7 @@ func TestComponentCRUD(t *testing.T) {
 		}
 
 		if errList != nil {
-			t.Fatalf("Failed to create component '%s':\n%v", component, err)
+			t.Errorf("Failed to create component '%s':\n%v", component, err)
 		}
 
 		defer func() {
@@ -163,7 +161,7 @@ func TestComponentCRUD(t *testing.T) {
 		)
 		errList, err = nil, nil
 		for range 3 {
-			_, err = m.CreateAndConfigureComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, &newComponentName, stackRef, useCase, "", newVar)
+			_, err = m.CreateAndConfigureComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, newComponentName, stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, useCase, "", newVar)
 			if err != nil {
 				errList = errors.Join(errList, err)
 				continue
@@ -173,7 +171,7 @@ func TestComponentCRUD(t *testing.T) {
 			break
 		}
 		if errList != nil {
-			t.Fatalf("Failed to update component '%s':\n%v", *createdComponent.Canonical, err)
+			t.Errorf("Failed to update component '%s':\n%v", *createdComponent.Canonical, err)
 		}
 
 		// TODO: Fix after issue: https://linear.app/cycloid/issue/BE-801/invalid-response-for-updatecomponent
@@ -185,6 +183,6 @@ func TestComponentCRUD(t *testing.T) {
 
 	_, err := m.ListComponents(config.Org, *config.Project.Canonical, *config.Environment.Canonical)
 	if err != nil {
-		t.Fatalf("Failed to list components in project '%s':\n%v", *config.Project.Canonical, err)
+		t.Errorf("Failed to list components in project '%s':\n%v", *config.Project.Canonical, err)
 	}
 }

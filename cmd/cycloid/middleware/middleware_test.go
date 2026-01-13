@@ -20,7 +20,7 @@ func runMain(ctx context.Context, main *testing.M) (int, error) {
 	config, err = testcfg.NewConfig("middleware")
 	defer config.Cleanup()
 	if err != nil {
-		return 1, fmt.Errorf("Config setup failed for package middleware: %v", err)
+		return 1, fmt.Errorf("config setup failed for package middleware: %w", err)
 	}
 
 	os.Setenv("CY_API_URL", config.APIUrl)

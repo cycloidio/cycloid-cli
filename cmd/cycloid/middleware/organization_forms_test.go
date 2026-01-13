@@ -33,6 +33,6 @@ func TestValidateFormYamlAnchors(t *testing.T) {
 
 	_, err := m.ValidateForm(org, rawForms)
 	if err != nil {
-		t.Fatalf("Using yaml anchor should not error:\nerr: '%s'\nyaml files: '%v'", err, rawForms)
+		t.Errorf("Using yaml anchor should not error:\nerr: '%s'\nyaml files: '%v'", err, rawForms)
 	}
 }

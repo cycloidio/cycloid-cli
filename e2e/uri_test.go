@@ -90,7 +90,7 @@ func TestGetCmd(t *testing.T) {
 		t.Run(testCase.name, func(t *testing.T) {
 			cmdOut, cmdErr := executeCommand(testCase.args)
 			if cmdErr != nil {
-				t.Fatalf("failed to get from urls: %v: %s", testCase.args, cmdErr)
+				t.Errorf("failed to get from urls: %v: %s", testCase.args, cmdErr)
 			}
 
 			testCase.expect(t, cmdOut)

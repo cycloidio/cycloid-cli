@@ -2,9 +2,7 @@ package cyargs_test
 
 import (
 	"encoding/json"
-	"fmt"
 	"os"
-	"reflect"
 	"testing"
 
 	"github.com/spf13/cobra"
@@ -41,7 +39,7 @@ func TestGetStackformsVars(t *testing.T) {
 	}
 	expectedJSON, err := json.Marshal(expected)
 	if err != nil {
-		t.Fatalf("failed setup for test, failed to encode expected value '%v' to json: %s", expected, err)
+		t.Errorf("failed setup for test, failed to encode expected value '%v' to json: %s", expected, err)
 	}
 
 	t.Run("VarsStdin", func(t *testing.T) {
@@ -50,18 +48,18 @@ func TestGetStackformsVars(t *testing.T) {
 
 		tempFile, err := os.CreateTemp("", "json-test")
 		if err != nil {
-			t.Fatalf("failed to setup test, cannot create temp file: %s", err)
+			t.Errorf("failed to setup test, cannot create temp file: %s", err)
 		}
 		defer os.Remove(tempFile.Name())
 
 		_, err = tempFile.Write(expectedJSON)
 		if err != nil {
-			t.Fatalf("failed to setup test, cannot write to test file %s: %s", tempFile.Name(), err)
+			t.Errorf("failed to setup test, cannot write to test file %s: %s", tempFile.Name(), err)
 		}
 
 		_, err = tempFile.Seek(0, 0)
 		if err != nil {
-			t.Fatalf("failed to setup test, cannot change offset in file reader: %s", err)
+			t.Errorf("failed to setup test, cannot change offset in file reader: %s", err)
 		}
 
 		oldStdin := os.Stdin
@@ -76,12 +74,12 @@ func TestGetStackformsVars(t *testing.T) {
 		var defaults = make(models.FormVariables)
 		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
-			t.Fatalf("stackform var parsing failed: %s", err)
+			t.Errorf("stackform var parsing failed: %s", err)
 		}
 
 		gotJSON, err := json.Marshal(output)
 		if err != nil {
-			t.Fatalf("failed to serialize json output '%v': %s", &output, err)
+			t.Errorf("failed to serialize json output '%v': %s", &output, err)
 		}
 		assert.Equal(t, string(expectedJSON), string(gotJSON), "should be equal")
 	})
@@ -93,7 +91,7 @@ func TestGetStackformsVars(t *testing.T) {
 		var defaults = make(models.FormVariables)
 		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
-			t.Fatalf("Empty default should work: %s", err)
+			t.Errorf("Empty default should work: %s", err)
 		}
 
 		assert.Equal(t, defaults, output, "should be empty")
@@ -108,12 +106,12 @@ func TestGetStackformsVars(t *testing.T) {
 		var defaults = make(models.FormVariables)
 		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
-			t.Fatalf("Empty default should work: %s", err)
+			t.Errorf("Empty default should work: %s", err)
 		}
 
 		gotJSON, err := json.Marshal(output)
 		if err != nil {
-			t.Fatalf("failed to serialize json output '%v': %s", &output, err)
+			t.Errorf("failed to serialize json output '%v': %s", &output, err)
 		}
 		assert.Equal(t, expectedJSON, gotJSON, "should be equal")
 	})
@@ -129,12 +127,12 @@ func TestGetStackformsVars(t *testing.T) {
 		var defaults = make(models.FormVariables)
 		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
-			t.Fatalf("Empty default should work: %s", err)
+			t.Errorf("Empty default should work: %s", err)
 		}
 
 		gotJSON, err := json.Marshal(output)
 		if err != nil {
-			t.Fatalf("failed to serialize json output '%v': %s", &output, err)
+			t.Errorf("failed to serialize json output '%v': %s", &output, err)
 		}
 		assert.Equal(t, string(expectedJSON), string(gotJSON), "should be equal")
 	})
@@ -145,13 +143,13 @@ func TestGetStackformsVars(t *testing.T) {
 
 		tempFile, err := os.CreateTemp("", "json-test")
 		if err != nil {
-			t.Fatalf("failed to setup test, cannot create temp file: %s", err)
+			t.Errorf("failed to setup test, cannot create temp file: %s", err)
 		}
 		defer os.Remove(tempFile.Name())
 
 		_, err = tempFile.Write(expectedJSON)
 		if err != nil {
-			t.Fatalf("failed to setup test, cannot write to test file %s: %s", tempFile.Name(), err)
+			t.Errorf("failed to setup test, cannot write to test file %s: %s", tempFile.Name(), err)
 		}
 
 		cmd.ParseFlags([]string{
@@ -161,12 +159,12 @@ func TestGetStackformsVars(t *testing.T) {
 		var defaults = make(models.FormVariables)
 		output, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
-			t.Fatalf("Empty default should work: %s", err)
+			t.Errorf("Empty default should work: %s", err)
 		}
 
 		gotJSON, err := json.Marshal(output)
 		if err != nil {
-			t.Fatalf("failed to serialize json output '%v': %s", &output, err)
+			t.Errorf("failed to serialize json output '%v': %s", &output, err)
 		}
 		assert.Equal(t, string(expectedJSON), string(gotJSON), "should be equal")
 	})
@@ -187,7 +185,7 @@ func TestGetStackformsVars(t *testing.T) {
 		var defaults = make(models.FormVariables)
 		parsedVars, err := cyargs.GetStackformsVars(cmd, defaults)
 		if err != nil {
-			t.Fatalf("Empty default should work: %s", err)
+			t.Errorf("Empty default should work: %s", err)
 		}
 
 		value, ok := parsedVars["types"]["string"]["double_quote"].(string)
@@ -206,7 +204,6 @@ func TestGetStackformsVars(t *testing.T) {
 		assert.True(t, ok, "type cast to boolean should be okay")
 		assert.Equal(t, true, valueBool, "the output should be a bool")
 
-		fmt.Println(reflect.TypeOf(parsedVars["types"]["array"]["no_quote"]))
 		valueArray, ok := parsedVars["types"]["array"]["no_quote"]
 		assert.True(t, ok, "type cast to array should be okay")
 		assert.Equal(t, []any{"string", "hello_there"}, valueArray, "the output should be a array")

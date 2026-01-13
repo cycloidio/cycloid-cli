@@ -11,6 +11,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 type Config struct {
@@ -18,9 +19,10 @@ type Config struct {
 	APIUrl string
 	Org    string
 	// GitCredential models.Credential
-	ConfigRepo  *models.ConfigRepository
-	CatalogRepo *models.ServiceCatalogSource
-	Middleware  middleware.Middleware
+	ConfigRepo               *models.ConfigRepository
+	CatalogRepo              *models.ServiceCatalogSource
+	CatalogRepoVersionStacks *models.ServiceCatalogSourceVersion
+	Middleware               middleware.Middleware
 	// Common project to use for tests that require one
 	Project *models.Project
 	// Common environment to use for tests that require one
@@ -172,6 +174,21 @@ func NewConfig(testName string) (*Config, error) {
 		}
 	}
 
+	catalogRepoChanges, err := m.RefreshCatalogRepository(config.Org, *config.CatalogRepo.Canonical)
+	if err != nil {
+		return config, fmt.Errorf("failed to refresh catalog repo: %w", err)
+	}
+
+	for _, v := range catalogRepoChanges.Versions {
+		if ptr.Value(v.Name) == "stacks" {
+			config.CatalogRepoVersionStacks = v
+			break
+		}
+	}
+	if config.CatalogRepoVersionStacks == nil {
+		return config, fmt.Errorf("failed to find latest catalog repo version after refresh")
+	}
+
 	project, err := config.NewTestProject("common")
 	if err != nil {
 		return config, err
@@ -186,14 +203,14 @@ func NewConfig(testName string) (*Config, error) {
 
 	stackRef := config.Org + ":" + defaultStackCanonical
 	component, err := config.NewTestComponent(
-		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, nil,
+		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, "", "", *config.CatalogRepoVersionStacks.CommitHash, nil,
 	)
 	if err != nil {
 		return config, err
 	}
 	config.Component = component
 
-	stackConfig, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase)
+	stackConfig, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase, "", "", *config.CatalogRepoVersionStacks.CommitHash)
 	if err != nil {
 		return config, err
 	}
@@ -269,13 +286,11 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 // setupTestProject will create an component with a random canonical derived from identifier
 // and return the component, the function to defer for its deletion and error.
 // The func will always be returned so even if err != nil, defer the func.
-func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCase string, inputs models.FormVariables) (*models.Component, error) {
+func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCase, versionTag, versionBranch, versionCommitHash string, inputs models.FormVariables) (*models.Component, error) {
 	m := config.Middleware
 	component := RandomCanonical(identifier)
 
-	outComponent, err := m.CreateAndConfigureComponent(
-		config.Org, project, env, component, "", &component, stackRef, useCase, "", inputs,
-	)
+	outComponent, err := m.CreateAndConfigureComponent(config.Org, project, env, component, "", component, stackRef, versionTag, versionBranch, versionCommitHash, useCase, "", inputs)
 	if err != nil {
 		return nil, err
 	}

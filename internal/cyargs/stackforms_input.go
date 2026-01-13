@@ -52,7 +52,7 @@ func GetStackformsVars(cmd *cobra.Command, defaults models.FormVariables) (model
 
 		tempFile, err := os.CreateTemp("", "cy-stdin-*")
 		if err != nil {
-			return nil, fmt.Errorf("failed to write temp file for stdin: %v", err)
+			return nil, fmt.Errorf("failed to write temp file for stdin: %w", err)
 		}
 		defer func() {
 			closeErr := tempFile.Close()

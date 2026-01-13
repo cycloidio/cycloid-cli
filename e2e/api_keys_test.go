@@ -27,7 +27,7 @@ func TestAPIKeysCmd(t *testing.T) {
 		}
 		createOut, createErr := executeCommand(args)
 		if createErr != nil {
-			t.Fatalf("failed to create api key admin: %s", createErr)
+			t.Errorf("failed to create api key admin: %s", createErr)
 		}
 
 		defer t.Run("DeleteAPIKeyOk", func(t *testing.T) {
@@ -39,13 +39,13 @@ func TestAPIKeysCmd(t *testing.T) {
 			}
 			_, deleteErr := executeCommand(args)
 			if deleteErr != nil {
-				t.Fatalf("failed to delete api key admin: %s", deleteErr)
+				t.Errorf("failed to delete api key admin: %s", deleteErr)
 			}
 		})
 
 		err := json.Unmarshal([]byte(createOut), &createdAPIKey)
 		if err != nil {
-			t.Fatalf("CLI output can't be serialize to models.APIKey, out:\n%s\nerr:\n%s", createOut, err)
+			t.Errorf("CLI output can't be serialize to models.APIKey, out:\n%s\nerr:\n%s", createOut, err)
 		}
 
 		assert.Equal(t, *createdAPIKey.Canonical, testKeyCanonical)
@@ -59,18 +59,18 @@ func TestAPIKeysCmd(t *testing.T) {
 			}
 			listOut, listErr := executeCommand(args)
 			if listErr != nil {
-				t.Fatalf("failed to list api keys: %s", listErr)
+				t.Errorf("failed to list api keys: %s", listErr)
 			}
 
 			err := json.Unmarshal([]byte(listOut), &APIKeyList)
 			if err != nil {
-				t.Fatalf("failed to parse cli output as list of api keys, out: %s\nerr: %s", listOut, err)
+				t.Errorf("failed to parse cli output as list of api keys, out: %s\nerr: %s", listOut, err)
 			}
 
 			if index := slices.IndexFunc(APIKeyList, func(a *models.APIKey) bool {
 				return *a.Canonical == testKeyCanonical
 			}); index == -1 {
-				t.Fatalf("failed to find the API key with can '%s' in list: %s", testKeyCanonical, litter.Sdump(APIKeyList))
+				t.Errorf("failed to find the API key with can '%s' in list: %s", testKeyCanonical, litter.Sdump(APIKeyList))
 			}
 		})
 	})

@@ -111,7 +111,11 @@ type ClientService interface {
 
 	GetServiceCatalogSources(params *GetServiceCatalogSourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogSourcesOK, error)
 
+	ListServiceCatalogSourceVersions(params *ListServiceCatalogSourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListServiceCatalogSourceVersionsOK, error)
+
 	RefreshServiceCatalogSource(params *RefreshServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceOK, error)
+
+	RefreshServiceCatalogSourceVersions(params *RefreshServiceCatalogSourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceVersionsOK, error)
 
 	UpdateServiceCatalogSource(params *UpdateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogSourceOK, error)
 
@@ -293,6 +297,49 @@ func (a *Client) GetServiceCatalogSources(params *GetServiceCatalogSourcesParams
 }
 
 /*
+ListServiceCatalogSourceVersions List Service catalog source versions
+*/
+func (a *Client) ListServiceCatalogSourceVersions(params *ListServiceCatalogSourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListServiceCatalogSourceVersionsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewListServiceCatalogSourceVersionsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "listServiceCatalogSourceVersions",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/versions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ListServiceCatalogSourceVersionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ListServiceCatalogSourceVersionsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ListServiceCatalogSourceVersionsDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
 RefreshServiceCatalogSource Refresh a Service catalog source
 */
 func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceOK, error) {
@@ -331,6 +378,49 @@ func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSource
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*RefreshServiceCatalogSourceDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+RefreshServiceCatalogSourceVersions List Service catalog source versions
+*/
+func (a *Client) RefreshServiceCatalogSourceVersions(params *RefreshServiceCatalogSourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceVersionsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewRefreshServiceCatalogSourceVersionsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "refreshServiceCatalogSourceVersions",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/versions/refresh",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &RefreshServiceCatalogSourceVersionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*RefreshServiceCatalogSourceVersionsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*RefreshServiceCatalogSourceVersionsDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
