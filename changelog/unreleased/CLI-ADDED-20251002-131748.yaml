@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add cycloid uri schema commands `cy get` and `cy uri interpolate`
-time: 2025-10-02T13:17:48.849427456Z
-custom:
-  DETAILS: Those commands allows you to fetch and inject values from Cycloid in files.
-  PR: "383"
-  TYPE: CLI
