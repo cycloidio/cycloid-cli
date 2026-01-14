@@ -8,6 +8,7 @@ package organization_roles
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type GetRoleReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetRoleReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetRoleReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetRoleOK()
@@ -121,7 +122,7 @@ func (o *GetRoleOK) readResponse(response runtime.ClientResponse, consumer runti
 	o.Payload = new(GetRoleOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -209,7 +210,7 @@ func (o *GetRoleForbidden) readResponse(response runtime.ClientResponse, consume
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -297,7 +298,7 @@ func (o *GetRoleNotFound) readResponse(response runtime.ClientResponse, consumer
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -388,7 +389,7 @@ func (o *GetRoleDefault) readResponse(response runtime.ClientResponse, consumer 
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -428,11 +429,15 @@ func (o *GetRoleOKBody) validateData(formats strfmt.Registry) error {
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getRoleOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getRoleOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -459,11 +464,15 @@ func (o *GetRoleOKBody) contextValidateData(ctx context.Context, formats strfmt.
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getRoleOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getRoleOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

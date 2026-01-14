@@ -11,6 +11,7 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
@@ -20,7 +21,7 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
 
 	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -34,7 +35,7 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 
 	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -42,19 +43,144 @@ func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
 	return payload.Data, nil
 }
 
-func (m *middleware) ListStackUseCases(org, ref string) ([]*models.StackUseCase, error) {
+// resolveStackVersion resolves versionTag/versionBranch/versionCommitHash to version ID and commit hash.
+// Priority: tag > branch > commitHash (whichever is provided first)
+// If all parameters are empty, uses the default catalog version (latest tag or branch HEAD).
+func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranch, versionCommitHash string) (versionID uint32, commitHash string, err error) {
+	// If all are empty, use default version
+	if versionTag == "" && versionBranch == "" && versionCommitHash == "" {
+		defaultVersion, err := m.getDefaultCatalogVersion(org, stackRef)
+		if err != nil {
+			return 0, "", fmt.Errorf("failed to get default stack version: %w", err)
+		}
+		if defaultVersion == nil || defaultVersion.ID == nil || defaultVersion.CommitHash == nil {
+			return 0, "", errors.New("no stack catalog version found")
+		}
+		return *defaultVersion.ID, *defaultVersion.CommitHash, nil
+	}
+
+	// List all versions for the stack
+	versions, err := m.ListStackVersions(org, stackRef)
+	if err != nil {
+		return 0, "", fmt.Errorf("failed to list stack versions: %w", err)
+	}
+
+	// Priority 1: tag
+	if versionTag != "" {
+		for _, version := range versions {
+			if ptr.Value(version.Type) == "tag" &&
+				ptr.Value(version.Name) == versionTag {
+				return *version.ID, *version.CommitHash, nil
+			}
+		}
+		return 0, "", fmt.Errorf("stack version tag %q not found", versionTag)
+	}
+
+	// Priority 2: branch
+	if versionBranch != "" {
+		for _, version := range versions {
+			if ptr.Value(version.Type) == "branch" &&
+				ptr.Value(version.Name) == versionBranch {
+				return *version.ID, *version.CommitHash, nil
+			}
+		}
+		return 0, "", fmt.Errorf("stack version branch %q not found", versionBranch)
+	}
+
+	// Priority 3: commit hash
+	for _, version := range versions {
+		if ptr.Value(version.CommitHash) == versionCommitHash {
+			return *version.ID, *version.CommitHash, nil
+		}
+	}
+	return 0, "", fmt.Errorf("stack version commit hash %q not found", versionCommitHash)
+}
+
+func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string) ([]*models.StackUseCase, error) {
+	// Resolve version parameters to ID
+	versionID, _, err := m.resolveStackVersion(org, ref, versionTag, versionBranch, versionCommitHash)
+	if err != nil {
+		return nil, err
+	}
+
 	params := service_catalogs.NewGetServiceCatalogUseCasesParams()
 	params.SetOrganizationCanonical(org)
 	params.SetServiceCatalogRef(ref)
+	params.SetServiceCatalogSourceVersionID(versionID)
 
 	resp, err := m.api.ServiceCatalogs.GetServiceCatalogUseCases(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
 
 	return payload.Data, nil
+}
+
+func (m *middleware) ListStackVersions(org, ref string) ([]*models.ServiceCatalogSourceVersion, error) {
+	params := service_catalogs.NewGetServiceCatalogVersionsParams()
+	params.SetOrganizationCanonical(org)
+	params.SetServiceCatalogRef(ref)
+
+	resp, err := m.api.ServiceCatalogs.GetServiceCatalogVersions(params, m.api.Credentials(&org))
+	if err != nil {
+		return nil, NewAPIError(err)
+	}
+
+	payload := resp.GetPayload()
+
+	return payload.Data, nil
+}
+
+// getDefaultCatalogVersion returns the default catalog version for a stack based on priority:
+// 1. If a version with is_latest=true and type="tag" exists, use that
+// 2. Otherwise, use the latest commit of the branch of the catalog repository of the stack
+func (m *middleware) getDefaultCatalogVersion(org, ref string) (*models.ServiceCatalogSourceVersion, error) {
+	stack, err := m.GetStack(org, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	var catalogRepoBranch string
+	if stack.ServiceCatalogSourceCanonical != "" {
+		catalogRepo, err := m.GetCatalogRepository(org, stack.ServiceCatalogSourceCanonical)
+		if err != nil {
+			return nil, err
+		}
+		catalogRepoBranch = catalogRepo.Branch
+	}
+
+	versions, err := m.ListStackVersions(org, ref)
+	if err != nil {
+		return nil, err
+	}
+
+	var branchVersion *models.ServiceCatalogSourceVersion
+
+	// Look for latest tag or the stack's branch latest commit
+	for _, version := range versions {
+		// Priority 1: is_latest tag (must be a tag, not a branch)
+		if ptr.Value(version.IsLatest) &&
+			ptr.Value(version.Type) == "tag" {
+			return version, nil
+		}
+
+		// Collect the version matching the stack's catalog repository branch
+		if ptr.Value(version.Type) == "branch" &&
+			ptr.Value(version.Name) == catalogRepoBranch {
+			// Keep track of this branch version (should be the latest commit)
+			branchVersion = version
+		}
+	}
+
+	// Priority 2: latest commit of the catalog repository branch
+	if branchVersion != nil {
+		return branchVersion, nil
+	}
+
+	// No default found
+	return nil, nil
 }
 
 // ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
@@ -126,7 +252,7 @@ func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, stack, ca
 
 	resp, err := m.api.ServiceCatalogs.CreateServiceCatalogFromTemplate(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 	payload := resp.GetPayload()
 
@@ -155,7 +281,7 @@ func (m *middleware) UpdateStack(
 
 	resp, err := m.api.ServiceCatalogs.UpdateServiceCatalog(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

@@ -8,6 +8,7 @@ package component_pipelines_jobs_builds
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type CreateBuildReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *CreateBuildReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CreateBuildReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewCreateBuildOK()
@@ -121,7 +122,7 @@ func (o *CreateBuildOK) readResponse(response runtime.ClientResponse, consumer r
 	o.Payload = new(CreateBuildOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -209,7 +210,7 @@ func (o *CreateBuildForbidden) readResponse(response runtime.ClientResponse, con
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -297,7 +298,7 @@ func (o *CreateBuildNotFound) readResponse(response runtime.ClientResponse, cons
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -388,7 +389,7 @@ func (o *CreateBuildDefault) readResponse(response runtime.ClientResponse, consu
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -428,11 +429,15 @@ func (o *CreateBuildOKBody) validateData(formats strfmt.Registry) error {
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createBuildOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createBuildOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -459,11 +464,15 @@ func (o *CreateBuildOKBody) contextValidateData(ctx context.Context, formats str
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createBuildOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createBuildOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

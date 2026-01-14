@@ -21,16 +21,16 @@ func TestPipelines(t *testing.T) {
 			"pipelines", "list",
 		})
 		if listErr != nil {
-			t.Fatalf("List org pipeline should not err, out: %s\nerr: %s", listOut, listErr)
+			t.Errorf("List org pipeline should not err, out: %s\nerr: %s", listOut, listErr)
 		}
 
 		err := json.Unmarshal([]byte(listOut), &pipelineList)
 		if err != nil {
-			t.Fatalf("failed to unmarshall list test output, out: %s\nerr: %s", listOut, err)
+			t.Errorf("failed to unmarshall list test output, out: %s\nerr: %s", listOut, err)
 		}
 
 		if len(pipelineList) == 0 {
-			t.Fatalf("There should be at least one pipeline in this org:\n%s", listOut)
+			t.Errorf("There should be at least one pipeline in this org:\n%s", listOut)
 		}
 	})
 
@@ -45,17 +45,17 @@ func TestPipelines(t *testing.T) {
 			"--pipeline", *firstPipeline.Name,
 		})
 		if getErr != nil {
-			t.Fatalf("get pipeline should not err, out: %s\nerr: %s", getOut, getErr)
+			t.Errorf("get pipeline should not err, out: %s\nerr: %s", getOut, getErr)
 		}
 
 		var getPipeline models.Pipeline
 		err := json.Unmarshal([]byte(getOut), &getPipeline)
 		if err != nil {
-			t.Fatalf("Failed to parse json output of pipelines get cmd, out: %s\nerr: %s", getOut, err)
+			t.Errorf("Failed to parse json output of pipelines get cmd, out: %s\nerr: %s", getOut, err)
 		}
 
 		if assert.ObjectsAreEqualValues(firstPipeline, getPipeline) {
-			t.Fatalf("both pipelines should be equal:\nexpect: %v\ngot: %v", firstPipeline, getPipeline)
+			t.Errorf("both pipelines should be equal:\nexpect: %v\ngot: %v", firstPipeline, getPipeline)
 		}
 	})
 
@@ -69,7 +69,7 @@ func TestPipelines(t *testing.T) {
 			"--pipeline", *firstPipeline.Name,
 		})
 		if pauseErr != nil {
-			t.Fatalf("failed to pause pipeline '%s': %s", *firstPipeline.Name, pauseErr)
+			t.Errorf("failed to pause pipeline '%s': %s", *firstPipeline.Name, pauseErr)
 		}
 	})
 
@@ -83,7 +83,7 @@ func TestPipelines(t *testing.T) {
 			"--pipeline", *firstPipeline.Name,
 		})
 		if unpauseErr != nil {
-			t.Fatalf("failed to unpause pipeline '%s': %s", *firstPipeline.Name, unpauseErr)
+			t.Errorf("failed to unpause pipeline '%s': %s", *firstPipeline.Name, unpauseErr)
 		}
 	})
 
@@ -97,7 +97,7 @@ func TestPipelines(t *testing.T) {
 			"--pipeline", *firstPipeline.Name,
 		})
 		if syncedErr != nil {
-			t.Fatalf("failed to pause pipeline '%s': %s", *firstPipeline.Name, syncedErr)
+			t.Errorf("failed to pause pipeline '%s': %s", *firstPipeline.Name, syncedErr)
 		}
 	})
 
@@ -108,7 +108,7 @@ func TestPipelines(t *testing.T) {
 			"--since-days", "99",
 		})
 		if cmdErr != nil {
-			t.Fatalf("failed to list last-used pipelines, out: %s\nerr: %s", cmdOut, cmdErr)
+			t.Errorf("failed to list last-used pipelines, out: %s\nerr: %s", cmdOut, cmdErr)
 		}
 	})
 
@@ -129,16 +129,16 @@ func TestPipelines(t *testing.T) {
 			"--pipeline", *firstPipeline.Name,
 		})
 		if listErr != nil {
-			t.Fatalf("List job in pipeline '%s' should not err, out: %s\nerr: %s", *firstPipeline.Name, listOut, listErr)
+			t.Errorf("List job in pipeline %q should not err, out: %s\nerr: %s", *firstPipeline.Name, listOut, listErr)
 		}
 
 		err := json.Unmarshal([]byte(listOut), &jobList)
 		if err != nil {
-			t.Fatalf("failed to marshal output of cy pp job list, out: %s\nerr: %s", listOut, err)
+			t.Errorf("failed to marshal output of cy pp job list, out: %s\nerr: %s", listOut, err)
 		}
 
 		if len(jobList) == 0 {
-			t.Fatalf("job list should not be empty:\n%s", litter.Sdump(jobList))
+			t.Errorf("job list should not be empty:\n%s", litter.Sdump(jobList))
 		}
 
 		firstJob := jobList[0]
@@ -153,13 +153,13 @@ func TestPipelines(t *testing.T) {
 				"--job", *firstJob.Name,
 			})
 			if getErr != nil {
-				t.Fatalf("cy get job in pipeline '%s' should not fail, out: %s\nerr: %s", *firstJob.Name, getOut, getErr)
+				t.Errorf("cy get job in pipeline '%s' should not fail, out: %s\nerr: %s", *firstJob.Name, getOut, getErr)
 			}
 
 			var getJob *models.Job
 			err := json.Unmarshal([]byte(getOut), &getJob)
 			if err != nil {
-				t.Fatalf("failed to unmarshall get job cmd output, out: %s\nerr: %s", getOut, err)
+				t.Errorf("failed to unmarshall get job cmd output, out: %s\nerr: %s", getOut, err)
 			}
 
 			assert.Equal(t, *firstJob.ID, *getJob.ID)
@@ -176,7 +176,7 @@ func TestPipelines(t *testing.T) {
 				"--job", *firstJob.Name,
 			})
 			if pauseErr != nil {
-				t.Fatalf("cmd cy pp job pause failed for pipeline '%s', out: %s, err: %s", *firstPipeline.Name, pauseOut, pauseErr)
+				t.Errorf("cmd cy pp job pause failed for pipeline '%s', out: %s, err: %s", *firstPipeline.Name, pauseOut, pauseErr)
 			}
 
 			t.Run("UnpauseJobOk", func(t *testing.T) {
@@ -190,7 +190,7 @@ func TestPipelines(t *testing.T) {
 					"--job", *firstJob.Name,
 				})
 				if unpauseErr != nil {
-					t.Fatalf("cmd cy pp job unpause failed for pipeline '%s', out: %s, err: %s", *firstPipeline.Name, unpauseOut, unpauseErr)
+					t.Errorf("cmd cy pp job unpause failed for pipeline '%s', out: %s, err: %s", *firstPipeline.Name, unpauseOut, unpauseErr)
 				}
 			})
 		})
@@ -208,17 +208,17 @@ func TestPipelines(t *testing.T) {
 				"--job", *firstJob.Name,
 			})
 			if triggerErr != nil {
-				t.Fatalf("cmd cy pp build create failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, triggerOut, triggerErr)
+				t.Errorf("cmd cy pp build create failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, triggerOut, triggerErr)
 			}
 
 			err := json.Unmarshal([]byte(triggerOut), &triggeredBuild)
 			if err != nil {
-				t.Fatalf("cmd output is not a models.Build, out: %s\nerr: %s", triggerOut, triggerErr)
+				t.Errorf("cmd output is not a models.Build, out: %s\nerr: %s", triggerOut, triggerErr)
 			}
 
 			buildIDStr := strconv.Itoa(int(*triggeredBuild.ID))
 			if err != nil {
-				t.Fatalf("invalid build id in:\n%v\n%s", triggeredBuild, err)
+				t.Errorf("invalid build id in:\n%v\n%s", triggeredBuild, err)
 			}
 
 			t.Run("GetBuildOk", func(t *testing.T) {
@@ -233,7 +233,7 @@ func TestPipelines(t *testing.T) {
 					"--build-id", buildIDStr,
 				})
 				if getErr != nil {
-					t.Fatalf("cmd cy pp build get failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, getOut, getErr)
+					t.Errorf("cmd cy pp build get failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, getOut, getErr)
 				}
 			})
 
@@ -248,7 +248,7 @@ func TestPipelines(t *testing.T) {
 					"--job", *firstJob.Name,
 				})
 				if listErr != nil {
-					t.Fatalf("cmd cy pp build list failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, listOut, listErr)
+					t.Errorf("cmd cy pp build list failed for job '%s' in pipeline '%s', out: %s, err: %s", *firstJob.Name, *firstPipeline.Name, listOut, listErr)
 				}
 			})
 		})

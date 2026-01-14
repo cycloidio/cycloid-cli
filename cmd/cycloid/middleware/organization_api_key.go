@@ -16,7 +16,7 @@ func (m *middleware) ListAPIKeys(org string) ([]*models.APIKey, error) {
 
 	resp, err := m.api.OrganizationAPIKeys.GetAPIKeys(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, fmt.Errorf("unable to list API keys: %w", NewApiError(err))
+		return nil, fmt.Errorf("unable to list API keys: %w", NewAPIError(err))
 	}
 
 	payload := resp.GetPayload()
@@ -32,7 +32,7 @@ func (m *middleware) GetAPIKey(org, canonical string) (*models.APIKey, error) {
 
 	resp, err := m.api.OrganizationAPIKeys.GetAPIKey(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, fmt.Errorf("unable to get API key: %w", NewApiError(err))
+		return nil, fmt.Errorf("unable to get API key: %w", NewAPIError(err))
 	}
 
 	payload := resp.GetPayload()
@@ -57,14 +57,14 @@ func (m *middleware) CreateAPIKey(org, canonical, description, owner string, nam
 
 	err := body.Validate(strfmt.Default)
 	if err != nil {
-		return nil, fmt.Errorf("invalid body for createAPIKey: %v", err)
+		return nil, fmt.Errorf("invalid body for createAPIKey: %w", err)
 	}
 
 	params.SetBody(&body)
 
 	resp, err := m.api.OrganizationAPIKeys.CreateAPIKey(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -79,7 +79,7 @@ func (m *middleware) DeleteAPIKey(org, canonical string) error {
 	params.SetAPIKeyCanonical(canonical)
 
 	if _, err := m.api.OrganizationAPIKeys.DeleteAPIKey(params, m.api.Credentials(&org)); err != nil {
-		return fmt.Errorf("unable to delete API key: %w", NewApiError(err))
+		return fmt.Errorf("unable to delete API key: %w", NewAPIError(err))
 	}
 	return nil
 }

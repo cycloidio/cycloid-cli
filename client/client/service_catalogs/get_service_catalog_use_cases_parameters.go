@@ -14,6 +14,7 @@ import (
 	"github.com/go-openapi/runtime"
 	cr "github.com/go-openapi/runtime/client"
 	"github.com/go-openapi/strfmt"
+	"github.com/go-openapi/swag"
 )
 
 // NewGetServiceCatalogUseCasesParams creates a new GetServiceCatalogUseCasesParams object,
@@ -73,6 +74,15 @@ type GetServiceCatalogUseCasesParams struct {
 	*/
 	ServiceCatalogRef string
 
+	/* ServiceCatalogSourceVersionID.
+
+	   The ID of the SCS Version
+
+	   Format: uint32
+	   Default: 1
+	*/
+	ServiceCatalogSourceVersionID uint32
+
 	timeout    time.Duration
 	Context    context.Context
 	HTTPClient *http.Client
@@ -90,7 +100,18 @@ func (o *GetServiceCatalogUseCasesParams) WithDefaults() *GetServiceCatalogUseCa
 //
 // All values with no default are reset to their zero value.
 func (o *GetServiceCatalogUseCasesParams) SetDefaults() {
-	// no default values defined for this parameter
+	var (
+		serviceCatalogSourceVersionIDDefault = uint32(1)
+	)
+
+	val := GetServiceCatalogUseCasesParams{
+		ServiceCatalogSourceVersionID: serviceCatalogSourceVersionIDDefault,
+	}
+
+	val.timeout = o.timeout
+	val.Context = o.Context
+	val.HTTPClient = o.HTTPClient
+	*o = val
 }
 
 // WithTimeout adds the timeout to the get service catalog use cases params
@@ -148,6 +169,17 @@ func (o *GetServiceCatalogUseCasesParams) SetServiceCatalogRef(serviceCatalogRef
 	o.ServiceCatalogRef = serviceCatalogRef
 }
 
+// WithServiceCatalogSourceVersionID adds the serviceCatalogSourceVersionID to the get service catalog use cases params
+func (o *GetServiceCatalogUseCasesParams) WithServiceCatalogSourceVersionID(serviceCatalogSourceVersionID uint32) *GetServiceCatalogUseCasesParams {
+	o.SetServiceCatalogSourceVersionID(serviceCatalogSourceVersionID)
+	return o
+}
+
+// SetServiceCatalogSourceVersionID adds the serviceCatalogSourceVersionId to the get service catalog use cases params
+func (o *GetServiceCatalogUseCasesParams) SetServiceCatalogSourceVersionID(serviceCatalogSourceVersionID uint32) {
+	o.ServiceCatalogSourceVersionID = serviceCatalogSourceVersionID
+}
+
 // WriteToRequest writes these params to a swagger request
 func (o *GetServiceCatalogUseCasesParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.Registry) error {
 
@@ -164,6 +196,16 @@ func (o *GetServiceCatalogUseCasesParams) WriteToRequest(r runtime.ClientRequest
 	// path param service_catalog_ref
 	if err := r.SetPathParam("service_catalog_ref", o.ServiceCatalogRef); err != nil {
 		return err
+	}
+
+	// query param service_catalog_source_version_id
+	qrServiceCatalogSourceVersionID := o.ServiceCatalogSourceVersionID
+	qServiceCatalogSourceVersionID := swag.FormatUint32(qrServiceCatalogSourceVersionID)
+	if qServiceCatalogSourceVersionID != "" {
+
+		if err := r.SetQueryParam("service_catalog_source_version_id", qServiceCatalogSourceVersionID); err != nil {
+			return err
+		}
 	}
 
 	if len(res) > 0 {

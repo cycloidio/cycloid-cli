@@ -28,10 +28,9 @@ func TestComponentCmd(t *testing.T) {
 		testJSONStdin := `{"types": {"tests": {"array": ["hello", false, 1, 1.1]}}}`
 		filename, err := WriteTempFile(testJSONFileContent)
 		if err != nil {
-			t.Fatalf("comp create setup failed: %v", err)
+			t.Errorf("comp create setup failed: %v", err)
 		}
 
-		var errList error
 		var stdout, stderr string
 		args := []string{
 			"--output", "json",
@@ -52,17 +51,12 @@ func TestComponentCmd(t *testing.T) {
 			"-V", `section with spaces.group with spaces.no_spaces="osef"`,
 			"-s", stackRef,
 			"-u", "default",
+			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
 		}
-		for range 3 {
-			stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
-			if err != nil {
-				errList = errors.Join(errList, err)
-				continue
-			}
-			break
-		}
-		if errList != nil {
-			t.Fatalf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+		stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
+		if err != nil {
+			t.Logf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+			t.FailNow()
 		}
 
 		// delete
@@ -75,7 +69,7 @@ func TestComponentCmd(t *testing.T) {
 				"-c", component,
 			})
 			if err != nil {
-				t.Fatalf("failed to delete and cleanup component '%s' from Create test: %v\nstdout: %s", component, err, out)
+				t.Errorf("failed to delete and cleanup component '%s' from Create test: %v\nstdout: %s", component, err, out)
 			}
 		})
 
@@ -90,13 +84,13 @@ func TestComponentCmd(t *testing.T) {
 		}
 		out, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to execute cmd '%s': %s", strings.Join(args, " "), err)
+			t.Errorf("failed to execute cmd '%s': %s", strings.Join(args, " "), err)
 		}
 
 		var comp models.Component
 		err = json.Unmarshal([]byte(out), &comp)
 		if err != nil {
-			t.Fatalf("failed to parse output of cy comp get command: %v\noutput: %s", err, out)
+			t.Errorf("failed to parse output of cy comp get command: %v\noutput: %s", err, out)
 		}
 
 		assert.NotNil(t, comp)
@@ -114,13 +108,13 @@ func TestComponentCmd(t *testing.T) {
 		}
 		out, err = executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to execute cmd '%s': %s", strings.Join(args, " "), err)
+			t.Errorf("failed to execute cmd '%s': %s", strings.Join(args, " "), err)
 		}
 
 		var comps []models.Component
 		err = json.Unmarshal([]byte(out), &comps)
 		if err != nil {
-			t.Fatalf("failed to parse output of cy comp get command: %v\noutput: %s", err, out)
+			t.Errorf("failed to parse output of cy comp get command: %v\noutput: %s", err, out)
 		}
 	})
 
@@ -139,6 +133,7 @@ func TestComponentCmd(t *testing.T) {
 			"-s", stackRef,
 			"-u", "default",
 			"--update",
+			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
 		}
 		var err, errList error
 		var stdout, stderr string
@@ -153,7 +148,7 @@ func TestComponentCmd(t *testing.T) {
 		}
 
 		if errList != nil {
-			t.Fatalf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+			t.Errorf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 
 		defer t.Run("DeleteCreateWithUpdateComp", func(t *testing.T) {
@@ -165,7 +160,7 @@ func TestComponentCmd(t *testing.T) {
 				"-c", newComp,
 			})
 			if err != nil {
-				t.Fatalf("failed to delete and cleanup component '%s' from '%s' test: %v\nstdout: %s", component, t.Name(), err, out)
+				t.Errorf("failed to delete and cleanup component '%s' from '%s' test: %v\nstdout: %s", component, t.Name(), err, out)
 			}
 		})
 	})
@@ -177,7 +172,7 @@ func TestComponentCmd(t *testing.T) {
 		testJSONStdin := `{"types": {"tests": {"array": ["hello", false, 1, 1.1]}}}`
 		filename, err := WriteTempFile(testJSONFileContent)
 		if err != nil {
-			t.Fatalf("comp create setup failed: %v", err)
+			t.Errorf("comp create setup failed: %v", err)
 		}
 		defer os.Remove(filename)
 
@@ -201,10 +196,11 @@ func TestComponentCmd(t *testing.T) {
 			"-s", stackRef,
 			"-u", "default",
 			"--update",
+			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
 		}
 		stdout, stderr, err := executeCommandStdin(testJSONStdin, args)
 		if err != nil {
-			t.Fatalf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+			t.Errorf("component creation failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 		defer t.Run("DeleteCreateWithUpdateComp", func(t *testing.T) {
 			out, err := executeCommand([]string{
@@ -215,7 +211,7 @@ func TestComponentCmd(t *testing.T) {
 				"-c", component,
 			})
 			if err != nil {
-				t.Fatalf("failed to delete and cleanup component '%s' from '%s' test: %v\nstdout: %s", component, t.Name(), err, out)
+				t.Errorf("failed to delete and cleanup component '%s' from '%s' test: %v\nstdout: %s", component, t.Name(), err, out)
 			}
 		})
 
@@ -225,7 +221,7 @@ func TestComponentCmd(t *testing.T) {
 		testJSONStdin = `{"types": {"tests": {"array": []}}}`
 		filename, err = WriteTempFile(testJSONFileContent)
 		if err != nil {
-			t.Fatalf("comp create setup failed: %v", err)
+			t.Errorf("comp create setup failed: %v", err)
 		}
 		defer os.Remove(filename)
 
@@ -249,11 +245,12 @@ func TestComponentCmd(t *testing.T) {
 			"-s", stackRef,
 			"-u", "default",
 			"--update",
+			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
 		}
 
 		stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
 		if err != nil {
-			t.Fatalf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+			t.Errorf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 
 		// get config
@@ -266,13 +263,13 @@ func TestComponentCmd(t *testing.T) {
 		}
 		stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
 		if err != nil {
-			t.Fatalf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+			t.Errorf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 
 		var outVars models.FormVariables
 		err = json.Unmarshal([]byte(stdout), &outVars)
 		if err != nil {
-			t.Fatalf("failed to parse output of CLI as JSON:\n%s\n%s", stdout, err)
+			t.Errorf("failed to parse output of CLI as JSON:\n%s\n%s", stdout, err)
 		}
 
 		value, _ := outVars["types"]["tests"]["map"].(map[string]any)["update"].(bool)
@@ -286,7 +283,7 @@ func TestComponentCmd(t *testing.T) {
 		testJSONStdin = `{"types": {"tests": {"float": 2.2}}}`
 		filename, err = WriteTempFile(testJSONFileContent)
 		if err != nil {
-			t.Fatalf("comp update setup failed: %v", err)
+			t.Errorf("comp update setup failed: %v", err)
 		}
 		defer os.Remove(filename)
 
@@ -308,11 +305,12 @@ func TestComponentCmd(t *testing.T) {
 			// Test var=value flag
 			"-V", `section with spaces.group with spaces.no_spaces=update2`,
 			"-u", "default",
+			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
 		}
 
 		stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
 		if err != nil {
-			t.Fatalf("component update failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+			t.Errorf("component update failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 
 		// check config after update
@@ -325,13 +323,13 @@ func TestComponentCmd(t *testing.T) {
 		}
 		stdout, stderr, err = executeCommandStdin(testJSONStdin, args)
 		if err != nil {
-			t.Fatalf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
+			t.Errorf("component put failed: %v\nstdout:\n%s\nstderr\n%s", err, stdout, stderr)
 		}
 
 		outVars = make(models.FormVariables)
 		err = json.Unmarshal([]byte(stdout), &outVars)
 		if err != nil {
-			t.Fatalf("failed to parse output of CLI as JSON:\n%s\n%s", stdout, err)
+			t.Errorf("failed to parse output of CLI as JSON:\n%s\n%s", stdout, err)
 		}
 
 		assert.Equal(t, "update2", outVars["types"]["tests"]["string"])
@@ -353,6 +351,7 @@ func TestComponentCmd(t *testing.T) {
 			"-d", description,
 			"-s", stackRef,
 			"-u", "default",
+			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
 			"-V", `section with spaces.thisgroupdoesnotexists.no_spaces=update2`,
 			"-V", `sectiondoesnotexists.thisgroupdoesnotexists.no_spaces=true`,
 		}
@@ -360,7 +359,77 @@ func TestComponentCmd(t *testing.T) {
 		cmdOut, cmdErr := executeCommand(args)
 		if cmdErr != nil {
 			// We just check that it doesn't panic for now
-			t.Fatalf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
+			t.Errorf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
+		}
+	})
+
+	t.Run("TestCreateWithUpdateOnNonConfiguredComponentOk", func(t *testing.T) {
+		component := randomCanonical("created-not-configured")
+
+		m := config.Middleware
+		created, err := m.CreateComponent(config.Org, *config.Project.Canonical,
+			*config.Environment.Canonical, component, description, component,
+			stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, "")
+		if err != nil {
+			t.Logf("test setup failed: component creation %q reported err: %v", component, err)
+			t.FailNow()
+		}
+		defer m.DeleteComponent(config.Org, *created.Project.Canonical,
+			*created.Environment.Canonical, *created.Canonical)
+
+		args := []string{
+			"--output", "json",
+			"--org", config.Org,
+			"components", "create",
+			"--update",
+			"--name", component,
+			"-p", *config.Project.Canonical,
+			"-e", *config.Environment.Canonical,
+			"-c", component,
+			"-d", description,
+			"-s", stackRef,
+			"-u", "default",
+			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
+		}
+
+		cmdOut, cmdErr := executeCommand(args)
+		if cmdErr != nil {
+			// We just check that it doesn't panic for now
+			t.Errorf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
+		}
+	})
+
+	t.Run("TestUpdateOnNonConfiguredComponentOk", func(t *testing.T) {
+		component := randomCanonical("created-not-configured")
+
+		m := config.Middleware
+		created, err := m.CreateComponent(config.Org, *config.Project.Canonical,
+			*config.Environment.Canonical, component, description, component,
+			stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, "")
+		if err != nil {
+			t.Logf("test setup failed: component creation %q reported err: %v", component, err)
+			t.FailNow()
+		}
+		defer m.DeleteComponent(config.Org, *created.Project.Canonical,
+			*created.Environment.Canonical, *created.Canonical)
+
+		args := []string{
+			"--output", "json",
+			"--org", config.Org,
+			"components", "update",
+			"--name", component,
+			"-p", *config.Project.Canonical,
+			"-e", *config.Environment.Canonical,
+			"-c", component,
+			"-d", description,
+			"-u", "default",
+			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
+		}
+
+		cmdOut, cmdErr := executeCommand(args)
+		if cmdErr != nil {
+			// We just check that it doesn't panic for now
+			t.Errorf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
 		}
 	})
 }

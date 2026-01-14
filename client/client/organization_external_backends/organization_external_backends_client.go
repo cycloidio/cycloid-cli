@@ -122,7 +122,7 @@ type ClientService interface {
 CreateExternalBackend Save information about the external backend
 */
 func (a *Client) CreateExternalBackend(params *CreateExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateExternalBackendOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateExternalBackendParams()
 	}
@@ -142,17 +142,22 @@ func (a *Client) CreateExternalBackend(params *CreateExternalBackendParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateExternalBackendOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
-	// safeguard: normally, absent a default response, unknown success responses return an error above: so this is a codegen issue
+
+	// unexpected success response.
+
+	// no default response is defined.
+	//
+	// safeguard: normally, in the absence of a default response, unknown success responses return an error above: so this is a codegen issue
 	msg := fmt.Sprintf("unexpected success response for createExternalBackend: API contract not enforced by server. Client expected to get an error, but got: %T", result)
 	panic(msg)
 }
@@ -161,7 +166,7 @@ func (a *Client) CreateExternalBackend(params *CreateExternalBackendParams, auth
 DeleteExternalBackend delete an External Backend
 */
 func (a *Client) DeleteExternalBackend(params *DeleteExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteExternalBackendNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteExternalBackendParams()
 	}
@@ -181,17 +186,22 @@ func (a *Client) DeleteExternalBackend(params *DeleteExternalBackendParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteExternalBackendNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteExternalBackendDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -199,7 +209,7 @@ func (a *Client) DeleteExternalBackend(params *DeleteExternalBackendParams, auth
 GetExternalBackend Get the external backend
 */
 func (a *Client) GetExternalBackend(params *GetExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetExternalBackendOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetExternalBackendParams()
 	}
@@ -219,17 +229,22 @@ func (a *Client) GetExternalBackend(params *GetExternalBackendParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetExternalBackendOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetExternalBackendDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -237,7 +252,7 @@ func (a *Client) GetExternalBackend(params *GetExternalBackendParams, authInfo r
 GetExternalBackends Get the list of organization external backends
 */
 func (a *Client) GetExternalBackends(params *GetExternalBackendsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetExternalBackendsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetExternalBackendsParams()
 	}
@@ -257,17 +272,22 @@ func (a *Client) GetExternalBackends(params *GetExternalBackendsParams, authInfo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetExternalBackendsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetExternalBackendsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -275,7 +295,7 @@ func (a *Client) GetExternalBackends(params *GetExternalBackendsParams, authInfo
 UpdateExternalBackend Update an External Backend
 */
 func (a *Client) UpdateExternalBackend(params *UpdateExternalBackendParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateExternalBackendOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateExternalBackendParams()
 	}
@@ -295,17 +315,22 @@ func (a *Client) UpdateExternalBackend(params *UpdateExternalBackendParams, auth
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateExternalBackendOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateExternalBackendDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

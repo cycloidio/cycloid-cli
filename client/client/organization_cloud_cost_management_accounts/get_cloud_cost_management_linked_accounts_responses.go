@@ -8,6 +8,7 @@ package organization_cloud_cost_management_accounts
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -27,7 +28,7 @@ type GetCloudCostManagementLinkedAccountsReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetCloudCostManagementLinkedAccountsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetCloudCostManagementLinkedAccountsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetCloudCostManagementLinkedAccountsOK()
@@ -128,7 +129,7 @@ func (o *GetCloudCostManagementLinkedAccountsOK) readResponse(response runtime.C
 	o.Payload = new(GetCloudCostManagementLinkedAccountsOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -216,7 +217,7 @@ func (o *GetCloudCostManagementLinkedAccountsForbidden) readResponse(response ru
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -304,7 +305,7 @@ func (o *GetCloudCostManagementLinkedAccountsNotFound) readResponse(response run
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -392,7 +393,7 @@ func (o *GetCloudCostManagementLinkedAccountsUnprocessableEntity) readResponse(r
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -483,7 +484,7 @@ func (o *GetCloudCostManagementLinkedAccountsDefault) readResponse(response runt
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -528,11 +529,15 @@ func (o *GetCloudCostManagementLinkedAccountsOKBody) validateData(formats strfmt
 
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("getCloudCostManagementLinkedAccountsOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("getCloudCostManagementLinkedAccountsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -567,11 +572,15 @@ func (o *GetCloudCostManagementLinkedAccountsOKBody) contextValidateData(ctx con
 			}
 
 			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("getCloudCostManagementLinkedAccountsOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("getCloudCostManagementLinkedAccountsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

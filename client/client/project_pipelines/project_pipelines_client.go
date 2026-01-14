@@ -112,7 +112,7 @@ type ClientService interface {
 GetProjectPipelines Get the pipelines that the authenticated user has access to.
 */
 func (a *Client) GetProjectPipelines(params *GetProjectPipelinesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetProjectPipelinesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetProjectPipelinesParams()
 	}
@@ -132,17 +132,22 @@ func (a *Client) GetProjectPipelines(params *GetProjectPipelinesParams, authInfo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetProjectPipelinesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetProjectPipelinesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

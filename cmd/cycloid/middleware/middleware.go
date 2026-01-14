@@ -6,9 +6,9 @@ import (
 )
 
 type Middleware interface {
-	UserLogin(org, email, username *string, password string) (*models.UserSession, error)
+	UserLogin(org, email *string, password string) (*models.UserSession, error)
 	UserLoginToOrg(org, email, password string) (*models.UserSession, error)
-	UserSignup(username, email, password, givenName, familyName string) error
+	UserSignup(username, email, password, fullName string) error
 	RefreshToken(org, childOrg *string, token string) (*models.UserSession, error)
 
 	ActivateLicence(org, licence string) error
@@ -35,7 +35,8 @@ type Middleware interface {
 	GetStack(org, ref string) (*models.ServiceCatalog, error)
 	UpdateStack(org, ref, teamCanonical string, visibility *string) (*models.ServiceCatalog, error)
 	ListStacks(org string) ([]*models.ServiceCatalog, error)
-	ListStackUseCases(org, ref string) ([]*models.StackUseCase, error)
+	ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string) ([]*models.StackUseCase, error)
+	ListStackVersions(org, ref string) ([]*models.ServiceCatalogSourceVersion, error)
 	ListBlueprints(org string) ([]*models.ServiceCatalog, error)
 	CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, error)
 
@@ -133,16 +134,16 @@ type Middleware interface {
 	DeleteEnv(org, project, env string) error
 
 	// Component
-	CreateComponent(org, project, env, component, description string, componentName, serviceCatalogRef *string, cloudProviderCanonical string) (*models.Component, error)
+	CreateComponent(org, project, env, component, description, componentName, serviceCatalogRef, versionTag, versionBranch, versionCommitHash, cloudProviderCanonical string) (*models.Component, error)
 	UpdateComponent(org, project, env, component, description string, componentName *string) (*models.Component, error)
-	CreateAndConfigureComponent(org, project, env, component, description string, componentName *string, serviceCatalogRef, useCase, cloudProviderCanonical string, vars models.FormVariables) (*models.Component, error)
+	CreateAndConfigureComponent(org, project, env, component, description, componentName, serviceCatalogRef, versionTag, versionBranch, versionCommitHash, useCase, cloudProviderCanonical string, vars models.FormVariables) (*models.Component, error)
 	ConfigureComponent(org, project, env, component, useCase string, vars models.FormVariables) error
 	ListComponents(org, project, env string) ([]*models.Component, error)
 	GetComponent(org, project, env, component string) (*models.Component, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, error)
 	DeleteComponent(org, project, env, component string) error
 	GetComponentConfig(org, project, env, component string) (models.FormVariables, error)
-	GetComponentStackConfig(org, project, env, component, useCase string) (models.ServiceCatalogConfigs, error)
+	GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, error)
 
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)
@@ -170,14 +171,13 @@ type Middleware interface {
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, error)
 
 	// Extra actions out of the api
-	InitFirstOrg(org, userName, givenName, famillyName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error)
+	InitFirstOrg(org, userName, fullName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error)
 }
 
 type FirstOrgData struct {
 	Org                 string
-	UserName            string
-	FamillyName         string
-	GivenName           string
+	Username            string
+	FullName            string
 	Email               string
 	Password            string
 	Token               string

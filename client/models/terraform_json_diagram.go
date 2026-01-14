@@ -10,4 +10,4 @@ package models
 // # The JSON Diagram structure
 //
 // swagger:model TerraformJSONDiagram
-type TerraformJSONDiagram interface{}
+type TerraformJSONDiagram any

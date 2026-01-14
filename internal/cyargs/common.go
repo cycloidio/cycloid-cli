@@ -104,8 +104,10 @@ func GetCyContext(cmd *cobra.Command) (org, project, env, component string, err 
 	return org, project, env, component, nil
 }
 
-func AddNameFlag(cmd *cobra.Command) {
-	cmd.Flags().StringP("name", "n", "", "set a human friendly name.")
+func AddNameFlag(cmd *cobra.Command) string {
+	flagName := "name"
+	cmd.Flags().StringP(flagName, "n", "", "set a human friendly name.")
+	return flagName
 }
 
 func GetName(cmd *cobra.Command) (string, error) {
@@ -395,7 +397,7 @@ func AddOwnerFlag(cmd *cobra.Command) string {
 			if strings.HasPrefix(member.Username, toComplete) {
 				owners[index] = cobra.CompletionWithDesc(
 					member.Username,
-					fmt.Sprintf("%s %s (%s)", member.GivenName, member.FamilyName, member.Email.String()),
+					fmt.Sprintf("%s (%s)", member.FullName, member.Email.String()),
 				)
 			}
 		}
@@ -431,7 +433,7 @@ func GetDescription(cmd *cobra.Command) (string, error) {
 func GetOrg(cmd *cobra.Command) (string, error) {
 	org := v.GetString("org")
 	if org == "" {
-		return "", fmt.Errorf("org is not set, use --org flag or CY_ORG env var, value: %s", org)
+		return "", fmt.Errorf("org is not set, use --org flag or CY_ORG env var, current value: %q", org)
 	}
 
 	return org, nil

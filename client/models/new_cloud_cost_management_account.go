@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -82,11 +83,15 @@ func (m *NewCloudCostManagementAccount) validateExternalBackend(formats strfmt.R
 
 	if m.ExternalBackend != nil {
 		if err := m.ExternalBackend.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("external_backend")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("external_backend")
 			}
+
 			return err
 		}
 	}
@@ -113,11 +118,15 @@ func (m *NewCloudCostManagementAccount) contextValidateExternalBackend(ctx conte
 	if m.ExternalBackend != nil {
 
 		if err := m.ExternalBackend.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("external_backend")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("external_backend")
 			}
+
 			return err
 		}
 	}

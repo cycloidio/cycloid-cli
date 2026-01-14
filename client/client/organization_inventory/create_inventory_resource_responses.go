@@ -7,6 +7,7 @@ package organization_inventory
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -24,7 +25,7 @@ type CreateInventoryResourceReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *CreateInventoryResourceReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CreateInventoryResourceReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 204:
 		result := NewCreateInventoryResourceNoContent()
@@ -187,7 +188,7 @@ func (o *CreateInventoryResourceForbidden) readResponse(response runtime.ClientR
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -278,7 +279,7 @@ func (o *CreateInventoryResourceDefault) readResponse(response runtime.ClientRes
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

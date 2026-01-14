@@ -111,7 +111,11 @@ type ClientService interface {
 
 	GetServiceCatalogSources(params *GetServiceCatalogSourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogSourcesOK, error)
 
+	ListServiceCatalogSourceVersions(params *ListServiceCatalogSourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListServiceCatalogSourceVersionsOK, error)
+
 	RefreshServiceCatalogSource(params *RefreshServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceOK, error)
+
+	RefreshServiceCatalogSourceVersions(params *RefreshServiceCatalogSourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceVersionsOK, error)
 
 	UpdateServiceCatalogSource(params *UpdateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogSourceOK, error)
 
@@ -124,7 +128,7 @@ type ClientService interface {
 CreateServiceCatalogSource Creates a Service catalog source
 */
 func (a *Client) CreateServiceCatalogSource(params *CreateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateServiceCatalogSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateServiceCatalogSourceParams()
 	}
@@ -144,17 +148,22 @@ func (a *Client) CreateServiceCatalogSource(params *CreateServiceCatalogSourcePa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateServiceCatalogSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateServiceCatalogSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -162,7 +171,7 @@ func (a *Client) CreateServiceCatalogSource(params *CreateServiceCatalogSourcePa
 DeleteServiceCatalogSource delete a Service catalog source
 */
 func (a *Client) DeleteServiceCatalogSource(params *DeleteServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteServiceCatalogSourceNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteServiceCatalogSourceParams()
 	}
@@ -182,17 +191,22 @@ func (a *Client) DeleteServiceCatalogSource(params *DeleteServiceCatalogSourcePa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteServiceCatalogSourceNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteServiceCatalogSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -200,7 +214,7 @@ func (a *Client) DeleteServiceCatalogSource(params *DeleteServiceCatalogSourcePa
 GetServiceCatalogSource Return the Service Catalog Source
 */
 func (a *Client) GetServiceCatalogSource(params *GetServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetServiceCatalogSourceParams()
 	}
@@ -220,17 +234,22 @@ func (a *Client) GetServiceCatalogSource(params *GetServiceCatalogSourceParams, 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetServiceCatalogSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetServiceCatalogSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -238,7 +257,7 @@ func (a *Client) GetServiceCatalogSource(params *GetServiceCatalogSourceParams, 
 GetServiceCatalogSources Return all the private service catalogs
 */
 func (a *Client) GetServiceCatalogSources(params *GetServiceCatalogSourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogSourcesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetServiceCatalogSourcesParams()
 	}
@@ -258,17 +277,65 @@ func (a *Client) GetServiceCatalogSources(params *GetServiceCatalogSourcesParams
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetServiceCatalogSourcesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetServiceCatalogSourcesDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+ListServiceCatalogSourceVersions List Service catalog source versions
+*/
+func (a *Client) ListServiceCatalogSourceVersions(params *ListServiceCatalogSourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListServiceCatalogSourceVersionsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewListServiceCatalogSourceVersionsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "listServiceCatalogSourceVersions",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/versions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &ListServiceCatalogSourceVersionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*ListServiceCatalogSourceVersionsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*ListServiceCatalogSourceVersionsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -276,7 +343,7 @@ func (a *Client) GetServiceCatalogSources(params *GetServiceCatalogSourcesParams
 RefreshServiceCatalogSource Refresh a Service catalog source
 */
 func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRefreshServiceCatalogSourceParams()
 	}
@@ -296,17 +363,65 @@ func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSource
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RefreshServiceCatalogSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*RefreshServiceCatalogSourceDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+RefreshServiceCatalogSourceVersions List Service catalog source versions
+*/
+func (a *Client) RefreshServiceCatalogSourceVersions(params *RefreshServiceCatalogSourceVersionsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceVersionsOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewRefreshServiceCatalogSourceVersionsParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "refreshServiceCatalogSourceVersions",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/service_catalog_sources/{service_catalog_source_canonical}/versions/refresh",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &RefreshServiceCatalogSourceVersionsReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*RefreshServiceCatalogSourceVersionsOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*RefreshServiceCatalogSourceVersionsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -314,7 +429,7 @@ func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSource
 UpdateServiceCatalogSource Update a Service catalog source
 */
 func (a *Client) UpdateServiceCatalogSource(params *UpdateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateServiceCatalogSourceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateServiceCatalogSourceParams()
 	}
@@ -334,17 +449,22 @@ func (a *Client) UpdateServiceCatalogSource(params *UpdateServiceCatalogSourcePa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateServiceCatalogSourceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateServiceCatalogSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -352,7 +472,7 @@ func (a *Client) UpdateServiceCatalogSource(params *UpdateServiceCatalogSourcePa
 ValidateServiceCatalogSource Validate a Service catalog source
 */
 func (a *Client) ValidateServiceCatalogSource(params *ValidateServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ValidateServiceCatalogSourceNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewValidateServiceCatalogSourceParams()
 	}
@@ -372,17 +492,22 @@ func (a *Client) ValidateServiceCatalogSource(params *ValidateServiceCatalogSour
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ValidateServiceCatalogSourceNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ValidateServiceCatalogSourceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

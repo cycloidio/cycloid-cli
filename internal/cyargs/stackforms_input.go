@@ -15,6 +15,7 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 var (
@@ -45,9 +46,13 @@ func GetStackformsVars(cmd *cobra.Command, defaults models.FormVariables) (model
 	// dump stdin from cmd.InOrStdin() in a temp file.
 	index := slices.Index(varFiles, "-")
 	if index != -1 {
+		if !common.DetectStdinInput() {
+			return nil, fmt.Errorf("stdin looks empty, please fill stdin when using '-' argument")
+		}
+
 		tempFile, err := os.CreateTemp("", "cy-stdin-*")
 		if err != nil {
-			return nil, fmt.Errorf("failed to write temp file for stdin: %v", err)
+			return nil, fmt.Errorf("failed to write temp file for stdin: %w", err)
 		}
 		defer func() {
 			closeErr := tempFile.Close()
@@ -59,12 +64,12 @@ func GetStackformsVars(cmd *cobra.Command, defaults models.FormVariables) (model
 
 		stdin, err := io.ReadAll(cmd.InOrStdin())
 		if err != nil {
-			return nil, fmt.Errorf("failed to read from stdin: %s", err)
+			return nil, fmt.Errorf("failed to read from stdin: %w", err)
 		}
 
 		_, err = tempFile.Write(stdin)
 		if err != nil {
-			return nil, fmt.Errorf("failed to write stdin to temp file: %s", err)
+			return nil, fmt.Errorf("failed to write stdin to temp file: %w", err)
 		}
 
 		varFiles[index] = tempFile.Name()
@@ -81,7 +86,7 @@ func GetStackformsVars(cmd *cobra.Command, defaults models.FormVariables) (model
 		decoder := json.NewDecoder(strings.NewReader(jsonFromEnv))
 		err := decoder.Decode(&varsFromEnv)
 		if err != nil {
-			return nil, fmt.Errorf("invalid JSON variables in '%s' env var: %s", StackformsEnvVarName, err)
+			return nil, fmt.Errorf("invalid JSON variables in %q env var: %w", StackformsEnvVarName, err)
 		}
 	}
 
@@ -138,7 +143,7 @@ func MergeStackformsVars(defaults models.FormVariables, envVars models.FormVaria
 	for k, v := range keyValueField {
 		err = UpdateFormVar(k, v, defaults)
 		if err != nil {
-			return nil, fmt.Errorf("failed to update vars '%s' with field '%s': %s", k, v, err)
+			return nil, fmt.Errorf("failed to update vars %q with field %q: %w", k, v, err)
 		}
 	}
 
@@ -153,7 +158,7 @@ func MergeJSONFileVars(jsonFiles []string) (models.FormVariables, error) {
 		var decoder *json.Decoder
 		reader, err := os.Open(filename)
 		if err != nil {
-			return nil, fmt.Errorf("failed to open var file at path '%s': %v", filename, err)
+			return nil, fmt.Errorf("failed to open var file at path %q: %w", filename, err)
 		}
 		defer reader.Close()
 
@@ -166,11 +171,11 @@ func MergeJSONFileVars(jsonFiles []string) (models.FormVariables, error) {
 				break
 			}
 			if err != nil {
-				return nil, fmt.Errorf("failed to read StackForms variables from '%s': %v", filename, err)
+				return nil, fmt.Errorf("failed to read StackForms variables from %q: %w", filename, err)
 			}
 
 			if err := mergo.Merge(&output, extractedVars, mergo.WithOverride); err != nil {
-				return nil, fmt.Errorf("failed to merge variables from '%s': %v", filename, err)
+				return nil, fmt.Errorf("failed to merge variables from %q: %w", filename, err)
 			}
 		}
 	}
@@ -190,11 +195,11 @@ func MergeJSONVars(jsonVars []string) (models.FormVariables, error) {
 
 		err := json.Unmarshal([]byte(jsonString), &extractedVars)
 		if err != nil {
-			return nil, errors.Errorf("failed to parse json-var input as valid Stackform JSON:\n%s\n%v", jsonString, err)
+			return nil, fmt.Errorf("failed to parse json-var input as valid Stackform JSON %q: %w", jsonString, err)
 		}
 
 		if err := mergo.Merge(&output, extractedVars, mergo.WithOverride); err != nil {
-			return nil, errors.Errorf("failed to merge input vars from json-var input:\n%v\n%v", extractedVars, err)
+			return nil, fmt.Errorf("failed to merge input vars from json-var input %q: %w", extractedVars, err)
 		}
 	}
 
@@ -235,7 +240,7 @@ func UpdateFormVar(field string, value string, vars models.FormVariables) error 
 		var data any
 		err := json.Unmarshal([]byte(trimmedValue), &data)
 		if err != nil {
-			return errors.Wrapf(err, "invalid JSON value in key=val update with value '%s'", trimmedValue)
+			return errors.Wrapf(err, "invalid JSON value in key=val update with value %q", trimmedValue)
 		}
 
 		vars[section][group][key] = data

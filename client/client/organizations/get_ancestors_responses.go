@@ -8,6 +8,7 @@ package organizations
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -27,7 +28,7 @@ type GetAncestorsReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetAncestorsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetAncestorsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetAncestorsOK()
@@ -116,7 +117,7 @@ func (o *GetAncestorsOK) readResponse(response runtime.ClientResponse, consumer 
 	o.Payload = new(GetAncestorsOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -204,7 +205,7 @@ func (o *GetAncestorsUnauthorized) readResponse(response runtime.ClientResponse,
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -295,7 +296,7 @@ func (o *GetAncestorsDefault) readResponse(response runtime.ClientResponse, cons
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -348,11 +349,15 @@ func (o *GetAncestorsOKBody) validateData(formats strfmt.Registry) error {
 
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -370,11 +375,15 @@ func (o *GetAncestorsOKBody) validatePagination(formats strfmt.Registry) error {
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getAncestorsOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getAncestorsOK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}
@@ -411,11 +420,15 @@ func (o *GetAncestorsOKBody) contextValidateData(ctx context.Context, formats st
 			}
 
 			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("getAncestorsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -430,11 +443,15 @@ func (o *GetAncestorsOKBody) contextValidatePagination(ctx context.Context, form
 	if o.Pagination != nil {
 
 		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getAncestorsOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getAncestorsOK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}

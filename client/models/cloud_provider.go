@@ -107,7 +107,7 @@ func (m *CloudProvider) validateAbbreviation(formats strfmt.Registry) error {
 	return nil
 }
 
-var cloudProviderTypeCanonicalPropEnum []interface{}
+var cloudProviderTypeCanonicalPropEnum []any
 
 func init() {
 	var res []string

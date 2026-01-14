@@ -7,6 +7,8 @@ package models
 
 import (
 	"context"
+	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -83,6 +85,9 @@ type Project struct {
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
+
+	// Aggregated value of the Environments Components Version.Status
+	VersionStatus []string `json:"version_status"`
 }
 
 // Validate validates this project
@@ -130,6 +135,10 @@ func (m *Project) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVersionStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -219,11 +228,15 @@ func (m *Project) validateEnvironments(formats strfmt.Registry) error {
 
 		if m.Environments[i] != nil {
 			if err := m.Environments[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -279,11 +292,15 @@ func (m *Project) validateOwner(formats strfmt.Registry) error {
 
 	if m.Owner != nil {
 		if err := m.Owner.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("owner")
 			}
+
 			return err
 		}
 	}
@@ -298,11 +315,15 @@ func (m *Project) validateTeam(formats strfmt.Registry) error {
 
 	if m.Team != nil {
 		if err := m.Team.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("team")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("team")
 			}
+
 			return err
 		}
 	}
@@ -318,6 +339,42 @@ func (m *Project) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+var projectVersionStatusItemsEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["no_status","latest","active","deleted","outdated"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		projectVersionStatusItemsEnum = append(projectVersionStatusItemsEnum, v)
+	}
+}
+
+func (m *Project) validateVersionStatusItemsEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, projectVersionStatusItemsEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *Project) validateVersionStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.VersionStatus) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.VersionStatus); i++ {
+
+		// value enum
+		if err := m.validateVersionStatusItemsEnum("version_status"+"."+strconv.Itoa(i), "body", m.VersionStatus[i]); err != nil {
+			return err
+		}
+
 	}
 
 	return nil
@@ -356,11 +413,15 @@ func (m *Project) contextValidateEnvironments(ctx context.Context, formats strfm
 			}
 
 			if err := m.Environments[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("environments" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("environments" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -379,11 +440,15 @@ func (m *Project) contextValidateOwner(ctx context.Context, formats strfmt.Regis
 		}
 
 		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("owner")
 			}
+
 			return err
 		}
 	}
@@ -400,11 +465,15 @@ func (m *Project) contextValidateTeam(ctx context.Context, formats strfmt.Regist
 		}
 
 		if err := m.Team.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("team")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("team")
 			}
+
 			return err
 		}
 	}

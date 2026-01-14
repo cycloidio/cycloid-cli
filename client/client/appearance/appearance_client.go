@@ -114,7 +114,7 @@ type ClientService interface {
 GetActiveAppearance Get the active appearance available in the organization
 */
 func (a *Client) GetActiveAppearance(params *GetActiveAppearanceParams, opts ...ClientOption) (*GetActiveAppearanceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetActiveAppearanceParams()
 	}
@@ -133,17 +133,22 @@ func (a *Client) GetActiveAppearance(params *GetActiveAppearanceParams, opts ...
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetActiveAppearanceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetActiveAppearanceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -151,7 +156,7 @@ func (a *Client) GetActiveAppearance(params *GetActiveAppearanceParams, opts ...
 GetDefaultAppearance Get the default appearance available in the platform
 */
 func (a *Client) GetDefaultAppearance(params *GetDefaultAppearanceParams, opts ...ClientOption) (*GetDefaultAppearanceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetDefaultAppearanceParams()
 	}
@@ -170,17 +175,22 @@ func (a *Client) GetDefaultAppearance(params *GetDefaultAppearanceParams, opts .
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetDefaultAppearanceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetDefaultAppearanceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

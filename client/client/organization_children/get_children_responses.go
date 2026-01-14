@@ -8,6 +8,7 @@ package organization_children
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -27,7 +28,7 @@ type GetChildrenReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetChildrenReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetChildrenReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetChildrenOK()
@@ -128,7 +129,7 @@ func (o *GetChildrenOK) readResponse(response runtime.ClientResponse, consumer r
 	o.Payload = new(GetChildrenOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -216,7 +217,7 @@ func (o *GetChildrenForbidden) readResponse(response runtime.ClientResponse, con
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -304,7 +305,7 @@ func (o *GetChildrenNotFound) readResponse(response runtime.ClientResponse, cons
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -392,7 +393,7 @@ func (o *GetChildrenUnprocessableEntity) readResponse(response runtime.ClientRes
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -483,7 +484,7 @@ func (o *GetChildrenDefault) readResponse(response runtime.ClientResponse, consu
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -536,11 +537,15 @@ func (o *GetChildrenOKBody) validateData(formats strfmt.Registry) error {
 
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -558,11 +563,15 @@ func (o *GetChildrenOKBody) validatePagination(formats strfmt.Registry) error {
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getChildrenOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getChildrenOK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}
@@ -599,11 +608,15 @@ func (o *GetChildrenOKBody) contextValidateData(ctx context.Context, formats str
 			}
 
 			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("getChildrenOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -618,11 +631,15 @@ func (o *GetChildrenOKBody) contextValidatePagination(ctx context.Context, forma
 	if o.Pagination != nil {
 
 		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getChildrenOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getChildrenOK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}

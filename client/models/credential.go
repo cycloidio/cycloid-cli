@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -183,11 +184,15 @@ func (m *Credential) validateInUse(formats strfmt.Registry) error {
 
 	if m.InUse != nil {
 		if err := m.InUse.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("in_use")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("in_use")
 			}
+
 			return err
 		}
 	}
@@ -220,11 +225,15 @@ func (m *Credential) validateOwner(formats strfmt.Registry) error {
 
 	if m.Owner != nil {
 		if err := m.Owner.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("owner")
 			}
+
 			return err
 		}
 	}
@@ -249,11 +258,15 @@ func (m *Credential) validateRaw(formats strfmt.Registry) error {
 
 	if m.Raw != nil {
 		if err := m.Raw.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("raw")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("raw")
 			}
+
 			return err
 		}
 	}
@@ -261,7 +274,7 @@ func (m *Credential) validateRaw(formats strfmt.Registry) error {
 	return nil
 }
 
-var credentialTypeTypePropEnum []interface{}
+var credentialTypeTypePropEnum []any
 
 func init() {
 	var res []string
@@ -371,11 +384,15 @@ func (m *Credential) contextValidateInUse(ctx context.Context, formats strfmt.Re
 		}
 
 		if err := m.InUse.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("in_use")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("in_use")
 			}
+
 			return err
 		}
 	}
@@ -392,11 +409,15 @@ func (m *Credential) contextValidateOwner(ctx context.Context, formats strfmt.Re
 		}
 
 		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("owner")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("owner")
 			}
+
 			return err
 		}
 	}
@@ -409,11 +430,15 @@ func (m *Credential) contextValidateRaw(ctx context.Context, formats strfmt.Regi
 	if m.Raw != nil {
 
 		if err := m.Raw.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("raw")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("raw")
 			}
+
 			return err
 		}
 	}

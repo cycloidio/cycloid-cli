@@ -21,6 +21,9 @@ import (
 // swagger:model InventoryOutput
 type InventoryOutput struct {
 
+	// Description
+	Description string `json:"description,omitempty"`
+
 	// id
 	// Required: true
 	// Minimum: 1
@@ -30,8 +33,17 @@ type InventoryOutput struct {
 	// Required: true
 	Key *string `json:"key"`
 
+	// Defines whether this output is pinned. Pinned outputs are highlighted on the frontend.
+	Pinned bool `json:"pinned,omitempty"`
+
+	// Whether this output is a sensitive field
+	Sensitive bool `json:"sensitive,omitempty"`
+
+	// Output type
+	Type any `json:"type,omitempty"`
+
 	// Output value
-	Value interface{} `json:"value,omitempty"`
+	Value any `json:"value,omitempty"`
 }
 
 // Validate validates this inventory output

@@ -9,7 +9,7 @@ import (
 func FormUseCaseToFormVars(stackConfig models.ServiceCatalogConfigs, useCaseName string) (models.FormVariables, error) {
 	useCaseData, ok := stackConfig[useCaseName]
 	if !ok {
-		return nil, fmt.Errorf("cannot find usecase named '%s' in stack config", useCaseName)
+		return nil, fmt.Errorf("cannot find usecase named %q in stack config", useCaseName)
 	}
 
 	output := make(models.FormVariables)

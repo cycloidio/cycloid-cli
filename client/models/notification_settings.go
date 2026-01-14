@@ -48,7 +48,7 @@ func (m *NotificationSettings) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-var notificationSettingsTypeActivityReportFrequencyPropEnum []interface{}
+var notificationSettingsTypeActivityReportFrequencyPropEnum []any
 
 func init() {
 	var res []string

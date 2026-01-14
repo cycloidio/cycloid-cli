@@ -70,12 +70,22 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 		}
 	}
 
+	// Try to get the stack version flags
+	tag, branch, hash, err := GetStackVersionFlags(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to read stack version flags: "+err.Error()), cobra.ShellCompDirectiveError
+	}
+
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	stackUseCases, err := m.ListStackUseCases(org, stackRef)
+	// Try to get the stack use cases using the provided flags
+	// If none are provided yet, this will use default version
+	stackUseCases, err := m.ListStackUseCases(org, stackRef, tag, branch, hash)
 	if err != nil {
-		return cobra.AppendActiveHelp(nil, "cannot find stack or blueprint with ref: "+stackRef+", err: "+err.Error()),
+		// During completion, the version flags might not be set yet
+		// Return a helpful message to guide the user
+		return cobra.AppendActiveHelp(nil, "please provide one of --stack-tag, --stack-branch, or --stack-commit-hash first"),
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
@@ -93,11 +103,11 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 	return useCases, cobra.ShellCompDirectiveNoFileComp
 }
 
-func GetUseCase(cmd *cobra.Command) (*string, error) {
+func GetUseCase(cmd *cobra.Command) (string, error) {
 	useCase, err := cmd.Flags().GetString("use-case")
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &useCase, nil
+	return useCase, nil
 }

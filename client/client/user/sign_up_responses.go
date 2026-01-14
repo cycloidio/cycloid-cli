@@ -6,7 +6,9 @@ package user
 // Editing this file might prove futile when you re-run the swagger generate command
 
 import (
+	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -14,6 +16,7 @@ import (
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
+	"github.com/go-openapi/validate"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
@@ -24,10 +27,10 @@ type SignUpReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *SignUpReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *SignUpReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
-	case 204:
-		result := NewSignUpNoContent()
+	case 200:
+		result := NewSignUpOK()
 		if err := result.readResponse(response, consumer, o.formats); err != nil {
 			return nil, err
 		}
@@ -56,58 +59,72 @@ func (o *SignUpReader) ReadResponse(response runtime.ClientResponse, consumer ru
 	}
 }
 
-// NewSignUpNoContent creates a SignUpNoContent with default headers values
-func NewSignUpNoContent() *SignUpNoContent {
-	return &SignUpNoContent{}
+// NewSignUpOK creates a SignUpOK with default headers values
+func NewSignUpOK() *SignUpOK {
+	return &SignUpOK{}
 }
 
 /*
-SignUpNoContent describes a response with status code 204, with default header values.
+SignUpOK describes a response with status code 200, with default header values.
 
-Account created. The account MUST be verified through the link sent to the email address.
+Account created. The response specifies whether the user is already verified or not. If verified, the response contains a login token allowing to access the dashboard without having to verify the account. If not verified, the account MUST be verified through the link sent to the email address.
 */
-type SignUpNoContent struct {
+type SignUpOK struct {
+	Payload *SignUpOKBody
 }
 
-// IsSuccess returns true when this sign up no content response has a 2xx status code
-func (o *SignUpNoContent) IsSuccess() bool {
+// IsSuccess returns true when this sign up o k response has a 2xx status code
+func (o *SignUpOK) IsSuccess() bool {
 	return true
 }
 
-// IsRedirect returns true when this sign up no content response has a 3xx status code
-func (o *SignUpNoContent) IsRedirect() bool {
+// IsRedirect returns true when this sign up o k response has a 3xx status code
+func (o *SignUpOK) IsRedirect() bool {
 	return false
 }
 
-// IsClientError returns true when this sign up no content response has a 4xx status code
-func (o *SignUpNoContent) IsClientError() bool {
+// IsClientError returns true when this sign up o k response has a 4xx status code
+func (o *SignUpOK) IsClientError() bool {
 	return false
 }
 
-// IsServerError returns true when this sign up no content response has a 5xx status code
-func (o *SignUpNoContent) IsServerError() bool {
+// IsServerError returns true when this sign up o k response has a 5xx status code
+func (o *SignUpOK) IsServerError() bool {
 	return false
 }
 
-// IsCode returns true when this sign up no content response a status code equal to that given
-func (o *SignUpNoContent) IsCode(code int) bool {
-	return code == 204
+// IsCode returns true when this sign up o k response a status code equal to that given
+func (o *SignUpOK) IsCode(code int) bool {
+	return code == 200
 }
 
-// Code gets the status code for the sign up no content response
-func (o *SignUpNoContent) Code() int {
-	return 204
+// Code gets the status code for the sign up o k response
+func (o *SignUpOK) Code() int {
+	return 200
 }
 
-func (o *SignUpNoContent) Error() string {
-	return fmt.Sprintf("[POST /user][%d] signUpNoContent", 204)
+func (o *SignUpOK) Error() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user][%d] signUpOK %s", 200, payload)
 }
 
-func (o *SignUpNoContent) String() string {
-	return fmt.Sprintf("[POST /user][%d] signUpNoContent", 204)
+func (o *SignUpOK) String() string {
+	payload, _ := json.Marshal(o.Payload)
+	return fmt.Sprintf("[POST /user][%d] signUpOK %s", 200, payload)
 }
 
-func (o *SignUpNoContent) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+func (o *SignUpOK) GetPayload() *SignUpOKBody {
+	return o.Payload
+}
+
+func (o *SignUpOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
+
+	o.Payload = new(SignUpOKBody)
+
+	// response payload
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
+		return err
+	}
 
 	return nil
 }
@@ -249,7 +266,7 @@ func (o *SignUpUnprocessableEntity) readResponse(response runtime.ClientResponse
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -340,9 +357,130 @@ func (o *SignUpDefault) readResponse(response runtime.ClientResponse, consumer r
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
+	return nil
+}
+
+/*
+SignUpOKBody sign up o k body
+swagger:model SignUpOKBody
+*/
+type SignUpOKBody struct {
+
+	// session
+	Session *models.UserSession `json:"session,omitempty"`
+
+	// Specifies whether the user is already verified.
+	// Required: true
+	Verified *bool `json:"verified"`
+}
+
+// Validate validates this sign up o k body
+func (o *SignUpOKBody) Validate(formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.validateSession(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateVerified(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *SignUpOKBody) validateSession(formats strfmt.Registry) error {
+	if swag.IsZero(o.Session) { // not required
+		return nil
+	}
+
+	if o.Session != nil {
+		if err := o.Session.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("signUpOK" + "." + "session")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("signUpOK" + "." + "session")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (o *SignUpOKBody) validateVerified(formats strfmt.Registry) error {
+
+	if err := validate.Required("signUpOK"+"."+"verified", "body", o.Verified); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ContextValidate validate this sign up o k body based on the context it is used
+func (o *SignUpOKBody) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := o.contextValidateSession(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (o *SignUpOKBody) contextValidateSession(ctx context.Context, formats strfmt.Registry) error {
+
+	if o.Session != nil {
+
+		if swag.IsZero(o.Session) { // not required
+			return nil
+		}
+
+		if err := o.Session.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("signUpOK" + "." + "session")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("signUpOK" + "." + "session")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (o *SignUpOKBody) MarshalBinary() ([]byte, error) {
+	if o == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(o)
+}
+
+// UnmarshalBinary interface implementation
+func (o *SignUpOKBody) UnmarshalBinary(b []byte) error {
+	var res SignUpOKBody
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*o = res
 	return nil
 }

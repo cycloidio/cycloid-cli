@@ -23,7 +23,7 @@ type PublicPlan struct {
 
 	// plan
 	// Required: true
-	Plan interface{} `json:"plan"`
+	Plan any `json:"plan"`
 
 	// schema
 	// Required: true

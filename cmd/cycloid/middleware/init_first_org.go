@@ -4,17 +4,18 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/pkg/errors"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"github.com/pkg/errors"
 )
 
 // InitFirstOrg will create the first user, org and inject the licence to the
 // current console.
 // If apiKeyCanonical != nil, will also create an api key admin and add it to a
 // credential.
-func (m *middleware) InitFirstOrg(org, userName, givenName, famillyName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error) {
-	err := m.UserSignup(userName, email, password, givenName, famillyName)
+func (m *middleware) InitFirstOrg(org, userName, fullName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error) {
+	err := m.UserSignup(userName, email, password, fullName)
 	var signupErr *APIError
 	if errors.As(err, &signupErr) {
 		if signupErr.HTTPCode != "409" && err != nil {
@@ -22,7 +23,7 @@ func (m *middleware) InitFirstOrg(org, userName, givenName, famillyName, email, 
 		}
 	}
 
-	login, err := m.UserLogin(&org, &email, &userName, password)
+	login, err := m.UserLogin(&org, &email, password)
 	if err != nil {
 		return nil, fmt.Errorf("failed to login with admin user: %w", err)
 	}
@@ -48,13 +49,12 @@ func (m *middleware) InitFirstOrg(org, userName, givenName, famillyName, email, 
 	}
 
 	output := &FirstOrgData{
-		Org:         org,
-		UserName:    userName,
-		FamillyName: famillyName,
-		GivenName:   givenName,
-		Email:       email,
-		Password:    password,
-		Token:       *refresh.Token,
+		Org:      org,
+		Username: userName,
+		FullName: fullName,
+		Email:    email,
+		Password: password,
+		Token:    *refresh.Token,
 	}
 
 	if apiKeyCanonical == nil {
@@ -94,7 +94,7 @@ func (m *middleware) InitFirstOrg(org, userName, givenName, famillyName, email, 
 		}
 
 		APIKey, err := m.CreateAPIKey(
-			org, *apiKeyCanonical, "Initial api key admin", userName, apiKeyCanonical,
+			org, *apiKeyCanonical, "Initial api key admin", fullName, apiKeyCanonical,
 			[]*models.NewRule{
 				{Action: ptr.Ptr("organization:**"), Effect: ptr.Ptr("allow"), Resources: []string{}},
 			},

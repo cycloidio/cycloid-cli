@@ -23,7 +23,7 @@ func TestExternalBackends(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		cs, err := JsonListExtractFields(cmdOut, "id", "", "")
+		cs, err := JSONListExtractFields(cmdOut, "id", "", "")
 		require.Nil(t, err)
 
 		for _, c := range cs {
@@ -122,6 +122,9 @@ func TestExternalBackends(t *testing.T) {
 	})
 
 	t.Run("SuccessExternalBackendsCreateAWSRemoteTFState", func(t *testing.T) {
+		// TODO: Fix tests when components are implemented
+		t.Skip()
+
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
@@ -135,9 +138,6 @@ func TestExternalBackends(t *testing.T) {
 			"--project", "eb-test",
 			"--env", "test",
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
 
 		assert.Nil(t, cmdErr)
 		require.Contains(t, cmdOut, "purpose\": \"remote_tfstate")
@@ -161,15 +161,15 @@ func TestExternalBackends(t *testing.T) {
 	})
 
 	t.Run("SuccessExternalBackendsList", func(t *testing.T) {
+		// TODO: Fix tests when components are implemented
+		t.Skip()
+
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"external-backends",
 			"list",
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
 
 		assert.Nil(t, cmdErr)
 		require.Contains(t, cmdOut, "purpose\": \"remote_tfstate")

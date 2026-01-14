@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -195,11 +196,15 @@ func (m *ElasticsearchLogs) validateSources(formats strfmt.Registry) error {
 			}
 			if val, ok := m.Sources[k][kk]; ok {
 				if err := val.Validate(formats); err != nil {
-					if ve, ok := err.(*errors.Validation); ok {
+					ve := new(errors.Validation)
+					if stderrors.As(err, &ve) {
 						return ve.ValidateName("sources" + "." + k + "." + kk)
-					} else if ce, ok := err.(*errors.CompositeError); ok {
+					}
+					ce := new(errors.CompositeError)
+					if stderrors.As(err, &ce) {
 						return ce.ValidateName("sources" + "." + k + "." + kk)
 					}
+
 					return err
 				}
 			}
@@ -303,7 +308,7 @@ type ElasticsearchLogsSourcesAnon struct {
 	// JSON representing the prefilters to apply to the index to get
 	// the specific values.
 	//
-	Prefilters interface{} `json:"prefilters,omitempty"`
+	Prefilters any `json:"prefilters,omitempty"`
 
 	// List of URLs to override the main URL defined
 	//
@@ -331,11 +336,15 @@ func (m *ElasticsearchLogsSourcesAnon) validateMapping(formats strfmt.Registry) 
 
 	if m.Mapping != nil {
 		if err := m.Mapping.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("mapping")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("mapping")
 			}
+
 			return err
 		}
 	}
@@ -366,11 +375,15 @@ func (m *ElasticsearchLogsSourcesAnon) contextValidateMapping(ctx context.Contex
 		}
 
 		if err := m.Mapping.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("mapping")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("mapping")
 			}
+
 			return err
 		}
 	}

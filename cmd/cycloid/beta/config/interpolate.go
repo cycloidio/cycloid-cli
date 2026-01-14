@@ -25,6 +25,7 @@ func NewInterpolateCmd() *cobra.Command {
 	cyargs.AddStackRefFlag(cmd)
 	cyargs.AddCyContext(cmd)
 	cyargs.AddStackFormsInputFlags(cmd)
+	cyargs.AddStackVersionFlags(cmd)
 	return cmd
 }
 
@@ -57,15 +58,21 @@ func interpolate(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
+	// Get the stack version flags
+	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	if err != nil {
+		return errors.Wrap(err, "failed to read stack version flags")
+	}
+
 	// Get default to stacks
-	stackConfig, err := m.GetComponentStackConfig(org, project, env, component, *useCase)
+	stackConfig, err := m.GetComponentStackConfig(org, project, env, component, useCase, tag, branch, hash)
 	if err != nil {
 		return err
 	}
 
-	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfig, *useCase)
+	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfig, useCase)
 	if err != nil {
-		return fmt.Errorf("failed to parse default value for stack '%s' with use-case '%s': %s", stackRef, *useCase, err)
+		return fmt.Errorf("failed to parse default value for stack %q with use-case %q: %w", stackRef, useCase, err)
 	}
 
 	inputs, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
@@ -78,7 +85,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	config, err := m.InterpolateFormsConfig(org, project, env, component, stackRef, *useCase, inputs)
+	config, err := m.InterpolateFormsConfig(org, project, env, component, stackRef, useCase, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to interpolate config", printer.Options{}, cmd.OutOrStderr())
 	}

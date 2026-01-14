@@ -21,7 +21,7 @@ func TestMembers(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		ids, err := JsonListExtractFields(cmdOut, "id", "email", "^foo@bli.fr$")
+		ids, err := JSONListExtractFields(cmdOut, "id", "email", "^foo@bli.fr$")
 		require.Nil(t, err)
 
 		for _, id := range ids {
@@ -49,7 +49,7 @@ func TestMembers(t *testing.T) {
 		err := json.Unmarshal([]byte(cmdOut), &memberList)
 		require.Nil(t, err, "unmarshalling cli json output")
 
-		ok := JsonListFindObjectValue(memberList, "email", "cycloidio@cycloid.io")
+		ok := JSONListFindObjectValue(memberList, "email", "cycloidio@cycloid.io")
 		assert.True(t, ok, fmt.Sprint("member with cycloidio@cycloid.io email address not found in json:\n", cmdOut))
 	})
 
@@ -101,7 +101,7 @@ func TestMembers(t *testing.T) {
 		err := json.Unmarshal([]byte(cmdOut), &memberList)
 		require.Nil(t, err, "unmarshalling cli json output")
 
-		ok := JsonListFindObjectValue(memberList, "invitation_email", "foo@bli.fr")
+		ok := JSONListFindObjectValue(memberList, "invitation_email", "foo@bli.fr")
 		assert.True(t, ok, fmt.Sprint("member with foo@bli.fr email address not found in json:\n", cmdOut))
 	})
 }

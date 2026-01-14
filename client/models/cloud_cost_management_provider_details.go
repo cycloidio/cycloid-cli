@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -55,11 +56,15 @@ func (m *CloudCostManagementProviderDetails) validateCostHistogram(formats strfm
 
 	if m.CostHistogram != nil {
 		if err := m.CostHistogram.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cost_histogram")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cost_histogram")
 			}
+
 			return err
 		}
 	}
@@ -74,11 +79,15 @@ func (m *CloudCostManagementProviderDetails) validateFilterValues(formats strfmt
 
 	if m.FilterValues != nil {
 		if err := m.FilterValues.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("filter_values")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("filter_values")
 			}
+
 			return err
 		}
 	}
@@ -109,11 +118,15 @@ func (m *CloudCostManagementProviderDetails) contextValidateCostHistogram(ctx co
 	if m.CostHistogram != nil {
 
 		if err := m.CostHistogram.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("cost_histogram")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cost_histogram")
 			}
+
 			return err
 		}
 	}
@@ -130,11 +143,15 @@ func (m *CloudCostManagementProviderDetails) contextValidateFilterValues(ctx con
 		}
 
 		if err := m.FilterValues.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("filter_values")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("filter_values")
 			}
+
 			return err
 		}
 	}

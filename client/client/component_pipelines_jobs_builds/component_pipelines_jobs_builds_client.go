@@ -133,7 +133,7 @@ type ClientService interface {
 AbortBuild Abort a specific build.
 */
 func (a *Client) AbortBuild(params *AbortBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*AbortBuildNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewAbortBuildParams()
 	}
@@ -153,17 +153,22 @@ func (a *Client) AbortBuild(params *AbortBuildParams, authInfo runtime.ClientAut
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*AbortBuildNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*AbortBuildDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -171,7 +176,7 @@ func (a *Client) AbortBuild(params *AbortBuildParams, authInfo runtime.ClientAut
 CreateBuild Create a new build for the job
 */
 func (a *Client) CreateBuild(params *CreateBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateBuildOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateBuildParams()
 	}
@@ -191,17 +196,22 @@ func (a *Client) CreateBuild(params *CreateBuildParams, authInfo runtime.ClientA
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateBuildOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateBuildDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -209,7 +219,7 @@ func (a *Client) CreateBuild(params *CreateBuildParams, authInfo runtime.ClientA
 GetBuild Get the information of the build.
 */
 func (a *Client) GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBuildParams()
 	}
@@ -229,17 +239,22 @@ func (a *Client) GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInf
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBuildOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetBuildDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -247,7 +262,7 @@ func (a *Client) GetBuild(params *GetBuildParams, authInfo runtime.ClientAuthInf
 GetBuildEvents Get the events of a build.
 */
 func (a *Client) GetBuildEvents(params *GetBuildEventsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildEventsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBuildEventsParams()
 	}
@@ -267,17 +282,22 @@ func (a *Client) GetBuildEvents(params *GetBuildEventsParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBuildEventsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetBuildEventsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -285,7 +305,7 @@ func (a *Client) GetBuildEvents(params *GetBuildEventsParams, authInfo runtime.C
 GetBuildPlan Get the plan of the build.
 */
 func (a *Client) GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildPlanOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBuildPlanParams()
 	}
@@ -305,17 +325,22 @@ func (a *Client) GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.Clien
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBuildPlanOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetBuildPlanDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -323,7 +348,7 @@ func (a *Client) GetBuildPlan(params *GetBuildPlanParams, authInfo runtime.Clien
 GetBuildPreparation Get the preparation of the Build.
 */
 func (a *Client) GetBuildPreparation(params *GetBuildPreparationParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildPreparationOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBuildPreparationParams()
 	}
@@ -343,17 +368,22 @@ func (a *Client) GetBuildPreparation(params *GetBuildPreparationParams, authInfo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBuildPreparationOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetBuildPreparationDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -361,7 +391,7 @@ func (a *Client) GetBuildPreparation(params *GetBuildPreparationParams, authInfo
 GetBuildResources Get the resources of the build.
 */
 func (a *Client) GetBuildResources(params *GetBuildResourcesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildResourcesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBuildResourcesParams()
 	}
@@ -381,17 +411,22 @@ func (a *Client) GetBuildResources(params *GetBuildResourcesParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBuildResourcesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetBuildResourcesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -399,7 +434,7 @@ func (a *Client) GetBuildResources(params *GetBuildResourcesParams, authInfo run
 GetBuilds Get the pipeline job's builds that the authenticated user has access to.
 */
 func (a *Client) GetBuilds(params *GetBuildsParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetBuildsOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetBuildsParams()
 	}
@@ -419,17 +454,22 @@ func (a *Client) GetBuilds(params *GetBuildsParams, authInfo runtime.ClientAuthI
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetBuildsOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetBuildsDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -437,7 +477,7 @@ func (a *Client) GetBuilds(params *GetBuildsParams, authInfo runtime.ClientAuthI
 RerunBuild Reruns a specific build.
 */
 func (a *Client) RerunBuild(params *RerunBuildParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RerunBuildOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRerunBuildParams()
 	}
@@ -457,17 +497,22 @@ func (a *Client) RerunBuild(params *RerunBuildParams, authInfo runtime.ClientAut
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RerunBuildOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*RerunBuildDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

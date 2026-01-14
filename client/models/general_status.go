@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -71,11 +72,15 @@ func (m *GeneralStatus) validateChecks(formats strfmt.Registry) error {
 
 		if m.Checks[i] != nil {
 			if err := m.Checks[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("checks" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("checks" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -98,7 +103,7 @@ func (m *GeneralStatus) validateMessage(formats strfmt.Registry) error {
 	return nil
 }
 
-var generalStatusTypeStatusPropEnum []interface{}
+var generalStatusTypeStatusPropEnum []any
 
 func init() {
 	var res []string
@@ -169,11 +174,15 @@ func (m *GeneralStatus) contextValidateChecks(ctx context.Context, formats strfm
 			}
 
 			if err := m.Checks[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("checks" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("checks" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}

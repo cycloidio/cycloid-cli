@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -137,11 +138,15 @@ func (m *UpdateCredential) validateRaw(formats strfmt.Registry) error {
 
 	if m.Raw != nil {
 		if err := m.Raw.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("raw")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("raw")
 			}
+
 			return err
 		}
 	}
@@ -149,7 +154,7 @@ func (m *UpdateCredential) validateRaw(formats strfmt.Registry) error {
 	return nil
 }
 
-var updateCredentialTypeTypePropEnum []interface{}
+var updateCredentialTypeTypePropEnum []any
 
 func init() {
 	var res []string
@@ -232,11 +237,15 @@ func (m *UpdateCredential) contextValidateRaw(ctx context.Context, formats strfm
 	if m.Raw != nil {
 
 		if err := m.Raw.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("raw")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("raw")
 			}
+
 			return err
 		}
 	}

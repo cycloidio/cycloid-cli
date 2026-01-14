@@ -124,7 +124,7 @@ type ClientService interface {
 CreateInfraImport Create a new Infra Import
 */
 func (a *Client) CreateInfraImport(params *CreateInfraImportParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateInfraImportAccepted, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateInfraImportParams()
 	}
@@ -144,17 +144,22 @@ func (a *Client) CreateInfraImport(params *CreateInfraImportParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateInfraImportAccepted)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateInfraImportDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -162,7 +167,7 @@ func (a *Client) CreateInfraImport(params *CreateInfraImportParams, authInfo run
 DeleteInfraImport Delete the infra Import.
 */
 func (a *Client) DeleteInfraImport(params *DeleteInfraImportParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteInfraImportNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteInfraImportParams()
 	}
@@ -182,17 +187,22 @@ func (a *Client) DeleteInfraImport(params *DeleteInfraImportParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteInfraImportNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteInfraImportDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -200,7 +210,7 @@ func (a *Client) DeleteInfraImport(params *DeleteInfraImportParams, authInfo run
 DeleteServiceCatalogImport Delete the Stack import of the organization.
 */
 func (a *Client) DeleteServiceCatalogImport(params *DeleteServiceCatalogImportParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteServiceCatalogImportNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteServiceCatalogImportParams()
 	}
@@ -220,17 +230,22 @@ func (a *Client) DeleteServiceCatalogImport(params *DeleteServiceCatalogImportPa
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteServiceCatalogImportNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteServiceCatalogImportDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -238,7 +253,7 @@ func (a *Client) DeleteServiceCatalogImport(params *DeleteServiceCatalogImportPa
 GetInfraImport Get the Infra Import
 */
 func (a *Client) GetInfraImport(params *GetInfraImportParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetInfraImportOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetInfraImportParams()
 	}
@@ -258,17 +273,22 @@ func (a *Client) GetInfraImport(params *GetInfraImportParams, authInfo runtime.C
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetInfraImportOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetInfraImportDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -276,7 +296,7 @@ func (a *Client) GetInfraImport(params *GetInfraImportParams, authInfo runtime.C
 GetServiceCatalogImport Get the import of a new Stack of the organization.
 */
 func (a *Client) GetServiceCatalogImport(params *GetServiceCatalogImportParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetServiceCatalogImportOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetServiceCatalogImportParams()
 	}
@@ -296,17 +316,22 @@ func (a *Client) GetServiceCatalogImport(params *GetServiceCatalogImportParams, 
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetServiceCatalogImportOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetServiceCatalogImportDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -314,7 +339,7 @@ func (a *Client) GetServiceCatalogImport(params *GetServiceCatalogImportParams, 
 RetryInfraImport Retry infra import.
 */
 func (a *Client) RetryInfraImport(params *RetryInfraImportParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RetryInfraImportAccepted, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRetryInfraImportParams()
 	}
@@ -334,17 +359,22 @@ func (a *Client) RetryInfraImport(params *RetryInfraImportParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RetryInfraImportAccepted)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*RetryInfraImportDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -352,7 +382,7 @@ func (a *Client) RetryInfraImport(params *RetryInfraImportParams, authInfo runti
 RetryServiceCatalogImport Retry to import a Stack.
 */
 func (a *Client) RetryServiceCatalogImport(params *RetryServiceCatalogImportParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RetryServiceCatalogImportAccepted, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewRetryServiceCatalogImportParams()
 	}
@@ -372,17 +402,22 @@ func (a *Client) RetryServiceCatalogImport(params *RetryServiceCatalogImportPara
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*RetryServiceCatalogImportAccepted)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*RetryServiceCatalogImportDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

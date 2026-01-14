@@ -25,7 +25,7 @@ func TestKpis(t *testing.T) {
 			"list",
 		})
 		require.Nil(t, cmdErr)
-		cs, err := JsonListExtractFields(cmdOut, "canonical", "canonical", "^test-.*")
+		cs, err := JSONListExtractFields(cmdOut, "canonical", "canonical", "^test-.*")
 		require.Nil(t, err)
 
 		for _, c := range cs {
@@ -114,6 +114,9 @@ func TestKpis(t *testing.T) {
 	})
 
 	t.Run("SuccessKpisCreate", func(t *testing.T) {
+		// TODO: Fix tests when components are implemented
+		t.Skip()
+
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
@@ -127,23 +130,20 @@ func TestKpis(t *testing.T) {
 			"--job", "job-hello-world",
 		})
 
-		// TODO: Fix tests when components are implemented
-		t.Skip()
-
 		require.Nil(t, cmdErr)
 		require.Contains(t, cmdOut, "canonical\": \"test-")
 	})
 
 	t.Run("SuccessKpisList", func(t *testing.T) {
+		// TODO: Fix tests when components are implemented
+		t.Skip()
+
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"kpis",
 			"list",
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
 
 		require.Nil(t, cmdErr)
 		require.Contains(t, cmdOut, "canonical\": \"test-")
@@ -153,6 +153,9 @@ func TestKpis(t *testing.T) {
 	})
 
 	t.Run("SuccessKpisDelete", func(t *testing.T) {
+		// TODO: Fix tests when components are implemented
+		t.Skip()
+
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
@@ -160,9 +163,6 @@ func TestKpis(t *testing.T) {
 			"delete",
 			"--canonical", createdKpi,
 		})
-
-		// TODO: Fix tests when components are implemented
-		t.Skip()
 
 		require.Nil(t, cmdErr)
 		assert.Equal(t, "", cmdOut)

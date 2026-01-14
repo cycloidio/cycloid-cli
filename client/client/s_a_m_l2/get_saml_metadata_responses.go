@@ -7,6 +7,7 @@ package s_a_m_l2
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -24,7 +25,7 @@ type GetSamlMetadataReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetSamlMetadataReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetSamlMetadataReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetSamlMetadataOK()
@@ -61,7 +62,7 @@ GetSamlMetadataOK describes a response with status code 200, with default header
 SAML2 XML metadata describing the Cycloid Service Provider.
 */
 type GetSamlMetadataOK struct {
-	Payload interface{}
+	Payload any
 }
 
 // IsSuccess returns true when this get saml metadata o k response has a 2xx status code
@@ -104,14 +105,14 @@ func (o *GetSamlMetadataOK) String() string {
 	return fmt.Sprintf("[GET /saml2][%d] getSamlMetadataOK %s", 200, payload)
 }
 
-func (o *GetSamlMetadataOK) GetPayload() interface{} {
+func (o *GetSamlMetadataOK) GetPayload() any {
 	return o.Payload
 }
 
 func (o *GetSamlMetadataOK) readResponse(response runtime.ClientResponse, consumer runtime.Consumer, formats strfmt.Registry) error {
 
 	// response payload
-	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), &o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -199,7 +200,7 @@ func (o *GetSamlMetadataNotFound) readResponse(response runtime.ClientResponse, 
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -290,7 +291,7 @@ func (o *GetSamlMetadataDefault) readResponse(response runtime.ClientResponse, c
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

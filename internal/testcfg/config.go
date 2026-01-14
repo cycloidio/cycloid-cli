@@ -11,7 +11,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/sanity-io/litter"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 type Config struct {
@@ -19,9 +19,10 @@ type Config struct {
 	APIUrl string
 	Org    string
 	// GitCredential models.Credential
-	ConfigRepo  *models.ConfigRepository
-	CatalogRepo *models.ServiceCatalogSource
-	Middleware  middleware.Middleware
+	ConfigRepo               *models.ConfigRepository
+	CatalogRepo              *models.ServiceCatalogSource
+	CatalogRepoVersionStacks *models.ServiceCatalogSourceVersion
+	Middleware               middleware.Middleware
 	// Common project to use for tests that require one
 	Project *models.Project
 	// Common environment to use for tests that require one
@@ -106,7 +107,8 @@ func NewConfig(testName string) (*Config, error) {
 	config.Middleware = m
 
 	var (
-		userName        = "administrator"
+		username        = "administrator"
+		fullName        = "administrator"
 		email           = "admin@cycloid.io"
 		password        = "cycloidadmin"
 		apiKeyCanonical = "admin-" + testName
@@ -114,7 +116,7 @@ func NewConfig(testName string) (*Config, error) {
 
 	if provisionAPI {
 		// try to login, is successful, console is initialized
-		init, err := m.InitFirstOrg(config.Org, userName, userName, userName, email, password, licence, &apiKeyCanonical)
+		init, err := m.InitFirstOrg(config.Org, username, fullName, email, password, licence, &apiKeyCanonical)
 		if err != nil {
 			return nil, fmt.Errorf("failed to init console: %w", err)
 		}
@@ -128,7 +130,12 @@ func NewConfig(testName string) (*Config, error) {
 			return nil, err
 		}
 
-		err = os.WriteFile(root+"/.api_key", []byte("CY_API_KEY="+config.APIKey), 0666)
+		apiKeyEnvFile := strings.Join([]string{
+			"CY_API_KEY=" + config.APIKey,
+			"CY_API_URL=" + config.APIUrl,
+			"CY_ORG=" + config.Org,
+		}, "\n")
+		err = os.WriteFile(root+"/.api_key", []byte(apiKeyEnvFile), 0666)
 		if err != nil {
 			return nil, err
 		}
@@ -144,15 +151,19 @@ func NewConfig(testName string) (*Config, error) {
 		}
 	}
 
-	_, err = m.CreateConfigRepository(config.Org,
+	currentConfigRepo, err := m.CreateConfigRepository(config.Org,
 		*config.ConfigRepo.Canonical, *config.ConfigRepo.Canonical, *config.ConfigRepo.URL,
 		config.ConfigRepo.Branch, localGitCredential, *config.ConfigRepo.Default,
 	)
 	if errors.As(err, &apiErr) {
-		if apiErr.HTTPCode != "409" {
-			return config, fmt.Errorf("failed to setup config repo: %w", err)
+		var getErr error
+		currentConfigRepo, getErr = m.GetConfigRepository(config.Org, configRepository)
+		if apiErr.HTTPCode != "409" || getErr != nil {
+			return config, fmt.Errorf("failed to setup config repo: %w%w", err, getErr)
 		}
 	}
+
+	config.ConfigRepo = currentConfigRepo
 
 	_, err = m.CreateCatalogRepository(config.Org, *config.CatalogRepo.Canonical,
 		*config.CatalogRepo.URL, config.CatalogRepo.Branch, "", "local", "",
@@ -161,6 +172,21 @@ func NewConfig(testName string) (*Config, error) {
 		if apiErr.HTTPCode != "409" {
 			return config, fmt.Errorf("failed to setup catalog repo: %w", err)
 		}
+	}
+
+	catalogRepoChanges, err := m.RefreshCatalogRepository(config.Org, *config.CatalogRepo.Canonical)
+	if err != nil {
+		return config, fmt.Errorf("failed to refresh catalog repo: %w", err)
+	}
+
+	for _, v := range catalogRepoChanges.Versions {
+		if ptr.Value(v.Name) == "stacks" {
+			config.CatalogRepoVersionStacks = v
+			break
+		}
+	}
+	if config.CatalogRepoVersionStacks == nil {
+		return config, fmt.Errorf("failed to find latest catalog repo version after refresh")
 	}
 
 	project, err := config.NewTestProject("common")
@@ -176,17 +202,15 @@ func NewConfig(testName string) (*Config, error) {
 	config.Environment = environment
 
 	stackRef := config.Org + ":" + defaultStackCanonical
-
 	component, err := config.NewTestComponent(
-		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, nil,
+		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, "", "", *config.CatalogRepoVersionStacks.CommitHash, nil,
 	)
 	if err != nil {
 		return config, err
 	}
 	config.Component = component
 
-	litter.Dump(project, environment, component)
-	stackConfig, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase)
+	stackConfig, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase, "", "", *config.CatalogRepoVersionStacks.CommitHash)
 	if err != nil {
 		return config, err
 	}
@@ -195,15 +219,7 @@ func NewConfig(testName string) (*Config, error) {
 	if err != nil {
 		return config, err
 	}
-
-	// Add a random value in forms to avoid git conflict
-	if vars != nil {
-		common.UpdateMapField("types.tests.string", RandomCanonical("common"), vars)
-	} else {
-		vars = models.FormVariables{
-			"types": {"tests": {"string": RandomCanonical("common")}},
-		}
-	}
+	common.UpdateMapField("types.tests.string", RandomCanonical("common"), vars)
 
 	return config, nil
 }
@@ -226,13 +242,13 @@ func (config *Config) NewTestProject(identifier string) (*models.Project, error)
 
 	out, err := m.CreateProject(config.Org, project, project, description, configRepository, owner, team, color, icon)
 	if err != nil {
-		return nil, fmt.Errorf("failed to setup test project: %s", err)
+		return nil, fmt.Errorf("failed to setup test project: %w", err)
 	}
 
 	config.AppendCleanup(func() {
 		err := m.DeleteProject(config.Org, project)
 		if err != nil {
-			log.Fatalf("cannot cleanup projet '%s' for test '%s': %s", project, identifier, err)
+			log.Fatalf("cannot cleanup projet %q for test %q: %v", project, identifier, err)
 			return
 		}
 	})
@@ -253,13 +269,13 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 
 	out, err := m.CreateEnv(config.Org, project, env, env, color)
 	if err != nil {
-		return nil, fmt.Errorf("failed to setup test environment: %s", err)
+		return nil, fmt.Errorf("failed to setup test environment: %w", err)
 	}
 
 	config.AppendCleanup(func() {
 		err := m.DeleteEnv(config.Org, project, env)
 		if err != nil {
-			log.Fatalf("cannot cleanup env '%s' for test '%s': %s", env, identifier, err)
+			log.Fatalf("cannot cleanup env %q for test %q: %v", env, identifier, err)
 			return
 		}
 	})
@@ -270,24 +286,18 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 // setupTestProject will create an component with a random canonical derived from identifier
 // and return the component, the function to defer for its deletion and error.
 // The func will always be returned so even if err != nil, defer the func.
-func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCase string, inputs models.FormVariables) (*models.Component, error) {
+func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCase, versionTag, versionBranch, versionCommitHash string, inputs models.FormVariables) (*models.Component, error) {
 	m := config.Middleware
 	component := RandomCanonical(identifier)
 
-	outComponent, err := m.CreateAndConfigureComponent(
-		config.Org, project, env, component, "", &component, stackRef, useCase, "", inputs,
-	)
+	outComponent, err := m.CreateAndConfigureComponent(config.Org, project, env, component, "", component, stackRef, versionTag, versionBranch, versionCommitHash, useCase, "", inputs)
 	if err != nil {
 		return nil, err
 	}
 
-	if outComponent == nil {
-		panic("empty component")
-	}
-
 	config.AppendCleanup(func() {
 		if err := m.DeleteComponent(config.Org, project, env, component); err != nil {
-			log.Printf("failed to cleanup component for test '%s': %s", identifier, err)
+			log.Printf("failed to cleanup component for test %q: %v", identifier, err)
 		}
 	})
 
@@ -315,14 +325,14 @@ func (config *Config) NewTestChildOrg(parent, child string) (func(), error) {
 	deferFunc := func() {
 		err := m.DeleteOrganization(child)
 		if err != nil {
-			log.Fatalf("Failed to delete org '%s': %v", child, err)
+			log.Fatalf("Failed to delete org %q: %v", child, err)
 			return
 		}
 	}
 
 	_, err := m.CreateOrganizationChild(parent, child, nil)
 	if err != nil {
-		return deferFunc, fmt.Errorf("failed to create child org '%s': %v", child, err)
+		return deferFunc, fmt.Errorf("failed to create child org %q: %v", child, err)
 	}
 
 	return deferFunc, nil

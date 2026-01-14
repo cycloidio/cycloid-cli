@@ -8,6 +8,7 @@ package organization_external_backends
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type CreateExternalBackendReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *CreateExternalBackendReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CreateExternalBackendReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewCreateExternalBackendOK()
@@ -102,7 +103,7 @@ func (o *CreateExternalBackendOK) readResponse(response runtime.ClientResponse, 
 	o.Payload = new(CreateExternalBackendOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -142,11 +143,15 @@ func (o *CreateExternalBackendOKBody) validateData(formats strfmt.Registry) erro
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createExternalBackendOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createExternalBackendOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -173,11 +178,15 @@ func (o *CreateExternalBackendOKBody) contextValidateData(ctx context.Context, f
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createExternalBackendOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createExternalBackendOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

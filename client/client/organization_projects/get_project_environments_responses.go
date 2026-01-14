@@ -8,6 +8,7 @@ package organization_projects
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 	"strconv"
@@ -27,7 +28,7 @@ type GetProjectEnvironmentsReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetProjectEnvironmentsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetProjectEnvironmentsReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetProjectEnvironmentsOK()
@@ -128,7 +129,7 @@ func (o *GetProjectEnvironmentsOK) readResponse(response runtime.ClientResponse,
 	o.Payload = new(GetProjectEnvironmentsOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -216,7 +217,7 @@ func (o *GetProjectEnvironmentsForbidden) readResponse(response runtime.ClientRe
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -304,7 +305,7 @@ func (o *GetProjectEnvironmentsNotFound) readResponse(response runtime.ClientRes
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -392,7 +393,7 @@ func (o *GetProjectEnvironmentsUnprocessableEntity) readResponse(response runtim
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -483,7 +484,7 @@ func (o *GetProjectEnvironmentsDefault) readResponse(response runtime.ClientResp
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -536,11 +537,15 @@ func (o *GetProjectEnvironmentsOKBody) validateData(formats strfmt.Registry) err
 
 		if o.Data[i] != nil {
 			if err := o.Data[i].Validate(formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("getProjectEnvironmentsOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("getProjectEnvironmentsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -558,11 +563,15 @@ func (o *GetProjectEnvironmentsOKBody) validatePagination(formats strfmt.Registr
 
 	if o.Pagination != nil {
 		if err := o.Pagination.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getProjectEnvironmentsOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getProjectEnvironmentsOK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}
@@ -599,11 +608,15 @@ func (o *GetProjectEnvironmentsOKBody) contextValidateData(ctx context.Context, 
 			}
 
 			if err := o.Data[i].ContextValidate(ctx, formats); err != nil {
-				if ve, ok := err.(*errors.Validation); ok {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
 					return ve.ValidateName("getProjectEnvironmentsOK" + "." + "data" + "." + strconv.Itoa(i))
-				} else if ce, ok := err.(*errors.CompositeError); ok {
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
 					return ce.ValidateName("getProjectEnvironmentsOK" + "." + "data" + "." + strconv.Itoa(i))
 				}
+
 				return err
 			}
 		}
@@ -618,11 +631,15 @@ func (o *GetProjectEnvironmentsOKBody) contextValidatePagination(ctx context.Con
 	if o.Pagination != nil {
 
 		if err := o.Pagination.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getProjectEnvironmentsOK" + "." + "pagination")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getProjectEnvironmentsOK" + "." + "pagination")
 			}
+
 			return err
 		}
 	}

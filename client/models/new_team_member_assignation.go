@@ -16,21 +16,26 @@ import (
 
 // NewTeamMemberAssignation Assign user
 //
-// # Member is a user assigned to a Team
+// Member is a user assigned to a Team. This is a good place to use oneOf property, but unfortunatelly we are still in 2.0, so the rule is:
+// one of username or email must be given. In case if both are present, only the username is used to send the invite,
+// because only one user can be added at the time.
 //
 // swagger:model NewTeamMemberAssignation
 type NewTeamMemberAssignation struct {
 
+	// Assign user by email (can be used for users who didn't accept the invitation yet and have no username)
+	// Format: email
+	Email strfmt.Email `json:"email,omitempty"`
+
 	// Assign user by username
-	// Required: true
-	Username *string `json:"username"`
+	Username string `json:"username,omitempty"`
 }
 
 // Validate validates this new team member assignation
 func (m *NewTeamMemberAssignation) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateUsername(formats); err != nil {
+	if err := m.validateEmail(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -40,9 +45,12 @@ func (m *NewTeamMemberAssignation) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewTeamMemberAssignation) validateUsername(formats strfmt.Registry) error {
+func (m *NewTeamMemberAssignation) validateEmail(formats strfmt.Registry) error {
+	if swag.IsZero(m.Email) { // not required
+		return nil
+	}
 
-	if err := validate.Required("username", "body", m.Username); err != nil {
+	if err := validate.FormatOf("email", "body", "email", m.Email.String(), formats); err != nil {
 		return err
 	}
 

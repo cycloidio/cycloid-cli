@@ -1,0 +1,8 @@
+component: CLI
+kind: FIXED
+body: Make interpolator output consistent regarding trailling newlines
+time: 2025-10-14T12:15:43.724019426Z
+custom:
+  DETAILS: All output will end with a newline.
+  PR: "395"
+  TYPE: CLI

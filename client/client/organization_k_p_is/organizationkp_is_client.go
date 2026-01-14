@@ -112,7 +112,7 @@ type ClientService interface {
 GetOrganizationKpis Get the list of configured KPIs in this organization
 */
 func (a *Client) GetOrganizationKpis(params *GetOrganizationKpisParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetOrganizationKpisOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetOrganizationKpisParams()
 	}
@@ -132,17 +132,22 @@ func (a *Client) GetOrganizationKpis(params *GetOrganizationKpisParams, authInfo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetOrganizationKpisOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetOrganizationKpisDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

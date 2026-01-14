@@ -33,7 +33,7 @@ func TestEnvs(t *testing.T) {
 		}
 		_, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to create env '%s': %v", env, err)
+			t.Errorf("failed to create env '%s': %v", env, err)
 		}
 	})
 
@@ -45,7 +45,7 @@ func TestEnvs(t *testing.T) {
 		}
 		_, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to delete env '%s': %v", env, err)
+			t.Errorf("failed to delete env '%s': %v", env, err)
 		}
 	})
 
@@ -58,13 +58,13 @@ func TestEnvs(t *testing.T) {
 		}
 		cmdOut, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to get env '%s': %v", env, err)
+			t.Errorf("failed to get env '%s': %v", env, err)
 		}
 
 		var got models.Environment
 		err = json.Unmarshal([]byte(cmdOut), &got)
 		if err != nil {
-			t.Fatalf("failed to marshal json cli output: %s\nerr: %s", cmdOut, err)
+			t.Errorf("failed to marshal json cli output: %s\nerr: %s", cmdOut, err)
 		}
 
 		assert.EqualValues(t, env, *got.Canonical)
@@ -86,13 +86,13 @@ func TestEnvs(t *testing.T) {
 		}
 		out, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to create env '%s': %v", env, err)
+			t.Errorf("failed to create env '%s': %v", env, err)
 		}
 
 		var envResult models.Environment
 		err = json.Unmarshal([]byte(out), &envResult)
 		if err != nil {
-			t.Fatalf("failed to parse json output from the CLI on create --update: %v\noutput: %s", err, out)
+			t.Errorf("failed to parse json output from the CLI on create --update: %v\noutput: %s", err, out)
 		}
 
 		assert.Equal(t, createUpdateName, envResult.Name)
@@ -111,7 +111,7 @@ func TestEnvs(t *testing.T) {
 		}
 		_, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to create env '%s': %v", newEnv, err)
+			t.Errorf("failed to create env '%s': %v", newEnv, err)
 		}
 
 		defer t.Run("DeleteCreateUpdate", func(t *testing.T) {
@@ -122,7 +122,7 @@ func TestEnvs(t *testing.T) {
 			}
 			_, err := executeCommand(args)
 			if err != nil {
-				t.Fatalf("failed to delete env '%s': %v", newEnv, err)
+				t.Errorf("failed to delete env '%s': %v", newEnv, err)
 			}
 		})
 	})
@@ -139,13 +139,13 @@ func TestEnvs(t *testing.T) {
 		}
 		out, err := executeCommand(args)
 		if err != nil {
-			t.Fatalf("failed to update env '%s': %v", env, err)
+			t.Errorf("failed to update env '%s': %v", env, err)
 		}
 
 		var envResult models.Environment
 		err = json.Unmarshal([]byte(out), &envResult)
 		if err != nil {
-			t.Fatalf("failed to parse json output from the CLI on update: %v", err)
+			t.Errorf("failed to parse json output from the CLI on update: %v", err)
 		}
 
 		assert.Equal(t, newName, envResult.Name)

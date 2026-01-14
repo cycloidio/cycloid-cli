@@ -36,8 +36,3 @@ func ConvertMapInterfaceToMapString(p any) any {
 		return v
 	}
 }
-
-// p returns the pointer to the value T
-func p[T any](i T) *T {
-	return &i
-}

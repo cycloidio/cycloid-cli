@@ -8,21 +8,20 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) UserSignup(username, email, password, givenName, familyName string) error {
+func (m *middleware) UserSignup(username, email, password, fullName string) error {
 	params := user.NewSignUpParams()
 	body := &models.NewUserAccount{
-		Username:   &username,
-		Email:      (*strfmt.Email)(&email),
-		Password:   (*strfmt.Password)(&password),
-		GivenName:  &givenName,
-		FamilyName: &familyName,
+		Username: username,
+		Email:    (*strfmt.Email)(&email),
+		Password: (*strfmt.Password)(&password),
+		FullName: &fullName,
 	}
 
 	params.WithBody(body)
 
 	_, err := m.api.User.SignUp(params)
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil
@@ -47,14 +46,14 @@ func (m *middleware) RefreshToken(org, childOrg *string, token string) (*models.
 		),
 	)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
 	return payload.Data, nil
 }
 
-func (m *middleware) UserLogin(org, email, username *string, password string) (*models.UserSession, error) {
+func (m *middleware) UserLogin(org, email *string, password string) (*models.UserSession, error) {
 	params := user.NewLoginParams()
 	body := models.UserLogin{
 		Password: (*strfmt.Password)(&password),
@@ -71,7 +70,7 @@ func (m *middleware) UserLogin(org, email, username *string, password string) (*
 	params.WithBody(&body)
 	resp, err := m.api.User.Login(params)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -90,7 +89,7 @@ func (m *middleware) UserLoginToOrg(org, email, password string) (*models.UserSe
 
 	resp, err := m.api.User.LoginToOrg(params)
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()

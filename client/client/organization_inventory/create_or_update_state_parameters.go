@@ -65,7 +65,7 @@ type CreateOrUpdateStateParams struct {
 
 	   The information of the Inventory new data
 	*/
-	Body interface{}
+	Body any
 
 	/* Jwt.
 
@@ -127,13 +127,13 @@ func (o *CreateOrUpdateStateParams) SetHTTPClient(client *http.Client) {
 }
 
 // WithBody adds the body to the create or update state params
-func (o *CreateOrUpdateStateParams) WithBody(body interface{}) *CreateOrUpdateStateParams {
+func (o *CreateOrUpdateStateParams) WithBody(body any) *CreateOrUpdateStateParams {
 	o.SetBody(body)
 	return o
 }
 
 // SetBody adds the body to the create or update state params
-func (o *CreateOrUpdateStateParams) SetBody(body interface{}) {
+func (o *CreateOrUpdateStateParams) SetBody(body any) {
 	o.Body = body
 }
 

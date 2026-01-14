@@ -71,7 +71,7 @@ func (m *Rule) validateAction(formats strfmt.Registry) error {
 	return nil
 }
 
-var ruleTypeEffectPropEnum []interface{}
+var ruleTypeEffectPropEnum []any
 
 func init() {
 	var res []string

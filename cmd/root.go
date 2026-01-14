@@ -10,13 +10,13 @@ import (
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalog_repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalogrepositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/config_repositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/configrepositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/credentials"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environments"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/external_backends"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/externalbackends"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/infrapolicies"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
@@ -27,6 +27,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
 	"github.com/cycloidio/cycloid-cli/internal/version"
 )
 
@@ -58,12 +59,12 @@ Documentation at https://docs.cycloid.io/reference/cli/
 Some environment variables can be set to ease context setting in Cycloid.
 Those variables will be overridden by related flags.
 
-Name         |  Desctiption
+Name         |  Description
 -------------|-----------------
 CY_API_URL   | Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
 CY_ORG       | Set the current organization
 CY_PROJECT   | Set the current project
-CY_ENV       | (or CY_ENVIRONMENT) Set the current environment
+CY_ENV       | Set the current environment
 CY_COMPONENT | Set the current component
 CY_API_KEY   | Set the current API Key to use
 CY_VERBOSITY | Set the verbosity level (debug, info, warning, error), default warning.
@@ -105,12 +106,13 @@ func AttachCommands(cmd *cobra.Command) {
 		root.NewVersionCmd(),
 		root.NewStatusCmd(),
 		root.NewCompletionCmd(),
+		root.NewGetCommand(),
 		apikey.NewCommands(),
-		catalog_repositories.NewCommands(),
-		config_repositories.NewCommands(),
+		catalogrepositories.NewCommands(),
+		configrepositories.NewCommands(),
 		credentials.NewCommands(),
 		events.NewCommands(),
-		external_backends.NewCommands(),
+		externalbackends.NewCommands(),
 		infrapolicies.NewCommands(),
 		members.NewCommands(),
 		organizations.NewCommands(),
@@ -124,5 +126,6 @@ func AttachCommands(cmd *cobra.Command) {
 		login.NewCommands(),
 		terracost.NewCommands(),
 		beta.NewCommands(),
+		uri.NewURICommands(),
 	)
 }

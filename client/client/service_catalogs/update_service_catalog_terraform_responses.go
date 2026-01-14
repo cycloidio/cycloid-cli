@@ -7,6 +7,7 @@ package service_catalogs
 
 import (
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -24,7 +25,7 @@ type UpdateServiceCatalogTerraformReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *UpdateServiceCatalogTerraformReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *UpdateServiceCatalogTerraformReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 204:
 		result := NewUpdateServiceCatalogTerraformNoContent()
@@ -199,7 +200,7 @@ func (o *UpdateServiceCatalogTerraformForbidden) readResponse(response runtime.C
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -287,7 +288,7 @@ func (o *UpdateServiceCatalogTerraformNotFound) readResponse(response runtime.Cl
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -375,7 +376,7 @@ func (o *UpdateServiceCatalogTerraformUnprocessableEntity) readResponse(response
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -466,7 +467,7 @@ func (o *UpdateServiceCatalogTerraformDefault) readResponse(response runtime.Cli
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 

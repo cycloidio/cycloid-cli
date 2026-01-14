@@ -11,7 +11,7 @@ func (m *middleware) ListRoles(org string) ([]*models.Role, error) {
 
 	resp, err := m.api.OrganizationRoles.GetRoles(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -26,7 +26,7 @@ func (m *middleware) GetRole(org, role string) (*models.Role, error) {
 
 	resp, err := m.api.OrganizationRoles.GetRole(params, m.api.Credentials(&org))
 	if err != nil {
-		return nil, NewApiError(err)
+		return nil, NewAPIError(err)
 	}
 
 	payload := resp.GetPayload()
@@ -41,7 +41,7 @@ func (m *middleware) DeleteRole(org, role string) error {
 
 	_, err := m.api.OrganizationRoles.DeleteRole(params, m.api.Credentials(&org))
 	if err != nil {
-		return NewApiError(err)
+		return NewAPIError(err)
 	}
 
 	return nil

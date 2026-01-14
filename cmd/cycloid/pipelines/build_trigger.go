@@ -64,7 +64,7 @@ func createBuild(cmd *cobra.Command, args []string) error {
 
 	build, err := m.CreateBuild(org, project, env, component, pipeline, job)
 	if err != nil {
-		return fmt.Errorf("failed to trigger build in context project '%s', env '%s', component '%s' with pipeline '%s' in job '%s': %s", project, env, component, pipeline, job, err)
+		return fmt.Errorf("failed to trigger build in context project %q, env %q, component %q with pipeline %q in job %q: %w", project, env, component, pipeline, job, err)
 	}
 
 	return printer.SmartPrint(p, build, nil, "", printer.Options{}, cmd.OutOrStdout())

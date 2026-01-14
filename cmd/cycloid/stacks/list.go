@@ -2,6 +2,7 @@ package stacks
 
 import (
 	"fmt"
+
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -89,7 +90,8 @@ func list(cmd *cobra.Command, args []string) error {
 		}
 
 		if stack.Ref != nil {
-			stackUseCases, err := m.ListStackUseCases(org, *stack.Ref)
+			// Pass empty version flags to use default/latest version
+			stackUseCases, err := m.ListStackUseCases(org, *stack.Ref, "", "", "")
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), "error: failed to fetch use cases for blueprint '%s': %s\n", *stack.Ref, err.Error())
 				continue

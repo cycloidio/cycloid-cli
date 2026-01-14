@@ -8,6 +8,7 @@ package service_catalogs
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type CreateServiceCatalogFromTemplateReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *CreateServiceCatalogFromTemplateReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *CreateServiceCatalogFromTemplateReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewCreateServiceCatalogFromTemplateOK()
@@ -127,7 +128,7 @@ func (o *CreateServiceCatalogFromTemplateOK) readResponse(response runtime.Clien
 	o.Payload = new(CreateServiceCatalogFromTemplateOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -215,7 +216,7 @@ func (o *CreateServiceCatalogFromTemplateForbidden) readResponse(response runtim
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -303,7 +304,7 @@ func (o *CreateServiceCatalogFromTemplateNotFound) readResponse(response runtime
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -391,7 +392,7 @@ func (o *CreateServiceCatalogFromTemplateUnprocessableEntity) readResponse(respo
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -482,7 +483,7 @@ func (o *CreateServiceCatalogFromTemplateDefault) readResponse(response runtime.
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -522,11 +523,15 @@ func (o *CreateServiceCatalogFromTemplateOKBody) validateData(formats strfmt.Reg
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createServiceCatalogFromTemplateOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createServiceCatalogFromTemplateOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -553,11 +558,15 @@ func (o *CreateServiceCatalogFromTemplateOKBody) contextValidateData(ctx context
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("createServiceCatalogFromTemplateOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("createServiceCatalogFromTemplateOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

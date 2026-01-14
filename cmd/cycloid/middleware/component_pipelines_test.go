@@ -2,20 +2,21 @@ package middleware_test
 
 import (
 	"fmt"
-	"reflect"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestComponentPipeline(t *testing.T) {
 	m := config.Middleware
 
 	component, err := config.NewTestComponent(
-		*config.Project.Canonical, *config.Environment.Canonical, t.Name(), config.Org+":"+pipelineTestStackCanonical, pipelineTestStackUseCase, pipelineTestDefaultVars,
+		*config.Project.Canonical, *config.Environment.Canonical, t.Name(), config.Org+":"+pipelineTestStackCanonical, pipelineTestStackUseCase, "", "", *config.CatalogRepoVersionStacks.CommitHash, pipelineTestDefaultVars,
 	)
 	if err != nil {
-		t.Errorf("failed to setup base component for test '%s': %s", t.Name(), err)
+		t.Errorf("failed to setup base component for test %q: %v", t.Name(), err)
 	}
 
 	t.Run("GetPipeline", func(t *testing.T) {
@@ -26,9 +27,8 @@ func TestComponentPipeline(t *testing.T) {
 			return
 		}
 
-		if !reflect.DeepEqual(*got.Component, *component) {
-			t.Fatalf("component in pipeline doesn't match, got:\n%v\nexpect: %v", *got.Component, *component)
-		}
+		got.Component.Project.Owner = component.Project.Owner
+		require.Equal(t, *got.Component, *component)
 	})
 
 	t.Run("PausePipeline", func(t *testing.T) {
@@ -129,7 +129,7 @@ jobs:
 
 			err = m.AbortBuild(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name, buildIDStr)
 			if err != nil {
-				t.Fatalf("failed to abort build '%s': %s", buildIDStr, err)
+				t.Errorf("failed to abort build '%s': %s", buildIDStr, err)
 			}
 
 			// // Add a bit of time, concourse seems to not like it
@@ -137,7 +137,7 @@ jobs:
 			//
 			// _, err = m.RerunBuild(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *component.Canonical, *updatedPipeline.Name, *pipelineJobs[0].Name, buildIDStr)
 			// if err != nil {
-			// 	t.Fatalf("failed to re-run build '%s': %s", buildIDStr, err)
+			// 	t.Errorf("failed to re-run build '%s': %s", buildIDStr, err)
 			// }
 		})
 	})

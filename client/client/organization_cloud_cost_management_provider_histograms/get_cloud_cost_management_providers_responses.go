@@ -8,6 +8,7 @@ package organization_cloud_cost_management_provider_histograms
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type GetCloudCostManagementProvidersReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *GetCloudCostManagementProvidersReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *GetCloudCostManagementProvidersReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewGetCloudCostManagementProvidersOK()
@@ -121,7 +122,7 @@ func (o *GetCloudCostManagementProvidersOK) readResponse(response runtime.Client
 	o.Payload = new(GetCloudCostManagementProvidersOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -209,7 +210,7 @@ func (o *GetCloudCostManagementProvidersForbidden) readResponse(response runtime
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -297,7 +298,7 @@ func (o *GetCloudCostManagementProvidersUnprocessableEntity) readResponse(respon
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -388,7 +389,7 @@ func (o *GetCloudCostManagementProvidersDefault) readResponse(response runtime.C
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -428,11 +429,15 @@ func (o *GetCloudCostManagementProvidersOKBody) validateData(formats strfmt.Regi
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getCloudCostManagementProvidersOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getCloudCostManagementProvidersOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -459,11 +464,15 @@ func (o *GetCloudCostManagementProvidersOKBody) contextValidateData(ctx context.
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("getCloudCostManagementProvidersOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("getCloudCostManagementProvidersOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

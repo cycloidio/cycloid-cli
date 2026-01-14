@@ -8,6 +8,7 @@ package organization_forms
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"fmt"
 	"io"
 
@@ -26,7 +27,7 @@ type InterpolateFormsConfigReader struct {
 }
 
 // ReadResponse reads a server response into the received o.
-func (o *InterpolateFormsConfigReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (interface{}, error) {
+func (o *InterpolateFormsConfigReader) ReadResponse(response runtime.ClientResponse, consumer runtime.Consumer) (any, error) {
 	switch response.Code() {
 	case 200:
 		result := NewInterpolateFormsConfigOK()
@@ -127,7 +128,7 @@ func (o *InterpolateFormsConfigOK) readResponse(response runtime.ClientResponse,
 	o.Payload = new(InterpolateFormsConfigOKBody)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -215,7 +216,7 @@ func (o *InterpolateFormsConfigForbidden) readResponse(response runtime.ClientRe
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -303,7 +304,7 @@ func (o *InterpolateFormsConfigNotFound) readResponse(response runtime.ClientRes
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -391,7 +392,7 @@ func (o *InterpolateFormsConfigUnprocessableEntity) readResponse(response runtim
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -482,7 +483,7 @@ func (o *InterpolateFormsConfigDefault) readResponse(response runtime.ClientResp
 	o.Payload = new(models.ErrorPayload)
 
 	// response payload
-	if err := consumer.Consume(response.Body(), o.Payload); err != nil && err != io.EOF {
+	if err := consumer.Consume(response.Body(), o.Payload); err != nil && !stderrors.Is(err, io.EOF) {
 		return err
 	}
 
@@ -509,6 +510,11 @@ type InterpolateFormsConfigBody struct {
 	// Required: true
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
 
+	// Is the ID of the new SCS Version used
+	// Required: true
+	// Minimum: 1
+	ServiceCatalogSourceVersionID *uint32 `json:"service_catalog_source_version_id"`
+
 	// use case
 	// Required: true
 	// Max Length: 100
@@ -530,6 +536,10 @@ func (o *InterpolateFormsConfigBody) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := o.validateServiceCatalogRef(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := o.validateServiceCatalogSourceVersionID(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -577,6 +587,19 @@ func (o *InterpolateFormsConfigBody) validateServiceCatalogRef(formats strfmt.Re
 	return nil
 }
 
+func (o *InterpolateFormsConfigBody) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
+
+	if err := validate.Required("body"+"."+"service_catalog_source_version_id", "body", o.ServiceCatalogSourceVersionID); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumUint("body"+"."+"service_catalog_source_version_id", "body", uint64(*o.ServiceCatalogSourceVersionID), 1, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (o *InterpolateFormsConfigBody) validateUseCase(formats strfmt.Registry) error {
 
 	if err := validate.Required("body"+"."+"use_case", "body", o.UseCase); err != nil {
@@ -606,11 +629,15 @@ func (o *InterpolateFormsConfigBody) validateVars(formats strfmt.Registry) error
 
 	if o.Vars != nil {
 		if err := o.Vars.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("body" + "." + "vars")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("body" + "." + "vars")
 			}
+
 			return err
 		}
 	}
@@ -635,11 +662,15 @@ func (o *InterpolateFormsConfigBody) ContextValidate(ctx context.Context, format
 func (o *InterpolateFormsConfigBody) contextValidateVars(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := o.Vars.ContextValidate(ctx, formats); err != nil {
-		if ve, ok := err.(*errors.Validation); ok {
+		ve := new(errors.Validation)
+		if stderrors.As(err, &ve) {
 			return ve.ValidateName("body" + "." + "vars")
-		} else if ce, ok := err.(*errors.CompositeError); ok {
+		}
+		ce := new(errors.CompositeError)
+		if stderrors.As(err, &ce) {
 			return ce.ValidateName("body" + "." + "vars")
 		}
+
 		return err
 	}
 
@@ -697,11 +728,15 @@ func (o *InterpolateFormsConfigOKBody) validateData(formats strfmt.Registry) err
 
 	if o.Data != nil {
 		if err := o.Data.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("interpolateFormsConfigOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("interpolateFormsConfigOK" + "." + "data")
 			}
+
 			return err
 		}
 	}
@@ -728,11 +763,15 @@ func (o *InterpolateFormsConfigOKBody) contextValidateData(ctx context.Context, 
 	if o.Data != nil {
 
 		if err := o.Data.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("interpolateFormsConfigOK" + "." + "data")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("interpolateFormsConfigOK" + "." + "data")
 			}
+
 			return err
 		}
 	}

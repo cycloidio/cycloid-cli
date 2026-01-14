@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -31,13 +32,8 @@ type MemberOrg struct {
 	// Format: email
 	Email strfmt.Email `json:"email,omitempty"`
 
-	// family name
-	// Min Length: 2
-	FamilyName string `json:"family_name,omitempty"`
-
-	// given name
-	// Min Length: 2
-	GivenName string `json:"given_name,omitempty"`
+	// full name
+	FullName string `json:"full_name,omitempty"`
 
 	// id
 	// Required: true
@@ -102,14 +98,6 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateEmail(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateFamilyName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateGivenName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -192,30 +180,6 @@ func (m *MemberOrg) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberOrg) validateFamilyName(formats strfmt.Registry) error {
-	if swag.IsZero(m.FamilyName) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("family_name", "body", m.FamilyName, 2); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MemberOrg) validateGivenName(formats strfmt.Registry) error {
-	if swag.IsZero(m.GivenName) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("given_name", "body", m.GivenName, 2); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *MemberOrg) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
@@ -253,7 +217,7 @@ func (m *MemberOrg) validateInvitationResentAt(formats strfmt.Registry) error {
 	return nil
 }
 
-var memberOrgTypeInvitationStatePropEnum []interface{}
+var memberOrgTypeInvitationStatePropEnum []any
 
 func init() {
 	var res []string
@@ -317,11 +281,15 @@ func (m *MemberOrg) validateInvitedBy(formats strfmt.Registry) error {
 
 	if m.InvitedBy != nil {
 		if err := m.InvitedBy.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("invited_by")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("invited_by")
 			}
+
 			return err
 		}
 	}
@@ -341,7 +309,7 @@ func (m *MemberOrg) validateLastLoginAt(formats strfmt.Registry) error {
 	return nil
 }
 
-var memberOrgTypeLocalePropEnum []interface{}
+var memberOrgTypeLocalePropEnum []any
 
 func init() {
 	var res []string
@@ -406,11 +374,15 @@ func (m *MemberOrg) validateRole(formats strfmt.Registry) error {
 
 	if m.Role != nil {
 		if err := m.Role.Validate(formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("role")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("role")
 			}
+
 			return err
 		}
 	}
@@ -477,11 +449,15 @@ func (m *MemberOrg) contextValidateInvitedBy(ctx context.Context, formats strfmt
 		}
 
 		if err := m.InvitedBy.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("invited_by")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("invited_by")
 			}
+
 			return err
 		}
 	}
@@ -494,11 +470,15 @@ func (m *MemberOrg) contextValidateRole(ctx context.Context, formats strfmt.Regi
 	if m.Role != nil {
 
 		if err := m.Role.ContextValidate(ctx, formats); err != nil {
-			if ve, ok := err.(*errors.Validation); ok {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
 				return ve.ValidateName("role")
-			} else if ce, ok := err.(*errors.CompositeError); ok {
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
 				return ce.ValidateName("role")
 			}
+
 			return err
 		}
 	}

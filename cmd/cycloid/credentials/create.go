@@ -237,7 +237,7 @@ func create(cmd *cobra.Command, args []string) error {
 	if updateAllowed, _ := cmd.Flags().GetBool("update"); updateAllowed {
 		credentials, err := m.ListCredentials(org, credentialTypes)
 		if err != nil {
-			return fmt.Errorf("failed to create --update credential, cannot check for existing credential '%s': %s", credential, err.Error())
+			return fmt.Errorf("failed to create --update credential, cannot check for existing credential %q: %w", credential, err)
 		}
 
 		if slices.IndexFunc(credentials, func(c *models.CredentialSimple) bool {
@@ -444,7 +444,7 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 
 	default:
-		return fmt.Errorf("unsupported credential type: %s", credentialTypes)
+		return fmt.Errorf("unsupported credential type %q", credentialTypes)
 	}
 
 	outCredential, err := m.CreateCredential(org, name, credentialTypes, rawCred, credentialPath, credential, description)

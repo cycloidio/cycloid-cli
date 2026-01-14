@@ -99,7 +99,7 @@ func GetPipeline(cmd *cobra.Command) (string, error) {
 	// If pipeline not set, try to get it from the component
 	org, project, environment, component, err := GetCyContext(cmd)
 	if err != nil {
-		return "", fmt.Errorf("missing context to infer pipeline, set --pipeline flag or fill org/project/env/component: %s", err)
+		return "", fmt.Errorf("missing context to infer pipeline, set --pipeline flag or fill org/project/env/component: %w", err)
 	}
 
 	api := common.NewAPI()
@@ -107,7 +107,7 @@ func GetPipeline(cmd *cobra.Command) (string, error) {
 
 	pipelines, err := m.GetEnvPipelines(org, project, environment)
 	if err != nil {
-		return "", fmt.Errorf("failed to infer pipeline from context: %s", err.Error())
+		return "", fmt.Errorf("failed to infer pipeline from context: %w", err)
 	}
 
 	index := slices.IndexFunc(pipelines, func(p *models.Pipeline) bool {
@@ -115,7 +115,7 @@ func GetPipeline(cmd *cobra.Command) (string, error) {
 	})
 
 	if index == -1 {
-		return "", fmt.Errorf("pipeline for component '%s' in project '%s' and environment '%s' is not found, please fill --pipeline argument: %s", component, project, environment, err)
+		return "", fmt.Errorf("pipeline for component %q in project %q and environment %q is not found, please fill --pipeline argument: %w", component, project, environment, err)
 	}
 
 	return *pipelines[index].Name, nil

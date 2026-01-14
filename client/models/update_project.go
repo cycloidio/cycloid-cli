@@ -100,7 +100,7 @@ func (m *UpdateProject) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-var updateProjectTypeCloudProviderPropEnum []interface{}
+var updateProjectTypeCloudProviderPropEnum []any
 
 func init() {
 	var res []string

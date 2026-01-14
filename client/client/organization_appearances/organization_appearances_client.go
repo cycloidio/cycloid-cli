@@ -120,7 +120,7 @@ type ClientService interface {
 CreateAppearance Create a new appearance for the organization.
 */
 func (a *Client) CreateAppearance(params *CreateAppearanceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateAppearanceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateAppearanceParams()
 	}
@@ -140,17 +140,22 @@ func (a *Client) CreateAppearance(params *CreateAppearanceParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateAppearanceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateAppearanceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -158,7 +163,7 @@ func (a *Client) CreateAppearance(params *CreateAppearanceParams, authInfo runti
 DeleteAppearance Delete an existing appearance in the organization.
 */
 func (a *Client) DeleteAppearance(params *DeleteAppearanceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteAppearanceNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteAppearanceParams()
 	}
@@ -178,17 +183,22 @@ func (a *Client) DeleteAppearance(params *DeleteAppearanceParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteAppearanceNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteAppearanceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -196,7 +206,7 @@ func (a *Client) DeleteAppearance(params *DeleteAppearanceParams, authInfo runti
 GetAppearance Get the appearance available in the organization with a canonical
 */
 func (a *Client) GetAppearance(params *GetAppearanceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetAppearanceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetAppearanceParams()
 	}
@@ -216,17 +226,22 @@ func (a *Client) GetAppearance(params *GetAppearanceParams, authInfo runtime.Cli
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetAppearanceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetAppearanceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -234,7 +249,7 @@ func (a *Client) GetAppearance(params *GetAppearanceParams, authInfo runtime.Cli
 ListAppearances List of appearances available in the organization.
 */
 func (a *Client) ListAppearances(params *ListAppearancesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListAppearancesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListAppearancesParams()
 	}
@@ -254,17 +269,22 @@ func (a *Client) ListAppearances(params *ListAppearancesParams, authInfo runtime
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListAppearancesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListAppearancesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -272,7 +292,7 @@ func (a *Client) ListAppearances(params *ListAppearancesParams, authInfo runtime
 UpdateAppearance Update an existing appearance in the organization.
 */
 func (a *Client) UpdateAppearance(params *UpdateAppearanceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateAppearanceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateAppearanceParams()
 	}
@@ -292,17 +312,22 @@ func (a *Client) UpdateAppearance(params *UpdateAppearanceParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateAppearanceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateAppearanceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

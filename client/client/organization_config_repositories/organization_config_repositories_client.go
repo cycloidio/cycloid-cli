@@ -122,7 +122,7 @@ type ClientService interface {
 CreateConfigRepository Creates a config repository
 */
 func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateConfigRepositoryOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateConfigRepositoryParams()
 	}
@@ -142,17 +142,22 @@ func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateConfigRepositoryOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateConfigRepositoryDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -160,7 +165,7 @@ func (a *Client) CreateConfigRepository(params *CreateConfigRepositoryParams, au
 CreateConfigRepositoryConfig Create Service Catalog config files in the Config Repository.
 */
 func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConfigParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateConfigRepositoryConfigNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCreateConfigRepositoryConfigParams()
 	}
@@ -180,17 +185,22 @@ func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConf
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CreateConfigRepositoryConfigNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateConfigRepositoryConfigDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -198,7 +208,7 @@ func (a *Client) CreateConfigRepositoryConfig(params *CreateConfigRepositoryConf
 DeleteConfigRepository delete a Config Repositories
 */
 func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteConfigRepositoryNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewDeleteConfigRepositoryParams()
 	}
@@ -218,17 +228,22 @@ func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*DeleteConfigRepositoryNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*DeleteConfigRepositoryDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -236,7 +251,7 @@ func (a *Client) DeleteConfigRepository(params *DeleteConfigRepositoryParams, au
 GetConfigRepository Return the Config Repository
 */
 func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetConfigRepositoryOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetConfigRepositoryParams()
 	}
@@ -256,17 +271,22 @@ func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetConfigRepositoryOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetConfigRepositoryDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -274,7 +294,7 @@ func (a *Client) GetConfigRepository(params *GetConfigRepositoryParams, authInfo
 ListConfigRepositories Return all the config repositories
 */
 func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*ListConfigRepositoriesOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewListConfigRepositoriesParams()
 	}
@@ -294,17 +314,22 @@ func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ListConfigRepositoriesOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ListConfigRepositoriesDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -312,7 +337,7 @@ func (a *Client) ListConfigRepositories(params *ListConfigRepositoriesParams, au
 UpdateConfigRepository Update a config repository
 */
 func (a *Client) UpdateConfigRepository(params *UpdateConfigRepositoryParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdateConfigRepositoryOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewUpdateConfigRepositoryParams()
 	}
@@ -332,17 +357,22 @@ func (a *Client) UpdateConfigRepository(params *UpdateConfigRepositoryParams, au
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*UpdateConfigRepositoryOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*UpdateConfigRepositoryDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

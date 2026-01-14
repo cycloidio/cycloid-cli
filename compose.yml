@@ -1,16 +1,7 @@
-# This is just to ensure docker compose will error if secrets are not provider.
-# Docker compose won't check it otherwise
-x-required-env-var:
-- ${API_LICENCE_KEY:?"use:\n export API_LICENCE_KEY=$(cy cred get scaleway-cycloid-backend -o json | jq -r .raw.raw.licence_key)"}
-
-secrets:
-  api_licence_key:
-    environment: API_LICENCE_KEY
-
 services:
   # Override API service to create an API from a builded docker image.
   youdeploy-api:
-    image: 661913936052.dkr.ecr.eu-west-1.amazonaws.com/youdeploy-http-api:${TEST_BACKEND_API_TAG:-staging}
+    image: rg.fr-par.scw.cloud/cycloidio/cycloid-backend:${BACKEND_TAG:-staging}
     healthcheck:
       test:
       - "CMD-SHELL"
@@ -36,8 +27,6 @@ services:
     configs:
     - source: youdeploy-config.yml
       target: /ci/config.yml
-    secrets:
-    - api_licence_key
     entrypoint:
     - bash
     - -ec
@@ -89,11 +78,11 @@ services:
 
   ## Email
   email-smtp-no-tls-auth:
-    image: mailhog/mailhog:v1.0.0
-    command: -auth-file /mailhog.auth
-    configs: [mailhog.auth]
+    image: axllent/mailpit:v1.27.3
     attach: false
     restart: always
+    environment:
+      MP_SMTP_AUTH: admin:admin
     networks:
       cycloid:
         ipv4_address: "${DOCKER_IPAM:-192.168.10}.3"
@@ -404,7 +393,7 @@ configs:
 
       redis-uri: "redis://${DOCKER_IPAM:-192.168.10}.6:6379"
 
-      email-smtp-svr-addr: "email-smtp-no-tls-auth:1025"
+      email-smtp-svr-addr: "${DOCKER_IPAM:-192.168.10}.3:1025"
       email-smtp-username: admin
       email-smtp-password: admin
       email-addr-from: "Cycloid Platform <noreply@cycloid.io>"
@@ -421,9 +410,6 @@ configs:
       worker-queues: [emails,hubspot,cost_explorer,checks,terracost]
       worker-run-internal: true
       worker-run-scheduler: true
-
-  mailhog.auth:
-    content: "admin:$2y$12$9cbAZjq/uv6WzyA5sx/UpugL9qa54oUFJapYIDEPny.9h8b4Bzndy"
 
   redisTLSCert:
     content: |

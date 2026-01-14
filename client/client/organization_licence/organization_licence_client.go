@@ -114,7 +114,7 @@ type ClientService interface {
 ActivateLicence Activate Cycloid's licence. If another licence already exists,  it will be overwritten
 */
 func (a *Client) ActivateLicence(params *ActivateLicenceParams, opts ...ClientOption) (*ActivateLicenceNoContent, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewActivateLicenceParams()
 	}
@@ -133,17 +133,22 @@ func (a *Client) ActivateLicence(params *ActivateLicenceParams, opts ...ClientOp
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*ActivateLicenceNoContent)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*ActivateLicenceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -151,7 +156,7 @@ func (a *Client) ActivateLicence(params *ActivateLicenceParams, opts ...ClientOp
 GetLicence Get currently active licence.
 */
 func (a *Client) GetLicence(params *GetLicenceParams, opts ...ClientOption) (*GetLicenceOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetLicenceParams()
 	}
@@ -170,17 +175,22 @@ func (a *Client) GetLicence(params *GetLicenceParams, opts ...ClientOption) (*Ge
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetLicenceOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetLicenceDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

@@ -114,7 +114,7 @@ type ClientService interface {
 CostEstimateForm Estimates the Cost from the Form Input
 */
 func (a *Client) CostEstimateForm(params *CostEstimateFormParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CostEstimateFormOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCostEstimateFormParams()
 	}
@@ -134,17 +134,22 @@ func (a *Client) CostEstimateForm(params *CostEstimateFormParams, authInfo runti
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CostEstimateFormOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CostEstimateFormDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
@@ -152,7 +157,7 @@ func (a *Client) CostEstimateForm(params *CostEstimateFormParams, authInfo runti
 CostEstimateTfPlan Estimate costs of a Terraform plan in JSON format.
 */
 func (a *Client) CostEstimateTfPlan(params *CostEstimateTfPlanParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CostEstimateTfPlanOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewCostEstimateTfPlanParams()
 	}
@@ -172,17 +177,22 @@ func (a *Client) CostEstimateTfPlan(params *CostEstimateTfPlanParams, authInfo r
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*CostEstimateTfPlanOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CostEstimateTfPlanDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 

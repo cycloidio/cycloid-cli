@@ -64,7 +64,7 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	useCase := *useCasePtr
+	useCase := useCasePtr
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)

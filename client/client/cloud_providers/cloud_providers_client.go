@@ -112,7 +112,7 @@ type ClientService interface {
 GetCloudProviders Get the list of Cloud Providers
 */
 func (a *Client) GetCloudProviders(params *GetCloudProvidersParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetCloudProvidersOK, error) {
-	// TODO: Validate the params before sending
+	// NOTE: parameters are not validated before sending
 	if params == nil {
 		params = NewGetCloudProvidersParams()
 	}
@@ -132,17 +132,22 @@ func (a *Client) GetCloudProviders(params *GetCloudProvidersParams, authInfo run
 	for _, opt := range opts {
 		opt(op)
 	}
-
 	result, err := a.transport.Submit(op)
 	if err != nil {
 		return nil, err
 	}
+
+	// only one success response has to be checked
 	success, ok := result.(*GetCloudProvidersOK)
 	if ok {
 		return success, nil
 	}
-	// unexpected success response
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*GetCloudProvidersDefault)
+
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
