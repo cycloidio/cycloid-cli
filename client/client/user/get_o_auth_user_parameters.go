@@ -61,6 +61,12 @@ GetOAuthUserParams contains all the parameters to send to the API endpoint
 */
 type GetOAuthUserParams struct {
 
+	/* CodeVerifier.
+
+	   The PKCE code_verifier used for OAuth 2.0 PKCE flow
+	*/
+	CodeVerifier *string
+
 	/* OauthCode.
 
 	   The OAuth code returned form the Social Provider
@@ -132,6 +138,17 @@ func (o *GetOAuthUserParams) SetHTTPClient(client *http.Client) {
 	o.HTTPClient = client
 }
 
+// WithCodeVerifier adds the codeVerifier to the get o auth user params
+func (o *GetOAuthUserParams) WithCodeVerifier(codeVerifier *string) *GetOAuthUserParams {
+	o.SetCodeVerifier(codeVerifier)
+	return o
+}
+
+// SetCodeVerifier adds the codeVerifier to the get o auth user params
+func (o *GetOAuthUserParams) SetCodeVerifier(codeVerifier *string) {
+	o.CodeVerifier = codeVerifier
+}
+
 // WithOauthCode adds the oauthCode to the get o auth user params
 func (o *GetOAuthUserParams) WithOauthCode(oauthCode string) *GetOAuthUserParams {
 	o.SetOauthCode(oauthCode)
@@ -172,6 +189,23 @@ func (o *GetOAuthUserParams) WriteToRequest(r runtime.ClientRequest, reg strfmt.
 		return err
 	}
 	var res []error
+
+	if o.CodeVerifier != nil {
+
+		// query param code_verifier
+		var qrCodeVerifier string
+
+		if o.CodeVerifier != nil {
+			qrCodeVerifier = *o.CodeVerifier
+		}
+		qCodeVerifier := qrCodeVerifier
+		if qCodeVerifier != "" {
+
+			if err := r.SetQueryParam("code_verifier", qCodeVerifier); err != nil {
+				return err
+			}
+		}
+	}
 
 	// query param oauth_code
 	qrOauthCode := o.OauthCode

@@ -30,6 +30,9 @@ type AuthenticationOIDC struct {
 	// The secret key used to securely exchange the authorization code for tokens.
 	OidcClientSecret string `json:"oidc_client_secret,omitempty"`
 
+	// Enables client authentication via signed JWT (HS512) using the client secret, as per RFC 7523.
+	OidcClientSecretJwt bool `json:"oidc_client_secret_jwt,omitempty"`
+
 	// The friendly name shown on the login button
 	OidcDisplayName string `json:"oidc_display_name,omitempty"`
 
@@ -68,6 +71,9 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 
 		// The secret key used to securely exchange the authorization code for tokens.
 		OidcClientSecret string `json:"oidc_client_secret,omitempty"`
+
+		// Enables client authentication via signed JWT (HS512) using the client secret, as per RFC 7523.
+		OidcClientSecretJwt bool `json:"oidc_client_secret_jwt,omitempty"`
 
 		// The friendly name shown on the login button
 		OidcDisplayName string `json:"oidc_display_name,omitempty"`
@@ -112,6 +118,7 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 
 	result.OidcClientID = data.OidcClientID
 	result.OidcClientSecret = data.OidcClientSecret
+	result.OidcClientSecretJwt = data.OidcClientSecretJwt
 	result.OidcDisplayName = data.OidcDisplayName
 	result.OidcIcon = data.OidcIcon
 	result.OidcIssuer = data.OidcIssuer
@@ -133,6 +140,9 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 		// The secret key used to securely exchange the authorization code for tokens.
 		OidcClientSecret string `json:"oidc_client_secret,omitempty"`
 
+		// Enables client authentication via signed JWT (HS512) using the client secret, as per RFC 7523.
+		OidcClientSecretJwt bool `json:"oidc_client_secret_jwt,omitempty"`
+
 		// The friendly name shown on the login button
 		OidcDisplayName string `json:"oidc_display_name,omitempty"`
 
@@ -146,6 +156,8 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 		OidcClientID: m.OidcClientID,
 
 		OidcClientSecret: m.OidcClientSecret,
+
+		OidcClientSecretJwt: m.OidcClientSecretJwt,
 
 		OidcDisplayName: m.OidcDisplayName,
 
