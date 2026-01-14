@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Fixed cases where component update would error on non-configured components
-time: 2025-10-14T19:55:28.029604872Z
-custom:
-  DETAILS: ""
-  PR: "396"
-  TYPE: CLI
