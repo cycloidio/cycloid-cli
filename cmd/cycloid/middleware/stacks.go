@@ -6,12 +6,11 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/go-openapi/strfmt"
-	"github.com/pkg/errors"
-
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
+	"github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
 )
 
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
@@ -53,9 +52,11 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 		if err != nil {
 			return 0, "", fmt.Errorf("failed to get default stack version: %w", err)
 		}
+
 		if defaultVersion == nil || defaultVersion.ID == nil || defaultVersion.CommitHash == nil {
 			return 0, "", errors.New("no stack catalog version found")
 		}
+
 		return *defaultVersion.ID, *defaultVersion.CommitHash, nil
 	}
 
@@ -157,30 +158,19 @@ func (m *middleware) getDefaultCatalogVersion(org, ref string) (*models.ServiceC
 	}
 
 	var branchVersion *models.ServiceCatalogSourceVersion
-
-	// Look for latest tag or the stack's branch latest commit
+	// Default to default catalog branch
 	for _, version := range versions {
-		// Priority 1: is_latest tag (must be a tag, not a branch)
-		if ptr.Value(version.IsLatest) &&
-			ptr.Value(version.Type) == "tag" {
-			return version, nil
-		}
-
-		// Collect the version matching the stack's catalog repository branch
 		if ptr.Value(version.Type) == "branch" &&
 			ptr.Value(version.Name) == catalogRepoBranch {
-			// Keep track of this branch version (should be the latest commit)
 			branchVersion = version
 		}
 	}
 
-	// Priority 2: latest commit of the catalog repository branch
 	if branchVersion != nil {
 		return branchVersion, nil
 	}
 
-	// No default found
-	return nil, nil
+	return nil, fmt.Errorf("failed to find the default version")
 }
 
 // ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
