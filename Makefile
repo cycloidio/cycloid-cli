@@ -54,6 +54,8 @@ install: .env .git/hooks/pre-commit ## install all pre-requisites
 .env: ## generate the .env files with the required secrets for this repo
 	@rm .env || true
 	@CY_API_KEY=$${CY_SAAS_API_KEY?A valid API key to the cycloid org in our saas is required for this target. It must be provided via the CY_SAAS_API_KEY} \
+		CY_API_URL=https://http-api.cycloid.io \
+		CY_ORG=cycloid \
 		cy uri interpolate .env.sample > .env
 
 source-env: ## source the local env to use cycloid
