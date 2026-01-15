@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add support for stack versioning
-time: 2026-01-15T14:49:54.349996668Z
-custom:
-  DETAILS: ""
-  PR: "399"
-  TYPE: CLI
