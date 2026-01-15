@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Fixed component version inference
-time: 2026-01-15T14:50:33.972933867Z
-custom:
-  DETAILS: Version by default will fallback to branch unless specified.
-  PR: "402"
-  TYPE: CLI
