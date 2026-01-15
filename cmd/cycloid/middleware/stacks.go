@@ -6,12 +6,11 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/go-openapi/strfmt"
-	"github.com/pkg/errors"
-
 	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
+	"github.com/go-openapi/strfmt"
+	"github.com/pkg/errors"
 )
 
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
@@ -53,9 +52,11 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 		if err != nil {
 			return 0, "", fmt.Errorf("failed to get default stack version: %w", err)
 		}
+
 		if defaultVersion == nil || defaultVersion.ID == nil || defaultVersion.CommitHash == nil {
 			return 0, "", errors.New("no stack catalog version found")
 		}
+
 		return *defaultVersion.ID, *defaultVersion.CommitHash, nil
 	}
 
