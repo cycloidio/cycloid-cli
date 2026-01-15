@@ -158,30 +158,19 @@ func (m *middleware) getDefaultCatalogVersion(org, ref string) (*models.ServiceC
 	}
 
 	var branchVersion *models.ServiceCatalogSourceVersion
-
-	// Look for latest tag or the stack's branch latest commit
+	// Default to default catalog branch
 	for _, version := range versions {
-		// Priority 1: is_latest tag (must be a tag, not a branch)
-		if ptr.Value(version.IsLatest) &&
-			ptr.Value(version.Type) == "tag" {
-			return version, nil
-		}
-
-		// Collect the version matching the stack's catalog repository branch
 		if ptr.Value(version.Type) == "branch" &&
 			ptr.Value(version.Name) == catalogRepoBranch {
-			// Keep track of this branch version (should be the latest commit)
 			branchVersion = version
 		}
 	}
 
-	// Priority 2: latest commit of the catalog repository branch
 	if branchVersion != nil {
 		return branchVersion, nil
 	}
 
-	// No default found
-	return nil, nil
+	return nil, fmt.Errorf("failed to find the default version")
 }
 
 // ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
