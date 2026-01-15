@@ -5,10 +5,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/spf13/cobra"
-
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/spf13/cobra"
 )
 
 func ValidateForms(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
@@ -202,9 +201,6 @@ func AddStackVersionFlags(cmd *cobra.Command) {
 
 	// Make flags mutually exclusive
 	cmd.MarkFlagsMutuallyExclusive("stack-tag", "stack-branch", "stack-commit-hash")
-
-	// Require at least one of these flags
-	cmd.MarkFlagsOneRequired("stack-tag", "stack-branch", "stack-commit-hash")
 }
 
 // GetStackVersionFlags reads the stack version flags from the command.

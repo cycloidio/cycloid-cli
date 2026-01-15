@@ -1,12 +1,12 @@
 package cyargs
 
 import (
+	"fmt"
 	"strings"
-
-	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/spf13/cobra"
 )
 
 func AddComponentDescriptionFlag(cmd *cobra.Command) {
@@ -85,7 +85,10 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 	if err != nil {
 		// During completion, the version flags might not be set yet
 		// Return a helpful message to guide the user
-		return cobra.AppendActiveHelp(nil, "please provide one of --stack-tag, --stack-branch, or --stack-commit-hash first"),
+		return cobra.AppendActiveHelp(
+				nil,
+				fmt.Sprintf("Cannot detect version for stack %q: %s. Check and refresh your catalog repository.", stackRef, err.Error()),
+			),
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
