@@ -45,6 +45,9 @@ type ServiceCatalog struct {
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at,omitempty"`
 
+	// Default version of the stack, based on the Catalog Repository branch
+	DefaultVersionBranch string `json:"default_version_branch,omitempty"`
+
 	// dependencies
 	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
 
