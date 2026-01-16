@@ -57,7 +57,7 @@ type MemberOrg struct {
 	InvitedAt *uint64 `json:"invited_at,omitempty"`
 
 	// Organization member who invited the current user.
-	InvitedBy *MemberOrg `json:"invited_by,omitempty"`
+	InvitedBy *SimpleMemberOrg `json:"invited_by,omitempty"`
 
 	// When the user logged in last time.
 	// Minimum: 0
