@@ -3,6 +3,7 @@ package common
 import (
 	"encoding/json"
 	"fmt"
+	"net/http"
 	"net/url"
 	"os"
 	"regexp"
@@ -10,16 +11,15 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cycloidio/cycloid-cli/client/client"
+	"github.com/cycloidio/cycloid-cli/config"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/go-openapi/runtime"
 	httptransport "github.com/go-openapi/runtime/client"
 	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/cycloidio/cycloid-cli/client/client"
-	"github.com/cycloidio/cycloid-cli/config"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 var orgRe = regexp.MustCompile(`\(\$ organization_canonical \$\)`)
@@ -129,11 +129,19 @@ func NewAPI(opts ...APIOptions) *APIClient {
 
 	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
 
-	rt, err := httptransport.TLSTransport(httptransport.TLSClientOptions{InsecureSkipVerify: acfg.Insecure})
+	rt, err := httptransport.TLSTransport(
+		httptransport.TLSClientOptions{
+			InsecureSkipVerify: acfg.Insecure,
+		})
 	if err != nil {
 		// TODO: error handling ...
 		fmt.Printf("unable to create round tripper: %v", err)
 		return nil
+	}
+
+	// TODO: check if there is other required things to do
+	if t, ok := rt.(*http.Transport); ok {
+		t.Proxy = http.ProxyFromEnvironment
 	}
 
 	// Hack because https://github.com/go-swagger/go-swagger/issues/1899
