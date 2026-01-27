@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -15,43 +14,34 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// MemberTeam Member of a team
+// SimpleMemberOrg Simplified model of a member of an organization
 //
-// Member is a user who is associated to a team.
+// Simplified model of a member of an organization. The member is 'accepted' and have an associated user account.
 //
-// swagger:model MemberTeam
-type MemberTeam struct {
+// swagger:model SimpleMemberOrg
+type SimpleMemberOrg struct {
 
 	// When the user became a member.
 	// Required: true
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at"`
 
-	// user email
+	// Primary email
 	// Required: true
 	// Format: email
 	Email *strfmt.Email `json:"email"`
 
-	// Full name, can be empty in case if the user hasn't accepted the invitation yet.
-	// Max Length: 255
-	// Min Length: 2
+	// full name
 	FullName string `json:"full_name,omitempty"`
 
-	// id
+	// Member ID (different from the user ID)
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
-	// Team member who invited the current user to the team.
-	InvitedBy *SimpleMemberOrg `json:"invited_by,omitempty"`
-
 	// When the user logged in last time.
 	// Minimum: 0
 	LastLoginAt *uint64 `json:"last_login_at,omitempty"`
-
-	// mfa enabled
-	// Required: true
-	MfaEnabled *bool `json:"mfa_enabled"`
 
 	// picture url
 	// Format: uri
@@ -61,15 +51,15 @@ type MemberTeam struct {
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 
-	// User canonical, can be empty in case if the user hasn't accepted the invitation yet.
+	// username
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Username string `json:"username,omitempty"`
 }
 
-// Validate validates this member team
-func (m *MemberTeam) Validate(formats strfmt.Registry) error {
+// Validate validates this simple member org
+func (m *SimpleMemberOrg) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCreatedAt(formats); err != nil {
@@ -80,23 +70,11 @@ func (m *MemberTeam) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFullName(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateInvitedBy(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateLastLoginAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateMfaEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -118,7 +96,7 @@ func (m *MemberTeam) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberTeam) validateCreatedAt(formats strfmt.Registry) error {
+func (m *SimpleMemberOrg) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
 		return err
@@ -131,7 +109,7 @@ func (m *MemberTeam) validateCreatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberTeam) validateEmail(formats strfmt.Registry) error {
+func (m *SimpleMemberOrg) validateEmail(formats strfmt.Registry) error {
 
 	if err := validate.Required("email", "body", m.Email); err != nil {
 		return err
@@ -144,23 +122,7 @@ func (m *MemberTeam) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberTeam) validateFullName(formats strfmt.Registry) error {
-	if swag.IsZero(m.FullName) { // not required
-		return nil
-	}
-
-	if err := validate.MinLength("full_name", "body", m.FullName, 2); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("full_name", "body", m.FullName, 255); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MemberTeam) validateID(formats strfmt.Registry) error {
+func (m *SimpleMemberOrg) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
@@ -173,30 +135,7 @@ func (m *MemberTeam) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitedBy) { // not required
-		return nil
-	}
-
-	if m.InvitedBy != nil {
-		if err := m.InvitedBy.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("invited_by")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("invited_by")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *MemberTeam) validateLastLoginAt(formats strfmt.Registry) error {
+func (m *SimpleMemberOrg) validateLastLoginAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.LastLoginAt) { // not required
 		return nil
 	}
@@ -208,16 +147,7 @@ func (m *MemberTeam) validateLastLoginAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberTeam) validateMfaEnabled(formats strfmt.Registry) error {
-
-	if err := validate.Required("mfa_enabled", "body", m.MfaEnabled); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *MemberTeam) validatePictureURL(formats strfmt.Registry) error {
+func (m *SimpleMemberOrg) validatePictureURL(formats strfmt.Registry) error {
 	if swag.IsZero(m.PictureURL) { // not required
 		return nil
 	}
@@ -229,7 +159,7 @@ func (m *MemberTeam) validatePictureURL(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberTeam) validateUpdatedAt(formats strfmt.Registry) error {
+func (m *SimpleMemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
@@ -241,7 +171,7 @@ func (m *MemberTeam) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberTeam) validateUsername(formats strfmt.Registry) error {
+func (m *SimpleMemberOrg) validateUsername(formats strfmt.Registry) error {
 	if swag.IsZero(m.Username) { // not required
 		return nil
 	}
@@ -261,47 +191,13 @@ func (m *MemberTeam) validateUsername(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this member team based on the context it is used
-func (m *MemberTeam) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.contextValidateInvitedBy(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *MemberTeam) contextValidateInvitedBy(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.InvitedBy != nil {
-
-		if swag.IsZero(m.InvitedBy) { // not required
-			return nil
-		}
-
-		if err := m.InvitedBy.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("invited_by")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("invited_by")
-			}
-
-			return err
-		}
-	}
-
+// ContextValidate validates this simple member org based on context it is used
+func (m *SimpleMemberOrg) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
 }
 
 // MarshalBinary interface implementation
-func (m *MemberTeam) MarshalBinary() ([]byte, error) {
+func (m *SimpleMemberOrg) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -309,8 +205,8 @@ func (m *MemberTeam) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *MemberTeam) UnmarshalBinary(b []byte) error {
-	var res MemberTeam
+func (m *SimpleMemberOrg) UnmarshalBinary(b []byte) error {
+	var res SimpleMemberOrg
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
