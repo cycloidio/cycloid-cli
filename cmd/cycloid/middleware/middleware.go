@@ -148,6 +148,7 @@ type Middleware interface {
 	DeleteRole(org, role string) error
 	GetRole(org, role string) (*models.Role, error)
 	ListRoles(org string) ([]*models.Role, error)
+	CreateRole(org string, name, canonical, description *string, rules []*models.NewRule) (*models.NewRole, error)
 
 	// CreateKpi(name, kpiType, widget, org, project, job, env, config string) (*models.KPI, error)
 	// DeleteKpi(org, kpi string) error
