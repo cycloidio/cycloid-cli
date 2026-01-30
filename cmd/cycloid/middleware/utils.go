@@ -1,6 +1,10 @@
 package middleware
 
-import "fmt"
+import (
+	"fmt"
+	"regexp"
+	"strings"
+)
 
 // from https://github.com/cycloidio/youdeploy-http-api/blob/develop/utils/convert.go
 
@@ -35,4 +39,38 @@ func ConvertMapInterfaceToMapString(p any) any {
 	default:
 		return v
 	}
+}
+
+var allowedCanonicalCharRegex = regexp.MustCompile("[^a-zA-Z0-9-_]")
+
+// ToCanonical convert a name to a valid canonical
+func ToCanonical(name string) string {
+	replacer := strings.NewReplacer(
+		" ", "_",
+	)
+
+	replaced := replacer.Replace(name)
+	filtered := allowedCanonicalCharRegex.ReplaceAllString(replaced, "")
+	trimmed := strings.Trim(filtered, "-_")
+	return strings.ToLower(trimmed)
+}
+
+// NameOrCanonical will process name and canonical argument and return both
+// if name is set, the canonical will be inferred from it
+// if canonical is set, name will be a Capitalized version of the canonical
+// if both are empty, you will get an error
+func NameOrCanonical(name, canonical *string) (string, string, error) {
+	if name == nil && canonical == nil {
+		return "", "", fmt.Errorf("name or canonical is required, both are empty")
+	}
+
+	// if name == nil {
+	// 	return strings.ToUpper(*canonical[:1]) + *canonical[1:], *canonical, nil
+	// }
+
+	if canonical == nil {
+		return *name, ToCanonical(*canonical), nil
+	}
+
+	return *name, *canonical, nil
 }

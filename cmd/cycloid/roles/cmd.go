@@ -23,7 +23,10 @@ func NewCommands() *cobra.Command {
 
 	cmd.AddCommand(NewDeleteCommand(),
 		NewListCommand(),
-		NewGetCommand())
+		NewGetCommand(),
+		NewCreateCommand(),
+		NewDeleteCommand(),
+	)
 
 	return cmd
 }
