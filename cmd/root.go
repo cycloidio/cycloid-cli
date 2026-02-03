@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
-
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
@@ -29,6 +26,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
 	"github.com/cycloidio/cycloid-cli/internal/version"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
 )
 
 var (
@@ -68,6 +67,9 @@ CY_ENV       | Set the current environment
 CY_COMPONENT | Set the current component
 CY_API_KEY   | Set the current API Key to use
 CY_VERBOSITY | Set the verbosity level (debug, info, warning, error), default warning.
+HTTP_PROXY   | Set the http proxy with host[:port] format for http request
+HTTPS_PROXY  | Set the https proxy with host[:port] format for https request
+NO_PROXY     | List of hosts that must bypass proxy configuration
 `,
 	}
 
