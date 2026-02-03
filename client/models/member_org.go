@@ -9,6 +9,7 @@ import (
 	"context"
 	"encoding/json"
 	stderrors "errors"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -57,7 +58,7 @@ type MemberOrg struct {
 	InvitedAt *uint64 `json:"invited_at,omitempty"`
 
 	// Organization member who invited the current user.
-	InvitedBy *MemberOrg `json:"invited_by,omitempty"`
+	InvitedBy *SimpleMemberOrg `json:"invited_by,omitempty"`
 
 	// When the user logged in last time.
 	// Minimum: 0
@@ -77,6 +78,9 @@ type MemberOrg struct {
 	// role
 	// Required: true
 	Role *Role `json:"role"`
+
+	// teams
+	Teams []*SimpleTeam `json:"teams"`
 
 	// When the user had the role modified.
 	// Minimum: 0
@@ -138,6 +142,10 @@ func (m *MemberOrg) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRole(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTeams(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -390,6 +398,36 @@ func (m *MemberOrg) validateRole(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *MemberOrg) validateTeams(formats strfmt.Registry) error {
+	if swag.IsZero(m.Teams) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Teams); i++ {
+		if swag.IsZero(m.Teams[i]) { // not required
+			continue
+		}
+
+		if m.Teams[i] != nil {
+			if err := m.Teams[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("teams" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("teams" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *MemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
 	if swag.IsZero(m.UpdatedAt) { // not required
 		return nil
@@ -431,6 +469,10 @@ func (m *MemberOrg) ContextValidate(ctx context.Context, formats strfmt.Registry
 	}
 
 	if err := m.contextValidateRole(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateTeams(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -481,6 +523,35 @@ func (m *MemberOrg) contextValidateRole(ctx context.Context, formats strfmt.Regi
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *MemberOrg) contextValidateTeams(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Teams); i++ {
+
+		if m.Teams[i] != nil {
+
+			if swag.IsZero(m.Teams[i]) { // not required
+				return nil
+			}
+
+			if err := m.Teams[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("teams" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("teams" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil
