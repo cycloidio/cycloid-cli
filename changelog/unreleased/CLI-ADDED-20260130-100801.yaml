@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add support for common proxy env vars (`HTTP_PROXY`, `HTTPS_PROXY`, `NO_PROXY`)
-time: 2026-01-30T10:08:01.338870768Z
-custom:
-  DETAILS: ""
-  PR: "405"
-  TYPE: CLI
