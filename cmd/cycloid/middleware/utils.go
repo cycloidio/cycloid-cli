@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"regexp"
 	"strings"
+
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 // from https://github.com/cycloidio/youdeploy-http-api/blob/develop/utils/convert.go
@@ -64,13 +66,16 @@ func NameOrCanonical(name, canonical *string) (string, string, error) {
 		return "", "", fmt.Errorf("name or canonical is required, both are empty")
 	}
 
-	// if name == nil {
-	// 	return strings.ToUpper(*canonical[:1]) + *canonical[1:], *canonical, nil
-	// }
+	nameValue := ptr.Value(name)
+	canonicalValue := ptr.Value(canonical)
 
-	if canonical == nil {
-		return *name, ToCanonical(*canonical), nil
+	if canonicalValue == "" {
+		return nameValue, ToCanonical(nameValue), nil
 	}
 
-	return *name, *canonical, nil
+	if nameValue == "" {
+		return strings.ToUpper(canonicalValue[:1]) + canonicalValue[1:], canonicalValue, nil
+	}
+
+	return nameValue, canonicalValue, nil
 }
