@@ -1,0 +1,86 @@
+---
+description: CLI-specific development guidelines for the Cycloid CLI project, covering command structure, argument handling, output formatting, and user experience best practices. This rule ensures consistent CLI behavior and maintainable command implementations. CLI-specific rules override general Go rules when working on CLI-related code.
+globs: ["cmd/**/*.go", "internal/cyargs/**/*.go", "e2e/**/*.go"]
+alwaysApply: true
+contextFiles: ["CONTRIBUTING.md", "DEVELOPING_TIPS.md"]
+---
+You are an expert in Go CLI development, specifically for the Cycloid CLI project. Your role is to ensure CLI commands are user-friendly, consistent, maintainable, and follow established patterns.
+
+**Note: These CLI-specific rules override general Go rules (golang.mdc) when working on CLI-related code. CLI-specific patterns and practices take precedence over general Go guidelines.**
+
+### CLI Architecture and Structure:
+- **Command Organization**: Use Cobra framework with clear command hierarchy and logical grouping.
+- **Consistent Naming**: Follow established naming conventions for commands, flags, and arguments.
+- **Modular Design**: Separate command logic from business logic using middleware pattern.
+- **Error Handling**: Provide clear, actionable error messages to users.
+
+### Command Development Guidelines:
+- **Initialize middleware after argument collection** to ensure all required parameters are available.
+- **Use `cyargs` functions** for consistent flag registration and argument retrieval across commands.
+- **Direct errors to `cmd.OutOrStderr()`** and successful output to `cmd.OutOrStdout()` for proper CLI stream separation.
+- **Extract duplicated logic** into helper functions to maintain DRY principles.
+- **Use anonymous structs** for local data structures that are only used within a single function.
+
+### Argument and Flag Management:
+- **Consistent Flag Naming**: Use kebab-case for flag names (e.g., `--blueprint-ref`, `--service-catalog-source-canonical`).
+- **Required vs Optional**: Clearly mark required flags and provide helpful descriptions.
+- **Flag Validation**: Validate flag values early and provide clear error messages.
+- **Use `cyargs` Package**: Leverage the internal `cyargs` package for consistent argument handling.
+- **Avoid Flag Conflicts**: Ensure no shorthand conflicts with global flags.
+
+### Output Formatting:
+- **Multiple Output Formats**: Support JSON, table, and other formats as appropriate.
+- **Consistent Structure**: Use consistent field names and data structures across commands.
+- **User-Friendly Messages**: Provide clear success and error messages.
+- **Progress Indicators**: Use progress indicators for long-running operations.
+
+### CLI Testing Guidelines:
+- **E2E Tests**: Write comprehensive end-to-end tests for all CLI commands.
+- **Unit Tests**: Test individual command logic and middleware functions.
+- **Mock External Dependencies**: Use mocks for API calls and external services.
+- **Test Coverage**: Ensure high test coverage for all CLI functionality.
+
+### User Experience:
+- **Helpful Examples**: Provide clear examples in command help text.
+- **Descriptive Messages**: Use descriptive error messages that guide users to solutions.
+- **Consistent Behavior**: Ensure similar commands behave consistently.
+- **Performance**: Optimize command execution time for better user experience.
+
+### CLI Code Organization:
+- **Command Files**: Organize commands logically in separate files.
+- **Middleware Pattern**: Use middleware for business logic separation.
+- **Internal Packages**: Use internal packages for shared CLI utilities.
+- **Clean Imports**: Keep imports organized and minimal.
+
+### CLI Error Handling:
+- **Graceful Degradation**: Handle errors gracefully without crashing the CLI.
+- **Contextual Errors**: Provide context about what went wrong and how to fix it.
+- **Exit Codes**: Use appropriate exit codes for different error conditions.
+- **Logging**: Use appropriate log levels for debugging and user information.
+
+### CLI Security Considerations:
+- **Input Validation**: Validate all user inputs thoroughly.
+- **Sensitive Data**: Handle sensitive data (API keys, tokens) securely.
+- **Output Sanitization**: Ensure output doesn't expose sensitive information.
+- **Authentication**: Implement proper authentication and authorization checks.
+
+### CLI Performance and Resource Management:
+- **Efficient API Calls**: Minimize API calls and use appropriate timeouts.
+- **Resource Cleanup**: Ensure proper cleanup of resources (connections, files).
+- **Memory Management**: Avoid memory leaks in long-running commands.
+- **Concurrent Operations**: Use goroutines appropriately for parallel operations.
+
+### CLI Documentation:
+- **Command Help**: Provide comprehensive help text for all commands.
+- **Examples**: Include practical examples in command documentation.
+- **README Updates**: Keep README files updated with new commands and features.
+- **Contributing Guidelines**: Follow CONTRIBUTING.md for development practices.
+
+### Key CLI Conventions:
+1. **Consistency First**: Ensure all commands follow the same patterns and conventions.
+2. **User-Centric Design**: Prioritize user experience and ease of use.
+3. **Maintainable Code**: Write code that is easy to understand and modify.
+4. **Comprehensive Testing**: Test all CLI functionality thoroughly.
+5. **Clear Documentation**: Document commands and their usage clearly.
+6. **Error Resilience**: Handle errors gracefully and provide helpful feedback.
+7. **Performance Awareness**: Consider performance implications of CLI operations.
