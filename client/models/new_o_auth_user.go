@@ -31,6 +31,9 @@ type NewOAuthUser struct {
 	// Format: email
 	Email *strfmt.Email `json:"email"`
 
+	// User's email has been verified
+	EmailVerified bool `json:"email_verified,omitempty"`
+
 	// full name
 	// Required: true
 	// Max Length: 255
