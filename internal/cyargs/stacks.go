@@ -115,23 +115,6 @@ func CompleteVisibility(cmd *cobra.Command, args []string, toComplete string) ([
 	}, cobra.ShellCompDirectiveNoFileComp
 }
 
-func AddTeamFlag(cmd *cobra.Command) string {
-	flagName := "team"
-	cmd.Flags().StringP(flagName, "t", "", "designate the maintainers of a stack")
-	cmd.RegisterFlagCompletionFunc(flagName, CompleteTeam)
-	return flagName
-}
-
-func GetTeam(cmd *cobra.Command) (string, error) {
-	return cmd.Flags().GetString("team")
-}
-
-// TODO: We don't care that much of that
-// This may disappear
-func CompleteTeam(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-	return []cobra.Completion{}, cobra.ShellCompDirectiveNoFileComp
-}
-
 // Blueprint-related functions
 func AddBlueprintRefFlag(cmd *cobra.Command) string {
 	flagName := "blueprint-ref"
