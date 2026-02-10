@@ -23,10 +23,11 @@ func (m *middleware) ListTeamMembers(org string, team string) ([]*models.MemberT
 	return payload.Data, nil
 }
 
-func (m *middleware) GetTeamMembers(org string, team string) (*models.MemberTeam, error) {
+func (m *middleware) GetTeamMember(org string, team string, memberID uint32) (*models.MemberTeam, error) {
 	params := organization_team_members.NewGetTeamMemberParams()
 	params.SetOrganizationCanonical(org)
 	params.SetTeamCanonical(team)
+	params.SetMemberID(memberID)
 
 	resp, err := m.api.OrganizationTeamMembers.GetTeamMember(params, m.api.Credentials(&org))
 	if err != nil {
@@ -43,6 +44,7 @@ func (m *middleware) GetTeamMembers(org string, team string) (*models.MemberTeam
 func (m *middleware) AssignMemberToTeam(org, team string, username, email *string) (*models.MemberTeam, error) {
 	params := organization_team_members.NewAssignMemberToTeamParams()
 	params.SetOrganizationCanonical(org)
+	params.SetTeamCanonical(team)
 	body := &models.NewTeamMemberAssignation{}
 
 	if username == nil && email == nil {
@@ -62,7 +64,7 @@ func (m *middleware) AssignMemberToTeam(org, team string, username, email *strin
 	}
 
 	params.SetBody(body)
-	resp, err := m.api.OrganizationTeamMembers.AssignMemberToTeam(params, m.api.Credentials(&org))
+	resp, err := m.api.OrganizationTeamMembers.AssignMemberToTeam(params, m.api.Credentials(&org), organization_team_members.WithAcceptApplicationVndCycloidIoV1JSON)
 	if err != nil {
 		return nil, NewAPIError(err)
 	}
@@ -70,4 +72,18 @@ func (m *middleware) AssignMemberToTeam(org, team string, username, email *strin
 	payload := resp.GetPayload()
 
 	return payload.Data, nil
+}
+
+func (m *middleware) UnAssignMemberFromTeam(org, team string, memberID uint32) error {
+	params := organization_team_members.NewUnassignMemberFromTeamParams()
+	params.SetOrganizationCanonical(org)
+	params.SetTeamCanonical(team)
+	params.SetMemberID(memberID)
+
+	_, err := m.api.OrganizationTeamMembers.UnassignMemberFromTeam(params, m.api.Credentials(&org), organization_team_members.WithAcceptApplicationJSON)
+	if err != nil {
+		return NewAPIError(err)
+	}
+
+	return nil
 }
