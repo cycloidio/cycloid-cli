@@ -67,6 +67,19 @@ type Middleware interface {
 	ListInvites(org string) ([]*models.MemberOrg, error)
 	UpdateMember(org string, id uint32, role string) (*models.MemberOrg, error)
 
+	// organization_teams
+	ListTeams(org string, teamNameFilter *string, createdAtFilter *uint64, memberIDFilter *uint32, orderBy *TeamOrderByParam) ([]*models.Team, error)
+	GetTeam(org, team string) (*models.Team, error)
+	CreateTeam(org string, name, team, owner *string, roles []string) (*models.Team, error)
+	UpdateTeam(org string, name, team, owner *string, roles []string) (*models.Team, error)
+	DeleteTeam(org, team string) error
+
+	// organization_team_members
+	ListTeamMembers(org string, team string) ([]*models.MemberTeam, error)
+	GetTeamMember(org string, team string, memberID uint32) (*models.MemberTeam, error)
+	AssignMemberToTeam(org, team string, username, email *string) (*models.MemberTeam, error)
+	UnAssignMemberFromTeam(org, team string, memberID uint32) error
+
 	// organizations
 	CreateOrganization(name string) (*models.Organization, error)
 	UpdateOrganization(org, name string) (*models.Organization, error)

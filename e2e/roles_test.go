@@ -1,8 +1,6 @@
 package e2e_test
 
 import (
-	"fmt"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -42,7 +40,6 @@ func TestRoles(t *testing.T) {
 			"--rule-json", `{"action": "organization:create", "effect": "allow", "resources": []}`,
 			"--rule-file", ruleFile,
 		}
-		fmt.Println(strings.Join(cmd, " "))
 		cmdOut, cmdErr := executeCommand(cmd)
 
 		require.Nil(t, cmdErr)

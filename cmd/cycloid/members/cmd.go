@@ -26,7 +26,8 @@ func NewCommands() *cobra.Command {
 		NewListCommand(),
 		NewGetCommand(),
 		NewInviteCommand(),
-		NewListInvitesCommand())
+		NewListInvitesCommand(),
+	)
 
 	return cmd
 }
