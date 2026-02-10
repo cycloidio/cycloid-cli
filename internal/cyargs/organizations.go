@@ -62,7 +62,7 @@ func GetOrgParentCanonical(cmd *cobra.Command) (string, error) {
 func AddRoleCanonicalFlag(cmd *cobra.Command) string {
 	flagName := "role"
 	cmd.Flags().StringP(flagName, "r", "", "the role canonical")
-	cmd.RegisterFlagCompletionFunc(flagName, CompleteRoleCanonicals)
+	cmd.RegisterFlagCompletionFunc(flagName, CompleteRoleCanonical)
 	return flagName
 }
 
@@ -85,7 +85,7 @@ func GetRoleCanonical(cmd *cobra.Command) (string, error) {
 	return can, nil
 }
 
-func CompleteRoleCanonicals(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+func CompleteRoleCanonical(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 	org, err := GetOrg(cmd)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list role, missing org for completion "+err.Error()), cobra.ShellCompDirectiveNoFileComp

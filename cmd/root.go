@@ -23,6 +23,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/teams"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
 	"github.com/cycloidio/cycloid-cli/internal/version"
@@ -129,5 +130,6 @@ func AttachCommands(cmd *cobra.Command) {
 		terracost.NewCommands(),
 		beta.NewCommands(),
 		uri.NewURICommands(),
+		teams.NewTeamsCommands(),
 	)
 }

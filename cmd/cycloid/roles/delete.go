@@ -23,7 +23,7 @@ func NewDeleteCommand() *cobra.Command {
 		Use:               "delete",
 		Aliases:           []string{"rm"},
 		Args:              cobra.MinimumNArgs(1),
-		ValidArgsFunction: cyargs.CompleteRoleCanonicals,
+		ValidArgsFunction: cyargs.CompleteRoleCanonical,
 		Example:           example,
 		Short:             short,
 		Long:              long,

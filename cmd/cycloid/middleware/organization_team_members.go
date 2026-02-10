@@ -23,10 +23,11 @@ func (m *middleware) ListTeamMembers(org string, team string) ([]*models.MemberT
 	return payload.Data, nil
 }
 
-func (m *middleware) GetTeamMembers(org string, team string) (*models.MemberTeam, error) {
+func (m *middleware) GetTeamMember(org string, team string, memberID uint32) (*models.MemberTeam, error) {
 	params := organization_team_members.NewGetTeamMemberParams()
 	params.SetOrganizationCanonical(org)
 	params.SetTeamCanonical(team)
+	params.SetMemberID(memberID)
 
 	resp, err := m.api.OrganizationTeamMembers.GetTeamMember(params, m.api.Credentials(&org))
 	if err != nil {
