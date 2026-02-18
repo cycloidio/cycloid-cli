@@ -139,9 +139,12 @@ func NewAPI(opts ...APIOptions) *APIClient {
 		return nil
 	}
 
-	// TODO: check if there is other required things to do
 	if t, ok := rt.(*http.Transport); ok {
 		t.Proxy = http.ProxyFromEnvironment
+
+		// Extend timeout
+		t.IdleConnTimeout = time.Second * 10
+		t.ResponseHeaderTimeout = time.Second * 10
 	}
 
 	// Hack because https://github.com/go-swagger/go-swagger/issues/1899
