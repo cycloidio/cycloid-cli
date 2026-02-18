@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: Update teams commands and added member management commands
+time: 2026-02-18T20:35:27.850357845Z
+custom:
+  DETAILS: Lookup `cy team --help` and `cy team members --help` commands
+  PR: "411"
+  TYPE: CLI
