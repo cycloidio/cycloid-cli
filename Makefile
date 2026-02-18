@@ -38,7 +38,7 @@ SWAGGER_GENERATE = swagger generate client \
 		--target=./client \
 		--name=api
 
-BACKEND_TAG ?= staging
+export BACKEND_TAG ?= $(shell cat client/version)-rc
 
 -include .env
 -include .api_key
@@ -46,6 +46,10 @@ BACKEND_TAG ?= staging
 .PHONY: help
 help: ## Show this help
 	@grep -F -h "##" $(MAKEFILE_LIST) | grep -F -v fgrep | sed -e 's/:.*##/:##/' | column -t -s '##'
+
+.PHONY: print-version
+print-version:
+	echo $$BACKEND_TAG
 
 .PHONY: install
 install: .env .git/hooks/pre-commit ## install all pre-requisites
