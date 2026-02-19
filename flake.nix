@@ -25,9 +25,9 @@
 
             go_1_25
             go-swagger
-            gci
-            golangci-lint
-            golangci-lint-langserver
+            # gci
+            # golangci-lint
+            # golangci-lint-langserver
             awscli
             docker
             pre-commit
