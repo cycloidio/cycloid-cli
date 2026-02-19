@@ -26,7 +26,7 @@ func NewGetCommand() *cobra.Command {
 		Short:             short,
 		Long:              long,
 		RunE:              getRole,
-		ValidArgsFunction: cyargs.CompleteRoleCanonicals,
+		ValidArgsFunction: cyargs.CompleteRoleCanonical,
 	}
 
 	cyargs.AddRoleCanonicalFlag(cmd)
