@@ -38,8 +38,6 @@ SWAGGER_GENERATE = swagger generate client \
 		--target=./client \
 		--name=api
 
-export BACKEND_TAG ?= $(shell cat client/version)-rc
-
 -include .env
 -include .api_key
 
