@@ -1,6 +1,10 @@
 package middleware
 
 import (
+	"crypto/tls"
+	"net/http"
+	"time"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
@@ -89,6 +93,7 @@ type Middleware interface {
 	ListOrganizationWorkers(org string) ([]*models.Worker, error)
 	ListOrganizationChildrens(org string) ([]*models.Organization, error)
 	CreateOrganizationChild(org, childOrg string, childOrgName *string) (*models.Organization, error)
+	CreateOrUpdateSubscription(org string, plan *SubscriptionPlan, expiresAt time.Time, membersCount uint64, overwrite bool) (*models.Subscription, error)
 
 	// Organization Forms
 	InterpolateFormsConfig(org, env, project, component, serviceCatalogRef, useCase string, inputs models.FormVariables) (*models.ServiceCatalogConfig, error)
@@ -200,9 +205,16 @@ type FirstOrgData struct {
 }
 
 type middleware struct {
-	api *common.APIClient
+	api           *common.APIClient
+	GenericClient http.Client
 }
 
 func NewMiddleware(api *common.APIClient) Middleware {
+	client := http.DefaultClient
+	client.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{
+			InsecureSkipVerify: api.Config.Insecure,
+		},
+	}
 	return &middleware{api: api}
 }
