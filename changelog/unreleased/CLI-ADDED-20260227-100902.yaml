@@ -1,9 +1,0 @@
-component: CLI
-kind: ADDED
-body: Add `cy organization subscription update` command to register a subscription
-  to an organization.
-time: 2026-02-27T10:09:02.057747908Z
-custom:
-  DETAILS: ""
-  PR: "410"
-  TYPE: CLI
