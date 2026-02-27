@@ -4,8 +4,10 @@ import (
 	"encoding/json"
 	"slices"
 	"testing"
+	"time"
 
 	"github.com/matryer/is"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/testcfg"
@@ -54,6 +56,30 @@ func TestOrganizations(t *testing.T) {
 		err := json.Unmarshal([]byte(cmdOut), &outOrg)
 		is.NoErr(err)                         // JSON output should be a valid model
 		is.Equal(childOrg, *outOrg.Canonical) // org canonicals should match
+
+		t.Run("SuccessOrganizationsAddSubscription", func(t *testing.T) {
+			_, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"organization", "subscription",
+				"update",
+				"--org", childOrg,
+				"--member-count", "10",
+				"--expires-at", time.Now().AddDate(1, 0, 0).Format(time.RFC3339),
+			})
+			assert.NoError(t, cmdErr, "command should be okay")
+		})
+
+		t.Run("SuccessOrganizationsAddSubscriptionOverwriteOk", func(t *testing.T) {
+			_, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"organization", "subscription",
+				"update",
+				"--org", childOrg,
+				"--member-count", "5",
+				"--expires-at", time.Now().AddDate(1, 0, 0).Format(time.RFC3339),
+			})
+			assert.NoError(t, cmdErr, "We should be able to overwrite the sub")
+		})
 
 		t.Run("SuccessOrganizationsListChildrens", func(t *testing.T) {
 			is := is.New(t)
