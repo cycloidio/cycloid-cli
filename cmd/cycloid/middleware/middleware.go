@@ -3,6 +3,7 @@ package middleware
 import (
 	"crypto/tls"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -191,6 +192,9 @@ type Middleware interface {
 
 	// Extra actions out of the api
 	InitFirstOrg(org, userName, fullName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, error)
+
+	// Generic request for un-implemented routes
+	GenericRequest(method string, org *string, params url.Values, headers map[string]string, body any, response any, route ...string) (*http.Response, error)
 }
 
 type FirstOrgData struct {
