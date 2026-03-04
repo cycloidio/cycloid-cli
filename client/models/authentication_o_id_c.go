@@ -24,6 +24,10 @@ import (
 type AuthenticationOIDC struct {
 	enabledField *bool
 
+	// Whether the client secret is set or not.
+	// Read Only: true
+	HasSecret *bool `json:"has_secret,omitempty"`
+
 	// The public ID registered with the OIDC provider. Identifies your application.
 	OidcClientID string `json:"oidc_client_id,omitempty"`
 
@@ -65,6 +69,10 @@ func (m *AuthenticationOIDC) SetType(val string) {
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 	var data struct {
+
+		// Whether the client secret is set or not.
+		// Read Only: true
+		HasSecret *bool `json:"has_secret,omitempty"`
 
 		// The public ID registered with the OIDC provider. Identifies your application.
 		OidcClientID string `json:"oidc_client_id,omitempty"`
@@ -116,6 +124,7 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 		return errors.New(422, "invalid type value: %q", base.Type)
 	}
 
+	result.HasSecret = data.HasSecret
 	result.OidcClientID = data.OidcClientID
 	result.OidcClientSecret = data.OidcClientSecret
 	result.OidcClientSecretJwt = data.OidcClientSecretJwt
@@ -133,6 +142,10 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 	var b1, b2, b3 []byte
 	var err error
 	b1, err = json.Marshal(struct {
+
+		// Whether the client secret is set or not.
+		// Read Only: true
+		HasSecret *bool `json:"has_secret,omitempty"`
 
 		// The public ID registered with the OIDC provider. Identifies your application.
 		OidcClientID string `json:"oidc_client_id,omitempty"`
@@ -152,6 +165,8 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 		// The base URL of the OIDC provider. Used for automatic endpoint discovery.
 		OidcIssuer string `json:"oidc_issuer,omitempty"`
 	}{
+
+		HasSecret: m.HasSecret,
 
 		OidcClientID: m.OidcClientID,
 
@@ -212,9 +227,22 @@ func (m *AuthenticationOIDC) validateEnabled(formats strfmt.Registry) error {
 func (m *AuthenticationOIDC) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateHasSecret(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *AuthenticationOIDC) contextValidateHasSecret(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "has_secret", "body", m.HasSecret); err != nil {
+		return err
+	}
+
 	return nil
 }
 

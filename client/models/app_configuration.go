@@ -21,6 +21,15 @@ import (
 // swagger:model AppConfiguration
 type AppConfiguration struct {
 
+	// Base URL of the Cyclobot API the frontend should use.
+	CyclobotAPIURL string `json:"cyclobot_api_url,omitempty"`
+
+	// Indicates if Cyclobot is enabled for the frontend.
+	CyclobotEnabled bool `json:"cyclobot_enabled,omitempty"`
+
+	// Graph ID to use for the Cyclobot agent.
+	CyclobotGraphID string `json:"cyclobot_graph_id,omitempty"`
+
 	// Indicates if Sentry is enabled.
 	// Required: true
 	SentryEnabled *bool `json:"sentry_enabled"`

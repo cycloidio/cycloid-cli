@@ -103,9 +103,58 @@ func WithAcceptApplicationVndCycloidIoV1JSON(r *runtime.ClientOperation) {
 
 // ClientService is the interface for Client methods
 type ClientService interface {
+	CreateOrUpdateSubscription(params *CreateOrUpdateSubscriptionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateOrUpdateSubscriptionOK, error)
+
 	CreateSubscription(params *CreateSubscriptionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateSubscriptionNoContent, error)
 
+	DeleteSubscription(params *DeleteSubscriptionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteSubscriptionNoContent, error)
+
+	GetSubscription(params *GetSubscriptionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetSubscriptionOK, error)
+
 	SetTransport(transport runtime.ClientTransport)
+}
+
+/*
+CreateOrUpdateSubscription Create or update the subscription for the Organization. This operation is idempotent.
+*/
+func (a *Client) CreateOrUpdateSubscription(params *CreateOrUpdateSubscriptionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*CreateOrUpdateSubscriptionOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewCreateOrUpdateSubscriptionParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "createOrUpdateSubscription",
+		Method:             "PUT",
+		PathPattern:        "/organizations/{organization_canonical}/subscriptions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &CreateOrUpdateSubscriptionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*CreateOrUpdateSubscriptionOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*CreateOrUpdateSubscriptionDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }
 
 /*
@@ -147,6 +196,92 @@ func (a *Client) CreateSubscription(params *CreateSubscriptionParams, authInfo r
 	//
 	// a default response is provided: fill this and return an error
 	unexpectedSuccess := result.(*CreateSubscriptionDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+DeleteSubscription Delete the subscription for the Organization
+*/
+func (a *Client) DeleteSubscription(params *DeleteSubscriptionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DeleteSubscriptionNoContent, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewDeleteSubscriptionParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "deleteSubscription",
+		Method:             "DELETE",
+		PathPattern:        "/organizations/{organization_canonical}/subscriptions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &DeleteSubscriptionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*DeleteSubscriptionNoContent)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*DeleteSubscriptionDefault)
+
+	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
+}
+
+/*
+GetSubscription Get the subscription for the Organization
+*/
+func (a *Client) GetSubscription(params *GetSubscriptionParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*GetSubscriptionOK, error) {
+	// NOTE: parameters are not validated before sending
+	if params == nil {
+		params = NewGetSubscriptionParams()
+	}
+	op := &runtime.ClientOperation{
+		ID:                 "getSubscription",
+		Method:             "GET",
+		PathPattern:        "/organizations/{organization_canonical}/subscriptions",
+		ProducesMediaTypes: []string{"application/json"},
+		ConsumesMediaTypes: []string{"application/vnd.cycloid.io.v1+json", "application/x-www-form-urlencoded"},
+		Schemes:            []string{"https"},
+		Params:             params,
+		Reader:             &GetSubscriptionReader{formats: a.formats},
+		AuthInfo:           authInfo,
+		Context:            params.Context,
+		Client:             params.HTTPClient,
+	}
+	for _, opt := range opts {
+		opt(op)
+	}
+	result, err := a.transport.Submit(op)
+	if err != nil {
+		return nil, err
+	}
+
+	// only one success response has to be checked
+	success, ok := result.(*GetSubscriptionOK)
+	if ok {
+		return success, nil
+	}
+
+	// unexpected success response.
+	//
+	// a default response is provided: fill this and return an error
+	unexpectedSuccess := result.(*GetSubscriptionDefault)
 
 	return nil, runtime.NewAPIError("unexpected success response: content available as default response in error", unexpectedSuccess, unexpectedSuccess.Code())
 }

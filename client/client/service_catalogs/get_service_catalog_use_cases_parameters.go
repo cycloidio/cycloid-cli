@@ -81,7 +81,7 @@ type GetServiceCatalogUseCasesParams struct {
 	   Format: uint32
 	   Default: 1
 	*/
-	ServiceCatalogSourceVersionID uint32
+	ServiceCatalogSourceVersionID *uint32
 
 	timeout    time.Duration
 	Context    context.Context
@@ -105,7 +105,7 @@ func (o *GetServiceCatalogUseCasesParams) SetDefaults() {
 	)
 
 	val := GetServiceCatalogUseCasesParams{
-		ServiceCatalogSourceVersionID: serviceCatalogSourceVersionIDDefault,
+		ServiceCatalogSourceVersionID: &serviceCatalogSourceVersionIDDefault,
 	}
 
 	val.timeout = o.timeout
@@ -170,13 +170,13 @@ func (o *GetServiceCatalogUseCasesParams) SetServiceCatalogRef(serviceCatalogRef
 }
 
 // WithServiceCatalogSourceVersionID adds the serviceCatalogSourceVersionID to the get service catalog use cases params
-func (o *GetServiceCatalogUseCasesParams) WithServiceCatalogSourceVersionID(serviceCatalogSourceVersionID uint32) *GetServiceCatalogUseCasesParams {
+func (o *GetServiceCatalogUseCasesParams) WithServiceCatalogSourceVersionID(serviceCatalogSourceVersionID *uint32) *GetServiceCatalogUseCasesParams {
 	o.SetServiceCatalogSourceVersionID(serviceCatalogSourceVersionID)
 	return o
 }
 
 // SetServiceCatalogSourceVersionID adds the serviceCatalogSourceVersionId to the get service catalog use cases params
-func (o *GetServiceCatalogUseCasesParams) SetServiceCatalogSourceVersionID(serviceCatalogSourceVersionID uint32) {
+func (o *GetServiceCatalogUseCasesParams) SetServiceCatalogSourceVersionID(serviceCatalogSourceVersionID *uint32) {
 	o.ServiceCatalogSourceVersionID = serviceCatalogSourceVersionID
 }
 
@@ -198,13 +198,20 @@ func (o *GetServiceCatalogUseCasesParams) WriteToRequest(r runtime.ClientRequest
 		return err
 	}
 
-	// query param service_catalog_source_version_id
-	qrServiceCatalogSourceVersionID := o.ServiceCatalogSourceVersionID
-	qServiceCatalogSourceVersionID := swag.FormatUint32(qrServiceCatalogSourceVersionID)
-	if qServiceCatalogSourceVersionID != "" {
+	if o.ServiceCatalogSourceVersionID != nil {
 
-		if err := r.SetQueryParam("service_catalog_source_version_id", qServiceCatalogSourceVersionID); err != nil {
-			return err
+		// query param service_catalog_source_version_id
+		var qrServiceCatalogSourceVersionID uint32
+
+		if o.ServiceCatalogSourceVersionID != nil {
+			qrServiceCatalogSourceVersionID = *o.ServiceCatalogSourceVersionID
+		}
+		qServiceCatalogSourceVersionID := swag.FormatUint32(qrServiceCatalogSourceVersionID)
+		if qServiceCatalogSourceVersionID != "" {
+
+			if err := r.SetQueryParam("service_catalog_source_version_id", qServiceCatalogSourceVersionID); err != nil {
+				return err
+			}
 		}
 	}
 

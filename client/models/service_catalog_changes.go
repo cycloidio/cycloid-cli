@@ -18,7 +18,7 @@ import (
 
 // ServiceCatalogChanges ServiceCatalogChanges
 //
-// Represents list of service catalogs changes during the refresh of a service catalog source.
+// Represents list of service catalogs changes during the refresh of a service catalog source. Errored stacks are included in the corresponding field. The "details" field of the ErrorDetailsItem contains the stack canonical, if any.
 //
 // swagger:model ServiceCatalogChanges
 type ServiceCatalogChanges struct {
@@ -30,6 +30,9 @@ type ServiceCatalogChanges struct {
 	// deleted
 	// Required: true
 	Deleted []*ServiceCatalog `json:"deleted"`
+
+	// errored
+	Errored []*ErrorDetailsItem `json:"errored"`
 
 	// updated
 	// Required: true
@@ -48,6 +51,10 @@ func (m *ServiceCatalogChanges) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateDeleted(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateErrored(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -116,6 +123,36 @@ func (m *ServiceCatalogChanges) validateDeleted(formats strfmt.Registry) error {
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("deleted" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalogChanges) validateErrored(formats strfmt.Registry) error {
+	if swag.IsZero(m.Errored) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Errored); i++ {
+		if swag.IsZero(m.Errored[i]) { // not required
+			continue
+		}
+
+		if m.Errored[i] != nil {
+			if err := m.Errored[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("errored" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("errored" + "." + strconv.Itoa(i))
 				}
 
 				return err
@@ -200,6 +237,10 @@ func (m *ServiceCatalogChanges) ContextValidate(ctx context.Context, formats str
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateErrored(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateUpdated(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -261,6 +302,35 @@ func (m *ServiceCatalogChanges) contextValidateDeleted(ctx context.Context, form
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("deleted" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalogChanges) contextValidateErrored(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Errored); i++ {
+
+		if m.Errored[i] != nil {
+
+			if swag.IsZero(m.Errored[i]) { // not required
+				return nil
+			}
+
+			if err := m.Errored[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("errored" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("errored" + "." + strconv.Itoa(i))
 				}
 
 				return err

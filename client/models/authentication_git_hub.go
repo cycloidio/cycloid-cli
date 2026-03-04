@@ -30,6 +30,10 @@ type AuthenticationGitHub struct {
 	// The secret of the auth client, it'll not be returned on the public calls
 	ClientSecretID string `json:"client_secret_id,omitempty"`
 
+	// Whether the client secret is set or not.
+	// Read Only: true
+	HasSecret *bool `json:"has_secret,omitempty"`
+
 	// GitHub host address is used to determine where the request for the token should be sent.
 	// In most cases this address will be https://api.github.com`, but it could be different
 	// for onprem clients that use GitHub Enterprise.
@@ -65,6 +69,10 @@ func (m *AuthenticationGitHub) UnmarshalJSON(raw []byte) error {
 
 		// The secret of the auth client, it'll not be returned on the public calls
 		ClientSecretID string `json:"client_secret_id,omitempty"`
+
+		// Whether the client secret is set or not.
+		// Read Only: true
+		HasSecret *bool `json:"has_secret,omitempty"`
 
 		// GitHub host address is used to determine where the request for the token should be sent.
 		// In most cases this address will be https://api.github.com`, but it could be different
@@ -106,6 +114,7 @@ func (m *AuthenticationGitHub) UnmarshalJSON(raw []byte) error {
 
 	result.ClientID = data.ClientID
 	result.ClientSecretID = data.ClientSecretID
+	result.HasSecret = data.HasSecret
 	result.HostAddress = data.HostAddress
 
 	*m = result
@@ -125,6 +134,10 @@ func (m AuthenticationGitHub) MarshalJSON() ([]byte, error) {
 		// The secret of the auth client, it'll not be returned on the public calls
 		ClientSecretID string `json:"client_secret_id,omitempty"`
 
+		// Whether the client secret is set or not.
+		// Read Only: true
+		HasSecret *bool `json:"has_secret,omitempty"`
+
 		// GitHub host address is used to determine where the request for the token should be sent.
 		// In most cases this address will be https://api.github.com`, but it could be different
 		// for onprem clients that use GitHub Enterprise.
@@ -135,6 +148,8 @@ func (m AuthenticationGitHub) MarshalJSON() ([]byte, error) {
 		ClientID: m.ClientID,
 
 		ClientSecretID: m.ClientSecretID,
+
+		HasSecret: m.HasSecret,
 
 		HostAddress: m.HostAddress,
 	})
@@ -185,9 +200,22 @@ func (m *AuthenticationGitHub) validateEnabled(formats strfmt.Registry) error {
 func (m *AuthenticationGitHub) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateHasSecret(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *AuthenticationGitHub) contextValidateHasSecret(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "has_secret", "body", m.HasSecret); err != nil {
+		return err
+	}
+
 	return nil
 }
 

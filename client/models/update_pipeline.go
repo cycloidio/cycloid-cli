@@ -8,15 +8,18 @@ package models
 import (
 	"context"
 
-	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag"
-	"github.com/go-openapi/validate"
 )
 
 // UpdatePipeline Update Pipeline
 //
-// The entity which represents a new pipeline config to update in the application.
+// The entity which represents a new pipeline config to update in the
+// application.
+// If the refresh_from_git is requested, the passed_config is ignored
+// and the new pipeline config and vars are retrieved from git instead.
+// If the refresh_from_git is set to false (default), the passed_config is required
+// and is used to update the pipeline config. The passed_config is NOT templated.
 //
 // swagger:model UpdatePipeline
 type UpdatePipeline struct {
@@ -24,9 +27,12 @@ type UpdatePipeline struct {
 	// check credentials
 	CheckCredentials bool `json:"check_credentials,omitempty"`
 
-	// passed config
-	// Required: true
-	PassedConfig *string `json:"passed_config"`
+	// Already templated 'final' pipeline config that is used to perform 'live updates'.
+	// What you pass here is what you get.
+	PassedConfig string `json:"passed_config,omitempty"`
+
+	// If set to true, the new pipeline content and vars are retrieved from git and templated.
+	RefreshFromGit *bool `json:"refresh_from_git,omitempty"`
 
 	// yaml vars
 	YamlVars string `json:"yaml_vars,omitempty"`
@@ -34,24 +40,6 @@ type UpdatePipeline struct {
 
 // Validate validates this update pipeline
 func (m *UpdatePipeline) Validate(formats strfmt.Registry) error {
-	var res []error
-
-	if err := m.validatePassedConfig(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if len(res) > 0 {
-		return errors.CompositeValidationError(res...)
-	}
-	return nil
-}
-
-func (m *UpdatePipeline) validatePassedConfig(formats strfmt.Registry) error {
-
-	if err := validate.Required("passed_config", "body", m.PassedConfig); err != nil {
-		return err
-	}
-
 	return nil
 }
 

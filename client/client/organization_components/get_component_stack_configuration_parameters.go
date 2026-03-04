@@ -86,14 +86,6 @@ type GetComponentStackConfigurationParams struct {
 	*/
 	ProjectCanonical string
 
-	/* ServiceCatalogSourceVersionCommitHash.
-
-	   The HASH of the SCS Version
-
-	   Format: uint32
-	*/
-	ServiceCatalogSourceVersionCommitHash string
-
 	/* ServiceCatalogSourceVersionID.
 
 	   The ID of the SCS Version
@@ -101,7 +93,7 @@ type GetComponentStackConfigurationParams struct {
 	   Format: uint32
 	   Default: 1
 	*/
-	ServiceCatalogSourceVersionID uint32
+	ServiceCatalogSourceVersionID *uint32
 
 	/* UseCase.
 
@@ -131,7 +123,7 @@ func (o *GetComponentStackConfigurationParams) SetDefaults() {
 	)
 
 	val := GetComponentStackConfigurationParams{
-		ServiceCatalogSourceVersionID: serviceCatalogSourceVersionIDDefault,
+		ServiceCatalogSourceVersionID: &serviceCatalogSourceVersionIDDefault,
 	}
 
 	val.timeout = o.timeout
@@ -217,25 +209,14 @@ func (o *GetComponentStackConfigurationParams) SetProjectCanonical(projectCanoni
 	o.ProjectCanonical = projectCanonical
 }
 
-// WithServiceCatalogSourceVersionCommitHash adds the serviceCatalogSourceVersionCommitHash to the get component stack configuration params
-func (o *GetComponentStackConfigurationParams) WithServiceCatalogSourceVersionCommitHash(serviceCatalogSourceVersionCommitHash string) *GetComponentStackConfigurationParams {
-	o.SetServiceCatalogSourceVersionCommitHash(serviceCatalogSourceVersionCommitHash)
-	return o
-}
-
-// SetServiceCatalogSourceVersionCommitHash adds the serviceCatalogSourceVersionCommitHash to the get component stack configuration params
-func (o *GetComponentStackConfigurationParams) SetServiceCatalogSourceVersionCommitHash(serviceCatalogSourceVersionCommitHash string) {
-	o.ServiceCatalogSourceVersionCommitHash = serviceCatalogSourceVersionCommitHash
-}
-
 // WithServiceCatalogSourceVersionID adds the serviceCatalogSourceVersionID to the get component stack configuration params
-func (o *GetComponentStackConfigurationParams) WithServiceCatalogSourceVersionID(serviceCatalogSourceVersionID uint32) *GetComponentStackConfigurationParams {
+func (o *GetComponentStackConfigurationParams) WithServiceCatalogSourceVersionID(serviceCatalogSourceVersionID *uint32) *GetComponentStackConfigurationParams {
 	o.SetServiceCatalogSourceVersionID(serviceCatalogSourceVersionID)
 	return o
 }
 
 // SetServiceCatalogSourceVersionID adds the serviceCatalogSourceVersionId to the get component stack configuration params
-func (o *GetComponentStackConfigurationParams) SetServiceCatalogSourceVersionID(serviceCatalogSourceVersionID uint32) {
+func (o *GetComponentStackConfigurationParams) SetServiceCatalogSourceVersionID(serviceCatalogSourceVersionID *uint32) {
 	o.ServiceCatalogSourceVersionID = serviceCatalogSourceVersionID
 }
 
@@ -278,23 +259,20 @@ func (o *GetComponentStackConfigurationParams) WriteToRequest(r runtime.ClientRe
 		return err
 	}
 
-	// query param service_catalog_source_version_commit_hash
-	qrServiceCatalogSourceVersionCommitHash := o.ServiceCatalogSourceVersionCommitHash
-	qServiceCatalogSourceVersionCommitHash := qrServiceCatalogSourceVersionCommitHash
-	if qServiceCatalogSourceVersionCommitHash != "" {
+	if o.ServiceCatalogSourceVersionID != nil {
 
-		if err := r.SetQueryParam("service_catalog_source_version_commit_hash", qServiceCatalogSourceVersionCommitHash); err != nil {
-			return err
+		// query param service_catalog_source_version_id
+		var qrServiceCatalogSourceVersionID uint32
+
+		if o.ServiceCatalogSourceVersionID != nil {
+			qrServiceCatalogSourceVersionID = *o.ServiceCatalogSourceVersionID
 		}
-	}
+		qServiceCatalogSourceVersionID := swag.FormatUint32(qrServiceCatalogSourceVersionID)
+		if qServiceCatalogSourceVersionID != "" {
 
-	// query param service_catalog_source_version_id
-	qrServiceCatalogSourceVersionID := o.ServiceCatalogSourceVersionID
-	qServiceCatalogSourceVersionID := swag.FormatUint32(qrServiceCatalogSourceVersionID)
-	if qServiceCatalogSourceVersionID != "" {
-
-		if err := r.SetQueryParam("service_catalog_source_version_id", qServiceCatalogSourceVersionID); err != nil {
-			return err
+			if err := r.SetQueryParam("service_catalog_source_version_id", qServiceCatalogSourceVersionID); err != nil {
+				return err
+			}
 		}
 	}
 

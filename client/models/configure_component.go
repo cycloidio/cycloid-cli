@@ -22,15 +22,9 @@ import (
 // swagger:model ConfigureComponent
 type ConfigureComponent struct {
 
-	// Is the CommitHash of the version, if the component updated the version this should be the new hash. We need the ID+HASH as the ID alone we do not know if the version was updated or not (same ID could have been used with a different hash). With both we can assert if it did or did not change the version
-	//
-	// Required: true
-	ServiceCatalogSourceVersionCommitHash *string `json:"service_catalog_source_version_commit_hash"`
-
 	// Is the ID of the new SCS Version used
-	// Required: true
 	// Minimum: 1
-	ServiceCatalogSourceVersionID *uint32 `json:"service_catalog_source_version_id"`
+	ServiceCatalogSourceVersionID uint32 `json:"service_catalog_source_version_id,omitempty"`
 
 	// use case
 	// Required: true
@@ -46,10 +40,6 @@ type ConfigureComponent struct {
 // Validate validates this configure component
 func (m *ConfigureComponent) Validate(formats strfmt.Registry) error {
 	var res []error
-
-	if err := m.validateServiceCatalogSourceVersionCommitHash(formats); err != nil {
-		res = append(res, err)
-	}
 
 	if err := m.validateServiceCatalogSourceVersionID(formats); err != nil {
 		res = append(res, err)
@@ -69,22 +59,12 @@ func (m *ConfigureComponent) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *ConfigureComponent) validateServiceCatalogSourceVersionCommitHash(formats strfmt.Registry) error {
-
-	if err := validate.Required("service_catalog_source_version_commit_hash", "body", m.ServiceCatalogSourceVersionCommitHash); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *ConfigureComponent) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
-
-	if err := validate.Required("service_catalog_source_version_id", "body", m.ServiceCatalogSourceVersionID); err != nil {
-		return err
+	if swag.IsZero(m.ServiceCatalogSourceVersionID) { // not required
+		return nil
 	}
 
-	if err := validate.MinimumUint("service_catalog_source_version_id", "body", uint64(*m.ServiceCatalogSourceVersionID), 1, false); err != nil {
+	if err := validate.MinimumUint("service_catalog_source_version_id", "body", uint64(m.ServiceCatalogSourceVersionID), 1, false); err != nil {
 		return err
 	}
 
