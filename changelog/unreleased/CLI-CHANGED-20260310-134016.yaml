@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: "Update client to version v6.8.22"
+time: 2026-03-10T13:40:16.823192037+00:00
+custom:
+  DETAILS: ""
+  PR: "415"
+  TYPE: CLI
