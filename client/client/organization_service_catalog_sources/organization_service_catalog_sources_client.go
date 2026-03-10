@@ -340,7 +340,7 @@ func (a *Client) ListServiceCatalogSourceVersions(params *ListServiceCatalogSour
 }
 
 /*
-RefreshServiceCatalogSource Refresh a Service catalog source
+RefreshServiceCatalogSource Refresh a Service catalog source. It compares changes between the remote repository and the local youdeploy database. The response contains stacks that have been successfully refreshed along with the stacks that errored.
 */
 func (a *Client) RefreshServiceCatalogSource(params *RefreshServiceCatalogSourceParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*RefreshServiceCatalogSourceOK, error) {
 	// NOTE: parameters are not validated before sending

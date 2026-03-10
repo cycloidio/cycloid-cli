@@ -415,9 +415,8 @@ type CostEstimateFormBody struct {
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
 
 	// Is the ID of the new SCS Version used
-	// Required: true
 	// Minimum: 1
-	ServiceCatalogSourceVersionID *uint32 `json:"service_catalog_source_version_id"`
+	ServiceCatalogSourceVersionID uint32 `json:"service_catalog_source_version_id,omitempty"`
 
 	// use case
 	// Required: true
@@ -492,12 +491,11 @@ func (o *CostEstimateFormBody) validateServiceCatalogRef(formats strfmt.Registry
 }
 
 func (o *CostEstimateFormBody) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
-
-	if err := validate.Required("body"+"."+"service_catalog_source_version_id", "body", o.ServiceCatalogSourceVersionID); err != nil {
-		return err
+	if swag.IsZero(o.ServiceCatalogSourceVersionID) { // not required
+		return nil
 	}
 
-	if err := validate.MinimumUint("body"+"."+"service_catalog_source_version_id", "body", uint64(*o.ServiceCatalogSourceVersionID), 1, false); err != nil {
+	if err := validate.MinimumUint("body"+"."+"service_catalog_source_version_id", "body", uint64(o.ServiceCatalogSourceVersionID), 1, false); err != nil {
 		return err
 	}
 

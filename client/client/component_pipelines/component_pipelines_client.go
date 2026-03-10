@@ -215,7 +215,15 @@ func (a *Client) DeletePipeline(params *DeletePipelineParams, authInfo runtime.C
 }
 
 /*
-DiffPipeline The diff between the provided pipeline configuration and the pipeline from the given name.
+	DiffPipeline thes diff between the provided pipeline configuration or current config stored on git of the pipeline with the given name
+
+	The diff between the provided pipeline configuration (or current config stored on git) of the pipeline with the given name.
+
+This endpoint operates in two modes:
+1. diff with pipeline config from git (remote),
+2. diff with the passed_config.
+In 1. we use the configured vars to execute the current config template retrieved from git. Parameter passed_config is ignored.
+In 2. we use the passed_config as is to update the pipeline config. The passed_config is the new pipeline config - it's not templated again.
 */
 func (a *Client) DiffPipeline(params *DiffPipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*DiffPipelineOK, error) {
 	// NOTE: parameters are not validated before sending
@@ -559,7 +567,14 @@ func (a *Client) UnpausePipeline(params *UnpausePipelineParams, authInfo runtime
 }
 
 /*
-UpdatePipeline Update the configuration of the given pipeline name.
+	UpdatePipeline updates the configuration of the given pipeline name
+
+	Update the configuration of the given pipeline name. This endpoint operates in two modes:
+
+1. pipeline config refresh from git (remote),
+2. live config update.
+In 1. we use the configured vars to execute the current config template retrieved from git. Parameter passed_config is ignored.
+In 2. we use the passed_config as is to update the pipeline config. The passed_config is the new pipeline config - it's not templated again.
 */
 func (a *Client) UpdatePipeline(params *UpdatePipelineParams, authInfo runtime.ClientAuthInfoWriter, opts ...ClientOption) (*UpdatePipelineOK, error) {
 	// NOTE: parameters are not validated before sending

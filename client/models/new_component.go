@@ -46,9 +46,8 @@ type NewComponent struct {
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
 
 	// service catalog source version id
-	// Required: true
 	// Minimum: 1
-	ServiceCatalogSourceVersionID *uint32 `json:"service_catalog_source_version_id"`
+	ServiceCatalogSourceVersionID uint32 `json:"service_catalog_source_version_id,omitempty"`
 }
 
 // Validate validates this new component
@@ -144,12 +143,11 @@ func (m *NewComponent) validateServiceCatalogRef(formats strfmt.Registry) error 
 }
 
 func (m *NewComponent) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
-
-	if err := validate.Required("service_catalog_source_version_id", "body", m.ServiceCatalogSourceVersionID); err != nil {
-		return err
+	if swag.IsZero(m.ServiceCatalogSourceVersionID) { // not required
+		return nil
 	}
 
-	if err := validate.MinimumUint("service_catalog_source_version_id", "body", uint64(*m.ServiceCatalogSourceVersionID), 1, false); err != nil {
+	if err := validate.MinimumUint("service_catalog_source_version_id", "body", uint64(m.ServiceCatalogSourceVersionID), 1, false); err != nil {
 		return err
 	}
 

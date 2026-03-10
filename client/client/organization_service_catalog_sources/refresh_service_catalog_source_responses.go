@@ -71,9 +71,11 @@ func NewRefreshServiceCatalogSourceOK() *RefreshServiceCatalogSourceOK {
 }
 
 /*
-RefreshServiceCatalogSourceOK describes a response with status code 200, with default header values.
+	RefreshServiceCatalogSourceOK describes a response with status code 200, with default header values.
 
-Success refresh
+	At least one stack has been successfully refreshed. Despite returning success code, some stacks might not have been refreshed.
+
+The stacks that errored are returned in the response.
 */
 type RefreshServiceCatalogSourceOK struct {
 	Payload *RefreshServiceCatalogSourceOKBody
