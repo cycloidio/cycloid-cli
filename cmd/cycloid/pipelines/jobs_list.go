@@ -17,7 +17,7 @@ func NewJobsListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "list a pipeline's jobs",
-		Example: `cy --org my-org pp list-jobs --project my-project --env env --component component -o json`,
+		Example: `cy --org my-org pp job list --project my-project --env env --component component --pipeline pipeline -o json`,
 		RunE:    listJobs,
 		Args:    cobra.NoArgs,
 	}
