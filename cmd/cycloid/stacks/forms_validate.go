@@ -19,7 +19,7 @@ func NewFormsValidateCommand() *cobra.Command {
 		Args:              cobra.MinimumNArgs(1),
 		ValidArgsFunction: cyargs.ValidateForms,
 		Short:             "validate a .forms.yml file",
-		Example:           `cy stacks validate-form --org my-org .forms.yml`,
+		Example:           `cy stack forms validate --org my-org .forms.yml`,
 		RunE:              validateForm,
 	}
 
