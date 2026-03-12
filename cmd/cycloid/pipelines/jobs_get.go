@@ -15,7 +15,7 @@ func NewJobsGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "get",
 		Short:   "get a pipeline's job",
-		Example: `cy --org my-org pp get-job --project my-project --env env --component component --job my-job -o json`,
+		Example: `cy --org my-org pp job get --project my-project --env env --component component --pipeline pipeline --job my-job -o json`,
 		RunE:    getJob,
 		Args:    cobra.NoArgs,
 	}
