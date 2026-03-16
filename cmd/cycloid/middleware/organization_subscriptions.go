@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
 	"time"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -11,7 +12,7 @@ type SubscriptionPlan = string
 
 const (
 	FreeTrial    = "free_trial"
-	PlatformTeam = "platform_team"
+	PlatformTeam = "platform_teams"
 )
 
 var (
@@ -21,23 +22,30 @@ var (
 	}
 )
 
-func (m *middleware) CreateOrUpdateSubscription(org string, plan *SubscriptionPlan, expiresAt time.Time, membersCount uint64, overwrite bool) (*models.Subscription, error) {
-	var subscription *models.Subscription
+type SubscriptionRequest struct {
+	ExpiresAt     string `json:"expires_at"`
+	MembersCount  uint64 `json:"members_count"`
+	Overwrite     bool   `json:"overwrite"`
+	PlanCanonical string `json:"plan_canonical"`
+}
 
-	var body = map[string]any{
-		"expires_at":    expiresAt.Format(time.RFC3339),
-		"members_count": membersCount,
-		"overwrite":     overwrite,
+func (m *middleware) CreateOrUpdateSubscription(org string, plan SubscriptionPlan, expiresAt time.Time, membersCount uint64, overwrite bool) (*models.Subscription, *http.Response, error) {
+	body := SubscriptionRequest{
+		ExpiresAt:     expiresAt.Format(time.RFC3339),
+		MembersCount:  membersCount,
+		Overwrite:     overwrite,
+		PlanCanonical: plan,
 	}
 
-	if plan != nil {
-		body["plan_canonical"] = *plan
-	}
-
-	_, err := m.GenericRequest("PUT", &org, nil, nil, body, subscription, "organizations", org, "subscriptions")
+	var result *models.Subscription
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "subscriptions"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, fmt.Errorf("failed to update subscription: %w", err)
+		return nil, resp, fmt.Errorf("failed to update subscription: %w", err)
 	}
-
-	return subscription, nil
+	return result, resp, nil
 }

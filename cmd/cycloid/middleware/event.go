@@ -1,18 +1,16 @@
 package middleware
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) error {
-	params := organizations.NewSendEventParams()
-	params.SetOrganizationCanonical(org)
-
+func (m *middleware) SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) (*http.Response, error) {
 	var ts []*models.Tag
-	var err error
 
 	for k, v := range tags {
 		_k := k
@@ -21,11 +19,6 @@ func (m *middleware) SendEvent(org, eventType, title, message, severity string, 
 			Key:   &_k,
 			Value: &_v,
 		}
-		err = tag.Validate(strfmt.Default)
-		if err != nil {
-			continue
-		}
-
 		ts = append(ts, tag)
 	}
 
@@ -38,40 +31,35 @@ func (m *middleware) SendEvent(org, eventType, title, message, severity string, 
 		Message:  &message,
 	}
 
-	params.SetBody(body)
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return err
-	}
-
-	_, err = m.api.Organizations.SendEvent(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "events"},
+		Body:         body,
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) ListEvents(org string, eventType, eventSeverity []string, begin, end uint64) ([]*models.Event, error) {
-	params := organizations.NewGetEventsParams()
-	params.WithOrganizationCanonical(org)
-	params.Begin = &begin
-	params.End = &end
-
-	if len(eventSeverity) != 0 {
-		params.WithSeverity(eventSeverity)
+func (m *middleware) ListEvents(org string, eventType, eventSeverity []string, begin, end uint64) ([]*models.Event, *http.Response, error) {
+	query := url.Values{}
+	query.Set("begin", strconv.FormatUint(begin, 10))
+	query.Set("end", strconv.FormatUint(end, 10))
+	for _, s := range eventSeverity {
+		query.Add("severity", s)
+	}
+	for _, t := range eventType {
+		query.Add("type", t)
 	}
 
-	if len(eventType) != 0 {
-		params.WithType(eventType)
-	}
-
-	resp, err := m.api.Organizations.GetEvents(params, m.api.Credentials(&org))
+	var result []*models.Event
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "events"},
+		Query:        query,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, fmt.Errorf("failed to list events: %w", err)
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }

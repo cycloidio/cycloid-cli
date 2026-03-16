@@ -1,22 +1,21 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client/project_pipelines"
+	"net/http"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// GetEnvPipelines list all pipeline of a designated env.
-func (m *middleware) GetProjectPipelines(org, project string) ([]*models.Pipeline, error) {
-	params := project_pipelines.NewGetProjectPipelinesParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-
-	resp, err := m.api.ProjectPipelines.GetProjectPipelines(params, m.api.Credentials(&org))
+// GetProjectPipelines lists all pipelines of a designated project.
+func (m *middleware) GetProjectPipelines(org, project string) ([]*models.Pipeline, *http.Response, error) {
+	var result []*models.Pipeline
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "pipelines"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
