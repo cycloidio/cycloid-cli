@@ -47,6 +47,6 @@ func del(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteOrganization(org)
+	_, err = m.DeleteOrganization(org)
 	return printer.SmartPrint(p, nil, err, "unable to delete organization", printer.Options{}, cmd.OutOrStdout())
 }

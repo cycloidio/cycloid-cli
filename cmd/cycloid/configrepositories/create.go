@@ -87,6 +87,6 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.CreateConfigRepository(org, name, canonical, url, branch, cred, setDefault)
+	cr, _, err := m.CreateConfigRepository(org, name, canonical, url, branch, cred, setDefault)
 	return printer.SmartPrint(p, cr, err, "unable to create config repository", printer.Options{}, cmd.OutOrStdout())
 }

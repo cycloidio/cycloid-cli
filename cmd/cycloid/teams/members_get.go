@@ -53,16 +53,20 @@ func getTeamMember(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	var outMembers = make([]*models.MemberTeam, len(args))
-	currentMembers, err := m.ListTeamMembers(org, team)
+	currentMembers, _, err := m.ListTeamMembers(org, team)
 	if err != nil {
 		return printer.SmartPrint(p, nil, fmt.Errorf("failed to list members of team %q: %w", team, err), "", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	for i, memberArg := range args {
 		if index := slices.IndexFunc(currentMembers, func(m *models.MemberTeam) bool {
+			emailStr := ""
+			if m.Email != nil {
+				emailStr = m.Email.String()
+			}
 			return memberArg == strconv.Itoa(int(ptr.Value(m.ID))) ||
-				memberArg == m.Username ||
-				memberArg == m.Email.String()
+				memberArg == ptr.Value(m.Username) ||
+				memberArg == emailStr
 		}); index != -1 {
 			outMembers[i] = currentMembers[i]
 		}

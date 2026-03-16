@@ -53,6 +53,6 @@ func listInvites(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	mbs, err := m.ListInvites(org)
+	mbs, _, err := m.ListInvites(org)
 	return printer.SmartPrint(p, mbs, err, "unable to list invites", printer.Options{}, cmd.OutOrStdout())
 }

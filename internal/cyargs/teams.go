@@ -47,7 +47,7 @@ func CompleteTeam(cmd *cobra.Command, args []string, toComplete string) ([]cobra
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	teams, err := m.ListTeams(org, &name, createdAt, &memberID, orderBy)
+	teams, _, err := m.ListTeams(org, &name, createdAt, &memberID, orderBy)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "Failed to list team for completion: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -92,7 +92,7 @@ func TeamMembersCompletionHelper(cmd *cobra.Command) ([]*models.MemberTeam, erro
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	teams, err := m.ListTeamMembers(org, team)
+	teams, _, err := m.ListTeamMembers(org, team)
 	if err != nil {
 		return nil, fmt.Errorf("cannot list members from team %q for completion: %w", team, err)
 	}
@@ -115,7 +115,11 @@ func CompleteTeamMemberID(cmd *cobra.Command, args []string, toComplete string) 
 
 		idStr := strconv.Itoa(int(*member.ID))
 		if strings.HasPrefix(idStr, toComplete) || toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(idStr, member.Email.String()+": "+member.FullName)
+			emailStr := ""
+			if member.Email != nil {
+				emailStr = member.Email.String()
+			}
+			completions[i] = cobra.CompletionWithDesc(idStr, emailStr+": "+ptr.Value(member.GivenName)+" "+ptr.Value(member.FamilyName))
 		}
 	}
 
@@ -131,8 +135,13 @@ func CompleteTeamMemberUsername(cmd *cobra.Command, args []string, toComplete st
 
 	completions := make([]cobra.Completion, len(members))
 	for i, member := range members {
-		if strings.HasPrefix(member.Username, toComplete) || toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(member.Username, member.Email.String()+": "+member.Username)
+		username := ptr.Value(member.Username)
+		if strings.HasPrefix(username, toComplete) || toComplete == "" {
+			emailStr := ""
+			if member.Email != nil {
+				emailStr = member.Email.String()
+			}
+			completions[i] = cobra.CompletionWithDesc(username, emailStr+": "+username)
 		}
 	}
 
@@ -148,8 +157,12 @@ func CompleteTeamMemberEmail(cmd *cobra.Command, args []string, toComplete strin
 
 	completions := make([]cobra.Completion, len(members))
 	for i, member := range members {
-		if strings.HasPrefix(member.Email.String(), toComplete) || toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(member.Email.String(), member.Username+": "+member.FullName)
+		emailStr := ""
+		if member.Email != nil {
+			emailStr = member.Email.String()
+		}
+		if strings.HasPrefix(emailStr, toComplete) || toComplete == "" {
+			completions[i] = cobra.CompletionWithDesc(emailStr, ptr.Value(member.Username)+": "+ptr.Value(member.GivenName)+" "+ptr.Value(member.FamilyName))
 		}
 	}
 
@@ -165,10 +178,15 @@ func CompleteTeamMemberEmailOrUsername(cmd *cobra.Command, args []string, toComp
 
 	completions := make([]cobra.Completion, len(members))
 	for i, member := range members {
-		if strings.HasPrefix(member.Email.String(), toComplete) ||
-			strings.HasPrefix(member.Username, toComplete) ||
+		emailStr := ""
+		if member.Email != nil {
+			emailStr = member.Email.String()
+		}
+		username := ptr.Value(member.Username)
+		if strings.HasPrefix(emailStr, toComplete) ||
+			strings.HasPrefix(username, toComplete) ||
 			toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(member.Email.String(), member.Username+": "+member.FullName)
+			completions[i] = cobra.CompletionWithDesc(emailStr, username+": "+ptr.Value(member.GivenName)+" "+ptr.Value(member.FamilyName))
 		}
 	}
 
@@ -185,20 +203,28 @@ func CompleteTeamMemberAny(cmd *cobra.Command, args []string, toComplete string)
 	completions := make([]cobra.Completion, len(members))
 	for i, member := range members {
 		// Try to complete any of those team member attributes, fullname, email, id
+		emailStr := ""
+		if member.Email != nil {
+			emailStr = member.Email.String()
+		}
+		username := ptr.Value(member.Username)
+		givenName := ptr.Value(member.GivenName)
+		familyName := ptr.Value(member.FamilyName)
+		fullName := givenName + " " + familyName
 		idStr := strconv.Itoa(int(ptr.Value(member.ID)))
 		if strings.HasPrefix(idStr, toComplete) || toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(idStr, member.Username+": "+member.FullName)
+			completions[i] = cobra.CompletionWithDesc(idStr, username+": "+fullName)
 			continue
 		}
 
-		if strings.HasPrefix(member.FullName, toComplete) ||
-			strings.HasPrefix(member.Username, toComplete) || toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(member.FullName, member.Username+": "+member.FullName)
+		if strings.HasPrefix(fullName, toComplete) ||
+			strings.HasPrefix(username, toComplete) || toComplete == "" {
+			completions[i] = cobra.CompletionWithDesc(fullName, username+": "+fullName)
 			continue
 		}
 
-		if strings.HasPrefix(member.Email.String(), toComplete) || toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(member.Email.String(), member.Username+": "+member.FullName)
+		if strings.HasPrefix(emailStr, toComplete) || toComplete == "" {
+			completions[i] = cobra.CompletionWithDesc(emailStr, username+": "+fullName)
 		}
 	}
 
@@ -283,7 +309,7 @@ func CompleteTeamOwnerCanonical(cmd *cobra.Command, args []string, toComplete st
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	users, err := m.ListMembers(org)
+	users, _, err := m.ListMembers(org)
 	if err != nil {
 		return cobra.AppendActiveHelp([]string{}, "failed to list current org members: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}
@@ -291,7 +317,7 @@ func CompleteTeamOwnerCanonical(cmd *cobra.Command, args []string, toComplete st
 	completions := make([]cobra.Completion, len(users))
 	for i, user := range users {
 		if strings.HasPrefix(user.Username, toComplete) {
-			completions[i] = cobra.CompletionWithDesc(user.Username, user.Email.String()+": "+user.FullName)
+			completions[i] = cobra.CompletionWithDesc(user.Username, user.Email.String()+": "+user.GivenName+" "+user.FamilyName)
 		}
 	}
 

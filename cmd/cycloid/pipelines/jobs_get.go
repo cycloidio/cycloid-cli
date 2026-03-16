@@ -56,7 +56,7 @@ func getJob(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	outJob, err := m.GetJob(org, project, env, component, pipeline, job)
+	outJob, _, err := m.GetJob(org, project, env, component, pipeline, job)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to fetch job: "+job, printer.Options{}, cmd.OutOrStderr())
 	}

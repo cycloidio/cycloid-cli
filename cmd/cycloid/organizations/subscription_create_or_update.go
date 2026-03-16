@@ -28,7 +28,7 @@ func NewCreateOrUpdateSubscriptionCommand() *cobra.Command {
 	defaultDate := time.Now().AddDate(0, 3, 0)
 	cmd.Flags().TimeP("expires-at", "t", defaultDate, []string{time.RFC3339}, "Add an expiration time for the subscription, default in three month ("+defaultDate.Format(time.RFC3339)+")")
 	cmd.MarkFlagRequired("expire-at")
-	cmd.Flags().StringP("plan", "p", "platform_teams", "Select a plan, default to `platform_teams`")
+	cmd.Flags().StringP("plan", "p", middleware.PlatformTeam, "Select a plan, default to `platform_teams`")
 	cmd.RegisterFlagCompletionFunc("plan", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		var completions = []cobra.Completion{}
 		for _, p := range middleware.AvailableSubscriptionPlans {
@@ -85,7 +85,7 @@ func createOrUpdateSubscription(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	subscription, err := m.CreateOrUpdateSubscription(org, &plan, expiresAt, memberCount, update)
+	subscription, _, err := m.CreateOrUpdateSubscription(org, plan, expiresAt, memberCount, update)
 	if err != nil {
 		return fmt.Errorf("failed to update subscription for org %q: %w", org, err)
 	}

@@ -78,7 +78,7 @@ func migrate(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	compResponse, err := m.MigrateComponent(org, project, env, component, newProject, newEnv, newComponent, newComponentName)
+	compResponse, _, err := m.MigrateComponent(org, project, env, component, newProject, newEnv, newComponent, newComponentName)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to migrate component", printer.Options{}, cmd.OutOrStderr())
 	}

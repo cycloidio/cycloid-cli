@@ -60,7 +60,7 @@ func assignTeamMember(cmd *cobra.Command, args []string) error {
 			username = &id
 		}
 
-		outMembers[i], err = m.AssignMemberToTeam(org, team, username, email)
+		outMembers[i], _, err = m.AssignMemberToTeam(org, team, username, email)
 		if err != nil {
 			return printer.SmartPrint(p, outMembers, fmt.Errorf("failed to assign member %q in team %q: %w", id, team, err), "", printer.Options{}, cmd.OutOrStderr())
 		}

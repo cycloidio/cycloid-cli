@@ -69,9 +69,9 @@ func create(cmd *cobra.Command, args []string) error {
 
 	var outOrg *models.Organization
 	if parentOrg != "" {
-		outOrg, err = m.CreateOrganizationChild(parentOrg, org, &name)
+		outOrg, _, err = m.CreateOrganizationChild(parentOrg, org, &name)
 	} else {
-		outOrg, err = m.CreateOrganization(name)
+		outOrg, _, err = m.CreateOrganization(name)
 	}
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create org named '"+name+"'", printer.Options{}, cmd.OutOrStderr())

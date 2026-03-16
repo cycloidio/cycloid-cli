@@ -33,7 +33,7 @@ func CompleteOrg(cmd *cobra.Command, args []string, toComplete string) ([]cobra.
 		return []string{}, cobra.ShellCompDirectiveNoFileComp
 	}
 
-	orgs, err := m.ListOrganizationChildrens(org)
+	orgs, _, err := m.ListOrganizationChildrens(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list orgs for completion: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}
@@ -94,7 +94,7 @@ func CompleteRoleCanonical(cmd *cobra.Command, args []string, toComplete string)
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	roles, err := m.ListRoles(org)
+	roles, _, err := m.ListRoles(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list roles, "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}

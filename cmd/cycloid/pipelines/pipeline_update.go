@@ -76,7 +76,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to read variables file")
 	}
 
-	resp, err := m.UpdatePipeline(org, project, env, component, pipeline, string(rawPipeline), string(rawVars), false)
+	resp, _, err := m.UpdatePipeline(org, project, env, component, pipeline, string(rawPipeline), string(rawVars), false)
 	if err != nil {
 		return err
 	}

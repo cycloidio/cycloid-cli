@@ -35,7 +35,7 @@ func CompleteCatalogRepository(cmd *cobra.Command, args []string, toComplete str
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	stacks, err := m.ListCatalogRepositories(org)
+	stacks, _, err := m.ListCatalogRepositories(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list catalog repositories for completion in org '"+org+"': "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -63,7 +63,7 @@ func AddConfigRepositoryFlag(cmd *cobra.Command) string {
 			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
 		}
 
-		stacks, err := m.ListConfigRepositories(org)
+		stacks, _, err := m.ListConfigRepositories(org)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to list config repositories for completion in org '"+org+"' :"+err.Error()), cobra.ShellCompDirectiveError
 		}
@@ -107,7 +107,7 @@ func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
 
 	// TODO: This behavior will be pushed to backend
 	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
-	catalogRepos, err := m.ListConfigRepositories(org)
+	catalogRepos, _, err := m.ListConfigRepositories(org)
 	if err != nil {
 		return "", fmt.Errorf("failed to get the default config repository: %w", err)
 	}

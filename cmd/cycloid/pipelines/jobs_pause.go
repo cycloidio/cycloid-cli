@@ -56,6 +56,6 @@ func pauseJob(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.PauseJob(org, project, env, component, pipeline, job)
+	_, err = m.PauseJob(org, project, env, component, pipeline, job)
 	return printer.SmartPrint(p, nil, err, "unable to pause the job", printer.Options{}, cmd.OutOrStdout())
 }

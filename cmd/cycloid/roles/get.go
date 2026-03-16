@@ -69,7 +69,7 @@ func getRole(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	mb, err := m.GetRole(org, role)
+	mb, _, err := m.GetRole(org, role)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get role", printer.Options{}, cmd.OutOrStderr())
 	}

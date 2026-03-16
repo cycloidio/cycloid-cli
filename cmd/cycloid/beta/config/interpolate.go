@@ -65,7 +65,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 	}
 
 	// Get default to stacks
-	stackConfig, err := m.GetComponentStackConfig(org, project, env, component, useCase, tag, branch, hash)
+	stackConfig, _, err := m.GetComponentStackConfig(org, project, env, component, useCase, tag, branch, hash)
 	if err != nil {
 		return err
 	}
@@ -85,7 +85,7 @@ func interpolate(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	config, err := m.InterpolateFormsConfig(org, project, env, component, stackRef, useCase, inputs)
+	config, _, err := m.InterpolateFormsConfig(org, project, env, component, stackRef, useCase, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to interpolate config", printer.Options{}, cmd.OutOrStderr())
 	}

@@ -45,6 +45,6 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	o, err := m.GetOrganization(org)
+	o, _, err := m.GetOrganization(org)
 	return printer.SmartPrint(p, o, err, "unable to get organization", printer.Options{}, cmd.OutOrStdout())
 }

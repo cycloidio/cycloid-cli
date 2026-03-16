@@ -235,7 +235,7 @@ func create(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	if updateAllowed, _ := cmd.Flags().GetBool("update"); updateAllowed {
-		credentials, err := m.ListCredentials(org, credentialTypes)
+		credentials, _, err := m.ListCredentials(org, credentialTypes)
 		if err != nil {
 			return fmt.Errorf("failed to create --update credential, cannot check for existing credential %q: %w", credential, err)
 		}
@@ -447,7 +447,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported credential type %q", credentialTypes)
 	}
 
-	outCredential, err := m.CreateCredential(org, name, credentialTypes, rawCred, credentialPath, credential, description)
+	outCredential, _, err := m.CreateCredential(org, name, credentialTypes, rawCred, credentialPath, credential, description)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStderr())
 	}

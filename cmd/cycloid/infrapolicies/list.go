@@ -54,7 +54,7 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	res, err := m.ListInfraPolicies(org)
+	res, _, err := m.ListInfraPolicies(org)
 	return printer.SmartPrint(p, res, err, "unable to list infrapolicies", printer.Options{}, cmd.OutOrStdout())
 
 }

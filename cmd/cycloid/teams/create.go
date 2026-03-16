@@ -80,7 +80,7 @@ func createTeam(cmd *cobra.Command, args []string) error {
 	var newTeam *models.Team
 
 	if allowUpdate {
-		teams, err := m.ListTeams(org, &teamName, nil, nil, &middleware.Ascending)
+		teams, _, err := m.ListTeams(org, &teamName, nil, nil, &middleware.Ascending)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, "failed to List team to check exisiting", printer.Options{}, cmd.OutOrStderr())
 		}
@@ -89,7 +89,7 @@ func createTeam(cmd *cobra.Command, args []string) error {
 			return ptr.Value(t.Canonical) == team
 		}); i != -1 {
 			currentTeam := teams[i]
-			newTeam, err = m.UpdateTeam(
+			newTeam, _, err = m.UpdateTeam(
 				org, ptr.Ptr(utils.CoalesceNonZero(teamName, ptr.Value(currentTeam.Name))),
 				currentTeam.Canonical, ptr.Ptr(utils.CoalesceNonZero(teamOwner, ptr.Value(ptr.Value(currentTeam.Owner).Username))), roles,
 			)
@@ -101,7 +101,7 @@ func createTeam(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	newTeam, err = m.CreateTeam(org, &teamName, &team, &teamOwner, roles)
+	newTeam, _, err = m.CreateTeam(org, &teamName, &team, &teamOwner, roles)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to CreateTeam", printer.Options{}, cmd.OutOrStderr())
 	}

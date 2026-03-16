@@ -96,7 +96,7 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	if update {
-		projects, err := m.ListProjects(org)
+		projects, _, err := m.ListProjects(org)
 		if err != nil {
 			return fmt.Errorf("failed to create --update project, cannot check is project %q exists: %w", project, err)
 		}
@@ -123,7 +123,7 @@ func create(cmd *cobra.Command, args []string) error {
 				}
 			}
 
-			resp, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "")
+			resp, _, err := m.UpdateProject(org, name, project, description, configRepository, owner, "", color, icon, "")
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 			}
@@ -140,7 +140,7 @@ func create(cmd *cobra.Command, args []string) error {
 		icon = cyargs.PickRandomIcon(nil)
 	}
 
-	resp, err := m.CreateProject(org, name, project, description, configRepository, owner, "", color, icon)
+	resp, _, err := m.CreateProject(org, name, project, description, configRepository, owner, "", color, icon)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 	}

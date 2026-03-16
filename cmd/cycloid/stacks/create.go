@@ -74,7 +74,7 @@ func createFromBlueprint(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	createdStack, err := m.CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase)
+	createdStack, _, err := m.CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create stack from blueprint", printer.Options{}, cmd.OutOrStderr())
 	}

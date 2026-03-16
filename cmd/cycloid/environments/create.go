@@ -81,7 +81,7 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	if update {
-		environments, err := m.ListProjectsEnv(org, project)
+		environments, _, err := m.ListProjectsEnv(org, project)
 		if err != nil {
 			return fmt.Errorf("failed to create --update environment, cannot check for existing environment %q: %w", env, err)
 		}
@@ -99,7 +99,7 @@ func create(cmd *cobra.Command, args []string) error {
 				}
 			}
 
-			resp, err := m.UpdateEnv(org, project, env, name, color)
+			resp, _, err := m.UpdateEnv(org, project, env, name, color)
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 			}
@@ -112,7 +112,7 @@ func create(cmd *cobra.Command, args []string) error {
 		color = cyargs.PickRandomColor(&env)
 	}
 
-	resp, err := m.CreateEnv(org, project, env, name, color)
+	resp, _, err := m.CreateEnv(org, project, env, name, color)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create environment", printer.Options{}, cmd.OutOrStderr())
 	}

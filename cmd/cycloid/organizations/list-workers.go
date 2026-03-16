@@ -41,6 +41,6 @@ func listWorkers(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	ws, err := m.ListOrganizationWorkers(org)
+	ws, _, err := m.ListOrganizationWorkers(org)
 	return printer.SmartPrint(p, ws, err, "unable to list organization workers", printer.Options{}, cmd.OutOrStdout())
 }

@@ -67,7 +67,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	currentEnv, err := m.GetEnv(org, project, env)
+	currentEnv, _, err := m.GetEnv(org, project, env)
 	if err != nil {
 		return printer.SmartPrint(p, currentEnv, err, "environment not found", printer.Options{}, cmd.OutOrStderr())
 	}
@@ -86,7 +86,7 @@ func update(cmd *cobra.Command, args []string) error {
 		name = currentEnv.Name
 	}
 
-	resp, err := m.UpdateEnv(org, project, env, name, color)
+	resp, _, err := m.UpdateEnv(org, project, env, name, color)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 	}

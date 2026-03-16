@@ -58,7 +58,7 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	res, err := m.GetInfraPolicy(org, canonical)
+	res, _, err := m.GetInfraPolicy(org, canonical)
 	return printer.SmartPrint(p, res, err, "unable to get infrapolicy", printer.Options{}, cmd.OutOrStdout())
 
 }

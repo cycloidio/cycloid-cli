@@ -106,7 +106,7 @@ func createRole(cmd *cobra.Command, args []string) error {
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
-	outRole, err := m.CreateRole(org, &name, &role, &description, rules)
+	outRole, _, err := m.CreateRole(org, &name, &role, &description, rules)
 	if err != nil {
 		return fmt.Errorf("failed to create the role: %w", err)
 	}

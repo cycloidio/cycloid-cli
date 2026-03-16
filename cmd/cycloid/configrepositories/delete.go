@@ -53,6 +53,6 @@ func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteConfigRepository(org, can)
+	_, err = m.DeleteConfigRepository(org, can)
 	return printer.SmartPrint(p, nil, err, "unable to delete config repository", printer.Options{}, cmd.OutOrStdout())
 }

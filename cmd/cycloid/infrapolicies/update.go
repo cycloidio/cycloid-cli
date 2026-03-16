@@ -104,7 +104,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	res, err := m.UpdateInfraPolicy(org, canonical, policyPath, description, name, owner, severity, enabled)
+	res, _, err := m.UpdateInfraPolicy(org, canonical, policyPath, description, name, owner, severity, enabled)
 	return printer.SmartPrint(p, res, err, "unable to update infrapolicy", printer.Options{}, cmd.OutOrStdout())
 
 }

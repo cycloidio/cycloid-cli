@@ -3,20 +3,13 @@ package common
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/url"
 	"os"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/client/client"
 	"github.com/cycloidio/cycloid-cli/config"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"github.com/go-openapi/runtime"
-	httptransport "github.com/go-openapi/runtime/client"
-	strfmt "github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -94,14 +87,10 @@ func WithToken(t string) APIOptions {
 }
 
 type APIClient struct {
-	*client.API
-
 	Config APIConfig
 }
 
 func NewAPI(opts ...APIOptions) *APIClient {
-	cfg := client.DefaultTransportConfig()
-
 	acfg := APIConfig{
 		URL:      viper.GetString("api-url"),
 		Insecure: viper.GetBool("insecure"),
@@ -120,39 +109,7 @@ func NewAPI(opts ...APIOptions) *APIClient {
 		}
 	}
 
-	apiURL, err := url.Parse(acfg.URL)
-	if err == nil && apiURL.Host != "" {
-		cfg = cfg.WithHost(apiURL.Host)
-		cfg = cfg.WithSchemes([]string{apiURL.Scheme})
-		cfg = cfg.WithBasePath(apiURL.Path)
-	}
-
-	api := client.NewHTTPClientWithConfig(strfmt.Default, cfg)
-
-	rt, err := httptransport.TLSTransport(
-		httptransport.TLSClientOptions{
-			InsecureSkipVerify: acfg.Insecure,
-		})
-	if err != nil {
-		// TODO: error handling ...
-		fmt.Printf("unable to create round tripper: %v", err)
-		return nil
-	}
-
-	// TODO: check if there is other required things to do
-	if t, ok := rt.(*http.Transport); ok {
-		t.Proxy = http.ProxyFromEnvironment
-	}
-
-	// Hack because https://github.com/go-swagger/go-swagger/issues/1899
-	// none of producers: map[application/json:0x7f7dff8da3d0 application/octet-stream:0x7f7dff8d8ff0 application/xml:0x7f7dff8db1d0 text/csv:0x7f7dff8d9da0 text/html:0x7f7dff8daa60 text/plain:0x7f7dff8daa60] registered. try application/vnd.cycloid.io.v1+json
-	tr := api.Transport.(*httptransport.Runtime)
-	tr.Producers["application/vnd.cycloid.io.v1+json"] = runtime.JSONProducer()
-	tr.Transport = rt
-	// tr.DefaultAuthentication = httptransport.BearerToken("token")
-	// api.SetTransport(tr)
 	return &APIClient{
-		API:    api,
 		Config: acfg,
 	}
 }
@@ -203,23 +160,6 @@ func (a *APIClient) GetToken(org *string) string {
 	}
 
 	return token
-}
-
-func (a *APIClient) Credentials(org *string) runtime.ClientAuthInfoWriter {
-	if org == nil {
-		org = ptr.Ptr("")
-	}
-
-	token := a.GetToken(org)
-
-	return runtime.ClientAuthInfoWriterFunc(func(r runtime.ClientRequest, _ strfmt.Registry) error {
-		if len(token) == 0 {
-			return errors.New("No API_KEY was provided, please provide one by CY_API_KEY env var or using cy login.")
-		}
-
-		r.SetHeaderParam("Authorization", "Bearer "+token)
-		return nil
-	})
 }
 
 // GenerateCanonical will generate a canonical from the

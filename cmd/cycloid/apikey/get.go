@@ -59,7 +59,7 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	key, err := m.GetAPIKey(org, canonical)
+	key, _, err := m.GetAPIKey(org, canonical)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get API key", printer.Options{}, cmd.OutOrStderr())
 	}

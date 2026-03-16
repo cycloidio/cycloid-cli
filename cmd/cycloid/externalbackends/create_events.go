@@ -62,6 +62,6 @@ func createEvents(cmd *cobra.Command, args []string) error {
 	// Set project and env to empty cause events are not linked to a project
 	project := ""
 	env := ""
-	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, noDefault, ebC)
+	resp, _, err := m.CreateExternalBackends(org, project, env, purpose, cred, noDefault, ebC)
 	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, cmd.OutOrStdout())
 }

@@ -53,7 +53,7 @@ func AddAPIKeyCanonicalFlag(cmd *cobra.Command) string {
 
 			api := common.NewAPI()
 			m := middleware.NewMiddleware(api)
-			APIKeys, err := m.ListAPIKeys(org)
+			APIKeys, _, err := m.ListAPIKeys(org)
 			if err != nil {
 				return cobra.AppendActiveHelp(nil, "failed to list API Keys: "+err.Error()),
 					cobra.ShellCompDirectiveNoFileComp

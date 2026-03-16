@@ -45,7 +45,7 @@ func getTeam(cmd *cobra.Command, args []string) error {
 
 	var teams = make([]*models.Team, len(args))
 	for i, canonical := range args {
-		team, err := m.GetTeam(org, canonical)
+		team, _, err := m.GetTeam(org, canonical)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, fmt.Sprintf("failed to get team %q: %s", canonical, err.Error()), printer.Options{}, cmd.OutOrStderr())
 		}

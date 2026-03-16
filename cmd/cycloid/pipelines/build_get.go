@@ -61,7 +61,7 @@ func getBuild(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	build, err := m.GetBuild(org, project, env, component, pipeline, job, buildID)
+	build, _, err := m.GetBuild(org, project, env, component, pipeline, job, buildID)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err,
 			fmt.Sprintf("failed to fetch build with ID '%s', in pipeline '%s' of project '%s', env '%s', component '%s'",
