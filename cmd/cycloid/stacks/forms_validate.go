@@ -51,7 +51,7 @@ func validateForm(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	validation, err := m.ValidateForm(org, rawForm)
+	validation, _, err := m.ValidateForm(org, rawForm)
 	if err != nil {
 		return printer.SmartPrint(p, validation, err, "form validation failed", printer.Options{}, cmd.OutOrStderr())
 	}

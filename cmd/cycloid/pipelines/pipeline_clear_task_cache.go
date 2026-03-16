@@ -62,7 +62,7 @@ func cleartaskCache(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	out, err := m.ClearTaskCache(org, project, env, component, pipeline, job, step)
+	out, _, err := m.ClearTaskCache(org, project, env, component, pipeline, job, step)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to clear task cache", printer.Options{}, cmd.OutOrStdout())
 	}

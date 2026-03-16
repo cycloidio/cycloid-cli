@@ -49,6 +49,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	environments, err := m.ListProjectsEnv(org, project)
+	environments, _, err := m.ListProjectsEnv(org, project)
 	return printer.SmartPrint(p, environments, err, "unable to list environments", printer.Options{}, cmd.OutOrStdout())
 }

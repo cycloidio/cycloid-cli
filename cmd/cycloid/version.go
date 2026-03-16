@@ -33,7 +33,7 @@ func getVersion(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	d, err := m.GetAppVersion()
+	d, _, err := m.GetAppVersion()
 	if err != nil {
 		return err
 	}

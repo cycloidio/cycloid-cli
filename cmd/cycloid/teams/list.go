@@ -68,7 +68,7 @@ func listTeam(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	teams, err := m.ListTeams(
+	teams, _, err := m.ListTeams(
 		org, utils.CoalesceNonZeroPtr(teamName),
 		teamCreatedAt, utils.CoalesceNonZeroPtr(teamMemberID), teamOrderBy,
 	)

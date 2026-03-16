@@ -60,6 +60,6 @@ func deleteMember(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteMember(org, id)
+	_, err = m.DeleteMember(org, id)
 	return printer.SmartPrint(p, nil, err, "unable to remove member", printer.Options{}, cmd.OutOrStdout())
 }

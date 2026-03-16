@@ -47,6 +47,6 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.DeleteProject(org, project)
+	_, err = m.DeleteProject(org, project)
 	return printer.SmartPrint(p, nil, err, "unable to delete project", printer.Options{}, cmd.OutOrStdout())
 }

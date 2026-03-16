@@ -68,6 +68,6 @@ func validate(cmd *cobra.Command, args []string) error {
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
-	res, err := m.ValidateInfraPolicies(org, project, env, plan)
+	res, _, err := m.ValidateInfraPolicies(org, project, env, plan)
 	return printer.SmartPrint(p, res, err, "unable to validate terraform plan file", printer.Options{}, cmd.OutOrStdout())
 }

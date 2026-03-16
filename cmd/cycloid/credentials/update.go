@@ -437,7 +437,7 @@ func update(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported credential type: %s", credT)
 	}
 
-	outCred, err := m.UpdateCredential(org, name, credT, rawCred, credentialPath, credential, description)
+	outCred, _, err := m.UpdateCredential(org, name, credT, rawCred, credentialPath, credential, description)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to update credential", printer.Options{}, cmd.OutOrStderr())
 	}

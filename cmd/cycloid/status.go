@@ -36,7 +36,7 @@ func status(output string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	services, err := m.GetStatus()
+	services, _, err := m.GetStatus()
 	if err != nil {
 		return errors.Wrap(err, "unable to get status")
 	}

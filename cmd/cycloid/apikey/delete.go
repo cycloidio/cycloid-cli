@@ -58,6 +58,6 @@ func remove(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteAPIKey(org, canonical)
+	_, err = m.DeleteAPIKey(org, canonical)
 	return printer.SmartPrint(p, nil, err, "unable to delete API key", printer.Options{}, cmd.OutOrStderr())
 }

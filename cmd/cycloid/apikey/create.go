@@ -98,7 +98,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	key, err := m.CreateAPIKey(org, apiKey, description, owner, &apiKeyName, rulesModel)
+	key, _, err := m.CreateAPIKey(org, apiKey, description, owner, &apiKeyName, rulesModel)
 	if err != nil {
 		return fmt.Errorf("failed to request API Key: %w", err)
 	}

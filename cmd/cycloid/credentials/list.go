@@ -47,7 +47,7 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	creds, err := m.ListCredentials(org, credT)
+	creds, _, err := m.ListCredentials(org, credT)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to list credential", printer.Options{}, cmd.OutOrStderr())
 	}

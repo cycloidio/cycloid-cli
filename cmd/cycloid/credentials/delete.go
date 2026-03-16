@@ -47,7 +47,7 @@ func del(cmd *cobra.Command, args []string) error {
 	}
 
 	if credentialPath != "" && credentialFlag == "" {
-		credList, err := m.ListCredentials(org, "")
+		credList, _, err := m.ListCredentials(org, "")
 		if err != nil {
 			return fmt.Errorf("failed to fetch cred list to match credential by path %q: %w", credentialPath, err)
 		}
@@ -84,7 +84,7 @@ func del(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
-		err := m.DeleteCredential(org, credential)
+		_, err := m.DeleteCredential(org, credential)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, fmt.Sprintf("unable to delete credential '%s'", credential), printer.Options{}, cmd.OutOrStderr())
 		}

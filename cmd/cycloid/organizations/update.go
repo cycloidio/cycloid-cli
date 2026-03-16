@@ -55,6 +55,6 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	o, err := m.UpdateOrganization(org, name)
+	o, _, err := m.UpdateOrganization(org, name)
 	return printer.SmartPrint(p, o, err, "unable to update organization", printer.Options{}, cmd.OutOrStdout())
 }

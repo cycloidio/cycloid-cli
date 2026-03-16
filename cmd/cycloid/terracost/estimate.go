@@ -51,6 +51,6 @@ func estimate(cmd *cobra.Command, args []string) error {
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
-	res, err := m.CostEstimation(org, plan)
+	res, _, err := m.CostEstimation(org, plan)
 	return printer.SmartPrint(p, res, err, "unable to estimate terraform plan file", printer.Options{}, cmd.OutOrStdout())
 }

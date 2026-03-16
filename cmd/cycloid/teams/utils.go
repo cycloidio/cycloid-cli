@@ -14,7 +14,7 @@ func anyMembersToID(org, team string, members []string) ([]*uint32, error) {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	teamMembers, err := m.ListTeamMembers(org, team)
+	teamMembers, _, err := m.ListTeamMembers(org, team)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert members to ID, cannot list current team members: %w", err)
 	}
@@ -22,7 +22,11 @@ func anyMembersToID(org, team string, members []string) ([]*uint32, error) {
 	result := make([]*uint32, len(members))
 	for i, member := range members {
 		for _, teamMember := range teamMembers {
-			if member == teamMember.FullName || member == teamMember.Email.String() {
+			emailStr := ""
+			if teamMember.Email != nil {
+				emailStr = teamMember.Email.String()
+			}
+			if member == ptr.Value(teamMember.GivenName)+" "+ptr.Value(teamMember.FamilyName) || member == emailStr {
 				result[i] = teamMember.ID
 				break
 			}

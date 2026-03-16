@@ -52,7 +52,7 @@ func listJobs(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	jobs, err := m.GetJobs(org, project, env, component, pipeline)
+	jobs, _, err := m.GetJobs(org, project, env, component, pipeline)
 	if err != nil {
 		return fmt.Errorf("failed to fetch jobs for pipeline %q: %w", pipeline, err)
 	}

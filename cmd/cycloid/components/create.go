@@ -96,7 +96,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	}
 
 	if update {
-		components, err := m.ListComponents(org, project, env)
+		components, _, err := m.ListComponents(org, project, env)
 		if err != nil {
 			return fmt.Errorf("failed to create --update component, cannot check existing component %q: %w", component, err)
 		}
@@ -109,8 +109,8 @@ func createComponent(cmd *cobra.Command, args []string) error {
 
 			// Fetch base forms value from current component
 			var currentConfig = make(models.FormVariables)
-			if currentComponent.IsConfigured {
-				currentConfig, err = m.GetComponentConfig(org, project, env, component)
+			if currentComponent.UseCase != nil {
+				currentConfig, _, err = m.GetComponentConfig(org, project, env, component)
 				if err != nil {
 					return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
 				}
@@ -122,7 +122,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 			}
 
 			// ConfigureComponent will reconfigure the component
-			componentOutput, err := m.CreateAndConfigureComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
+			componentOutput, _, err := m.CreateOrUpdateComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "failed to configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 			}
@@ -131,7 +131,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	componentEntity, err := m.GetComponent(org, project, env, component)
+	componentEntity, _, err := m.GetComponent(org, project, env, component)
 	if err == nil {
 		return printer.SmartPrint(p, componentEntity, fmt.Errorf("component %q already exists, to update it, use the --update flag", component), "failed to create component", printer.Options{}, cmd.OutOrStderr())
 	}
@@ -141,7 +141,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	componentOutput, err := m.CreateAndConfigureComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
+	componentOutput, _, err := m.CreateOrUpdateComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create and configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}

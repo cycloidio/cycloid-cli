@@ -85,6 +85,6 @@ func updateConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.UpdateConfigRepository(org, can, cred, name, url, branch, setDefault)
+	cr, _, err := m.UpdateConfigRepository(org, can, cred, name, url, branch, setDefault)
 	return printer.SmartPrint(p, cr, err, "unable to update config repository", printer.Options{}, cmd.OutOrStdout())
 }

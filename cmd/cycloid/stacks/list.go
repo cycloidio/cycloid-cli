@@ -57,7 +57,7 @@ func list(cmd *cobra.Command, args []string) error {
 
 	// list standard stacks
 	if !blueprint {
-		stacks, err := m.ListStacks(org)
+		stacks, _, err := m.ListStacks(org)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, "failed to list stacks from API", printer.Options{}, cmd.OutOrStderr())
 		}
@@ -77,7 +77,7 @@ func list(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to get printer: %w", err)
 	}
 
-	stacks, err := m.ListBlueprints(org)
+	stacks, _, err := m.ListBlueprints(org)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to list blueprints from API", printer.Options{}, cmd.OutOrStderr())
 	}
@@ -91,7 +91,7 @@ func list(cmd *cobra.Command, args []string) error {
 
 		if stack.Ref != nil {
 			// Pass empty version flags to use default/latest version
-			stackUseCases, err := m.ListStackUseCases(org, *stack.Ref, "", "", "")
+			stackUseCases, _, err := m.ListStackUseCases(org, *stack.Ref, "", "", "")
 			if err != nil {
 				fmt.Fprintf(cmd.OutOrStderr(), "error: failed to fetch use cases for blueprint '%s': %s\n", *stack.Ref, err.Error())
 				continue

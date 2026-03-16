@@ -57,7 +57,7 @@ func listBuilds(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	builds, err := m.GetBuilds(org, project, env, component, pipeline, job)
+	builds, _, err := m.GetBuilds(org, project, env, component, pipeline, job)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err,
 			fmt.Sprintf("failed to get builds of pipeline '%s', in project '%s', in env '%s', in component '%s'.",

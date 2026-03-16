@@ -43,6 +43,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	projects, err := m.ListProjects(org)
+	projects, _, err := m.ListProjects(org)
 	return printer.SmartPrint(p, projects, err, "unable to list project", printer.Options{}, cmd.OutOrStdout())
 }

@@ -7,7 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -24,29 +23,16 @@ cy --org my-org stacks get-config -p my-project -e my-env -c my-component my-use
 		RunE: getConfig,
 		Args: cobra.RangeArgs(0, 2),
 	}
+	cyargs.AddCyContext(cmd)
 	cyargs.AddUseCaseFlag(cmd)
 	cyargs.AddStackVersionFlags(cmd)
+	cyargs.AddStackFormsInputFlags(cmd)
 
 	return cmd
 }
 
 func getConfig(cmd *cobra.Command, args []string) error {
-	org, err := cyargs.GetOrg(cmd)
-	if err != nil {
-		return err
-	}
-
-	proj, err := cyargs.GetProject(cmd)
-	if err != nil {
-		return err
-	}
-
-	env, err := cyargs.GetEnv(cmd)
-	if err != nil {
-		return err
-	}
-
-	component, err := cyargs.GetComponent(cmd)
+	org, project, environment, component, err := cyargs.GetCyContext(cmd)
 	if err != nil {
 		return err
 	}
@@ -57,8 +43,6 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	} else if useCase == "" {
 		return fmt.Errorf("missing use-case argument")
 	}
-
-	internal.Debug("project:", proj, "env:", env, "component:", component, "usecase:", useCase)
 
 	output, err := cmd.Flags().GetString("output")
 	if err != nil {
@@ -85,7 +69,7 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "failed to read stack version flags")
 	}
 
-	stackConfigs, err := m.GetComponentStackConfig(org, proj, env, component, useCase, tag, branch, hash)
+	stackConfigs, _, err := m.GetComponentStackConfig(org, project, environment, component, useCase, tag, branch, hash)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStderr())
 	}

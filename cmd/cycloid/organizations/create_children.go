@@ -49,6 +49,6 @@ func createChild(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	oc, err := m.CreateOrganizationChild(org, porg, nil)
+	oc, _, err := m.CreateOrganizationChild(org, porg, nil)
 	return printer.SmartPrint(p, oc, err, "unable to create a child organization", printer.Options{}, cmd.OutOrStdout())
 }

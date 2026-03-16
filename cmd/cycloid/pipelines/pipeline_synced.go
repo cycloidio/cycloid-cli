@@ -48,7 +48,7 @@ func synced(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	pp, err := m.SyncedPipeline(org, project, env, component, pipeline)
+	pp, _, err := m.SyncedPipeline(org, project, env, component, pipeline)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to pipeline sync status", printer.Options{}, cmd.OutOrStderr())
 	}

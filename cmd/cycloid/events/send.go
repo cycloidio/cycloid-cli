@@ -115,6 +115,6 @@ func send(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("required flag(s) \"message\" or \"message-file\" not set")
 	}
 
-	err = m.SendEvent(org, eType, title, msg, severity, tags, color)
+	_, err = m.SendEvent(org, eType, title, msg, severity, tags, color)
 	return printer.SmartPrint(p, nil, err, "unable to send event", printer.Options{}, cmd.OutOrStdout())
 }

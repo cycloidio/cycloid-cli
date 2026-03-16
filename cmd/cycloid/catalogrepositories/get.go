@@ -52,6 +52,6 @@ func getCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.GetCatalogRepository(org, can)
+	cr, _, err := m.GetCatalogRepository(org, can)
 	return printer.SmartPrint(p, cr, err, "unable to get catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

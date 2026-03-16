@@ -45,6 +45,6 @@ func listConfigRepositories(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	crs, err := m.ListConfigRepositories(org)
+	crs, _, err := m.ListConfigRepositories(org)
 	return printer.SmartPrint(p, crs, err, "unable to list config repository", printer.Options{}, cmd.OutOrStdout())
 }

@@ -55,6 +55,6 @@ func deleteEnvironment(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	err = m.DeleteEnv(org, project, env)
+	_, err = m.DeleteEnv(org, project, env)
 	return printer.SmartPrint(p, nil, err, "unable to delete environment", printer.Options{}, cmd.OutOrStdout())
 }

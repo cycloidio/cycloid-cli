@@ -41,7 +41,7 @@ func getComponent(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	componentState, err := m.GetComponent(org, project, env, component)
+	componentState, _, err := m.GetComponent(org, project, env, component)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to fetch state of component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
 	}

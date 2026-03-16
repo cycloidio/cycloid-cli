@@ -55,7 +55,7 @@ func listTeamMember(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	members, err := m.ListTeamMembers(org, team)
+	members, _, err := m.ListTeamMembers(org, team)
 	if err != nil {
 		return printer.SmartPrint(p, nil, fmt.Errorf("failed to list members of team %q: %w", args[0], err), "", printer.Options{}, cmd.OutOrStderr())
 	}

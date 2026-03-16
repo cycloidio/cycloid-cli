@@ -53,7 +53,7 @@ func deleteRole(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	for _, role := range args {
-		err := m.DeleteRole(org, role)
+		_, err := m.DeleteRole(org, role)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, fmt.Sprintf("failed to delete role %q", role), printer.Options{}, cmd.OutOrStderr())
 		}

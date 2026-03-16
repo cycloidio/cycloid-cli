@@ -76,7 +76,7 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	events, err := m.ListEvents(org, eventType, eventSeverity, begin*1000, end*1000)
+	events, _, err := m.ListEvents(org, eventType, eventSeverity, begin*1000, end*1000)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to list events", printer.Options{}, cmd.OutOrStderr())
 	}
