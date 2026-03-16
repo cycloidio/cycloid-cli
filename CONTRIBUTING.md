@@ -1,45 +1,40 @@
-# If needed, update swagger or re-generate clients
+# Contributing
 
-```
-sudo make generate-client
-```
+## Adding a feature or command
 
-# Run fake api server
+See [`docs/adding-a-command.md`](docs/adding-a-command.md) for a full walkthrough including middleware methods, cobra commands, flags, and tests.
 
-```
-docker run -it -p 80:5000 gaell/simple-docker-app
-```
+## Running tests
 
-# Build the cli
+See [`docs/testing.md`](docs/testing.md) for setup, environment variables, and test patterns.
 
-```
-make build
-```
+Quick start:
 
-# Give a try
-
-```
-./cy login --org my-org --email example@email.com --password my-password --api-url https://cycloid-api.local.tld
-./cy external-backends list
+```bash
+make be-start          # start the local backend
+go test ./...          # run all tests
+make be-stop
 ```
 
-# Running E2E tests
+## Code style
 
-E2E tests tend to be idempotent as possible but we recommend to use it again a dedicated Cycloid server. Before running the test, you can specify a few environment variables:
-
-  * CY_API_URL: the URL of the Cycloid API server
-  * CY_TEST_EMAIL: the test email
-  * CY_TEST_PASSWORD: the test password
-  * CY_TEST_ORG: the test organization
-
-# Add changelog entry
-
-Currently we use `changie` to manage the changelog. Each PR merge will result in a file at changelog/unreleased/ with a certain format.
-
-To simplify the usage of `changie` there's a yaml file, which describes the different file's format, possibilities, etc. To create a new entry you just need to use the following makefile target:
-
+```bash
+make format            # gci + goimports + shfmt
+make lint              # golangci-lint + shellcheck
 ```
+
+Always run both before submitting a PR.
+
+## Changelog
+
+Each PR should include a changelog entry:
+
+```bash
 make new-changelog-entry
 ```
 
-For more details on `changie` at https://changie.dev/guide/quick-start/
+This runs `changie` via docker and creates a file in `changelog/unreleased/`.
+
+## Architecture overview
+
+See [`docs/architecture.md`](docs/architecture.md) and [`CLAUDE.md`](CLAUDE.md).
