@@ -42,6 +42,7 @@ func init() {
 	viper.SetEnvPrefix("CY")
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.AutomaticEnv()
+	viper.SetDefault("console_url", "https://console.cycloid.io")
 }
 
 func NewRootCommand() *cobra.Command {
@@ -62,6 +63,7 @@ Those variables will be overridden by related flags.
 Name         |  Description
 -------------|-----------------
 CY_API_URL   | Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
+CY_CONSOLE_URL | Override Cycloid console base URL for build deep links (default https://console.cycloid.io)
 CY_ORG       | Set the current organization
 CY_PROJECT   | Set the current project
 CY_ENV       | Set the current environment

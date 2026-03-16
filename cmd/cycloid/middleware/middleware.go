@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"context"
 	"crypto/tls"
+	"io"
 	"net/http"
 	"time"
 
@@ -134,6 +136,7 @@ type Middleware interface {
 	RerunBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, *http.Response, error)
 	AbortBuild(org, project, env, component, pipeline, job, buildID string) (*http.Response, error)
 	GetBuildEvents(org, project, env, component, pipeline, buildID string) (*string, *http.Response, error)
+	OpenBuildEventsStream(ctx context.Context, org, project, env, component, pipeline, buildID, lastEventID string) (io.ReadCloser, *http.Response, error)
 	GetBuildPlan(org, project, env, component, pipeline, job, buildID string) (*models.PublicPlan, *http.Response, error)
 	GetBuildPreparation(org, project, env, component, pipeline, job, buildID string) (*models.Preparation, *http.Response, error)
 	GetBuildResources(org, project, env, component, pipeline, job, buildID string) (*models.BuildInputsOutputs, *http.Response, error)
