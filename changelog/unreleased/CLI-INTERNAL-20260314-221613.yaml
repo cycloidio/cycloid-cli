@@ -1,0 +1,8 @@
+component: CLI
+kind: INTERNAL
+body: Refactor middleware out of go-swagger client
+time: 2026-03-14T22:16:13.121908866Z
+custom:
+  DETAILS: ""
+  PR: "418"
+  TYPE: CLI
