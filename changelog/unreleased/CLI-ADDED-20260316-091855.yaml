@@ -1,0 +1,10 @@
+component: CLI
+kind: ADDED
+body: '`debug` verbosity level will now dump the content of the HTTP requests and response with the API'
+time: 2026-03-16T09:18:55.818866747Z
+custom:
+  DETAILS: |
+    This is usefull to debug errors with the backend. Be warned that playload
+    may include sensitive values for e.g. credentials. Be careful in uses in CI/CD.
+  PR: "418"
+  TYPE: CLI
