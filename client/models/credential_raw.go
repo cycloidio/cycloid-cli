@@ -54,7 +54,7 @@ type CredentialRaw struct {
 	Password string `json:"password,omitempty"`
 
 	// raw
-	Raw any `json:"raw,omitempty"`
+	Raw interface{} `json:"raw,omitempty"`
 
 	// secret key
 	SecretKey string `json:"secret_key,omitempty"`
@@ -86,7 +86,7 @@ func (m *CredentialRaw) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-var credentialRawTypeEnvironmentPropEnum []any
+var credentialRawTypeEnvironmentPropEnum []interface{}
 
 func init() {
 	var res []string

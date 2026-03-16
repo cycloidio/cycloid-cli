@@ -68,6 +68,14 @@ type UpdateProject struct {
 	// of a project it has all the permission on it.
 	//
 	Owner string `json:"owner,omitempty"`
+
+	// This will be used to assert that the Project is in it's last updated form
+	// because if not we could have inconsistencies with the environments. The
+	// format is in seconds, basically UNIX format.
+	//
+	// Required: true
+	// Minimum: 0
+	UpdatedAt *uint64 `json:"updated_at"`
 }
 
 // Validate validates this update project
@@ -94,13 +102,17 @@ func (m *UpdateProject) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
 }
 
-var updateProjectTypeCloudProviderPropEnum []any
+var updateProjectTypeCloudProviderPropEnum []interface{}
 
 func init() {
 	var res []string
@@ -202,6 +214,19 @@ func (m *UpdateProject) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", *m.Name, 1); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UpdateProject) validateUpdatedAt(formats strfmt.Registry) error {
+
+	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
 	}
 

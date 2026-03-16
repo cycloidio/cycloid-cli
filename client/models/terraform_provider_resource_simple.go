@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -115,15 +114,11 @@ func (m *TerraformProviderResourceSimple) validateAttributes(formats strfmt.Regi
 
 	if m.Attributes != nil {
 		if err := m.Attributes.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("attributes")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("attributes")
 			}
-
 			return err
 		}
 	}
@@ -233,15 +228,11 @@ func (m *TerraformProviderResourceSimple) contextValidateAttributes(ctx context.
 	if m.Attributes != nil {
 
 		if err := m.Attributes.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("attributes")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("attributes")
 			}
-
 			return err
 		}
 	}

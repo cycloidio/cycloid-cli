@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -148,15 +147,11 @@ func (m *Pipeline) validateComponent(formats strfmt.Registry) error {
 
 	if m.Component != nil {
 		if err := m.Component.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("component")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("component")
 			}
-
 			return err
 		}
 	}
@@ -185,15 +180,11 @@ func (m *Pipeline) validateEnvironment(formats strfmt.Registry) error {
 
 	if m.Environment != nil {
 		if err := m.Environment.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environment")
 			}
-
 			return err
 		}
 	}
@@ -213,15 +204,11 @@ func (m *Pipeline) validateGroups(formats strfmt.Registry) error {
 
 		if m.Groups[i] != nil {
 			if err := m.Groups[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -253,15 +240,11 @@ func (m *Pipeline) validateJobs(formats strfmt.Registry) error {
 
 		if m.Jobs[i] != nil {
 			if err := m.Jobs[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -297,15 +280,11 @@ func (m *Pipeline) validateProject(formats strfmt.Registry) error {
 
 	if m.Project != nil {
 		if err := m.Project.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}
@@ -379,15 +358,11 @@ func (m *Pipeline) contextValidateComponent(ctx context.Context, formats strfmt.
 	if m.Component != nil {
 
 		if err := m.Component.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("component")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("component")
 			}
-
 			return err
 		}
 	}
@@ -400,15 +375,11 @@ func (m *Pipeline) contextValidateEnvironment(ctx context.Context, formats strfm
 	if m.Environment != nil {
 
 		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environment")
 			}
-
 			return err
 		}
 	}
@@ -427,15 +398,11 @@ func (m *Pipeline) contextValidateGroups(ctx context.Context, formats strfmt.Reg
 			}
 
 			if err := m.Groups[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -456,15 +423,11 @@ func (m *Pipeline) contextValidateJobs(ctx context.Context, formats strfmt.Regis
 			}
 
 			if err := m.Jobs[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -479,15 +442,11 @@ func (m *Pipeline) contextValidateProject(ctx context.Context, formats strfmt.Re
 	if m.Project != nil {
 
 		if err := m.Project.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}

@@ -141,7 +141,7 @@ func (m *UpdateInfraPolicy) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-var updateInfraPolicyTypeSeverityPropEnum []any
+var updateInfraPolicyTypeSeverityPropEnum []interface{}
 
 func init() {
 	var res []string

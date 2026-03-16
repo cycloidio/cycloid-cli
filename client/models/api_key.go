@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -161,15 +160,11 @@ func (m *APIKey) validateOwner(formats strfmt.Registry) error {
 
 	if m.Owner != nil {
 		if err := m.Owner.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}
@@ -190,15 +185,11 @@ func (m *APIKey) validateRules(formats strfmt.Registry) error {
 
 		if m.Rules[i] != nil {
 			if err := m.Rules[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("rules" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -235,15 +226,11 @@ func (m *APIKey) contextValidateOwner(ctx context.Context, formats strfmt.Regist
 		}
 
 		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}
@@ -262,15 +249,11 @@ func (m *APIKey) contextValidateRules(ctx context.Context, formats strfmt.Regist
 			}
 
 			if err := m.Rules[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("rules" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("rules" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}

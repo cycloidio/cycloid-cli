@@ -42,7 +42,7 @@ type BuildSummary struct {
 	PipelineName string `json:"pipeline_name,omitempty"`
 
 	// plan
-	Plan any `json:"plan,omitempty"`
+	Plan interface{} `json:"plan,omitempty"`
 
 	// start time
 	StartTime uint64 `json:"start_time,omitempty"`

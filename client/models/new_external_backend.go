@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	stderrors "errors"
 	"io"
 
 	"github.com/go-openapi/errors"
@@ -98,7 +97,7 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 	}
 
 	propConfiguration, err := UnmarshalExternalBackendConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
-	if err != nil && !stderrors.Is(err, io.EOF) {
+	if err != nil && err != io.EOF {
 		return err
 	}
 
@@ -237,15 +236,11 @@ func (m *NewExternalBackend) validateConfiguration(formats strfmt.Registry) erro
 	}
 
 	if err := m.Configuration().Validate(formats); err != nil {
-		ve := new(errors.Validation)
-		if stderrors.As(err, &ve) {
+		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
-		}
-		ce := new(errors.CompositeError)
-		if stderrors.As(err, &ce) {
+		} else if ce, ok := err.(*errors.CompositeError); ok {
 			return ce.ValidateName("configuration")
 		}
-
 		return err
 	}
 
@@ -312,7 +307,7 @@ func (m *NewExternalBackend) validateProjectCanonical(formats strfmt.Registry) e
 	return nil
 }
 
-var newExternalBackendTypePurposePropEnum []any
+var newExternalBackendTypePurposePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -378,15 +373,11 @@ func (m *NewExternalBackend) ContextValidate(ctx context.Context, formats strfmt
 func (m *NewExternalBackend) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
-		ve := new(errors.Validation)
-		if stderrors.As(err, &ve) {
+		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
-		}
-		ce := new(errors.CompositeError)
-		if stderrors.As(err, &ce) {
+		} else if ce, ok := err.(*errors.CompositeError); ok {
 			return ce.ValidateName("configuration")
 		}
-
 		return err
 	}
 

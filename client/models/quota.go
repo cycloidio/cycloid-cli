@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -159,15 +158,11 @@ func (m *Quota) validateResourcePool(formats strfmt.Registry) error {
 
 	if m.ResourcePool != nil {
 		if err := m.ResourcePool.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resource_pool")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("resource_pool")
 			}
-
 			return err
 		}
 	}
@@ -196,15 +191,11 @@ func (m *Quota) validateTeam(formats strfmt.Registry) error {
 
 	if m.Team != nil {
 		if err := m.Team.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("team")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("team")
 			}
-
 			return err
 		}
 	}
@@ -274,15 +265,11 @@ func (m *Quota) contextValidateResourcePool(ctx context.Context, formats strfmt.
 	if m.ResourcePool != nil {
 
 		if err := m.ResourcePool.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resource_pool")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("resource_pool")
 			}
-
 			return err
 		}
 	}
@@ -295,15 +282,11 @@ func (m *Quota) contextValidateTeam(ctx context.Context, formats strfmt.Registry
 	if m.Team != nil {
 
 		if err := m.Team.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("team")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("team")
 			}
-
 			return err
 		}
 	}

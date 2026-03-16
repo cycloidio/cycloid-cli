@@ -23,9 +23,6 @@ type CloudCostManagementFilterValues struct {
 	// categories
 	Categories []string `json:"categories"`
 
-	// components
-	Components []string `json:"components"`
-
 	// currencies
 	Currencies []string `json:"currencies"`
 
@@ -39,13 +36,13 @@ type CloudCostManagementFilterValues struct {
 	LinkedAccounts []string `json:"linked_accounts"`
 
 	// linked accounts with cp
-	LinkedAccountsWithCp any `json:"linked_accounts_with_cp,omitempty"`
+	LinkedAccountsWithCp interface{} `json:"linked_accounts_with_cp,omitempty"`
 
 	// master accounts
 	MasterAccounts []string `json:"master_accounts"`
 
 	// master accounts with cp
-	MasterAccountsWithCp any `json:"master_accounts_with_cp,omitempty"`
+	MasterAccountsWithCp interface{} `json:"master_accounts_with_cp,omitempty"`
 
 	// projects
 	Projects []string `json:"projects"`

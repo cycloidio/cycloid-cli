@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -66,15 +65,11 @@ func (m *CredentialInUse) validateConfigRepositories(formats strfmt.Registry) er
 
 		if m.ConfigRepositories[i] != nil {
 			if err := m.ConfigRepositories[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("config_repositories" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("config_repositories" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -96,15 +91,11 @@ func (m *CredentialInUse) validateExternalBackends(formats strfmt.Registry) erro
 
 		if m.ExternalBackends[i] != nil {
 			if err := m.ExternalBackends[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("external_backends" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("external_backends" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -126,15 +117,11 @@ func (m *CredentialInUse) validateServiceCatalogSources(formats strfmt.Registry)
 
 		if m.ServiceCatalogSources[i] != nil {
 			if err := m.ServiceCatalogSources[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("service_catalog_sources" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("service_catalog_sources" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -177,15 +164,11 @@ func (m *CredentialInUse) contextValidateConfigRepositories(ctx context.Context,
 			}
 
 			if err := m.ConfigRepositories[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("config_repositories" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("config_repositories" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -206,15 +189,11 @@ func (m *CredentialInUse) contextValidateExternalBackends(ctx context.Context, f
 			}
 
 			if err := m.ExternalBackends[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("external_backends" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("external_backends" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -235,15 +214,11 @@ func (m *CredentialInUse) contextValidateServiceCatalogSources(ctx context.Conte
 			}
 
 			if err := m.ServiceCatalogSources[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("service_catalog_sources" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("service_catalog_sources" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
