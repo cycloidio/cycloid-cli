@@ -1,6 +1,8 @@
 # Cycloid Developer Tips
 
-> [!NOTE] These are internal notes meant for cycloid develovers only since they
+> [!NOTE] **ARCHIVED** — Key content has been extracted into `docs/` (see `docs/adding-a-command.md`, `docs/testing.md`, `docs/architecture.md`). This file is kept for internal release process reference only (Concourse CI links, version tagging process) and requires access to private Cycloid repositories.
+
+> [!NOTE] These are internal notes meant for cycloid developers only since they
 > require access to private git repositories.
 
 This file gives some tips to how to test, change or upgrade cli, for cycloid developers.
