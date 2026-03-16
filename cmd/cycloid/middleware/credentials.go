@@ -1,18 +1,14 @@
 package middleware
 
 import (
+	"net/http"
+	"net/url"
 	"regexp"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/cycloidio/cycloid-cli/client/client/organization_credentials"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) CreateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, error) {
-	params := organization_credentials.NewCreateCredentialParams()
-	params.SetOrganizationCanonical(org)
-
+func (m *middleware) CreateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, *http.Response, error) {
 	if path == "" {
 		re := regexp.MustCompile(`[^a-zA-z0-9_\-./]`)
 		path = re.ReplaceAllString(name, "-")
@@ -27,27 +23,20 @@ func (m *middleware) CreateCredential(org, name, credentialType string, rawCred 
 		Canonical:   canonical,
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.Credential
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "credentials"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	resp, err := m.api.OrganizationCredentials.CreateCredential(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UpdateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, error) {
-	params := organization_credentials.NewUpdateCredentialParams()
-	params.SetOrganizationCanonical(org)
-	params.SetCredentialCanonical(canonical)
-
+func (m *middleware) UpdateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, *http.Response, error) {
 	if path == "" {
 		re := regexp.MustCompile(`[^a-zA-z0-9_\-./]`)
 		path = re.ReplaceAllString(name, "-")
@@ -62,64 +51,56 @@ func (m *middleware) UpdateCredential(org, name, credentialType string, rawCred 
 		Canonical:   &canonical,
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.Credential
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "credentials", canonical},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	resp, err := m.api.OrganizationCredentials.UpdateCredential(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetCredential(org, credential string) (*models.Credential, error) {
-	params := organization_credentials.NewGetCredentialParams()
-	params.SetOrganizationCanonical(org)
-	params.SetCredentialCanonical(credential)
-
-	resp, err := m.api.OrganizationCredentials.GetCredential(params, m.api.Credentials(&org))
+func (m *middleware) GetCredential(org, credential string) (*models.Credential, *http.Response, error) {
+	var result *models.Credential
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "credentials", credential},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteCredential(org, credential string) error {
-	params := organization_credentials.NewDeleteCredentialParams()
-	params.SetOrganizationCanonical(org)
-	params.SetCredentialCanonical(credential)
-
-	_, err := m.api.OrganizationCredentials.DeleteCredential(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) DeleteCredential(org, credential string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "credentials", credential},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) ListCredentials(org, credentialType string) ([]*models.CredentialSimple, error) {
-	params := organization_credentials.NewListCredentialsParams()
-	params.SetOrganizationCanonical(org)
-
+func (m *middleware) ListCredentials(org, credentialType string) ([]*models.CredentialSimple, *http.Response, error) {
+	var query url.Values
 	if credentialType != "" {
-		params.SetCredentialType(&credentialType)
+		query = url.Values{"credential_type": []string{credentialType}}
 	}
 
-	resp, err := m.api.OrganizationCredentials.ListCredentials(params, m.api.Credentials(&org))
+	var result []*models.CredentialSimple
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "credentials"},
+		Query:        query,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }

@@ -2,51 +2,42 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/cycloidio/cycloid-cli/client/client/organization_infrastructure_policies"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 )
 
 // ValidateInfraPolicies will validate the TF plan against
 // OPA policies defined on the Cycloid server
-func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, error) {
-	params := organization_infrastructure_policies.NewValidateProjectInfraPoliciesParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-
+func (m *middleware) ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, *http.Response, error) {
 	tfplan := string(plan)
-	params.SetBody(&models.TerraformPlanInput{
+	body := &models.TerraformPlanInput{
 		Tfplan: &tfplan,
-	})
-
-	resp, err := m.api.OrganizationInfrastructurePolicies.ValidateProjectInfraPolicies(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
 	}
 
-	payload := resp.GetPayload()
-
-	d := payload.Data
-	return d, nil
+	var result *models.InfraPoliciesValidationResult
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "validate_infra_policies"},
+		Body:         body,
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
 }
 
-// CreateInfraPoliciy will create a new infraPolicy
-// with the rego file suplied
-func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, error) {
-	params := organization_infrastructure_policies.NewCreateInfraPolicyParams()
-	params.SetOrganizationCanonical(org)
-
+// CreateInfraPolicy will create a new infraPolicy with the rego file supplied
+func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, *http.Response, error) {
 	// Reads file content and converts it into string
 	policyFileContent, err := os.ReadFile(policyFile)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read rego file: %w", err)
+		return nil, nil, fmt.Errorf("unable to read rego file: %w", err)
 	}
-	// If canonical empty,use the default one
+	// If canonical empty, use the default one
 	if policyCanonical == "" {
 		policyCanonical = common.GenerateCanonical(policyName)
 	}
@@ -62,76 +53,63 @@ func (m *middleware) CreateInfraPolicy(org, policyFile, policyCanonical, descrip
 		Severity:    &severity,
 	}
 
-	err = body.Validate(strfmt.Default)
+	var result *models.InfraPolicy
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "infra_policies"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, fmt.Errorf("InfraPolicy invalid: %w", err)
+		return nil, resp, fmt.Errorf("failed to create infra policy: %w", err)
 	}
-
-	params.SetBody(body)
-	resp, err := m.api.OrganizationInfrastructurePolicies.CreateInfraPolicy(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
 // DeleteInfraPolicy will delete a infraPolicy
-func (m *middleware) DeleteInfraPolicy(org, policycanonical string) error {
-	params := organization_infrastructure_policies.NewDeleteInfraPolicyParams()
-	params.SetOrganizationCanonical(org)
-	params.SetInfraPolicyCanonical(policycanonical)
-
-	_, err := m.api.OrganizationInfrastructurePolicies.DeleteInfraPolicy(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-	return nil
+func (m *middleware) DeleteInfraPolicy(org, policycanonical string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "infra_policies", policycanonical},
+	}, nil)
+	return resp, err
 }
 
 // ListInfraPolicies will list all infraPolicies in an organization
-func (m *middleware) ListInfraPolicies(org string) ([]*models.InfraPolicy, error) {
-	params := organization_infrastructure_policies.NewGetInfraPoliciesParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.OrganizationInfrastructurePolicies.GetInfraPolicies(params, m.api.Credentials(&org))
+func (m *middleware) ListInfraPolicies(org string) ([]*models.InfraPolicy, *http.Response, error) {
+	var result []*models.InfraPolicy
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "infra_policies"},
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-// GetInfraPolicy will list all infraPolicies in an organization
-func (m *middleware) GetInfraPolicy(org, infraPolicy string) (*models.InfraPolicy, error) {
-	params := organization_infrastructure_policies.NewGetInfraPolicyParams()
-	params.SetOrganizationCanonical(org)
-	params.SetInfraPolicyCanonical(infraPolicy)
-
-	resp, err := m.api.OrganizationInfrastructurePolicies.GetInfraPolicy(params, m.api.Credentials(&org))
+// GetInfraPolicy will get a specific infra policy
+func (m *middleware) GetInfraPolicy(org, infraPolicy string) (*models.InfraPolicy, *http.Response, error) {
+	var result *models.InfraPolicy
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "infra_policies", infraPolicy},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
 // UpdateInfraPolicy will update an existing infrapolicy with the given params
-func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, error) {
-	params := organization_infrastructure_policies.NewUpdateInfraPolicyParams()
-	params.SetOrganizationCanonical(org)
-	params.SetInfraPolicyCanonical(infraPolicy)
-
+func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, *http.Response, error) {
 	// Reads file content and converts it into string
 	policyFileContent, err := os.ReadFile(policyFile)
 	if err != nil {
-		return nil, fmt.Errorf("unable to read rego file: %w", err)
+		return nil, nil, fmt.Errorf("unable to read rego file: %w", err)
 	}
 	policyBody := string(policyFileContent)
 
@@ -144,18 +122,15 @@ func (m *middleware) UpdateInfraPolicy(org, infraPolicy, policyFile, description
 		Severity:    &severity,
 	}
 
-	err = body.Validate(strfmt.Default)
+	var result *models.InfraPolicy
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "infra_policies", infraPolicy},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, fmt.Errorf("InfraPolicy invalid: %w", err)
+		return nil, resp, fmt.Errorf("failed to update infra policy: %w", err)
 	}
-
-	params.SetBody(body)
-	resp, err := m.api.OrganizationInfrastructurePolicies.UpdateInfraPolicy(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }

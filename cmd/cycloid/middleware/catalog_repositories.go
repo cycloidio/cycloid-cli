@@ -1,58 +1,49 @@
 package middleware
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"net/http"
+
 	"github.com/pkg/errors"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_service_catalog_sources"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, error) {
-	params := organization_service_catalog_sources.NewGetServiceCatalogSourcesParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSources(params, m.api.Credentials(&org))
+func (m *middleware) ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, *http.Response, error) {
+	var result []*models.ServiceCatalogSource
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, error) {
-	params := organization_service_catalog_sources.NewGetServiceCatalogSourceParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceCanonical(catalogRepo)
-
-	resp, err := m.api.OrganizationServiceCatalogSources.GetServiceCatalogSource(params, m.api.Credentials(&org))
+func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, *http.Response, error) {
+	var result *models.ServiceCatalogSource
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) error {
-	params := organization_service_catalog_sources.NewDeleteServiceCatalogSourceParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceCanonical(catalogRepo)
-
-	_, err := m.api.OrganizationServiceCatalogSources.DeleteServiceCatalogSource(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-	return nil
+func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred, visibility, teamCanonical string) (*models.ServiceCatalogSource, error) {
-	params := organization_service_catalog_sources.NewCreateServiceCatalogSourceParams()
-	params.SetOrganizationCanonical(org)
-
+func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred, visibility, teamCanonical string) (*models.ServiceCatalogSource, *http.Response, error) {
 	var body *models.NewServiceCatalogSource
 
 	if len(cred) != 0 {
@@ -76,35 +67,27 @@ func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred, visib
 	case "":
 		break
 	default:
-		return nil, errors.New("invalid visibility parameter for CreateCatalogRepository, accepted values are 'local', 'shared' or 'hidden'")
+		return nil, nil, errors.New("invalid visibility parameter for CreateCatalogRepository, accepted values are 'local', 'shared' or 'hidden'")
 	}
 
 	if teamCanonical != "" {
 		body.TeamCanonical = teamCanonical
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.ServiceCatalogSource
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	resp, err := m.api.OrganizationServiceCatalogSources.CreateServiceCatalogSource(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string,
-) (*models.ServiceCatalogSource, error) {
-	params := organization_service_catalog_sources.NewUpdateServiceCatalogSourceParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceCanonical(catalogRepo)
-
+func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string, visibility *string) (*models.ServiceCatalogSource, *http.Response, error) {
 	body := &models.UpdateServiceCatalogSource{
 		Branch:              branch,
 		CredentialCanonical: cred,
@@ -112,33 +95,28 @@ func (m *middleware) UpdateCatalogRepository(org, catalogRepo string, name, url,
 		URL:                 &url,
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.ServiceCatalogSource
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	resp, err := m.api.OrganizationServiceCatalogSources.UpdateServiceCatalogSource(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, error) {
-	params := organization_service_catalog_sources.NewRefreshServiceCatalogSourceParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogSourceCanonical(catalogRepo)
-
-	resp, err := m.api.OrganizationServiceCatalogSources.RefreshServiceCatalogSource(params, m.api.Credentials(&org))
+func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, *http.Response, error) {
+	var result *models.ServiceCatalogChanges
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo, "refresh"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }

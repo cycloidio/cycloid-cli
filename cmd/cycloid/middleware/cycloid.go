@@ -1,32 +1,35 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client/cycloid"
+	"net/http"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // GetAppVersion returns the version of the running Cycloid server
-func (m *middleware) GetAppVersion() (*models.AppVersion, error) {
-	params := cycloid.NewGetAppVersionParams()
-
-	resp, err := m.api.Cycloid.GetAppVersion(params)
+func (m *middleware) GetAppVersion() (*models.AppVersion, *http.Response, error) {
+	var result *models.AppVersion
+	resp, err := m.GenericRequest(Request{
+		Method: "GET",
+		NoAuth: true,
+		Route:  []string{"version"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
 // GetStatus returns the status of the various Cycloid services
-func (m *middleware) GetStatus() (*models.GeneralStatus, error) {
-	resp, err := m.api.Cycloid.GetStatus(nil)
+func (m *middleware) GetStatus() (*models.GeneralStatus, *http.Response, error) {
+	var result *models.GeneralStatus
+	resp, err := m.GenericRequest(Request{
+		Method: "GET",
+		NoAuth: true,
+		Route:  []string{"status"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, NewAPIError(err)
+	return result, resp, nil
 }

@@ -1,96 +1,64 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines_jobs"
+	"net/http"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) GetJobs(org, project, env, component, pipeline string) ([]*models.Job, error) {
-	params := component_pipelines_jobs.NewGetJobsParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-
-	resp, err := m.api.ComponentPipelinesJobs.GetJobs(params, m.api.Credentials(&org))
+func (m *middleware) GetJobs(org, project, env, component, pipeline string) ([]*models.Job, *http.Response, error) {
+	var result []*models.Job
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetJob(org, project, env, component, pipeline, job string) (*models.Job, error) {
-	params := component_pipelines_jobs.NewGetJobParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-
-	resp, err := m.api.ComponentPipelinesJobs.GetJob(params, m.api.Credentials(&org))
+func (m *middleware) GetJob(org, project, env, component, pipeline, job string) (*models.Job, *http.Response, error) {
+	var result *models.Job
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) PauseJob(org, project, env, component, pipeline, job string) error {
-	params := component_pipelines_jobs.NewPauseJobParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-
-	_, err := m.api.ComponentPipelinesJobs.PauseJob(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) PauseJob(org, project, env, component, pipeline, job string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "pause"},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) UnPauseJob(org, project, env, component, pipeline, job string) error {
-	params := component_pipelines_jobs.NewUnpauseJobParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-
-	_, err := m.api.ComponentPipelinesJobs.UnpauseJob(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) UnPauseJob(org, project, env, component, pipeline, job string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "unpause"},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) ClearTaskCache(org, project, env, component, pipeline, job, step string) (*models.ClearTaskCache, error) {
-	params := component_pipelines_jobs.NewClearTaskCacheParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-	params.SetStepName(step)
-
-	resp, err := m.api.ComponentPipelinesJobs.ClearTaskCache(params, m.api.Credentials(&org))
+func (m *middleware) ClearTaskCache(org, project, env, component, pipeline, job, step string) (*models.ClearTaskCache, *http.Response, error) {
+	var result *models.ClearTaskCache
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "tasks", step, "cache"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-	return payload.Data, nil
+	return result, resp, nil
 }

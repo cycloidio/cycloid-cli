@@ -1,45 +1,40 @@
 package middleware
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
+	"net/url"
+	"strconv"
 
-	"github.com/cycloidio/cycloid-cli/client/client/service_catalogs"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"github.com/go-openapi/strfmt"
 	"github.com/pkg/errors"
 )
 
-func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, error) {
-	params := service_catalogs.NewGetServiceCatalogParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogRef(ref)
-
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalog(params, m.api.Credentials(&org))
+func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, *http.Response, error) {
+	var result *models.ServiceCatalog
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalogs", ref},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, error) {
-	params := service_catalogs.NewListServiceCatalogsParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.ServiceCatalogs.ListServiceCatalogs(params, m.api.Credentials(&org))
+func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, *http.Response, error) {
+	var result []*models.ServiceCatalog
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalogs"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
 // resolveStackVersion resolves versionTag/versionBranch/versionCommitHash to version ID and commit hash.
@@ -61,7 +56,7 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 	}
 
 	// List all versions for the stack
-	versions, err := m.ListStackVersions(org, stackRef)
+	versions, _, err := m.ListStackVersions(org, stackRef)
 	if err != nil {
 		return 0, "", fmt.Errorf("failed to list stack versions: %w", err)
 	}
@@ -97,67 +92,73 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 	return 0, "", fmt.Errorf("stack version commit hash %q not found", versionCommitHash)
 }
 
-func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string) ([]*models.StackUseCase, error) {
+func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string) ([]*StackUseCase, *http.Response, error) {
 	// Resolve version parameters to ID
 	versionID, _, err := m.resolveStackVersion(org, ref, versionTag, versionBranch, versionCommitHash)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	params := service_catalogs.NewGetServiceCatalogUseCasesParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogRef(ref)
-	params.SetServiceCatalogSourceVersionID(versionID)
+	query := url.Values{
+		"service_catalog_source_version_id": []string{strconv.FormatUint(uint64(versionID), 10)},
+	}
 
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalogUseCases(params, m.api.Credentials(&org))
+	var result []*StackUseCase
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalogs", ref, "use_cases"},
+		Query:        query,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) ListStackVersions(org, ref string) ([]*models.ServiceCatalogSourceVersion, error) {
-	params := service_catalogs.NewGetServiceCatalogVersionsParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogRef(ref)
-
-	resp, err := m.api.ServiceCatalogs.GetServiceCatalogVersions(params, m.api.Credentials(&org))
+func (m *middleware) ListStackVersions(org, ref string) ([]*StackVersion, *http.Response, error) {
+	var result []*StackVersion
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalogs", ref, "versions"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
+	return result, resp, nil
+}
 
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+// ResolveStackVersion is the public API for resolving a stack version string to (versionID, commitHash).
+// The stackVersion parameter is treated as a tag name; if empty, the default version is used.
+func (m *middleware) ResolveStackVersion(org, ref, stackVersion string) (uint32, string, error) {
+	return m.resolveStackVersion(org, ref, stackVersion, "", "")
 }
 
 // getDefaultCatalogVersion returns the default catalog version for a stack based on priority:
 // 1. If a version with is_latest=true and type="tag" exists, use that
 // 2. Otherwise, use the latest commit of the branch of the catalog repository of the stack
-func (m *middleware) getDefaultCatalogVersion(org, ref string) (*models.ServiceCatalogSourceVersion, error) {
-	stack, err := m.GetStack(org, ref)
+func (m *middleware) getDefaultCatalogVersion(org, ref string) (*StackVersion, error) {
+	stack, _, err := m.GetStack(org, ref)
 	if err != nil {
 		return nil, err
 	}
 
 	var catalogRepoBranch string
 	if stack.ServiceCatalogSourceCanonical != "" {
-		catalogRepo, err := m.GetCatalogRepository(org, stack.ServiceCatalogSourceCanonical)
+		catalogRepo, _, err := m.GetCatalogRepository(org, stack.ServiceCatalogSourceCanonical)
 		if err != nil {
 			return nil, err
 		}
 		catalogRepoBranch = catalogRepo.Branch
 	}
 
-	versions, err := m.ListStackVersions(org, ref)
+	versions, _, err := m.ListStackVersions(org, ref)
 	if err != nil {
 		return nil, err
 	}
 
-	var branchVersion *models.ServiceCatalogSourceVersion
+	var branchVersion *StackVersion
 	// Default to default catalog branch
 	for _, version := range versions {
 		if ptr.Value(version.Type) == "branch" &&
@@ -175,58 +176,36 @@ func (m *middleware) getDefaultCatalogVersion(org, ref string) (*models.ServiceC
 
 // ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
 // TODO: Merge this route with ListStack once we find a way to add LHS filter params to the client.
-func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, error) {
-	// This method use a custom request because we use the (undocumented)
-	// LHS filter param like the frontend does: `service_catalog_blueprint[eq]=true`
-	url := fmt.Sprintf("%s/organizations/%s/service_catalogs?organization_canonical=%s&service_catalog_blueprint%%5Beq%%5D=true",
-		m.api.Config.URL, org, org)
-	req, err := http.NewRequest("GET", url, nil)
+func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, *http.Response, error) {
+	// This method uses custom LHS filter param like the frontend does: `service_catalog_blueprint[eq]=true`
+	// We use url.Values directly here - the encodeQuery will encode this as-is
+	// Note: url.Values{} Encode() will URL-encode the brackets, so we manually build the query string
+	query := url.Values{}
+	query.Set("organization_canonical", org)
+	query.Set("service_catalog_blueprint[eq]", "true")
+
+	var stacks []*models.ServiceCatalog
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalogs"},
+		Query:        query,
+	}, &stacks)
 	if err != nil {
-		return nil, err
-	}
-
-	token := m.api.GetToken(&org)
-	if token == "" {
-		return nil, errors.New("missing API key, please provide valid authentication using CY_API_KEY env var")
-	}
-	req.Header.Set("Authorization", "Bearer "+token)
-	req.Header.Set("Content-Type", "application/json")
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	var stacks struct {
-		Data []*models.ServiceCatalog `json:"data"`
-	}
-
-	err = json.Unmarshal(body, &stacks)
-	if err != nil {
-		return nil, fmt.Errorf("failed to parse response: %v", err)
+		return nil, resp, err
 	}
 
 	var validBlueprints []*models.ServiceCatalog
-	for _, catalog := range stacks.Data {
+	for _, catalog := range stacks {
 		if catalog.Blueprint {
 			validBlueprints = append(validBlueprints, catalog)
 		}
 	}
 
-	// Don't validate payload on this route, not supported atm.
-	return validBlueprints, nil
+	return validBlueprints, resp, nil
 }
 
-func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, error) {
-	params := service_catalogs.NewCreateServiceCatalogFromTemplateParams()
-	params.SetOrganizationCanonical(org)
-	params.SetServiceCatalogRef(blueprintRef)
+func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, *http.Response, error) {
 	body := &models.NewServiceCatalogFromTemplate{
 		Name:                          &name,
 		Canonical:                     &stack,
@@ -234,57 +213,48 @@ func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, stack, ca
 		UseCase:                       &useCase,
 	}
 
-	err := body.Validate(strfmt.Default)
+	var result *models.ServiceCatalog
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalogs", blueprintRef, "template"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, errors.Wrap(err, "validation failed for createStackFromBlueprint input")
+		return nil, resp, errors.Wrap(err, "failed to create stack from blueprint")
 	}
-	params.WithBody(body)
-
-	resp, err := m.api.ServiceCatalogs.CreateServiceCatalogFromTemplate(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
 func (m *middleware) UpdateStack(
 	org, ref, teamCanonical string,
 	visibility *string,
-) (*models.ServiceCatalog, error) {
-	params := service_catalogs.NewUpdateServiceCatalogParams()
-	params.WithOrganizationCanonical(org)
-	params.WithServiceCatalogRef(ref)
-
+) (*models.ServiceCatalog, *http.Response, error) {
 	body := &models.UpdateServiceCatalog{
 		TeamCanonical: teamCanonical,
 		Visibility:    visibility,
 	}
 
-	err := body.Validate(strfmt.Default)
+	var result *models.ServiceCatalog
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalogs", ref},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, errors.Wrap(err, "validation failed for updateServiceCatalog input")
+		return nil, resp, err
 	}
-
-	params.WithBody(body)
-
-	resp, err := m.api.ServiceCatalogs.UpdateServiceCatalog(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
 
 	// TODO: This is a local fix for https://github.com/cycloidio/youdeploy-http-api/issues/5020
 	// Remove this condition when backend will be fixed
 	// If the team attribute is nil, this means that the backend did not found the maitainer canonical
-	if teamCanonical != "" && payload.Data.Team == nil {
-		return payload.Data, errors.Errorf(
+	if teamCanonical != "" && result.Team == nil {
+		return result, resp, errors.Errorf(
 			"maintainer with canonical '%s' may not exists, maintainer on stack ref '%s' has been removed, please check you team canonical argument and ensure that the team exists.",
 			teamCanonical, ref,
 		)
 	}
 
-	return payload.Data, nil
+	return result, resp, nil
 }

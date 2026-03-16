@@ -20,7 +20,7 @@ func TestGetOrgPipelines(t *testing.T) {
 	m := config.Middleware
 
 	pipelineName := fmt.Sprintf("%s-%s-%s", *config.Project.Canonical, *config.Environment.Canonical, *config.Component.Canonical)
-	got, err := m.GetOrgPipelines(config.Org, &pipelineName, config.Project.Canonical, config.Environment.Canonical, []string{})
+	got, _, err := m.GetOrgPipelines(config.Org, &pipelineName, config.Project.Canonical, config.Environment.Canonical, []string{})
 	if err != nil {
 		t.Errorf("middleware.GetOrgPipelines() error = %v", err)
 		return

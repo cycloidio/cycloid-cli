@@ -1,9 +1,9 @@
 package middleware
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"net/http"
+	"net/url"
 
-	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
@@ -11,79 +11,45 @@ func componentsPipelineName(project, env string) string {
 	return project + "-" + env
 }
 
-func (m *middleware) PausePipeline(org, project, env, component, pipelineName string) error {
-	params := component_pipelines.NewPausePipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipelineName)
-
-	_, err := m.api.ComponentPipelines.PausePipeline(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) PausePipeline(org, project, env, component, pipelineName string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipelineName, "pause"},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) UnpausePipeline(org, project, env, component, pipelineName string) error {
-	params := component_pipelines.NewUnpausePipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipelineName)
-
-	_, err := m.api.ComponentPipelines.UnpausePipeline(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) UnpausePipeline(org, project, env, component, pipelineName string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipelineName, "unpause"},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) DiffPipeline(org, project, env, component, pipelineName, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.PipelineDiffs, error) {
-	params := component_pipelines.NewDiffPipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipelineName)
-
+func (m *middleware) DiffPipeline(org, project, env, component, pipelineName, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.PipelineDiffs, *http.Response, error) {
 	body := &models.UpdatePipeline{
 		PassedConfig:     &yamlPipeline,
 		YamlVars:         yamlVariables,
 		CheckCredentials: checkCredentials,
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.PipelineDiffs
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipelineName, "diff"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	resp, err := m.api.ComponentPipelines.DiffPipeline(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-	// Payload validation on pipelines is bugged, to fix later
-	// if err := payload.Validate(strfmt.Default); err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) CreatePipeline(org, project, env, pipeline, component, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.Pipeline, error) {
-	params := component_pipelines.NewCreatePipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-
+func (m *middleware) CreatePipeline(org, project, env, pipeline, component, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.Pipeline, *http.Response, error) {
 	pipelineName := componentsPipelineName(project, env)
 
 	body := &models.NewPipeline{
@@ -92,129 +58,84 @@ func (m *middleware) CreatePipeline(org, project, env, pipeline, component, yaml
 		YamlVars:         yamlVariables,
 		CheckCredentials: checkCredentials,
 	}
-	err := body.Validate(strfmt.Default)
+
+	var result *models.Pipeline
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	params.SetBody(body)
-	resp, err := m.api.ComponentPipelines.CreatePipeline(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-	// if err := payload.Validate(strfmt.Default); err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) RenamePipeline(org, project, env, component, pipeline, newName string) error {
-	params := component_pipelines.NewRenamePipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetPipelineName(newName)
+func (m *middleware) RenamePipeline(org, project, env, component, pipeline, newName string) (*http.Response, error) {
+	// renamePipeline uses a query param for the new name
+	query := url.Values{"pipeline_name": []string{newName}}
 
-	_, err := m.api.ComponentPipelines.RenamePipeline(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "rename"},
+		Query:        query,
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) SyncedPipeline(org, project, env, component, pipeline string) (*models.PipelineStatus, error) {
-	params := component_pipelines.NewSyncedPipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-
-	resp, err := m.api.ComponentPipelines.SyncedPipeline(params, m.api.Credentials(&org))
+func (m *middleware) SyncedPipeline(org, project, env, component, pipeline string) (*models.PipelineStatus, *http.Response, error) {
+	var result *models.PipelineStatus
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "synced"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-	// if err := payload.Validate(strfmt.Default); err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetPipeline(org, project, env, component, pipeline string) (*models.Pipeline, error) {
-	params := component_pipelines.NewGetPipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-
-	resp, err := m.api.ComponentPipelines.GetPipeline(params, m.api.Credentials(&org))
+func (m *middleware) GetPipeline(org, project, env, component, pipeline string) (*models.Pipeline, *http.Response, error) {
+	var result *models.Pipeline
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-	// if err := payload.Validate(strfmt.Default); err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UpdatePipeline(org, project, env, component, pipelineName, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.Pipeline, error) {
-	params := component_pipelines.NewUpdatePipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipelineName)
-
+func (m *middleware) UpdatePipeline(org, project, env, component, pipelineName, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.Pipeline, *http.Response, error) {
 	body := &models.UpdatePipeline{
 		PassedConfig:     &yamlPipeline,
 		YamlVars:         yamlVariables,
 		CheckCredentials: checkCredentials,
 	}
-	err := body.Validate(strfmt.Default)
+
+	var result *models.Pipeline
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipelineName},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	params.SetBody(body)
-
-	resp, err := m.api.ComponentPipelines.UpdatePipeline(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-	// if err := payload.Validate(strfmt.Default); err != nil {
-	// 	return payload.Data, fmt.Errorf("invalid response from the API: %v", err)
-	// }
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeletePipeline(org, project, env, component, pipeline string) error {
-	params := component_pipelines.NewDeletePipelineParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-
-	_, err := m.api.ComponentPipelines.DeletePipeline(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) DeletePipeline(org, project, env, component, pipeline string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline},
+	}, nil)
+	return resp, err
 }

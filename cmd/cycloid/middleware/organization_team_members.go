@@ -2,88 +2,70 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
+	"strconv"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_team_members"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	strfmt "github.com/go-openapi/strfmt"
 )
 
-func (m *middleware) ListTeamMembers(org string, team string) ([]*models.MemberTeam, error) {
-	params := organization_team_members.NewGetTeamMembersParams()
-	params.SetOrganizationCanonical(org)
-	params.SetTeamCanonical(team)
-
-	resp, err := m.api.OrganizationTeamMembers.GetTeamMembers(params, m.api.Credentials(&org))
+func (m *middleware) ListTeamMembers(org string, team string) ([]*models.MemberTeam, *http.Response, error) {
+	var result []*models.MemberTeam
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "teams", team, "members"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetTeamMember(org string, team string, memberID uint32) (*models.MemberTeam, error) {
-	params := organization_team_members.NewGetTeamMemberParams()
-	params.SetOrganizationCanonical(org)
-	params.SetTeamCanonical(team)
-	params.SetMemberID(memberID)
-
-	resp, err := m.api.OrganizationTeamMembers.GetTeamMember(params, m.api.Credentials(&org))
+func (m *middleware) GetTeamMember(org string, team string, memberID uint32) (*models.MemberTeam, *http.Response, error) {
+	var result *models.MemberTeam
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "teams", team, "members", strconv.FormatUint(uint64(memberID), 10)},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
 // AssignMemberToTeam will assign a organization member to a team using either username or email
 // one of them is required
-func (m *middleware) AssignMemberToTeam(org, team string, username, email *string) (*models.MemberTeam, error) {
-	params := organization_team_members.NewAssignMemberToTeamParams()
-	params.SetOrganizationCanonical(org)
-	params.SetTeamCanonical(team)
-	body := &models.NewTeamMemberAssignation{}
-
+func (m *middleware) AssignMemberToTeam(org, team string, username, email *string) (*models.MemberTeam, *http.Response, error) {
 	if username == nil && email == nil {
-		return nil, fmt.Errorf("missing email or username for AssignMemberToTeam")
+		return nil, nil, fmt.Errorf("missing email or username for AssignMemberToTeam")
 	}
 
+	body := map[string]string{}
 	if username != nil {
-		body.Username = *username
+		body["username"] = *username
+	} else {
+		body["email"] = *email
 	}
 
-	if email != nil {
-		body.Email = strfmt.Email(*email)
-	}
-	err := body.Validate(strfmt.Default)
+	var result *models.MemberTeam
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "teams", team, "members"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	params.SetBody(body)
-	resp, err := m.api.OrganizationTeamMembers.AssignMemberToTeam(params, m.api.Credentials(&org), organization_team_members.WithAcceptApplicationVndCycloidIoV1JSON)
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UnAssignMemberFromTeam(org, team string, memberID uint32) error {
-	params := organization_team_members.NewUnassignMemberFromTeamParams()
-	params.SetOrganizationCanonical(org)
-	params.SetTeamCanonical(team)
-	params.SetMemberID(memberID)
-
-	_, err := m.api.OrganizationTeamMembers.UnassignMemberFromTeam(params, m.api.Credentials(&org), organization_team_members.WithAcceptApplicationJSON)
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) UnAssignMemberFromTeam(org, team string, memberID uint32) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "teams", team, "members", strconv.FormatUint(uint64(memberID), 10)},
+	}, nil)
+	return resp, err
 }

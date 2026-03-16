@@ -1,117 +1,100 @@
 package middleware
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_members"
 	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
+	"github.com/go-openapi/strfmt"
 )
 
-func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, error) {
-	params := organization_members.NewGetOrgMembersParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, m.api.Credentials(&org))
+func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, *http.Response, error) {
+	var result []*models.MemberOrg
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "members"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) ListInvites(org string) ([]*models.MemberOrg, error) {
-	params := organization_members.NewGetOrgMembersParams()
-	params.SetOrganizationCanonical(org)
-	params.SetInvitationState(ptr.Ptr("pending"))
+func (m *middleware) ListInvites(org string) ([]*models.MemberOrg, *http.Response, error) {
+	query := url.Values{"invitation_state": []string{"pending"}}
 
-	resp, err := m.api.OrganizationMembers.GetOrgMembers(params, m.api.Credentials(&org))
+	var result []*models.MemberOrg
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "members"},
+		Query:        query,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetMember(org string, id uint32) (*models.MemberOrg, error) {
-	params := organization_members.NewGetOrgMemberParams()
-	params.SetOrganizationCanonical(org)
-	params.SetMemberID(id)
-
-	resp, err := m.api.OrganizationMembers.GetOrgMember(params, m.api.Credentials(&org))
+func (m *middleware) GetMember(org string, id uint32) (*models.MemberOrg, *http.Response, error) {
+	var result *models.MemberOrg
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "members", strconv.FormatUint(uint64(id), 10)},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteMember(org string, id uint32) error {
-	params := organization_members.NewRemoveOrgMemberParams()
-	params.SetOrganizationCanonical(org)
-	params.SetMemberID(id)
-
-	_, err := m.api.OrganizationMembers.RemoveOrgMember(params, m.api.Credentials(&org))
-	if err != nil {
-		return err
-	}
-
-	return nil
+func (m *middleware) DeleteMember(org string, id uint32) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "members", strconv.FormatUint(uint64(id), 10)},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) UpdateMember(org string, id uint32, role string) (*models.MemberOrg, error) {
-	params := organization_members.NewUpdateOrgMemberParams()
-	params.SetOrganizationCanonical(org)
-	params.SetMemberID(id)
-
+func (m *middleware) UpdateMember(org string, id uint32, role string) (*models.MemberOrg, *http.Response, error) {
 	body := &models.MemberAssignation{
 		RoleCanonical: &role,
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.MemberOrg
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "members", strconv.FormatUint(uint64(id), 10)},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	resp, err := m.api.OrganizationMembers.UpdateOrgMember(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) InviteMember(org, email, role string) (*models.MemberOrg, error) {
-	params := organization_members.NewInviteUserToOrgMemberParams()
-	params.SetOrganizationCanonical(org)
-
+func (m *middleware) InviteMember(org, email, role string) (*models.MemberOrg, *http.Response, error) {
 	fmtEmail := strfmt.Email(email)
 	body := &models.NewMemberInvitation{
 		Email:         &fmtEmail,
 		RoleCanonical: &role,
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.MemberOrg
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "members"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, fmt.Errorf("failed to invite member: %w", err)
 	}
-
-	resp, err := m.api.OrganizationMembers.InviteUserToOrgMember(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
