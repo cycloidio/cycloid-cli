@@ -88,6 +88,18 @@ AAAEC0ryBZ1uJQ2drmjsO+WpsC2E/5SWheJD/r8+Q4LghWxfw72aGSXkICIPQ0t5Byg9/V
 
 	TestPipelineVariables = []byte(`message: "hello world and especially to ($ organization_canonical $)"`)
 
+	// TestTerraformPlanSample is a minimal valid Terraform plan JSON used for
+	// terracost estimate and infrapolicy validate tests.
+	TestTerraformPlanSample = []byte(`{
+  "format_version": "1.1",
+  "terraform_version": "1.5.0",
+  "variables": {},
+  "planned_values": {"root_module": {}},
+  "resource_changes": [],
+  "prior_state": {"format_version": "1.0", "values": {"root_module": {}}},
+  "configuration": {"root_module": {}}
+}`)
+
 	TestInfraPolicySample = []byte(`
 	package test
 	import input.tfplan as tfplan

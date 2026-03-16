@@ -134,6 +134,25 @@ func TestStacks(t *testing.T) {
 		})
 		is.True(cmdErr != nil) // CLI should output an error if we try to update a stack with a team that doesn't exists
 	})
+	t.Run("SuccessStacksGetConfig", func(t *testing.T) {
+		is := is.New(t)
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"--project", *config.Project.Canonical,
+			"--env", *config.Environment.Canonical,
+			"--component", *config.Component.Canonical,
+			"stack", "get-config",
+			"--use-case", "default",
+		})
+		is.NoErr(cmdErr) // get-config should not fail
+
+		// Output should be valid JSON
+		var out interface{}
+		err := json.Unmarshal([]byte(cmdOut), &out)
+		is.NoErr(err) // output should be deserializable JSON
+	})
+
 	t.Run("SuccessStacksValidateForm", func(t *testing.T) {
 		is := is.New(t)
 		var TestForms = []byte(`---

@@ -11,6 +11,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 )
 
+
 func TestProjects(t *testing.T) {
 
 	os.Setenv("CY_API_URL", config.APIUrl)
@@ -139,5 +140,22 @@ func TestProjects(t *testing.T) {
 		}
 
 		assert.Equal(t, updateDesc, projectResult.Description)
+	})
+
+	t.Run("ListEnv", func(t *testing.T) {
+		args := []string{
+			"--output", "json",
+			"project", "list-env",
+			"--project", project,
+		}
+		out, err := executeCommand(args)
+		if err != nil {
+			t.Errorf("failed to list project environments for '%s': %v", project, err)
+		}
+
+		var envList []*models.Environment
+		if jsonErr := json.Unmarshal([]byte(out), &envList); jsonErr != nil {
+			t.Errorf("failed to parse json output of list-env: %v\noutput: %s", jsonErr, out)
+		}
 	})
 }
