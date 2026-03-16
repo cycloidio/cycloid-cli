@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -192,15 +191,11 @@ func (m *Team) validateMembersPreview(formats strfmt.Registry) error {
 
 		if m.MembersPreview[i] != nil {
 			if err := m.MembersPreview[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("members_preview" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("members_preview" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -230,15 +225,11 @@ func (m *Team) validateOwner(formats strfmt.Registry) error {
 
 	if m.Owner != nil {
 		if err := m.Owner.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}
@@ -265,15 +256,11 @@ func (m *Team) validateRoles(formats strfmt.Registry) error {
 
 		if m.Roles[i] != nil {
 			if err := m.Roles[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("roles" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("roles" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -329,15 +316,11 @@ func (m *Team) contextValidateMembersPreview(ctx context.Context, formats strfmt
 			}
 
 			if err := m.MembersPreview[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("members_preview" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("members_preview" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -356,15 +339,11 @@ func (m *Team) contextValidateOwner(ctx context.Context, formats strfmt.Registry
 		}
 
 		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}
@@ -383,15 +362,11 @@ func (m *Team) contextValidateRoles(ctx context.Context, formats strfmt.Registry
 			}
 
 			if err := m.Roles[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("roles" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("roles" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}

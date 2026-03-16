@@ -10,4 +10,4 @@ package models
 // # The user's guide progress JSON schema
 //
 // swagger:model UserGuide
-type UserGuide any
+type UserGuide interface{}

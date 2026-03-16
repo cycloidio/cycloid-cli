@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -32,10 +31,15 @@ type MemberTeam struct {
 	// Format: email
 	Email *strfmt.Email `json:"email"`
 
-	// Full name, can be empty in case if the user hasn't accepted the invitation yet.
-	// Max Length: 255
+	// family name
+	// Required: true
 	// Min Length: 2
-	FullName string `json:"full_name,omitempty"`
+	FamilyName *string `json:"family_name"`
+
+	// given name
+	// Required: true
+	// Min Length: 2
+	GivenName *string `json:"given_name"`
 
 	// id
 	// Required: true
@@ -43,7 +47,7 @@ type MemberTeam struct {
 	ID *uint32 `json:"id"`
 
 	// Team member who invited the current user to the team.
-	InvitedBy *SimpleMemberOrg `json:"invited_by,omitempty"`
+	InvitedBy *MemberOrg `json:"invited_by,omitempty"`
 
 	// When the user logged in last time.
 	// Minimum: 0
@@ -61,11 +65,12 @@ type MemberTeam struct {
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at,omitempty"`
 
-	// User canonical, can be empty in case if the user hasn't accepted the invitation yet.
+	// username
+	// Required: true
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Username string `json:"username,omitempty"`
+	Username *string `json:"username"`
 }
 
 // Validate validates this member team
@@ -80,7 +85,11 @@ func (m *MemberTeam) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFullName(formats); err != nil {
+	if err := m.validateFamilyName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateGivenName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -144,16 +153,26 @@ func (m *MemberTeam) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *MemberTeam) validateFullName(formats strfmt.Registry) error {
-	if swag.IsZero(m.FullName) { // not required
-		return nil
-	}
+func (m *MemberTeam) validateFamilyName(formats strfmt.Registry) error {
 
-	if err := validate.MinLength("full_name", "body", m.FullName, 2); err != nil {
+	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("full_name", "body", m.FullName, 255); err != nil {
+	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *MemberTeam) validateGivenName(formats strfmt.Registry) error {
+
+	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
 		return err
 	}
 
@@ -180,15 +199,11 @@ func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
 
 	if m.InvitedBy != nil {
 		if err := m.InvitedBy.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("invited_by")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("invited_by")
 			}
-
 			return err
 		}
 	}
@@ -242,19 +257,20 @@ func (m *MemberTeam) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
-		return nil
-	}
 
-	if err := validate.MinLength("username", "body", m.Username, 3); err != nil {
+	if err := validate.Required("username", "body", m.Username); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", m.Username, 100); err != nil {
+	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 
@@ -284,15 +300,11 @@ func (m *MemberTeam) contextValidateInvitedBy(ctx context.Context, formats strfm
 		}
 
 		if err := m.InvitedBy.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("invited_by")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("invited_by")
 			}
-
 			return err
 		}
 	}

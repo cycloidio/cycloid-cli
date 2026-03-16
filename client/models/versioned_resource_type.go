@@ -35,7 +35,7 @@ type VersionedResourceType struct {
 
 	// source
 	// Required: true
-	Source map[string]any `json:"source"`
+	Source map[string]interface{} `json:"source"`
 
 	// tags
 	// Required: true

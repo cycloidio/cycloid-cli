@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -36,7 +35,7 @@ type KPI struct {
 	// The config represent some extra parameters which are required for the configuration of certain KPIs. Please refer to the documentation for more details.
 	//
 	// Required: true
-	Config any `json:"config"`
+	Config interface{} `json:"config"`
 
 	// created at
 	// Required: true
@@ -44,7 +43,7 @@ type KPI struct {
 	CreatedAt *uint64 `json:"created_at"`
 
 	// The data is represented in CSV format. Depending on the widget configured for the KPI, the format may vary. For more information please refer to our product documentation.
-	DataSet []any `json:"data_set"`
+	DataSet []interface{} `json:"data_set"`
 
 	// description
 	// Required: true
@@ -245,15 +244,11 @@ func (m *KPI) validateProject(formats strfmt.Registry) error {
 
 	if m.Project != nil {
 		if err := m.Project.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}
@@ -261,7 +256,7 @@ func (m *KPI) validateProject(formats strfmt.Registry) error {
 	return nil
 }
 
-var kPITypeTypePropEnum []any
+var kPITypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -326,7 +321,7 @@ func (m *KPI) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-var kPITypeWidgetPropEnum []any
+var kPITypeWidgetPropEnum []interface{}
 
 func init() {
 	var res []string
@@ -403,15 +398,11 @@ func (m *KPI) contextValidateProject(ctx context.Context, formats strfmt.Registr
 	if m.Project != nil {
 
 		if err := m.Project.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}

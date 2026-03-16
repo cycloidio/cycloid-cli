@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -35,7 +34,7 @@ type PlanConfig struct {
 	Get string `json:"get,omitempty"`
 
 	// params
-	Params map[string]any `json:"params,omitempty"`
+	Params map[string]interface{} `json:"params,omitempty"`
 
 	// passed
 	Passed []string `json:"passed"`
@@ -99,15 +98,11 @@ func (m *PlanConfig) validateAggregate(formats strfmt.Registry) error {
 
 		if m.Aggregate[i] != nil {
 			if err := m.Aggregate[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("aggregate" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("aggregate" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -129,15 +124,11 @@ func (m *PlanConfig) validateDo(formats strfmt.Registry) error {
 
 		if m.Do[i] != nil {
 			if err := m.Do[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("do" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("do" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -154,15 +145,11 @@ func (m *PlanConfig) validateTaskConfig(formats strfmt.Registry) error {
 
 	if m.TaskConfig != nil {
 		if err := m.TaskConfig.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("taskConfig")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("taskConfig")
 			}
-
 			return err
 		}
 	}
@@ -203,15 +190,11 @@ func (m *PlanConfig) contextValidateAggregate(ctx context.Context, formats strfm
 			}
 
 			if err := m.Aggregate[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("aggregate" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("aggregate" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -232,15 +215,11 @@ func (m *PlanConfig) contextValidateDo(ctx context.Context, formats strfmt.Regis
 			}
 
 			if err := m.Do[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("do" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("do" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -259,15 +238,11 @@ func (m *PlanConfig) contextValidateTaskConfig(ctx context.Context, formats strf
 		}
 
 		if err := m.TaskConfig.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("taskConfig")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("taskConfig")
 			}
-
 			return err
 		}
 	}

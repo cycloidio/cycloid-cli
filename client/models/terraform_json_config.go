@@ -22,7 +22,7 @@ type TerraformJSONConfig struct {
 
 	// config
 	// Required: true
-	Config any `json:"config"`
+	Config interface{} `json:"config"`
 }
 
 // Validate validates this terraform JSON config

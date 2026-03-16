@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -89,15 +88,11 @@ func (m *CloudCostManagementProjectResources) validateProviders(formats strfmt.R
 
 		if m.Providers[i] != nil {
 			if err := m.Providers[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("providers" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("providers" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -132,15 +127,11 @@ func (m *CloudCostManagementProjectResources) contextValidateProviders(ctx conte
 			}
 
 			if err := m.Providers[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("providers" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("providers" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}

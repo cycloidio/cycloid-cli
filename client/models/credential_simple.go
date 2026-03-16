@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -176,15 +175,11 @@ func (m *CredentialSimple) validateInUse(formats strfmt.Registry) error {
 
 	if m.InUse != nil {
 		if err := m.InUse.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("in_use")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("in_use")
 			}
-
 			return err
 		}
 	}
@@ -217,15 +212,11 @@ func (m *CredentialSimple) validateOwner(formats strfmt.Registry) error {
 
 	if m.Owner != nil {
 		if err := m.Owner.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}
@@ -242,7 +233,7 @@ func (m *CredentialSimple) validatePath(formats strfmt.Registry) error {
 	return nil
 }
 
-var credentialSimpleTypeTypePropEnum []any
+var credentialSimpleTypeTypePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -348,15 +339,11 @@ func (m *CredentialSimple) contextValidateInUse(ctx context.Context, formats str
 		}
 
 		if err := m.InUse.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("in_use")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("in_use")
 			}
-
 			return err
 		}
 	}
@@ -373,15 +360,11 @@ func (m *CredentialSimple) contextValidateOwner(ctx context.Context, formats str
 		}
 
 		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}

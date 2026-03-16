@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -90,15 +89,11 @@ func (m *CloudCostManagementDashboard) validateFilterValues(formats strfmt.Regis
 
 	if m.FilterValues != nil {
 		if err := m.FilterValues.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("filter_values")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("filter_values")
 			}
-
 			return err
 		}
 	}
@@ -119,15 +114,11 @@ func (m *CloudCostManagementDashboard) validateProjectResources(formats strfmt.R
 
 		if m.ProjectResources[i] != nil {
 			if err := m.ProjectResources[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("project_resources" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("project_resources" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -145,15 +136,11 @@ func (m *CloudCostManagementDashboard) validateProjects(formats strfmt.Registry)
 
 	if m.Projects != nil {
 		if err := m.Projects.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("projects")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("projects")
 			}
-
 			return err
 		}
 	}
@@ -169,15 +156,11 @@ func (m *CloudCostManagementDashboard) validateProviders(formats strfmt.Registry
 
 	if m.Providers != nil {
 		if err := m.Providers.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("providers")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("providers")
 			}
-
 			return err
 		}
 	}
@@ -216,15 +199,11 @@ func (m *CloudCostManagementDashboard) contextValidateFilterValues(ctx context.C
 	if m.FilterValues != nil {
 
 		if err := m.FilterValues.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("filter_values")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("filter_values")
 			}
-
 			return err
 		}
 	}
@@ -243,15 +222,11 @@ func (m *CloudCostManagementDashboard) contextValidateProjectResources(ctx conte
 			}
 
 			if err := m.ProjectResources[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("project_resources" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("project_resources" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -266,15 +241,11 @@ func (m *CloudCostManagementDashboard) contextValidateProjects(ctx context.Conte
 	if m.Projects != nil {
 
 		if err := m.Projects.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("projects")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("projects")
 			}
-
 			return err
 		}
 	}
@@ -287,15 +258,11 @@ func (m *CloudCostManagementDashboard) contextValidateProviders(ctx context.Cont
 	if m.Providers != nil {
 
 		if err := m.Providers.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("providers")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("providers")
 			}
-
 			return err
 		}
 	}

@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -77,15 +76,11 @@ func (m *InUseExternalBackend) validateComponent(formats strfmt.Registry) error 
 
 	if m.Component != nil {
 		if err := m.Component.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("component")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("component")
 			}
-
 			return err
 		}
 	}
@@ -109,15 +104,11 @@ func (m *InUseExternalBackend) validateEnvironment(formats strfmt.Registry) erro
 
 	if m.Environment != nil {
 		if err := m.Environment.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environment")
 			}
-
 			return err
 		}
 	}
@@ -132,15 +123,11 @@ func (m *InUseExternalBackend) validateProject(formats strfmt.Registry) error {
 
 	if m.Project != nil {
 		if err := m.Project.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}
@@ -188,15 +175,11 @@ func (m *InUseExternalBackend) contextValidateComponent(ctx context.Context, for
 		}
 
 		if err := m.Component.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("component")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("component")
 			}
-
 			return err
 		}
 	}
@@ -213,15 +196,11 @@ func (m *InUseExternalBackend) contextValidateEnvironment(ctx context.Context, f
 		}
 
 		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environment")
 			}
-
 			return err
 		}
 	}
@@ -238,15 +217,11 @@ func (m *InUseExternalBackend) contextValidateProject(ctx context.Context, forma
 		}
 
 		if err := m.Project.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}

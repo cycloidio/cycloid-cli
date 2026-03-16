@@ -62,7 +62,7 @@ func (m *NewRule) validateAction(formats strfmt.Registry) error {
 	return nil
 }
 
-var newRuleTypeEffectPropEnum []any
+var newRuleTypeEffectPropEnum []interface{}
 
 func init() {
 	var res []string

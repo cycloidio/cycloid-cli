@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -217,15 +216,11 @@ func (m *InfraPolicy) validateOwner(formats strfmt.Registry) error {
 
 	if m.Owner != nil {
 		if err := m.Owner.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}
@@ -233,7 +228,7 @@ func (m *InfraPolicy) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-var infraPolicyTypeSeverityPropEnum []any
+var infraPolicyTypeSeverityPropEnum []interface{}
 
 func init() {
 	var res []string
@@ -311,15 +306,11 @@ func (m *InfraPolicy) contextValidateOwner(ctx context.Context, formats strfmt.R
 		}
 
 		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}

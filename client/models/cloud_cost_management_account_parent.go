@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -172,15 +171,11 @@ func (m *CloudCostManagementAccountParent) validateCloudProvider(formats strfmt.
 
 	if m.CloudProvider != nil {
 		if err := m.CloudProvider.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cloud_provider")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("cloud_provider")
 			}
-
 			return err
 		}
 	}
@@ -256,7 +251,7 @@ func (m *CloudCostManagementAccountParent) validateName(formats strfmt.Registry)
 	return nil
 }
 
-var cloudCostManagementAccountParentTypeStatusPropEnum []any
+var cloudCostManagementAccountParentTypeStatusPropEnum []interface{}
 
 func init() {
 	var res []string
@@ -334,15 +329,11 @@ func (m *CloudCostManagementAccountParent) contextValidateCloudProvider(ctx cont
 	if m.CloudProvider != nil {
 
 		if err := m.CloudProvider.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("cloud_provider")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("cloud_provider")
 			}
-
 			return err
 		}
 	}

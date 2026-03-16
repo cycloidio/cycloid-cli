@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	stderrors "errors"
 	"io"
 
 	"github.com/go-openapi/errors"
@@ -51,7 +50,7 @@ func (m *Authentication) UnmarshalJSON(raw []byte) error {
 	var propConfig AuthenticationConfig
 	if string(data.Config) != "null" {
 		config, err := UnmarshalAuthenticationConfig(bytes.NewBuffer(data.Config), runtime.JSONConsumer())
-		if err != nil && !stderrors.Is(err, io.EOF) {
+		if err != nil && err != io.EOF {
 			return err
 		}
 		propConfig = config
@@ -109,15 +108,11 @@ func (m *Authentication) validateConfig(formats strfmt.Registry) error {
 	}
 
 	if err := m.Config().Validate(formats); err != nil {
-		ve := new(errors.Validation)
-		if stderrors.As(err, &ve) {
+		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("config")
-		}
-		ce := new(errors.CompositeError)
-		if stderrors.As(err, &ce) {
+		} else if ce, ok := err.(*errors.CompositeError); ok {
 			return ce.ValidateName("config")
 		}
-
 		return err
 	}
 
@@ -145,15 +140,11 @@ func (m *Authentication) contextValidateConfig(ctx context.Context, formats strf
 	}
 
 	if err := m.Config().ContextValidate(ctx, formats); err != nil {
-		ve := new(errors.Validation)
-		if stderrors.As(err, &ve) {
+		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("config")
-		}
-		ce := new(errors.CompositeError)
-		if stderrors.As(err, &ce) {
+		} else if ce, ok := err.(*errors.CompositeError); ok {
 			return ce.ValidateName("config")
 		}
-
 		return err
 	}
 

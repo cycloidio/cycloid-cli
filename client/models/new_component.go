@@ -45,10 +45,15 @@ type NewComponent struct {
 	// Required: true
 	ServiceCatalogRef *string `json:"service_catalog_ref"`
 
-	// service catalog source version id
+	// use case
 	// Required: true
-	// Minimum: 1
-	ServiceCatalogSourceVersionID *uint32 `json:"service_catalog_source_version_id"`
+	// Max Length: 100
+	// Min Length: 1
+	// Pattern: (^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)
+	UseCase *string `json:"use_case"`
+
+	// vars
+	Vars FormVariables `json:"vars,omitempty"`
 }
 
 // Validate validates this new component
@@ -71,7 +76,11 @@ func (m *NewComponent) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateServiceCatalogSourceVersionID(formats); err != nil {
+	if err := m.validateUseCase(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVars(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -143,21 +152,75 @@ func (m *NewComponent) validateServiceCatalogRef(formats strfmt.Registry) error 
 	return nil
 }
 
-func (m *NewComponent) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
+func (m *NewComponent) validateUseCase(formats strfmt.Registry) error {
 
-	if err := validate.Required("service_catalog_source_version_id", "body", m.ServiceCatalogSourceVersionID); err != nil {
+	if err := validate.Required("use_case", "body", m.UseCase); err != nil {
 		return err
 	}
 
-	if err := validate.MinimumUint("service_catalog_source_version_id", "body", uint64(*m.ServiceCatalogSourceVersionID), 1, false); err != nil {
+	if err := validate.MinLength("use_case", "body", *m.UseCase, 1); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("use_case", "body", *m.UseCase, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("use_case", "body", *m.UseCase, `(^[a-z0-9]+(([a-z0-9\-_]+)?[a-z0-9]+)?$)`); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// ContextValidate validates this new component based on context it is used
+func (m *NewComponent) validateVars(formats strfmt.Registry) error {
+	if swag.IsZero(m.Vars) { // not required
+		return nil
+	}
+
+	if m.Vars != nil {
+		if err := m.Vars.Validate(formats); err != nil {
+			if ve, ok := err.(*errors.Validation); ok {
+				return ve.ValidateName("vars")
+			} else if ce, ok := err.(*errors.CompositeError); ok {
+				return ce.ValidateName("vars")
+			}
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this new component based on the context it is used
 func (m *NewComponent) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateVars(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *NewComponent) contextValidateVars(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Vars) { // not required
+		return nil
+	}
+
+	if err := m.Vars.ContextValidate(ctx, formats); err != nil {
+		if ve, ok := err.(*errors.Validation); ok {
+			return ve.ValidateName("vars")
+		} else if ce, ok := err.(*errors.CompositeError); ok {
+			return ce.ValidateName("vars")
+		}
+		return err
+	}
+
 	return nil
 }
 

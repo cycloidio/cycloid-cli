@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -116,15 +115,11 @@ func (m *Job) validateFinishedBuild(formats strfmt.Registry) error {
 
 	if m.FinishedBuild != nil {
 		if err := m.FinishedBuild.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("finished_build")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("finished_build")
 			}
-
 			return err
 		}
 	}
@@ -153,15 +148,11 @@ func (m *Job) validateInputs(formats strfmt.Registry) error {
 
 		if m.Inputs[i] != nil {
 			if err := m.Inputs[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -187,15 +178,11 @@ func (m *Job) validateNextBuild(formats strfmt.Registry) error {
 
 	if m.NextBuild != nil {
 		if err := m.NextBuild.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("next_build")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("next_build")
 			}
-
 			return err
 		}
 	}
@@ -215,15 +202,11 @@ func (m *Job) validateOutputs(formats strfmt.Registry) error {
 
 		if m.Outputs[i] != nil {
 			if err := m.Outputs[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("outputs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("outputs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -240,15 +223,11 @@ func (m *Job) validateTransitionBuild(formats strfmt.Registry) error {
 
 	if m.TransitionBuild != nil {
 		if err := m.TransitionBuild.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("transition_build")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("transition_build")
 			}
-
 			return err
 		}
 	}
@@ -295,15 +274,11 @@ func (m *Job) contextValidateFinishedBuild(ctx context.Context, formats strfmt.R
 		}
 
 		if err := m.FinishedBuild.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("finished_build")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("finished_build")
 			}
-
 			return err
 		}
 	}
@@ -322,15 +297,11 @@ func (m *Job) contextValidateInputs(ctx context.Context, formats strfmt.Registry
 			}
 
 			if err := m.Inputs[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("inputs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("inputs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -349,15 +320,11 @@ func (m *Job) contextValidateNextBuild(ctx context.Context, formats strfmt.Regis
 		}
 
 		if err := m.NextBuild.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("next_build")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("next_build")
 			}
-
 			return err
 		}
 	}
@@ -376,15 +343,11 @@ func (m *Job) contextValidateOutputs(ctx context.Context, formats strfmt.Registr
 			}
 
 			if err := m.Outputs[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("outputs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("outputs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -403,15 +366,11 @@ func (m *Job) contextValidateTransitionBuild(ctx context.Context, formats strfmt
 		}
 
 		if err := m.TransitionBuild.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("transition_build")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("transition_build")
 			}
-
 			return err
 		}
 	}

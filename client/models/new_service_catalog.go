@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -159,15 +158,11 @@ func (m *NewServiceCatalog) validateDependencies(formats strfmt.Registry) error 
 
 		if m.Dependencies[i] != nil {
 			if err := m.Dependencies[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -260,15 +255,11 @@ func (m *NewServiceCatalog) validateTechnologies(formats strfmt.Registry) error 
 
 		if m.Technologies[i] != nil {
 			if err := m.Technologies[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("technologies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("technologies" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -307,15 +298,11 @@ func (m *NewServiceCatalog) contextValidateDependencies(ctx context.Context, for
 			}
 
 			if err := m.Dependencies[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -336,15 +323,11 @@ func (m *NewServiceCatalog) contextValidateTechnologies(ctx context.Context, for
 			}
 
 			if err := m.Technologies[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("technologies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("technologies" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}

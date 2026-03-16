@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -64,15 +63,11 @@ func (m *PipelineStatus) validateDiffs(formats strfmt.Registry) error {
 
 	if m.Diffs != nil {
 		if err := m.Diffs.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("diffs")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("diffs")
 			}
-
 			return err
 		}
 	}
@@ -80,7 +75,7 @@ func (m *PipelineStatus) validateDiffs(formats strfmt.Registry) error {
 	return nil
 }
 
-var pipelineStatusTypeSyncedPropEnum []any
+var pipelineStatusTypeSyncedPropEnum []interface{}
 
 func init() {
 	var res []string
@@ -152,15 +147,11 @@ func (m *PipelineStatus) contextValidateDiffs(ctx context.Context, formats strfm
 		}
 
 		if err := m.Diffs.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("diffs")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("diffs")
 			}
-
 			return err
 		}
 	}

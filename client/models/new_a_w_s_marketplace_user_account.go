@@ -27,7 +27,7 @@ type NewAWSMarketplaceUserAccount struct {
 	// Min Length: 1
 	AwsMarketplaceToken *string `json:"aws_marketplace_token"`
 
-	// Code of a country the user is from in alpha-2 format
+	// Code of a country the user is from
 	// Pattern: ^[A-Z]{2}$
 	CountryCode string `json:"country_code,omitempty"`
 
@@ -36,11 +36,15 @@ type NewAWSMarketplaceUserAccount struct {
 	// Format: email
 	Email *strfmt.Email `json:"email"`
 
-	// full name
+	// family name
 	// Required: true
-	// Max Length: 255
 	// Min Length: 2
-	FullName *string `json:"full_name"`
+	FamilyName *string `json:"family_name"`
+
+	// given name
+	// Required: true
+	// Min Length: 2
+	GivenName *string `json:"given_name"`
 
 	// User's preferred language
 	// Enum: ["en","fr","es"]
@@ -48,15 +52,16 @@ type NewAWSMarketplaceUserAccount struct {
 
 	// password
 	// Required: true
-	// Min Length: 12
+	// Min Length: 8
 	// Format: password
 	Password *strfmt.Password `json:"password"`
 
 	// username
+	// Required: true
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Username string `json:"username,omitempty"`
+	Username *string `json:"username"`
 }
 
 // Validate validates this new a w s marketplace user account
@@ -75,7 +80,11 @@ func (m *NewAWSMarketplaceUserAccount) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFullName(formats); err != nil {
+	if err := m.validateFamilyName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateGivenName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -135,24 +144,33 @@ func (m *NewAWSMarketplaceUserAccount) validateEmail(formats strfmt.Registry) er
 	return nil
 }
 
-func (m *NewAWSMarketplaceUserAccount) validateFullName(formats strfmt.Registry) error {
+func (m *NewAWSMarketplaceUserAccount) validateFamilyName(formats strfmt.Registry) error {
 
-	if err := validate.Required("full_name", "body", m.FullName); err != nil {
+	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("full_name", "body", *m.FullName, 2); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("full_name", "body", *m.FullName, 255); err != nil {
+	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-var newAWSMarketplaceUserAccountTypeLocalePropEnum []any
+func (m *NewAWSMarketplaceUserAccount) validateGivenName(formats strfmt.Registry) error {
+
+	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var newAWSMarketplaceUserAccountTypeLocalePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -203,7 +221,7 @@ func (m *NewAWSMarketplaceUserAccount) validatePassword(formats strfmt.Registry)
 		return err
 	}
 
-	if err := validate.MinLength("password", "body", m.Password.String(), 12); err != nil {
+	if err := validate.MinLength("password", "body", m.Password.String(), 8); err != nil {
 		return err
 	}
 
@@ -215,19 +233,20 @@ func (m *NewAWSMarketplaceUserAccount) validatePassword(formats strfmt.Registry)
 }
 
 func (m *NewAWSMarketplaceUserAccount) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
-		return nil
-	}
 
-	if err := validate.MinLength("username", "body", m.Username, 3); err != nil {
+	if err := validate.Required("username", "body", m.Username); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", m.Username, 100); err != nil {
+	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

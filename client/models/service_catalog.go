@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -44,9 +43,6 @@ type ServiceCatalog struct {
 	// created at
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at,omitempty"`
-
-	// Default version of the stack, based on the Catalog Repository branch
-	DefaultVersionBranch string `json:"default_version_branch,omitempty"`
 
 	// dependencies
 	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
@@ -278,15 +274,11 @@ func (m *ServiceCatalog) validateCloudProviders(formats strfmt.Registry) error {
 
 		if m.CloudProviders[i] != nil {
 			if err := m.CloudProviders[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -320,15 +312,11 @@ func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
 
 		if m.Dependencies[i] != nil {
 			if err := m.Dependencies[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -381,7 +369,7 @@ func (m *ServiceCatalog) validateImage(formats strfmt.Registry) error {
 	return nil
 }
 
-var serviceCatalogTypeImportStatusPropEnum []any
+var serviceCatalogTypeImportStatusPropEnum []interface{}
 
 func init() {
 	var res []string
@@ -519,15 +507,11 @@ func (m *ServiceCatalog) validateTeam(formats strfmt.Registry) error {
 
 	if m.Team != nil {
 		if err := m.Team.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("team")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("team")
 			}
-
 			return err
 		}
 	}
@@ -547,15 +531,11 @@ func (m *ServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
 
 		if m.Technologies[i] != nil {
 			if err := m.Technologies[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("technologies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("technologies" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -641,15 +621,11 @@ func (m *ServiceCatalog) contextValidateCloudProviders(ctx context.Context, form
 			}
 
 			if err := m.CloudProviders[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -670,15 +646,11 @@ func (m *ServiceCatalog) contextValidateDependencies(ctx context.Context, format
 			}
 
 			if err := m.Dependencies[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -697,15 +669,11 @@ func (m *ServiceCatalog) contextValidateTeam(ctx context.Context, formats strfmt
 		}
 
 		if err := m.Team.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("team")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("team")
 			}
-
 			return err
 		}
 	}
@@ -724,15 +692,11 @@ func (m *ServiceCatalog) contextValidateTechnologies(ctx context.Context, format
 			}
 
 			if err := m.Technologies[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("technologies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("technologies" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
