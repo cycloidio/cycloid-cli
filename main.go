@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"os"
 
@@ -15,6 +16,10 @@ var (
 	rootCmd *cobra.Command
 )
 
+type exitCoder interface {
+	ExitCode() int
+}
+
 func inRed(msg string) string {
 	return fmt.Sprintf("\033[1;31m%s\033[0m", msg)
 }
@@ -23,6 +28,10 @@ func inRed(msg string) string {
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		rootCmd.PrintErrln(inRed("Error:"), err.Error())
+		var codedErr exitCoder
+		if errors.As(err, &codedErr) {
+			os.Exit(codedErr.ExitCode())
+		}
 		os.Exit(1)
 	}
 }

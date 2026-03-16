@@ -1,6 +1,8 @@
 package middleware
 
 import (
+	"bytes"
+	"context"
 	"fmt"
 	"io"
 	"net/http"
@@ -73,6 +75,26 @@ func (m *middleware) AbortBuild(org, project, env, component, pipeline, job, bui
 
 // GetBuildEvents returns the build events as a raw string (text/event-stream).
 func (m *middleware) GetBuildEvents(org, project, env, component, pipeline, buildID string) (*string, *http.Response, error) {
+	body, resp, err := m.OpenBuildEventsStream(context.Background(), org, project, env, component, pipeline, buildID, "")
+	if err != nil {
+		return nil, resp, err
+	}
+	defer body.Close()
+
+	content, err := io.ReadAll(body)
+	if err != nil {
+		return nil, resp, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	s := string(content)
+	return &s, resp, nil
+}
+
+// OpenBuildEventsStream opens a text/event-stream reader for build logs.
+func (m *middleware) OpenBuildEventsStream(
+	ctx context.Context,
+	org, project, env, component, pipeline, buildID, lastEventID string,
+) (io.ReadCloser, *http.Response, error) {
 	baseURL, err := url.Parse(m.api.Config.URL)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to parse base url: %w", err)
@@ -89,31 +111,32 @@ func (m *middleware) GetBuildEvents(org, project, env, component, pipeline, buil
 		"events",
 	)
 
-	req, err := http.NewRequest("GET", baseURL.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, "GET", baseURL.String(), nil)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to create request: %w", err)
 	}
 
 	req.Header.Set("Accept", "text/event-stream")
 	req.Header.Set("Authorization", "Bearer "+m.api.GetToken(&org))
+	if lastEventID != "" {
+		req.Header.Set("Last-Event-ID", lastEventID)
+	}
 
 	resp, err := m.GenericClient.Do(req)
 	if err != nil {
 		return nil, nil, fmt.Errorf("HTTP request failed: %w", err)
 	}
-	defer resp.Body.Close()
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, resp, fmt.Errorf("failed to read response body: %w", err)
-	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return nil, resp, newAPIResponseError(resp, body)
+		body, readErr := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if readErr != nil {
+			return nil, resp, fmt.Errorf("failed to read error response body: %w", readErr)
+		}
+		return nil, resp, newAPIResponseError(resp, bytes.TrimSpace(body))
 	}
 
-	s := string(body)
-	return &s, resp, nil
+	return resp.Body, resp, nil
 }
 
 func (m *middleware) GetBuildPlan(org, project, env, component, pipeline, job, buildID string) (*models.PublicPlan, *http.Response, error) {

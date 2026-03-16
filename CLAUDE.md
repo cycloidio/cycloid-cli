@@ -152,6 +152,7 @@ Register in the command constructor (`NewGetX()`), never inside `RunE`.
 ## Deeper docs
 
 - `@docs/architecture.md` — HTTP layer, Request struct, auth flow, error taxonomy
+- `@docs/pipeline-build-watch-output.md` — `pipeline build trigger --watch` human SSE output; how to disable or remove
 - `@docs/adding-a-command.md` — full walkthrough with working example
 - `@docs/testing.md` — middleware + e2e test patterns, testcfg deep-dive
 - `@docs/middleware-refactor.md` — what changed and why, migration reference

@@ -146,3 +146,7 @@ The repository used to use the go-swagger generated operations package (`client/
 - `GenericRequest` gives explicit control over routing, auth, headers, and response decoding
 
 The `client/models/` package (data types) is still auto-generated from `swagger.yaml` and must not be edited manually.
+
+## Pipeline build watch (human SSE formatting)
+
+`cy pipeline build trigger --watch` streams build events while polling until the build finishes. Human vs raw NDJSON formatting lives in `internal/buildwatch`; the cobra command only passes options and calls `buildwatch.Watch`. If it causes problems, see [pipeline-build-watch-output.md](./pipeline-build-watch-output.md) for how to disable or remove it without touching the HTTP client.
