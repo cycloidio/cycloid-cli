@@ -1,10 +1,13 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func TestCatalogRepositories(t *testing.T) {
@@ -82,5 +85,26 @@ func TestCatalogRepositories(t *testing.T) {
 
 		require.Nil(t, cmdErr)
 		assert.Contains(t, cmdOut, "updated")
+	})
+
+	t.Run("SuccessCatalogRepositoryUpdate", func(t *testing.T) {
+		updatedName := "step-by-step-updated"
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"catalog-repository",
+			"update",
+			"--canonical", "step-by-step",
+			"--name", updatedName,
+			"--branch", "stack-aws",
+			"--url", "https://github.com/cycloid-community-catalog/docs-step-by-step-stack.git",
+			"--cred", "",
+		})
+
+		require.Nil(t, cmdErr)
+		var updatedRepo models.ServiceCatalogSource
+		err := json.Unmarshal([]byte(cmdOut), &updatedRepo)
+		require.Nil(t, err, "output should deserialize to ServiceCatalogSource, out: %s", cmdOut)
+		assert.Equal(t, updatedName, *updatedRepo.Name)
 	})
 }

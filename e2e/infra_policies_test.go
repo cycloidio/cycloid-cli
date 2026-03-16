@@ -1,6 +1,7 @@
 package e2e_test
 
 import (
+	"path/filepath"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -9,51 +10,47 @@ import (
 
 func TestInfraPolicies(t *testing.T) {
 	t.Skip()
-	// Checks the succesfull creation of a new infrapolicy
-	// The test validates that the reply of the create method
-	// contains the canonical of the created infrapolicy
-	t.Run("SuccessInfraPolicyCreate", func(t *testing.T) {
-		WriteFile("/tmp/test-cli-ip.rego", TestInfraPolicySample)
+	ipCanonical := randomCanonical("test-ip")
+	tmpDir := t.TempDir()
+	policyPath := filepath.Join(tmpDir, "test-cli-ip.rego")
+	WriteFile(policyPath, TestInfraPolicySample)
 
+	// Checks the successful creation of a new infrapolicy
+	t.Run("SuccessInfraPolicyCreate", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"ip",
 			"create",
-			"--policy-path", "/tmp/test-cli-ip.rego",
-			"--name", "test",
+			"--policy-path", policyPath,
+			"--canonical", ipCanonical,
+			"--name", ipCanonical,
 			"--description", "test infrapolicy",
 			"--owner", "cycloidio",
 			"--severity", "advisory",
-			"--enabled=1",
+			"--enabled=true",
 		})
 
 		assert.Nil(t, cmdErr)
-		require.Contains(t, cmdOut, "canonical\": \"test")
+		require.Contains(t, cmdOut, ipCanonical)
 	})
 
-	// Checks the succesfull get of a new infrapolicy
-	// The test validates that the reply of the get method
-	// contains the description of the infrapolicy
+	// Checks the successful get of a new infrapolicy
 	t.Run("SuccessInfraPolicyGet", func(t *testing.T) {
-
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"ip",
 			"get",
-			"--canonical", "test",
+			"--canonical", ipCanonical,
 		})
 
 		assert.Nil(t, cmdErr)
 		require.Contains(t, cmdOut, "description\": \"test infrapolicy")
 	})
 
-	// Checks the succesfull list of infrapolicies in org
-	// The test validates that the reply of the list method
-	// contains the infrapolicy (previously created)
+	// Checks the successful list of infrapolicies in org
 	t.Run("SuccessInfraPoliciesList", func(t *testing.T) {
-
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
@@ -65,20 +62,16 @@ func TestInfraPolicies(t *testing.T) {
 		require.Contains(t, cmdOut, "description\": \"test infrapolicy")
 	})
 
-	// Checks the succesfull update of a infrapolicy
-	// The test validates that the reply of the update method
-	// contains the changed description of the infrapolicy
+	// Checks the successful update of a infrapolicy
 	t.Run("SuccessInfraPolicyUpdate", func(t *testing.T) {
-		//WriteFile("/tmp/update-test-cli-ip.rego", TestInfraPolicySample)
-
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"ip",
 			"update",
-			"--canonical", "test",
-			"--policy-path", "/tmp/test-cli-ip.rego",
-			"--name", "test",
+			"--canonical", ipCanonical,
+			"--policy-path", policyPath,
+			"--name", ipCanonical,
 			"--description", "changed description",
 			"--owner", "cycloidio",
 			"--severity", "advisory",
@@ -89,22 +82,35 @@ func TestInfraPolicies(t *testing.T) {
 		require.Contains(t, cmdOut, "description\": \"changed description")
 	})
 
-	// Checks the succesfull deletion of a infrapolicy
-	// The test validates that the reply of the delete method
-	// has no error
-	t.Run("SuccessInfraPolicyDelete", func(t *testing.T) {
+	// Checks that validate runs against a terraform plan
+	t.Run("SuccessInfraPoliciesValidate", func(t *testing.T) {
+		planPath := filepath.Join(tmpDir, "test-plan.json")
+		WriteFile(planPath, TestTerraformPlanSample)
 
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"ip",
+			"validate",
+			"--plan-path", planPath,
+			"--project", *config.Project.Canonical,
+			"--env", *config.Environment.Canonical,
+		})
+
+		assert.Nil(t, cmdErr, "validate should not fail, out: %s", cmdOut)
+	})
+
+	// Checks the successful deletion of a infrapolicy
+	t.Run("SuccessInfraPolicyDelete", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"ip",
 			"delete",
-			"--canonical", "test",
+			"--canonical", ipCanonical,
 		})
 
 		assert.Nil(t, cmdErr)
 		require.Empty(t, cmdOut)
 	})
 }
-
-//TODO! validate test

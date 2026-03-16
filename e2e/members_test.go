@@ -10,7 +10,6 @@ import (
 )
 
 func TestMembers(t *testing.T) {
-	t.Skip()
 	// Cleanup invites in case of a previous test
 	t.Run("CleanupPreviousInvites", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
@@ -49,27 +48,69 @@ func TestMembers(t *testing.T) {
 		err := json.Unmarshal([]byte(cmdOut), &memberList)
 		require.Nil(t, err, "unmarshalling cli json output")
 
-		ok := JSONListFindObjectValue(memberList, "email", "cycloidio@cycloid.io")
-		assert.True(t, ok, fmt.Sprint("member with cycloidio@cycloid.io email address not found in json:\n", cmdOut))
+		ok := JSONListFindObjectValue(memberList, "email", "admin@cycloid.io")
+		assert.True(t, ok, fmt.Sprint("member with admin@cycloid.io email address not found in json:\n", cmdOut))
 	})
 
 	t.Run("SuccessMembersGet", func(t *testing.T) {
+		// Look up the admin member's numeric ID from the list
+		listOut, listErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"members",
+			"list",
+		})
+		require.Nil(t, listErr, "members list should not fail")
+
+		ids, err := JSONListExtractFields(listOut, "id", "email", "^admin@cycloid.io$")
+		require.Nil(t, err)
+		require.NotEmpty(t, ids, "admin member should be in the list")
+
+		adminID := ids[0]
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
 			"members",
 			"get",
-			"--id", "1",
+			"--id", adminID,
 		})
 
-		require.Nil(t, cmdErr, "CLI should not error on this action.")
+		require.Nil(t, cmdErr, "CLI should not error on members get")
 
 		var member map[string]any
-		err := json.Unmarshal([]byte(cmdOut), &member)
-		require.Nil(t, err, "we should be able to serialized the CLI json output: ", cmdOut)
+		err = json.Unmarshal([]byte(cmdOut), &member)
+		require.Nil(t, err, "we should be able to serialize the CLI json output: ", cmdOut)
 
-		assert.Equal(t, member["email"], "cycloidio@cycloid.io",
-			"member with cycloidio@cycloid.io email address not found in json:\n", cmdOut)
+		assert.Equal(t, "admin@cycloid.io", member["email"],
+			"member with admin@cycloid.io email address not found in json:\n", cmdOut)
+	})
+
+	t.Run("SuccessMembersUpdate", func(t *testing.T) {
+		// Look up the admin member's numeric ID from the list
+		listOut, listErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"members",
+			"list",
+		})
+		require.Nil(t, listErr, "members list should not fail")
+
+		ids, err := JSONListExtractFields(listOut, "id", "email", "^admin@cycloid.io$")
+		require.Nil(t, err)
+		require.NotEmpty(t, ids, "admin member should be in the list")
+
+		adminID := ids[0]
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"members",
+			"update",
+			"--id", adminID,
+			"--role", "organization-admin",
+		})
+
+		require.Nil(t, cmdErr, "members update should not fail")
+		assert.NotEmpty(t, cmdOut, "members update should return the updated member")
 	})
 
 	t.Run("SuccessMembersInvite", func(t *testing.T) {
@@ -84,7 +125,6 @@ func TestMembers(t *testing.T) {
 
 		require.Nil(t, cmdErr)
 		assert.Equal(t, "", cmdOut)
-
 	})
 
 	t.Run("SuccessMembersListInvite", func(t *testing.T) {

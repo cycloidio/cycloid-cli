@@ -73,5 +73,24 @@ func TestAPIKeysCmd(t *testing.T) {
 				t.Errorf("failed to find the API key with can '%s' in list: %s", testKeyCanonical, litter.Sdump(APIKeyList))
 			}
 		})
+
+		t.Run("GetAPIKeyOk", func(t *testing.T) {
+			args := []string{
+				"--output", "json",
+				"--org", config.Org,
+				"api-key", "get",
+				"--canonical", testKeyCanonical,
+			}
+			getOut, getErr := executeCommand(args)
+			if getErr != nil {
+				t.Errorf("failed to get api key: %s", getErr)
+			}
+
+			var gotKey models.APIKey
+			if err := json.Unmarshal([]byte(getOut), &gotKey); err != nil {
+				t.Errorf("CLI output can't be serialized to models.APIKey, out:\n%s\nerr:\n%s", getOut, err)
+			}
+			assert.Equal(t, testKeyCanonical, *gotKey.Canonical)
+		})
 	})
 }

@@ -196,7 +196,7 @@ func TestComponentCmd(t *testing.T) {
 			"-s", stackRef,
 			"-u", "default",
 			"--update",
-			"--stack-commit-hash", *config.CatalogRepoVersionStacks.CommitHash,
+			"--stack-branch", config.CatalogRepo.Branch,
 		}
 		stdout, stderr, err := executeCommandStdin(testJSONStdin, args)
 		if err != nil {
@@ -367,9 +367,9 @@ func TestComponentCmd(t *testing.T) {
 		component := randomCanonical("created-not-configured")
 
 		m := config.Middleware
-		created, err := m.CreateComponent(config.Org, *config.Project.Canonical,
+		created, _, err := m.CreateOrUpdateComponent(config.Org, *config.Project.Canonical,
 			*config.Environment.Canonical, component, description, component,
-			stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, "")
+			stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, "default", "", nil)
 		if err != nil {
 			t.Logf("test setup failed: component creation %q reported err: %v", component, err)
 			t.FailNow()
@@ -403,9 +403,9 @@ func TestComponentCmd(t *testing.T) {
 		component := randomCanonical("created-not-configured")
 
 		m := config.Middleware
-		created, err := m.CreateComponent(config.Org, *config.Project.Canonical,
+		created, _, err := m.CreateOrUpdateComponent(config.Org, *config.Project.Canonical,
 			*config.Environment.Canonical, component, description, component,
-			stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, "")
+			stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, "default", "", nil)
 		if err != nil {
 			t.Logf("test setup failed: component creation %q reported err: %v", component, err)
 			t.FailNow()
