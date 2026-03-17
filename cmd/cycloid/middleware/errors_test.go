@@ -40,6 +40,20 @@ func TestAPIResponseError(t *testing.T) {
 		assert.Equal(t, "API error 500: 500 Internal Server Error", err.Error())
 	})
 
+	t.Run("ErrorWithoutPayloadFallbackToRawBodyAndPath", func(t *testing.T) {
+		err := &middleware.APIResponseError{
+			StatusCode: 422,
+			Status:     "422 Unprocessable Entity",
+			Path:       "/organizations/org/projects/project/environments/env/components",
+			Body:       []byte("stack branch simple-terraform not found"),
+		}
+		assert.Equal(
+			t,
+			`API error 422 on "/organizations/org/projects/project/environments/env/components": stack branch simple-terraform not found`,
+			err.Error(),
+		)
+	})
+
 	t.Run("GetPayload", func(t *testing.T) {
 		payload := &models.ErrorPayload{}
 		err := &middleware.APIResponseError{
@@ -47,5 +61,18 @@ func TestAPIResponseError(t *testing.T) {
 			Payload:    payload,
 		}
 		assert.Equal(t, payload, err.GetPayload())
+	})
+
+	t.Run("ErrorWithoutPayloadFallbackToRawBodyWithoutPath", func(t *testing.T) {
+		err := &middleware.APIResponseError{
+			StatusCode: 422,
+			Status:     "422 Unprocessable Entity",
+			Body:       []byte("stack branch simple-terraform not found"),
+		}
+		assert.Equal(
+			t,
+			"API error 422: stack branch simple-terraform not found",
+			err.Error(),
+		)
 	})
 }

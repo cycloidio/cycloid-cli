@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
@@ -32,13 +33,13 @@ type StackUseCase struct {
 // Request represents an HTTP request to the Cycloid API.
 type Request struct {
 	Method       string
-	Organization *string          // used for auth token lookup
-	NoAuth       bool             // disables auth header
-	Route        []string         // joined onto base URL: ["organizations", org, "projects"]
-	Query        any              // url.Values or struct with `url` tags
+	Organization *string  // used for auth token lookup
+	NoAuth       bool     // disables auth header
+	Route        []string // joined onto base URL: ["organizations", org, "projects"]
+	Query        any      // url.Values or struct with `url` tags
 	Headers      map[string]string
-	Accept       *string          // overrides default Accept header
-	Body         any              // JSON-marshalled when non-nil
+	Accept       *string // overrides default Accept header
+	Body         any     // JSON-marshalled when non-nil
 }
 
 // APIResponseError is returned when the API returns a non-2xx response.
@@ -47,12 +48,22 @@ type APIResponseError struct {
 	Status     string
 	Body       []byte
 	Payload    *models.ErrorPayload
+	Path       string
 }
 
 func (e *APIResponseError) Error() string {
 	if e.Payload != nil && len(e.Payload.Errors) > 0 && e.Payload.Errors[0].Message != nil {
 		return fmt.Sprintf("API error %d: %s", e.StatusCode, *e.Payload.Errors[0].Message)
 	}
+
+	body := strings.TrimSpace(string(e.Body))
+	if body != "" {
+		if e.Path != "" {
+			return fmt.Sprintf("API error %d on %q: %s", e.StatusCode, e.Path, body)
+		}
+		return fmt.Sprintf("API error %d: %s", e.StatusCode, body)
+	}
+
 	return fmt.Sprintf("API error %d: %s", e.StatusCode, e.Status)
 }
 
@@ -61,11 +72,29 @@ func (e *APIResponseError) GetPayload() *models.ErrorPayload {
 	return e.Payload
 }
 
+// HTTPStatusCode implements printer.ErrHTTPResponse.
+func (e *APIResponseError) HTTPStatusCode() int {
+	return e.StatusCode
+}
+
+// HTTPResponseBody implements printer.ErrHTTPResponse.
+func (e *APIResponseError) HTTPResponseBody() []byte {
+	return e.Body
+}
+
+// HTTPRequestPath implements printer.RequestPather.
+func (e *APIResponseError) HTTPRequestPath() string {
+	return e.Path
+}
+
 func newAPIResponseError(resp *http.Response, body []byte) *APIResponseError {
 	apiErr := &APIResponseError{
 		StatusCode: resp.StatusCode,
 		Status:     resp.Status,
 		Body:       body,
+	}
+	if resp.Request != nil && resp.Request.URL != nil {
+		apiErr.Path = resp.Request.URL.RequestURI()
 	}
 
 	var payload models.ErrorPayload

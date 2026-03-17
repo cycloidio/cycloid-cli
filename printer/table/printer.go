@@ -166,7 +166,7 @@ func (t Table) Print(obj interface{}, opts printer.Options, w io.Writer) error {
 	})
 	if ok {
 		errP := apiErr.GetPayload()
-		if reflect.TypeOf(errP) == reflect.TypeOf(&models.ErrorPayload{}) {
+		if errP != nil && reflect.TypeOf(errP) == reflect.TypeOf(&models.ErrorPayload{}) && len(errP.Errors) > 0 {
 			obj = errP.Errors
 		}
 	}
