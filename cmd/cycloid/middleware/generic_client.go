@@ -105,17 +105,49 @@ func (m *middleware) GenericRequest(req Request, response any) (*http.Response, 
 		if err := json.Unmarshal(respBody, &envelope); err != nil {
 			// Try direct unmarshal if envelope fails
 			if err2 := json.Unmarshal(respBody, response); err2 != nil {
-				return resp, fmt.Errorf("failed to decode JSON response: %w (envelope error: %v)", err2, err)
+				return resp, &responseJSONError{
+					statusCode: resp.StatusCode,
+					body:       respBody,
+					cause:      fmt.Errorf("%w (envelope error: %v)", err2, err),
+				}
 			}
 			return resp, nil
 		}
 
 		if envelope.Data != nil {
 			if err := json.Unmarshal(envelope.Data, response); err != nil {
-				return resp, fmt.Errorf("failed to decode JSON from data envelope: %w", err)
+				return resp, &responseJSONError{
+					statusCode: resp.StatusCode,
+					body:       respBody,
+					cause:      err,
+				}
 			}
 		}
 	}
 
 	return resp, nil
+}
+
+// responseJSONError is returned when the API responded 2xx but the body could
+// not be decoded into the expected JSON shape.
+type responseJSONError struct {
+	statusCode int
+	body       []byte
+	cause      error
+}
+
+func (e *responseJSONError) Error() string {
+	return fmt.Sprintf("failed to decode JSON response (HTTP %d): %v", e.statusCode, e.cause)
+}
+
+func (e *responseJSONError) Unwrap() error {
+	return e.cause
+}
+
+func (e *responseJSONError) HTTPStatusCode() int {
+	return e.statusCode
+}
+
+func (e *responseJSONError) HTTPResponseBody() []byte {
+	return e.body
 }

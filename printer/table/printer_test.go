@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/printer"
 )
 
@@ -94,4 +95,23 @@ value a	value b	abc
 		require.NoError(t, err)
 		assert.Equal(t, exp, b.String())
 	})
+}
+
+// apiErrNilPayload mimics *middleware.APIResponseError with no parsed JSON error payload (e.g. HTML body).
+type apiErrNilPayload struct {
+	StatusCode int
+}
+
+func (*apiErrNilPayload) GetPayload() *models.ErrorPayload {
+	return nil
+}
+
+func TestTablePrinter_APIErrorNilPayloadDoesNotPanic(t *testing.T) {
+	var (
+		tab Table
+		b   bytes.Buffer
+	)
+	err := tab.Print(&apiErrNilPayload{StatusCode: 404}, printer.Options{}, &b)
+	require.NoError(t, err)
+	assert.NotEmpty(t, b.String())
 }

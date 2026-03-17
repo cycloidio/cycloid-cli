@@ -112,9 +112,12 @@ type APIResponseError struct {
     Status     string
     Body       []byte                 // raw response body
     Payload    *models.ErrorPayload   // parsed if body was valid JSON error
+    Path       string                 // request path (+ query) for fallback errors
 }
 
-// Error() format: "API error 422: <message from payload>"
+// Error() format:
+// - payload message available: "API error 422: <message from payload>"
+// - fallback body/path:       "API error 422 on "/path?query": <raw body>"
 ```
 
 Check with `errors.As`:
@@ -129,6 +132,10 @@ if errors.As(err, &apiErr) {
 ```
 
 Common status codes: 400 bad request, 401 unauthorized, 403 forbidden, 404 not found, 409 conflict, 422 unprocessable entity.
+
+### JSON output and API error diagnostics
+
+Errors that implement `printer.ErrHTTPResponse` attach the HTTP status code and raw response body (`*APIResponseError` for non-2xx, plus the decode error type returned by `GenericRequest` when a 2xx body cannot be unmarshaled). When `--output json` is used, the JSON printer first tries to marshal the value normally. If marshaling fails but the value is an error satisfying `ErrHTTPResponse`, it prints a small JSON object instead: `cli_marshal_error`, `http_status`, `api_response_preview` (first 10 lines of the body), and optionally `request_path` when the error also implements `printer.RequestPather` (as `*APIResponseError` does).
 
 ## Why `client/client/` is unused
 
