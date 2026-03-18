@@ -15,7 +15,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var (
 		example = `cy --org my-org roles delete [role_canonicals...]`
-		short   = "Remove a user from the organization"
+		short   = "Delete one or more roles from the organization"
 		long    = short
 	)
 

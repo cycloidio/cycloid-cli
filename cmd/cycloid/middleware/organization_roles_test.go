@@ -30,6 +30,16 @@ func TestRolesCRUD(t *testing.T) {
 	require.NoError(t, err, "GetRole should succeed")
 	assert.Equal(t, canonical, *got.Canonical)
 
+	updated, _, err := m.UpdateRole(config.Org, canonical, ptr.Ptr("Updated Role Name"), ptr.Ptr(canonical), ptr.Ptr("updated description"), []*models.NewRule{rule})
+	require.NoError(t, err, "UpdateRole should succeed")
+	require.NotNil(t, updated)
+	assert.Equal(t, "Updated Role Name", *updated.Name)
+	assert.Equal(t, "updated description", *updated.Description)
+
+	got, _, err = m.GetRole(config.Org, canonical)
+	require.NoError(t, err)
+	assert.Equal(t, "Updated Role Name", *got.Name)
+
 	list, _, err := m.ListRoles(config.Org)
 	require.NoError(t, err, "ListRoles should succeed")
 	assert.NotEmpty(t, list)

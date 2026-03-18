@@ -165,6 +165,7 @@ type Middleware interface {
 	GetRole(org, role string) (*models.Role, *http.Response, error)
 	ListRoles(org string) ([]*models.Role, *http.Response, error)
 	CreateRole(org string, name, canonical, description *string, rules []*models.NewRule) (*models.NewRole, *http.Response, error)
+	UpdateRole(org, roleCanonical string, name, canonical, description *string, rules []*models.NewRule) (*models.Role, *http.Response, error)
 
 	// ApiKeys
 	ListAPIKeys(org string) ([]*models.APIKey, *http.Response, error)
