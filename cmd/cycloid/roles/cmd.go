@@ -16,6 +16,7 @@ func NewCommands() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:     "roles",
+		Aliases: []string{"role"},
 		Example: example,
 		Short:   short,
 		Long:    long,
