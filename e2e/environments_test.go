@@ -127,6 +127,43 @@ func TestEnvs(t *testing.T) {
 		})
 	})
 
+	t.Run("CreateWithoutColorRandomized", func(t *testing.T) {
+		newEnv := randomCanonical("e2e-env-no-color")
+		args := []string{
+			"-o", "json",
+			"env", "create",
+			"--project", project,
+			"--env", newEnv,
+			"--name", "No color env",
+		}
+		out, err := executeCommand(args)
+		if err != nil {
+			t.Errorf("failed to create env '%s' without color: %v", newEnv, err)
+		}
+
+		defer t.Run("DeleteNoColorEnv", func(t *testing.T) {
+			args := []string{
+				"env", "delete",
+				"--project", project,
+				"--env", newEnv,
+			}
+			_, err := executeCommand(args)
+			if err != nil {
+				t.Errorf("failed to delete env '%s': %v", newEnv, err)
+			}
+		})
+
+		var envResult models.Environment
+		err = json.Unmarshal([]byte(out), &envResult)
+		if err != nil {
+			t.Errorf("failed to parse json output from the CLI on create without color: %v\noutput: %s", err, out)
+		}
+
+		if assert.NotNil(t, envResult.Color, "expected a random color to be assigned") {
+			assert.Contains(t, cyargs.ValidColors, *envResult.Color)
+		}
+	})
+
 	t.Run("Update", func(t *testing.T) {
 		var newName = "NewName"
 		args := []string{
