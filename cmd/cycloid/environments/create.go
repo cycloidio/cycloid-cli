@@ -95,7 +95,7 @@ func create(cmd *cobra.Command, args []string) error {
 					color = *current.Color
 				} else {
 					// Use a random one if none is set
-					color = cyargs.PickRandomColor(&env)
+					color = cyargs.PickRandomColor(nil)
 				}
 			}
 
@@ -109,7 +109,7 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	if color == cyargs.DefaultColor {
-		color = cyargs.PickRandomColor(&env)
+		color = cyargs.PickRandomColor(nil)
 	}
 
 	resp, _, err := m.CreateEnv(org, project, env, name, color)
