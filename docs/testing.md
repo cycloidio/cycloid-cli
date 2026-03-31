@@ -219,6 +219,20 @@ func TestWidgets(t *testing.T) {
 
 The `defer` on `SuccessWidgetDelete` ensures cleanup even if inner tests fail.
 
+### `create --update` (upsert) coverage
+
+When you add or change idempotent `create --update` behavior, extend **existing** e2e files for that resource in the same change. Examples in this repo:
+
+| Area | File | Notes |
+|------|------|--------|
+| Teams | `e2e/teams_test.go` | Name-only upsert (`SuccessTeamCreateUpdateWithNameOnly`) |
+| Projects / envs | `e2e/projects_test.go`, `e2e/environments_test.go` | Already cover inferred canonical + `--update` |
+| Child orgs | `e2e/organizations_test.go` | Duplicate create errors; `create --update` succeeds |
+| Catalog repos | `e2e/catalog_repositories_test.go` | Nested in `SuccessCatalogRepositoriesCreate`: duplicate create errors; `create --update` succeeds |
+| Stacks (blueprint) | `e2e/stacks_test.go` | Existing canonical + `--update` returns same stack |
+
+`e2e/config_repositories_test.go` is currently skipped (BE-981); when it is re-enabled, add matching `--update` cases there.
+
 ### Known skipped tests
 
 | Test | File | Reason |

@@ -18,6 +18,19 @@ func AddCatalogRepositoryFlag(cmd *cobra.Command) string {
 	return flagName
 }
 
+// AddCatalogRepoCanonicalFlag registers optional --canonical on catalog-repo create (identity for upsert).
+func AddCatalogRepoCanonicalFlag(cmd *cobra.Command) string {
+	const flagName = "canonical"
+	cmd.Flags().String(flagName, "", "catalog repository canonical; if omitted, derived from --name")
+	_ = cmd.RegisterFlagCompletionFunc(flagName, CompleteCatalogRepository)
+	return flagName
+}
+
+// GetCatalogRepoCanonical returns the optional catalog repository canonical from create (empty if unset).
+func GetCatalogRepoCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("canonical")
+}
+
 func GetCatalogRepository(cmd *cobra.Command) (string, error) {
 	catalogRepository, err := cmd.Flags().GetString("catalog-repository")
 	if err != nil {
