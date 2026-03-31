@@ -12,6 +12,9 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/custommodels"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStacks(t *testing.T) {
@@ -32,6 +35,54 @@ func TestStacks(t *testing.T) {
 	})
 
 	var testStackRef = config.Org + ":stack-e2e-stackforms"
+	var testStackCanonical = "stack-e2e-stackforms"
+
+	t.Run("SuccessStackCreateDuplicateWithoutUpdateErrors", func(t *testing.T) {
+		is := is.New(t)
+		catalogRepo := ptr.Value(config.CatalogRepo.Canonical)
+		is.True(catalogRepo != "")
+
+		// Required flags; blueprint-ref is not used when the stack canonical already exists (CLI short-circuits).
+		_, dupErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"stack", "create",
+			"--name", "E2E existing stack",
+			"--stack", testStackCanonical,
+			"--catalog-repository", catalogRepo,
+			"--blueprint-ref", testStackRef,
+			"--use-case", "default",
+		})
+		require.Error(t, dupErr, "create without --update must fail when stack canonical already exists")
+	})
+
+	t.Run("SuccessStackCreateWithUpdateIdempotent", func(t *testing.T) {
+		is := is.New(t)
+		catalogRepo := ptr.Value(config.CatalogRepo.Canonical)
+		is.True(catalogRepo != "")
+
+		cmdOut2, cmdErr2 := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"stack", "create",
+			"--update",
+			"--name", "E2E existing stack",
+			"--stack", testStackCanonical,
+			"--catalog-repository", catalogRepo,
+			"--blueprint-ref", testStackRef,
+			"--use-case", "default",
+		})
+		require.NoError(t, cmdErr2)
+
+		var outStack models.ServiceCatalog
+		err := json.Unmarshal([]byte(cmdOut2), &outStack)
+		require.NoError(t, err)
+		require.NotNil(t, outStack.Canonical)
+		assert.Equal(t, testStackCanonical, *outStack.Canonical)
+		require.NotNil(t, outStack.Ref)
+		assert.Equal(t, testStackRef, *outStack.Ref)
+	})
+
 	t.Run("SuccessStacksGet", func(t *testing.T) {
 		is := is.New(t)
 		cmdOut, cmdErr := executeCommand([]string{

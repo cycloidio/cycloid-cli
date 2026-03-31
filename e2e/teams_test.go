@@ -116,4 +116,44 @@ func TestTeams(t *testing.T) {
 			assert.Equal(t, "admin@cycloid.io", ptr.Value(outMember[0].Email).String())
 		})
 	})
+
+	t.Run("SuccessTeamCreateUpdateWithNameOnly", func(t *testing.T) {
+		displayName := "Upsert Team " + randomCanonical("team")
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"team", "create",
+			"--name", displayName,
+			"--role", "organization-admin",
+		})
+		require.NoError(t, cmdErr, "first create should succeed")
+
+		var first models.Team
+		require.NoError(t, json.Unmarshal([]byte(cmdOut), &first))
+		canonical := ptr.Value(first.Canonical)
+		require.NotEmpty(t, canonical)
+
+		defer func() {
+			_, err := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"team", "delete", canonical,
+			})
+			require.NoError(t, err, "cleanup delete should succeed")
+		}()
+
+		cmdOut2, cmdErr2 := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"team", "create",
+			"--update",
+			"--name", displayName,
+			"--role", "organization-admin",
+		})
+		require.NoError(t, cmdErr2, "create --update with name only should find team by inferred canonical")
+
+		var second models.Team
+		require.NoError(t, json.Unmarshal([]byte(cmdOut2), &second))
+		assert.Equal(t, canonical, ptr.Value(second.Canonical), "upsert should target the same team")
+	})
 }

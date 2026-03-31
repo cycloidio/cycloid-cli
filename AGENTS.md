@@ -61,6 +61,7 @@ These are invariants that LLM agents and new contributors must not violate:
 6. **ALWAYS use `printer.SmartPrint`** — errors go to `OutOrStderr()`, results go to `OutOrStdout()`.
 7. **E2E tests require a running backend** (`make be-start`). Never run e2e in parallel.
 8. **Run `make format && make lint` after every code change.**
+9. **Ship tests with every feature** — in the same change, add or extend coverage for what you introduce: new or changed middleware in `cmd/cycloid/middleware/*_test.go` (or focused unit tests where appropriate), and user-facing CLI behavior in `e2e/*_test.go` when that resource already has e2e tests. Do not land behavior-only changes without tests.
 
 ## `GenericRequest` pattern
 
@@ -142,6 +143,7 @@ Register in the command constructor (`NewGetX()`), never inside `RunE`.
 
 ## Testing
 
+- **Tests ship with the feature** (see Hard Rule 9): middleware and command changes should include tests in the same PR; extend existing `e2e/*_test.go` files when the resource is already covered there.
 - **Middleware tests** (`cmd/cycloid/middleware/*_test.go`): `TestMain` calls `testcfg.NewConfig("middleware")`. Fixtures: `config.Project`, `config.Environment`, `config.Component`, `config.ConfigRepo`, `config.CatalogRepo`.
 - **E2E tests** (`e2e/*_test.go`): `executeCommand(args)` runs the real CLI. Same `testcfg` setup.
 - E2E tests are **not parallel** (backend git writes are not concurrent-safe).

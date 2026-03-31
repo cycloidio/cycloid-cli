@@ -8,6 +8,7 @@ import (
 
 	"github.com/matryer/is"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/testcfg"
@@ -62,6 +63,36 @@ func TestOrganizations(t *testing.T) {
 		err := json.Unmarshal([]byte(cmdOut), &outOrg)
 		is.NoErr(err)                         // JSON output should be a valid model
 		is.Equal(childOrg, *outOrg.Canonical) // org canonicals should match
+
+		t.Run("SuccessOrganizationsCreateChildDuplicateWithoutUpdateErrors", func(t *testing.T) {
+			_, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"organization",
+				"create",
+				"--name", childOrg,
+				"--parent-canonical", config.Org,
+			})
+			require.Error(t, cmdErr, "second create without --update must fail")
+		})
+
+		t.Run("SuccessOrganizationsCreateChildWithUpdate", func(t *testing.T) {
+			cmdOut, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"organization",
+				"create",
+				"--update",
+				"--name", childOrg,
+				"--parent-canonical", config.Org,
+			})
+			require.NoError(t, cmdErr)
+
+			var again *models.Organization
+			err := json.Unmarshal([]byte(cmdOut), &again)
+			require.NoError(t, err)
+			require.NotNil(t, again)
+			require.NotNil(t, again.Canonical)
+			assert.Equal(t, childOrg, *again.Canonical)
+		})
 
 		t.Run("SuccessOrganizationsUpdate", func(t *testing.T) {
 			is := is.New(t)
