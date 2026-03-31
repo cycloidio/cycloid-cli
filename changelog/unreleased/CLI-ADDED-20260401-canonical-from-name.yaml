@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: Project and environment create can infer missing canonicals from `--name` when appropriate
+time: 2026-04-01T14:00:04Z
+custom:
+  DETAILS: ""
+  PR: "420"
+  TYPE: CLI

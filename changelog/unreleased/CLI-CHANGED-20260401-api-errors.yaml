@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: API errors may include the request path and a raw response body fallback when JSON error parsing fails
+time: 2026-04-01T14:00:02Z
+custom:
+  DETAILS: ""
+  PR: "420"
+  TYPE: CLI
