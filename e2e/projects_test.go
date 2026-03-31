@@ -8,9 +8,9 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 )
-
 
 func TestProjects(t *testing.T) {
 
@@ -41,6 +41,75 @@ func TestProjects(t *testing.T) {
 		if err != nil {
 			t.Errorf("failed to create project '%s': %v", project, err)
 		}
+	})
+
+	t.Run("CreateWithNameOnlyAndUpdate", func(t *testing.T) {
+		var (
+			nameOnly    = "Project Name " + randomCanonical("e2e")
+			canonical   = middleware.ToCanonical(nameOnly)
+			updatedDesc = "Updated inferred project description"
+			newIcon     = cyargs.PickRandomIcon(nil)
+			newColor    = cyargs.PickRandomColor(nil)
+		)
+
+		createArgs := []string{
+			"--output", "json",
+			"project", "create",
+			"--name", nameOnly,
+			"--description", description,
+			"--owner", owner,
+			"--icon", icon,
+			"--color", color,
+		}
+		createOut, err := executeCommand(createArgs)
+		if err != nil {
+			t.Errorf("failed to create project with name-only '%s': %v", nameOnly, err)
+		}
+
+		defer t.Run("DeleteNameOnlyProject", func(t *testing.T) {
+			args := []string{
+				"project", "delete",
+				"--project", canonical,
+			}
+			_, err := executeCommand(args)
+			if err != nil {
+				t.Errorf("failed to delete project '%s': %v", canonical, err)
+			}
+		})
+
+		var createdProject models.Project
+		err = json.Unmarshal([]byte(createOut), &createdProject)
+		if err != nil {
+			t.Errorf("failed to parse create output for inferred project: %v\noutput: %s", err, createOut)
+		}
+		assert.Equal(t, nameOnly, *createdProject.Name)
+		assert.Equal(t, canonical, *createdProject.Canonical)
+
+		updateArgs := []string{
+			"--output", "json",
+			"project", "create",
+			"--name", nameOnly,
+			"--description", updatedDesc,
+			"--owner", owner,
+			"--icon", newIcon,
+			"--color", newColor,
+			"--update",
+		}
+		updateOut, err := executeCommand(updateArgs)
+		if err != nil {
+			t.Errorf("failed to create --update project with name-only '%s': %v", nameOnly, err)
+		}
+
+		var updatedProject models.Project
+		err = json.Unmarshal([]byte(updateOut), &updatedProject)
+		if err != nil {
+			t.Errorf("failed to parse update output for inferred project: %v\noutput: %s", err, updateOut)
+		}
+		assert.Equal(t, canonical, *updatedProject.Canonical)
+		assert.Equal(t, nameOnly, *updatedProject.Name)
+		assert.Equal(t, updatedDesc, updatedProject.Description)
+		assert.Equal(t, newColor, *updatedProject.Color)
+		assert.Equal(t, newIcon, *updatedProject.Icon)
 	})
 
 	defer t.Run("Delete", func(t *testing.T) {

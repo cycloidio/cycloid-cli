@@ -8,6 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 )
 
@@ -35,6 +36,48 @@ func TestEnvs(t *testing.T) {
 		if err != nil {
 			t.Errorf("failed to create env '%s': %v", env, err)
 		}
+	})
+
+	t.Run("CreateWithNameOnly", func(t *testing.T) {
+		var (
+			nameOnly  = "Environment Name " + randomCanonical("e2e")
+			inferred  = middleware.ToCanonical(nameOnly)
+			nameColor = cyargs.PickRandomColor(&inferred)
+		)
+
+		args := []string{
+			"--output", "json",
+			"env", "create",
+			"--project", project,
+			"--name", nameOnly,
+			"--color", nameColor,
+		}
+		out, err := executeCommand(args)
+		if err != nil {
+			t.Errorf("failed to create env with name-only '%s': %v", nameOnly, err)
+		}
+
+		defer t.Run("DeleteNameOnlyEnv", func(t *testing.T) {
+			args := []string{
+				"env", "delete",
+				"--project", project,
+				"--env", inferred,
+			}
+			_, err := executeCommand(args)
+			if err != nil {
+				t.Errorf("failed to delete inferred env '%s': %v", inferred, err)
+			}
+		})
+
+		var createdEnv models.Environment
+		err = json.Unmarshal([]byte(out), &createdEnv)
+		if err != nil {
+			t.Errorf("failed to parse json output for inferred env creation: %v\noutput: %s", err, out)
+		}
+
+		assert.Equal(t, inferred, *createdEnv.Canonical)
+		assert.Equal(t, nameOnly, createdEnv.Name)
+		assert.Equal(t, nameColor, *createdEnv.Color)
 	})
 
 	defer t.Run("Delete", func(t *testing.T) {

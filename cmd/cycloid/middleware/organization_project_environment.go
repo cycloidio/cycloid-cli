@@ -20,6 +20,11 @@ func (m *middleware) GetEnv(org, project, env string) (*models.Environment, *htt
 }
 
 func (m *middleware) CreateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error) {
+	envName, env, err := NameOrCanonical(&envName, &env)
+	if err != nil {
+		return nil, nil, err
+	}
+
 	envBody := models.NewEnvironment{
 		Name:      &envName,
 		Canonical: env,
