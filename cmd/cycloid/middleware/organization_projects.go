@@ -47,9 +47,9 @@ func (m *middleware) GetProject(org, project string) (*models.Project, *http.Res
 }
 
 func (m *middleware) CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, *http.Response, error) {
-	if projectName == "" {
-		// If name is empty, use the canonical
-		projectName = project
+	projectName, project, err := NameOrCanonical(&projectName, &project)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	body := &models.NewProject{

@@ -76,8 +76,8 @@ func TestOrganizations(t *testing.T) {
 
 			var outOrg *models.Organization
 			err := json.Unmarshal([]byte(cmdOut), &outOrg)
-			is.NoErr(err)                         // output should be deserializable
-			is.Equal(updatedName, *outOrg.Name)   // name should be updated
+			is.NoErr(err)                       // output should be deserializable
+			is.Equal(updatedName, *outOrg.Name) // name should be updated
 		})
 
 		t.Run("SuccessOrganizationsAddSubscription", func(t *testing.T) {

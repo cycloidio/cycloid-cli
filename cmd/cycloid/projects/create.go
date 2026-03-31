@@ -36,20 +36,21 @@ func NewCreateCommand() *cobra.Command {
 }
 
 func create(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	project, err := cyargs.GetProject(cmd)
+	project, err := cyargs.GetProjectOrEmpty(cmd)
 	if err != nil {
 		return err
 	}
 
 	name, err := cyargs.GetName(cmd)
+	if err != nil {
+		return err
+	}
+	name, project, err = middleware.NameOrCanonical(&name, &project)
 	if err != nil {
 		return err
 	}
@@ -94,6 +95,9 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	if update {
 		projects, _, err := m.ListProjects(org)

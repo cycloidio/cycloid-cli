@@ -33,9 +33,6 @@ func NewCreateCommand() *cobra.Command {
 }
 
 func create(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -46,7 +43,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	env, err := cyargs.GetEnv(cmd)
+	env, err := cyargs.GetEnvOrEmpty(cmd)
 	if err != nil {
 		return err
 	}
@@ -55,8 +52,9 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if name == "" {
-		name = env
+	name, env, err = middleware.NameOrCanonical(&name, &env)
+	if err != nil {
+		return err
 	}
 
 	color, err := cyargs.GetColor(cmd)
@@ -79,6 +77,9 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	if update {
 		environments, _, err := m.ListProjectsEnv(org, project)

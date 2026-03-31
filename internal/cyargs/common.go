@@ -150,16 +150,24 @@ func AddProjectFlag(cmd *cobra.Command) {
 }
 
 func GetProject(cmd *cobra.Command) (string, error) {
+	project, err := GetProjectOrEmpty(cmd)
+	if err != nil {
+		return "", err
+	}
+	if project == "" {
+		return "", errors.New("project is not set, use --project flag or CY_PROJECT env var")
+	}
+
+	return project, nil
+}
+
+func GetProjectOrEmpty(cmd *cobra.Command) (string, error) {
 	project, _ := cmd.Flags().GetString("project")
 	if project != "" {
 		return project, nil
 	}
 
 	project = v.GetString("project")
-	if project == "" {
-		return "", errors.New("project is not set, use --project flag or CY_PROJECT env var")
-	}
-
 	return project, nil
 }
 
@@ -201,16 +209,24 @@ func AddEnvFlag(cmd *cobra.Command) {
 }
 
 func GetEnv(cmd *cobra.Command) (string, error) {
+	env, err := GetEnvOrEmpty(cmd)
+	if err != nil {
+		return "", err
+	}
+	if env == "" {
+		return "", errors.New("env is not set, use --env flag or CY_ENV env var")
+	}
+
+	return env, nil
+}
+
+func GetEnvOrEmpty(cmd *cobra.Command) (string, error) {
 	env, _ := cmd.Flags().GetString("env")
 	if env != "" {
 		return env, nil
 	}
 
 	env = v.GetString("env")
-	if env == "" {
-		return "", errors.New("env is not set, use --env flag or CY_ENV env var")
-	}
-
 	return env, nil
 }
 
