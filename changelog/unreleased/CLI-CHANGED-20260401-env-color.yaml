@@ -1,8 +1,0 @@
-component: CLI
-kind: CHANGED
-body: Environment create picks a random theme color when `--color` is left at the default
-time: 2026-04-01T14:00:03Z
-custom:
-  DETAILS: ""
-  PR: "420"
-  TYPE: CLI
