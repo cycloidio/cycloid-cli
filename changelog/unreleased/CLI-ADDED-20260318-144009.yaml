@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: '`cy roles update` and `cy roles create --update` commands'
-time: 2026-03-18T14:40:09.980425991Z
-custom:
-  DETAILS: Add also a `cy role` alias
-  PR: "423"
-  TYPE: CLI

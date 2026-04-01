@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: Improve help examples for pipeline job commands and `stack forms validate`
-time: 2026-04-01T14:00:00Z
-custom:
-  DETAILS: ""
-  PR: "420"
-  TYPE: CLI
