@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -73,15 +72,11 @@ func (m *PipelineDiffs) validateGroups(formats strfmt.Registry) error {
 
 		if m.Groups[i] != nil {
 			if err := m.Groups[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -103,15 +98,11 @@ func (m *PipelineDiffs) validateJobs(formats strfmt.Registry) error {
 
 		if m.Jobs[i] != nil {
 			if err := m.Jobs[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -133,15 +124,11 @@ func (m *PipelineDiffs) validateResourceTypes(formats strfmt.Registry) error {
 
 		if m.ResourceTypes[i] != nil {
 			if err := m.ResourceTypes[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("resource_types" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("resource_types" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -163,15 +150,11 @@ func (m *PipelineDiffs) validateResources(formats strfmt.Registry) error {
 
 		if m.Resources[i] != nil {
 			if err := m.Resources[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("resources" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("resources" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -218,15 +201,11 @@ func (m *PipelineDiffs) contextValidateGroups(ctx context.Context, formats strfm
 			}
 
 			if err := m.Groups[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("groups" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("groups" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -247,15 +226,11 @@ func (m *PipelineDiffs) contextValidateJobs(ctx context.Context, formats strfmt.
 			}
 
 			if err := m.Jobs[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("jobs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("jobs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -276,15 +251,11 @@ func (m *PipelineDiffs) contextValidateResourceTypes(ctx context.Context, format
 			}
 
 			if err := m.ResourceTypes[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("resource_types" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("resource_types" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -305,15 +276,11 @@ func (m *PipelineDiffs) contextValidateResources(ctx context.Context, formats st
 			}
 
 			if err := m.Resources[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("resources" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("resources" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}

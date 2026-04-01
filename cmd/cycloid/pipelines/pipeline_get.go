@@ -52,7 +52,7 @@ func getPipeline(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	outPipeline, err := m.GetPipeline(org, project, env, component, pipeline)
+	outPipeline, _, err := m.GetPipeline(org, project, env, component, pipeline)
 	if err != nil {
 		return fmt.Errorf("failed to get pipeline %q in context project %q, env %q, component %q: %w", pipeline, project, env, component, err)
 	}

@@ -1,94 +1,72 @@
 package middleware
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
-	"github.com/pkg/errors"
+	"errors"
+	"net/http"
+
 	"gopkg.in/yaml.v3"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_forms"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// // from https://github.com/cycloidio/youdeploy-http-api/blob/develop/services/youdeploy/svccat/form/file.go#L12
-// // modify Entity by interface and add Data from FileV1
-// type FileForms struct {
-// 	Version  *string                `yaml:"version" json:"version"`
-// 	UseCases interface{}            `yaml:"use_cases" json:"use_cases"`
-// 	Data     map[string]interface{} `yaml:",inline"`
-// }
-
-func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, error) {
+func (m *middleware) ValidateForm(org string, rawForms []byte) (*models.FormsValidationResult, *http.Response, error) {
 	var formsfile any
 
 	err := yaml.Unmarshal(rawForms, &formsfile)
 	if err != nil {
-		// return nil, err
-		// Convert swagger validation error as FormsValidationResult
-		// to keep the same display on validation error for the end user
 		ve := &models.FormsValidationResult{
 			Errors: []string{err.Error()},
 			Forms:  nil,
 		}
-		return ve, nil
+		return ve, nil, nil
 	}
-
-	params := organization_forms.NewValidateFormsFileParams()
-	params.SetOrganizationCanonical(org)
 
 	body := &models.FormsValidation{
 		FormFile: formsfile,
 	}
-	err = body.Validate(strfmt.Default)
+
+	var result *models.FormsValidationResult
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "forms", "validate"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		// return nil, err
-		// Convert swagger validation error as FormsValidationResult
-		// to keep the same display on validation error for the end user
-		ve := &models.FormsValidationResult{
-			Errors: []string{err.Error()},
-		}
-		return ve, nil
+		return nil, resp, err
 	}
-
-	params.SetBody(body)
-	resp, err := m.api.OrganizationForms.ValidateFormsFile(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-	// Don't validate this payload.
-	// Validation will silence an expected error related to SF validation
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) InterpolateFormsConfig(org, project, env, component, serviceCatalogRef, useCase string, inputs models.FormVariables) (*models.ServiceCatalogConfig, error) {
+// interpolateFormsConfigBody mirrors the fields needed for the forms config interpolation
+type interpolateFormsConfigBody struct {
+	ServiceCatalogRef  *string              `json:"service_catalog_ref"`
+	ComponentCanonical *string              `json:"component_canonical"`
+	UseCase            *string              `json:"use_case"`
+	Vars               models.FormVariables `json:"vars"`
+}
+
+func (m *middleware) InterpolateFormsConfig(org, project, env, component, serviceCatalogRef, useCase string, inputs models.FormVariables) (*models.ServiceCatalogConfig, *http.Response, error) {
 	if inputs == nil {
-		return nil, errors.New("form inputs for interpolateFormsConfig must not be nil")
+		return nil, nil, errors.New("form inputs for interpolateFormsConfig must not be nil")
 	}
-	body := organization_forms.InterpolateFormsConfigBody{
+
+	body := interpolateFormsConfigBody{
 		ServiceCatalogRef:  &serviceCatalogRef,
 		ComponentCanonical: &component,
 		UseCase:            &useCase,
 		Vars:               inputs,
 	}
 
-	params := organization_forms.NewInterpolateFormsConfigParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-	params.WithBody(body)
-
-	if err := params.Body.Validate(strfmt.Default); err != nil {
-		return nil, err
-	}
-
-	resp, err := m.api.OrganizationForms.InterpolateFormsConfig(params, m.api.Credentials(&org))
+	var result *models.ServiceCatalogConfig
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "forms", "config"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }

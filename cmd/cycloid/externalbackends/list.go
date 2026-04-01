@@ -55,6 +55,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	ebs, err := m.ListExternalBackends(org)
+	ebs, _, err := m.ListExternalBackends(org)
 	return printer.SmartPrint(p, ebs, err, "unable to list external backends", printer.Options{}, cmd.OutOrStdout())
 }

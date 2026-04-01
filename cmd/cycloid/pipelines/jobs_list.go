@@ -17,7 +17,7 @@ func NewJobsListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Short:   "list a pipeline's jobs",
-		Example: `cy --org my-org pp list-jobs --project my-project --env env --component component -o json`,
+		Example: `cy --org my-org pp job list --project my-project --env env --component component --pipeline pipeline -o json`,
 		RunE:    listJobs,
 		Args:    cobra.NoArgs,
 	}
@@ -52,7 +52,7 @@ func listJobs(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	jobs, err := m.GetJobs(org, project, env, component, pipeline)
+	jobs, _, err := m.GetJobs(org, project, env, component, pipeline)
 	if err != nil {
 		return fmt.Errorf("failed to fetch jobs for pipeline %q: %w", pipeline, err)
 	}

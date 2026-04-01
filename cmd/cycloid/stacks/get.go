@@ -50,7 +50,7 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	s, err := m.GetStack(org, ref)
+	s, _, err := m.GetStack(org, ref)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to get stack from API", printer.Options{}, cmd.OutOrStderr())
 	}

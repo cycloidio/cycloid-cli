@@ -54,6 +54,6 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.RefreshCatalogRepository(org, can)
+	cr, _, err := m.RefreshCatalogRepository(org, can)
 	return printer.SmartPrint(p, cr, err, "unable to refresh catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

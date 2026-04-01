@@ -1,177 +1,179 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client/component_pipelines_jobs_builds"
+	"bytes"
+	"context"
+	"fmt"
+	"io"
+	"net/http"
+	"net/url"
+	"path"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) GetBuilds(org, project, env, component, pipeline, job string) ([]*models.Build, error) {
-	params := component_pipelines_jobs_builds.NewGetBuildsParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-
-	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuilds(params, m.api.Credentials(&org))
+func (m *middleware) GetBuilds(org, project, env, component, pipeline, job string) ([]*models.Build, *http.Response, error) {
+	var result []*models.Build
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "builds"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, error) {
-	params := component_pipelines_jobs_builds.NewGetBuildParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-	params.SetBuildID(buildID)
-
-	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuild(params, m.api.Credentials(&org))
+func (m *middleware) GetBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, *http.Response, error) {
+	var result *models.Build
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "builds", buildID},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) CreateBuild(org, project, env, component, pipeline, job string) (*models.Build, error) {
-	params := component_pipelines_jobs_builds.NewCreateBuildParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-
-	resp, err := m.api.ComponentPipelinesJobsBuilds.CreateBuild(params, m.api.Credentials(&org))
+func (m *middleware) CreateBuild(org, project, env, component, pipeline, job string) (*models.Build, *http.Response, error) {
+	var result *models.Build
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "builds"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) RerunBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, error) {
-	params := component_pipelines_jobs_builds.NewRerunBuildParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-	params.SetBuildID(buildID)
-
-	resp, err := m.api.ComponentPipelinesJobsBuilds.RerunBuild(params, m.api.Credentials(&org))
+func (m *middleware) RerunBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, *http.Response, error) {
+	var result *models.Build
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "builds", buildID},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) AbortBuild(org, project, env, component, pipeline, job, buildID string) error {
-	params := component_pipelines_jobs_builds.NewAbortBuildParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetJobName(job)
-	params.SetBuildID(buildID)
-
-	_, err := m.api.ComponentPipelinesJobsBuilds.AbortBuild(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) AbortBuild(org, project, env, component, pipeline, job, buildID string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "builds", buildID, "abort"},
+	}, nil)
+	return resp, err
 }
 
-// GetBuildEvents will return the Content-Type as string.
-func (m *middleware) GetBuildEvents(org, project, env, component, pipeline, buildID string) (*string, error) {
-	params := component_pipelines_jobs_builds.NewGetBuildEventsParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetBuildID(buildID)
-
-	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuildEvents(params, m.api.Credentials(&org))
+// GetBuildEvents returns the build events as a raw string (text/event-stream).
+func (m *middleware) GetBuildEvents(org, project, env, component, pipeline, buildID string) (*string, *http.Response, error) {
+	body, resp, err := m.OpenBuildEventsStream(context.Background(), org, project, env, component, pipeline, buildID, "")
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
+	}
+	defer body.Close()
+
+	content, err := io.ReadAll(body)
+	if err != nil {
+		return nil, resp, fmt.Errorf("failed to read response body: %w", err)
 	}
 
-	return &resp.ContentType, nil
+	s := string(content)
+	return &s, resp, nil
 }
 
-func (m *middleware) GetBuildPlan(org, project, env, component, pipeline, job, buildID string) (*models.PublicPlan, error) {
-	params := component_pipelines_jobs_builds.NewGetBuildPlanParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetBuildID(buildID)
-
-	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuildPlan(params, m.api.Credentials(&org))
+// OpenBuildEventsStream opens a text/event-stream reader for build logs.
+func (m *middleware) OpenBuildEventsStream(
+	ctx context.Context,
+	org, project, env, component, pipeline, buildID, lastEventID string,
+) (io.ReadCloser, *http.Response, error) {
+	baseURL, err := url.Parse(m.api.Config.URL)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, nil, fmt.Errorf("failed to parse base url: %w", err)
 	}
 
-	payload := resp.GetPayload()
+	baseURL.Path = path.Join(
+		baseURL.Path,
+		"organizations", org,
+		"projects", project,
+		"environments", env,
+		"components", component,
+		"pipelines", pipeline,
+		"builds", buildID,
+		"events",
+	)
 
-	return payload.Data, nil
+	req, err := http.NewRequestWithContext(ctx, "GET", baseURL.String(), nil)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create request: %w", err)
+	}
+
+	req.Header.Set("Accept", "text/event-stream")
+	req.Header.Set("Authorization", "Bearer "+m.api.GetToken(&org))
+	if lastEventID != "" {
+		req.Header.Set("Last-Event-ID", lastEventID)
+	}
+
+	resp, err := m.GenericClient.Do(req)
+	if err != nil {
+		return nil, nil, fmt.Errorf("HTTP request failed: %w", err)
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		body, readErr := io.ReadAll(resp.Body)
+		resp.Body.Close()
+		if readErr != nil {
+			return nil, resp, fmt.Errorf("failed to read error response body: %w", readErr)
+		}
+		return nil, resp, newAPIResponseError(resp, bytes.TrimSpace(body))
+	}
+
+	return resp.Body, resp, nil
 }
 
-func (m *middleware) GetBuildPreparation(org, project, env, component, pipeline, job, buildID string) (*models.Preparation, error) {
-	params := component_pipelines_jobs_builds.NewGetBuildPreparationParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetBuildID(buildID)
-
-	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuildPreparation(params, m.api.Credentials(&org))
+func (m *middleware) GetBuildPlan(org, project, env, component, pipeline, job, buildID string) (*models.PublicPlan, *http.Response, error) {
+	var result *models.PublicPlan
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "builds", buildID, "plan"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetBuildResources(org, project, env, component, pipeline, job, buildID string) (*models.BuildInputsOutputs, error) {
-	params := component_pipelines_jobs_builds.NewGetBuildResourcesParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetInpathPipelineName(pipeline)
-	params.SetBuildID(buildID)
-
-	resp, err := m.api.ComponentPipelinesJobsBuilds.GetBuildResources(params, m.api.Credentials(&org))
+func (m *middleware) GetBuildPreparation(org, project, env, component, pipeline, job, buildID string) (*models.Preparation, *http.Response, error) {
+	var result *models.Preparation
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "builds", buildID, "preparation"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
+	return result, resp, nil
+}
 
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+func (m *middleware) GetBuildResources(org, project, env, component, pipeline, job, buildID string) (*models.BuildInputsOutputs, *http.Response, error) {
+	var result *models.BuildInputsOutputs
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "pipelines", pipeline, "jobs", job, "builds", buildID, "resources"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
 }

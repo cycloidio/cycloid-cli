@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -168,15 +167,11 @@ func (m *ServiceCatalogSource) validateChanges(formats strfmt.Registry) error {
 
 	if m.Changes != nil {
 		if err := m.Changes.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("changes")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("changes")
 			}
-
 			return err
 		}
 	}
@@ -246,15 +241,11 @@ func (m *ServiceCatalogSource) validateOwner(formats strfmt.Registry) error {
 
 	if m.Owner != nil {
 		if err := m.Owner.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}
@@ -286,15 +277,11 @@ func (m *ServiceCatalogSource) validateServiceCatalogs(formats strfmt.Registry) 
 
 		if m.ServiceCatalogs[i] != nil {
 			if err := m.ServiceCatalogs[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("service_catalogs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("service_catalogs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -373,15 +360,11 @@ func (m *ServiceCatalogSource) contextValidateChanges(ctx context.Context, forma
 		}
 
 		if err := m.Changes.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("changes")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("changes")
 			}
-
 			return err
 		}
 	}
@@ -394,15 +377,11 @@ func (m *ServiceCatalogSource) contextValidateOwner(ctx context.Context, formats
 	if m.Owner != nil {
 
 		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("owner")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("owner")
 			}
-
 			return err
 		}
 	}
@@ -421,15 +400,11 @@ func (m *ServiceCatalogSource) contextValidateServiceCatalogs(ctx context.Contex
 			}
 
 			if err := m.ServiceCatalogs[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("service_catalogs" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("service_catalogs" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}

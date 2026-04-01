@@ -48,7 +48,7 @@ func CompleteCredentialCanonical(cmd *cobra.Command, args []string, toComplete s
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	creds, err := m.ListCredentials(org, "")
+	creds, _, err := m.ListCredentials(org, "")
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -91,7 +91,7 @@ func CompleteCredentialPath(cmd *cobra.Command, args []string, toComplete string
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	creds, err := m.ListCredentials(org, "")
+	creds, _, err := m.ListCredentials(org, "")
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -134,7 +134,7 @@ func CompleteCredentialName(cmd *cobra.Command, args []string, toComplete string
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	creds, err := m.ListCredentials(org, "")
+	creds, _, err := m.ListCredentials(org, "")
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp

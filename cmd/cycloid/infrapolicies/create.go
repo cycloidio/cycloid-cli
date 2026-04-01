@@ -103,7 +103,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	res, err := m.CreateInfraPolicy(org, policyPath, canonical, description, name, owner, severity, enabled)
+	res, _, err := m.CreateInfraPolicy(org, policyPath, canonical, description, name, owner, severity, enabled)
 	return printer.SmartPrint(p, res, err, "unable to create infrapolicy", printer.Options{}, cmd.OutOrStdout())
 
 }

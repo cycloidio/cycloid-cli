@@ -8,12 +8,19 @@ import (
 
 	"github.com/matryer/is"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 )
 
 func TestOrganizations(t *testing.T) {
+	t.Run("SuccessOrganizationsList", func(t *testing.T) {
+		// organization list requires a user token; it returns 422 when called with an API key.
+		// The e2e tests authenticate via API key, so this endpoint cannot be tested here.
+		t.Skip("organization list is not supported with API key authentication (422)")
+	})
+
 	t.Run("SuccessOrganizationsGet", func(t *testing.T) {
 		is := is.New(t)
 		cmdOut, cmdErr := executeCommand([]string{
@@ -57,6 +64,53 @@ func TestOrganizations(t *testing.T) {
 		is.NoErr(err)                         // JSON output should be a valid model
 		is.Equal(childOrg, *outOrg.Canonical) // org canonicals should match
 
+		t.Run("SuccessOrganizationsCreateChildDuplicateWithoutUpdateErrors", func(t *testing.T) {
+			_, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"organization",
+				"create",
+				"--name", childOrg,
+				"--parent-canonical", config.Org,
+			})
+			require.Error(t, cmdErr, "second create without --update must fail")
+		})
+
+		t.Run("SuccessOrganizationsCreateChildWithUpdate", func(t *testing.T) {
+			cmdOut, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"organization",
+				"create",
+				"--update",
+				"--name", childOrg,
+				"--parent-canonical", config.Org,
+			})
+			require.NoError(t, cmdErr)
+
+			var again *models.Organization
+			err := json.Unmarshal([]byte(cmdOut), &again)
+			require.NoError(t, err)
+			require.NotNil(t, again)
+			require.NotNil(t, again.Canonical)
+			assert.Equal(t, childOrg, *again.Canonical)
+		})
+
+		t.Run("SuccessOrganizationsUpdate", func(t *testing.T) {
+			is := is.New(t)
+			updatedName := childOrg + "-updated"
+			cmdOut, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"--org", childOrg,
+				"organization", "update",
+				"--name", updatedName,
+			})
+			is.NoErr(cmdErr) // update should not fail
+
+			var outOrg *models.Organization
+			err := json.Unmarshal([]byte(cmdOut), &outOrg)
+			is.NoErr(err)                       // output should be deserializable
+			is.Equal(updatedName, *outOrg.Name) // name should be updated
+		})
+
 		t.Run("SuccessOrganizationsAddSubscription", func(t *testing.T) {
 			_, cmdErr := executeCommand([]string{
 				"--output", "json",
@@ -74,6 +128,7 @@ func TestOrganizations(t *testing.T) {
 				"--output", "json",
 				"organization", "subscription",
 				"update",
+				"--update",
 				"--org", childOrg,
 				"--member-count", "5",
 				"--expires-at", time.Now().AddDate(1, 0, 0).Format(time.RFC3339),

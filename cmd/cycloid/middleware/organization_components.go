@@ -2,197 +2,105 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
+	"net/url"
+	"strconv"
 
-	"github.com/go-openapi/strfmt"
-
-	"github.com/cycloidio/cycloid-cli/client/client/organization_components"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
-func (m *middleware) GetComponentConfig(org, project, env, component string) (models.FormVariables, error) {
-	params := organization_components.NewGetComponentConfigParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-	params.WithComponentCanonical(component)
-
-	resp, err := m.api.OrganizationComponents.GetComponentConfig(params, m.api.Credentials(&org))
+func (m *middleware) GetComponentConfig(org, project, env, component string) (models.FormVariables, *http.Response, error) {
+	var result models.FormVariables
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "config"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetComponent(org, project, env, component string) (*models.Component, error) {
-	params := organization_components.NewGetComponentParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-
-	resp, err := m.api.OrganizationComponents.GetComponent(params, m.api.Credentials(&org))
+func (m *middleware) GetComponent(org, project, env, component string) (*models.Component, *http.Response, error) {
+	var result *models.Component
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) ListComponents(org, project, env string) ([]*models.Component, error) {
-	params := organization_components.NewGetComponentsParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-
-	resp, err := m.api.OrganizationComponents.GetComponents(params, m.api.Credentials(&org))
+func (m *middleware) ListComponents(org, project, env string) ([]*models.Component, *http.Response, error) {
+	var result []*models.Component
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) CreateComponent(org, project, env, component, description, componentName, serviceCatalogRef, versionTag, versionBranch, versionCommitHash, cloudProviderCanonical string) (*models.Component, error) {
-	// Resolve version parameters to ID
-	versionID, _, err := m.resolveStackVersion(org, serviceCatalogRef, versionTag, versionBranch, versionCommitHash)
-	if err != nil {
-		return nil, err
-	}
-
-	params := organization_components.NewCreateComponentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-
-	body := &models.NewComponent{
-		Name:                          ptr.Ptr(componentName),
-		Canonical:                     component,
-		Description:                   description,
-		ServiceCatalogRef:             ptr.Ptr(serviceCatalogRef),
-		CloudProviderCanonical:        cloudProviderCanonical,
-		ServiceCatalogSourceVersionID: ptr.Ptr(versionID),
-	}
-
-	err = body.Validate(strfmt.Default)
-	if err != nil {
-		return nil, fmt.Errorf("createComponent parameter validation failed, body:\n%v\nerr: %w", body, err)
-	}
-	params.WithBody(body)
-
-	resp, err := m.api.OrganizationComponents.CreateComponent(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+// newComponentBody is a local body struct used for component upsert.
+// It includes service_catalog_source_version_id which the backend still requires
+// but which was removed from the generated models.NewComponent.
+type newComponentBody struct {
+	Canonical                             string               `json:"canonical,omitempty"`
+	CloudProviderCanonical                string               `json:"cloud_provider_canonical,omitempty"`
+	Description                           string               `json:"description,omitempty"`
+	Name                                  *string              `json:"name"`
+	ServiceCatalogRef                     *string              `json:"service_catalog_ref"`
+	ServiceCatalogSourceVersionID         *uint32              `json:"service_catalog_source_version_id,omitempty"`
+	ServiceCatalogSourceVersionCommitHash *string              `json:"service_catalog_source_version_commit_hash,omitempty"`
+	UseCase                               *string              `json:"use_case,omitempty"`
+	Vars                                  models.FormVariables `json:"vars,omitempty"`
 }
 
-func (m *middleware) CreateAndConfigureComponent(org, project, env, component, description, componentName, serviceCatalogRef, versionTag, versionBranch, versionCommitHash, useCase, cloudProviderCanonical string, vars models.FormVariables) (*models.Component, error) {
-	// Resolve version parameters to ID and commit hash
-	versionID, commitHash, err := m.resolveStackVersion(org, serviceCatalogRef, versionTag, versionBranch, versionCommitHash)
+// CreateOrUpdateComponent creates or updates a component with the provided configuration,
+// including syncing the Concourse pipeline. Uses PUT on the collection endpoint.
+func (m *middleware) CreateOrUpdateComponent(org, project, env, component, description, name, stackRef, versionTag, versionBranch, versionCommitHash, useCase, cloudProvider string, vars models.FormVariables) (*models.Component, *http.Response, error) {
+	versionID, commitHash, err := m.resolveStackVersion(org, stackRef, versionTag, versionBranch, versionCommitHash)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
-
-	params := organization_components.NewCreateAndConfigureComponentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-
-	body := &models.NewAndConfiguredComponent{
+	var useCasePtr *string
+	if useCase != "" {
+		useCasePtr = ptr.Ptr(useCase)
+	}
+	body := &newComponentBody{
 		Canonical:                             component,
-		CloudProviderCanonical:                cloudProviderCanonical,
+		CloudProviderCanonical:                cloudProvider,
 		Description:                           description,
-		Name:                                  ptr.Ptr(componentName),
-		ServiceCatalogRef:                     serviceCatalogRef,
-		ServiceCatalogSourceVersionCommitHash: ptr.Ptr(commitHash),
+		Name:                                  ptr.Ptr(name),
+		ServiceCatalogRef:                     ptr.Ptr(stackRef),
 		ServiceCatalogSourceVersionID:         ptr.Ptr(versionID),
-		UseCase:                               useCase,
+		ServiceCatalogSourceVersionCommitHash: ptr.Ptr(commitHash),
+		UseCase:                               useCasePtr,
 		Vars:                                  vars,
 	}
 
-	err = body.Validate(strfmt.Default)
+	var result *models.Component
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, fmt.Errorf("createAndConfigureComponent body validation failed, body:\n%v\nerr: %w", body, err)
+		return nil, resp, fmt.Errorf("failed to create or update component: %w", err)
 	}
-
-	params.WithBody(body)
-
-	resp, err := m.api.OrganizationComponents.CreateAndConfigureComponent(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UpdateComponent(org, project, env, component, description string, componentName *string) (*models.Component, error) {
-	params := organization_components.NewUpdateComponentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-	params.WithComponentCanonical(component)
-
-	body := &models.UpdateComponent{
-		Name:        componentName,
-		Description: description,
-	}
-
-	err := body.Validate(strfmt.Default)
-	if err != nil {
-		return nil, fmt.Errorf("updateComponent parameter validation failed, body:\n%v\nerr: %w", body, err)
-	}
-	params.WithBody(body)
-
-	resp, err := m.api.OrganizationComponents.UpdateComponent(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
-}
-
-func (m *middleware) ConfigureComponent(org, project, env, component, useCase string, vars models.FormVariables) error {
-	params := organization_components.NewConfigureComponentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-	params.WithComponentCanonical(component)
-
-	body := &models.ConfigureComponent{
-		UseCase: &useCase,
-		Vars:    vars,
-	}
-
-	params.WithBody(body)
-	_, err := m.api.OrganizationComponents.ConfigureComponent(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
-}
-
-func (m *middleware) MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, error) {
-	params := organization_components.NewMigrateComponentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-	params.WithComponentCanonical(component)
+func (m *middleware) MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, *http.Response, error) {
 	body := models.MigrateComponent{
 		DestinationProjectCanonical:     targetProject,
 		DestinationEnvironmentCanonical: targetEnv,
@@ -200,38 +108,33 @@ func (m *middleware) MigrateComponent(org, project, env, component, targetProjec
 		DestinationComponentName:        newName,
 	}
 
-	params.WithBody(&body)
-
-	resp, err := m.api.OrganizationComponents.MigrateComponent(params, m.api.Credentials(&org))
+	var result *models.Component
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "migrate"},
+		Body:         &body,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, fmt.Errorf("failed to migrate component: %w", err)
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteComponent(org, project, env, component string) error {
-	params := organization_components.NewDeleteComponentParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-	params.WithEnvironmentCanonical(env)
-	params.WithComponentCanonical(component)
-
-	_, err := m.api.OrganizationComponents.DeleteComponent(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) DeleteComponent(org, project, env, component string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, error) {
+func (m *middleware) GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, *http.Response, error) {
 	// Need to get component to determine stack ref
-	comp, err := m.GetComponent(org, project, env, component)
+	comp, _, err := m.GetComponent(org, project, env, component)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	stackRef := *comp.ServiceCatalog.Ref
@@ -239,24 +142,26 @@ func (m *middleware) GetComponentStackConfig(org, project, env, component, useCa
 	// Resolve version parameters to ID and commit hash
 	versionID, commitHash, err := m.resolveStackVersion(org, stackRef, versionTag, versionBranch, versionCommitHash)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	params := organization_components.NewGetComponentStackConfigurationParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-	params.SetComponentCanonical(component)
-	params.SetUseCase(&useCase)
-	params.SetServiceCatalogSourceVersionCommitHash(commitHash)
-	params.SetServiceCatalogSourceVersionID(versionID)
+	query := url.Values{
+		"service_catalog_source_version_id":          []string{strconv.FormatUint(uint64(versionID), 10)},
+		"service_catalog_source_version_commit_hash": []string{commitHash},
+	}
+	if useCase != "" {
+		query.Set("use_case", useCase)
+	}
 
-	resp, err := m.api.OrganizationComponents.GetComponentStackConfiguration(params, m.api.Credentials(&org))
+	var result models.ServiceCatalogConfigs
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "stack_config"},
+		Query:        query,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }

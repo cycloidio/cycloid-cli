@@ -1,0 +1,11 @@
+component: CLI
+kind: ADDED
+body: '**Beta:** `cy pipeline build trigger --watch` streams Concourse build events with human-readable output, optional raw JSON via `--output json`, and debug-verbosity event detail'
+time: 2026-04-01T12:00:00Z
+custom:
+  DETAILS: |
+    Beta feature: watch polls until the build finishes while printing formatted SSE lines (or NDJSON when `--output json`).
+    Includes default console deep link (`https://console.cycloid.io`, overridable with `CY_CONSOLE_URL`), stderr hints for Ctrl+C (first aborts the build, second exits watch with code 130), `--watch-cancel-on-timeout`, and `--job` required on trigger.
+    Set `--verbosity debug` for verbose watch output. See `docs/pipeline-build-watch-output.md`.
+  PR: "420"
+  TYPE: CLI

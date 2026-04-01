@@ -132,6 +132,6 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	resp, err := m.CreateExternalBackends(org, project, env, purpose, cred, defaultEB, ebC)
+	resp, _, err := m.CreateExternalBackends(org, project, env, purpose, cred, defaultEB, ebC)
 	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, cmd.OutOrStdout())
 }

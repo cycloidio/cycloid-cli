@@ -74,12 +74,12 @@ func updateTeam(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to infer canonical: %w", err)
 	}
 
-	currentTeam, err := m.GetTeam(org, canonical)
+	currentTeam, _, err := m.GetTeam(org, canonical)
 	if err != nil {
 		return fmt.Errorf("failed to Get the team to update with canonical %q: %w", canonical, err)
 	}
 
-	newTeam, err := m.UpdateTeam(
+	newTeam, _, err := m.UpdateTeam(
 		org, ptr.Ptr(utils.CoalesceNonZero(teamName, ptr.Value(currentTeam.Name))),
 		currentTeam.Canonical, ptr.Ptr(utils.CoalesceNonZero(teamOwner, ptr.Value(ptr.Value(currentTeam.Owner).Username))), roles,
 	)

@@ -15,7 +15,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var (
 		example = `cy --org my-org roles delete [role_canonicals...]`
-		short   = "Remove a user from the organization"
+		short   = "Delete one or more roles from the organization"
 		long    = short
 	)
 
@@ -53,7 +53,7 @@ func deleteRole(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	for _, role := range args {
-		err := m.DeleteRole(org, role)
+		_, err := m.DeleteRole(org, role)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, fmt.Sprintf("failed to delete role %q", role), printer.Options{}, cmd.OutOrStderr())
 		}

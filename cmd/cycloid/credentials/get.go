@@ -49,7 +49,7 @@ func get(cmd *cobra.Command, args []string) error {
 	if credentialFlag != "" {
 		credential = credentialFlag
 	} else if credentialPath != "" && credentialFlag == "" {
-		credList, err := m.ListCredentials(org, "")
+		credList, _, err := m.ListCredentials(org, "")
 		if err != nil {
 			return fmt.Errorf("failed to fetch cred list to match credential by path %q: %w", credentialPath, err)
 		}
@@ -83,7 +83,7 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	c, err := m.GetCredential(org, credential)
+	c, _, err := m.GetCredential(org, credential)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to get credential from API", printer.Options{}, cmd.OutOrStderr())
 	}

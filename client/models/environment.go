@@ -7,8 +7,6 @@ package models
 
 import (
 	"context"
-	"encoding/json"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -37,6 +35,7 @@ type Environment struct {
 	Color *string `json:"color"`
 
 	// components
+	// Required: true
 	Components []*Component `json:"components"`
 
 	// created at
@@ -58,9 +57,6 @@ type Environment struct {
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
-
-	// When the environment is returned alongside Project this will be set with the aggregated value of the Components Version.Status it has
-	VersionStatus []string `json:"version_status"`
 }
 
 // Validate validates this environment
@@ -92,10 +88,6 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateUpdatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVersionStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -140,8 +132,9 @@ func (m *Environment) validateColor(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateComponents(formats strfmt.Registry) error {
-	if swag.IsZero(m.Components) { // not required
-		return nil
+
+	if err := validate.Required("components", "body", m.Components); err != nil {
+		return err
 	}
 
 	for i := 0; i < len(m.Components); i++ {
@@ -151,15 +144,11 @@ func (m *Environment) validateComponents(formats strfmt.Registry) error {
 
 		if m.Components[i] != nil {
 			if err := m.Components[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -224,42 +213,6 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-var environmentVersionStatusItemsEnum []any
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["no_status","latest","active","deleted","outdated"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		environmentVersionStatusItemsEnum = append(environmentVersionStatusItemsEnum, v)
-	}
-}
-
-func (m *Environment) validateVersionStatusItemsEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, environmentVersionStatusItemsEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *Environment) validateVersionStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.VersionStatus) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.VersionStatus); i++ {
-
-		// value enum
-		if err := m.validateVersionStatusItemsEnum("version_status"+"."+strconv.Itoa(i), "body", m.VersionStatus[i]); err != nil {
-			return err
-		}
-
-	}
-
-	return nil
-}
-
 // ContextValidate validate this environment based on the context it is used
 func (m *Environment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
@@ -285,15 +238,11 @@ func (m *Environment) contextValidateComponents(ctx context.Context, formats str
 			}
 
 			if err := m.Components[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("components" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}

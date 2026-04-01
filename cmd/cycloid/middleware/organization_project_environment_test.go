@@ -25,14 +25,14 @@ func TestEnvCrud(t *testing.T) {
 	)
 
 	defer func() {
-		err := m.DeleteProject(config.Org, project)
+		_, err := m.DeleteProject(config.Org, project)
 		if err != nil {
 			log.Fatalf("Failed to decomission project '%s' from CRUD tests: %v", project, err)
 			return
 		}
 	}()
 
-	createdProject, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
+	createdProject, _, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
 	if err != nil {
 		t.Errorf("Failed to create pre-requisite project, create project CRUD tests: %v", err)
 	}
@@ -45,14 +45,14 @@ func TestEnvCrud(t *testing.T) {
 	)
 
 	// create
-	createdEnv, err := m.CreateEnv(config.Org, *createdProject.Canonical, env, envName, envColor)
+	createdEnv, _, err := m.CreateEnv(config.Org, *createdProject.Canonical, env, envName, envColor)
 	if err != nil {
 		t.Errorf("Failed to create env '%s': %v", env, err)
 	}
 
 	// delete
 	defer func() {
-		err := m.DeleteEnv(config.Org, *createdProject.Canonical, *createdEnv.Canonical)
+		_, err := m.DeleteEnv(config.Org, *createdProject.Canonical, *createdEnv.Canonical)
 		if err != nil {
 			log.Fatalf("Failed to delete env '%s': %v", env, err)
 			return
@@ -65,7 +65,7 @@ func TestEnvCrud(t *testing.T) {
 		newEnvColor = "blue"
 	)
 
-	updatedEnv, err := m.UpdateEnv(config.Org, *createdProject.Canonical, *createdEnv.Canonical, newEnvName, newEnvColor)
+	updatedEnv, _, err := m.UpdateEnv(config.Org, *createdProject.Canonical, *createdEnv.Canonical, newEnvName, newEnvColor)
 	if err != nil {
 		t.Errorf("Failed to update env '%s':\n%v", env, err)
 	}

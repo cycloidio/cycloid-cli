@@ -2,79 +2,60 @@ package middleware
 
 import (
 	"errors"
+	"fmt"
+	"net/http"
+	"strconv"
 
-	"github.com/go-openapi/strfmt"
-
-	"github.com/cycloidio/cycloid-cli/client/client/organization_external_backends"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func (m *middleware) GetRemoteTFExternalBackend(org string) (*models.ExternalBackend, error) {
-	params := organization_external_backends.NewGetExternalBackendsParams()
-	params.SetOrganizationCanonical(org)
-	// params.SetExternalBackendDefault(ptr.Ptr(defaultEB))
-
-	resp, err := m.api.OrganizationExternalBackends.GetExternalBackends(params, m.api.Credentials(&org))
+	data, _, err := m.ListExternalBackends(org)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, err
 	}
-
-	payload := resp.GetPayload()
-
-	data := payload.Data
 	if len(data) == 0 {
-		return nil, NewAPIError(errors.New("couldn't find the remote terraform backend"))
+		return nil, errors.New("couldn't find the remote terraform backend")
 	}
-
 	return data[0], nil
 }
 
-func (m *middleware) GetExternalBackend(org string, externalBackend uint32) (*models.ExternalBackend, error) {
-	params := organization_external_backends.NewGetExternalBackendParams()
-	params.SetOrganizationCanonical(org)
-	params.SetExternalBackendID(externalBackend)
-
-	resp, err := m.api.OrganizationExternalBackends.GetExternalBackend(params, m.api.Credentials(&org))
+func (m *middleware) GetExternalBackend(org string, externalBackend uint32) (*models.ExternalBackend, *http.Response, error) {
+	var result *models.ExternalBackend
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "external_backends", strconv.FormatUint(uint64(externalBackend), 10)},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend, error) {
-	params := organization_external_backends.NewGetExternalBackendsParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.OrganizationExternalBackends.GetExternalBackends(params, m.api.Credentials(&org))
+func (m *middleware) ListExternalBackends(org string) ([]*models.ExternalBackend, *http.Response, error) {
+	var result []*models.ExternalBackend
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "external_backends"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) error {
-	params := organization_external_backends.NewDeleteExternalBackendParams()
-	params.SetOrganizationCanonical(org)
-	params.SetExternalBackendID(externalBackend)
-
-	_, err := m.api.OrganizationExternalBackends.DeleteExternalBackend(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) DeleteExternalBackend(org string, externalBackend uint32) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "external_backends", strconv.FormatUint(uint64(externalBackend), 10)},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) CreateExternalBackends(org, project, env, purpose, credential string, isDefault bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
-	params := organization_external_backends.NewCreateExternalBackendParams()
-	params.SetOrganizationCanonical(org)
-
+func (m *middleware) CreateExternalBackends(org, project, env, purpose, credential string, isDefault bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, *http.Response, error) {
 	var body *models.NewExternalBackend
 
 	if len(credential) != 0 {
@@ -94,36 +75,22 @@ func (m *middleware) CreateExternalBackends(org, project, env, purpose, credenti
 		}
 	}
 
-	err := ebConfig.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
 	body.SetConfiguration(ebConfig)
-	params.SetBody(body)
-	if project != "" {
-		params.WithProjectCanonical(&project)
-	}
-	err = body.Validate(strfmt.Default)
+
+	var result *models.ExternalBackend
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "external_backends"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, fmt.Errorf("failed to create external backend: %w", err)
 	}
-
-	resp, err := m.api.OrganizationExternalBackends.CreateExternalBackend(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32, purpose, credential string, isDefault bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, error) {
-	params := organization_external_backends.NewUpdateExternalBackendParams()
-	params.SetOrganizationCanonical(org)
-	params.SetExternalBackendID(externalBackendID)
-
+func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32, purpose, credential string, isDefault bool, ebConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, *http.Response, error) {
 	var body *models.UpdateExternalBackend
 
 	if len(credential) != 0 {
@@ -139,24 +106,17 @@ func (m *middleware) UpdateExternalBackend(org string, externalBackendID uint32,
 		}
 	}
 
-	err := ebConfig.Validate(strfmt.Default)
-	if err != nil {
-		return nil, err
-	}
-
 	body.SetConfiguration(ebConfig)
-	params.SetBody(body)
-	err = body.Validate(strfmt.Default)
+
+	var result *models.ExternalBackend
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "external_backends", strconv.FormatUint(uint64(externalBackendID), 10)},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, fmt.Errorf("failed to update external backend: %w", err)
 	}
-
-	resp, err := m.api.OrganizationExternalBackends.UpdateExternalBackend(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }

@@ -2,6 +2,7 @@ package e2e_test
 
 import (
 	"encoding/json"
+	"os"
 	"strconv"
 	"testing"
 
@@ -112,6 +113,41 @@ func TestPipelines(t *testing.T) {
 		}
 	})
 
+	t.Run("PipelineDiffOk", func(t *testing.T) {
+		if len(pipelineList) == 0 {
+			t.Skip("no pipelines available")
+		}
+
+		pipelineFile, err := os.CreateTemp("", "test-pipeline-*.yml")
+		if err != nil {
+			t.Fatalf("failed to create temp pipeline file: %s", err)
+		}
+		defer os.Remove(pipelineFile.Name())
+		WriteFile(pipelineFile.Name(), TestPipelineSample)
+
+		varsFile, err := os.CreateTemp("", "test-pipeline-vars-*.yml")
+		if err != nil {
+			t.Fatalf("failed to create temp pipeline vars file: %s", err)
+		}
+		defer os.Remove(varsFile.Name())
+		WriteFile(varsFile.Name(), TestPipelineVariables)
+
+		_, diffErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"pipeline", "diff",
+			"--project", *firstPipeline.Project.Canonical,
+			"--env", *firstPipeline.Environment.Canonical,
+			"--component", *firstPipeline.Component.Canonical,
+			"--pipeline", *firstPipeline.Name,
+			"--pipeline-config", pipelineFile.Name(),
+			"--pipeline-vars", varsFile.Name(),
+		})
+		if diffErr != nil {
+			t.Errorf("pipeline diff should not err: %s", diffErr)
+		}
+	})
+
 	// Jobs
 	var jobList []*models.Job
 	t.Run("ListJobsOk", func(t *testing.T) {
@@ -193,6 +229,23 @@ func TestPipelines(t *testing.T) {
 					t.Errorf("cmd cy pp job unpause failed for pipeline '%s', out: %s, err: %s", *firstPipeline.Name, unpauseOut, unpauseErr)
 				}
 			})
+		})
+
+		t.Run("PipelineClearTaskCacheOk", func(t *testing.T) {
+			t.Skip()
+			_, clearErr := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"pipeline", "clear-task-cache",
+				"--project", *firstPipeline.Project.Canonical,
+				"--env", *firstPipeline.Environment.Canonical,
+				"--component", *firstPipeline.Component.Canonical,
+				"--pipeline", *firstPipeline.Name,
+				"--job", *firstJob.Name,
+			})
+			if clearErr != nil {
+				t.Errorf("pipeline clear-task-cache should not err: %s", clearErr)
+			}
 		})
 
 		var triggeredBuild *models.Build

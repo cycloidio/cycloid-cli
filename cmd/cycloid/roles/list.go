@@ -48,7 +48,7 @@ func listRoles(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	roles, err := m.ListRoles(org)
+	roles, _, err := m.ListRoles(org)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to list roles", printer.Options{}, cmd.OutOrStderr())
 	}

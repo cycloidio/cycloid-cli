@@ -52,7 +52,7 @@ func list(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	pps, err := m.GetOrgPipelines(org, &pipelineName, &project, &env, statuses)
+	pps, _, err := m.GetOrgPipelines(org, &pipelineName, &project, &env, statuses)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to list pipelines", printer.Options{}, cmd.OutOrStderr())
 	}

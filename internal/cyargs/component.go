@@ -81,7 +81,7 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 
 	// Try to get the stack use cases using the provided flags
 	// If none are provided yet, this will use default version
-	stackUseCases, err := m.ListStackUseCases(org, stackRef, tag, branch, hash)
+	stackUseCases, _, err := m.ListStackUseCases(org, stackRef, tag, branch, hash)
 	if err != nil {
 		// During completion, the version flags might not be set yet
 		// Return a helpful message to guide the user

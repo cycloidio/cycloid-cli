@@ -79,6 +79,6 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred)
+	cr, _, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred, nil)
 	return printer.SmartPrint(p, cr, err, "unable to update catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

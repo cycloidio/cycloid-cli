@@ -44,6 +44,6 @@ func listChildrens(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	oc, err := m.ListOrganizationChildrens(org)
+	oc, _, err := m.ListOrganizationChildrens(org)
 	return printer.SmartPrint(p, oc, err, "unable to list organization childrens", printer.Options{}, cmd.OutOrStdout())
 }

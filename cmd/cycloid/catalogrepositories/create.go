@@ -1,6 +1,10 @@
 package catalogrepositories
 
 import (
+	stderrors "errors"
+	"fmt"
+	"net/http"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -26,14 +30,15 @@ func NewCreateCommand() *cobra.Command {
 		RunE: createCatalogRepository,
 	}
 
-	// create --branch test --cred my-cred --url "git@github.com:foo/bla.git"  --name catalogname
 	common.WithFlagCred(cmd)
 	common.RequiredFlag(WithFlagName, cmd)
 	common.RequiredFlag(WithFlagBranch, cmd)
 	common.RequiredFlag(WithFlagURL, cmd)
+	cyargs.AddCatalogRepoCanonicalFlag(cmd)
 
-	cmd.Flags().String("visibility", "", "set the stacks base visibility in the catalog. accepted values are 'local', 'share' or 'hidden' default to 'local'")
+	cmd.Flags().String("visibility", "", "set the stacks base visibility in the catalog. accepted values are 'local', 'shared' or 'hidden' (default: local)")
 	cmd.Flags().String("team", "", "set the team canonical to be set as maintener of the stacks")
+	cmd.Flags().Bool("update", false, "update the catalog repository if it already exists")
 
 	return cmd
 }
@@ -42,15 +47,22 @@ func NewCreateCommand() *cobra.Command {
 // post: createServiceCatalogSource
 // Creates a Service catalog source
 func createCatalogRepository(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
 	name, err := cmd.Flags().GetString("name")
+	if err != nil {
+		return err
+	}
+
+	canonical, err := cyargs.GetCatalogRepoCanonical(cmd)
+	if err != nil {
+		return err
+	}
+
+	displayName, repoCanonical, err := middleware.NameOrCanonical(&name, &canonical)
 	if err != nil {
 		return err
 	}
@@ -70,11 +82,6 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
 	visibility, err := cmd.Flags().GetString("visibility")
 	if err != nil {
 		return errors.Wrap(err, "unable to get visibility flag")
@@ -85,12 +92,50 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get team flag")
 	}
 
-	// fetch the printer from the factory
+	update, err := cmd.Flags().GetBool("update")
+	if err != nil {
+		return err
+	}
+
+	output, err := cyargs.GetOutput(cmd)
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
+
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, err := m.CreateCatalogRepository(org, name, url, branch, cred, visibility, teamCanonical)
-	return printer.SmartPrint(p, cr, err, "unable to create catalog repository", printer.Options{}, cmd.OutOrStdout())
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	_, _, getErr := m.GetCatalogRepository(org, repoCanonical)
+	exists := getErr == nil
+	if getErr != nil {
+		var apiErr *middleware.APIResponseError
+		if !stderrors.As(getErr, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
+			return printer.SmartPrint(p, nil, getErr, "failed to check if catalog repository exists", printer.Options{}, cmd.OutOrStderr())
+		}
+	}
+
+	if exists && !update {
+		return printer.SmartPrint(p, nil,
+			fmt.Errorf("catalog repository %q already exists; use --update or `cy catalog-repo update`", repoCanonical),
+			"unable to create catalog repository", printer.Options{}, cmd.OutOrStderr())
+	}
+
+	if exists {
+		cr, _, err := m.UpdateCatalogRepository(org, repoCanonical, displayName, url, branch, cred, nil)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to update catalog repository", printer.Options{}, cmd.OutOrStderr())
+		}
+		return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	cr, _, err := m.CreateCatalogRepository(org, displayName, url, branch, cred, visibility, teamCanonical)
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to create catalog repository", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

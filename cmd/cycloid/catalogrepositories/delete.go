@@ -53,6 +53,6 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteCatalogRepository(org, canonical)
+	_, err = m.DeleteCatalogRepository(org, canonical)
 	return printer.SmartPrint(p, nil, err, "unable to delete catalog repository", printer.Options{}, cmd.OutOrStdout())
 }

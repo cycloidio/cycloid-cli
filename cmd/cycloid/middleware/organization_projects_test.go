@@ -21,18 +21,18 @@ func TestProjectCrud(t *testing.T) {
 		icon        = "world"
 	)
 
-	createProjet, err := m.CreateProject(config.Org, projectName, project, description, *config.ConfigRepo.Canonical, owner, team, color, icon)
+	createProjet, _, err := m.CreateProject(config.Org, projectName, project, description, *config.ConfigRepo.Canonical, owner, team, color, icon)
 	if err != nil {
 		t.Errorf("Failed to create project '%s': %v", project, err)
 	}
 
-	_, err = m.GetProject(config.Org, *createProjet.Canonical)
+	_, _, err = m.GetProject(config.Org, *createProjet.Canonical)
 	if err != nil {
 		t.Errorf("Did not found create project '%s' with get request: %v", *createProjet.Canonical, err)
 	}
 
 	defer func() {
-		err := m.DeleteProject(config.Org, project)
+		_, err := m.DeleteProject(config.Org, project)
 		if err != nil {
 			t.Errorf("Failed to delete project '%s': %v", project, err)
 		}
@@ -45,7 +45,7 @@ func TestProjectCrud(t *testing.T) {
 		newColor       = "red"
 	)
 
-	updatedProject, err := m.UpdateProject(
+	updatedProject, _, err := m.UpdateProject(
 		config.Org, newName, project, newDescription, *config.ConfigRepo.Canonical,
 		owner, team, newColor, newIcon, "aws",
 	)

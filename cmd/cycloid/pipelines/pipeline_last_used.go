@@ -71,7 +71,7 @@ func lastUsed(cmd *cobra.Command, args []string) error {
 
 	var result = []LastUsedPipeline{}
 	maxTimestamp := uint64(0)
-	pps, err := m.GetOrgPipelines(org, nil, nil, nil, nil)
+	pps, _, err := m.GetOrgPipelines(org, nil, nil, nil, nil)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to list pipelines", printer.Options{}, cmd.ErrOrStderr())
 	}

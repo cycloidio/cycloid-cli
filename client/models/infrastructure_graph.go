@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -63,15 +62,11 @@ func (m *InfrastructureGraph) validateEdges(formats strfmt.Registry) error {
 
 		if m.Edges[i] != nil {
 			if err := m.Edges[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("edges" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("edges" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -94,15 +89,11 @@ func (m *InfrastructureGraph) validateNodes(formats strfmt.Registry) error {
 
 		if m.Nodes[i] != nil {
 			if err := m.Nodes[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodes" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("nodes" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -141,15 +132,11 @@ func (m *InfrastructureGraph) contextValidateEdges(ctx context.Context, formats 
 			}
 
 			if err := m.Edges[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("edges" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("edges" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -170,15 +157,11 @@ func (m *InfrastructureGraph) contextValidateNodes(ctx context.Context, formats 
 			}
 
 			if err := m.Nodes[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("nodes" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("nodes" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}

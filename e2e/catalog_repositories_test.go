@@ -1,10 +1,13 @@
 package e2e_test
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func TestCatalogRepositories(t *testing.T) {
@@ -44,6 +47,41 @@ func TestCatalogRepositories(t *testing.T) {
 		require.Nil(t, cmdErr)
 
 		assert.Contains(t, cmdOut, "canonical\": \"stack-aws-sample")
+
+		t.Run("SuccessCatalogRepositoriesCreateDuplicateWithoutUpdateErrors", func(t *testing.T) {
+			_, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"catalog-repository",
+				"create",
+				"--branch", "stack-aws",
+				"--url", "https://github.com/cycloid-community-catalog/docs-step-by-step-stack.git",
+				"--name", "step-by-step",
+			})
+			require.Error(t, cmdErr, "second create without --update should fail when catalog repo already exists")
+		})
+
+		t.Run("SuccessCatalogRepositoriesCreateWithUpdate", func(t *testing.T) {
+			cmdOut, cmdErr := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"catalog-repository",
+				"create",
+				"--update",
+				"--branch", "stack-aws",
+				"--url", "https://github.com/cycloid-community-catalog/docs-step-by-step-stack.git",
+				"--name", "step-by-step",
+			})
+			require.NoError(t, cmdErr, "create --update should succeed for existing catalog repo")
+
+			var repo models.ServiceCatalogSource
+			err := json.Unmarshal([]byte(cmdOut), &repo)
+			require.NoError(t, err, "output should deserialize, got: %s", cmdOut)
+			require.NotNil(t, repo.Canonical)
+			assert.Equal(t, "step-by-step", *repo.Canonical)
+			require.NotNil(t, repo.Name)
+			assert.Equal(t, "step-by-step", *repo.Name)
+		})
 	})
 
 	t.Run("SuccessCatalogRepositoriesList", func(t *testing.T) {
@@ -82,5 +120,26 @@ func TestCatalogRepositories(t *testing.T) {
 
 		require.Nil(t, cmdErr)
 		assert.Contains(t, cmdOut, "updated")
+	})
+
+	t.Run("SuccessCatalogRepositoryUpdate", func(t *testing.T) {
+		updatedName := "step-by-step-updated"
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"catalog-repository",
+			"update",
+			"--canonical", "step-by-step",
+			"--name", updatedName,
+			"--branch", "stack-aws",
+			"--url", "https://github.com/cycloid-community-catalog/docs-step-by-step-stack.git",
+			"--cred", "",
+		})
+
+		require.Nil(t, cmdErr)
+		var updatedRepo models.ServiceCatalogSource
+		err := json.Unmarshal([]byte(cmdOut), &updatedRepo)
+		require.Nil(t, err, "output should deserialize to ServiceCatalogSource, out: %s", cmdOut)
+		assert.Equal(t, updatedName, *updatedRepo.Name)
 	})
 }

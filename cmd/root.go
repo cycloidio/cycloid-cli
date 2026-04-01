@@ -42,6 +42,7 @@ func init() {
 	viper.SetEnvPrefix("CY")
 	viper.SetEnvKeyReplacer(strings.NewReplacer("-", "_"))
 	viper.AutomaticEnv()
+	viper.SetDefault("console_url", "https://console.cycloid.io")
 }
 
 func NewRootCommand() *cobra.Command {
@@ -62,12 +63,16 @@ Those variables will be overridden by related flags.
 Name         |  Description
 -------------|-----------------
 CY_API_URL   | Specify the HTTP url of Cycloid API to use, default https://http-api.cycloid.io
+CY_CONSOLE_URL | Override Cycloid console base URL for build deep links (default https://console.cycloid.io)
 CY_ORG       | Set the current organization
 CY_PROJECT   | Set the current project
 CY_ENV       | Set the current environment
 CY_COMPONENT | Set the current component
 CY_API_KEY   | Set the current API Key to use
 CY_VERBOSITY | Set the verbosity level (debug, info, warning, error), default warning.
+             | Setting debug will print every HTTP request and response to stderr,
+             | including headers and bodies. ⚠️  Output will contain credentials
+             | (API key shown as last 5 chars only).
 HTTP_PROXY   | Set the http proxy with host[:port] format for http request
 HTTPS_PROXY  | Set the https proxy with host[:port] format for https request
 NO_PROXY     | List of hosts that must bypass proxy configuration

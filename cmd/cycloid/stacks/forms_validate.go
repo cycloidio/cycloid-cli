@@ -19,7 +19,7 @@ func NewFormsValidateCommand() *cobra.Command {
 		Args:              cobra.MinimumNArgs(1),
 		ValidArgsFunction: cyargs.ValidateForms,
 		Short:             "validate a .forms.yml file",
-		Example:           `cy stacks validate-form --org my-org .forms.yml`,
+		Example:           `cy stack forms validate --org my-org .forms.yml`,
 		RunE:              validateForm,
 	}
 
@@ -51,7 +51,7 @@ func validateForm(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	validation, err := m.ValidateForm(org, rawForm)
+	validation, _, err := m.ValidateForm(org, rawForm)
 	if err != nil {
 		return printer.SmartPrint(p, validation, err, "form validation failed", printer.Options{}, cmd.OutOrStderr())
 	}

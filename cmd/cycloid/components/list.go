@@ -52,7 +52,7 @@ func getComponents(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	components, err := m.ListComponents(org, project, env)
+	components, _, err := m.ListComponents(org, project, env)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to fetch list of components in  '"+project+"', '"+env+"'", printer.Options{}, cmd.OutOrStderr())
 	}

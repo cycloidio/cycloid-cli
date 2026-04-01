@@ -22,7 +22,7 @@ import (
 // swagger:model NewUserAccount
 type NewUserAccount struct {
 
-	// Alpha-2 country code of a country the user is from
+	// Code of a country the user is from
 	// Pattern: ^[A-Z]{2}$
 	CountryCode string `json:"country_code,omitempty"`
 
@@ -31,11 +31,15 @@ type NewUserAccount struct {
 	// Format: email
 	Email *strfmt.Email `json:"email"`
 
-	// full name
+	// family name
 	// Required: true
-	// Max Length: 255
 	// Min Length: 2
-	FullName *string `json:"full_name"`
+	FamilyName *string `json:"family_name"`
+
+	// given name
+	// Required: true
+	// Min Length: 2
+	GivenName *string `json:"given_name"`
 
 	// The field is used when a user signup from an invitation to an organization. Giving the token, the created user will be automatically added to the organization.
 	// Min Length: 5
@@ -47,15 +51,16 @@ type NewUserAccount struct {
 
 	// password
 	// Required: true
-	// Min Length: 12
+	// Min Length: 8
 	// Format: password
 	Password *strfmt.Password `json:"password"`
 
 	// username
+	// Required: true
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Username string `json:"username,omitempty"`
+	Username *string `json:"username"`
 }
 
 // Validate validates this new user account
@@ -70,7 +75,11 @@ func (m *NewUserAccount) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFullName(formats); err != nil {
+	if err := m.validateFamilyName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateGivenName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -121,17 +130,26 @@ func (m *NewUserAccount) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewUserAccount) validateFullName(formats strfmt.Registry) error {
+func (m *NewUserAccount) validateFamilyName(formats strfmt.Registry) error {
 
-	if err := validate.Required("full_name", "body", m.FullName); err != nil {
+	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("full_name", "body", *m.FullName, 2); err != nil {
+	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("full_name", "body", *m.FullName, 255); err != nil {
+	return nil
+}
+
+func (m *NewUserAccount) validateGivenName(formats strfmt.Registry) error {
+
+	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
 		return err
 	}
 
@@ -150,7 +168,7 @@ func (m *NewUserAccount) validateInvitationToken(formats strfmt.Registry) error 
 	return nil
 }
 
-var newUserAccountTypeLocalePropEnum []any
+var newUserAccountTypeLocalePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -201,7 +219,7 @@ func (m *NewUserAccount) validatePassword(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("password", "body", m.Password.String(), 12); err != nil {
+	if err := validate.MinLength("password", "body", m.Password.String(), 8); err != nil {
 		return err
 	}
 
@@ -213,19 +231,20 @@ func (m *NewUserAccount) validatePassword(formats strfmt.Registry) error {
 }
 
 func (m *NewUserAccount) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
-		return nil
-	}
 
-	if err := validate.MinLength("username", "body", m.Username, 3); err != nil {
+	if err := validate.Required("username", "body", m.Username); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", m.Username, 100); err != nil {
+	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

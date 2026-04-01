@@ -50,6 +50,6 @@ func del(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteExternalBackend(org, id)
+	_, err = m.DeleteExternalBackend(org, id)
 	return printer.SmartPrint(p, nil, err, "unable to delete external backend", printer.Options{}, cmd.OutOrStdout())
 }

@@ -2,27 +2,27 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
 
-	"github.com/cycloidio/cycloid-cli/client/client/cost_estimation"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 // CostEstimation will consume the backend API endpoint for cost estimation
-func (m *middleware) CostEstimation(org string, plan []byte) (*models.CostEstimationResult, error) {
-	params := cost_estimation.NewCostEstimateTfPlanParams()
-	params.SetOrganizationCanonical(org)
-
+func (m *middleware) CostEstimation(org string, plan []byte) (*models.CostEstimationResult, *http.Response, error) {
 	tfplan := string(plan)
-	params.SetBody(&models.TerraformPlanInput{
+	body := &models.TerraformPlanInput{
 		Tfplan: &tfplan,
-	})
-
-	resp, err := m.api.CostEstimation.CostEstimateTfPlan(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, fmt.Errorf("unable to estimate cost insfrastructure: %w", NewAPIError(err))
 	}
 
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	var result *models.CostEstimationResult
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "cost_estimation", "tfplan"},
+		Body:         body,
+	}, &result)
+	if err != nil {
+		return nil, resp, fmt.Errorf("unable to estimate cost infrastructure: %w", err)
+	}
+	return result, resp, nil
 }

@@ -1,21 +1,22 @@
 package middleware_test
 
 import (
-	"fmt"
+	"net/http"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organizations"
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
 
 func ptrStr(s string) *string { return &s }
 
-func TestNewAPIError(t *testing.T) {
-	t.Run("SuccessWith_ErrorPayloader", func(t *testing.T) {
-		err := &organizations.CreateOrgUnprocessableEntity{
+func TestAPIResponseError(t *testing.T) {
+	t.Run("ErrorWithPayload", func(t *testing.T) {
+		err := &middleware.APIResponseError{
+			StatusCode: 422,
+			Status:     "422 Unprocessable Entity",
 			Payload: &models.ErrorPayload{
 				Errors: []*models.ErrorDetailsItem{
 					{
@@ -27,26 +28,51 @@ func TestNewAPIError(t *testing.T) {
 			},
 		}
 
-		aerr := middleware.NewAPIError(err)
-		apierr := aerr.(*middleware.APIError)
-		assert.Equal(t, "POST", apierr.HTTPMethod)
-		assert.Equal(t, "/organizations", apierr.URL)
-		assert.Equal(t, "422", apierr.HTTPCode)
-		assert.Equal(t, "createOrgUnprocessableEntity", apierr.APIAction)
+		assert.Equal(t, 422, err.StatusCode)
+		assert.Equal(t, "API error 422: the error that actually returned the BE", err.Error())
+	})
 
-		assert.Equal(t, "A 422 error was returned on \"createOrgUnprocessableEntity\" call with message: the error that actually returned the BE", aerr.Error())
+	t.Run("ErrorWithoutPayload", func(t *testing.T) {
+		err := &middleware.APIResponseError{
+			StatusCode: 500,
+			Status:     "500 Internal Server Error",
+		}
+		assert.Equal(t, "API error 500: 500 Internal Server Error", err.Error())
 	})
-	t.Run("SuccessWhenNo_ErrPayloader", func(t *testing.T) {
-		err := fmt.Errorf("std error")
-		aerr := middleware.NewAPIError(err)
-		_, ok := aerr.(*middleware.APIError)
-		assert.False(t, ok)
-		assert.Equal(t, "std error", aerr.Error())
+
+	t.Run("ErrorWithoutPayloadFallbackToRawBodyAndPath", func(t *testing.T) {
+		err := &middleware.APIResponseError{
+			StatusCode: 422,
+			Status:     "422 Unprocessable Entity",
+			Path:       "/organizations/org/projects/project/environments/env/components",
+			Body:       []byte("stack branch simple-terraform not found"),
+		}
+		assert.Equal(
+			t,
+			`API error 422 on "/organizations/org/projects/project/environments/env/components": stack branch simple-terraform not found`,
+			err.Error(),
+		)
 	})
-	t.Run("SuccessWhenNil", func(t *testing.T) {
-		aerr := middleware.NewAPIError(nil)
-		_, ok := aerr.(*middleware.APIError)
-		assert.False(t, ok)
-		assert.Nil(t, aerr)
+
+	t.Run("GetPayload", func(t *testing.T) {
+		payload := &models.ErrorPayload{}
+		err := &middleware.APIResponseError{
+			StatusCode: http.StatusConflict,
+			Payload:    payload,
+		}
+		assert.Equal(t, payload, err.GetPayload())
+	})
+
+	t.Run("ErrorWithoutPayloadFallbackToRawBodyWithoutPath", func(t *testing.T) {
+		err := &middleware.APIResponseError{
+			StatusCode: 422,
+			Status:     "422 Unprocessable Entity",
+			Body:       []byte("stack branch simple-terraform not found"),
+		}
+		assert.Equal(
+			t,
+			"API error 422: stack branch simple-terraform not found",
+			err.Error(),
+		)
 	})
 }

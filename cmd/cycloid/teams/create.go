@@ -1,8 +1,9 @@
 package teams
 
 import (
+	stderrors "errors"
 	"fmt"
-	"slices"
+	"net/http"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -55,6 +56,11 @@ func createTeam(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	displayName, teamCanonical, err := middleware.NameOrCanonical(&teamName, &team)
+	if err != nil {
+		return err
+	}
+
 	roles, err := cyargs.GetTeamRoles(cmd)
 	if err != nil {
 		return err
@@ -80,17 +86,15 @@ func createTeam(cmd *cobra.Command, args []string) error {
 	var newTeam *models.Team
 
 	if allowUpdate {
-		teams, err := m.ListTeams(org, &teamName, nil, nil, &middleware.Ascending)
+		currentTeam, _, err := m.GetTeam(org, teamCanonical)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "failed to List team to check exisiting", printer.Options{}, cmd.OutOrStderr())
-		}
-
-		if i := slices.IndexFunc(teams, func(t *models.Team) bool {
-			return ptr.Value(t.Canonical) == team
-		}); i != -1 {
-			currentTeam := teams[i]
-			newTeam, err = m.UpdateTeam(
-				org, ptr.Ptr(utils.CoalesceNonZero(teamName, ptr.Value(currentTeam.Name))),
+			var apiErr *middleware.APIResponseError
+			if !stderrors.As(err, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
+				return printer.SmartPrint(p, nil, err, "failed to get team to check if it exists", printer.Options{}, cmd.OutOrStderr())
+			}
+		} else {
+			newTeam, _, err = m.UpdateTeam(
+				org, ptr.Ptr(utils.CoalesceNonZero(displayName, ptr.Value(currentTeam.Name))),
 				currentTeam.Canonical, ptr.Ptr(utils.CoalesceNonZero(teamOwner, ptr.Value(ptr.Value(currentTeam.Owner).Username))), roles,
 			)
 			if err != nil {
@@ -101,7 +105,7 @@ func createTeam(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	newTeam, err = m.CreateTeam(org, &teamName, &team, &teamOwner, roles)
+	newTeam, _, err = m.CreateTeam(org, &displayName, &teamCanonical, &teamOwner, roles)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to CreateTeam", printer.Options{}, cmd.OutOrStderr())
 	}

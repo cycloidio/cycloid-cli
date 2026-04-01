@@ -41,6 +41,6 @@ func deleteComponent(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteComponent(org, project, env, component)
+	_, err = m.DeleteComponent(org, project, env, component)
 	return printer.SmartPrint(p, nil, err, "failed to delete component '"+component+"'", printer.Options{}, cmd.OutOrStdout())
 }

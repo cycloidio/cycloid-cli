@@ -1,97 +1,101 @@
 package middleware
 
 import (
-	"github.com/go-openapi/runtime"
+	"net/http"
+	"net/url"
+
 	"github.com/go-openapi/strfmt"
 
-	"github.com/cycloidio/cycloid-cli/client/client/user"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) UserSignup(username, email, password, fullName string) error {
-	params := user.NewSignUpParams()
-	body := &models.NewUserAccount{
-		Username: username,
-		Email:    (*strfmt.Email)(&email),
-		Password: (*strfmt.Password)(&password),
-		FullName: &fullName,
+func (m *middleware) UserSignup(username, email, password, fullName string) (*http.Response, error) {
+	// Use a raw struct to match the actual API field names.
+	// The swagger model uses given_name+family_name but the backend still accepts full_name.
+	body := map[string]string{
+		"username":  username,
+		"email":     email,
+		"password":  password,
+		"full_name": fullName,
 	}
 
-	params.WithBody(body)
-
-	_, err := m.api.User.SignUp(params)
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+	resp, err := m.GenericRequest(Request{
+		Method: "POST",
+		NoAuth: true,
+		Route:  []string{"user"},
+		Body:   body,
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) RefreshToken(org, childOrg *string, token string) (*models.UserSession, error) {
-	params := user.NewRefreshTokenParams()
+func (m *middleware) RefreshToken(org, childOrg *string, token string) (*models.UserSession, *http.Response, error) {
+	query := url.Values{}
 	if org != nil {
-		params.WithOrganizationCanonical(org)
+		query.Set("organization_canonical", *org)
 	}
-
 	if childOrg != nil {
-		params.WithChildCanonical(childOrg)
+		query.Set("child_canonical", *childOrg)
 	}
 
-	resp, err := m.api.User.RefreshToken(params,
-		runtime.ClientAuthInfoWriterFunc(
-			func(r runtime.ClientRequest, _ strfmt.Registry) error {
-				r.SetHeaderParam("Authorization", "Bearer "+token)
-				return nil
-			},
-		),
-	)
+	// RefreshToken uses the provided token directly, not from config
+	var result *models.UserSession
+	resp, err := m.GenericRequest(Request{
+		Method:  "GET",
+		Route:   []string{"user", "refresh_token"},
+		Query:   query,
+		Headers: map[string]string{"Authorization": "Bearer " + token},
+		NoAuth:  true, // We manually set the Authorization header above
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UserLogin(org, email *string, password string) (*models.UserSession, error) {
-	params := user.NewLoginParams()
+func (m *middleware) UserLogin(org, email *string, password string) (*models.UserSession, *http.Response, error) {
 	body := models.UserLogin{
 		Password: (*strfmt.Password)(&password),
 	}
 
 	if email != nil {
-		body.Email = (*strfmt.Email)(email)
+		emailFmt := strfmt.Email(*email)
+		body.Email = emailFmt
 	}
 
 	if org != nil {
 		body.OrganizationCanonical = *org
 	}
 
-	params.WithBody(&body)
-	resp, err := m.api.User.Login(params)
+	var result *models.UserSession
+	resp, err := m.GenericRequest(Request{
+		Method: "POST",
+		NoAuth: true,
+		Route:  []string{"user", "login"},
+		Body:   &body,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UserLoginToOrg(org, email, password string) (*models.UserSession, error) {
-	params := user.NewLoginToOrgParams()
-	params.WithOrganizationCanonical(org)
+func (m *middleware) UserLoginToOrg(org, email, password string) (*models.UserSession, *http.Response, error) {
+	emailFmt := strfmt.Email(email)
 	body := models.UserLogin{
-		Email:                 (*strfmt.Email)(&email),
+		Email:                 emailFmt,
 		OrganizationCanonical: org,
 		Password:              (*strfmt.Password)(&password),
 	}
-	params.WithBody(&body)
 
-	resp, err := m.api.User.LoginToOrg(params)
+	var result *models.UserSession
+	resp, err := m.GenericRequest(Request{
+		Method: "POST",
+		NoAuth: true,
+		Route:  []string{"user", "login", org},
+		Body:   &body,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-	return payload.Data, nil
+	return result, resp, nil
 }

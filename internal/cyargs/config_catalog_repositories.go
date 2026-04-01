@@ -18,6 +18,19 @@ func AddCatalogRepositoryFlag(cmd *cobra.Command) string {
 	return flagName
 }
 
+// AddCatalogRepoCanonicalFlag registers optional --canonical on catalog-repo create (identity for upsert).
+func AddCatalogRepoCanonicalFlag(cmd *cobra.Command) string {
+	const flagName = "canonical"
+	cmd.Flags().String(flagName, "", "catalog repository canonical; if omitted, derived from --name")
+	_ = cmd.RegisterFlagCompletionFunc(flagName, CompleteCatalogRepository)
+	return flagName
+}
+
+// GetCatalogRepoCanonical returns the optional catalog repository canonical from create (empty if unset).
+func GetCatalogRepoCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("canonical")
+}
+
 func GetCatalogRepository(cmd *cobra.Command) (string, error) {
 	catalogRepository, err := cmd.Flags().GetString("catalog-repository")
 	if err != nil {
@@ -35,7 +48,7 @@ func CompleteCatalogRepository(cmd *cobra.Command, args []string, toComplete str
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	stacks, err := m.ListCatalogRepositories(org)
+	stacks, _, err := m.ListCatalogRepositories(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list catalog repositories for completion in org '"+org+"': "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -63,7 +76,7 @@ func AddConfigRepositoryFlag(cmd *cobra.Command) string {
 			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
 		}
 
-		stacks, err := m.ListConfigRepositories(org)
+		stacks, _, err := m.ListConfigRepositories(org)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to list config repositories for completion in org '"+org+"' :"+err.Error()), cobra.ShellCompDirectiveError
 		}
@@ -107,7 +120,7 @@ func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
 
 	// TODO: This behavior will be pushed to backend
 	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
-	catalogRepos, err := m.ListConfigRepositories(org)
+	catalogRepos, _, err := m.ListConfigRepositories(org)
 	if err != nil {
 		return "", fmt.Errorf("failed to get the default config repository: %w", err)
 	}

@@ -48,6 +48,6 @@ func listEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	projects, err := m.ListProjectsEnv(org, project)
+	projects, _, err := m.ListProjectsEnv(org, project)
 	return printer.SmartPrint(p, projects, err, "unable to listenv project", printer.Options{}, cmd.OutOrStdout())
 }

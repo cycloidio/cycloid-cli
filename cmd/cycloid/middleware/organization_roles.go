@@ -1,61 +1,53 @@
 package middleware
 
 import (
-	"github.com/cycloidio/cycloid-cli/client/client/organization_roles"
+	"fmt"
+	"net/http"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"github.com/go-openapi/strfmt"
 )
 
-func (m *middleware) ListRoles(org string) ([]*models.Role, error) {
-	params := organization_roles.NewGetRolesParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.OrganizationRoles.GetRoles(params, m.api.Credentials(&org))
+func (m *middleware) ListRoles(org string) ([]*models.Role, *http.Response, error) {
+	var result []*models.Role
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "roles"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetRole(org, role string) (*models.Role, error) {
-	params := organization_roles.NewGetRoleParams()
-	params.SetOrganizationCanonical(org)
-	params.SetRoleCanonical(role)
-
-	resp, err := m.api.OrganizationRoles.GetRole(params, m.api.Credentials(&org))
+func (m *middleware) GetRole(org, role string) (*models.Role, *http.Response, error) {
+	var result *models.Role
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "roles", role},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteRole(org, role string) error {
-	params := organization_roles.NewDeleteRoleParams()
-	params.SetOrganizationCanonical(org)
-	params.SetRoleCanonical(role)
-
-	_, err := m.api.OrganizationRoles.DeleteRole(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) DeleteRole(org, role string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "roles", role},
+	}, nil)
+	return resp, err
 }
 
 // CreateRole requires org, name or canonical and rules
-func (m *middleware) CreateRole(org string, name, canonical, description *string, rules []*models.NewRule) (*models.NewRole, error) {
-	params := organization_roles.NewCreateRoleParams()
-	params.WithOrganizationCanonical(org)
+func (m *middleware) CreateRole(org string, name, canonical, description *string, rules []*models.NewRule) (*models.NewRole, *http.Response, error) {
 	n, c, err := NameOrCanonical(name, canonical)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	body := &models.NewRole{
@@ -65,13 +57,45 @@ func (m *middleware) CreateRole(org string, name, canonical, description *string
 		Rules:       rules,
 	}
 
-	params.WithBody(body)
-	params.Body.Validate(strfmt.Default)
-
-	resp, err := m.api.OrganizationRoles.CreateRole(params, m.api.Credentials(&org))
+	var result *models.NewRole
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "roles"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+// UpdateRole updates an existing role (PUT). roleCanonical must match the resolved canonical from name/--role.
+func (m *middleware) UpdateRole(org, roleCanonical string, name, canonical, description *string, rules []*models.NewRule) (*models.Role, *http.Response, error) {
+	n, c, err := NameOrCanonical(name, canonical)
+	if err != nil {
+		return nil, nil, err
+	}
+	if c != roleCanonical {
+		return nil, nil, fmt.Errorf("role canonical %q must match update target %q", c, roleCanonical)
 	}
 
-	return resp.Payload.Data, nil
+	body := &models.NewRole{
+		Name:        &n,
+		Canonical:   c,
+		Description: ptr.Value(description),
+		Rules:       rules,
+	}
+
+	var result *models.Role
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "roles", roleCanonical},
+		Body:         body,
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
 }

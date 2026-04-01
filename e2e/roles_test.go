@@ -69,4 +69,30 @@ func TestRoles(t *testing.T) {
 		require.Nil(t, cmdErr)
 		assert.Contains(t, cmdOut, "canonical\": \"organization-member")
 	})
+
+	t.Run("SuccessRolesUpsertIdempotent", func(t *testing.T) {
+		roleCan := randomCanonical("role")
+		rule := `{"action": "organization:list", "effect": "allow", "resources": []}`
+		base := []string{"--output", "json", "--org", config.Org, "roles"}
+
+		createCmd := append(base, "create", "--role", roleCan, "--name", "Upsert Role", "--description", "v1", "--rule-json", rule)
+		_, err := executeCommand(createCmd)
+		require.Nil(t, err)
+
+		t.Cleanup(func() {
+			_, delErr := executeCommand(append(base, "delete", roleCan))
+			require.Nil(t, delErr)
+		})
+
+		_, err = executeCommand(append(base, "create", "--update", "--role", roleCan, "--name", "Upsert Role", "--description", "v1", "--rule-json", rule))
+		require.Nil(t, err, "create --update should succeed idempotently")
+
+		_, err = executeCommand(append(base, "update", "--role", roleCan, "--name", "Upsert Role v2", "--description", "v2", "--rule-json", rule))
+		require.Nil(t, err, "roles update should succeed")
+
+		getOut, err := executeCommand(append(base, "get", roleCan))
+		require.Nil(t, err)
+		assert.Contains(t, getOut, "Upsert Role v2")
+		assert.Contains(t, getOut, roleCan)
+	})
 }

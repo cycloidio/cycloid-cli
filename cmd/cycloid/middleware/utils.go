@@ -68,6 +68,9 @@ func NameOrCanonical(name, canonical *string) (string, string, error) {
 
 	nameValue := ptr.Value(name)
 	canonicalValue := ptr.Value(canonical)
+	if nameValue == "" && canonicalValue == "" {
+		return "", "", fmt.Errorf("name or canonical is required, both are empty")
+	}
 
 	if canonicalValue == "" {
 		return nameValue, ToCanonical(nameValue), nil

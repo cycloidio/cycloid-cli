@@ -12,7 +12,7 @@ import (
 func TestGetProjectPipelines(t *testing.T) {
 	m := config.Middleware
 
-	got, err := m.GetProjectPipelines(config.Org, *config.Project.Canonical)
+	got, _, err := m.GetProjectPipelines(config.Org, *config.Project.Canonical)
 	if err != nil {
 		t.Errorf("middleware.GetProjectPipelines() error = %v", err)
 		return

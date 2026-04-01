@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -21,7 +22,7 @@ type Config struct {
 	// GitCredential models.Credential
 	ConfigRepo               *models.ConfigRepository
 	CatalogRepo              *models.ServiceCatalogSource
-	CatalogRepoVersionStacks *models.ServiceCatalogSourceVersion
+	CatalogRepoVersionStacks *middleware.StackVersion
 	Middleware               middleware.Middleware
 	// Common project to use for tests that require one
 	Project *models.Project
@@ -116,7 +117,7 @@ func NewConfig(testName string) (*Config, error) {
 
 	if provisionAPI {
 		// try to login, is successful, console is initialized
-		init, err := m.InitFirstOrg(config.Org, username, fullName, email, password, licence, &apiKeyCanonical)
+		init, _, err := m.InitFirstOrg(config.Org, username, fullName, email, password, licence, &apiKeyCanonical)
 		if err != nil {
 			return nil, fmt.Errorf("failed to init console: %w", err)
 		}
@@ -141,46 +142,52 @@ func NewConfig(testName string) (*Config, error) {
 		}
 	}
 
-	_, err := m.CreateCredential(config.Org, localGitCredential, "ssh",
+	_, _, err := m.CreateCredential(config.Org, localGitCredential, "ssh",
 		&models.CredentialRaw{SSHKey: localGitSSHKey}, "", localGitCredential, "",
 	)
-	var apiErr *middleware.APIError
+	var apiErr *middleware.APIResponseError
 	if errors.As(err, &apiErr) {
-		if apiErr.HTTPCode != "409" {
+		if apiErr.StatusCode != 409 {
 			return config, fmt.Errorf("failed to init config repo credential: %w", err)
 		}
 	}
 
-	currentConfigRepo, err := m.CreateConfigRepository(config.Org,
+	currentConfigRepo, _, err := m.CreateConfigRepository(config.Org,
 		*config.ConfigRepo.Canonical, *config.ConfigRepo.Canonical, *config.ConfigRepo.URL,
 		config.ConfigRepo.Branch, localGitCredential, *config.ConfigRepo.Default,
 	)
 	if errors.As(err, &apiErr) {
 		var getErr error
-		currentConfigRepo, getErr = m.GetConfigRepository(config.Org, configRepository)
-		if apiErr.HTTPCode != "409" || getErr != nil {
+		currentConfigRepo, _, getErr = m.GetConfigRepository(config.Org, configRepository)
+		if apiErr.StatusCode != 409 || getErr != nil {
 			return config, fmt.Errorf("failed to setup config repo: %w%w", err, getErr)
 		}
 	}
 
 	config.ConfigRepo = currentConfigRepo
 
-	_, err = m.CreateCatalogRepository(config.Org, *config.CatalogRepo.Canonical,
+	_, _, err = m.CreateCatalogRepository(config.Org, *config.CatalogRepo.Canonical,
 		*config.CatalogRepo.URL, config.CatalogRepo.Branch, "", "local", "",
 	)
 	if errors.As(err, &apiErr) {
-		if apiErr.HTTPCode != "409" {
+		if apiErr.StatusCode != 409 {
 			return config, fmt.Errorf("failed to setup catalog repo: %w", err)
 		}
 	}
 
-	catalogRepoChanges, err := m.RefreshCatalogRepository(config.Org, *config.CatalogRepo.Canonical)
+	_, _, err = m.RefreshCatalogRepository(config.Org, *config.CatalogRepo.Canonical)
 	if err != nil {
 		return config, fmt.Errorf("failed to refresh catalog repo: %w", err)
 	}
 
-	for _, v := range catalogRepoChanges.Versions {
-		if ptr.Value(v.Name) == "stacks" {
+	stackRef := config.Org + ":" + defaultStackCanonical
+	stackVersions, _, err := m.ListStackVersions(config.Org, stackRef)
+	if err != nil {
+		return config, fmt.Errorf("failed to list stack versions: %w", err)
+	}
+
+	for _, v := range stackVersions {
+		if ptr.Value(v.Name) == catalogRepoBranch {
 			config.CatalogRepoVersionStacks = v
 			break
 		}
@@ -201,16 +208,15 @@ func NewConfig(testName string) (*Config, error) {
 	}
 	config.Environment = environment
 
-	stackRef := config.Org + ":" + defaultStackCanonical
 	component, err := config.NewTestComponent(
-		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, "", "", *config.CatalogRepoVersionStacks.CommitHash, nil,
+		*project.Canonical, *environment.Canonical, "common", stackRef, defaultStackUseCase, "", "", ptr.Value(config.CatalogRepoVersionStacks.CommitHash), nil,
 	)
 	if err != nil {
 		return config, err
 	}
 	config.Component = component
 
-	stackConfig, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase, "", "", *config.CatalogRepoVersionStacks.CommitHash)
+	stackConfig, _, err := m.GetComponentStackConfig(config.Org, *project.Canonical, *environment.Canonical, *component.Canonical, defaultStackUseCase, "", "", ptr.Value(config.CatalogRepoVersionStacks.CommitHash))
 	if err != nil {
 		return config, err
 	}
@@ -240,13 +246,13 @@ func (config *Config) NewTestProject(identifier string) (*models.Project, error)
 
 	m := config.Middleware
 
-	out, err := m.CreateProject(config.Org, project, project, description, configRepository, owner, team, color, icon)
+	out, _, err := m.CreateProject(config.Org, project, project, description, configRepository, owner, team, color, icon)
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup test project: %w", err)
 	}
 
 	config.AppendCleanup(func() {
-		err := m.DeleteProject(config.Org, project)
+		_, err := m.DeleteProject(config.Org, project)
 		if err != nil {
 			log.Fatalf("cannot cleanup projet %q for test %q: %v", project, identifier, err)
 			return
@@ -267,13 +273,13 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 
 	m := config.Middleware
 
-	out, err := m.CreateEnv(config.Org, project, env, env, color)
+	out, _, err := m.CreateEnv(config.Org, project, env, env, color)
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup test environment: %w", err)
 	}
 
 	config.AppendCleanup(func() {
-		err := m.DeleteEnv(config.Org, project, env)
+		_, err := m.DeleteEnv(config.Org, project, env)
 		if err != nil {
 			log.Fatalf("cannot cleanup env %q for test %q: %v", env, identifier, err)
 			return
@@ -290,13 +296,38 @@ func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCa
 	m := config.Middleware
 	component := RandomCanonical(identifier)
 
-	outComponent, err := m.CreateAndConfigureComponent(config.Org, project, env, component, "", component, stackRef, versionTag, versionBranch, versionCommitHash, useCase, "", inputs)
+	// Workaround for BE-1344: RefreshCatalogRepository is async — the DB is updated
+	// immediately but the backend git fetch may not be complete when we try to create a
+	// component. On a 404 GitObject error, trigger another refresh and retry.
+	const maxAttempts = 5
+	var outComponent *models.Component
+	var err error
+	for attempt := range maxAttempts {
+		if attempt > 0 {
+			time.Sleep(5 * time.Second)
+			// Nudge backend to complete git fetch before retrying
+			_, _, _ = m.RefreshCatalogRepository(config.Org, *config.CatalogRepo.Canonical)
+		}
+		outComponent, _, err = m.CreateOrUpdateComponent(config.Org, project, env,
+			component, "", component, stackRef, versionTag, versionBranch,
+			versionCommitHash, useCase, "", inputs)
+		if err == nil {
+			break
+		}
+		var apiErr *middleware.APIResponseError
+		if !errors.As(err, &apiErr) || apiErr.StatusCode != 404 ||
+			!strings.Contains(err.Error(), "GitObject") {
+			return nil, err // non-transient error, fail immediately
+		}
+		log.Printf("NewTestComponent: attempt %d/%d: transient GitObject error (BE-1344), retrying: %v",
+			attempt+1, maxAttempts, err)
+	}
 	if err != nil {
 		return nil, err
 	}
 
 	config.AppendCleanup(func() {
-		if err := m.DeleteComponent(config.Org, project, env, component); err != nil {
+		if _, err := m.DeleteComponent(config.Org, project, env, component); err != nil {
 			log.Printf("failed to cleanup component for test %q: %v", identifier, err)
 		}
 	})
@@ -323,14 +354,14 @@ func (config *Config) Cleanup() {
 func (config *Config) NewTestChildOrg(parent, child string) (func(), error) {
 	m := config.Middleware
 	deferFunc := func() {
-		err := m.DeleteOrganization(child)
+		_, err := m.DeleteOrganization(child)
 		if err != nil {
 			log.Fatalf("Failed to delete org %q: %v", child, err)
 			return
 		}
 	}
 
-	_, err := m.CreateOrganizationChild(parent, child, nil)
+	_, _, err := m.CreateOrganizationChild(parent, child, nil)
 	if err != nil {
 		return deferFunc, fmt.Errorf("failed to create child org %q: %v", child, err)
 	}

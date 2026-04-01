@@ -69,7 +69,7 @@ func AddPipeline(cmd *cobra.Command) string {
 
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
-		pipelines, err := m.GetEnvPipelines(org, project, env)
+		pipelines, _, err := m.GetEnvPipelines(org, project, env)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to fetch pipeline list for completion in org '"+org+"': "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
@@ -105,7 +105,7 @@ func GetPipeline(cmd *cobra.Command) (string, error) {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	pipelines, err := m.GetEnvPipelines(org, project, environment)
+	pipelines, _, err := m.GetEnvPipelines(org, project, environment)
 	if err != nil {
 		return "", fmt.Errorf("failed to infer pipeline from context: %w", err)
 	}
@@ -160,7 +160,7 @@ func AddPipelineJob(cmd *cobra.Command) string {
 
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
-		jobs, err := m.GetJobs(org, project, env, component, pipeline)
+		jobs, _, err := m.GetJobs(org, project, env, component, pipeline)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, fmt.Sprintf(
 					"failed to fetch job list for completion with context org: %s, project: %s, env: %s, component: %s, pipeline: %s, err: %s",
@@ -217,7 +217,7 @@ func AddPipelineBuildID(cmd *cobra.Command) string {
 			api := common.NewAPI()
 			m := middleware.NewMiddleware(api)
 
-			builds, err := m.GetBuilds(org, project, env, component, pipeline, job)
+			builds, _, err := m.GetBuilds(org, project, env, component, pipeline, job)
 			if err != nil {
 				return cobra.AppendActiveHelp(nil, fmt.Sprintf(
 					"failed to fetch job list for completion with context org: %s, project: %s, env: %s, component: %s, pipeline: %s, job: %s err: %s",

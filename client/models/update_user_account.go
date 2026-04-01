@@ -8,7 +8,6 @@ package models
 import (
 	"context"
 	"encoding/json"
-	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -19,12 +18,12 @@ import (
 
 // UpdateUserAccount Update user's account
 //
-// The user's account information of the authenticated user to be updated. The username is not editable and is used to match the user account. Emails and password can be omitted if they don't have to be updated, because we can now if they have been sent or not although go-swagger doesn't currently support `PATCH` updates (see [comment](https://github.com/cycloidio/youdeploy-http-api/pull/71#issuecomment-321894076)), we do for this one with this 2 properties because they are good for the user, specially for the `password_update` one. In order to detect if they have been sent or not, we check if the length of array of emails is 0 (if it's sent, then the length MUST be greater than 0 as specified with minItems) and in case of the `password_update` field if it's `nil` or not. If the 'picture_url' is not send then it's removed from the user as it implies that it has deleted it, and also because we do not support partial updates
+// The user's account information of the authenticated user to be updated. Emails and password can be omitted if they don't have to be updated, because we can now if they have been sent or not although go-swagger doesn't currently support `PATCH` updates (see [comment](https://github.com/cycloidio/youdeploy-http-api/pull/71#issuecomment-321894076)), we do for this one with this 2 properties because they are good for the user, specially for the `password_update` one. In order to detect if they have been sent or not, we check if the length of array of emails is 0 (if it's sent, then the length MUST be greater than 0 as specified with minItems) and in case of the `password_update` field if it's `nil` or not. If the 'picture_url' is not send then it's removed from the user as it implies that it has deleted it, and also because we do not support partial updates
 //
 // swagger:model UpdateUserAccount
 type UpdateUserAccount struct {
 
-	// Code of a country the user is from in alpha-2 format
+	// Code of a country the user is from
 	// Pattern: ^[A-Z]{2}$
 	CountryCode string `json:"country_code,omitempty"`
 
@@ -32,11 +31,15 @@ type UpdateUserAccount struct {
 	// Min Items: 1
 	Emails []*UpdateUserAccountEmail `json:"emails"`
 
-	// full name
+	// family name
 	// Required: true
-	// Max Length: 255
 	// Min Length: 2
-	FullName *string `json:"full_name"`
+	FamilyName *string `json:"family_name"`
+
+	// given name
+	// Required: true
+	// Min Length: 2
+	GivenName *string `json:"given_name"`
 
 	// User's preferred language
 	// Required: true
@@ -54,7 +57,7 @@ type UpdateUserAccount struct {
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
 
-	// Used to identify the user. Not editable.
+	// username
 	// Required: true
 	// Max Length: 100
 	// Min Length: 3
@@ -74,7 +77,11 @@ func (m *UpdateUserAccount) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFullName(formats); err != nil {
+	if err := m.validateFamilyName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateGivenName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -134,15 +141,11 @@ func (m *UpdateUserAccount) validateEmails(formats strfmt.Registry) error {
 
 		if m.Emails[i] != nil {
 			if err := m.Emails[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("emails" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("emails" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -152,24 +155,33 @@ func (m *UpdateUserAccount) validateEmails(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateUserAccount) validateFullName(formats strfmt.Registry) error {
+func (m *UpdateUserAccount) validateFamilyName(formats strfmt.Registry) error {
 
-	if err := validate.Required("full_name", "body", m.FullName); err != nil {
+	if err := validate.Required("family_name", "body", m.FamilyName); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("full_name", "body", *m.FullName, 2); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("full_name", "body", *m.FullName, 255); err != nil {
+	if err := validate.MinLength("family_name", "body", *m.FamilyName, 2); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-var updateUserAccountTypeLocalePropEnum []any
+func (m *UpdateUserAccount) validateGivenName(formats strfmt.Registry) error {
+
+	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
+		return err
+	}
+
+	if err := validate.MinLength("given_name", "body", *m.GivenName, 2); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var updateUserAccountTypeLocalePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -231,15 +243,11 @@ func (m *UpdateUserAccount) validatePasswordUpdate(formats strfmt.Registry) erro
 
 	if m.PasswordUpdate != nil {
 		if err := m.PasswordUpdate.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("password_update")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("password_update")
 			}
-
 			return err
 		}
 	}
@@ -309,15 +317,11 @@ func (m *UpdateUserAccount) contextValidateEmails(ctx context.Context, formats s
 			}
 
 			if err := m.Emails[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
+				if ve, ok := err.(*errors.Validation); ok {
 					return ve.ValidateName("emails" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
+				} else if ce, ok := err.(*errors.CompositeError); ok {
 					return ce.ValidateName("emails" + "." + strconv.Itoa(i))
 				}
-
 				return err
 			}
 		}
@@ -336,15 +340,11 @@ func (m *UpdateUserAccount) contextValidatePasswordUpdate(ctx context.Context, f
 		}
 
 		if err := m.PasswordUpdate.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("password_update")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("password_update")
 			}
-
 			return err
 		}
 	}

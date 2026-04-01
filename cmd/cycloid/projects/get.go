@@ -50,6 +50,6 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	proj, err := m.GetProject(org, project)
+	proj, _, err := m.GetProject(org, project)
 	return printer.SmartPrint(p, proj, err, "unable to get project", printer.Options{}, cmd.OutOrStdout())
 }

@@ -3,7 +3,6 @@ package credentials
 import (
 	"fmt"
 	"os"
-	"slices"
 	"strings"
 
 	"github.com/pkg/errors"
@@ -205,15 +204,13 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	credentialPath, _ := cyargs.GetCredentialPath(cmd)
-	if credentialPath == "" {
-		credentialPath = pathFromCanonical(credential)
-	}
-
 	name, _ := cyargs.GetCredentialName(cmd)
 	if name == "" {
 		name = credential
 	}
+
+	credentialPath, _ := cyargs.GetCredentialPath(cmd)
+	credentialPath = defaultCredentialPath(credentialPath, credential, name)
 
 	description, err := cyargs.GetCredentialDescription(cmd)
 	if err != nil {
@@ -235,14 +232,23 @@ func create(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	if updateAllowed, _ := cmd.Flags().GetBool("update"); updateAllowed {
-		credentials, err := m.ListCredentials(org, credentialTypes)
+		credentials, _, err := m.ListCredentials(org, credentialTypes)
 		if err != nil {
-			return fmt.Errorf("failed to create --update credential, cannot check for existing credential %q: %w", credential, err)
+			return fmt.Errorf("failed to create --update credential, cannot check for existing credential (canonical=%q path=%q name=%q): %w",
+				credential, credentialPath, name, err)
 		}
 
-		if slices.IndexFunc(credentials, func(c *models.CredentialSimple) bool {
-			return *c.Canonical == credential
-		}) != -1 {
+		existingCredential := findCredentialForUpdate(credentials, credential, credentialPath, name)
+		if existingCredential != nil {
+			// update requires the canonical in the route: infer it when the user identified
+			// the credential by path/name (the common create --name --update flow).
+			if credential == "" && existingCredential.Canonical != nil {
+				credential = *existingCredential.Canonical
+				if err := cmd.Flags().Set("canonical", credential); err != nil {
+					return fmt.Errorf("failed to set credential canonical before update: %w", err)
+				}
+			}
+
 			return update(cmd, args)
 		}
 	}
@@ -447,10 +453,51 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unsupported credential type %q", credentialTypes)
 	}
 
-	outCredential, err := m.CreateCredential(org, name, credentialTypes, rawCred, credentialPath, credential, description)
+	outCredential, _, err := m.CreateCredential(org, name, credentialTypes, rawCred, credentialPath, credential, description)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	return printer.SmartPrint(p, outCredential, nil, "", printer.Options{}, cmd.OutOrStdout())
+}
+
+func defaultCredentialPath(path, canonical, name string) string {
+	if path != "" {
+		return path
+	}
+	if canonical != "" {
+		return pathFromCanonical(canonical)
+	}
+	if name != "" {
+		return pathFromCanonical(name)
+	}
+	return ""
+}
+
+func findCredentialForUpdate(credentials []*models.CredentialSimple, canonical, path, name string) *models.CredentialSimple {
+	if canonical != "" {
+		for _, credential := range credentials {
+			if credential != nil && credential.Canonical != nil && *credential.Canonical == canonical {
+				return credential
+			}
+		}
+	}
+
+	if path != "" {
+		for _, credential := range credentials {
+			if credential != nil && credential.Path != nil && *credential.Path == path {
+				return credential
+			}
+		}
+	}
+
+	if name != "" {
+		for _, credential := range credentials {
+			if credential != nil && credential.Name != nil && *credential.Name == name {
+				return credential
+			}
+		}
+	}
+
+	return nil
 }

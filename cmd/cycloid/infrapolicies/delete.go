@@ -58,7 +58,7 @@ func delete(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	err = m.DeleteInfraPolicy(org, canonical)
+	_, err = m.DeleteInfraPolicy(org, canonical)
 	return printer.SmartPrint(p, nil, err, "unable to delete infrapolicy", printer.Options{}, cmd.OutOrStdout())
 
 }

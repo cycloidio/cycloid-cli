@@ -1,33 +1,29 @@
 package middleware
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
-	"github.com/pkg/errors"
+	"net/http"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) GetEnv(org, project, env string) (*models.Environment, error) {
-	params := organization_projects.NewGetEnvironmentParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-
-	resp, err := m.api.OrganizationProjects.GetEnvironment(params, m.api.Credentials(&org))
+func (m *middleware) GetEnv(org, project, env string) (*models.Environment, *http.Response, error) {
+	var result *models.Environment
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) CreateEnv(org, project, env, envName, color string) (*models.Environment, error) {
-	params := organization_projects.NewCreateEnvironmentParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
+func (m *middleware) CreateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error) {
+	envName, env, err := NameOrCanonical(&envName, &env)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	envBody := models.NewEnvironment{
 		Name:      &envName,
@@ -35,55 +31,43 @@ func (m *middleware) CreateEnv(org, project, env, envName, color string) (*model
 		Color:     color,
 	}
 
-	err := envBody.Validate(strfmt.Default)
+	var result *models.Environment
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments"},
+		Body:         &envBody,
+	}, &result)
 	if err != nil {
-		return nil, errors.Wrap(err, "Validation failed for createEnv argument, check API docs for allow values in createEnv")
+		return nil, resp, err
 	}
-
-	params.WithBody(&envBody)
-
-	resp, err := m.api.OrganizationProjects.CreateEnvironment(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*models.Environment, error) {
-	params := organization_projects.NewUpdateEnvironmentParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-
+func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error) {
 	envBody := models.UpdateEnvironment{
 		Name:  &envName,
 		Color: color,
 	}
-	params.WithBody(&envBody)
 
-	resp, err := m.api.OrganizationProjects.UpdateEnvironment(params, m.api.Credentials(&org))
+	var result *models.Environment
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env},
+		Body:         &envBody,
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteEnv(org, project, env string) error {
-	params := organization_projects.NewDeleteEnvironmentParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-	params.SetEnvironmentCanonical(env)
-
-	_, err := m.api.OrganizationProjects.DeleteEnvironment(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-
-	return nil
+func (m *middleware) DeleteEnv(org, project, env string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env},
+	}, nil)
+	return resp, err
 }

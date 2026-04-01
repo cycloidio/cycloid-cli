@@ -74,7 +74,7 @@ func diff(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	pipelineDiff, err := m.DiffPipeline(org, project, env, component, pipeline, string(rawPipeline), string(rawVars), false)
+	pipelineDiff, _, err := m.DiffPipeline(org, project, env, component, pipeline, string(rawPipeline), string(rawVars), false)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to get pipeline diff", printer.Options{}, cmd.OutOrStderr())
 	}

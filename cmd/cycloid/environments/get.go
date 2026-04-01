@@ -58,6 +58,6 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	proj, err := m.GetEnv(org, project, env)
+	proj, _, err := m.GetEnv(org, project, env)
 	return printer.SmartPrint(p, proj, err, "unable to get environment", printer.Options{}, cmd.OutOrStdout())
 }

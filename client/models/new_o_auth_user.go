@@ -22,7 +22,7 @@ import (
 // swagger:model NewOAuthUser
 type NewOAuthUser struct {
 
-	// Code of a country the user is from in alpha-2 format
+	// Code of a country the user is from
 	// Pattern: ^[A-Z]{2}$
 	CountryCode string `json:"country_code,omitempty"`
 
@@ -31,14 +31,12 @@ type NewOAuthUser struct {
 	// Format: email
 	Email *strfmt.Email `json:"email"`
 
-	// User's email has been verified
-	EmailVerified bool `json:"email_verified,omitempty"`
+	// family name
+	FamilyName string `json:"family_name,omitempty"`
 
-	// full name
+	// given name
 	// Required: true
-	// Max Length: 255
-	// Min Length: 2
-	FullName *string `json:"full_name"`
+	GivenName *string `json:"given_name"`
 
 	// The field is used when a user signup from an invitation to an organization. Giving the token, the created user will be automatically added to the organization.
 	// Min Length: 5
@@ -60,10 +58,11 @@ type NewOAuthUser struct {
 	SocialID *string `json:"social_id"`
 
 	// username
+	// Required: true
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	Username string `json:"username,omitempty"`
+	Username *string `json:"username"`
 }
 
 // Validate validates this new o auth user
@@ -78,7 +77,7 @@ func (m *NewOAuthUser) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateFullName(formats); err != nil {
+	if err := m.validateGivenName(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -133,17 +132,9 @@ func (m *NewOAuthUser) validateEmail(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewOAuthUser) validateFullName(formats strfmt.Registry) error {
+func (m *NewOAuthUser) validateGivenName(formats strfmt.Registry) error {
 
-	if err := validate.Required("full_name", "body", m.FullName); err != nil {
-		return err
-	}
-
-	if err := validate.MinLength("full_name", "body", *m.FullName, 2); err != nil {
-		return err
-	}
-
-	if err := validate.MaxLength("full_name", "body", *m.FullName, 255); err != nil {
+	if err := validate.Required("given_name", "body", m.GivenName); err != nil {
 		return err
 	}
 
@@ -162,7 +153,7 @@ func (m *NewOAuthUser) validateInvitationToken(formats strfmt.Registry) error {
 	return nil
 }
 
-var newOAuthUserTypeLocalePropEnum []any
+var newOAuthUserTypeLocalePropEnum []interface{}
 
 func init() {
 	var res []string
@@ -229,19 +220,20 @@ func (m *NewOAuthUser) validateSocialID(formats strfmt.Registry) error {
 }
 
 func (m *NewOAuthUser) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
-		return nil
-	}
 
-	if err := validate.MinLength("username", "body", m.Username, 3); err != nil {
+	if err := validate.Required("username", "body", m.Username); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("username", "body", m.Username, 100); err != nil {
+	if err := validate.MinLength("username", "body", *m.Username, 3); err != nil {
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.MaxLength("username", "body", *m.Username, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("username", "body", *m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

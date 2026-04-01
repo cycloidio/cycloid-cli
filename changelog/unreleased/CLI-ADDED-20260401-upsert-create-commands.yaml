@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: 'Add `--update` to `organization create`, `config-repo create`, `catalog-repo create`, and `stack create`; fix `team create --update` when only `--name` is set'
+time: 2026-04-01T12:00:00Z
+custom:
+  DETAILS: "Catalog-repo create accepts optional `--canonical` for identity. AGENTS.md and CLAUDE.md require shipping tests with each feature. E2E and docs/testing.md cover upsert flows."
+  PR: "420"
+  TYPE: CLI

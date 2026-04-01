@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/internal/testcfg"
+	"github.com/spf13/viper"
 )
 
 var config *testcfg.Config
@@ -25,6 +26,9 @@ func runMain(main *testing.M) (int, error) {
 	os.Setenv("CY_API_URL", config.APIUrl)
 	os.Setenv("CY_API_KEY", config.APIKey)
 	os.Setenv("CY_ORG", config.Org)
+	if v := os.Getenv("CY_TEST_VERBOSITY"); v != "" {
+		viper.Set("verbosity", v)
+	}
 
 	return main.Run(), nil
 }

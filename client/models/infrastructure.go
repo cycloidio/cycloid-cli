@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -66,15 +65,11 @@ func (m *Infrastructure) validateGraph(formats strfmt.Registry) error {
 
 	if m.Graph != nil {
 		if err := m.Graph.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("graph")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("graph")
 			}
-
 			return err
 		}
 	}
@@ -101,15 +96,11 @@ func (m *Infrastructure) contextValidateGraph(ctx context.Context, formats strfm
 	if m.Graph != nil {
 
 		if err := m.Graph.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("graph")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("graph")
 			}
-
 			return err
 		}
 	}

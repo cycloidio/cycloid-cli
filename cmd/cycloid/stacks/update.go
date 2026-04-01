@@ -61,7 +61,7 @@ func update(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	// Fetch the current stack state
-	stack, err := m.GetStack(org, stackRef)
+	stack, _, err := m.GetStack(org, stackRef)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, fmt.Sprintf("failed to retrieve the stack with stack ref: %s", stackRef), printer.Options{}, cmd.OutOrStderr())
 	}
@@ -93,7 +93,7 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	// Send request
-	s, err := m.UpdateStack(org, stackRef, team, visibility)
+	s, _, err := m.UpdateStack(org, stackRef, team, visibility)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, fmt.Sprintf("fail to update stack with ref: %s", stackRef), printer.Options{}, cmd.OutOrStderr())
 	}

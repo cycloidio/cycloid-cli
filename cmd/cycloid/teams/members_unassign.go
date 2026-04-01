@@ -57,7 +57,7 @@ func unassignTeamMember(cmd *cobra.Command, args []string) error {
 
 	var outUnassigned = make([]*uint32, len(members))
 	for i, member := range members {
-		err = m.UnAssignMemberFromTeam(org, team, ptr.Value(member))
+		_, err = m.UnAssignMemberFromTeam(org, team, ptr.Value(member))
 		if err != nil {
 			return printer.SmartPrint(p, outUnassigned, fmt.Errorf("failed to unassign member with ID %d in team %q: %w", member, team, err), "", printer.Options{}, cmd.OutOrStderr())
 		}

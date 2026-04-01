@@ -2,65 +2,54 @@ package middleware
 
 import (
 	"fmt"
+	"net/http"
 
-	strfmt "github.com/go-openapi/strfmt"
-
-	"github.com/cycloidio/cycloid-cli/client/client/organization_projects"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) ListProjects(org string) ([]*models.Project, error) {
-	params := organization_projects.NewGetProjectsParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.OrganizationProjects.GetProjects(params, m.api.Credentials(&org))
+func (m *middleware) ListProjects(org string) ([]*models.Project, *http.Response, error) {
+	var result []*models.Project
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	p := resp.GetPayload()
-	d := p.Data
-
-	return d, nil
+	return result, resp, nil
 }
 
-func (m *middleware) ListProjectsEnv(org, project string) ([]*models.Environment, error) {
-	params := organization_projects.NewGetProjectEnvironmentsParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-
-	resp, err := m.api.OrganizationProjects.GetProjectEnvironments(params, m.api.Credentials(&org))
+func (m *middleware) ListProjectsEnv(org, project string) ([]*models.Environment, *http.Response, error) {
+	var result []*models.Environment
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	p := resp.GetPayload()
-	return p.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetProject(org, project string) (*models.Project, error) {
-	params := organization_projects.NewGetProjectParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-
-	resp, err := m.api.OrganizationProjects.GetProject(params, m.api.Credentials(&org))
+func (m *middleware) GetProject(org, project string) (*models.Project, *http.Response, error) {
+	var result *models.Project
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	p := resp.GetPayload()
-	d := p.Data
-
-	return d, nil
+	return result, resp, nil
 }
 
-func (m *middleware) CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, error) {
-	params := organization_projects.NewCreateProjectParams()
-	params.WithOrganizationCanonical(org)
-
-	if projectName == "" {
-		// If name is empty, use the canonical
-		projectName = project
+func (m *middleware) CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, *http.Response, error) {
+	projectName, project, err := NameOrCanonical(&projectName, &project)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	body := &models.NewProject{
@@ -74,27 +63,20 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 		TeamCanonical:             team,
 	}
 
-	err := body.Validate(strfmt.Default)
+	var result *models.Project
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, fmt.Errorf("failed to validate body input for createProject: %w", err)
+		return nil, resp, fmt.Errorf("failed to create project: %w", err)
 	}
-	params.WithBody(body)
-
-	resp, err := m.api.OrganizationProjects.CreateProject(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, error) {
-	params := organization_projects.NewUpdateProjectParams()
-	params.WithOrganizationCanonical(org)
-	params.WithProjectCanonical(project)
-
+func (m *middleware) UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, *http.Response, error) {
 	body := &models.UpdateProject{
 		Name:                      &projectName,
 		Description:               description,
@@ -105,30 +87,24 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 		CloudProvider:             cloudProvider,
 	}
 
-	err := body.Validate(strfmt.Default)
+	var result *models.Project
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	params.SetBody(body)
-	resp, err := m.api.OrganizationProjects.UpdateProject(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteProject(org, project string) error {
-	params := organization_projects.NewDeleteProjectParams()
-	params.SetOrganizationCanonical(org)
-	params.SetProjectCanonical(project)
-
-	_, err := m.api.OrganizationProjects.DeleteProject(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-	return nil
+func (m *middleware) DeleteProject(org, project string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project},
+	}, nil)
+	return resp, err
 }

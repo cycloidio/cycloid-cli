@@ -10,54 +10,7 @@ import (
 )
 
 func TestComponentCRUD(t *testing.T) {
-	// setup
 	m := config.Middleware
-
-	// var (
-	// 	projectName      = "Test CRUD component"
-	// 	project          = testcfg.RandomCanonical("test-crud-components")
-	// 	description      = "Testing components"
-	// 	configRepository = *config.ConfigRepo.Canonical
-	// 	owner            = ""
-	// 	team             = ""
-	// 	color            = "default"
-	// 	icon             = "world"
-	// )
-	//
-	// defer func() {
-	// 	err := m.DeleteProject(config.Org, project)
-	// 	if err != nil {
-	// 		log.Fatalf("Failed to decomission project '%s' from CRUD tests: %v", project, err)
-	// 		return
-	// 	}
-	// }()
-	//
-	// createdProject, err := m.CreateProject(config.Org, projectName, project, description, configRepository, owner, team, color, icon)
-	// if err != nil {
-	// 	t.Errorf("Failed to create pre-requisite project, create project CRUD tests: %v", err)
-	// }
-	//
-	// var (
-	// 	env      = "test"
-	// 	envName  = "Test"
-	// 	envColor = "red"
-	// )
-	//
-	// defer func() {
-	// 	err := m.DeleteEnv(config.Org, project, env)
-	// 	if err != nil {
-	// 		log.Fatalf("Failed to delete env '%s': %v", env, err)
-	// 		return
-	// 	}
-	// }()
-	//
-	// _, err = m.CreateEnv(config.Org, *createdProject.Canonical, env, envName, envColor)
-	// if err != nil {
-	// 	t.Errorf("Failed to create env '%s': %v", env, err)
-	// }
-	// end setup
-
-	// update
 	for index := range 2 { // Made only two to speed up tests
 		var (
 			componentName        = "Test Component " + strconv.Itoa(index)
@@ -127,13 +80,13 @@ func TestComponentCRUD(t *testing.T) {
 		var createdComponent *models.Component
 		var err, errList error
 		for range 3 { // retries due to concurenccy bug in backend
-			createdComponent, err = m.GetComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, component)
+			createdComponent, _, err = m.GetComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, component)
 			if err == nil {
 				errList = nil
 				break
 			}
 
-			createdComponent, err = m.CreateAndConfigureComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, componentName, stackRef, "", "", "", useCase, "", *formVars)
+			createdComponent, _, err = m.CreateOrUpdateComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, component, componentDescription, componentName, stackRef, "", "", "", useCase, "", *formVars)
 			if err != nil {
 				errList = errors.Join(errList, err)
 				continue
@@ -148,7 +101,7 @@ func TestComponentCRUD(t *testing.T) {
 		}
 
 		defer func() {
-			err := m.DeleteComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical)
+			_, err := m.DeleteComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical)
 			if err != nil {
 				log.Fatalf("Failed to delete component '%s': %v", *createdComponent.Canonical, err)
 				return
@@ -161,7 +114,7 @@ func TestComponentCRUD(t *testing.T) {
 		)
 		errList, err = nil, nil
 		for range 3 {
-			_, err = m.CreateAndConfigureComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, newComponentName, stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, useCase, "", newVar)
+			_, _, err = m.CreateOrUpdateComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, newDescription, newComponentName, stackRef, "", "", *config.CatalogRepoVersionStacks.CommitHash, useCase, "", newVar)
 			if err != nil {
 				errList = errors.Join(errList, err)
 				continue
@@ -181,7 +134,7 @@ func TestComponentCRUD(t *testing.T) {
 		// assert.Equal(t, newDescription, *updatedComponent.Canonical)
 	}
 
-	_, err := m.ListComponents(config.Org, *config.Project.Canonical, *config.Environment.Canonical)
+	_, _, err := m.ListComponents(config.Org, *config.Project.Canonical, *config.Environment.Canonical)
 	if err != nil {
 		t.Errorf("Failed to list components in project '%s':\n%v", *config.Project.Canonical, err)
 	}

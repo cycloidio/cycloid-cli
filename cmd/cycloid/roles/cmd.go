@@ -8,7 +8,7 @@ func NewCommands() *cobra.Command {
 	var (
 		example = `
 	# Manage roles of my-org organization
-	cy --org my-org roles [list|get|delete]
+	cy --org my-org roles [list|get|create|update|delete]
 	`
 		short = "Manage roles from the organization"
 		long  = short
@@ -16,15 +16,17 @@ func NewCommands() *cobra.Command {
 
 	var cmd = &cobra.Command{
 		Use:     "roles",
+		Aliases: []string{"role"},
 		Example: example,
 		Short:   short,
 		Long:    long,
 	}
 
-	cmd.AddCommand(NewDeleteCommand(),
+	cmd.AddCommand(
 		NewListCommand(),
 		NewGetCommand(),
 		NewCreateCommand(),
+		NewUpdateCommand(),
 		NewDeleteCommand(),
 	)
 

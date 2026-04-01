@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	stderrors "errors"
 	"io"
 
 	"github.com/go-openapi/errors"
@@ -61,7 +60,7 @@ func (m *InfraImportResourcesBody) UnmarshalJSON(raw []byte) error {
 	}
 
 	propConfiguration, err := UnmarshalCloudProviderConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
-	if err != nil && !stderrors.Is(err, io.EOF) {
+	if err != nil && err != io.EOF {
 		return err
 	}
 
@@ -129,15 +128,11 @@ func (m *InfraImportResourcesBody) validateConfiguration(formats strfmt.Registry
 	}
 
 	if err := m.Configuration().Validate(formats); err != nil {
-		ve := new(errors.Validation)
-		if stderrors.As(err, &ve) {
+		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
-		}
-		ce := new(errors.CompositeError)
-		if stderrors.As(err, &ce) {
+		} else if ce, ok := err.(*errors.CompositeError); ok {
 			return ce.ValidateName("configuration")
 		}
-
 		return err
 	}
 
@@ -182,15 +177,11 @@ func (m *InfraImportResourcesBody) ContextValidate(ctx context.Context, formats 
 func (m *InfraImportResourcesBody) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
-		ve := new(errors.Validation)
-		if stderrors.As(err, &ve) {
+		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
-		}
-		ce := new(errors.CompositeError)
-		if stderrors.As(err, &ce) {
+		} else if ce, ok := err.(*errors.CompositeError); ok {
 			return ce.ValidateName("configuration")
 		}
-
 		return err
 	}
 

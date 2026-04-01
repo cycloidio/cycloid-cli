@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -57,15 +56,11 @@ func (m *SCConfigPipelineConfig) validatePipeline(formats strfmt.Registry) error
 
 	if m.Pipeline != nil {
 		if err := m.Pipeline.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("pipeline")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("pipeline")
 			}
-
 			return err
 		}
 	}
@@ -81,15 +76,11 @@ func (m *SCConfigPipelineConfig) validateVariables(formats strfmt.Registry) erro
 
 	if m.Variables != nil {
 		if err := m.Variables.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("variables")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("variables")
 			}
-
 			return err
 		}
 	}
@@ -120,15 +111,11 @@ func (m *SCConfigPipelineConfig) contextValidatePipeline(ctx context.Context, fo
 	if m.Pipeline != nil {
 
 		if err := m.Pipeline.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("pipeline")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("pipeline")
 			}
-
 			return err
 		}
 	}
@@ -141,15 +128,11 @@ func (m *SCConfigPipelineConfig) contextValidateVariables(ctx context.Context, f
 	if m.Variables != nil {
 
 		if err := m.Variables.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("variables")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("variables")
 			}
-
 			return err
 		}
 	}

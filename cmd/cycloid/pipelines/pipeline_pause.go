@@ -50,7 +50,7 @@ func pause(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	err = m.PausePipeline(org, project, env, component, pipeline)
+	_, err = m.PausePipeline(org, project, env, component, pipeline)
 	if err != nil {
 		printer.SmartPrint(p, nil, err, "failed to pause pipeline", printer.Options{}, cmd.OutOrStderr())
 	}

@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -103,15 +102,11 @@ func (m *InfrastructureGraphNode) validateResource(formats strfmt.Registry) erro
 
 	if m.Resource != nil {
 		if err := m.Resource.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resource")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("resource")
 			}
-
 			return err
 		}
 	}
@@ -138,15 +133,11 @@ func (m *InfrastructureGraphNode) contextValidateResource(ctx context.Context, f
 	if m.Resource != nil {
 
 		if err := m.Resource.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("resource")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("resource")
 			}
-
 			return err
 		}
 	}

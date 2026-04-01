@@ -1,6 +1,10 @@
 package organizations
 
 import (
+	stderrors "errors"
+	"fmt"
+	"net/http"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -39,20 +43,22 @@ cy organization create --name bar --parent-canonical foo
 
 	cmd.MarkFlagRequired(cyargs.AddOrgNameFlag(cmd))
 	cyargs.AddOrgChildOfFlag(cmd)
+	cmd.Flags().Bool("update", false, "update the organization display name if it already exists (same canonical as derived from --name)")
 	return cmd
 }
 
 func create(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	name, err := cyargs.GetOrgName(cmd)
 	if err != nil {
 		return err
 	}
-	org := common.GenerateCanonical(name)
 
 	parentOrg, err := cyargs.GetOrgParentCanonical(cmd)
+	if err != nil {
+		return err
+	}
+
+	update, err := cmd.Flags().GetBool("update")
 	if err != nil {
 		return err
 	}
@@ -67,11 +73,39 @@ func create(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
+	canonical := common.GenerateCanonical(name)
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	_, _, getErr := m.GetOrganization(canonical)
+	exists := getErr == nil
+	if getErr != nil {
+		var apiErr *middleware.APIResponseError
+		if !stderrors.As(getErr, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
+			return printer.SmartPrint(p, nil, getErr, "failed to check if organization exists", printer.Options{}, cmd.OutOrStderr())
+		}
+	}
+
+	if exists && !update {
+		return printer.SmartPrint(p, nil,
+			fmt.Errorf("organization %q already exists; use --update to change its display name", canonical),
+			"failed to create organization", printer.Options{}, cmd.OutOrStderr())
+	}
+
 	var outOrg *models.Organization
+	if exists {
+		outOrg, _, err = m.UpdateOrganization(canonical, name)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "failed to update organization", printer.Options{}, cmd.OutOrStderr())
+		}
+		return printer.SmartPrint(p, outOrg, nil, "", printer.Options{}, cmd.OutOrStdout())
+	}
+
 	if parentOrg != "" {
-		outOrg, err = m.CreateOrganizationChild(parentOrg, org, &name)
+		outOrg, _, err = m.CreateOrganizationChild(parentOrg, canonical, &name)
 	} else {
-		outOrg, err = m.CreateOrganization(name)
+		outOrg, _, err = m.CreateOrganization(name)
 	}
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create org named '"+name+"'", printer.Options{}, cmd.OutOrStderr())

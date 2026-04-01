@@ -9,7 +9,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	stderrors "errors"
 	"io"
 
 	"github.com/go-openapi/errors"
@@ -108,7 +107,7 @@ func (m *NewInfraImport) UnmarshalJSON(raw []byte) error {
 	}
 
 	propConfiguration, err := UnmarshalCloudProviderConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
-	if err != nil && !stderrors.Is(err, io.EOF) {
+	if err != nil && err != io.EOF {
 		return err
 	}
 
@@ -259,15 +258,11 @@ func (m *NewInfraImport) validateComponent(formats strfmt.Registry) error {
 
 	if m.Component != nil {
 		if err := m.Component.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("component")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("component")
 			}
-
 			return err
 		}
 	}
@@ -282,15 +277,11 @@ func (m *NewInfraImport) validateConfiguration(formats strfmt.Registry) error {
 	}
 
 	if err := m.Configuration().Validate(formats); err != nil {
-		ve := new(errors.Validation)
-		if stderrors.As(err, &ve) {
+		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
-		}
-		ce := new(errors.CompositeError)
-		if stderrors.As(err, &ce) {
+		} else if ce, ok := err.(*errors.CompositeError); ok {
 			return ce.ValidateName("configuration")
 		}
-
 		return err
 	}
 
@@ -325,15 +316,11 @@ func (m *NewInfraImport) validateEnvironment(formats strfmt.Registry) error {
 
 	if m.Environment != nil {
 		if err := m.Environment.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environment")
 			}
-
 			return err
 		}
 	}
@@ -348,15 +335,11 @@ func (m *NewInfraImport) validateExternalBackend(formats strfmt.Registry) error 
 
 	if m.ExternalBackend != nil {
 		if err := m.ExternalBackend.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("external_backend")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("external_backend")
 			}
-
 			return err
 		}
 	}
@@ -371,15 +354,11 @@ func (m *NewInfraImport) validateProject(formats strfmt.Registry) error {
 
 	if m.Project != nil {
 		if err := m.Project.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}
@@ -395,15 +374,11 @@ func (m *NewInfraImport) validateStack(formats strfmt.Registry) error {
 
 	if m.Stack != nil {
 		if err := m.Stack.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("stack")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("stack")
 			}
-
 			return err
 		}
 	}
@@ -454,15 +429,11 @@ func (m *NewInfraImport) contextValidateComponent(ctx context.Context, formats s
 		}
 
 		if err := m.Component.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("component")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("component")
 			}
-
 			return err
 		}
 	}
@@ -473,15 +444,11 @@ func (m *NewInfraImport) contextValidateComponent(ctx context.Context, formats s
 func (m *NewInfraImport) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
 
 	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
-		ve := new(errors.Validation)
-		if stderrors.As(err, &ve) {
+		if ve, ok := err.(*errors.Validation); ok {
 			return ve.ValidateName("configuration")
-		}
-		ce := new(errors.CompositeError)
-		if stderrors.As(err, &ce) {
+		} else if ce, ok := err.(*errors.CompositeError); ok {
 			return ce.ValidateName("configuration")
 		}
-
 		return err
 	}
 
@@ -497,15 +464,11 @@ func (m *NewInfraImport) contextValidateEnvironment(ctx context.Context, formats
 		}
 
 		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environment")
 			}
-
 			return err
 		}
 	}
@@ -522,15 +485,11 @@ func (m *NewInfraImport) contextValidateExternalBackend(ctx context.Context, for
 		}
 
 		if err := m.ExternalBackend.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("external_backend")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("external_backend")
 			}
-
 			return err
 		}
 	}
@@ -547,15 +506,11 @@ func (m *NewInfraImport) contextValidateProject(ctx context.Context, formats str
 		}
 
 		if err := m.Project.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}
@@ -568,15 +523,11 @@ func (m *NewInfraImport) contextValidateStack(ctx context.Context, formats strfm
 	if m.Stack != nil {
 
 		if err := m.Stack.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("stack")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("stack")
 			}
-
 			return err
 		}
 	}

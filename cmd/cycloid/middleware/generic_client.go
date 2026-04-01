@@ -8,63 +8,146 @@ import (
 	"net/http"
 	"net/url"
 	"path"
-	"reflect"
+	"time"
+
+	"github.com/spf13/viper"
 )
 
-// GenericRequest add the default headers and api URL from cy context.
-// You need to specify the org for authentication.
-// The body and the response parameters must be pointers to struct.
-func (m *middleware) GenericRequest(method string, org *string, params url.Values, headers map[string]string, body any, response any, route ...string) (*http.Response, error) {
-	url, err := url.Parse(m.api.Config.URL)
+// GenericRequest sends an HTTP request to the Cycloid API.
+// It adds default authentication headers and handles JSON marshaling/unmarshaling.
+// On non-2xx responses, it returns an *APIResponseError.
+// On 2xx responses, it unwraps the {"data": <response>} envelope into the response pointer.
+// Pass nil as response to discard the response body.
+func (m *middleware) GenericRequest(req Request, response any) (*http.Response, error) {
+	baseURL, err := url.Parse(m.api.Config.URL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse base url from %q, this means that CY_API_URL is probably invalid: %w", m.api.Config.URL, err)
 	}
 
-	url.Path = path.Join(route...)
-	url.RawQuery = params.Encode()
+	// Build URL from route segments
+	routeParts := make([]string, 0, len(req.Route)+1)
+	routeParts = append(routeParts, baseURL.Path)
+	routeParts = append(routeParts, req.Route...)
+	baseURL.Path = path.Join(routeParts...)
 
+	// Encode query parameters
+	if req.Query != nil {
+		qv, err := encodeQuery(req.Query)
+		if err != nil {
+			return nil, fmt.Errorf("failed to encode query params: %w", err)
+		}
+		baseURL.RawQuery = qv.Encode()
+	}
+
+	// Marshal body
 	var bodyBytes []byte
-	if body != nil {
-		bodyBytes, err = json.Marshal(body)
+	if req.Body != nil {
+		bodyBytes, err = json.Marshal(req.Body)
 		if err != nil {
 			return nil, fmt.Errorf("failed to serialize body to JSON for HTTP request: %w", err)
 		}
 	}
 
-	req, err := http.NewRequest(method, url.String(), bytes.NewReader(bodyBytes))
+	httpReq, err := http.NewRequest(req.Method, baseURL.String(), bytes.NewReader(bodyBytes))
 	if err != nil {
-		return nil, fmt.Errorf("failed to create request with method %q and url %q: %w", method, url.String(), err)
+		return nil, fmt.Errorf("failed to create request with method %q and url %q: %w", req.Method, baseURL.String(), err)
 	}
 
-	for k, v := range headers {
-		req.Header.Add(k, v)
+	// Set headers
+	for k, v := range req.Headers {
+		httpReq.Header.Add(k, v)
 	}
 
-	req.Header.Add("Authorization", "Bearer "+m.api.GetToken(org))
-	req.Header.Add("Content-Type", "application/json")
+	httpReq.Header.Set("Content-Type", "application/json")
 
-	resp, err := m.GenericClient.Do(req)
+	// Set Accept header
+	if req.Accept != nil {
+		httpReq.Header.Set("Accept", *req.Accept)
+	}
+
+	// Set auth header
+	if !req.NoAuth {
+		httpReq.Header.Set("Authorization", "Bearer "+m.api.GetToken(req.Organization))
+	}
+
+	debug := viper.GetString("verbosity") == "debug"
+	if debug {
+		httpDebugLogger.logRequest(httpReq, bodyBytes)
+	}
+
+	start := time.Now()
+	resp, err := m.GenericClient.Do(httpReq)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, fmt.Errorf("HTTP request failed: %w", err)
 	}
+	elapsed := time.Since(start)
 	defer resp.Body.Close()
 
 	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read body from HTTP request: %w", err)
+		return nil, fmt.Errorf("failed to read body from HTTP response: %w", err)
 	}
 
-	responseReflectValue := reflect.ValueOf(response)
-	if !responseReflectValue.IsNil() {
+	if debug {
+		httpDebugLogger.logResponse(resp, respBody, elapsed)
+	}
 
-		if responseReflectValue.Kind() != reflect.Pointer {
-			return nil, fmt.Errorf("GenericRequest response parameter requires a pointer to struct, this is an internal error, please report to the maintainer")
+	// Handle non-2xx responses
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return resp, newAPIResponseError(resp, respBody)
+	}
+
+	// Unwrap {"data": ...} envelope
+	if response != nil && len(respBody) > 0 {
+		var envelope struct {
+			Data json.RawMessage `json:"data"`
 		}
-		err = json.Unmarshal(respBody, response)
-		if err != nil {
-			return nil, fmt.Errorf("failed to decode JSON from body: %w", err)
+		if err := json.Unmarshal(respBody, &envelope); err != nil {
+			// Try direct unmarshal if envelope fails
+			if err2 := json.Unmarshal(respBody, response); err2 != nil {
+				return resp, &responseJSONError{
+					statusCode: resp.StatusCode,
+					body:       respBody,
+					cause:      fmt.Errorf("%w (envelope error: %v)", err2, err),
+				}
+			}
+			return resp, nil
+		}
+
+		if envelope.Data != nil {
+			if err := json.Unmarshal(envelope.Data, response); err != nil {
+				return resp, &responseJSONError{
+					statusCode: resp.StatusCode,
+					body:       respBody,
+					cause:      err,
+				}
+			}
 		}
 	}
 
 	return resp, nil
+}
+
+// responseJSONError is returned when the API responded 2xx but the body could
+// not be decoded into the expected JSON shape.
+type responseJSONError struct {
+	statusCode int
+	body       []byte
+	cause      error
+}
+
+func (e *responseJSONError) Error() string {
+	return fmt.Sprintf("failed to decode JSON response (HTTP %d): %v", e.statusCode, e.cause)
+}
+
+func (e *responseJSONError) Unwrap() error {
+	return e.cause
+}
+
+func (e *responseJSONError) HTTPStatusCode() int {
+	return e.statusCode
+}
+
+func (e *responseJSONError) HTTPResponseBody() []byte {
+	return e.body
 }

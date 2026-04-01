@@ -1,58 +1,47 @@
 package middleware
 
 import (
-	strfmt "github.com/go-openapi/strfmt"
+	"net/http"
 
-	"github.com/cycloidio/cycloid-cli/client/client/organization_config_repositories"
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigRepository, error) {
-	params := organization_config_repositories.NewListConfigRepositoriesParams()
-	params.SetOrganizationCanonical(org)
-
-	resp, err := m.api.OrganizationConfigRepositories.ListConfigRepositories(params, m.api.Credentials(&org))
+func (m *middleware) ListConfigRepositories(org string) ([]*models.ConfigRepository, *http.Response, error) {
+	var result []*models.ConfigRepository
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "config_repositories"},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) GetConfigRepository(org, configRepo string) (*models.ConfigRepository, error) {
-	params := organization_config_repositories.NewGetConfigRepositoryParams()
-	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryCanonical(configRepo)
-
-	resp, err := m.api.OrganizationConfigRepositories.GetConfigRepository(params, m.api.Credentials(&org))
-
+func (m *middleware) GetConfigRepository(org, configRepo string) (*models.ConfigRepository, *http.Response, error) {
+	var result *models.ConfigRepository
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "config_repositories", configRepo},
+	}, &result)
 	if err != nil {
-		return nil, NewAPIError(err)
+		return nil, resp, err
 	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) DeleteConfigRepository(org, configRepo string) error {
-	params := organization_config_repositories.NewDeleteConfigRepositoryParams()
-	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryCanonical(configRepo)
-
-	_, err := m.api.OrganizationConfigRepositories.DeleteConfigRepository(params, m.api.Credentials(&org))
-	if err != nil {
-		return NewAPIError(err)
-	}
-	return nil
+func (m *middleware) DeleteConfigRepository(org, configRepo string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "config_repositories", configRepo},
+	}, nil)
+	return resp, err
 }
 
-func (m *middleware) CreateConfigRepository(org, name, canonical, url, branch, cred string, setDefault bool) (*models.ConfigRepository, error) {
-	params := organization_config_repositories.NewCreateConfigRepositoryParams()
-	params.SetOrganizationCanonical(org)
-
+func (m *middleware) CreateConfigRepository(org, name, canonical, url, branch, cred string, setDefault bool) (*models.ConfigRepository, *http.Response, error) {
 	if name == "" {
 		name = canonical
 	}
@@ -69,27 +58,20 @@ func (m *middleware) CreateConfigRepository(org, name, canonical, url, branch, c
 		body.CredentialCanonical = &cred
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.ConfigRepository
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "config_repositories"},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	resp, err := m.api.OrganizationConfigRepositories.CreateConfigRepository(params, m.api.Credentials(&org))
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }
 
-func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, error) {
-	params := organization_config_repositories.NewUpdateConfigRepositoryParams()
-	params.SetOrganizationCanonical(org)
-	params.SetConfigRepositoryCanonical(configRepo)
-
+func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, *http.Response, error) {
 	body := &models.UpdateConfigRepository{
 		Branch:              &branch,
 		CredentialCanonical: &cred,
@@ -98,19 +80,15 @@ func (m *middleware) UpdateConfigRepository(org, configRepo, cred, name, url, br
 		URL:                 &url,
 	}
 
-	params.SetBody(body)
-	err := body.Validate(strfmt.Default)
+	var result *models.ConfigRepository
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "config_repositories", configRepo},
+		Body:         body,
+	}, &result)
 	if err != nil {
-		return nil, err
+		return nil, resp, err
 	}
-
-	resp, err := m.api.OrganizationConfigRepositories.UpdateConfigRepository(params, m.api.Credentials(&org))
-
-	if err != nil {
-		return nil, NewAPIError(err)
-	}
-
-	payload := resp.GetPayload()
-
-	return payload.Data, nil
+	return result, resp, nil
 }

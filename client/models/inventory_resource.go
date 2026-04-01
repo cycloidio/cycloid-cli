@@ -7,7 +7,6 @@ package models
 
 import (
 	"context"
-	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -23,7 +22,7 @@ import (
 type InventoryResource struct {
 
 	// attributes
-	Attributes any `json:"attributes,omitempty"`
+	Attributes interface{} `json:"attributes,omitempty"`
 
 	// Category of the resource type
 	Category string `json:"category,omitempty"`
@@ -36,7 +35,7 @@ type InventoryResource struct {
 	CPU *uint64 `json:"cpu,omitempty"`
 
 	// List of attributes of the Resource, can be anything
-	CustomAttributes any `json:"custom_attributes,omitempty"`
+	CustomAttributes interface{} `json:"custom_attributes,omitempty"`
 
 	// Full description of the resource type documentation
 	Description string `json:"description,omitempty"`
@@ -152,15 +151,11 @@ func (m *InventoryResource) validateComponent(formats strfmt.Registry) error {
 
 	if m.Component != nil {
 		if err := m.Component.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("component")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("component")
 			}
-
 			return err
 		}
 	}
@@ -187,15 +182,11 @@ func (m *InventoryResource) validateEnvironment(formats strfmt.Registry) error {
 
 	if m.Environment != nil {
 		if err := m.Environment.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environment")
 			}
-
 			return err
 		}
 	}
@@ -255,15 +246,11 @@ func (m *InventoryResource) validateProject(formats strfmt.Registry) error {
 
 	if m.Project != nil {
 		if err := m.Project.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}
@@ -332,15 +319,11 @@ func (m *InventoryResource) contextValidateComponent(ctx context.Context, format
 		}
 
 		if err := m.Component.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("component")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("component")
 			}
-
 			return err
 		}
 	}
@@ -357,15 +340,11 @@ func (m *InventoryResource) contextValidateEnvironment(ctx context.Context, form
 		}
 
 		if err := m.Environment.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("environment")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("environment")
 			}
-
 			return err
 		}
 	}
@@ -382,15 +361,11 @@ func (m *InventoryResource) contextValidateProject(ctx context.Context, formats 
 		}
 
 		if err := m.Project.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
+			if ve, ok := err.(*errors.Validation); ok {
 				return ve.ValidateName("project")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
+			} else if ce, ok := err.(*errors.CompositeError); ok {
 				return ce.ValidateName("project")
 			}
-
 			return err
 		}
 	}

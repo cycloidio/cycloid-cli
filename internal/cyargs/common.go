@@ -132,7 +132,7 @@ func AddProjectFlag(cmd *cobra.Command) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
-		projects, err := m.ListProjects(org)
+		projects, _, err := m.ListProjects(org)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to fetch project list for completion in org '"+org+"': "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
@@ -150,16 +150,24 @@ func AddProjectFlag(cmd *cobra.Command) {
 }
 
 func GetProject(cmd *cobra.Command) (string, error) {
+	project, err := GetProjectOrEmpty(cmd)
+	if err != nil {
+		return "", err
+	}
+	if project == "" {
+		return "", errors.New("project is not set, use --project flag or CY_PROJECT env var")
+	}
+
+	return project, nil
+}
+
+func GetProjectOrEmpty(cmd *cobra.Command) (string, error) {
 	project, _ := cmd.Flags().GetString("project")
 	if project != "" {
 		return project, nil
 	}
 
 	project = v.GetString("project")
-	if project == "" {
-		return "", errors.New("project is not set, use --project flag or CY_PROJECT env var")
-	}
-
 	return project, nil
 }
 
@@ -183,7 +191,7 @@ func AddEnvFlag(cmd *cobra.Command) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
-		envs, err := m.ListProjectsEnv(org, project)
+		envs, _, err := m.ListProjectsEnv(org, project)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to list env from org '"+org+"' in project '"+project+"' for completion: "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
@@ -201,16 +209,24 @@ func AddEnvFlag(cmd *cobra.Command) {
 }
 
 func GetEnv(cmd *cobra.Command) (string, error) {
+	env, err := GetEnvOrEmpty(cmd)
+	if err != nil {
+		return "", err
+	}
+	if env == "" {
+		return "", errors.New("env is not set, use --env flag or CY_ENV env var")
+	}
+
+	return env, nil
+}
+
+func GetEnvOrEmpty(cmd *cobra.Command) (string, error) {
 	env, _ := cmd.Flags().GetString("env")
 	if env != "" {
 		return env, nil
 	}
 
 	env = v.GetString("env")
-	if env == "" {
-		return "", errors.New("env is not set, use --env flag or CY_ENV env var")
-	}
-
 	return env, nil
 }
 
@@ -239,7 +255,7 @@ func AddComponentFlag(cmd *cobra.Command) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
-		components, err := m.ListComponents(org, project, env)
+		components, _, err := m.ListComponents(org, project, env)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to list components for completion in org '"+org+"' with project '"+project+"' and env '"+env+"': "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
@@ -386,7 +402,7 @@ func AddOwnerFlag(cmd *cobra.Command) string {
 				cobra.ShellCompDirectiveNoFileComp
 		}
 
-		members, err := m.ListMembers(org)
+		members, _, err := m.ListMembers(org)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "cannot list org members for owner completion: "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
@@ -397,7 +413,7 @@ func AddOwnerFlag(cmd *cobra.Command) string {
 			if strings.HasPrefix(member.Username, toComplete) {
 				owners[index] = cobra.CompletionWithDesc(
 					member.Username,
-					fmt.Sprintf("%s (%s)", member.FullName, member.Email.String()),
+					fmt.Sprintf("%s %s (%s)", member.GivenName, member.FamilyName, member.Email.String()),
 				)
 			}
 		}

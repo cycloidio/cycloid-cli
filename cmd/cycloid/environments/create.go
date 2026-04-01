@@ -33,9 +33,6 @@ func NewCreateCommand() *cobra.Command {
 }
 
 func create(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -46,7 +43,7 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	env, err := cyargs.GetEnv(cmd)
+	env, err := cyargs.GetEnvOrEmpty(cmd)
 	if err != nil {
 		return err
 	}
@@ -55,8 +52,9 @@ func create(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	if name == "" {
-		name = env
+	name, env, err = middleware.NameOrCanonical(&name, &env)
+	if err != nil {
+		return err
 	}
 
 	color, err := cyargs.GetColor(cmd)
@@ -80,8 +78,11 @@ func create(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	if update {
-		environments, err := m.ListProjectsEnv(org, project)
+		environments, _, err := m.ListProjectsEnv(org, project)
 		if err != nil {
 			return fmt.Errorf("failed to create --update environment, cannot check for existing environment %q: %w", env, err)
 		}
@@ -95,11 +96,11 @@ func create(cmd *cobra.Command, args []string) error {
 					color = *current.Color
 				} else {
 					// Use a random one if none is set
-					color = cyargs.PickRandomColor(&env)
+					color = cyargs.PickRandomColor(nil)
 				}
 			}
 
-			resp, err := m.UpdateEnv(org, project, env, name, color)
+			resp, _, err := m.UpdateEnv(org, project, env, name, color)
 			if err != nil {
 				return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
 			}
@@ -109,10 +110,10 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	if color == cyargs.DefaultColor {
-		color = cyargs.PickRandomColor(&env)
+		color = cyargs.PickRandomColor(nil)
 	}
 
-	resp, err := m.CreateEnv(org, project, env, name, color)
+	resp, _, err := m.CreateEnv(org, project, env, name, color)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "failed to create environment", printer.Options{}, cmd.OutOrStderr())
 	}

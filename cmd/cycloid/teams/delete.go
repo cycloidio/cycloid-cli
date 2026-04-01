@@ -47,7 +47,7 @@ func deleteTeam(cmd *cobra.Command, args []string) error {
 
 	var deleted = make([]string, len(args))
 	for i, team := range args {
-		err = m.DeleteTeam(org, team)
+		_, err = m.DeleteTeam(org, team)
 		if err != nil {
 			return printer.SmartPrint(p, deleted, err, fmt.Sprintf("failed to delete team %q: %s", team, err.Error()), printer.Options{}, cmd.OutOrStderr())
 		}

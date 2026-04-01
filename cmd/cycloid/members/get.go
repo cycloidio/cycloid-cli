@@ -60,6 +60,6 @@ func getMember(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	mb, err := m.GetMember(org, id)
+	mb, _, err := m.GetMember(org, id)
 	return printer.SmartPrint(p, mb, err, "unable to get members", printer.Options{}, cmd.OutOrStdout())
 }

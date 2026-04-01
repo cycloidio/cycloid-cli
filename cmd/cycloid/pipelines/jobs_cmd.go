@@ -10,7 +10,12 @@ func NewJobsCommand() *cobra.Command {
 			"j",
 		},
 		Short: "Manage pipeline jobs",
-		Args:  cobra.NoArgs,
+		Example: `# list jobs from a pipeline
+cy pipeline job list --project my-project --env my-env --component my-component --pipeline my-pipeline
+
+# get a specific job from a pipeline
+cy pipeline job get --project my-project --env my-env --component my-component --pipeline my-pipeline --job my-job`,
+		Args: cobra.NoArgs,
 	}
 
 	cmd.AddCommand(

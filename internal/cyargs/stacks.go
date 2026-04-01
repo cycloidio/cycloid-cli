@@ -72,7 +72,7 @@ func CompleteStackRef(cmd *cobra.Command, args []string, toComplete string) ([]c
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
-	stacks, err := m.ListStacks(org)
+	stacks, _, err := m.ListStacks(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list stacks in org '"+org+"': "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -133,7 +133,7 @@ func CompleteBlueprint(cmd *cobra.Command, args []string, toComplete string) ([]
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	blueprints, err := m.ListBlueprints(org)
+	blueprints, _, err := m.ListBlueprints(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list stacks in org '"+org+"': "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -229,7 +229,7 @@ func CompleteCatalogRepoCommitHash(cmd *cobra.Command, args []string, toComplete
 			api := common.NewAPI()
 			m := middleware.NewMiddleware(api)
 
-			currentComponent, errGet := m.GetComponent(org, project, env, component)
+			currentComponent, _, errGet := m.GetComponent(org, project, env, component)
 			if errGet == nil && currentComponent.ServiceCatalog != nil && currentComponent.ServiceCatalog.Ref != nil {
 				stackRef = *currentComponent.ServiceCatalog.Ref
 			}
@@ -244,7 +244,7 @@ func CompleteCatalogRepoCommitHash(cmd *cobra.Command, args []string, toComplete
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	versions, err := m.ListStackVersions(org, stackRef)
+	versions, _, err := m.ListStackVersions(org, stackRef)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "cannot find versions for stack: "+stackRef+", err: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -297,7 +297,7 @@ func CompleteStackVersionTag(cmd *cobra.Command, args []string, toComplete strin
 			api := common.NewAPI()
 			m := middleware.NewMiddleware(api)
 
-			currentComponent, errGet := m.GetComponent(org, project, env, component)
+			currentComponent, _, errGet := m.GetComponent(org, project, env, component)
 			if errGet == nil && currentComponent.ServiceCatalog != nil && currentComponent.ServiceCatalog.Ref != nil {
 				stackRef = *currentComponent.ServiceCatalog.Ref
 			}
@@ -312,7 +312,7 @@ func CompleteStackVersionTag(cmd *cobra.Command, args []string, toComplete strin
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	versions, err := m.ListStackVersions(org, stackRef)
+	versions, _, err := m.ListStackVersions(org, stackRef)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "cannot find versions for stack: "+stackRef+", err: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
@@ -362,7 +362,7 @@ func CompleteStackVersionBranch(cmd *cobra.Command, args []string, toComplete st
 			api := common.NewAPI()
 			m := middleware.NewMiddleware(api)
 
-			currentComponent, errGet := m.GetComponent(org, project, env, component)
+			currentComponent, _, errGet := m.GetComponent(org, project, env, component)
 			if errGet == nil && currentComponent.ServiceCatalog != nil && currentComponent.ServiceCatalog.Ref != nil {
 				stackRef = *currentComponent.ServiceCatalog.Ref
 			}
@@ -377,7 +377,7 @@ func CompleteStackVersionBranch(cmd *cobra.Command, args []string, toComplete st
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	versions, err := m.ListStackVersions(org, stackRef)
+	versions, _, err := m.ListStackVersions(org, stackRef)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "cannot find versions for stack: "+stackRef+", err: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp

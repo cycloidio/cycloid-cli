@@ -46,7 +46,7 @@ func list(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	keys, err := m.ListAPIKeys(org)
+	keys, _, err := m.ListAPIKeys(org)
 	if err != nil {
 		return printer.SmartPrint(p, nil, err, "unable to list API keys", printer.Options{}, cmd.OutOrStderr())
 	}
