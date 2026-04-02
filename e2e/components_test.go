@@ -3,9 +3,12 @@ package e2e_test
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"strings"
+	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 
@@ -15,13 +18,14 @@ import (
 func TestComponentCmd(t *testing.T) {
 	var (
 		componentName        = "Test Component"
-		component            = randomCanonical("e2e-component")
 		componentDescription = "My cool component"
 		stackRef             = config.Org + ":stack-e2e-stackforms"
 		description          = "Testing components"
 	)
 
 	t.Run("CreateReadListDelete", func(t *testing.T) {
+		component := randomCanonical("e2e-component")
+
 		// create
 		testJSON := `{"types": {"tests": {"map": {"hello": "world", "int": 1, "bool": true}}}}`
 		testJSONFileContent := `{"types": {"tests": {"string": "myString"}}}`
@@ -160,12 +164,14 @@ func TestComponentCmd(t *testing.T) {
 				"-c", newComp,
 			})
 			if err != nil {
-				t.Errorf("failed to delete and cleanup component '%s' from '%s' test: %v\nstdout: %s", component, t.Name(), err, out)
+				t.Errorf("failed to delete and cleanup component '%s' from '%s' test: %v\nstdout: %s", newComp, t.Name(), err, out)
 			}
 		})
 	})
 
 	t.Run("CreateWithUpdateAndConfig", func(t *testing.T) {
+		component := randomCanonical("e2e-component")
+
 		// create
 		testJSON := `{"types": {"tests": {"map": {"hello": "world", "int": 1, "bool": true}}}}`
 		testJSONFileContent := `{"types": {"tests": {"string": "myString"}}}`
@@ -339,6 +345,8 @@ func TestComponentCmd(t *testing.T) {
 	})
 
 	t.Run("TestVarsInvalidSectionsAndGroup", func(t *testing.T) {
+		component := randomCanonical("e2e-component")
+
 		args := []string{
 			"--output", "json",
 			"--org", config.Org,
@@ -432,4 +440,112 @@ func TestComponentCmd(t *testing.T) {
 			t.Errorf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
 		}
 	})
+}
+
+// TestBackendComponentConcurrency is a stress test targeting the backend API.
+// It ramps up concurrent component creations from 2 to 30, one level at a time.
+// Each level creates N components simultaneously then deletes them before moving on.
+// If no component is created within a 30-second window at a given level, the test
+// fails and reports the concurrency level at which the backend stopped responding.
+func TestBackendComponentConcurrency(t *testing.T) {
+	const (
+		maxConcurrency = 30
+		timeout        = 30 * time.Second
+	)
+
+	stackRef := config.Org + ":stack-e2e-stackforms"
+	m := config.Middleware
+
+	type result struct {
+		canonical string
+		comp      *models.Component
+		err       error
+		elapsed   time.Duration
+	}
+
+	for n := 2; n <= maxConcurrency; n++ {
+		t.Logf("=== level %d: starting %d concurrent component creations ===", n, n)
+		levelStart := time.Now()
+
+		results := make([]result, n)
+		// firstDone is closed as soon as the first goroutine completes (success or failure),
+		// allowing us to detect a full 30s stall.
+		firstDone := make(chan struct{})
+		var firstDoneOnce sync.Once
+		var wg sync.WaitGroup
+		wg.Add(n)
+
+		for i := range n {
+			go func(idx int) {
+				defer wg.Done()
+				canonical := randomCanonical(fmt.Sprintf("e2e-c%d-%d", n, idx))
+				t.Logf("[n=%02d goroutine %02d] creating %s ...", n, idx, canonical)
+				createStart := time.Now()
+				comp, resp, err := m.CreateOrUpdateComponent(
+					config.Org,
+					*config.Project.Canonical,
+					*config.Environment.Canonical,
+					canonical,
+					fmt.Sprintf("Concurrent component n=%d idx=%d", n, idx),
+					canonical,
+					stackRef,
+					"", "",
+					*config.CatalogRepoVersionStacks.CommitHash,
+					"default",
+					"",
+					nil,
+				)
+				elapsed := time.Since(createStart)
+				firstDoneOnce.Do(func() { close(firstDone) })
+				if err != nil {
+					status := 0
+					if resp != nil {
+						status = resp.StatusCode
+					}
+					t.Logf("[n=%02d goroutine %02d] FAILED %s in %s (HTTP %d): %v", n, idx, canonical, elapsed, status, err)
+				} else {
+					t.Logf("[n=%02d goroutine %02d] OK     %s in %s", n, idx, canonical, elapsed)
+				}
+				results[idx] = result{canonical: canonical, comp: comp, err: err, elapsed: elapsed}
+			}(i)
+		}
+
+		// Wait for the first goroutine to finish, or timeout.
+		select {
+		case <-firstDone:
+			// At least one request came back — wait for the rest normally.
+			wg.Wait()
+		case <-time.After(timeout):
+			t.Errorf("STALL at concurrency level %d: no component created or failed within %s — backend appears deadlocked", n, timeout)
+			// Let goroutines finish in background to avoid leaks, but stop the test.
+			go wg.Wait()
+			return
+		}
+
+		levelElapsed := time.Since(levelStart)
+		var succeeded, failed int
+		for _, r := range results {
+			if r.err != nil {
+				failed++
+			} else {
+				succeeded++
+			}
+		}
+		t.Logf("=== level %d: %d/%d OK, %d/%d FAILED in %s ===", n, succeeded, n, failed, n, levelElapsed)
+
+		// Cleanup
+		for i, r := range results {
+			if r.comp == nil {
+				continue
+			}
+			t.Logf("[n=%02d cleanup] deleting %s ...", n, r.canonical)
+			_, err := m.DeleteComponent(config.Org, *r.comp.Project.Canonical,
+				*r.comp.Environment.Canonical, *r.comp.Canonical)
+			if err != nil {
+				t.Logf("[n=%02d cleanup] WARNING: failed to delete component %d (%s): %v", n, i, r.canonical, err)
+			}
+		}
+	}
+
+	t.Logf("Ramp-up complete: backend handled up to %d concurrent component creations", maxConcurrency)
 }

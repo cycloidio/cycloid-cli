@@ -231,6 +231,25 @@ services:
       CONCOURSE_VAULT_AUTH_BACKEND_MAX_TTL: 3600s
       CONCOURSE_CLUSTER_NAME: dev
 
+  yd-worker:
+    container_name: yd-worker
+    image: rg.fr-par.scw.cloud/cycloidio/cycloid-backend:${BACKEND_TAG:-staging}
+    ports:
+    - "2112:2112"
+    entrypoint:
+    - bash
+    - -ec
+    - exec /go/youdeploy-http-api worker --config-file /ci/config.yml
+    configs:
+    - source: youdeploy-config.yml
+      target: /ci/config.yml
+    depends_on:
+      youdeploy-api:
+        condition: service_healthy
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.18"
+
 configs:
   ## Mysql
   my.cnf:
