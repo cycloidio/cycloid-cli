@@ -20,6 +20,7 @@ swagger.yml
 # vendor/
 
 plugins/
+!cmd/cycloid/beta/plugins/
 cy
 ./gen
 pkged.go
