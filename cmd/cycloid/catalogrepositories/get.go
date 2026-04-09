@@ -32,7 +32,7 @@ func NewGetCommand() *cobra.Command {
 
 	// Keep --canonical for backward compatibility
 	can := cyargs.AddCatalogRepoCanonicalFlag(cmd)
-	_ = cmd.Flags().MarkDeprecated(can, "pass the canonical as a positional argument instead")
+	_ = cmd.Flags().MarkHidden(can)
 
 	return cmd
 }
