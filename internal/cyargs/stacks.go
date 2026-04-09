@@ -1,8 +1,7 @@
 package cyargs
 
 import (
-	"os"
-	"path/filepath"
+
 	"strings"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -11,48 +10,7 @@ import (
 )
 
 func ValidateForms(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-	var (
-		err error
-		dir string
-	)
-	if toComplete != "" {
-		absPath, err := filepath.Abs(toComplete)
-		if err != nil {
-			return []cobra.Completion{}, cobra.ShellCompDirectiveDefault
-		}
-
-		dir = filepath.Base(absPath)
-	} else {
-		cwd, err := os.Getwd()
-		if err != nil {
-			return []cobra.Completion{}, cobra.ShellCompDirectiveDefault
-		}
-
-		dir = filepath.Base(cwd)
-	}
-
-	dirEntries, err := os.ReadDir(dir)
-	if err != nil {
-		return []cobra.Completion{}, cobra.ShellCompDirectiveDefault
-	}
-
-	var comp = make([]cobra.Completion, len(dirEntries))
-	for index, dirEntry := range dirEntries {
-
-		if dirEntry.IsDir() {
-			continue
-		}
-
-		name := dirEntry.Name()
-		if (strings.HasSuffix(name, "yml") ||
-			strings.HasSuffix(name, "yaml") ||
-			name == ".forms.yaml" ||
-			name == ".forms.yml") && strings.HasPrefix(name, toComplete) {
-			comp[index] = name
-		}
-	}
-
-	return comp, cobra.ShellCompDirectiveDefault
+	return []cobra.Completion{"yml", "yaml"}, cobra.ShellCompDirectiveFilterFileExt
 }
 
 func AddStackRefFlag(cmd *cobra.Command) string {
