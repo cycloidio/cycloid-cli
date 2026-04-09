@@ -15,7 +15,7 @@ func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:               "delete [canonical...]",
 		Aliases:           []string{"rm"},
-		Args:              cobra.MinimumNArgs(1),
+		Args:              cyargs.RequireArgsOrFlag("canonical"),
 		ValidArgsFunction: cyargs.CompleteConfigRepository,
 		Short:             "delete a config repository",
 		Example: `

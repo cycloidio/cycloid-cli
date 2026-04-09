@@ -18,7 +18,7 @@ import (
 func NewGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "get [canonical...]",
-		Args:              cobra.MinimumNArgs(1),
+		Args:              cyargs.RequireArgsOrFlag("canonical"),
 		ValidArgsFunction: cyargs.CompleteAPIKeyCanonical,
 		Short:             "get API key",
 		Example: `

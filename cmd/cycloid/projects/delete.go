@@ -13,7 +13,7 @@ import (
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:               "delete [canonical...]",
-		Args:              cobra.MinimumNArgs(1),
+		Args:              cyargs.RequireArgsOrFlag("project"),
 		Aliases:           []string{"del", "rm"},
 		ValidArgsFunction: cyargs.CompleteProject,
 		Short:             "delete a project",

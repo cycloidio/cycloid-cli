@@ -456,3 +456,18 @@ func GetOrg(cmd *cobra.Command) (string, error) {
 
 	return org, nil
 }
+
+// RequireArgsOrFlag returns a cobra.PositionalArgs validator that accepts positional
+// arguments OR falls back gracefully when the named flag is provided instead.
+// This enables backward compatibility when a flag is deprecated in favour of positional args.
+func RequireArgsOrFlag(flagName string) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		if len(args) > 0 {
+			return nil
+		}
+		if f := cmd.Flags().Lookup(flagName); f != nil && f.Value.String() != "" {
+			return nil
+		}
+		return fmt.Errorf("requires at least 1 arg(s) or --%s flag, only received 0", flagName)
+	}
+}

@@ -19,7 +19,7 @@ func NewDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:               "delete [canonical...]",
 		Aliases:           []string{"rm"},
-		Args:              cobra.MinimumNArgs(1),
+		Args:              cyargs.RequireArgsOrFlag("canonical"),
 		ValidArgsFunction: cyargs.CompleteAPIKeyCanonical,
 		Short:             "delete an API key",
 		Example: `# delete the API key 'my-key' in the org my-org
