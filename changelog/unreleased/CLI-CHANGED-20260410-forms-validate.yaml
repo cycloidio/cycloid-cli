@@ -1,0 +1,8 @@
+component: StackForms
+kind: CHANGED
+body: "`stack forms validate` accepts multiple files and defaults to `.forms.yml` / `.forms.yaml` in the current directory"
+time: 2026-04-10T00:00:04Z
+custom:
+  DETAILS: "Running `cy stack forms validate` with no arguments now auto-discovers `.forms.yml` or `.forms.yaml` in the current directory. Multiple files can be validated at once: `cy stack forms validate .forms.yml other/.forms.yaml`. The command now exits with a non-zero status code when validation errors are found, making it usable in CI pipelines."
+  PR: "999"
+  TYPE: CLI

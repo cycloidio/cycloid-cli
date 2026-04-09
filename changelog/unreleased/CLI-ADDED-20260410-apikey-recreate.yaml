@@ -1,0 +1,8 @@
+component: API Keys
+kind: ADDED
+body: "`api-key create --recreate` flag to delete-and-recreate an existing key in one step"
+time: 2026-04-10T00:00:02Z
+custom:
+  DETAILS: "Without `--recreate`, creating an API key that already exists now fails with an explicit error instead of silently succeeding or failing. With `--recreate`, the existing key is deleted and a new one is created with the provided settings. Useful for rotating keys in automation."
+  PR: "999"
+  TYPE: CLI
