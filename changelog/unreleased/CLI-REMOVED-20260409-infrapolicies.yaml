@@ -1,0 +1,8 @@
+component: CLI
+kind: REMOVED
+body: InfraPolicies commands removed (infra-policy get/list/create/update/delete/validate)
+time: 2026-04-09T00:00:01Z
+custom:
+  DETAILS: ""
+  PR: "999"
+  TYPE: CLI

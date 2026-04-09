@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: Commands normalized to gold standard — positional args for get/delete, shell completion, consistent aliases, error output to stderr
+time: 2026-04-09T00:00:00Z
+custom:
+  DETAILS: "catalog-repo, config-repo, api-key, project, members, organizations and events commands now accept positional arguments for get/delete operations. Deprecated --canonical flags remain for backward compatibility. api-key create gains --recreate flag."
+  PR: "999"
+  TYPE: CLI
