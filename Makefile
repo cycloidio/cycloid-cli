@@ -92,6 +92,8 @@ client-generate: client-delete ## Generate client from file at SWAGGER_FILE path
 	# Used in CI, do not use docker compose here.
 	echo "Creating swagger files"; \
 	$(SWAGGER_GENERATE)
+	@# Discard the generated HTTP client package — we only keep models.
+	@find ./client -mindepth 1 -maxdepth 1 ! -name 'models' ! -name 'version' -exec rm -rf {} +
 	@export SWAGGER_VERSION=$$(python3 -c 'import yaml, sys; y = yaml.safe_load(sys.stdin); print(y["info"]["version"])' < swagger.yml); \
 	if [ -z "$$SWAGGER_VERSION" ]; then echo "Unable to read version from swagger"; exit 1; fi; \
 	echo $$SWAGGER_VERSION > client/version; \
