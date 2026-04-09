@@ -70,6 +70,7 @@ func validateForm(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
+	var hasErrors bool
 	for _, formsPath := range args {
 		rawForm, err := os.ReadFile(formsPath)
 		if err != nil {
@@ -88,10 +89,14 @@ func validateForm(cmd *cobra.Command, args []string) error {
 			continue
 		}
 
+		hasErrors = true
 		if err := printer.SmartPrint(p, validation, nil, "", printer.Options{}, cmd.OutOrStdout()); err != nil {
 			return err
 		}
 	}
 
+	if hasErrors {
+		return fmt.Errorf("one or more forms files failed validation")
+	}
 	return nil
 }

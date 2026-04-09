@@ -102,7 +102,7 @@ func runRoleWrite(cmd *cobra.Command, upsert bool) error {
 
 	outRole, _, err := m.CreateRole(org, &name, &role, &description, rules)
 	if err != nil {
-		return fmt.Errorf("failed to create the role: %w", err)
+		return printer.SmartPrint(p, nil, err, "failed to create role", printer.Options{}, cmd.OutOrStderr())
 	}
 
 	return printer.SmartPrint(p, outRole, nil, "", printer.Options{}, cmd.OutOrStdout())

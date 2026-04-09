@@ -48,7 +48,7 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 
 	// Support --canonical for backward compat; positional args take precedence
 	if len(args) == 0 {
-		can, err := cyargs.GetCatalogRepoCanonical(cmd)
+		can, err := cyargs.GetConfigRepoCanonical(cmd)
 		if err != nil {
 			return err
 		}

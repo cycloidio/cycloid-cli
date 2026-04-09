@@ -31,6 +31,11 @@ func GetCatalogRepoCanonical(cmd *cobra.Command) (string, error) {
 	return cmd.Flags().GetString("canonical")
 }
 
+// GetConfigRepoCanonical returns the optional config repository canonical (empty if unset).
+func GetConfigRepoCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("canonical")
+}
+
 func GetCatalogRepository(cmd *cobra.Command) (string, error) {
 	catalogRepository, err := cmd.Flags().GetString("catalog-repository")
 	if err != nil {
