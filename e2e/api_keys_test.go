@@ -92,5 +92,93 @@ func TestAPIKeysCmd(t *testing.T) {
 			}
 			assert.Equal(t, testKeyCanonical, *gotKey.Canonical)
 		})
+
+		t.Run("GetWithPositionalArg", func(t *testing.T) {
+			args := []string{
+				"--output", "json",
+				"--org", config.Org,
+				"api-key", "get",
+				testKeyCanonical, // positional, no --canonical
+			}
+			getOut, getErr := executeCommand(args)
+			if getErr != nil {
+				t.Errorf("failed to get api key via positional arg: %s", getErr)
+			}
+
+			var gotKey models.APIKey
+			if err := json.Unmarshal([]byte(getOut), &gotKey); err != nil {
+				t.Errorf("CLI output can't be serialized to models.APIKey, out:\n%s\nerr:\n%s", getOut, err)
+			}
+			assert.Equal(t, testKeyCanonical, *gotKey.Canonical)
+		})
+
+		t.Run("RecreateAPIKey", func(t *testing.T) {
+			tmpCan := randomCanonical("test-recreate")
+			rules := `[{"action":"organization:**","effect":"allow","resources":[]}]`
+
+			// Create
+			_, err := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"api-key", "create",
+				"--canonical", tmpCan,
+				"--rules", rules,
+			})
+			if err != nil {
+				t.Errorf("setup: failed to create api key for recreate test: %s", err)
+			}
+
+			defer t.Run("RecreateCleanup", func(t *testing.T) {
+				executeCommand([]string{
+					"--output", "json",
+					"--org", config.Org,
+					"api-key", "delete",
+					tmpCan,
+				})
+			})
+
+			// Second create without --recreate should fail
+			_, dupErr := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"api-key", "create",
+				"--canonical", tmpCan,
+				"--rules", rules,
+			})
+			assert.Error(t, dupErr, "second create without --recreate should fail")
+
+			// Third create with --recreate should succeed
+			_, recreateErr := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"api-key", "create",
+				"--canonical", tmpCan,
+				"--rules", rules,
+				"--recreate",
+			})
+			assert.NoError(t, recreateErr, "create --recreate should succeed for existing api key")
+		})
+
+		t.Run("DeleteWithPositionalArg", func(t *testing.T) {
+			tmpCan := randomCanonical("test-del-pos")
+			_, err := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"api-key", "create",
+				"--canonical", tmpCan,
+				"--rules", `[{"action":"organization:**","effect":"allow","resources":[]}]`,
+			})
+			if err != nil {
+				t.Errorf("setup: failed to create api key: %s", err)
+			}
+
+			_, deleteErr := executeCommand([]string{
+				"--output", "json",
+				"--org", config.Org,
+				"api-key", "delete",
+				tmpCan, // positional, no --canonical
+			})
+			assert.NoError(t, deleteErr, "delete via positional arg should succeed")
+		})
 	})
 }

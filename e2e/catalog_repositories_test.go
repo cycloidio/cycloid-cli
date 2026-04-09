@@ -142,4 +142,54 @@ func TestCatalogRepositories(t *testing.T) {
 		require.Nil(t, err, "output should deserialize to ServiceCatalogSource, out: %s", cmdOut)
 		assert.Equal(t, updatedName, *updatedRepo.Name)
 	})
+
+	// Positional-arg tests — verify the new interface works alongside deprecated --canonical
+
+	t.Run("GetWithPositionalArg", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"catalog-repository",
+			"get",
+			"step-by-step", // positional, no --canonical
+		})
+		require.Nil(t, cmdErr)
+		assert.Contains(t, cmdOut, "step-by-step")
+	})
+
+	t.Run("RefreshWithPositionalArg", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"catalog-repository",
+			"refresh",
+			"step-by-step", // positional, no --canonical
+		})
+		require.Nil(t, cmdErr)
+		assert.Contains(t, cmdOut, "updated")
+	})
+
+	t.Run("DeleteWithPositionalArg", func(t *testing.T) {
+		// Create a temporary repo to be deleted via positional arg
+		tmpCan := randomCanonical("cat-repo-pos")
+		_, createErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"catalog-repository",
+			"create",
+			"--branch", "stack-aws",
+			"--url", "https://github.com/cycloid-community-catalog/docs-step-by-step-stack.git",
+			"--name", tmpCan,
+		})
+		require.Nil(t, createErr, "setup: create catalog repo for delete test")
+
+		_, deleteErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"catalog-repository",
+			"delete",
+			tmpCan, // positional, no --canonical
+		})
+		require.Nil(t, deleteErr)
+	})
 }

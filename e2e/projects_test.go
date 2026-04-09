@@ -227,4 +227,47 @@ func TestProjects(t *testing.T) {
 			t.Errorf("failed to parse json output of list-env: %v\noutput: %s", jsonErr, out)
 		}
 	})
+
+	// Positional-arg tests — verify the new interface works alongside deprecated --project flag
+
+	t.Run("GetWithPositionalArg", func(t *testing.T) {
+		args := []string{
+			"--output", "json",
+			"project", "get",
+			project, // positional, no --project flag
+		}
+		out, err := executeCommand(args)
+		if err != nil {
+			t.Errorf("failed to get project '%s' via positional arg: %v", project, err)
+		}
+
+		var got models.Project
+		if jsonErr := json.Unmarshal([]byte(out), &got); jsonErr != nil {
+			t.Errorf("failed to parse get output: %v\noutput: %s", jsonErr, out)
+		}
+		assert.Equal(t, project, *got.Canonical)
+	})
+
+	t.Run("DeleteWithPositionalArg", func(t *testing.T) {
+		// Create a dedicated project to delete via positional arg
+		tmpProject := randomCanonical("e2e-del-pos")
+		_, createErr := executeCommand([]string{
+			"--output", "json",
+			"project", "create",
+			"--project", tmpProject,
+			"--name", tmpProject,
+			"--icon", icon,
+			"--color", color,
+		})
+		if createErr != nil {
+			t.Errorf("setup: failed to create project '%s': %v", tmpProject, createErr)
+		}
+
+		_, deleteErr := executeCommand([]string{
+			"--output", "json",
+			"project", "delete",
+			tmpProject, // positional, no --project flag
+		})
+		assert.NoError(t, deleteErr, "delete via positional arg should succeed")
+	})
 }
