@@ -124,7 +124,7 @@ func TestMembers(t *testing.T) {
 		})
 
 		require.Nil(t, cmdErr)
-		assert.Equal(t, "", cmdOut)
+		assert.NotEmpty(t, cmdOut, "invite should return the created invitation")
 	})
 
 	t.Run("SuccessMembersListInvite", func(t *testing.T) {

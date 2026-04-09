@@ -57,6 +57,9 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	if output == "table" {
+		output = "json"
+	}
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return err

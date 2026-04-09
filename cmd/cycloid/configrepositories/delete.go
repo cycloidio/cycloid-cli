@@ -61,6 +61,9 @@ func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
+	if output == "table" {
+		output = "json"
+	}
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")

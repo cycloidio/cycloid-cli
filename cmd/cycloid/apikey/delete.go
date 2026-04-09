@@ -65,6 +65,9 @@ func remove(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
+	if output == "table" {
+		output = "json"
+	}
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")

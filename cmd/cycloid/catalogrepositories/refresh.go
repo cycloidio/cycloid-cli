@@ -13,14 +13,17 @@ import (
 
 func NewRefreshCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:               "refresh [canonical]",
-		Args:              cobra.MaximumNArgs(1),
+		Use:               "refresh [canonical...]",
+		Args:              cyargs.RequireArgsOrFlag("canonical"),
 		ValidArgsFunction: cyargs.CompleteCatalogRepository,
-		Short:             "refresh a catalog repository",
+		Short:             "refresh one or more catalog repositories",
 		Long:              "refresh action can be used if the .cycloid.yml definition has been updated",
 		Example: `
 	# refresh a catalog repository by canonical
 	cy --org my-org catalog-repo refresh my-catalog-repository
+
+	# refresh multiple catalog repositories at once
+	cy --org my-org catalog-repo refresh repo-one repo-two
 
 	# refresh using the deprecated --canonical flag
 	cy --org my-org catalog-repo refresh --canonical my-catalog-repository
@@ -44,14 +47,13 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var can string
-	if len(args) == 1 {
-		can = args[0]
-	} else {
-		can, err = cyargs.GetCatalogRepoCanonical(cmd)
+	// Support --canonical for backward compat; positional args take precedence
+	if len(args) == 0 {
+		can, err := cyargs.GetCatalogRepoCanonical(cmd)
 		if err != nil {
 			return err
 		}
+		args = []string{can}
 	}
 
 	output, err := cyargs.GetOutput(cmd)
@@ -64,9 +66,21 @@ func refreshCatalogRepository(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, _, err := m.RefreshCatalogRepository(org, can)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to refresh catalog repository", printer.Options{}, cmd.OutOrStderr())
+	if len(args) == 1 {
+		cr, _, err := m.RefreshCatalogRepository(org, args[0])
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to refresh catalog repository", printer.Options{}, cmd.OutOrStderr())
+		}
+		return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
 	}
-	return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
+
+	results := make([]interface{}, 0, len(args))
+	for _, can := range args {
+		cr, _, err := m.RefreshCatalogRepository(org, can)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to refresh catalog repository "+can, printer.Options{}, cmd.OutOrStderr())
+		}
+		results = append(results, cr)
+	}
+	return printer.SmartPrint(p, results, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
