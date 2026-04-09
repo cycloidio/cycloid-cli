@@ -13,11 +13,15 @@ import (
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
-		Args:  cobra.NoArgs,
-		Short: "get a project",
+		Use:               "get [canonical...]",
+		Args:              cobra.MaximumNArgs(1),
+		ValidArgsFunction: cyargs.CompleteProject,
+		Short:             "get a project",
 		Example: `
-	# get a project in YAML format
+	# get a project by canonical
+	cy --org my-org project get my-project
+
+	# get a project using the --project flag or CY_PROJECT env var
 	cy --org my-org project get --project my-project -o yaml
 `,
 		RunE: get,
@@ -35,21 +39,30 @@ func get(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	project, err := cyargs.GetProject(cmd)
-	if err != nil {
-		return err
+
+	var project string
+	if len(args) == 1 {
+		project = args[0]
+	} else {
+		project, err = cyargs.GetProject(cmd)
+		if err != nil {
+			return err
+		}
 	}
+
 	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
 	proj, _, err := m.GetProject(org, project)
-	return printer.SmartPrint(p, proj, err, "unable to get project", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to get project", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, proj, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

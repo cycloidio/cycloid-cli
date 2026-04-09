@@ -27,12 +27,12 @@ func NewCreateCommand() *cobra.Command {
 		RunE: createConfigRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagCred, cmd)
-	common.RequiredFlag(WithFlagName, cmd)
-	common.RequiredFlag(WithFlagBranch, cmd)
-	common.RequiredFlag(WithFlagURL, cmd)
+	cmd.MarkFlagRequired(cyargs.AddRepoCredFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddRepoBranchFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddRepoURLFlag(cmd))
 	cyargs.AddConfigRepositoryFlag(cmd)
-	WithFlagDefault(cmd)
+	cyargs.AddRepoDefaultFlag(cmd)
 	cmd.Flags().Bool("update", false, "update the config repository if it already exists")
 
 	return cmd
@@ -49,7 +49,7 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cmd.Flags().GetString("name")
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
@@ -59,22 +59,22 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	url, err := cmd.Flags().GetString("url")
+	url, err := cyargs.GetRepoURL(cmd)
 	if err != nil {
 		return err
 	}
 
-	branch, err := cmd.Flags().GetString("branch")
+	branch, err := cyargs.GetRepoBranch(cmd)
 	if err != nil {
 		return err
 	}
 
-	setDefault, err := cmd.Flags().GetBool("default")
+	setDefault, err := cyargs.GetRepoDefault(cmd)
 	if err != nil {
 		return err
 	}
 
-	cred, err := cmd.Flags().GetString("cred")
+	cred, err := cyargs.GetRepoCred(cmd)
 	if err != nil {
 		return err
 	}

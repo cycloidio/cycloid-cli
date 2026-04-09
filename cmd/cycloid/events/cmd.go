@@ -9,7 +9,6 @@ func NewCommands() *cobra.Command {
 		Use: "event",
 		Aliases: []string{
 			"events",
-			"e",
 		},
 		Short: "Manage the events",
 	}

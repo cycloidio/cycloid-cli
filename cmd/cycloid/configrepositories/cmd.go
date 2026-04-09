@@ -11,7 +11,7 @@ func NewCommands() *cobra.Command {
 			"config-repo",
 			"config-repositories",
 		},
-		Short: "Manage the catalog repositories",
+		Short: "Manage the config repositories",
 	}
 
 	cmd.AddCommand(NewCreateCommand(),

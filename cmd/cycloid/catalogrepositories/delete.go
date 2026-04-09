@@ -13,17 +13,27 @@ import (
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
-		Args:  cobra.NoArgs,
-		Short: "delete a catalog repository",
+		Use:               "delete [canonical...]",
+		Aliases:           []string{"rm"},
+		Args:              cobra.MinimumNArgs(1),
+		ValidArgsFunction: cyargs.CompleteCatalogRepository,
+		Short:             "delete a catalog repository",
 		Example: `
-	# delete a catalog repository with the canonical my-catalog-repository
-	cy  --org my-org catalog-repository delete --canonical my-catalog-repository
+	# delete a catalog repository by canonical
+	cy --org my-org catalog-repo delete my-catalog-repository
+
+	# delete multiple catalog repositories at once
+	cy --org my-org catalog-repo delete repo-one repo-two
+
+	# delete using the deprecated --canonical flag
+	cy --org my-org catalog-repo delete --canonical my-catalog-repository
 `,
 		RunE: deleteCatalogRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagCan, cmd)
+	// Keep --canonical for backward compatibility
+	can := cyargs.AddCatalogRepoCanonicalFlag(cmd)
+	_ = cmd.Flags().MarkDeprecated(can, "pass the canonical as a positional argument instead")
 
 	return cmd
 }
@@ -37,22 +47,32 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	canonical, err := cmd.Flags().GetString("canonical")
-	if err != nil {
-		return err
+	// Support --canonical for backward compat; positional args take precedence
+	if len(args) == 0 {
+		can, err := cyargs.GetCatalogRepoCanonical(cmd)
+		if err != nil {
+			return err
+		}
+		args = []string{can}
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	_, err = m.DeleteCatalogRepository(org, canonical)
-	return printer.SmartPrint(p, nil, err, "unable to delete catalog repository", printer.Options{}, cmd.OutOrStdout())
+	deleted := make([]string, 0, len(args))
+	for _, canonical := range args {
+		_, err = m.DeleteCatalogRepository(org, canonical)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to delete catalog repository "+canonical, printer.Options{}, cmd.OutOrStderr())
+		}
+		deleted = append(deleted, canonical)
+	}
+	return printer.SmartPrint(p, deleted, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

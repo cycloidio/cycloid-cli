@@ -20,7 +20,9 @@ func NewCreateChildCommand() *cobra.Command {
 		Deprecated: "this function is replaced by `cy org create --org <org> --child-of <parent-org>`",
 		Hidden:     true,
 	}
-	common.RequiredPersistentFlag(WithFlagParentOrganization, cmd)
+
+	cmd.PersistentFlags().String("parent-org", "", "parent organization canonical")
+	cmd.MarkPersistentFlagRequired("parent-org")
 
 	return cmd
 }
@@ -38,17 +40,20 @@ func createChild(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	output, err := cmd.Flags().GetString("output")
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
 	oc, _, err := m.CreateOrganizationChild(org, porg, nil)
-	return printer.SmartPrint(p, oc, err, "unable to create a child organization", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to create a child organization", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, oc, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

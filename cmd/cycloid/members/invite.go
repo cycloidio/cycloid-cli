@@ -12,26 +12,19 @@ import (
 )
 
 func NewInviteCommand() *cobra.Command {
-	var (
-		example = `
+	var cmd = &cobra.Command{
+		Use:   "invite",
+		Args:  cobra.NoArgs,
+		Short: "Invite a user to the organization",
+		Example: `
 	# Invite a member within my-org organization
 	cy --org my-org members invite --role organization-member --email user@email.com
-	`
-		short = "Invite the organization member"
-		long  = short
-	)
-
-	var cmd = &cobra.Command{
-		Use:     "invite",
-		Args:    cobra.NoArgs,
-		Example: example,
-		Short:   short,
-		Long:    long,
-		RunE:    inviteMember,
+`,
+		RunE: inviteMember,
 	}
 
-	common.RequiredFlag(WithFlagEmail, cmd)
-	common.RequiredFlag(WithFlagRoleCanonical, cmd)
+	cmd.MarkFlagRequired(cyargs.AddMemberEmailFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddMemberRoleFlag(cmd))
 
 	return cmd
 }
@@ -45,27 +38,29 @@ func inviteMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	email, err := cmd.Flags().GetString("email")
+	email, err := cyargs.GetMemberEmail(cmd)
 	if err != nil {
 		return err
 	}
 
-	role, err := cmd.Flags().GetString("role")
+	role, err := cyargs.GetMemberRole(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
-		return err
+		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	_, _, err = m.InviteMember(org, email, role)
-	return printer.SmartPrint(p, nil, err, "unable to invite member", printer.Options{}, cmd.OutOrStdout())
+	mb, _, err := m.InviteMember(org, email, role)
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to invite member", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, mb, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

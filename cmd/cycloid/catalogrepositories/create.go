@@ -30,10 +30,10 @@ func NewCreateCommand() *cobra.Command {
 		RunE: createCatalogRepository,
 	}
 
-	common.WithFlagCred(cmd)
-	common.RequiredFlag(WithFlagName, cmd)
-	common.RequiredFlag(WithFlagBranch, cmd)
-	common.RequiredFlag(WithFlagURL, cmd)
+	cyargs.AddRepoCredFlag(cmd)
+	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddRepoBranchFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddRepoURLFlag(cmd))
 	cyargs.AddCatalogRepoCanonicalFlag(cmd)
 
 	cmd.Flags().String("visibility", "", "set the stacks base visibility in the catalog. accepted values are 'local', 'shared' or 'hidden' (default: local)")
@@ -52,7 +52,7 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cmd.Flags().GetString("name")
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
@@ -67,17 +67,17 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	url, err := cmd.Flags().GetString("url")
+	url, err := cyargs.GetRepoURL(cmd)
 	if err != nil {
 		return err
 	}
 
-	branch, err := cmd.Flags().GetString("branch")
+	branch, err := cyargs.GetRepoBranch(cmd)
 	if err != nil {
 		return err
 	}
 
-	cred, err := cmd.Flags().GetString("cred")
+	cred, err := cyargs.GetRepoCred(cmd)
 	if err != nil {
 		return err
 	}

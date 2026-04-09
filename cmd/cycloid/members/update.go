@@ -12,62 +12,55 @@ import (
 )
 
 func NewUpdateCommand() *cobra.Command {
-	var (
-		example = `
+	var cmd = &cobra.Command{
+		Use:   "update",
+		Args:  cobra.NoArgs,
+		Short: "Update a member",
+		Example: `
 	# Update a member within my-org organization
 	cy --org my-org members update --id 50 --role my-role
-	`
-		short = "Update a member"
-		long  = short
-	)
-
-	var cmd = &cobra.Command{
-		Use:     "update",
-		Args:    cobra.NoArgs,
-		Example: example,
-		Short:   short,
-		Long:    long,
-		RunE:    updateConfigRepository,
+`,
+		RunE: updateMember,
 	}
 
-	common.RequiredFlag(WithFlagID, cmd)
-	common.RequiredFlag(WithFlagRoleCanonical, cmd)
-
-	//TODO : dont Required flags and if not set, use value from the getConfigRepository
+	cmd.MarkFlagRequired(cyargs.AddMemberIDFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddMemberRoleFlag(cmd))
 
 	return cmd
 }
 
-func updateConfigRepository(cmd *cobra.Command, args []string) error {
+func updateMember(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
-
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return err
-	}
 
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	id, err := cyargs.GetMemberID(cmd)
 	if err != nil {
 		return err
 	}
 
-	role, err := cmd.Flags().GetString("role")
+	role, err := cyargs.GetMemberRole(cmd)
 	if err != nil {
 		return err
 	}
 
-	// fetch the printer from the factory
+	output, err := cyargs.GetOutput(cmd)
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
+
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
 	mb, _, err := m.UpdateMember(org, id, role)
-	return printer.SmartPrint(p, mb, err, "unable to update member", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to update member", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, mb, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

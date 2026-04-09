@@ -15,28 +15,27 @@ import (
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
-var (
-	apiKeyFlag     string
-	apiKeyNameFlag string
-)
-
-// NewcreateCommand returns the cobra command holding
+// NewCreateCommand returns the cobra command holding
 // the create API key subcommand
 func NewCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Args:  cobra.NoArgs,
-		Short: "create an API Key",
-		Example: `# Create and Admin API Key
-cy --org myOrg api-key create --canonical "admin-api-key" --owner "Admin" --rules '[{"action": "organization:**", "effect": "allow", "resources": []}]'`,
+		Short: "create an API key",
+		Example: `# Create an admin API key
+cy --org myOrg api-key create --canonical "admin-api-key" --owner "Admin" --rules '[{"action": "organization:**", "effect": "allow", "resources": []}]'
+
+# Recreate an existing API key with new rules
+cy --org myOrg api-key create --canonical "admin-api-key" --rules '[...]' --recreate`,
 		RunE: create,
 	}
 
-	apiKeyNameFlag = cyargs.AddAPIKeyNameFlag(cmd)
-	apiKeyFlag = cyargs.AddAPIKeyCanonicalFlag(cmd)
+	cyargs.AddAPIKeyNameFlag(cmd)
+	cyargs.AddAPIKeyCanonicalFlag(cmd)
 	cyargs.AddOwnerFlag(cmd)
 	cyargs.AddAPIKeyRulesFlag(cmd)
 	cyargs.AddDescriptionFlag(cmd)
+	cmd.Flags().Bool("recreate", false, "delete the API key if it already exists and create a new one with the provided settings")
 
 	return cmd
 }
@@ -51,11 +50,10 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var apiKey, apiKeyName string
-	apiKey, _ = cyargs.GetAPIKeyCanonical(cmd)
-	apiKeyName, _ = cyargs.GetAPIKeyName(cmd)
+	apiKey, _ := cyargs.GetAPIKeyCanonical(cmd)
+	apiKeyName, _ := cyargs.GetAPIKeyName(cmd)
 	if apiKey == "" && apiKeyName == "" {
-		return fmt.Errorf("missing either '--%s' or '--%s' flags", apiKeyFlag, apiKeyNameFlag)
+		return fmt.Errorf("missing either --canonical or --name flags")
 	}
 
 	if apiKey == "" {
@@ -64,6 +62,11 @@ func create(cmd *cobra.Command, args []string) error {
 
 	if apiKeyName == "" {
 		apiKeyName = apiKey
+	}
+
+	recreate, err := cmd.Flags().GetBool("recreate")
+	if err != nil {
+		return err
 	}
 
 	owner, err := cyargs.GetOwner(cmd)
@@ -92,16 +95,25 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to get output flag: %w", err)
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	key, _, err := m.CreateAPIKey(org, apiKey, description, owner, &apiKeyName, rulesModel)
-	if err != nil {
-		return fmt.Errorf("failed to request API Key: %w", err)
+	_, _, getErr := m.GetAPIKey(org, apiKey)
+	if getErr == nil {
+		if !recreate {
+			return fmt.Errorf("API key %q already exists; use --recreate to delete and recreate it", apiKey)
+		}
+		_, err := m.DeleteAPIKey(org, apiKey)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to delete existing API key before recreation", printer.Options{}, cmd.OutOrStderr())
+		}
 	}
 
+	key, _, err := m.CreateAPIKey(org, apiKey, description, owner, &apiKeyName, rulesModel)
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to create API key", printer.Options{}, cmd.OutOrStderr())
+	}
 	return printer.SmartPrint(p, key, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

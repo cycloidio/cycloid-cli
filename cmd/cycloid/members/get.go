@@ -12,25 +12,18 @@ import (
 )
 
 func NewGetCommand() *cobra.Command {
-	var (
-		example = `
+	var cmd = &cobra.Command{
+		Use:   "get",
+		Args:  cobra.NoArgs,
+		Short: "Get the organization member",
+		Example: `
 	# Get a member within my-org organization
 	cy --org my-org members get --id 50
-	`
-		short = "Get the organization member"
-		long  = short
-	)
-
-	var cmd = &cobra.Command{
-		Use:     "get",
-		Args:    cobra.NoArgs,
-		Example: example,
-		Short:   short,
-		Long:    long,
-		RunE:    getMember,
+`,
+		RunE: getMember,
 	}
 
-	common.RequiredFlag(WithFlagID, cmd)
+	cmd.MarkFlagRequired(cyargs.AddMemberIDFlag(cmd))
 
 	return cmd
 }
@@ -39,27 +32,29 @@ func getMember(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return err
-	}
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	id, err := cmd.Flags().GetUint32("id")
+	id, err := cyargs.GetMemberID(cmd)
 	if err != nil {
 		return err
 	}
 
-	// fetch the printer from the factory
+	output, err := cyargs.GetOutput(cmd)
+	if err != nil {
+		return errors.Wrap(err, "unable to get output flag")
+	}
+
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
 	mb, _, err := m.GetMember(org, id)
-	return printer.SmartPrint(p, mb, err, "unable to get members", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to get member", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, mb, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

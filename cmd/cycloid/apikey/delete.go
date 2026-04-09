@@ -17,17 +17,26 @@ import (
 // the delete API key subcommand
 func NewDeleteCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete",
-		Args:  cobra.NoArgs,
-		Short: "delete an API key",
+		Use:               "delete [canonical...]",
+		Aliases:           []string{"rm"},
+		Args:              cobra.MinimumNArgs(1),
+		ValidArgsFunction: cyargs.CompleteAPIKeyCanonical,
+		Short:             "delete an API key",
 		Example: `# delete the API key 'my-key' in the org my-org
-	cy api-key delete --org my-org --canonical my-key
-`,
+	cy --org my-org api-key delete my-key
+
+	# delete multiple API keys at once
+	cy --org my-org api-key delete key-one key-two
+
+	# delete using the deprecated --canonical flag
+	cy --org my-org api-key delete --canonical my-key`,
 		RunE: remove,
 	}
 
-	cyargs.AddAPIKeyCanonicalFlag(cmd)
-	cmd.MarkFlagRequired("canonical")
+	// Keep --canonical for backward compatibility
+	can := cyargs.AddAPIKeyCanonicalFlag(cmd)
+	_ = cmd.Flags().MarkDeprecated(can, "pass the canonical as a positional argument instead")
+
 	return cmd
 }
 
@@ -39,25 +48,35 @@ func remove(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to get org flag: %w", err)
 	}
 
+	// Support --canonical for backward compat; positional args take precedence
+	if len(args) == 0 {
+		can, err := cyargs.GetAPIKeyCanonical(cmd)
+		if err != nil {
+			return fmt.Errorf("unable to get canonical flag: %w", err)
+		}
+		args = []string{can}
+	}
+
 	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to get output flag: %w", err)
 	}
 
-	canonical, err := cyargs.GetAPIKeyCanonical(cmd)
-	if err != nil {
-		return fmt.Errorf("unable to get canonical flag: %w", err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	_, err = m.DeleteAPIKey(org, canonical)
-	return printer.SmartPrint(p, nil, err, "unable to delete API key", printer.Options{}, cmd.OutOrStderr())
+	deleted := make([]string, 0, len(args))
+	for _, canonical := range args {
+		_, err = m.DeleteAPIKey(org, canonical)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to delete API key "+canonical, printer.Options{}, cmd.OutOrStderr())
+		}
+		deleted = append(deleted, canonical)
+	}
+	return printer.SmartPrint(p, deleted, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
