@@ -81,5 +81,8 @@ func getCatalogRepository(cmd *cobra.Command, args []string) error {
 		}
 		results = append(results, cr)
 	}
+	if output == "table" {
+		p, _ = factory.GetPrinter("json")
+	}
 	return printer.SmartPrint(p, results, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

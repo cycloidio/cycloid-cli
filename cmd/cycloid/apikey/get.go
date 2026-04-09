@@ -87,5 +87,8 @@ func get(cmd *cobra.Command, args []string) error {
 		}
 		results = append(results, key)
 	}
+	if output == "table" {
+		p, _ = factory.GetPrinter("json")
+	}
 	return printer.SmartPrint(p, results, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
