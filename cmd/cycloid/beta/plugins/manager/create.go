@@ -23,7 +23,7 @@ func NewCreateCommand() *cobra.Command {
 	}
 
 	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
-	cmd.Flags().String("url", "", "URL of the plugin manager instance (required)")
+	cyargs.AddURLFlag(cmd, "URL of the plugin manager instance (required)")
 	cmd.MarkFlagRequired("url")
 	return cmd
 }
@@ -42,7 +42,7 @@ func createPluginManager(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	url, err := cmd.Flags().GetString("url")
+	url, err := cyargs.GetURL(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get --url flag")
 	}
