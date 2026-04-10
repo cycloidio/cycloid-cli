@@ -15,6 +15,20 @@ import (
 )
 
 // ---------------------------------------------------------------------------
+// URL flag (registry add, manager create, version publish)
+// ---------------------------------------------------------------------------
+
+// AddURLFlag registers a --url flag with the given usage description.
+func AddURLFlag(cmd *cobra.Command, usage string) {
+	cmd.Flags().String("url", "", usage)
+}
+
+// GetURL returns the value of the --url flag.
+func GetURL(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("url")
+}
+
+// ---------------------------------------------------------------------------
 // Plugin config flags (for install / upgrade)
 // ---------------------------------------------------------------------------
 
