@@ -54,6 +54,7 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 
 	tbl := libtable.New().
 		Border(lipgloss.HiddenBorder()).
+		BorderHeader(false).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			if row == libtable.HeaderRow {
 				return lipgloss.NewStyle().Bold(true)

@@ -12,7 +12,7 @@ import (
 )
 
 var projectTableOptions = printer.Options{
-	Columns:    []string{"Canonical", "Name", "Owner.Username"},
+	Columns:    []string{"Canonical", "Name", "Description", "Owner.Username"},
 	Identifier: "Canonical",
 }
 
