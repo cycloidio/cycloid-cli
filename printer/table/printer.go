@@ -52,9 +52,16 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 	termWidth := terminalWidth()
 	headers, rows = fitToWidth(headers, rows, opts.Identifier, termWidth, len(t.opts.Columns) > 0)
 
+	sepStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
 	tbl := libtable.New().
-		Border(lipgloss.HiddenBorder()).
-		BorderHeader(false).
+		Border(lipgloss.NormalBorder()).
+		BorderTop(false).
+		BorderBottom(false).
+		BorderLeft(false).
+		BorderRight(false).
+		BorderColumn(false).
+		BorderHeader(true).
+		BorderStyle(sepStyle).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			if row == libtable.HeaderRow {
 				return lipgloss.NewStyle().Bold(true)
