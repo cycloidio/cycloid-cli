@@ -1,34 +1,46 @@
 package components
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewDeleteComponentCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "delete -p project -e env -c component",
-		Args:  cobra.NoArgs,
+		Use:   "delete [canonical...]",
+		Args:  cyargs.RequireArgsOrFlag("component"),
 		Short: "Delete a component",
-		RunE:  deleteComponent,
+		Example: `
+	# delete a component using flags
+	cy --org my-org component delete -p my-proj -e my-env -c my-comp
+
+	# delete multiple components using positional args
+	cy --org my-org component delete -p my-proj -e my-env comp-a comp-b
+`,
+		RunE: deleteComponent,
 	}
-	cyargs.AddCyContext(cmd)
+	cyargs.AddProjectFlag(cmd)
+	cyargs.AddEnvFlag(cmd)
+	cyargs.AddComponentFlag(cmd)
 	return cmd
 }
 
 func deleteComponent(cmd *cobra.Command, args []string) error {
-	org, project, env, component, err := cyargs.GetCyContext(cmd)
+	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	project, err := cyargs.GetProject(cmd)
+	if err != nil {
+		return err
+	}
+
+	env, err := cyargs.GetEnv(cmd)
 	if err != nil {
 		return err
 	}
@@ -36,11 +48,22 @@ func deleteComponent(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
+	var components []string
+	if len(args) > 0 {
+		components = args
+	} else {
+		component, err := cyargs.GetComponent(cmd)
+		if err != nil {
+			return err
+		}
+		components = []string{component}
 	}
 
-	_, err = m.DeleteComponent(org, project, env, component)
-	return printer.SmartPrint(p, nil, err, "failed to delete component '"+component+"'", printer.Options{}, cmd.OutOrStdout())
+	for _, component := range components {
+		_, err = m.DeleteComponent(org, project, env, component)
+		if err != nil {
+			return cyout.Print(cmd, nil, err, "failed to delete component '"+component+"'")
+		}
+	}
+	return nil
 }

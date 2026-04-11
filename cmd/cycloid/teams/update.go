@@ -3,6 +3,8 @@ package teams
 import (
 	"fmt"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
@@ -10,7 +12,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/utils"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/spf13/cobra"
 )
 
 func NewUpdateTeamCommand() *cobra.Command {

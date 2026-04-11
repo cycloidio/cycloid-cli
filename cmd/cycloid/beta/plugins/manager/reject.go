@@ -1,8 +1,10 @@
 package manager
 
-import "github.com/spf13/cobra"
+import (
+	"github.com/spf13/cobra"
 
-import "github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+)
 
 func NewRejectCommand() *cobra.Command {
 	return &cobra.Command{
