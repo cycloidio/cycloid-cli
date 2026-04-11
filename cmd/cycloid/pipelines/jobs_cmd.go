@@ -23,6 +23,7 @@ cy pipeline job get --project my-project --env my-env --component my-component -
 		NewJobsListCommand(),
 		NewJobsPauseCommand(),
 		NewJobsUnpauseCommand(),
+		NewJobLogsCommand(),
 	)
 
 	return cmd

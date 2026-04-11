@@ -19,6 +19,7 @@ func NewBuildsCommand() *cobra.Command {
 		NewBuildCreateCommand(),
 		NewBuildListCommand(),
 		NewBuildGetCommand(),
+		NewBuildLogsCommand(),
 	)
 	return cmd
 }

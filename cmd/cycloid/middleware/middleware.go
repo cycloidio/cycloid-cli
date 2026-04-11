@@ -186,7 +186,7 @@ type Middleware interface {
 	// organization_plugins (installs)
 	ListPlugins(org string) ([]*models.PluginInstall, *http.Response, error)
 	GetPlugin(org string, id uint32) (*models.PluginInstall, *http.Response, error)
-	CreatePlugin(org string, config map[string]string) (*models.PluginInstall, *http.Response, error)
+	CreatePlugin(org string, versionID *uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
 	UpdatePlugin(org string, id, versionID uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
 	DeletePlugin(org string, id uint32) (*http.Response, error)
 	ListPluginLogs(org string, id uint32) (*models.PluginInstallLog, *http.Response, error)

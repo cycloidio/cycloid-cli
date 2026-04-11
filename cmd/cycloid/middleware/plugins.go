@@ -115,9 +115,18 @@ func (m *middleware) GetPlugin(org string, id uint32) (*models.PluginInstall, *h
 	return result, resp, nil
 }
 
-func (m *middleware) CreatePlugin(org string, config map[string]string) (*models.PluginInstall, *http.Response, error) {
-	body := &models.NewPluginInstall{
-		Configuration: config,
+// createPluginBody is a superset of models.NewPluginInstall that optionally
+// includes a version ID. The generated model is not used here so that we can
+// add fields without editing auto-generated code.
+type createPluginBody struct {
+	Configuration   map[string]string `json:"configuration"`
+	PluginVersionID *uint32           `json:"plugin_version_id,omitempty"`
+}
+
+func (m *middleware) CreatePlugin(org string, versionID *uint32, config map[string]string) (*models.PluginInstall, *http.Response, error) {
+	body := &createPluginBody{
+		Configuration:   config,
+		PluginVersionID: versionID,
 	}
 	var result *models.PluginInstall
 	resp, err := m.GenericRequest(Request{
@@ -329,8 +338,11 @@ func (m *middleware) GetPluginVersion(org string, registryID, pluginID, versionI
 }
 
 func (m *middleware) CreatePluginVersion(org string, registryID, pluginID uint32, url string) (*models.PluginVersion, *http.Response, error) {
-	u := strfmt.URI(url)
-	body := &models.NewPluginVersion{URL: &u}
+	// Use a plain struct instead of models.NewPluginVersion to avoid strfmt.URI
+	// coercion, which rejects Docker image references (scheme-less URIs).
+	body := struct {
+		URL string `json:"url"`
+	}{URL: url}
 	var result *models.PluginVersion
 	resp, err := m.GenericRequest(Request{
 		Method:       "POST",

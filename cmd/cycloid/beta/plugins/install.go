@@ -22,11 +22,15 @@ func NewInstallCommand() *cobra.Command {
 
   # Install a plugin from a JSON config file
   cy beta plugin install --config-file ./plugin-config.json
+
+  # Install a specific plugin version (pin for CI/CD)
+  cy beta plugin install --version-id 82 --config CY_API_KEY=secret
 `,
 		RunE: installPlugin,
 	}
 
 	cyargs.AddPluginConfigFlags(cmd)
+	cyargs.AddPluginVersionIDFlag(cmd)
 	return cmd
 }
 
@@ -37,6 +41,11 @@ func installPlugin(cmd *cobra.Command, args []string) error {
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
+	}
+
+	versionID, err := cyargs.GetPluginVersionID(cmd)
+	if err != nil {
+		return errors.Wrap(err, "unable to get --version-id flag")
 	}
 
 	config, err := cyargs.GetPluginConfig(cmd)
@@ -54,6 +63,6 @@ func installPlugin(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	result, _, err := m.CreatePlugin(org, config)
+	result, _, err := m.CreatePlugin(org, versionID, config)
 	return printer.SmartPrint(p, result, err, "unable to install plugin", printer.Options{}, cmd.OutOrStdout())
 }
