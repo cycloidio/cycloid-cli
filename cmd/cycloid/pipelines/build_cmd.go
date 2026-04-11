@@ -2,6 +2,8 @@ package pipelines
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/printer"
 )
 
 func NewBuildsCommand() *cobra.Command {
@@ -22,4 +24,9 @@ func NewBuildsCommand() *cobra.Command {
 		NewBuildLogsCommand(),
 	)
 	return cmd
+}
+
+var buildTableOptions = printer.Options{
+	Columns:    []string{"ID", "Name", "Status", "JobName", "StartTime"},
+	Identifier: "ID",
 }

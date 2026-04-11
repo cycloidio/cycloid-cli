@@ -1,15 +1,20 @@
 package environments
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
+
+var environmentTableOptions = printer.Options{
+	Columns:    []string{"Canonical", "Name"},
+	Identifier: "Canonical",
+}
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
@@ -21,6 +26,7 @@ func NewListCommand() *cobra.Command {
 	}
 
 	cyargs.AddProjectFlag(cmd)
+	cyout.RegisterModel(cmd, models.Environment{})
 	return cmd
 }
 
@@ -30,7 +36,7 @@ func list(cmd *cobra.Command, args []string) error {
 
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
-		return errors.Wrap(err, "unable to get org")
+		return err
 	}
 
 	project, err := cyargs.GetProject(cmd)
@@ -38,17 +44,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return err
-	}
-
 	environments, _, err := m.ListProjectsEnv(org, project)
-	return printer.SmartPrint(p, environments, err, "unable to list environments", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, environments, err, "unable to list environments", environmentTableOptions)
 }

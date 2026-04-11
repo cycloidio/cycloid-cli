@@ -1,14 +1,13 @@
 package environments
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewGetCommand() *cobra.Command {
@@ -25,6 +24,7 @@ func NewGetCommand() *cobra.Command {
 
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
+	cyout.RegisterModel(cmd, models.Environment{})
 	return cmd
 }
 
@@ -47,17 +47,6 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	proj, _, err := m.GetEnv(org, project, env)
-	return printer.SmartPrint(p, proj, err, "unable to get environment", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, proj, err, "unable to get environment", environmentTableOptions)
 }

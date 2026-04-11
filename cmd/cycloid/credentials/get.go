@@ -11,9 +11,15 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
+
+// credentialGetTableOptions excludes the Raw field (sensitive) but shows Keys.
+var credentialGetTableOptions = printer.Options{
+	Columns:    []string{"Canonical", "Name", "Type", "Path", "Keys"},
+	Identifier: "Canonical",
+}
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
@@ -30,6 +36,7 @@ func NewGetCommand() *cobra.Command {
 
 	cyargs.AddCredentialCanonicalFlag(cmd)
 	cyargs.AddCredentialPathFlag(cmd)
+	cyout.RegisterModel(cmd, models.Credential{})
 	return cmd
 }
 
@@ -72,21 +79,6 @@ func get(cmd *cobra.Command, args []string) error {
 		return errors.New("please fill --canonical or --path flags or as argument")
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	c, _, err := m.GetCredential(org, credential)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to get credential from API", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, c, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, c, err, "unable to get credential from API", credentialGetTableOptions)
 }

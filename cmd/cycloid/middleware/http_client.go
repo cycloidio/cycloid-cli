@@ -39,7 +39,7 @@ type Request struct {
 	Query        any      // url.Values or struct with `url` tags
 	Headers      map[string]string
 	Accept       *string // overrides default Accept header
-	Body         any     // JSON-marshalled when non-nil
+	Body         any     // JSON-marshaled when non-nil
 }
 
 // APIResponseError is returned when the API returns a non-2xx response.
