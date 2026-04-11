@@ -234,7 +234,11 @@ func fromTransformMap(m map[string]string, colNames []string) ([]string, []strin
 
 // headersFromStruct extracts exported, displayable field names via reflection.
 // Skips pointer-to-struct (nested objects) and unexported fields.
+// Returns nil for non-struct values (strings, ints, etc.).
 func headersFromStruct(v reflect.Value) []string {
+	if v.Kind() != reflect.Struct {
+		return nil
+	}
 	headers := make([]string, 0)
 	for i := 0; i < v.NumField(); i++ {
 		f := v.Type().Field(i)

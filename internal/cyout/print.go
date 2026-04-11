@@ -28,7 +28,7 @@ func PrintWithOptions(cmd *cobra.Command, obj interface{}, err error, errMsg str
 		return perr
 	}
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, errMsg, opts, cmd.OutOrStderr())
+		return printer.SmartPrint(p, nil, err, errMsg, opts, cmd.ErrOrStderr())
 	}
 	return printer.SmartPrint(p, obj, nil, "", opts, cmd.OutOrStdout())
 }
