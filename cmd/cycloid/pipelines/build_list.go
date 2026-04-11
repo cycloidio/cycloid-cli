@@ -3,14 +3,13 @@ package pipelines
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewBuildListCommand() *cobra.Command {
@@ -25,6 +24,7 @@ func NewBuildListCommand() *cobra.Command {
 	cyargs.AddCyContext(cmd)
 	cyargs.AddPipeline(cmd)
 	cmd.MarkFlagRequired(cyargs.AddPipelineJob(cmd))
+	cyout.RegisterModel(cmd, models.Build{})
 	return cmd
 }
 
@@ -46,25 +46,8 @@ func listBuilds(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	builds, _, err := m.GetBuilds(org, project, env, component, pipeline, job)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err,
-			fmt.Sprintf("failed to get builds of pipeline '%s', in project '%s', in env '%s', in component '%s'.",
-				pipeline, project, env, component),
-			printer.Options{}, cmd.OutOrStderr(),
-		)
-	}
-
-	return printer.SmartPrint(p, builds, nil, "", printer.Options{}, cmd.OutOrStdout())
+	errMsg := fmt.Sprintf("failed to get builds of pipeline '%s', in project '%s', in env '%s', in component '%s'",
+		pipeline, project, env, component)
+	return cyout.PrintWithOptions(cmd, builds, err, errMsg, buildTableOptions)
 }

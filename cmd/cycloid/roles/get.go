@@ -1,13 +1,13 @@
 package roles
 
 import (
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewGetCommand() *cobra.Command {
@@ -36,6 +36,7 @@ func NewGetCommand() *cobra.Command {
 	cmd.Flags().String("canonical", "", "the role canonical")
 	cmd.Flags().MarkHidden("canonical")
 
+	cyout.RegisterModel(cmd, models.Role{})
 	return cmd
 }
 
@@ -58,21 +59,6 @@ func getRole(cmd *cobra.Command, args []string) error {
 		role = args[0]
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	mb, _, err := m.GetRole(org, role)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to get role", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, mb, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, mb, err, "unable to get role", roleTableOptions)
 }

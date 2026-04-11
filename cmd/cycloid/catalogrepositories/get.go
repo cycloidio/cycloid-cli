@@ -1,14 +1,13 @@
 package catalogrepositories
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewGetCommand() *cobra.Command {
@@ -33,6 +32,7 @@ func NewGetCommand() *cobra.Command {
 	// Keep --canonical for backward compatibility
 	can := cyargs.AddCatalogRepoCanonicalFlag(cmd)
 	_ = cmd.Flags().MarkHidden(can)
+	cyout.RegisterModel(cmd, models.ServiceCatalogSource{})
 
 	return cmd
 }
@@ -55,34 +55,18 @@ func getCatalogRepository(cmd *cobra.Command, args []string) error {
 		args = []string{can}
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	if len(args) == 1 {
 		cr, _, err := m.GetCatalogRepository(org, args[0])
-		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to get catalog repository", printer.Options{}, cmd.OutOrStderr())
-		}
-		return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
+		return cyout.PrintWithOptions(cmd, cr, err, "unable to get catalog repository", catalogSourceTableOptions)
 	}
 
-	results := make([]interface{}, 0, len(args))
+	results := make([]*models.ServiceCatalogSource, 0, len(args))
 	for _, can := range args {
 		cr, _, err := m.GetCatalogRepository(org, can)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to get catalog repository "+can, printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to get catalog repository "+can, catalogSourceTableOptions)
 		}
 		results = append(results, cr)
 	}
-	if output == "table" {
-		p, _ = factory.GetPrinter("json")
-	}
-	return printer.SmartPrint(p, results, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, results, nil, "", catalogSourceTableOptions)
 }

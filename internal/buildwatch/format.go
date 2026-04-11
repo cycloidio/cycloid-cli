@@ -222,10 +222,10 @@ func paintLogLines(source, payload string, t StreamTheme) string {
 			continue
 		}
 		if t.Reset == "" {
-			b.WriteString(fmt.Sprintf("[%s] %s\n", label, line))
+			fmt.Fprintf(&b, "[%s] %s\n", label, line)
 			continue
 		}
-		b.WriteString(fmt.Sprintf("%s[%s]%s %s\n", prefixColor, label, t.Reset, line))
+		fmt.Fprintf(&b, "%s[%s]%s %s\n", prefixColor, label, t.Reset, line)
 	}
 	if b.Len() == 0 {
 		return ""

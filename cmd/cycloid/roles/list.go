@@ -1,14 +1,20 @@
 package roles
 
 import (
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
+
+var roleTableOptions = printer.Options{
+	Columns:    []string{"Canonical", "Name", "Description", "Default"},
+	Identifier: "Canonical",
+}
 
 func NewListCommand() *cobra.Command {
 	var (
@@ -25,7 +31,7 @@ func NewListCommand() *cobra.Command {
 		Long:    long,
 		RunE:    listRoles,
 	}
-
+	cyout.RegisterModel(cmd, models.Role{})
 	return cmd
 }
 
@@ -33,25 +39,11 @@ func listRoles(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	roles, _, err := m.ListRoles(org)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to list roles", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, roles, nil, "unable to list roles", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, roles, err, "unable to list roles", roleTableOptions)
 }
