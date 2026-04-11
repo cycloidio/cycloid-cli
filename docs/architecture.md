@@ -164,6 +164,8 @@ The `--output` flag (default: `table`) controls how results are rendered. It is 
 | `jq=<expr>` | Run jq expression over full JSON; strings printed raw, objects as pretty JSON |
 | `<field>` | Extract named field, one value per line (case-insensitive, dot notation OK) |
 
+`--jq <expr>` is a shorthand flag for `-o jq=<expr>` and resolves identically.
+
 ### Field extraction examples
 
 ```sh
