@@ -25,7 +25,7 @@ func NewUpgradeCommand() *cobra.Command {
 		RunE: upgradePlugin,
 	}
 
-	cmd.Flags().Uint32("version-id", 0, "ID of the target plugin version (required)")
+	cyargs.AddPluginVersionIDFlag(cmd)
 	cmd.MarkFlagRequired("version-id")
 	cyargs.AddPluginConfigFlags(cmd)
 	return cmd

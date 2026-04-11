@@ -29,6 +29,42 @@ func GetURL(cmd *cobra.Command) (string, error) {
 }
 
 // ---------------------------------------------------------------------------
+// Plugin version ID flag (for install / upgrade)
+// ---------------------------------------------------------------------------
+
+// AddPluginVersionIDFlag registers an optional --version-id uint32 flag.
+func AddPluginVersionIDFlag(cmd *cobra.Command) {
+	cmd.Flags().Uint32("version-id", 0, "ID of the target plugin version")
+}
+
+// GetPluginVersionID reads the --version-id flag.
+// Returns nil if the flag was not set (zero value means unset).
+func GetPluginVersionID(cmd *cobra.Command) (*uint32, error) {
+	v, err := cmd.Flags().GetUint32("version-id")
+	if err != nil {
+		return nil, err
+	}
+	if v == 0 {
+		return nil, nil
+	}
+	return &v, nil
+}
+
+// ---------------------------------------------------------------------------
+// Docker image flag (for version publish)
+// ---------------------------------------------------------------------------
+
+// AddDockerImageFlag registers a --docker-image string flag.
+func AddDockerImageFlag(cmd *cobra.Command) {
+	cmd.Flags().String("docker-image", "", "Docker image reference for the plugin version (e.g. registry:5000/org/plugin:tag)")
+}
+
+// GetDockerImage returns the value of the --docker-image flag.
+func GetDockerImage(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("docker-image")
+}
+
+// ---------------------------------------------------------------------------
 // Plugin config flags (for install / upgrade)
 // ---------------------------------------------------------------------------
 

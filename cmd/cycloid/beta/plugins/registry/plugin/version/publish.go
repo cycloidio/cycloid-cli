@@ -18,13 +18,17 @@ func NewPublishCommand() *cobra.Command {
 		ValidArgsFunction: cyargs.CompleteRegistryPluginID,
 		Short:             "[beta] Publish a new version of a plugin",
 		Example: `
+  # Publish an archive-based plugin version
   cy beta plugin registry plugin version publish my-registry my-plugin --url https://example.com/plugin-v1.2.tar.gz
+
+  # Publish a Docker image-based plugin version
+  cy beta plugin registry plugin version publish my-registry my-plugin --docker-image docker-registry:5000/org/plugin:42
 `,
 		RunE: publishVersion,
 	}
 
-	cyargs.AddURLFlag(cmd, "URL of the plugin version archive (required)")
-	cmd.MarkFlagRequired("url")
+	cyargs.AddURLFlag(cmd, "URL of the plugin version archive (mutually exclusive with --docker-image)")
+	cyargs.AddDockerImageFlag(cmd)
 	return cmd
 }
 
@@ -47,6 +51,23 @@ func publishVersion(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get --url flag")
 	}
 
+	dockerImage, err := cyargs.GetDockerImage(cmd)
+	if err != nil {
+		return errors.Wrap(err, "unable to get --docker-image flag")
+	}
+
+	if url == "" && dockerImage == "" {
+		return errors.New("one of --url or --docker-image is required")
+	}
+	if url != "" && dockerImage != "" {
+		return errors.New("--url and --docker-image are mutually exclusive")
+	}
+
+	versionURL := url
+	if dockerImage != "" {
+		versionURL = dockerImage
+	}
+
 	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
@@ -57,6 +78,6 @@ func publishVersion(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	result, _, err := m.CreatePluginVersion(org, registryID, pluginID, url)
+	result, _, err := m.CreatePluginVersion(org, registryID, pluginID, versionURL)
 	return printer.SmartPrint(p, result, err, "unable to publish plugin version", printer.Options{}, cmd.OutOrStdout())
 }
