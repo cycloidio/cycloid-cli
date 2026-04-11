@@ -64,9 +64,9 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 		BorderStyle(sepStyle).
 		StyleFunc(func(row, col int) lipgloss.Style {
 			if row == libtable.HeaderRow {
-				return lipgloss.NewStyle().Bold(true)
+				return lipgloss.NewStyle().Bold(true).Padding(0, 2, 0, 0)
 			}
-			return lipgloss.NewStyle()
+			return lipgloss.NewStyle().Padding(0, 2, 0, 0)
 		})
 
 	if !t.opts.NoHeader {
