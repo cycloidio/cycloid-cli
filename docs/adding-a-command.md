@@ -128,9 +128,14 @@ import (
     "github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
     "github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
     "github.com/cycloidio/cycloid-cli/internal/cyargs"
+    "github.com/cycloidio/cycloid-cli/internal/cyout"
     "github.com/cycloidio/cycloid-cli/printer"
-    "github.com/cycloidio/cycloid-cli/printer/factory"
 )
+
+var widgetTableOptions = printer.Options{
+    Columns:    []string{"Canonical", "Name", "Description"},
+    Identifier: "Canonical",
+}
 
 func NewGetWidget() *cobra.Command {
     cmd := &cobra.Command{
@@ -147,6 +152,7 @@ cy --org my-org widgets get --widget my-widget
     }
     cyargs.AddOrgFlag(cmd)
     cyargs.AddWidgetFlag(cmd)
+    cyout.RegisterModel(cmd, models.Widget{})
     return cmd
 }
 
@@ -162,11 +168,6 @@ func getWidget(cmd *cobra.Command, args []string) error {
         return err
     }
 
-    output, err := cyargs.GetOutput(cmd)
-    if err != nil {
-        return err
-    }
-
     identifiers := append([]string{}, args...)
     if widget != "" {
         identifiers = append(identifiers, widget)
@@ -175,34 +176,25 @@ func getWidget(cmd *cobra.Command, args []string) error {
         return errors.New("provide at least one widget identifier (arg or --widget)")
     }
 
-    // Step 2: build printer
-    p, err := factory.GetPrinter(output)
-    if err != nil {
-        return err
-    }
-
-    // Step 3: build API + middleware
+    // Step 2: build API + middleware
     api := common.NewAPI()
     m := middleware.NewMiddleware(api)
 
-    // Step 4: call middleware
+    // Step 3: call middleware + print
     if len(identifiers) == 1 {
         result, _, err := m.GetWidget(org, identifiers[0])
-        if err != nil {
-            return printer.SmartPrint(p, nil, err, "unable to get widget", printer.Options{}, cmd.OutOrStderr())
-        }
-        return printer.SmartPrint(p, result, nil, "", printer.Options{}, cmd.OutOrStdout())
+        return cyout.PrintWithOptions(cmd, result, err, "unable to get widget", widgetTableOptions)
     }
 
-    result := make([]*models.Widget, 0, len(identifiers))
-    for _, identifier := range identifiers {
-        widget, _, err := m.GetWidget(org, identifier)
+    results := make([]*models.Widget, 0, len(identifiers))
+    for _, id := range identifiers {
+        w, _, err := m.GetWidget(org, id)
         if err != nil {
-            return printer.SmartPrint(p, nil, err, fmt.Sprintf("unable to get widget %q", identifier), printer.Options{}, cmd.OutOrStderr())
+            return cyout.PrintWithOptions(cmd, nil, err, fmt.Sprintf("unable to get widget %q", id), widgetTableOptions)
         }
-        result = append(result, widget)
+        results = append(results, w)
     }
-    return printer.SmartPrint(p, result, nil, "", printer.Options{}, cmd.OutOrStdout())
+    return cyout.PrintWithOptions(cmd, results, nil, "", widgetTableOptions)
 }
 ```
 
