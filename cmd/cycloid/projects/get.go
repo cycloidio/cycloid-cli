@@ -13,12 +13,15 @@ import (
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:               "get [canonical...]",
-		Args:              cobra.MaximumNArgs(1),
+		Args:              cyargs.RequireArgsOrFlag("project"),
 		ValidArgsFunction: cyargs.CompleteProject,
 		Short:             "get a project",
 		Example: `
 	# get a project by canonical
 	cy --org my-org project get my-project
+
+	# get multiple projects
+	cy --org my-org project get proj-a proj-b
 
 	# get a project using the --project flag or CY_PROJECT env var
 	cy --org my-org project get --project my-project -o yaml
@@ -38,6 +41,19 @@ func get(cmd *cobra.Command, args []string) error {
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
+	}
+
+	// Multi-arg: fetch each canonical and return as a slice
+	if len(args) > 1 {
+		results := make([]*models.Project, 0, len(args))
+		for _, canonical := range args {
+			proj, _, err := m.GetProject(org, canonical)
+			if err != nil {
+				return cyout.PrintWithOptions(cmd, nil, err, "unable to get project "+canonical, projectTableOptions)
+			}
+			results = append(results, proj)
+		}
+		return cyout.PrintWithOptions(cmd, results, nil, "", projectTableOptions)
 	}
 
 	var project string

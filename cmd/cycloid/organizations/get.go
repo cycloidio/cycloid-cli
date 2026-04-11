@@ -1,28 +1,37 @@
 package organizations
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
+
+var orgTableOptions = printer.Options{
+	Columns:    []string{"Canonical", "Name"},
+	Identifier: "Canonical",
+}
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
-		Args:  cobra.NoArgs,
+		Use:   "get [canonical...]",
+		Args:  cobra.ArbitraryArgs,
 		Short: "get an organization",
 		Example: `
-	# get an organization by its canonical
+	# get the organization set via --org flag
 	cy organization get --org my-org -o yaml
+
+	# get multiple organizations by canonical
+	cy organization get my-org-a my-org-b
 `,
 		RunE: get,
 	}
 
+	cyout.RegisterModel(cmd, models.Organization{})
 	return cmd
 }
 
@@ -30,21 +39,30 @@ func get(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cyargs.GetOrg(cmd)
-	if err != nil {
-		return err
-	}
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+	// Multi-arg
+	if len(args) > 1 {
+		results := make([]*models.Organization, 0, len(args))
+		for _, canonical := range args {
+			o, _, err := m.GetOrganization(canonical)
+			if err != nil {
+				return cyout.PrintWithOptions(cmd, nil, err, "unable to get organization "+canonical, orgTableOptions)
+			}
+			results = append(results, o)
+		}
+		return cyout.PrintWithOptions(cmd, results, nil, "", orgTableOptions)
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
+	var org string
+	if len(args) == 1 {
+		org = args[0]
+	} else {
+		var err error
+		org, err = cyargs.GetOrg(cmd)
+		if err != nil {
+			return err
+		}
 	}
 
 	o, _, err := m.GetOrganization(org)
-	return printer.SmartPrint(p, o, err, "unable to get organization", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, o, err, "unable to get organization", orgTableOptions)
 }

@@ -12,16 +12,20 @@ import (
 
 func NewGetCommand() *cobra.Command {
 	var (
-		example = `cy --org my-org roles get my-role`
-		short   = "Get a role specification."
-		long    = short
+		example = `
+	# get a single role
+	cy --org my-org roles get my-role
+
+	# get multiple roles
+	cy --org my-org roles get role-a role-b
+`
+		short = "Get a role specification."
+		long  = short
 	)
 
 	var cmd = &cobra.Command{
-		Use: "get",
-		Args: cobra.MatchAll(
-			cobra.MaximumNArgs(1),
-		),
+		Use:               "get [canonical...]",
+		Args:              cyargs.RequireArgsOrFlag("role"),
 		Example:           example,
 		Short:             short,
 		Long:              long,
@@ -54,11 +58,26 @@ func getRole(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// flag has precedence
-	if role == "" && len(args) == 1 {
-		role = args[0]
+	// Flag has precedence → single get
+	if role != "" {
+		mb, _, err := m.GetRole(org, role)
+		return cyout.PrintWithOptions(cmd, mb, err, "unable to get role", roleTableOptions)
 	}
 
-	mb, _, err := m.GetRole(org, role)
+	// Multi-arg
+	if len(args) > 1 {
+		results := make([]*models.Role, 0, len(args))
+		for _, canonical := range args {
+			mb, _, err := m.GetRole(org, canonical)
+			if err != nil {
+				return cyout.PrintWithOptions(cmd, nil, err, "unable to get role "+canonical, roleTableOptions)
+			}
+			results = append(results, mb)
+		}
+		return cyout.PrintWithOptions(cmd, results, nil, "", roleTableOptions)
+	}
+
+	// Single positional arg
+	mb, _, err := m.GetRole(org, args[0])
 	return cyout.PrintWithOptions(cmd, mb, err, "unable to get role", roleTableOptions)
 }

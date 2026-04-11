@@ -12,12 +12,15 @@ import (
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
-		Args:  cobra.NoArgs,
-		Short: "get a environment",
+		Use:   "get [canonical...]",
+		Args:  cyargs.RequireArgsOrFlag("env"),
+		Short: "get an environment",
 		Example: `
-	# get a environment in YAML format
-	cy --org my-org environment get --environment my-environment -o yaml
+	# get an environment using the --env flag
+	cy --org my-org environment get --project my-proj --env my-env -o yaml
+
+	# get multiple environments using positional args
+	cy --org my-org environment get --project my-proj env-a env-b
 `,
 		RunE: get,
 	}
@@ -42,11 +45,29 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	env, err := cyargs.GetEnv(cmd)
-	if err != nil {
-		return err
+	// Multi-arg
+	if len(args) > 1 {
+		results := make([]*models.Environment, 0, len(args))
+		for _, env := range args {
+			e, _, err := m.GetEnv(org, project, env)
+			if err != nil {
+				return cyout.PrintWithOptions(cmd, nil, err, "unable to get environment "+env, environmentTableOptions)
+			}
+			results = append(results, e)
+		}
+		return cyout.PrintWithOptions(cmd, results, nil, "", environmentTableOptions)
 	}
 
-	proj, _, err := m.GetEnv(org, project, env)
-	return cyout.PrintWithOptions(cmd, proj, err, "unable to get environment", environmentTableOptions)
+	var env string
+	if len(args) == 1 {
+		env = args[0]
+	} else {
+		env, err = cyargs.GetEnv(cmd)
+		if err != nil {
+			return err
+		}
+	}
+
+	e, _, err := m.GetEnv(org, project, env)
+	return cyout.PrintWithOptions(cmd, e, err, "unable to get environment", environmentTableOptions)
 }

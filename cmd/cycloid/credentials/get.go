@@ -23,15 +23,21 @@ var credentialGetTableOptions = printer.Options{
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use: "get [credential]",
-		Args: cobra.MatchAll(
-			cobra.OnlyValidArgs,
-			cobra.RangeArgs(0, 1),
-		),
+		Use:               "get [canonical...]",
+		Args:              cobra.ArbitraryArgs,
 		ValidArgsFunction: cyargs.CompleteCredentialCanonical,
 		Short:             "get a credential",
-		Example:           `cy --org my-org credential get credential-canonical`,
-		RunE:              get,
+		Example: `
+	# get a credential by canonical
+	cy --org my-org credential get credential-canonical
+
+	# get multiple credentials
+	cy --org my-org credential get cred-a cred-b
+
+	# get a credential by path
+	cy --org my-org credential get --path /my/secret/path
+`,
+		RunE: get,
 	}
 
 	cyargs.AddCredentialCanonicalFlag(cmd)
@@ -49,13 +55,27 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var credential string
 	credentialFlag, _ := cyargs.GetCredentialCanonical(cmd)
 	credentialPath, _ := cyargs.GetCredentialPath(cmd)
-	// Fill credential with precedence Canflag > PathFlag > Args
+
+	// Multi-arg mode: multiple positional args, no flags
+	if len(args) > 1 && credentialFlag == "" && credentialPath == "" {
+		results := make([]*models.Credential, 0, len(args))
+		for _, canonical := range args {
+			c, _, err := m.GetCredential(org, canonical)
+			if err != nil {
+				return cyout.PrintWithOptions(cmd, nil, err, "unable to get credential "+canonical, credentialGetTableOptions)
+			}
+			results = append(results, c)
+		}
+		return cyout.PrintWithOptions(cmd, results, nil, "", credentialGetTableOptions)
+	}
+
+	// Single credential: flag > path > positional arg
+	var credential string
 	if credentialFlag != "" {
 		credential = credentialFlag
-	} else if credentialPath != "" && credentialFlag == "" {
+	} else if credentialPath != "" {
 		credList, _, err := m.ListCredentials(org, "")
 		if err != nil {
 			return fmt.Errorf("failed to fetch cred list to match credential by path %q: %w", credentialPath, err)
@@ -64,16 +84,15 @@ func get(cmd *cobra.Command, args []string) error {
 		index := slices.IndexFunc(credList, func(c *models.CredentialSimple) bool {
 			if c.Path != nil {
 				return *c.Path == credentialPath
-			} else {
-				return false
 			}
+			return false
 		})
 		if index == -1 || credList[index].Canonical == nil {
 			return fmt.Errorf("credential with path %q not found in org %q", credentialPath, org)
 		}
 
 		credential = *credList[index].Canonical
-	} else if credentialFlag == "" && credentialPath == "" && len(args) == 1 {
+	} else if len(args) == 1 {
 		credential = args[0]
 	} else {
 		return errors.New("please fill --canonical or --path flags or as argument")

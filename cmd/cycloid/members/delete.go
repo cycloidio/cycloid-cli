@@ -2,31 +2,33 @@ package members
 
 import (
 	"fmt"
+	"strconv"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "delete",
+		Use:     "delete [id...]",
 		Aliases: []string{"rm"},
-		Args:    cobra.NoArgs,
+		Args:    cyargs.RequireArgsOrFlag("id"),
 		Short:   "Remove a user from the organization",
 		Example: `
-	# Remove a member from my-org organization
+	# Remove a member from my-org organization using the --id flag
 	cy --org my-org members delete --id 50
+
+	# Remove multiple members using positional args
+	cy --org my-org members delete 50 51 52
 `,
 		RunE: deleteMember,
 	}
 
-	cmd.MarkFlagRequired(cyargs.AddMemberIDFlag(cmd))
+	cyargs.AddMemberIDFlag(cmd)
 
 	return cmd
 }
@@ -40,27 +42,24 @@ func deleteMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	id, err := cyargs.GetMemberID(cmd)
-	if err != nil {
-		return err
+	// Flag takes precedence → single delete
+	flagID, _ := cyargs.GetMemberID(cmd)
+	if flagID != 0 {
+		_, err = m.DeleteMember(org, flagID)
+		return cyout.Print(cmd, nil, err, "unable to remove member")
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+	// Positional args: parse each as uint32 ID
+	for _, arg := range args {
+		id64, parseErr := strconv.ParseUint(arg, 10, 32)
+		if parseErr != nil {
+			return fmt.Errorf("invalid member ID %q: %w", arg, parseErr)
+		}
+		id := uint32(id64)
+		_, err = m.DeleteMember(org, id)
+		if err != nil {
+			return cyout.Print(cmd, nil, err, fmt.Sprintf("unable to remove member %d", id))
+		}
 	}
-
-	if output == "table" {
-		output = "json"
-	}
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
-	_, err = m.DeleteMember(org, id)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to remove member", printer.Options{}, cmd.OutOrStderr())
-	}
-	return printer.SmartPrint(p, []string{fmt.Sprintf("%d", id)}, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return nil
 }

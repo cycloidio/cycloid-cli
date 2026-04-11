@@ -7,11 +7,12 @@ import (
 	"os"
 	"strings"
 
+	"github.com/spf13/cobra"
+	"go.yaml.in/yaml/v4"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
-	"go.yaml.in/yaml/v4"
 )
 
 func AddOrgNameFlag(cmd *cobra.Command) string {
