@@ -1,14 +1,13 @@
 package members
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewListInvitesCommand() *cobra.Command {
@@ -37,22 +36,11 @@ func listInvites(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return err
-	}
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	mbs, _, err := m.ListInvites(org)
-	return printer.SmartPrint(p, mbs, err, "unable to list invites", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, mbs, err, "unable to list invites", printer.Options{})
 }

@@ -3,14 +3,13 @@ package apikey
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // NewDeleteCommand returns the cobra command holding
@@ -57,29 +56,16 @@ func remove(cmd *cobra.Command, args []string) error {
 		args = []string{can}
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return fmt.Errorf("unable to get output flag: %w", err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
-
-	if output == "table" {
-		output = "json"
-	}
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
 
 	deleted := make([]string, 0, len(args))
 	for _, canonical := range args {
 		_, err = m.DeleteAPIKey(org, canonical)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to delete API key "+canonical, printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to delete API key "+canonical, printer.Options{})
 		}
 		deleted = append(deleted, canonical)
 	}
-	return printer.SmartPrint(p, deleted, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{})
 }

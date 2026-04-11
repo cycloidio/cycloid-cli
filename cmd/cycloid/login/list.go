@@ -1,14 +1,11 @@
 package login
 
 import (
-	"os"
-
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/config"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // NewListCommand returns the cobra command holding
@@ -22,17 +19,11 @@ func NewListCommand() *cobra.Command {
 	# list the organizations where the user is logged in
 	cy login list
 `,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			output, err := cmd.Flags().GetString("output")
-			if err != nil {
-				return errors.Wrap(err, "unable to get output flag")
-			}
-			return list(output)
-		},
+		RunE: listLogins,
 	}
 }
 
-func list(output string) error {
+func listLogins(cmd *cobra.Command, args []string) error {
 	// fetch any existing config
 	// we skip the error in case it's the first usage and the config
 	// file does not exist
@@ -57,13 +48,5 @@ func list(output string) error {
 		})
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
-	// print the result on the standard output
-	err = p.Print(orgs, printer.Options{}, os.Stdout)
-	return printer.SmartPrint(p, nil, err, "", printer.Options{}, os.Stdout)
+	return cyout.PrintWithOptions(cmd, orgs, nil, "", printer.Options{})
 }

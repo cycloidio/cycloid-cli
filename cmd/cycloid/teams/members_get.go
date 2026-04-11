@@ -11,9 +11,9 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewTeamMemberGetCommand() *cobra.Command {
@@ -40,23 +40,13 @@ func getTeamMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return fmt.Errorf("failed to get printer for output type %q: %w", output, err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	var outMembers = make([]*models.MemberTeam, len(args))
 	currentMembers, _, err := m.ListTeamMembers(org, team)
 	if err != nil {
-		return printer.SmartPrint(p, nil, fmt.Errorf("failed to list members of team %q: %w", team, err), "", printer.Options{}, cmd.OutOrStderr())
+		return cyout.PrintWithOptions(cmd, nil, fmt.Errorf("failed to list members of team %q: %w", team, err), "", printer.Options{})
 	}
 
 	for i, memberArg := range args {
@@ -74,8 +64,7 @@ func getTeamMember(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(args) == 1 {
-		return printer.SmartPrint(p, outMembers[0], nil, "", printer.Options{}, cmd.OutOrStdout())
-	} else {
-		return printer.SmartPrint(p, outMembers, nil, "", printer.Options{}, cmd.OutOrStdout())
+		return cyout.PrintWithOptions(cmd, outMembers[0], nil, "", printer.Options{})
 	}
+	return cyout.PrintWithOptions(cmd, outMembers, nil, "", printer.Options{})
 }

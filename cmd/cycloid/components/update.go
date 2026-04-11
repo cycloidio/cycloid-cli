@@ -8,9 +8,9 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewUpdateComponentCommand() *cobra.Command {
@@ -70,22 +70,12 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	currentComponent, _, err := m.GetComponent(org, project, env, component)
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current component", printer.Options{}, cmd.OutOrStderr())
+		return cyout.PrintWithOptions(cmd, nil, err, "failed to update component '"+component+"', cannot get current component", printer.Options{})
 	}
 
 	if stackRef == "" {
@@ -128,7 +118,7 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 	if currentComponent.UseCase != nil {
 		currentConfig, _, err = m.GetComponentConfig(org, project, env, component)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{})
 		}
 	}
 
@@ -139,9 +129,5 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 
 	// CreateComponent will reconfigure the component if it already exists
 	updatedComponent, _, err := m.CreateOrUpdateComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, updatedComponent, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, updatedComponent, err, "failed to configure component '"+component+"'", printer.Options{})
 }

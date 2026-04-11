@@ -8,10 +8,10 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/cycloidio/cycloid-cli/internal/utils"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewUpdateTeamCommand() *cobra.Command {
@@ -57,16 +57,6 @@ func updateTeam(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return fmt.Errorf("failed to get printer for output type %q: %w", output, err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -84,9 +74,5 @@ func updateTeam(cmd *cobra.Command, args []string) error {
 		org, ptr.Ptr(utils.CoalesceNonZero(teamName, ptr.Value(currentTeam.Name))),
 		currentTeam.Canonical, ptr.Ptr(utils.CoalesceNonZero(teamOwner, ptr.Value(ptr.Value(currentTeam.Owner).Username))), roles,
 	)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to UpdateTeam", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, newTeam, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, newTeam, err, "failed to UpdateTeam", printer.Options{})
 }

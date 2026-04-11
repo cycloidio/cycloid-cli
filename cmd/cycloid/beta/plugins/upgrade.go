@@ -7,8 +7,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewUpgradeCommand() *cobra.Command {
@@ -55,16 +55,6 @@ func upgradePlugin(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get plugin configuration")
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	result, _, err := m.UpdatePlugin(org, id, versionID, config)
-	return printer.SmartPrint(p, result, err, "unable to upgrade plugin", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, result, err, "unable to upgrade plugin", printer.Options{})
 }

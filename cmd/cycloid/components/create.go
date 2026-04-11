@@ -11,8 +11,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateComponentCommand() *cobra.Command {
@@ -71,11 +71,6 @@ func createComponent(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
 	update, err := cmd.Flags().GetBool("update")
 	if err != nil {
 		return err
@@ -88,11 +83,6 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
 	if err != nil {
 		return errors.Wrap(err, "failed to read stack version flags")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
 	}
 
 	if update {
@@ -112,7 +102,7 @@ func createComponent(cmd *cobra.Command, args []string) error {
 			if currentComponent.UseCase != nil {
 				currentConfig, _, err = m.GetComponentConfig(org, project, env, component)
 				if err != nil {
-					return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())
+					return cyout.PrintWithOptions(cmd, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{})
 				}
 			}
 
@@ -123,17 +113,13 @@ func createComponent(cmd *cobra.Command, args []string) error {
 
 			// ConfigureComponent will reconfigure the component
 			componentOutput, _, err := m.CreateOrUpdateComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
-			if err != nil {
-				return printer.SmartPrint(p, nil, err, "failed to configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
-			}
-
-			return printer.SmartPrint(p, componentOutput, nil, "", printer.Options{}, cmd.OutOrStdout())
+			return cyout.PrintWithOptions(cmd, componentOutput, err, "failed to configure component '"+component+"'", printer.Options{})
 		}
 	}
 
 	componentEntity, _, err := m.GetComponent(org, project, env, component)
 	if err == nil {
-		return printer.SmartPrint(p, componentEntity, fmt.Errorf("component %q already exists, to update it, use the --update flag", component), "failed to create component", printer.Options{}, cmd.OutOrStderr())
+		return cyout.PrintWithOptions(cmd, componentEntity, fmt.Errorf("component %q already exists, to update it, use the --update flag", component), "failed to create component", printer.Options{})
 	}
 
 	inputs, err := cyargs.GetStackformsVars(cmd, nil)
@@ -142,9 +128,5 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	}
 
 	componentOutput, _, err := m.CreateOrUpdateComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to create and configure component '"+component+"'", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, componentOutput, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, componentOutput, err, "failed to create and configure component '"+component+"'", printer.Options{})
 }
