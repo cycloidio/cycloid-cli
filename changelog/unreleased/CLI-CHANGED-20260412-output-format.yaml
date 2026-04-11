@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: "`--output` now supports table column selection, jq expressions, and field extraction"
+time: 2026-04-12T00:00:01Z
+custom:
+  DETAILS: "Extended `--output` grammar: `table=col1,col2` selects specific columns; `table:noheader` suppresses the header row; `jq=<expr>` runs an arbitrary jq expression over the full JSON response; any other value (e.g. `canonical`, `owner.username`) extracts that field, one value per line. Shell completion for `--output` is now model-aware: `cy project list -o <tab>` suggests model fields alongside `json`, `yaml`, `table`, and `jq=`. Pipe pattern enabled: `cy project delete $(cy project list -o canonical)`. Default table columns are curated per resource (e.g. projects show Canonical, Name, Description, Owner)."
+  PR: "999"
+  TYPE: CLI

@@ -22,7 +22,7 @@ HTTP → Cycloid REST API
         ▼
 JSON {"data": <payload>}   ← GenericRequest unwraps envelope; &result receives payload
         │
-printer.SmartPrint()       ← stdout (success) or stderr (error)
+cyout.PrintWithOptions()   ← stdout (success) or stderr (error); dispatches to printer
 ```
 
 ## The `Request` struct
@@ -146,6 +146,72 @@ The repository used to use the go-swagger generated operations package (`client/
 - `GenericRequest` gives explicit control over routing, auth, headers, and response decoding
 
 The `client/models/` package (data types) is still auto-generated from `swagger.yaml` and must not be edited manually.
+
+## `--output` system
+
+The `--output` flag (default: `table`) controls how results are rendered. It is parsed by `printer/factory/factory.go` into a `printer.Printer` implementation.
+
+### Grammar
+
+| Value | Result |
+|-------|--------|
+| `table` | Default curated table (columns defined per command) |
+| `table=col1,col2` | Table with explicit column selection |
+| `table:noheader` | Table without the header row |
+| `table=col1,col2:noheader` | Combined column selection + no header |
+| `json` | Full JSON (pretty-printed) |
+| `yaml` | Full YAML |
+| `jq=<expr>` | Run jq expression over full JSON; strings printed raw, objects as pretty JSON |
+| `<field>` | Extract named field, one value per line (case-insensitive, dot notation OK) |
+
+### Field extraction examples
+
+```sh
+cy project list -o canonical           # one canonical per line
+cy project list -o owner.username      # nested field
+cy project list -o "jq=.[].canonical"  # equivalent via jq
+cy project delete $(cy project list -o canonical)  # pipe pattern
+```
+
+### Shell completion
+
+Commands call `cyout.RegisterModel(cmd, models.X{})` in their constructor to register their model's fields. The global `--output` completion function reads these and suggests field names alongside `json`, `yaml`, `table`, and `jq=`:
+
+```sh
+cy project list -o <tab>           → json yaml table table= jq= canonical name id ...
+cy project list -o table=<tab>     → table=canonical table=name table=id ...
+cy project list -o can<tab>        → canonical
+```
+
+### Adding table columns to a command
+
+Define a `printer.Options` var in the command package and pass it to `cyout.PrintWithOptions`:
+
+```go
+var widgetTableOptions = printer.Options{
+    Columns:    []string{"Canonical", "Name", "Description"},
+    Identifier: "Canonical",  // never dropped when terminal is narrow
+}
+
+// in RunE:
+return cyout.PrintWithOptions(cmd, result, err, "unable to get widget", widgetTableOptions)
+```
+
+Column names support dot notation for nested fields (`"Owner.Username"`). The `Identifier` column is always shown even when the terminal is too narrow to show all columns.
+
+### `cyout` package
+
+`internal/cyout/` provides two helpers that replace the 3-line `GetOutput`/`GetPrinter`/`SmartPrint` boilerplate:
+
+```go
+// Simple (no column customisation):
+cyout.Print(cmd, obj, err, "unable to do X")
+
+// With column options:
+cyout.PrintWithOptions(cmd, obj, err, "unable to do X", tableOptions)
+```
+
+Errors are routed to `cmd.ErrOrStderr()`, results to `cmd.OutOrStdout()`.
 
 ## Pipeline build watch (human SSE formatting)
 
