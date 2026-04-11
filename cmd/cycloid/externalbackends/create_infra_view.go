@@ -3,15 +3,14 @@ package externalbackends
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func createInfraView(cmd *cobra.Command, args []string) error {
@@ -27,10 +26,6 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		defaultEB    bool
 	)
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -126,12 +121,6 @@ func createInfraView(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unexpected backend name")
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	resp, _, err := m.CreateExternalBackends(org, project, env, purpose, cred, defaultEB, ebC)
-	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, resp, err, "unable to create external backend", printer.Options{})
 }

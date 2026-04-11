@@ -8,9 +8,9 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewTeamMemberUnAssignCommand() *cobra.Command {
@@ -43,16 +43,6 @@ func unassignTeamMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return fmt.Errorf("failed to get printer for output type %q: %w", output, err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -60,11 +50,11 @@ func unassignTeamMember(cmd *cobra.Command, args []string) error {
 	for i, member := range members {
 		_, err = m.UnAssignMemberFromTeam(org, team, ptr.Value(member))
 		if err != nil {
-			return printer.SmartPrint(p, outUnassigned, fmt.Errorf("failed to unassign member with ID %d in team %q: %w", member, team, err), "", printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, outUnassigned, fmt.Errorf("failed to unassign member with ID %d in team %q: %w", member, team, err), "", printer.Options{})
 		}
 
 		outUnassigned[i] = member
 	}
 
-	return printer.SmartPrint(p, outUnassigned, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, outUnassigned, nil, "", printer.Options{})
 }

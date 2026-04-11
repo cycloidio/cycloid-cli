@@ -6,8 +6,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -52,26 +52,13 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 		args = []string{project}
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	if output == "table" {
-		output = "json"
-	}
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return err
-	}
-
 	deleted := make([]string, 0, len(args))
 	for _, project := range args {
 		_, err = m.DeleteProject(org, project)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to delete project "+project, printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to delete project "+project, printer.Options{})
 		}
 		deleted = append(deleted, project)
 	}
-	return printer.SmartPrint(p, deleted, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{})
 }

@@ -11,8 +11,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewPipelineLastUsedCommand() *cobra.Command {
@@ -49,31 +49,16 @@ func lastUsed(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return err
-	}
-
 	sinceDays, err := cmd.Flags().GetInt64("since-days")
 	if err != nil {
 		return err
-	}
-
-	if output == "table" {
-		output = "json"
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
 	}
 
 	var result = []LastUsedPipeline{}
 	maxTimestamp := uint64(0)
 	pps, _, err := m.GetOrgPipelines(org, nil, nil, nil, nil)
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to list pipelines", printer.Options{}, cmd.ErrOrStderr())
+		return cyout.PrintWithOptions(cmd, nil, err, "failed to list pipelines", printer.Options{})
 	}
 
 	for _, pipeline := range pps {
@@ -130,5 +115,5 @@ func lastUsed(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	return printer.SmartPrint(p, result, nil, "unable to list pipelines", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, result, nil, "unable to list pipelines", printer.Options{})
 }

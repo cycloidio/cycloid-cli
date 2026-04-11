@@ -10,8 +10,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateOrUpdateSubscriptionCommand() *cobra.Command {
@@ -73,16 +73,6 @@ func createOrUpdateSubscription(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return err
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -91,5 +81,5 @@ func createOrUpdateSubscription(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to update subscription for org %q: %w", org, err)
 	}
 
-	return printer.SmartPrint(p, subscription, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, subscription, nil, "", printer.Options{})
 }

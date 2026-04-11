@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 var (
@@ -91,22 +90,11 @@ func send(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	var msg string
 	if messageFile != "" {
 		rawMsg, err := os.ReadFile(messageFile)
 		if err != nil {
-			return errors.Wrap(err, "unable to read message file")
+			return fmt.Errorf("unable to read message file: %w", err)
 		}
 		msg = string(rawMsg)
 	} else if message != "" {
@@ -116,5 +104,5 @@ func send(cmd *cobra.Command, args []string) error {
 	}
 
 	_, err = m.SendEvent(org, eType, title, msg, severity, tags, color)
-	return printer.SmartPrint(p, nil, err, "unable to send event", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, nil, err, "unable to send event", printer.Options{})
 }

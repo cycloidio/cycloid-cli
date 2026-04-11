@@ -6,8 +6,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -38,16 +38,6 @@ func deletePluginManager(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return err
-	}
-
 	_, err = m.DeletePluginManager(org, id)
-	return printer.SmartPrint(p, nil, err, "unable to delete plugin manager", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, nil, err, "unable to delete plugin manager", printer.Options{})
 }

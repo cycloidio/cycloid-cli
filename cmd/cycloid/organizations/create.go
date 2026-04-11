@@ -5,15 +5,14 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // This command have been Hidden because it is not compatible with API key login.
@@ -63,16 +62,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	canonical := common.GenerateCanonical(name)
 
 	api := common.NewAPI()
@@ -83,23 +72,20 @@ func create(cmd *cobra.Command, args []string) error {
 	if getErr != nil {
 		var apiErr *middleware.APIResponseError
 		if !stderrors.As(getErr, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
-			return printer.SmartPrint(p, nil, getErr, "failed to check if organization exists", printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, getErr, "failed to check if organization exists", printer.Options{})
 		}
 	}
 
 	if exists && !update {
-		return printer.SmartPrint(p, nil,
+		return cyout.PrintWithOptions(cmd, nil,
 			fmt.Errorf("organization %q already exists; use --update to change its display name", canonical),
-			"failed to create organization", printer.Options{}, cmd.OutOrStderr())
+			"failed to create organization", printer.Options{})
 	}
 
 	var outOrg *models.Organization
 	if exists {
 		outOrg, _, err = m.UpdateOrganization(canonical, name)
-		if err != nil {
-			return printer.SmartPrint(p, nil, err, "failed to update organization", printer.Options{}, cmd.OutOrStderr())
-		}
-		return printer.SmartPrint(p, outOrg, nil, "", printer.Options{}, cmd.OutOrStdout())
+		return cyout.PrintWithOptions(cmd, outOrg, err, "failed to update organization", printer.Options{})
 	}
 
 	if parentOrg != "" {
@@ -107,9 +93,5 @@ func create(cmd *cobra.Command, args []string) error {
 	} else {
 		outOrg, _, err = m.CreateOrganization(name)
 	}
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to create org named '"+name+"'", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, outOrg, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, outOrg, err, "failed to create org named '"+name+"'", printer.Options{})
 }

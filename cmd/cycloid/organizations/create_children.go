@@ -1,14 +1,13 @@
 package organizations
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateChildCommand() *cobra.Command {
@@ -41,19 +40,6 @@ func createChild(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	oc, _, err := m.CreateOrganizationChild(org, porg, nil)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to create a child organization", printer.Options{}, cmd.OutOrStderr())
-	}
-	return printer.SmartPrint(p, oc, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, oc, err, "unable to create a child organization", printer.Options{})
 }

@@ -8,8 +8,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/internal"
 	"github.com/cycloidio/cycloid-cli/config"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // NewCommands returns the cobra command holding
@@ -44,15 +44,10 @@ func login(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable to get org flag")
 	}
 
-	p, err := factory.GetPrinter(viper.GetString("output"))
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	// Get api key via env var or cli flag
 	apiKey := viper.GetString("api-key")
 	if apiKey == "" {
-		return printer.SmartPrint(p, nil, nil, "CY_API_KEY is not set or invalid", printer.Options{}, cmd.OutOrStderr())
+		return cyout.PrintWithOptions(cmd, nil, nil, "CY_API_KEY is not set or invalid", printer.Options{})
 	}
 
 	// Warn user about deprecation
@@ -71,7 +66,7 @@ func login(cmd *cobra.Command, args []string) error {
 	}
 
 	if err := config.Write(conf); err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to write config file", printer.Options{}, cmd.OutOrStderr())
+		return cyout.PrintWithOptions(cmd, nil, err, "unable to write config file", printer.Options{})
 	}
 
 	return nil
