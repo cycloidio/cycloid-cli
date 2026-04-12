@@ -82,11 +82,11 @@ NO_PROXY     | List of hosts that must bypass proxy configuration
 `,
 	}
 
-	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", `Output format: table, table=col1,col2, table:noheader, table:border, table:noindex, json, yaml, jq=<expr>, <field>. Use --jq as shorthand for jq=<expr>.`)
+	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", `Output format: table, table=col1,col2, table:noheader, table:border, json, yaml, jq=<expr>, <field>. Use --jq as shorthand for jq=<expr>.`)
 	rootCmd.PersistentFlags().String("jq", "", `Shorthand for --output jq=<expr>. Runs a jq expression over the full JSON response.`)
 	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
 	rootCmd.RegisterFlagCompletionFunc("output", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		base := []cobra.Completion{"json", "yaml", "table", "table=", "table:", "table:border", "table:noindex", "table:noheader", "jq="}
+		base := []cobra.Completion{"json", "yaml", "table", "table=", "table:", "table:border", "table:noheader", "jq="}
 		fields := cyout.GetModelFields(cmd)
 
 		switch {

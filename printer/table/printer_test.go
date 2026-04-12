@@ -76,8 +76,7 @@ func TestTablePrinter(t *testing.T) {
 		err := tab.Print(&obj, printer.Options{}, &b)
 		require.NoError(t, err)
 		// Nested struct field is skipped by headersFromStruct → no data columns.
-		// Output may still contain # column header if table renders anything,
-		// but since there are no data columns, headers is empty → no output.
+		// Since there are no data columns, headers is empty → no output.
 		assert.Empty(t, b.String())
 	})
 	t.Run("SuccessSlicePtr", func(t *testing.T) {
@@ -157,44 +156,6 @@ func TestTablePrinter_APIErrorNilPayloadDoesNotPanic(t *testing.T) {
 	err := tab.Print(&apiErrNilPayload{StatusCode: 404}, printer.Options{}, &b)
 	require.NoError(t, err)
 	assert.NotEmpty(t, b.String())
-}
-
-func TestTablePrinter_RowIndex(t *testing.T) {
-	t.Run("IndexPresent", func(t *testing.T) {
-		type row struct{ Name string }
-		obj := []row{{"alice"}, {"bob"}}
-		var b bytes.Buffer
-		err := (&Table{}).Print(obj, printer.Options{}, &b)
-		require.NoError(t, err)
-		out := b.String()
-		assert.Contains(t, out, "#", "should have # column header")
-		assert.Contains(t, out, "0", "should have row index 0")
-		assert.Contains(t, out, "1", "should have row index 1")
-	})
-
-	t.Run("NoIndexOption", func(t *testing.T) {
-		type row struct{ Name string }
-		obj := []row{{"alice"}, {"bob"}}
-		var b bytes.Buffer
-		tab := Table{opts: printer.TableOptions{NoIndex: true}}
-		err := tab.Print(obj, printer.Options{}, &b)
-		require.NoError(t, err)
-		out := b.String()
-		assert.NotContains(t, out, "#", "should not have # column when NoIndex")
-		assert.Contains(t, out, "alice")
-	})
-
-	t.Run("SingleItem", func(t *testing.T) {
-		type item struct{ Name string }
-		obj := &item{"solo"}
-		var b bytes.Buffer
-		err := (&Table{}).Print(obj, printer.Options{}, &b)
-		require.NoError(t, err)
-		out := b.String()
-		assert.Contains(t, out, "#")
-		assert.Contains(t, out, "0")
-		assert.Contains(t, out, "solo")
-	})
 }
 
 func TestTablePrinter_BorderOption(t *testing.T) {
