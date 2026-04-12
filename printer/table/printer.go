@@ -32,6 +32,14 @@ func NewWithOptions(opts printer.TableOptions) *Table {
 
 // Print renders obj as a terminal table to w.
 func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error {
+	// Guard: nil interface or typed nil pointer — nothing to render.
+	if obj == nil {
+		return nil
+	}
+	if v := reflect.ValueOf(obj); (v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface) && v.IsNil() {
+		return nil
+	}
+
 	// Unwrap API error payloads into their error list for display
 	if apiErr, ok := obj.(interface {
 		GetPayload() *models.ErrorPayload
@@ -129,16 +137,22 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 // fields from obj that are not already in curatedCols.
 func expandColumns(obj interface{}, curatedCols []string) []string {
 	v := reflect.ValueOf(obj)
-	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+	for (v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface) && !v.IsNil() {
 		v = v.Elem()
+	}
+	if !v.IsValid() || v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		return curatedCols
 	}
 	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
 		if v.Len() == 0 {
 			return curatedCols
 		}
 		first := v.Index(0)
-		for first.Kind() == reflect.Interface || first.Kind() == reflect.Ptr {
+		for (first.Kind() == reflect.Interface || first.Kind() == reflect.Ptr) && !first.IsNil() {
 			first = first.Elem()
+		}
+		if !first.IsValid() || first.Kind() == reflect.Ptr || first.Kind() == reflect.Interface {
+			return curatedCols
 		}
 		v = first
 	}
@@ -178,6 +192,9 @@ func build(obj interface{}, tableOpts printer.TableOptions, printerOpts printer.
 
 	switch rObj.Kind() {
 	case reflect.Ptr:
+		if rObj.IsNil() {
+			return nil, nil, nil
+		}
 		elt := rObj.Elem()
 		if printerOpts.Transform != nil {
 			m := printerOpts.Transform(obj)
@@ -191,13 +208,10 @@ func build(obj interface{}, tableOpts printer.TableOptions, printerOpts printer.
 		if rObj.Len() == 0 {
 			return nil, nil, nil
 		}
-		// Derive headers from first element
-		first := rObj.Index(0)
-		if first.Kind() == reflect.Interface {
-			first = first.Elem()
-		}
-		if first.Kind() == reflect.Ptr {
-			first = first.Elem()
+		// Derive headers from first non-nil element
+		first := firstNonNilElem(rObj)
+		if !first.IsValid() {
+			return nil, nil, nil
 		}
 
 		// String slices: render as a single-column table.
@@ -235,14 +249,13 @@ func build(obj interface{}, tableOpts printer.TableOptions, printerOpts printer.
 				m := printerOpts.Transform(item.Interface())
 				_, row = fromTransformMap(m, headers)
 			} else {
-				elt := item
-				if elt.Kind() == reflect.Interface {
-					elt = elt.Elem()
+				elt := derefValue(item)
+				if !elt.IsValid() {
+					// nil element — emit empty row
+					row = make([]string, len(headers))
+				} else {
+					row = entryFromStruct(elt, headers)
 				}
-				if elt.Kind() == reflect.Ptr {
-					elt = elt.Elem()
-				}
-				row = entryFromStruct(elt, headers)
 			}
 			rows = append(rows, row)
 		}
@@ -251,6 +264,30 @@ func build(obj interface{}, tableOpts printer.TableOptions, printerOpts printer.
 	default:
 		return nil, nil, fmt.Errorf("unable to render table for type: %v", rObj.Kind())
 	}
+}
+
+// firstNonNilElem returns the first non-nil, dereferenced element from a slice/array.
+// Returns an invalid reflect.Value if all elements are nil.
+func firstNonNilElem(rObj reflect.Value) reflect.Value {
+	for i := 0; i < rObj.Len(); i++ {
+		v := derefValue(rObj.Index(i))
+		if v.IsValid() {
+			return v
+		}
+	}
+	return reflect.Value{}
+}
+
+// derefValue unwraps interface and pointer wrappers, returning the underlying value.
+// Returns an invalid reflect.Value if the chain terminates in nil.
+func derefValue(v reflect.Value) reflect.Value {
+	for v.Kind() == reflect.Interface || v.Kind() == reflect.Ptr {
+		if v.IsNil() {
+			return reflect.Value{}
+		}
+		v = v.Elem()
+	}
+	return v
 }
 
 // resolveHeaders picks the display column names for a struct value.
@@ -338,7 +375,7 @@ func fromTransformMap(m map[string]string, colNames []string) ([]string, []strin
 // Skips pointer-to-struct (nested objects) and unexported fields.
 // Returns nil for non-struct values (strings, ints, etc.).
 func headersFromStruct(v reflect.Value) []string {
-	if v.Kind() != reflect.Struct {
+	if !v.IsValid() || v.Kind() != reflect.Struct {
 		return nil
 	}
 	headers := make([]string, 0)
@@ -367,6 +404,9 @@ func headersFromStruct(v reflect.Value) []string {
 // Supports dot notation in header names (e.g., "Owner.Username").
 func entryFromStruct(obj reflect.Value, headers []string) []string {
 	row := make([]string, len(headers))
+	if !obj.IsValid() {
+		return row
+	}
 	for i, h := range headers {
 		row[i] = fieldValueStr(obj, h)
 	}
@@ -398,6 +438,9 @@ func fieldValueStr(v reflect.Value, path string) string {
 
 // renderValue converts a reflect.Value to a display string.
 func renderValue(v reflect.Value) string {
+	if !v.IsValid() {
+		return ""
+	}
 	switch v.Kind() {
 	case reflect.String:
 		return v.String()
@@ -415,6 +458,9 @@ func renderValue(v reflect.Value) string {
 		n := countExportedFields(v.Type())
 		return fmt.Sprintf("{record %d fields}", n)
 	case reflect.Slice:
+		if v.IsNil() {
+			return ""
+		}
 		if v.Type().Elem().Kind() == reflect.String {
 			parts := make([]string, v.Len())
 			for i := 0; i < v.Len(); i++ {
@@ -423,6 +469,16 @@ func renderValue(v reflect.Value) string {
 			return strings.Join(parts, ", ")
 		}
 		return strconv.Itoa(v.Len())
+	case reflect.Map:
+		if v.IsNil() || v.Len() == 0 {
+			return ""
+		}
+		return fmt.Sprintf("{%d entries}", v.Len())
+	case reflect.Interface:
+		if v.IsNil() {
+			return ""
+		}
+		return renderValue(v.Elem())
 	case reflect.Ptr:
 		elt := v.Elem()
 		if !elt.IsValid() {

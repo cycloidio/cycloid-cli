@@ -184,6 +184,192 @@ func TestTablePrinter_BorderOption(t *testing.T) {
 	})
 }
 
+// ---------------------------------------------------------------------------
+// Nil / panic-safety tests
+// ---------------------------------------------------------------------------
+
+func TestTablePrinter_NilSafety(t *testing.T) {
+	t.Run("NilInterface", func(t *testing.T) {
+		var b bytes.Buffer
+		err := (&Table{}).Print(nil, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Empty(t, b.String())
+	})
+
+	t.Run("TypedNilPointer", func(t *testing.T) {
+		type item struct{ Name string }
+		var p *item // typed nil
+		var b bytes.Buffer
+		err := (&Table{}).Print(p, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Empty(t, b.String())
+	})
+
+	t.Run("SliceOfAllNilPointers", func(t *testing.T) {
+		type item struct{ Name string }
+		objs := []*item{nil, nil, nil}
+		var b bytes.Buffer
+		err := (&Table{}).Print(objs, printer.Options{}, &b)
+		require.NoError(t, err)
+		// All nil → no headers discoverable → no output
+		assert.Empty(t, b.String())
+	})
+
+	t.Run("SliceWithMixedNilPointers", func(t *testing.T) {
+		type item struct{ Name string }
+		objs := []*item{nil, {Name: "alice"}, nil}
+		var b bytes.Buffer
+		err := (&Table{}).Print(objs, printer.Options{}, &b)
+		require.NoError(t, err)
+		out := b.String()
+		assert.Contains(t, out, "Name")
+		assert.Contains(t, out, "alice")
+	})
+
+	t.Run("SliceOfNilInterfaces", func(t *testing.T) {
+		objs := []interface{}{nil, nil}
+		var b bytes.Buffer
+		err := (&Table{}).Print(objs, printer.Options{}, &b)
+		require.NoError(t, err)
+	})
+
+	t.Run("SliceWithMixedNilInterfaces", func(t *testing.T) {
+		type item struct{ Name string }
+		objs := []interface{}{nil, &item{Name: "bob"}, nil}
+		var b bytes.Buffer
+		err := (&Table{}).Print(objs, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Contains(t, b.String(), "bob")
+	})
+
+	t.Run("EmptyStruct", func(t *testing.T) {
+		obj := &struct{}{}
+		var b bytes.Buffer
+		err := (&Table{}).Print(obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Empty(t, b.String())
+	})
+
+	t.Run("StructAllNilFields", func(t *testing.T) {
+		type item struct {
+			Name   *string
+			Count  *int64
+			Nested *struct{ X string }
+		}
+		obj := &item{}
+		var b bytes.Buffer
+		err := (&Table{}).Print(obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		// Name and Count are ptr-to-scalar (shown), Nested is ptr-to-struct (hidden)
+		out := b.String()
+		assert.Contains(t, out, "Name")
+		assert.Contains(t, out, "Count")
+	})
+
+	t.Run("NilSliceField", func(t *testing.T) {
+		type item struct {
+			Name string
+			Tags []string
+		}
+		obj := &item{Name: "test", Tags: nil}
+		var b bytes.Buffer
+		err := (&Table{}).Print(obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Contains(t, b.String(), "test")
+	})
+
+	t.Run("NilMapField", func(t *testing.T) {
+		type item struct {
+			Name   string
+			Config map[string]string
+		}
+		obj := &item{Name: "test", Config: nil}
+		var b bytes.Buffer
+		err := (&Table{}).Print(obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Contains(t, b.String(), "test")
+	})
+
+	t.Run("PopulatedMapField", func(t *testing.T) {
+		type item struct {
+			Name   string
+			Config map[string]string
+		}
+		obj := &item{Name: "test", Config: map[string]string{"a": "1", "b": "2"}}
+		var b bytes.Buffer
+		err := (&Table{}).Print(obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		out := b.String()
+		assert.Contains(t, out, "test")
+		assert.Contains(t, out, "{2 entries}")
+	})
+
+	t.Run("NonStructScalarValue", func(t *testing.T) {
+		// Passing a bare string should return an error, not panic
+		var b bytes.Buffer
+		err := (&Table{}).Print("just a string", printer.Options{}, &b)
+		assert.Error(t, err, "bare string should return error")
+	})
+
+	t.Run("NonStructIntValue", func(t *testing.T) {
+		var b bytes.Buffer
+		err := (&Table{}).Print(42, printer.Options{}, &b)
+		assert.Error(t, err, "bare int should return error")
+	})
+
+	t.Run("DotNotationOnNilNestedField", func(t *testing.T) {
+		type Owner struct{ Username string }
+		type item struct {
+			Name  string
+			Owner *Owner
+		}
+		obj := &item{Name: "test", Owner: nil}
+		var b bytes.Buffer
+		tab := NewWithOptions(printer.TableOptions{Columns: []string{"Name", "Owner.Username"}})
+		err := tab.Print(obj, printer.Options{}, &b)
+		require.NoError(t, err)
+		assert.Contains(t, b.String(), "test")
+	})
+
+	t.Run("DotNotationOnNilNestedInSlice", func(t *testing.T) {
+		type Owner struct{ Username string }
+		type item struct {
+			Name  string
+			Owner *Owner
+		}
+		objs := []*item{
+			{Name: "alice", Owner: &Owner{Username: "alice_u"}},
+			{Name: "bob", Owner: nil},
+		}
+		var b bytes.Buffer
+		tab := NewWithOptions(printer.TableOptions{Columns: []string{"Name", "Owner.Username"}})
+		err := tab.Print(objs, printer.Options{}, &b)
+		require.NoError(t, err)
+		out := b.String()
+		assert.Contains(t, out, "alice_u")
+		assert.Contains(t, out, "bob")
+	})
+
+	t.Run("TransformReturnsNilMap", func(t *testing.T) {
+		type item struct{ Name string }
+		obj := &item{Name: "test"}
+		var b bytes.Buffer
+		err := (&Table{}).Print(obj, printer.Options{
+			Transform: func(interface{}) map[string]string { return nil },
+		}, &b)
+		require.NoError(t, err)
+		// nil map → empty headers → no output
+		assert.Empty(t, b.String())
+	})
+
+	t.Run("ExpandColumnsNilSliceElement", func(t *testing.T) {
+		type item struct{ Name string }
+		objs := []*item{nil}
+		result := expandColumns(objs, []string{"Name"})
+		assert.Equal(t, []string{"Name"}, result, "should return curated cols when all nil")
+	})
+}
+
 func TestRenderValue(t *testing.T) {
 	t.Run("Struct", func(t *testing.T) {
 		type inner struct {
