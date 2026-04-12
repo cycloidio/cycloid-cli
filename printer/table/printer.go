@@ -67,13 +67,6 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 
 	headers, rows = fitToWidth(headers, rows, opts.Identifier, termWidth, protectedCount, t.opts.Border, userChoseColumns)
 
-	// Prepend row-index column (#) unless suppressed
-	if !t.opts.NoIndex {
-		for i, row := range rows {
-			rows[i] = append([]string{strconv.Itoa(i)}, row...)
-		}
-	}
-
 	borderStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
 
 	var tbl *libtable.Table
@@ -84,9 +77,6 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 			BorderStyle(borderStyle).
 			StyleFunc(func(row, col int) lipgloss.Style {
 				s := lipgloss.NewStyle().Padding(0, 1)
-				if !t.opts.NoIndex && col == 0 {
-					s = s.Foreground(lipgloss.Color("8")).Align(lipgloss.Right)
-				}
 				if row == libtable.HeaderRow {
 					return s.Bold(true)
 				}
@@ -104,9 +94,6 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 			BorderStyle(borderStyle).
 			StyleFunc(func(row, col int) lipgloss.Style {
 				s := lipgloss.NewStyle().Padding(0, 1)
-				if !t.opts.NoIndex && col == 0 {
-					s = s.Foreground(lipgloss.Color("8")).Align(lipgloss.Right)
-				}
 				if row == libtable.HeaderRow {
 					return s.Bold(true)
 				}
@@ -118,9 +105,6 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 		displayHeaders := make([]string, len(headers))
 		for i, h := range headers {
 			displayHeaders[i] = camelToTitle(h)
-		}
-		if !t.opts.NoIndex {
-			displayHeaders = append([]string{"#"}, displayHeaders...)
 		}
 		tbl = tbl.Headers(displayHeaders...)
 	}
