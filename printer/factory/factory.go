@@ -78,6 +78,10 @@ func parseTableOptions(output string) printer.TableOptions {
 			// skip
 		case part == "noheader":
 			opts.NoHeader = true
+		case part == "border":
+			opts.Border = true
+		case part == "noindex":
+			opts.NoIndex = true
 		case strings.HasPrefix(part, "cols="):
 			opts.Columns = splitTrim(strings.TrimPrefix(part, "cols="), ",")
 		}

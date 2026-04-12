@@ -25,5 +25,9 @@ type TableOptions struct {
 	Columns []string
 	// NoHeader suppresses the header row (from --output table:noheader).
 	NoHeader bool
+	// Border enables the rounded-border grid style (from --output table:border).
+	Border bool
+	// NoIndex suppresses the # row index column (from --output table:noindex).
+	NoIndex bool
 	// Future: Sort string, Limit int, Wide bool, Compact bool
 }
