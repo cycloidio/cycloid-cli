@@ -63,5 +63,5 @@ func deleteConfigRepository(cmd *cobra.Command, args []string) error {
 		}
 		deleted = append(deleted, can)
 	}
-	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{})
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{Columns: []string{"Canonical"}})
 }

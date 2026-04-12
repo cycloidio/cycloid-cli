@@ -43,5 +43,5 @@ func deleteTeam(cmd *cobra.Command, args []string) error {
 		deleted[i] = team
 	}
 
-	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{})
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{Columns: []string{"Canonical"}})
 }

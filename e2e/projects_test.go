@@ -270,4 +270,54 @@ func TestProjects(t *testing.T) {
 		})
 		assert.NoError(t, deleteErr, "delete via positional arg should succeed")
 	})
+
+	t.Run("DeleteDefaultTableOutput", func(t *testing.T) {
+		// Verify delete uses table mode by default and shows the deleted canonical.
+		tmpProject := randomCanonical("e2e-del-tbl")
+		_, createErr := executeCommand([]string{
+			"project", "create",
+			"--project", tmpProject,
+			"--name", tmpProject,
+			"--icon", icon,
+			"--color", color,
+		})
+		if createErr != nil {
+			t.Fatalf("setup: failed to create project '%s': %v", tmpProject, createErr)
+		}
+
+		out, deleteErr := executeCommand([]string{
+			"project", "delete",
+			tmpProject,
+		})
+		assert.NoError(t, deleteErr, "delete should succeed")
+		assert.Contains(t, out, tmpProject, "default table output should contain the deleted canonical")
+		assert.NotContains(t, out, "[", "default output should not be JSON array")
+	})
+
+	t.Run("DeleteMultiplePositionalArgs", func(t *testing.T) {
+		// Verify deleting multiple projects at once outputs a table with all canonicals.
+		proj1 := randomCanonical("e2e-del-m1")
+		proj2 := randomCanonical("e2e-del-m2")
+		for _, p := range []string{proj1, proj2} {
+			_, createErr := executeCommand([]string{
+				"project", "create",
+				"--project", p,
+				"--name", p,
+				"--icon", icon,
+				"--color", color,
+			})
+			if createErr != nil {
+				t.Fatalf("setup: failed to create project '%s': %v", p, createErr)
+			}
+		}
+
+		out, deleteErr := executeCommand([]string{
+			"project", "delete",
+			proj1, proj2,
+		})
+		assert.NoError(t, deleteErr, "bulk delete should succeed")
+		assert.Contains(t, out, proj1, "output should contain first deleted canonical")
+		assert.Contains(t, out, proj2, "output should contain second deleted canonical")
+		assert.NotContains(t, out, "[", "default output should not be JSON array")
+	})
 }

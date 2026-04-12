@@ -20,6 +20,9 @@ type Config struct {
 	// Organizations is the list of Organization where the user
 	// is currently logged in
 	Organizations map[string]Organization `yaml:"organizations"`
+	// Output is the default output format (e.g. "table", "json", "table:border").
+	// Overridden by CY_OUTPUT env var or the --output / --jq flags at runtime.
+	Output string `yaml:"output,omitempty"`
 }
 
 // Organization is an organization where the user

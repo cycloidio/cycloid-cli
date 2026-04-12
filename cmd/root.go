@@ -21,6 +21,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/output"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
@@ -70,6 +71,7 @@ CY_PROJECT   | Set the current project
 CY_ENV       | Set the current environment
 CY_COMPONENT | Set the current component
 CY_API_KEY   | Set the current API Key to use
+CY_OUTPUT    | Set the default output format (table, json, yaml, table:border, etc.)
 CY_VERBOSITY | Set the verbosity level (debug, info, warning, error), default warning.
              | Setting debug will print every HTTP request and response to stderr,
              | including headers and bodies. ⚠️  Output will contain credentials
@@ -80,11 +82,11 @@ NO_PROXY     | List of hosts that must bypass proxy configuration
 `,
 	}
 
-	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", `Output format: table, table=col1,col2, table:noheader, json, yaml, jq=<expr>, <field>. Use --jq as shorthand for jq=<expr>.`)
+	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", `Output format: table, table=col1,col2, table:noheader, table:border, table:noindex, json, yaml, jq=<expr>, <field>. Use --jq as shorthand for jq=<expr>.`)
 	rootCmd.PersistentFlags().String("jq", "", `Shorthand for --output jq=<expr>. Runs a jq expression over the full JSON response.`)
 	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
 	rootCmd.RegisterFlagCompletionFunc("output", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		base := []cobra.Completion{"json", "yaml", "table", "table=", "table:", "jq="}
+		base := []cobra.Completion{"json", "yaml", "table", "table=", "table:", "table:border", "table:noindex", "table:noheader", "jq="}
 		fields := cyout.GetModelFields(cmd)
 
 		switch {
@@ -168,6 +170,7 @@ func AttachCommands(cmd *cobra.Command) {
 		roles.NewCommands(),
 		stacks.NewCommands(),
 		login.NewCommands(),
+		output.NewOutputCmd(),
 		terracost.NewCommands(),
 		beta.NewCommands(),
 		uri.NewURICommands(),

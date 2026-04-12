@@ -41,7 +41,23 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 		}
 	}
 
-	headers, rows, err := build(obj, t.opts, opts)
+	termWidth := terminalWidth()
+
+	// Dynamic column expansion: on wide terminals show all struct fields;
+	// curated columns are protected from being dropped by fitToWidth.
+	userChoseColumns := len(t.opts.Columns) > 0
+	protectedCount := 0
+	buildOpts := t.opts
+
+	if len(opts.Columns) > 0 && termWidth > 0 && !userChoseColumns && opts.Transform == nil {
+		expanded := expandColumns(obj, opts.Columns)
+		if len(expanded) > len(opts.Columns) {
+			buildOpts.Columns = expanded
+			protectedCount = len(opts.Columns)
+		}
+	}
+
+	headers, rows, err := build(obj, buildOpts, opts)
 	if err != nil {
 		return err
 	}
@@ -49,30 +65,62 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 		return nil
 	}
 
-	termWidth := terminalWidth()
-	headers, rows = fitToWidth(headers, rows, opts.Identifier, termWidth, len(t.opts.Columns) > 0)
+	headers, rows = fitToWidth(headers, rows, opts.Identifier, termWidth, protectedCount, t.opts.Border, userChoseColumns)
 
-	sepStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
-	tbl := libtable.New().
-		Border(lipgloss.NormalBorder()).
-		BorderTop(false).
-		BorderBottom(false).
-		BorderLeft(false).
-		BorderRight(false).
-		BorderColumn(false).
-		BorderHeader(true).
-		BorderStyle(sepStyle).
-		StyleFunc(func(row, col int) lipgloss.Style {
-			if row == libtable.HeaderRow {
-				return lipgloss.NewStyle().Bold(true).Padding(0, 2, 0, 0)
-			}
-			return lipgloss.NewStyle().Padding(0, 2, 0, 0)
-		})
+	// Prepend row-index column (#) unless suppressed
+	if !t.opts.NoIndex {
+		for i, row := range rows {
+			rows[i] = append([]string{strconv.Itoa(i)}, row...)
+		}
+	}
+
+	borderStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("8"))
+
+	var tbl *libtable.Table
+	if t.opts.Border {
+		tbl = libtable.New().
+			Border(lipgloss.RoundedBorder()).
+			BorderRow(false).
+			BorderStyle(borderStyle).
+			StyleFunc(func(row, col int) lipgloss.Style {
+				s := lipgloss.NewStyle().Padding(0, 1)
+				if !t.opts.NoIndex && col == 0 {
+					s = s.Foreground(lipgloss.Color("8")).Align(lipgloss.Right)
+				}
+				if row == libtable.HeaderRow {
+					return s.Bold(true)
+				}
+				return s
+			})
+	} else {
+		tbl = libtable.New().
+			Border(lipgloss.NormalBorder()).
+			BorderTop(false).
+			BorderBottom(false).
+			BorderLeft(false).
+			BorderRight(false).
+			BorderColumn(false).
+			BorderHeader(true).
+			BorderStyle(borderStyle).
+			StyleFunc(func(row, col int) lipgloss.Style {
+				s := lipgloss.NewStyle().Padding(0, 1)
+				if !t.opts.NoIndex && col == 0 {
+					s = s.Foreground(lipgloss.Color("8")).Align(lipgloss.Right)
+				}
+				if row == libtable.HeaderRow {
+					return s.Bold(true)
+				}
+				return s
+			})
+	}
 
 	if !t.opts.NoHeader {
 		displayHeaders := make([]string, len(headers))
 		for i, h := range headers {
 			displayHeaders[i] = camelToTitle(h)
+		}
+		if !t.opts.NoIndex {
+			displayHeaders = append([]string{"#"}, displayHeaders...)
 		}
 		tbl = tbl.Headers(displayHeaders...)
 	}
@@ -81,11 +129,54 @@ func (t *Table) Print(obj interface{}, opts printer.Options, w io.Writer) error 
 		tbl = tbl.Row(row...)
 	}
 
-	fmt.Fprint(w, tbl.Render())
-	if !strings.HasSuffix(tbl.Render(), "\n") {
+	if termWidth > 0 {
+		tbl = tbl.Width(termWidth)
+	}
+
+	output := tbl.Render()
+	fmt.Fprint(w, output)
+	if !strings.HasSuffix(output, "\n") {
 		fmt.Fprintln(w)
 	}
 	return nil
+}
+
+// expandColumns returns curatedCols followed by any additional exported scalar
+// fields from obj that are not already in curatedCols.
+func expandColumns(obj interface{}, curatedCols []string) []string {
+	v := reflect.ValueOf(obj)
+	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
+		v = v.Elem()
+	}
+	if v.Kind() == reflect.Slice || v.Kind() == reflect.Array {
+		if v.Len() == 0 {
+			return curatedCols
+		}
+		first := v.Index(0)
+		for first.Kind() == reflect.Interface || first.Kind() == reflect.Ptr {
+			first = first.Elem()
+		}
+		v = first
+	}
+
+	allFields := headersFromStruct(v)
+	if len(allFields) == 0 {
+		return curatedCols
+	}
+
+	curatedSet := make(map[string]bool, len(curatedCols))
+	for _, c := range curatedCols {
+		curatedSet[strings.ToLower(c)] = true
+	}
+
+	result := make([]string, len(curatedCols), len(curatedCols)+len(allFields))
+	copy(result, curatedCols)
+	for _, f := range allFields {
+		if !curatedSet[strings.ToLower(f)] {
+			result = append(result, f)
+		}
+	}
+	return result
 }
 
 // build resolves which columns to use and renders each row.
@@ -124,6 +215,25 @@ func build(obj interface{}, tableOpts printer.TableOptions, printerOpts printer.
 		if first.Kind() == reflect.Ptr {
 			first = first.Elem()
 		}
+
+		// String slices: render as a single-column table.
+		// Column name comes from Columns[0] if set, otherwise "Value".
+		if first.Kind() == reflect.String {
+			colName := "Value"
+			if len(colNames) > 0 {
+				colName = colNames[0]
+			}
+			rows := make([][]string, rObj.Len())
+			for i := 0; i < rObj.Len(); i++ {
+				item := rObj.Index(i)
+				if item.Kind() == reflect.Interface {
+					item = item.Elem()
+				}
+				rows[i] = []string{item.String()}
+			}
+			return []string{colName}, rows, nil
+		}
+
 		var headers []string
 		if printerOpts.Transform != nil {
 			// Transform the first item to discover column names
@@ -311,8 +421,15 @@ func renderValue(v reflect.Value) string {
 		return strconv.FormatUint(v.Uint(), 10)
 	case reflect.Int64:
 		return strconv.FormatInt(v.Int(), 10)
+	case reflect.Int, reflect.Int32:
+		return strconv.FormatInt(v.Int(), 10)
+	case reflect.Float32, reflect.Float64:
+		return strconv.FormatFloat(v.Float(), 'f', -1, 64)
 	case reflect.Bool:
 		return fmt.Sprintf("%t", v.Bool())
+	case reflect.Struct:
+		n := countExportedFields(v.Type())
+		return fmt.Sprintf("{record %d fields}", n)
 	case reflect.Slice:
 		if v.Type().Elem().Kind() == reflect.String {
 			parts := make([]string, v.Len())
@@ -335,8 +452,15 @@ func renderValue(v reflect.Value) string {
 		case reflect.Int64:
 			t := time.Unix(elt.Int(), 0)
 			return t.Format(time.RFC3339)
+		case reflect.Int, reflect.Int32:
+			return strconv.FormatInt(elt.Int(), 10)
+		case reflect.Float32, reflect.Float64:
+			return strconv.FormatFloat(elt.Float(), 'f', -1, 64)
 		case reflect.Bool:
 			return fmt.Sprintf("%t", elt.Bool())
+		case reflect.Struct:
+			n := countExportedFields(elt.Type())
+			return fmt.Sprintf("{record %d fields}", n)
 		default:
 			return elt.Kind().String()
 		}
@@ -345,29 +469,50 @@ func renderValue(v reflect.Value) string {
 	}
 }
 
+// countExportedFields returns the number of exported fields in a struct type.
+func countExportedFields(t reflect.Type) int {
+	n := 0
+	for i := 0; i < t.NumField(); i++ {
+		if t.Field(i).IsExported() {
+			n++
+		}
+	}
+	return n
+}
+
 // fitToWidth progressively drops rightmost columns when output exceeds terminal width.
-// The identifier column is never dropped. If user explicitly chose columns, skip fitting.
-func fitToWidth(headers []string, rows [][]string, identifier string, termWidth int, userChoseColumns bool) ([]string, [][]string) {
+// protectedCount > 0: protect the first protectedCount columns from being dropped.
+// protectedCount == 0: protect the identifier column by name (legacy behavior).
+// If user explicitly chose columns, skip fitting entirely.
+func fitToWidth(headers []string, rows [][]string, identifier string, termWidth, protectedCount int, hasBorder, userChoseColumns bool) ([]string, [][]string) {
 	if termWidth <= 0 || userChoseColumns || len(headers) == 0 {
 		return headers, rows
 	}
 
+	// For legacy mode (no curated cols), find identifier index by name
 	identIdx := -1
-	for i, h := range headers {
-		if strings.EqualFold(h, identifier) {
-			identIdx = i
-			break
+	if protectedCount == 0 {
+		for i, h := range headers {
+			if strings.EqualFold(h, identifier) {
+				identIdx = i
+				break
+			}
 		}
 	}
 
 	for len(headers) > 1 {
-		if estimateWidth(headers, rows) <= termWidth {
+		if estimateWidth(headers, rows, hasBorder) <= termWidth {
 			break
 		}
-		// Drop the last column, but never the identifier
 		last := len(headers) - 1
-		if last == identIdx {
-			break
+		if protectedCount > 0 {
+			if last < protectedCount {
+				break
+			}
+		} else {
+			if last == identIdx {
+				break
+			}
 		}
 		headers = headers[:last]
 		for i := range rows {
@@ -380,7 +525,7 @@ func fitToWidth(headers []string, rows [][]string, identifier string, termWidth 
 }
 
 // estimateWidth estimates the table's rendered width.
-func estimateWidth(headers []string, rows [][]string) int {
+func estimateWidth(headers []string, rows [][]string, hasBorder bool) int {
 	widths := make([]int, len(headers))
 	for i, h := range headers {
 		widths[i] = len(camelToTitle(h))
@@ -394,7 +539,10 @@ func estimateWidth(headers []string, rows [][]string) int {
 	}
 	total := 0
 	for _, w := range widths {
-		total += w + 2 // +2 for padding
+		total += w + 2 // +2 for padding (1 left + 1 right)
+	}
+	if hasBorder {
+		total += len(widths) + 1 // left border + column separators + right border
 	}
 	return total
 }
