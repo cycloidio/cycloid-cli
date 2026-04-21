@@ -104,6 +104,26 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "failed to read stack version flags")
 	}
 
+	// If no version flag was specified, preserve the current component's version
+	// instead of defaulting to the catalog's default (which may differ).
+	if tag == "" && branch == "" && hash == "" {
+		if currentVersion := ptr.Value(currentComponent.ServiceCatalog.Version); currentVersion != "" {
+			versions, _, listErr := m.ListStackVersions(org, stackRef)
+			if listErr == nil {
+				for _, v := range versions {
+					if ptr.Value(v.Name) == currentVersion {
+						if ptr.Value(v.Type) == "tag" {
+							tag = currentVersion
+						} else {
+							branch = currentVersion
+						}
+						break
+					}
+				}
+			}
+		}
+	}
+
 	var currentConfig = make(models.FormVariables)
 	if currentComponent.UseCase != nil {
 		currentConfig, _, err = m.GetComponentConfig(org, project, env, component)

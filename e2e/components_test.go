@@ -432,4 +432,50 @@ func TestComponentCmd(t *testing.T) {
 			t.Errorf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
 		}
 	})
+
+	t.Run("TestUpdatePreservesStackVersionWhenNotSpecified", func(t *testing.T) {
+		// Regression test: cy component update without any --stack-branch/--stack-tag/
+		// --stack-commit-hash flag was silently switching the component to the catalog's
+		// default branch instead of keeping the current version.
+		component := randomCanonical("preserve-version")
+
+		m := config.Middleware
+		created, _, err := m.CreateOrUpdateComponent(config.Org, *config.Project.Canonical,
+			*config.Environment.Canonical, component, description, component,
+			stackRef, "", *config.CatalogRepoVersionStacks.Name, "", "default", "", nil)
+		if err != nil {
+			t.Logf("test setup failed: component creation %q reported err: %v", component, err)
+			t.FailNow()
+		}
+		defer m.DeleteComponent(config.Org, *created.Project.Canonical,
+			*created.Environment.Canonical, *created.Canonical)
+
+		versionBefore := created.ServiceCatalog.Version
+
+		// Update without specifying any version flag — version must be preserved.
+		args := []string{
+			"--output", "json",
+			"--org", config.Org,
+			"components", "update",
+			"-p", *config.Project.Canonical,
+			"-e", *config.Environment.Canonical,
+			"-c", component,
+			"-d", description,
+			"-u", "default",
+		}
+		cmdOut, cmdErr := executeCommand(args)
+		if cmdErr != nil {
+			t.Errorf("component update failed, stdout:\n%s\nstderr\n%s", cmdOut, cmdErr)
+			t.FailNow()
+		}
+
+		var updated models.Component
+		if err := json.Unmarshal([]byte(cmdOut), &updated); err != nil {
+			t.Errorf("failed to parse update output as JSON: %v\noutput: %s", err, cmdOut)
+			t.FailNow()
+		}
+
+		assert.Equal(t, versionBefore, updated.ServiceCatalog.Version,
+			"stack version must not change when no version flag is specified")
+	})
 }
