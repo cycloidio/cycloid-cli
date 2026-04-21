@@ -4,5 +4,5 @@ body: '`cy component update` without `--stack-branch`/`--stack-tag`/`--stack-com
 time: 2026-04-21T00:00:00Z
 custom:
   DETAILS: ""
-  PR: ""
+  PR: "427"
   TYPE: CLI
