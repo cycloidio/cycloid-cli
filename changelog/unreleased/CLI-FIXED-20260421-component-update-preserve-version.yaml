@@ -1,0 +1,8 @@
+component: CLI
+kind: FIXED
+body: '`cy component update` without `--stack-branch`/`--stack-tag`/`--stack-commit-hash` no longer resets the stack version to the catalog default'
+time: 2026-04-21T00:00:00Z
+custom:
+  DETAILS: ""
+  PR: ""
+  TYPE: CLI
