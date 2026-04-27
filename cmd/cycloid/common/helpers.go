@@ -9,10 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/config"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/cycloidio/cycloid-cli/config"
 )
 
 var orgRe = regexp.MustCompile(`\(\$ organization_canonical \$\)`)

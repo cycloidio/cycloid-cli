@@ -5,9 +5,10 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
 )
 
 // AddMemberIDFlag registers --id for member get/delete/update commands.
@@ -71,7 +72,7 @@ func CompleteMemberID(cmd *cobra.Command, args []string, toComplete string) ([]c
 		idStr := strconv.Itoa(int(*member.ID))
 		if strings.HasPrefix(idStr, toComplete) || toComplete == "" {
 			completions = append(completions, cobra.CompletionWithDesc(idStr,
-				fmt.Sprintf("%s %s (%s)", member.GivenName, member.FamilyName, member.Email.String()),
+				fmt.Sprintf("%s (%s)", member.FullName, member.Email.String()),
 			))
 		}
 	}
@@ -100,7 +101,7 @@ func CompleteMemberEmail(cmd *cobra.Command, args []string, toComplete string) (
 		emailStr := member.Email.String()
 		if strings.HasPrefix(emailStr, toComplete) || toComplete == "" {
 			completions = append(completions, cobra.CompletionWithDesc(emailStr,
-				fmt.Sprintf("%s %s (%s)", member.GivenName, member.FamilyName, member.Username),
+				fmt.Sprintf("%s (%s)", member.FullName, member.Username),
 			))
 		}
 	}

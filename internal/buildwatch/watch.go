@@ -15,8 +15,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"golang.org/x/term"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 const (

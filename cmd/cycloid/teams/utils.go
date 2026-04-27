@@ -26,7 +26,7 @@ func anyMembersToID(org, team string, members []string) ([]*uint32, error) {
 			if teamMember.Email != nil {
 				emailStr = teamMember.Email.String()
 			}
-			if member == ptr.Value(teamMember.GivenName)+" "+ptr.Value(teamMember.FamilyName) || member == emailStr {
+			if member == teamMember.FullName || member == emailStr {
 				result[i] = teamMember.ID
 				break
 			}

@@ -5,6 +5,8 @@ import (
 	"slices"
 	"strconv"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
@@ -12,7 +14,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/spf13/cobra"
 )
 
 func NewTeamMemberGetCommand() *cobra.Command {
@@ -65,7 +66,7 @@ func getTeamMember(cmd *cobra.Command, args []string) error {
 				emailStr = m.Email.String()
 			}
 			return memberArg == strconv.Itoa(int(ptr.Value(m.ID))) ||
-				memberArg == ptr.Value(m.Username) ||
+				memberArg == m.Username ||
 				memberArg == emailStr
 		}); index != -1 {
 			outMembers[i] = currentMembers[i]

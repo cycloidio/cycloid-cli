@@ -165,6 +165,72 @@ services:
         ipv4_address: "${DOCKER_IPAM:-192.168.10}.6"
 
 
+  plugin-registry:
+    image: cycloid/plugin-registry:latest
+    environment:
+      - PORT=4000
+      - DB_HOST=${DOCKER_IPAM:-192.168.10}.2
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=youdeploy
+      - DB_NAME=registry_develop
+      - REDIS_URI=redis://${DOCKER_IPAM:-192.168.10}.6:6379
+      - ORGS_CANS=cycloid
+      - CY_URL=http://${DOCKER_IPAM:-192.168.10}.10:3001
+      - REGISTRY_URI=${DOCKER_IPAM:-192.168.10}.12:5000
+      - REGISTRY_USERNAME=cycloid
+      - REGISTRY_PASSWORD=cycloid123
+      - RUN_MIGRATIONS=true
+    privileged: true
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.13"
+
+  plugin-manager:
+    image: cycloid/plugin-manager:latest
+    environment:
+      - LOG_LEVEL=debug
+      - PORT=4000
+      - DB_HOST=${DOCKER_IPAM:-192.168.10}.2
+      - DB_PORT=3306
+      - DB_USER=root
+      - DB_PASSWORD=youdeploy
+      - DB_NAME=manager_develop
+      - REDIS_URI=redis://${DOCKER_IPAM:-192.168.10}.6:6379
+      - CY_URL=http://${DOCKER_IPAM:-192.168.10}.10:3001
+      - ORGS_CANS=cycloid
+      - ADMIN_USERNAME=cycloid
+      - ADMIN_PASSWORD=cycloid123
+      - RUN_MIGRATIONS=true
+      - PLUGIN_MANAGER_NAME=test-plugin-manager
+    privileged: true
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.14"
+
+  docker-registry:
+    image: registry:3.0.0
+    configs:
+      - source: registry-htpasswd
+        target: /auth/htpasswd
+    environment:
+      - REGISTRY_AUTH=htpasswd
+      - REGISTRY_AUTH_HTPASSWD_REALM=cycloid
+      - REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd
+    networks:
+      cycloid:
+        ipv4_address: "${DOCKER_IPAM:-192.168.10}.12"
+
   git-server:
     image: cycloid/backend-tests-git-server:latest
     attach: false
@@ -354,6 +420,10 @@ configs:
       path "auth/token/renew-self" {
         capabilities = ["create"]
       }
+
+  registry-htpasswd:
+    content: |
+      cycloid:$$2y$$05$$sNTvLFbEI0nZzjV3wAgpROU7kIM07zm1MtUH5RBEteXhLnknSrMH2
 
   youdeploy-config.yml:
     content: |

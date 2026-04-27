@@ -6,8 +6,9 @@ import (
 	"net/url"
 	"strconv"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/go-openapi/strfmt"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, *http.Response, error) {

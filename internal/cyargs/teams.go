@@ -6,11 +6,12 @@ import (
 	"strings"
 	"time"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"github.com/spf13/cobra"
 )
 
 const (
@@ -119,7 +120,7 @@ func CompleteTeamMemberID(cmd *cobra.Command, args []string, toComplete string) 
 			if member.Email != nil {
 				emailStr = member.Email.String()
 			}
-			completions[i] = cobra.CompletionWithDesc(idStr, emailStr+": "+ptr.Value(member.GivenName)+" "+ptr.Value(member.FamilyName))
+			completions[i] = cobra.CompletionWithDesc(idStr, emailStr+": "+member.FullName)
 		}
 	}
 
@@ -135,7 +136,7 @@ func CompleteTeamMemberUsername(cmd *cobra.Command, args []string, toComplete st
 
 	completions := make([]cobra.Completion, len(members))
 	for i, member := range members {
-		username := ptr.Value(member.Username)
+		username := member.Username
 		if strings.HasPrefix(username, toComplete) || toComplete == "" {
 			emailStr := ""
 			if member.Email != nil {
@@ -162,7 +163,7 @@ func CompleteTeamMemberEmail(cmd *cobra.Command, args []string, toComplete strin
 			emailStr = member.Email.String()
 		}
 		if strings.HasPrefix(emailStr, toComplete) || toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(emailStr, ptr.Value(member.Username)+": "+ptr.Value(member.GivenName)+" "+ptr.Value(member.FamilyName))
+			completions[i] = cobra.CompletionWithDesc(emailStr, member.Username+": "+member.FullName)
 		}
 	}
 
@@ -182,11 +183,11 @@ func CompleteTeamMemberEmailOrUsername(cmd *cobra.Command, args []string, toComp
 		if member.Email != nil {
 			emailStr = member.Email.String()
 		}
-		username := ptr.Value(member.Username)
+		username := member.Username
 		if strings.HasPrefix(emailStr, toComplete) ||
 			strings.HasPrefix(username, toComplete) ||
 			toComplete == "" {
-			completions[i] = cobra.CompletionWithDesc(emailStr, username+": "+ptr.Value(member.GivenName)+" "+ptr.Value(member.FamilyName))
+			completions[i] = cobra.CompletionWithDesc(emailStr, username+": "+member.FullName)
 		}
 	}
 
@@ -207,10 +208,8 @@ func CompleteTeamMemberAny(cmd *cobra.Command, args []string, toComplete string)
 		if member.Email != nil {
 			emailStr = member.Email.String()
 		}
-		username := ptr.Value(member.Username)
-		givenName := ptr.Value(member.GivenName)
-		familyName := ptr.Value(member.FamilyName)
-		fullName := givenName + " " + familyName
+		username := member.Username
+		fullName := member.FullName
 		idStr := strconv.Itoa(int(ptr.Value(member.ID)))
 		if strings.HasPrefix(idStr, toComplete) || toComplete == "" {
 			completions[i] = cobra.CompletionWithDesc(idStr, username+": "+fullName)
@@ -317,7 +316,7 @@ func CompleteTeamOwnerCanonical(cmd *cobra.Command, args []string, toComplete st
 	completions := make([]cobra.Completion, len(users))
 	for i, user := range users {
 		if strings.HasPrefix(user.Username, toComplete) {
-			completions[i] = cobra.CompletionWithDesc(user.Username, user.Email.String()+": "+user.GivenName+" "+user.FamilyName)
+			completions[i] = cobra.CompletionWithDesc(user.Username, user.Email.String()+": "+user.FullName)
 		}
 	}
 

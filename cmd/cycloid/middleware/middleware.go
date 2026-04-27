@@ -179,6 +179,41 @@ type Middleware interface {
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, *http.Response, error)
 
+	// plugin_registries
+	ListPluginRegistries(org string) ([]*models.PluginRegistry, *http.Response, error)
+	CreatePluginRegistry(org, name, url string) (*models.PluginRegistry, *http.Response, error)
+	UpdatePluginRegistry(org string, registryID uint32, name string) (*models.PluginRegistry, *http.Response, error)
+	DeletePluginRegistry(org string, registryID uint32) (*http.Response, error)
+
+	// registry_plugins
+	GetRegistryPlugin(org string, registryID, pluginID uint32) (*models.Plugin, *http.Response, error)
+	CreateRegistryPlugin(org string, registryID uint32, name string) (*models.Plugin, *http.Response, error)
+	UpdateRegistryPlugin(org string, registryID, pluginID uint32, name string) (*models.Plugin, *http.Response, error)
+	DeleteRegistryPlugin(org string, registryID, pluginID uint32) (*http.Response, error)
+
+	// plugin_versions
+	ListPluginVersions(org string, registryID, pluginID uint32) ([]*models.PluginVersion, *http.Response, error)
+	GetPluginVersion(org string, registryID, pluginID, versionID uint32) (*models.PluginVersion, *http.Response, error)
+	CreatePluginVersion(org string, registryID, pluginID uint32, url string) (*models.PluginVersion, *http.Response, error)
+	DeletePluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
+	RetryPluginVersion(org string, registryID, pluginID, versionID uint32) (*models.PluginVersion, *http.Response, error)
+	GetPluginVersionLogs(org string, registryID, pluginID, versionID uint32) ([]*models.PluginVersionLog, *http.Response, error)
+	InstallPluginVersion(org string, registryID, pluginID, versionID uint32, configuration map[string]string) (*models.PluginInstall, *http.Response, error)
+
+	// organization_plugins
+	ListPlugins(org string) ([]*models.Plugin, *http.Response, error)
+	GetPlugin(org string, installID uint32) (*models.Plugin, *http.Response, error)
+	UpdatePlugin(org string, installID, versionID uint32, configuration map[string]string) (*models.Plugin, *http.Response, error)
+	DeletePlugin(org string, installID uint32) (*http.Response, error)
+	GetPluginLogs(org string, installID uint32) (*models.PluginInstallLog, *http.Response, error)
+
+	// plugin_widgets
+	ListPluginWidgets(org, placement string) ([]*models.PluginWidget, *http.Response, error)
+
+	// plugin_managers
+	ListPluginManagers(org string) ([]*models.PluginManager, *http.Response, error)
+	CreatePluginManager(org, name, url string) (*models.PluginManager, *http.Response, error)
+
 	// Extra actions out of the api
 	InitFirstOrg(org, userName, fullName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, *http.Response, error)
 

@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
@@ -18,7 +21,10 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/orgplugins"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pluginmanagers"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pluginregistries"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
@@ -26,8 +32,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
 	"github.com/cycloidio/cycloid-cli/internal/version"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -121,8 +125,11 @@ func AttachCommands(cmd *cobra.Command) {
 		events.NewCommands(),
 		externalbackends.NewCommands(),
 		members.NewCommands(),
+		orgplugins.NewCommands(),
 		organizations.NewCommands(),
 		pipelines.NewCommands(),
+		pluginmanagers.NewCommands(),
+		pluginregistries.NewCommands(),
 		projects.NewCommands(),
 		environments.NewCommands(),
 		components.NewCommands(),

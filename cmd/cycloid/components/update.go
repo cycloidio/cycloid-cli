@@ -8,7 +8,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/cycloidio/cycloid-cli/printer"
 	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
@@ -92,10 +91,10 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		stackRef = *currentComponent.ServiceCatalog.Ref
 	}
 
-	if useCase == "" && ptr.Value(currentComponent.UseCase) == "" {
+	if useCase == "" && currentComponent.UseCase == "" {
 		return errors.New("cannot determine the use case, please fill it with -(-u)se-case flag")
 	} else if useCase == "" {
-		useCase = ptr.Value(currentComponent.UseCase)
+		useCase = currentComponent.UseCase
 	}
 
 	// Get the stack version flags
@@ -105,7 +104,7 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 	}
 
 	var currentConfig = make(models.FormVariables)
-	if currentComponent.UseCase != nil {
+	if currentComponent.UseCase != "" {
 		currentConfig, _, err = m.GetComponentConfig(org, project, env, component)
 		if err != nil {
 			return printer.SmartPrint(p, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{}, cmd.OutOrStderr())

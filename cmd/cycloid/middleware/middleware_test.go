@@ -7,8 +7,9 @@ import (
 	"os"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 	"github.com/spf13/viper"
+
+	"github.com/cycloidio/cycloid-cli/internal/testcfg"
 )
 
 var config *testcfg.Config
