@@ -218,6 +218,14 @@ type Middleware interface {
 	ListComponentPlugins(org, project, env, component string) ([]*models.Plugin, *http.Response, error)
 	SetComponentPluginRelation(org, project, env, component string, pluginInstallID uint32, enabled bool) (*models.PluginRelation, *http.Response, error)
 
+	// org plugin widgets
+	ListPluginWidgets(org string) ([]*models.PluginWidget, *http.Response, error)
+	QueryPluginWidget(org string, widgetID uint32) (*models.PluginWidgetData, *http.Response, error)
+
+	// component plugin widgets
+	ListComponentPluginWidgets(org, project, env, component string) ([]*models.PluginWidget, *http.Response, error)
+	QueryComponentPluginWidget(org, project, env, component string, widgetID uint32) (*models.PluginWidgetData, *http.Response, error)
+
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, *http.Response, error)
 

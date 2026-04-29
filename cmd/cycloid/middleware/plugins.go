@@ -443,3 +443,59 @@ func (m *middleware) SetComponentPluginRelation(org, project, env, component str
 	}
 	return result, resp, nil
 }
+
+// --- Plugin Widgets (org) ---
+
+func (m *middleware) ListPluginWidgets(org string) ([]*models.PluginWidget, *http.Response, error) {
+	var result []*models.PluginWidget
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugin_widgets"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *middleware) QueryPluginWidget(org string, widgetID uint32) (*models.PluginWidgetData, *http.Response, error) {
+	var result *models.PluginWidgetData
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugin_widgets", fmt.Sprint(widgetID), "query"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+// --- Plugin Widgets (component) ---
+
+func (m *middleware) ListComponentPluginWidgets(org, project, env, component string) ([]*models.PluginWidget, *http.Response, error) {
+	var result []*models.PluginWidget
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "plugin_widgets"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *middleware) QueryComponentPluginWidget(org, project, env, component string, widgetID uint32) (*models.PluginWidgetData, *http.Response, error) {
+	var result *models.PluginWidgetData
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "plugin_widgets", fmt.Sprint(widgetID), "query"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}

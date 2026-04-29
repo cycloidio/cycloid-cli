@@ -6,6 +6,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/plugins/component"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/plugins/manager"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/plugins/registry"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/plugins/widget"
 )
 
 func NewCommands() *cobra.Command {
@@ -28,6 +29,7 @@ This command group is in beta. Backwards compatibility is not guaranteed.`,
 		component.NewCommands(),
 		manager.NewCommands(),
 		registry.NewCommands(),
+		widget.NewCommands(),
 	)
 	return cmd
 }
