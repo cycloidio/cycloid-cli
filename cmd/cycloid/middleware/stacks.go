@@ -25,12 +25,13 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, *http.Re
 	return result, resp, nil
 }
 
-func (m *middleware) ListStacks(org string) ([]*models.ServiceCatalog, *http.Response, error) {
+func (m *middleware) ListStacks(org string, filters ...LHSFilter) ([]*models.ServiceCatalog, *http.Response, error) {
 	var result []*models.ServiceCatalog
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "service_catalogs"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err
@@ -93,7 +94,7 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 	return 0, "", fmt.Errorf("stack version commit hash %q not found", versionCommitHash)
 }
 
-func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string) ([]*StackUseCase, *http.Response, error) {
+func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string, filters ...LHSFilter) ([]*StackUseCase, *http.Response, error) {
 	// Resolve version parameters to ID
 	versionID, _, err := m.resolveStackVersion(org, ref, versionTag, versionBranch, versionCommitHash)
 	if err != nil {
@@ -110,6 +111,7 @@ func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, vers
 		Organization: &org,
 		Route:        []string{"organizations", org, "service_catalogs", ref, "use_cases"},
 		Query:        query,
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err
@@ -117,12 +119,13 @@ func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, vers
 	return result, resp, nil
 }
 
-func (m *middleware) ListStackVersions(org, ref string) ([]*StackVersion, *http.Response, error) {
+func (m *middleware) ListStackVersions(org, ref string, filters ...LHSFilter) ([]*StackVersion, *http.Response, error) {
 	var result []*StackVersion
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "service_catalogs", ref, "versions"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err
@@ -175,35 +178,25 @@ func (m *middleware) getDefaultCatalogVersion(org, ref string) (*StackVersion, e
 	return nil, fmt.Errorf("failed to find the default version")
 }
 
-// ListBlueprints will list stacks that are flagged as blueprint. Uses the same route as ListStack.
-// TODO: Merge this route with ListStack once we find a way to add LHS filter params to the client.
-func (m *middleware) ListBlueprints(org string) ([]*models.ServiceCatalog, *http.Response, error) {
-	// This method uses custom LHS filter param like the frontend does: `service_catalog_blueprint[eq]=true`
-	// We use url.Values directly here - the encodeQuery will encode this as-is
-	// Note: url.Values{} Encode() will URL-encode the brackets, so we manually build the query string
-	query := url.Values{}
-	query.Set("organization_canonical", org)
-	query.Set("service_catalog_blueprint[eq]", "true")
+// ListBlueprints lists stacks that are flagged as blueprint using the LHS filter
+// service_catalog_blueprint[eq]=true. Additional caller-supplied filters are merged in.
+func (m *middleware) ListBlueprints(org string, filters ...LHSFilter) ([]*models.ServiceCatalog, *http.Response, error) {
+	lhsFilters := append(
+		[]LHSFilter{{Attribute: "service_catalog_blueprint", Condition: "eq", Value: "true"}},
+		filters...,
+	)
 
-	var stacks []*models.ServiceCatalog
+	var result []*models.ServiceCatalog
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "service_catalogs"},
-		Query:        query,
-	}, &stacks)
+		LHSFilters:   lhsFilters,
+	}, &result)
 	if err != nil {
 		return nil, resp, err
 	}
-
-	var validBlueprints []*models.ServiceCatalog
-	for _, catalog := range stacks {
-		if catalog.Blueprint {
-			validBlueprints = append(validBlueprints, catalog)
-		}
-	}
-
-	return validBlueprints, resp, nil
+	return result, resp, nil
 }
 
 func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, *http.Response, error) {

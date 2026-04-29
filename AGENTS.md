@@ -1,42 +1,46 @@
 # AGENTS.md
 
-This file mirrors `CLAUDE.md` for LLM agents that use the AGENTS.md convention (e.g., OpenAI Codex, Gemini Code Assist). Keep in sync with `CLAUDE.md` when updating either file.
+This file mirrors `CLAUDE.md` for LLM agents that use the AGENTS.md convention. Keep in sync when updating either file.
 
 ---
+
+# CLAUDE.md
+
+This file is auto-loaded by Claude Code on every invocation. See also `AGENTS.md` (kept identical, for non-Claude LLM agents).
 
 ## Commands
 
 ```bash
 # Build
-make build # build all platform binaries
-go build -o cy . # quick local build
+make build                  # build all platform binaries
+go build -o cy .            # quick local build
 
 # Test (requires local backend)
-make be-start # start backend via docker compose
-go test ./... # run all tests
-make test # same
-make be-stop # stop backend
+make be-reset               # start backend via docker compose
+go test ./...               # run all tests
+make test                   # same
+make be-stop                # stop backend
 
 # Run a specific test
 go test ./e2e/... -run TestProjects
 go test ./cmd/cycloid/middleware/... -run TestGetProject
 
 # Lint & format
-make lint # golangci-lint + shellcheck
-make format # gci + goimports + shfmt
+make lint                   # golangci-lint + shellcheck
+make format                 # gci + goimports + shfmt
 
 # Client regeneration (when swagger.yaml changes)
-make client-generate # regenerates ./client/ from swagger.yaml
+make client-generate        # regenerates ./client/ from swagger.yaml
 
 # Changelog
-make new-changelog-entry # add unreleased changelog entry (uses changie via docker)
+make new-changelog-entry    # add unreleased changelog entry (uses changie via docker)
 ```
 
 ## Architecture
 
 ```
-cmd/cycloid/<feature>/*.go → cmd/cycloid/middleware/ → GenericRequest()
- (cobra commands) (Middleware interface) (generic_client.go)
+cmd/cycloid/<feature>/*.go  →  cmd/cycloid/middleware/  →  GenericRequest()
+     (cobra commands)              (Middleware interface)      (generic_client.go)
 ```
 
 ### Key packages
@@ -70,20 +74,61 @@ These are invariants that LLM agents and new contributors must not violate:
 ```go
 // Standard middleware method pattern:
 func (m *middleware) GetProject(org, project string) (*models.Project, *http.Response, error) {
- var result *models.Project
- resp, err := m.GenericRequest(Request{
- Method: "GET",
- Organization: &org,
- Route: []string{"organizations", org, "projects", project},
- }, &result)
- if err != nil {
- return nil, resp, err
- }
- return result, resp, nil
+    var result *models.Project
+    resp, err := m.GenericRequest(Request{
+        Method:       "GET",
+        Organization: &org,
+        Route:        []string{"organizations", org, "projects", project},
+    }, &result)
+    if err != nil {
+        return nil, resp, err
+    }
+    return result, resp, nil
 }
 ```
 
-`Request` fields: `Method`, `Organization` (*string, for auth), `NoAuth` (bool), `Route` ([]string), `Query` (struct with `url` tags), `Headers` (map), `Accept` (*string), `Body` (any, JSON-marshalled).
+`Request` fields: `Method`, `Organization` (*string, for auth), `NoAuth` (bool), `Route` ([]string), `Query` (struct with `url` tags), `LHSFilters` ([]LHSFilter, see below), `Headers` (map), `Accept` (*string), `Body` (any, JSON-marshalled).
+
+## LHS filters
+
+The Cycloid API supports LHS bracket filters on `List` routes: `attribute[condition]=value`. The condition is typically `eq`, `rlike`, `gt`, `lt`, etc.
+
+**Rule: all new `List` middleware methods must accept `filters ...LHSFilter` as their last parameter.**
+
+`LHSFilter` is defined in `cmd/cycloid/middleware/lhs_filter.go`:
+
+```go
+type LHSFilter struct {
+    Attribute string
+    Condition string
+    Value     string
+}
+```
+
+Pass filters via the `LHSFilters` field of `Request`. Brackets are kept literal (not percent-encoded) so the API receives `name[eq]=my-project`, not `name%5Beq%5D=my-project`. Regex metacharacters in values (`?`, `*`, `+`, etc.) are also preserved.
+
+```go
+// Example: list projects filtered by name prefix
+func (m *middleware) ListProjects(org string, filters ...LHSFilter) ([]*models.Project, *http.Response, error) {
+    var result []*models.Project
+    resp, err := m.GenericRequest(Request{
+        Method:       "GET",
+        Organization: &org,
+        Route:        []string{"organizations", org, "projects"},
+        LHSFilters:   filters,
+    }, &result)
+    ...
+}
+
+// Caller usage:
+projects, _, err := m.ListProjects(org, middleware.LHSFilter{
+    Attribute: "name",
+    Condition: "rlike",
+    Value:     "proj.*",
+})
+```
+
+Offline (no-backend) unit tests for LHS filter encoding live in `cmd/cycloid/middleware/offline/lhs_filter_test.go`.
 
 ### Return type conventions
 
@@ -99,28 +144,28 @@ Always return the `*http.Response` so callers can inspect status codes. Assign `
 
 ```go
 func getProject(cmd *cobra.Command, args []string) error {
- // Step 1: ALL flags first
- org, err := cyargs.GetOrg(cmd)
- if err != nil { return err }
- project, err := cyargs.GetProject(cmd)
- if err != nil { return err }
- output, err := cmd.Flags().GetString("output")
- if err != nil { return errors.Wrap(err, "unable to get output flag") }
+    // Step 1: ALL flags first
+    org, err := cyargs.GetOrg(cmd)
+    if err != nil { return err }
+    project, err := cyargs.GetProject(cmd)
+    if err != nil { return err }
+    output, err := cmd.Flags().GetString("output")
+    if err != nil { return errors.Wrap(err, "unable to get output flag") }
 
- // Step 2: printer
- p, err := factory.GetPrinter(output)
- if err != nil { return errors.Wrap(err, "unable to get printer") }
+    // Step 2: printer
+    p, err := factory.GetPrinter(output)
+    if err != nil { return errors.Wrap(err, "unable to get printer") }
 
- // Step 3: API + middleware
- api := common.NewAPI()
- m := middleware.NewMiddleware(api)
+    // Step 3: API + middleware
+    api := common.NewAPI()
+    m := middleware.NewMiddleware(api)
 
- // Step 4: call + print
- result, _, err := m.GetProject(org, project)
- if err != nil {
- return printer.SmartPrint(p, nil, err, "unable to get project", printer.Options{}, cmd.OutOrStderr())
- }
- return printer.SmartPrint(p, result, nil, "", printer.Options{}, cmd.OutOrStdout())
+    // Step 4: call + print
+    result, _, err := m.GetProject(org, project)
+    if err != nil {
+        return printer.SmartPrint(p, nil, err, "unable to get project", printer.Options{}, cmd.OutOrStderr())
+    }
+    return printer.SmartPrint(p, result, nil, "", printer.Options{}, cmd.OutOrStdout())
 }
 ```
 
@@ -130,12 +175,12 @@ All shared flag definitions live in `internal/cyargs/`. Pattern:
 
 ```go
 func AddWidgetFlag(cmd *cobra.Command) {
- cmd.Flags().String("widget", "", "Widget canonical")
- _ = cmd.RegisterFlagCompletionFunc("widget", widgetCompletion)
+    cmd.Flags().String("widget", "", "Widget canonical")
+    _ = cmd.RegisterFlagCompletionFunc("widget", widgetCompletion)
 }
 
 func GetWidget(cmd *cobra.Command) (string, error) {
- return cmd.Flags().GetString("widget")
+    return cmd.Flags().GetString("widget")
 }
 ```
 
@@ -160,3 +205,47 @@ Register in the command constructor (`NewGetX()`), never inside `RunE`.
 - `@docs/adding-a-command.md` — full walkthrough with working example
 - `@docs/testing.md` — middleware + e2e test patterns, testcfg deep-dive
 - `@docs/middleware-refactor.md` — what changed and why, migration reference
+
+<!-- gitnexus:start -->
+# GitNexus — Code Intelligence
+
+This project is indexed by GitNexus as **cycloid-cli** (11055 symbols, 67195 relationships, 300 execution flows). Use the GitNexus MCP tools to understand code, assess impact, and navigate safely.
+
+> If any GitNexus tool warns the index is stale, run `npx gitnexus analyze` in terminal first.
+
+## Always Do
+
+- **MUST run impact analysis before editing any symbol.** Before modifying a function, class, or method, run `gitnexus_impact({target: "symbolName", direction: "upstream"})` and report the blast radius (direct callers, affected processes, risk level) to the user.
+- **MUST run `gitnexus_detect_changes()` before committing** to verify your changes only affect expected symbols and execution flows.
+- **MUST warn the user** if impact analysis returns HIGH or CRITICAL risk before proceeding with edits.
+- When exploring unfamiliar code, use `gitnexus_query({query: "concept"})` to find execution flows instead of grepping. It returns process-grouped results ranked by relevance.
+- When you need full context on a specific symbol — callers, callees, which execution flows it participates in — use `gitnexus_context({name: "symbolName"})`.
+
+## Never Do
+
+- NEVER edit a function, class, or method without first running `gitnexus_impact` on it.
+- NEVER ignore HIGH or CRITICAL risk warnings from impact analysis.
+- NEVER rename symbols with find-and-replace — use `gitnexus_rename` which understands the call graph.
+- NEVER commit changes without running `gitnexus_detect_changes()` to check affected scope.
+
+## Resources
+
+| Resource | Use for |
+|----------|---------|
+| `gitnexus://repo/cycloid-cli/context` | Codebase overview, check index freshness |
+| `gitnexus://repo/cycloid-cli/clusters` | All functional areas |
+| `gitnexus://repo/cycloid-cli/processes` | All execution flows |
+| `gitnexus://repo/cycloid-cli/process/{name}` | Step-by-step execution trace |
+
+## CLI
+
+| Task | Read this skill file |
+|------|---------------------|
+| Understand architecture / "How does X work?" | `.claude/skills/gitnexus/gitnexus-exploring/SKILL.md` |
+| Blast radius / "What breaks if I change X?" | `.claude/skills/gitnexus/gitnexus-impact-analysis/SKILL.md` |
+| Trace bugs / "Why is X failing?" | `.claude/skills/gitnexus/gitnexus-debugging/SKILL.md` |
+| Rename / extract / split / refactor | `.claude/skills/gitnexus/gitnexus-refactoring/SKILL.md` |
+| Tools, resources, schema reference | `.claude/skills/gitnexus/gitnexus-guide/SKILL.md` |
+| Index, status, clean, wiki CLI commands | `.claude/skills/gitnexus/gitnexus-cli/SKILL.md` |
+
+<!-- gitnexus:end -->

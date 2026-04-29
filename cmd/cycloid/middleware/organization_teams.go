@@ -16,7 +16,7 @@ var (
 	Descending TeamOrderByParam = "desc"
 )
 
-func (m *middleware) ListTeams(org string, teamNameFilter *string, createdAtFilter *uint64, memberIDFilter *uint32, orderBy *TeamOrderByParam) ([]*models.Team, *http.Response, error) {
+func (m *middleware) ListTeams(org string, teamNameFilter *string, createdAtFilter *uint64, memberIDFilter *uint32, orderBy *TeamOrderByParam, filters ...LHSFilter) ([]*models.Team, *http.Response, error) {
 	query := url.Values{}
 	if teamNameFilter != nil {
 		query.Set("team_name", *teamNameFilter)
@@ -37,6 +37,7 @@ func (m *middleware) ListTeams(org string, teamNameFilter *string, createdAtFilt
 		Organization: &org,
 		Route:        []string{"organizations", org, "teams"},
 		Query:        query,
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err

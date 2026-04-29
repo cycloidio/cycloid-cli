@@ -11,12 +11,13 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) ListMembers(org string) ([]*models.MemberOrg, *http.Response, error) {
+func (m *middleware) ListMembers(org string, filters ...LHSFilter) ([]*models.MemberOrg, *http.Response, error) {
 	var result []*models.MemberOrg
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "members"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err

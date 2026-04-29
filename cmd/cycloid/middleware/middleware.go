@@ -25,7 +25,7 @@ type Middleware interface {
 
 	// catalog_repositories
 	CreateCatalogRepository(org, name, url, branch, cred, visibility, teamCanonical string) (*models.ServiceCatalogSource, *http.Response, error)
-	ListCatalogRepositories(org string) ([]*models.ServiceCatalogSource, *http.Response, error)
+	ListCatalogRepositories(org string, filters ...LHSFilter) ([]*models.ServiceCatalogSource, *http.Response, error)
 	GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, *http.Response, error)
 	DeleteCatalogRepository(org, catalogRepo string) (*http.Response, error)
 	UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string, visibility *string) (*models.ServiceCatalogSource, *http.Response, error)
@@ -34,17 +34,17 @@ type Middleware interface {
 	CreateConfigRepository(org, name, canonical, url, branch, cred string, setDefault bool) (*models.ConfigRepository, *http.Response, error)
 	DeleteConfigRepository(org, configRepo string) (*http.Response, error)
 	GetConfigRepository(org, configRepo string) (*models.ConfigRepository, *http.Response, error)
-	ListConfigRepositories(org string) ([]*models.ConfigRepository, *http.Response, error)
+	ListConfigRepositories(org string, filters ...LHSFilter) ([]*models.ConfigRepository, *http.Response, error)
 	UpdateConfigRepository(org, configRepo, cred, name, url, branch string, setDefault bool) (*models.ConfigRepository, *http.Response, error)
 
 	// stacks (service_catalogs)
 	GetStack(org, ref string) (*models.ServiceCatalog, *http.Response, error)
 	UpdateStack(org, ref, teamCanonical string, visibility *string) (*models.ServiceCatalog, *http.Response, error)
-	ListStacks(org string) ([]*models.ServiceCatalog, *http.Response, error)
-	ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string) ([]*StackUseCase, *http.Response, error)
-	ListStackVersions(org, ref string) ([]*StackVersion, *http.Response, error)
+	ListStacks(org string, filters ...LHSFilter) ([]*models.ServiceCatalog, *http.Response, error)
+	ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string, filters ...LHSFilter) ([]*StackUseCase, *http.Response, error)
+	ListStackVersions(org, ref string, filters ...LHSFilter) ([]*StackVersion, *http.Response, error)
 	ResolveStackVersion(org, ref, stackVersion string) (uint32, string, error)
-	ListBlueprints(org string) ([]*models.ServiceCatalog, *http.Response, error)
+	ListBlueprints(org string, filters ...LHSFilter) ([]*models.ServiceCatalog, *http.Response, error)
 	CreateStackFromBlueprint(org, blueprintRef, name, stack, catalogRepository, useCase string) (*models.ServiceCatalog, *http.Response, error)
 
 	// organization_credentials
@@ -52,7 +52,7 @@ type Middleware interface {
 	UpdateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, *http.Response, error)
 	DeleteCredential(org, credential string) (*http.Response, error)
 	GetCredential(org, credential string) (*models.Credential, *http.Response, error)
-	ListCredentials(org, credentialType string) ([]*models.CredentialSimple, *http.Response, error)
+	ListCredentials(org, credentialType string, filters ...LHSFilter) ([]*models.CredentialSimple, *http.Response, error)
 
 	// events
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) (*http.Response, error)
@@ -70,19 +70,19 @@ type Middleware interface {
 	DeleteMember(org string, id uint32) (*http.Response, error)
 	GetMember(org string, id uint32) (*models.MemberOrg, *http.Response, error)
 	InviteMember(org, email, role string) (*models.MemberOrg, *http.Response, error)
-	ListMembers(org string) ([]*models.MemberOrg, *http.Response, error)
+	ListMembers(org string, filters ...LHSFilter) ([]*models.MemberOrg, *http.Response, error)
 	ListInvites(org string) ([]*models.MemberOrg, *http.Response, error)
 	UpdateMember(org string, id uint32, role string) (*models.MemberOrg, *http.Response, error)
 
 	// organization_teams
-	ListTeams(org string, teamNameFilter *string, createdAtFilter *uint64, memberIDFilter *uint32, orderBy *TeamOrderByParam) ([]*models.Team, *http.Response, error)
+	ListTeams(org string, teamNameFilter *string, createdAtFilter *uint64, memberIDFilter *uint32, orderBy *TeamOrderByParam, filters ...LHSFilter) ([]*models.Team, *http.Response, error)
 	GetTeam(org, team string) (*models.Team, *http.Response, error)
 	CreateTeam(org string, name, team, owner *string, roles []string) (*models.Team, *http.Response, error)
 	UpdateTeam(org string, name, team, owner *string, roles []string) (*models.Team, *http.Response, error)
 	DeleteTeam(org, team string) (*http.Response, error)
 
 	// organization_team_members
-	ListTeamMembers(org string, team string) ([]*models.MemberTeam, *http.Response, error)
+	ListTeamMembers(org string, team string, filters ...LHSFilter) ([]*models.MemberTeam, *http.Response, error)
 	GetTeamMember(org string, team string, memberID uint32) (*models.MemberTeam, *http.Response, error)
 	AssignMemberToTeam(org, team string, username, email *string) (*models.MemberTeam, *http.Response, error)
 	UnAssignMemberFromTeam(org, team string, memberID uint32) (*http.Response, error)
@@ -146,8 +146,8 @@ type Middleware interface {
 	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, *http.Response, error)
 	DeleteProject(org, project string) (*http.Response, error)
 	GetProject(org string, project string) (*models.Project, *http.Response, error)
-	ListProjects(org string) ([]*models.Project, *http.Response, error)
-	ListProjectsEnv(org, project string) ([]*models.Environment, *http.Response, error)
+	ListProjects(org string, filters ...LHSFilter) ([]*models.Project, *http.Response, error)
+	ListProjectsEnv(org, project string, filters ...LHSFilter) ([]*models.Environment, *http.Response, error)
 
 	// Env
 	GetEnv(org, project, env string) (*models.Environment, *http.Response, error)
@@ -157,7 +157,7 @@ type Middleware interface {
 
 	// Component
 	CreateOrUpdateComponent(org, project, env, component, description, name, stackRef, versionTag, versionBranch, versionCommitHash, useCase, cloudProvider string, vars models.FormVariables) (*models.Component, *http.Response, error)
-	ListComponents(org, project, env string) ([]*models.Component, *http.Response, error)
+	ListComponents(org, project, env string, filters ...LHSFilter) ([]*models.Component, *http.Response, error)
 	GetComponent(org, project, env, component string) (*models.Component, *http.Response, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, *http.Response, error)
 	DeleteComponent(org, project, env, component string) (*http.Response, error)
@@ -166,12 +166,12 @@ type Middleware interface {
 
 	DeleteRole(org, role string) (*http.Response, error)
 	GetRole(org, role string) (*models.Role, *http.Response, error)
-	ListRoles(org string) ([]*models.Role, *http.Response, error)
+	ListRoles(org string, filters ...LHSFilter) ([]*models.Role, *http.Response, error)
 	CreateRole(org string, name, canonical, description *string, rules []*models.NewRule) (*models.NewRole, *http.Response, error)
 	UpdateRole(org, roleCanonical string, name, canonical, description *string, rules []*models.NewRule) (*models.Role, *http.Response, error)
 
 	// ApiKeys
-	ListAPIKeys(org string) ([]*models.APIKey, *http.Response, error)
+	ListAPIKeys(org string, filters ...LHSFilter) ([]*models.APIKey, *http.Response, error)
 	GetAPIKey(org, canonical string) (*models.APIKey, *http.Response, error)
 	CreateAPIKey(org, canonical, description, owner string, name *string, rules []*models.NewRule) (*models.APIKey, *http.Response, error)
 	DeleteAPIKey(org, canonical string) (*http.Response, error)
