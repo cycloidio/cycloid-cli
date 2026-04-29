@@ -195,6 +195,7 @@ type Middleware interface {
 	ListPluginRegistries(org string) ([]*models.PluginRegistry, *http.Response, error)
 	GetPluginRegistry(org string, id uint32) (*models.PluginRegistry, *http.Response, error)
 	CreatePluginRegistry(org, name, url string) (*models.PluginRegistry, *http.Response, error)
+	UpdatePluginRegistry(org string, id uint32, name string) (*models.PluginRegistry, *http.Response, error)
 	DeletePluginRegistry(org string, id uint32) (*http.Response, error)
 
 	// organization_plugin_registries — plugins

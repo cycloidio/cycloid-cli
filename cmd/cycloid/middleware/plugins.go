@@ -228,6 +228,21 @@ func (m *middleware) CreatePluginRegistry(org, name, url string) (*models.Plugin
 	return result, resp, nil
 }
 
+func (m *middleware) UpdatePluginRegistry(org string, id uint32, name string) (*models.PluginRegistry, *http.Response, error) {
+	body := &models.UpdatePluginRegistry{Name: &name}
+	var result *models.PluginRegistry
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugin_registries", fmt.Sprint(id)},
+		Body:         body,
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
 func (m *middleware) DeletePluginRegistry(org string, id uint32) (*http.Response, error) {
 	resp, err := m.GenericRequest(Request{
 		Method:       "DELETE",

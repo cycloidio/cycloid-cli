@@ -17,6 +17,7 @@ func NewCommands() *cobra.Command {
 		NewListCommand(),
 		NewGetCommand(),
 		NewAddCommand(),
+		NewUpdateCommand(),
 		NewDeleteCommand(),
 		plugin.NewCommands(),
 	)
