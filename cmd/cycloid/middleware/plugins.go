@@ -410,3 +410,36 @@ func (m *middleware) ListPluginVersionLogs(org string, registryID, pluginID, ver
 	}
 	return result, resp, nil
 }
+
+// --- Component Plugins ---
+
+func (m *middleware) ListComponentPlugins(org, project, env, component string) ([]*models.Plugin, *http.Response, error) {
+	var result []*models.Plugin
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "plugins"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *middleware) SetComponentPluginRelation(org, project, env, component string, pluginInstallID uint32, enabled bool) (*models.PluginRelation, *http.Response, error) {
+	body := &models.PluginRelation{
+		Enabled:   &enabled,
+		Relations: map[string]any{},
+	}
+	var result *models.PluginRelation
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "plugins", fmt.Sprint(pluginInstallID), "relation"},
+		Body:         body,
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}

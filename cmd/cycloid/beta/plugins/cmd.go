@@ -3,6 +3,7 @@ package plugins
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/plugins/component"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/plugins/manager"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/plugins/registry"
 )
@@ -24,6 +25,7 @@ This command group is in beta. Backwards compatibility is not guaranteed.`,
 		NewUpgradeCommand(),
 		NewUninstallCommand(),
 		NewLogsCommand(),
+		component.NewCommands(),
 		manager.NewCommands(),
 		registry.NewCommands(),
 	)

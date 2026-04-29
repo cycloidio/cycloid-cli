@@ -214,6 +214,10 @@ type Middleware interface {
 	RetryPluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
 	ListPluginVersionLogs(org string, registryID, pluginID, versionID uint32) ([]*models.PluginVersionLog, *http.Response, error)
 
+	// component plugins
+	ListComponentPlugins(org, project, env, component string) ([]*models.Plugin, *http.Response, error)
+	SetComponentPluginRelation(org, project, env, component string, pluginInstallID uint32, enabled bool) (*models.PluginRelation, *http.Response, error)
+
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, *http.Response, error)
 
