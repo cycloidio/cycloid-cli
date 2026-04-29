@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/spf13/viper"
@@ -30,13 +31,22 @@ func (m *middleware) GenericRequest(req Request, response any) (*http.Response, 
 	routeParts = append(routeParts, req.Route...)
 	baseURL.Path = path.Join(routeParts...)
 
-	// Encode query parameters
+	// Encode query parameters; LHS filters use raw encoding to preserve literal brackets.
+	var rawQueryParts []string
 	if req.Query != nil {
 		qv, err := encodeQuery(req.Query)
 		if err != nil {
 			return nil, fmt.Errorf("failed to encode query params: %w", err)
 		}
-		baseURL.RawQuery = qv.Encode()
+		if encoded := qv.Encode(); encoded != "" {
+			rawQueryParts = append(rawQueryParts, encoded)
+		}
+	}
+	if len(req.LHSFilters) > 0 {
+		rawQueryParts = append(rawQueryParts, buildLHSFilterQuery(req.LHSFilters))
+	}
+	if len(rawQueryParts) > 0 {
+		baseURL.RawQuery = strings.Join(rawQueryParts, "&")
 	}
 
 	// Marshal body

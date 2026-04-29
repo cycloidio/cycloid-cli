@@ -7,12 +7,13 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) ListProjects(org string) ([]*models.Project, *http.Response, error) {
+func (m *middleware) ListProjects(org string, filters ...LHSFilter) ([]*models.Project, *http.Response, error) {
 	var result []*models.Project
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err
@@ -20,12 +21,13 @@ func (m *middleware) ListProjects(org string) ([]*models.Project, *http.Response
 	return result, resp, nil
 }
 
-func (m *middleware) ListProjectsEnv(org, project string) ([]*models.Environment, *http.Response, error) {
+func (m *middleware) ListProjectsEnv(org, project string, filters ...LHSFilter) ([]*models.Environment, *http.Response, error) {
 	var result []*models.Environment
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err

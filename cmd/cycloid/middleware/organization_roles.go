@@ -8,12 +8,13 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
-func (m *middleware) ListRoles(org string) ([]*models.Role, *http.Response, error) {
+func (m *middleware) ListRoles(org string, filters ...LHSFilter) ([]*models.Role, *http.Response, error) {
 	var result []*models.Role
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "roles"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err

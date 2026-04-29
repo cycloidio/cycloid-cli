@@ -33,13 +33,14 @@ type StackUseCase struct {
 // Request represents an HTTP request to the Cycloid API.
 type Request struct {
 	Method       string
-	Organization *string  // used for auth token lookup
-	NoAuth       bool     // disables auth header
-	Route        []string // joined onto base URL: ["organizations", org, "projects"]
-	Query        any      // url.Values or struct with `url` tags
+	Organization *string     // used for auth token lookup
+	NoAuth       bool        // disables auth header
+	Route        []string    // joined onto base URL: ["organizations", org, "projects"]
+	Query        any         // url.Values or struct with `url` tags
+	LHSFilters   []LHSFilter // LHS bracket filters: encoded as attribute[condition]=value with literal brackets
 	Headers      map[string]string
 	Accept       *string // overrides default Accept header
-	Body         any     // JSON-marshalled when non-nil
+	Body         any     // JSON-marshaled when non-nil
 }
 
 // APIResponseError is returned when the API returns a non-2xx response.

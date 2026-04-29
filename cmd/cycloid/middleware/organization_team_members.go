@@ -8,12 +8,13 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-func (m *middleware) ListTeamMembers(org string, team string) ([]*models.MemberTeam, *http.Response, error) {
+func (m *middleware) ListTeamMembers(org string, team string, filters ...LHSFilter) ([]*models.MemberTeam, *http.Response, error) {
 	var result []*models.MemberTeam
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "teams", team, "members"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err

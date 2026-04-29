@@ -36,12 +36,13 @@ func (m *middleware) GetComponent(org, project, env, component string) (*models.
 	return result, resp, nil
 }
 
-func (m *middleware) ListComponents(org, project, env string) ([]*models.Component, *http.Response, error) {
+func (m *middleware) ListComponents(org, project, env string, filters ...LHSFilter) ([]*models.Component, *http.Response, error) {
 	var result []*models.Component
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments", env, "components"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err

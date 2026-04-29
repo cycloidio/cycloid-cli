@@ -86,7 +86,7 @@ func (m *middleware) DeleteCredential(org, credential string) (*http.Response, e
 	return resp, err
 }
 
-func (m *middleware) ListCredentials(org, credentialType string) ([]*models.CredentialSimple, *http.Response, error) {
+func (m *middleware) ListCredentials(org, credentialType string, filters ...LHSFilter) ([]*models.CredentialSimple, *http.Response, error) {
 	// Explicit pagination matches swagger defaults (page_size 1000) so callers such as
 	// `credential create --update` do not miss an existing credential on backends that
 	// use a smaller default page size.
@@ -104,6 +104,7 @@ func (m *middleware) ListCredentials(org, credentialType string) ([]*models.Cred
 		Organization: &org,
 		Route:        []string{"organizations", org, "credentials"},
 		Query:        query,
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err
