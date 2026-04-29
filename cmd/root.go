@@ -23,6 +23,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/output"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/plugins"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
@@ -163,6 +164,7 @@ func AttachCommands(cmd *cobra.Command) {
 		members.NewCommands(),
 		organizations.NewCommands(),
 		pipelines.NewCommands(),
+		plugins.NewCommands(),
 		projects.NewCommands(),
 		environments.NewCommands(),
 		components.NewCommands(),

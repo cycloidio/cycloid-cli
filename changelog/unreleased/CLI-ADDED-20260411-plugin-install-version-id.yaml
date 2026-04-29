@@ -1,8 +1,8 @@
 component: CLI
 kind: ADDED
-body: "`cy beta plugin install --version-id` to pin a specific plugin version at install time"
+body: "`cy plugin install --version-id` to pin a specific plugin version at install time"
 time: 2026-04-11T00:00:00Z
 custom:
-  DETAILS: "Adds an optional `--version-id` flag to `cy beta plugin install`. When provided, the install request includes the target version ID, enabling CI/CD workflows to pin exact plugin versions without raw API calls."
+  DETAILS: "Adds an optional `--version-id` flag to `cy plugin install`. When provided, the install request includes the target version ID, enabling CI/CD workflows to pin exact plugin versions without raw API calls."
   PR: "426"
   TYPE: CLI

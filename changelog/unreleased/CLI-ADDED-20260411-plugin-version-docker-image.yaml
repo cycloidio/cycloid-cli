@@ -1,6 +1,6 @@
 component: CLI
 kind: ADDED
-body: "`cy beta plugin registry plugin version publish --docker-image` to publish Docker image-based plugin versions"
+body: "`cy plugin registry plugin version publish --docker-image` to publish Docker image-based plugin versions"
 time: 2026-04-11T00:00:01Z
 custom:
   DETAILS: "Adds `--docker-image` as a mutually exclusive alternative to `--url` in the version publish command. Accepts Docker image references (e.g. `registry:5000/org/plugin:tag`) that are not valid URIs, which the existing `--url` flag rejects."
