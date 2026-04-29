@@ -11,16 +11,19 @@ import (
 )
 
 func NewInstallCommand() *cobra.Command {
-	return &cobra.Command{
+	cmd := &cobra.Command{
 		Use:               "install <registry> <plugin> <version-id>",
 		Args:              cobra.ExactArgs(3),
 		ValidArgsFunction: cyargs.CompleteRegistryPluginID,
 		Short:             "Trigger installation of a plugin version",
 		Example: `
   cy plugin registry plugin version install my-registry my-plugin 7
+  cy plugin registry plugin version install my-registry my-plugin 7 --config key=value
 `,
 		RunE: installVersion,
 	}
+	cyargs.AddPluginConfigFlags(cmd)
+	return cmd
 }
 
 func installVersion(cmd *cobra.Command, args []string) error {
@@ -42,6 +45,11 @@ func installVersion(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	_, err = m.InstallPluginVersion(org, registryID, pluginID, versionID)
+	configuration, err := cyargs.GetPluginConfig(cmd)
+	if err != nil {
+		return err
+	}
+
+	_, err = m.InstallPluginVersion(org, registryID, pluginID, versionID, configuration)
 	return cyout.PrintWithOptions(cmd, nil, err, "unable to trigger plugin version install", printer.Options{})
 }

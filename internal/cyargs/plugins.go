@@ -125,14 +125,17 @@ func CompletePluginInstallID(cmd *cobra.Command, args []string, toComplete strin
 
 	completions := make([]cobra.Completion, 0, len(plugins)*2)
 	for _, p := range plugins {
-		if p.ID == nil || p.Status == nil {
+		if p.Install == nil || p.Install.ID == nil {
 			continue
 		}
-		idStr := strconv.Itoa(int(*p.ID))
-		status := *p.Status
+		idStr := strconv.Itoa(int(*p.Install.ID))
+		status := ""
+		if p.Install.Status != nil {
+			status = *p.Install.Status
+		}
 		name := idStr
-		if p.Version != nil && p.Version.Name != nil {
-			name = *p.Version.Name
+		if p.Name != nil {
+			name = *p.Name
 		}
 		completions = append(completions,
 			cobra.CompletionWithDesc(idStr, fmt.Sprintf("%s (%s)", name, status)),
@@ -143,6 +146,7 @@ func CompletePluginInstallID(cmd *cobra.Command, args []string, toComplete strin
 }
 
 // ResolvePluginInstallID resolves a numeric ID string or name to a uint32 plugin install ID.
+// The install ID lives at Plugin.Install.ID (not Plugin.ID which is the registry plugin ID).
 func ResolvePluginInstallID(org, nameOrID string, m middleware.Middleware) (uint32, error) {
 	if id, err := strconv.ParseUint(nameOrID, 10, 32); err == nil {
 		return uint32(id), nil
@@ -153,11 +157,11 @@ func ResolvePluginInstallID(org, nameOrID string, m middleware.Middleware) (uint
 	}
 	var matches []uint32
 	for _, p := range plugins {
-		if p.ID == nil {
+		if p.Install == nil || p.Install.ID == nil {
 			continue
 		}
-		if p.Version != nil && p.Version.Name != nil && *p.Version.Name == nameOrID {
-			matches = append(matches, *p.ID)
+		if p.Name != nil && *p.Name == nameOrID {
+			matches = append(matches, *p.Install.ID)
 		}
 	}
 	return resolveUnique("plugin install", nameOrID, matches)

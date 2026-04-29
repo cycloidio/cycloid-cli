@@ -184,8 +184,8 @@ type Middleware interface {
 	DeletePluginManager(org string, id uint32) (*http.Response, error)
 
 	// organization_plugins (installs)
-	ListPlugins(org string) ([]*models.PluginInstall, *http.Response, error)
-	GetPlugin(org string, id uint32) (*models.PluginInstall, *http.Response, error)
+	ListPlugins(org string) ([]*models.Plugin, *http.Response, error)
+	GetPlugin(org string, id uint32) (*models.Plugin, *http.Response, error)
 	CreatePlugin(org string, versionID *uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
 	UpdatePlugin(org string, id, versionID uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
 	DeletePlugin(org string, id uint32) (*http.Response, error)
@@ -210,7 +210,7 @@ type Middleware interface {
 	GetPluginVersion(org string, registryID, pluginID, versionID uint32) (*models.PluginVersion, *http.Response, error)
 	CreatePluginVersion(org string, registryID, pluginID uint32, url string) (*models.PluginVersion, *http.Response, error)
 	DeletePluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
-	InstallPluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
+	InstallPluginVersion(org string, registryID, pluginID, versionID uint32, configuration map[string]string) (*http.Response, error)
 	RetryPluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
 	ListPluginVersionLogs(org string, registryID, pluginID, versionID uint32) ([]*models.PluginVersionLog, *http.Response, error)
 
@@ -219,7 +219,7 @@ type Middleware interface {
 	SetComponentPluginRelation(org, project, env, component string, pluginInstallID uint32, enabled bool) (*models.PluginRelation, *http.Response, error)
 
 	// org plugin widgets
-	ListPluginWidgets(org string) ([]*models.PluginWidget, *http.Response, error)
+	ListPluginWidgets(org, placement string) ([]*models.PluginWidget, *http.Response, error)
 	QueryPluginWidget(org string, widgetID uint32) (*models.PluginWidgetData, *http.Response, error)
 
 	// component plugin widgets

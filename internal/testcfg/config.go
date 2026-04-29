@@ -50,10 +50,9 @@ func NewConfig(testName string) (*Config, error) {
 			"-----END OPENSSH PRIVATE KEY-----",
 		}, "\n")
 		localGitCredential    = "local-git"
-		dockerIPAM            = EnvDefault("DOCKER_IPAM", "192.168.10")
-		configRepoName        = "cli-test-config"
-		configRepository      = "cli-test-config"
-		configRepoURL         = fmt.Sprintf("git@%s.7:/git-server/repos/backend-test-config-repo.git", dockerIPAM)
+		configRepoName   = "cli-test-config"
+		configRepository = "cli-test-config"
+		configRepoURL    = "git@git-server:/git-server/repos/backend-test-config-repo.git"
 		configRepoBranch      = "master"
 		isDefault             = true
 		gitCred               = "github"
@@ -83,7 +82,7 @@ func NewConfig(testName string) (*Config, error) {
 	}
 
 	provisionAPI, _ := strconv.ParseBool(EnvDefault("CY_TEST_PROVISION_API", "1"))
-	config.APIUrl = EnvDefault("CY_TEST_API_URL", "http://"+dockerIPAM+".10:3001")
+	config.APIUrl = EnvDefault("CY_TEST_API_URL", "http://localhost:3001")
 	config.Org = EnvDefault("CY_TEST_ROOT_ORG", "cycloid")
 	licence, ok := os.LookupEnv("API_LICENCE_KEY")
 	if !ok && provisionAPI {

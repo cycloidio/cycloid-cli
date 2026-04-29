@@ -89,8 +89,8 @@ func (m *middleware) DeletePluginManager(org string, id uint32) (*http.Response,
 
 // --- Plugin Installs ---
 
-func (m *middleware) ListPlugins(org string) ([]*models.PluginInstall, *http.Response, error) {
-	var result []*models.PluginInstall
+func (m *middleware) ListPlugins(org string) ([]*models.Plugin, *http.Response, error) {
+	var result []*models.Plugin
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
@@ -102,8 +102,8 @@ func (m *middleware) ListPlugins(org string) ([]*models.PluginInstall, *http.Res
 	return result, resp, nil
 }
 
-func (m *middleware) GetPlugin(org string, id uint32) (*models.PluginInstall, *http.Response, error) {
-	var result *models.PluginInstall
+func (m *middleware) GetPlugin(org string, id uint32) (*models.Plugin, *http.Response, error) {
+	var result *models.Plugin
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
@@ -380,11 +380,16 @@ func (m *middleware) DeletePluginVersion(org string, registryID, pluginID, versi
 	return resp, err
 }
 
-func (m *middleware) InstallPluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error) {
+func (m *middleware) InstallPluginVersion(org string, registryID, pluginID, versionID uint32, configuration map[string]string) (*http.Response, error) {
+	if configuration == nil {
+		configuration = map[string]string{}
+	}
+	body := &models.NewPluginInstall{Configuration: configuration}
 	resp, err := m.GenericRequest(Request{
 		Method:       "POST",
 		Organization: &org,
 		Route:        versionsRoute(org, registryID, pluginID, fmt.Sprint(versionID), "install"),
+		Body:         body,
 	}, nil)
 	return resp, err
 }
@@ -446,12 +451,17 @@ func (m *middleware) SetComponentPluginRelation(org, project, env, component str
 
 // --- Plugin Widgets (org) ---
 
-func (m *middleware) ListPluginWidgets(org string) ([]*models.PluginWidget, *http.Response, error) {
+type listPluginWidgetsQuery struct {
+	Placement string `url:"placement"`
+}
+
+func (m *middleware) ListPluginWidgets(org, placement string) ([]*models.PluginWidget, *http.Response, error) {
 	var result []*models.PluginWidget
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "plugin_widgets"},
+		Query:        listPluginWidgetsQuery{Placement: placement},
 	}, &result)
 	if err != nil {
 		return nil, resp, err
