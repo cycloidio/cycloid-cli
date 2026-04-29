@@ -9,7 +9,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/cycloidio/cycloid-cli/internal/testcfg"
+	"github.com/cycloidio/cycloid-cli/pkg/testcfg"
 )
 
 var config *testcfg.Config

@@ -124,20 +124,25 @@ func NewConfig(testName string) (*Config, error) {
 		config.APIKey = *init.APIKey
 		api.Config.Token = *init.APIKey
 
-		// Write the API for the User, we'll look up a better way later
-		root, err := FindRepoRoot()
-		if err != nil {
-			return nil, err
-		}
-
-		apiKeyEnvFile := strings.Join([]string{
-			"CY_API_KEY=" + config.APIKey,
-			"CY_API_URL=" + config.APIUrl,
-			"CY_ORG=" + config.Org,
-		}, "\n")
-		err = os.WriteFile(root+"/.api_key", []byte(apiKeyEnvFile), 0666)
-		if err != nil {
-			return nil, err
+		// Write .api_key only when CY_TEST_WRITE_API_KEY_FILE is not "0".
+		// Default is "1" (enabled) so cycloid-cli dev flow is unchanged.
+		// Set to "0" when consuming from a different repo to avoid scribbling
+		// into that repo's working tree.
+		writeFile, _ := strconv.ParseBool(EnvDefault("CY_TEST_WRITE_API_KEY_FILE", "1"))
+		if writeFile {
+			root, err := FindRepoRoot()
+			if err != nil {
+				return nil, err
+			}
+			apiKeyEnvFile := strings.Join([]string{
+				"CY_API_KEY=" + config.APIKey,
+				"CY_API_URL=" + config.APIUrl,
+				"CY_ORG=" + config.Org,
+			}, "\n")
+			err = os.WriteFile(root+"/.api_key", []byte(apiKeyEnvFile), 0666)
+			if err != nil {
+				return nil, err
+			}
 		}
 	}
 

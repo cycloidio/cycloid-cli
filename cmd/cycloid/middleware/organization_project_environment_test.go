@@ -6,7 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/cycloidio/cycloid-cli/internal/testcfg"
+	"github.com/cycloidio/cycloid-cli/pkg/testcfg"
 )
 
 func TestEnvCrud(t *testing.T) {
