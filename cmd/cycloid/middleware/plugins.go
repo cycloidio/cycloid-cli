@@ -102,8 +102,8 @@ func (m *middleware) ListPlugins(org string) ([]*models.Plugin, *http.Response, 
 	return result, resp, nil
 }
 
-func (m *middleware) GetPlugin(org string, id uint32) (*models.Plugin, *http.Response, error) {
-	var result *models.Plugin
+func (m *middleware) GetPlugin(org string, id uint32) (*models.PluginInstall, *http.Response, error) {
+	var result *models.PluginInstall
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
