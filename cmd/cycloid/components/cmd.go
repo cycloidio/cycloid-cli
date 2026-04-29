@@ -57,10 +57,7 @@ var componentTableOptions = printer.Options{
 				version = *c.ServiceCatalog.Version
 			}
 		}
-		useCase := ""
-		if c.UseCase != nil {
-			useCase = *c.UseCase
-		}
+		useCase := c.UseCase
 		return map[string]string{
 			"Canonical":   canonical,
 			"Name":        name,

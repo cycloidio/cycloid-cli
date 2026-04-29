@@ -168,8 +168,8 @@ func (m *middleware) DeletePlugin(org string, id uint32) (*http.Response, error)
 	return resp, err
 }
 
-func (m *middleware) ListPluginLogs(org string, id uint32) (*models.PluginInstallLog, *http.Response, error) {
-	var result *models.PluginInstallLog
+func (m *middleware) ListPluginLogs(org string, id uint32) (*models.PluginLogs, *http.Response, error) {
+	var result *models.PluginLogs
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,

@@ -56,7 +56,7 @@ func getTeamMember(cmd *cobra.Command, args []string) error {
 				emailStr = m.Email.String()
 			}
 			return memberArg == strconv.Itoa(int(ptr.Value(m.ID))) ||
-				memberArg == ptr.Value(m.Username) ||
+				memberArg == m.Username ||
 				memberArg == emailStr
 		}); index != -1 {
 			outMembers[i] = currentMembers[i]

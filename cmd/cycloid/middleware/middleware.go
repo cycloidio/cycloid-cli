@@ -189,7 +189,7 @@ type Middleware interface {
 	CreatePlugin(org string, versionID *uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
 	UpdatePlugin(org string, id, versionID uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
 	DeletePlugin(org string, id uint32) (*http.Response, error)
-	ListPluginLogs(org string, id uint32) (*models.PluginInstallLog, *http.Response, error)
+	ListPluginLogs(org string, id uint32) (*models.PluginLogs, *http.Response, error)
 
 	// organization_plugin_registries
 	ListPluginRegistries(org string) ([]*models.PluginRegistry, *http.Response, error)

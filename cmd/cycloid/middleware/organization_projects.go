@@ -60,7 +60,6 @@ func (m *middleware) CreateProject(org, projectName, project, description, confi
 		Owner:                     owner,
 		Icon:                      icon,
 		Color:                     color,
-		TeamCanonical:             team,
 	}
 
 	var result *models.Project
