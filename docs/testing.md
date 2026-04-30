@@ -47,6 +47,20 @@ E2E tests are **not run in parallel** — the backend uses git under the hood an
 | `CY_TEST_PROVISION_API` | Set to `true` to provision test fixtures via API |
 | `CY_TEST_VERBOSITY` | Set to `debug` to enable HTTP debug logs |
 
+### Generating `.env` from prod credentials
+
+The repo ships an `.env.sample` with `cy://` URIs that resolve to real secrets. Generate a local `.env` by interpolating against your prod org:
+
+```bash
+# 1. Point cy at prod (uses bao-backed cyset shell function)
+cyset API_prod_cycloid
+
+# 2. Interpolate — resolves cy:// URIs to real values
+cy uri interpolate .env.sample > .env
+```
+
+`.env` is git-ignored. Re-run step 2 whenever secrets rotate. The file is sourced automatically by `docker compose` when you run `make be-reset`.
+
 The compose stack now uses Docker auto-IPAM (no static `192.168.10.0/24`); services
 talk to each other via service DNS names (e.g. `youdeploy-api:3001`,
 `docker-registry:5000`). Only `youdeploy-api` (port `3001`) and `docker-registry`

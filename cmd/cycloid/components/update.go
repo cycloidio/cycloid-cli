@@ -88,8 +88,8 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		useCase = currentComponent.UseCase
 	}
 
-	// Get the stack version flags
-	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	// Resolve stack version: --stack-version (new) or legacy flags; empty = preserve current.
+	tag, branch, hash, err := cyargs.ResolveStackVersionArg(cmd, m, org, stackRef)
 	if err != nil {
 		return errors.Wrap(err, "failed to read stack version flags")
 	}

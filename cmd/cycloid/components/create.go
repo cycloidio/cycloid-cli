@@ -79,8 +79,8 @@ func createComponent(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// Get the stack version flags
-	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	// Resolve stack version: --stack-version (new) or legacy flags.
+	tag, branch, hash, err := cyargs.ResolveStackVersionArg(cmd, m, org, stackRef)
 	if err != nil {
 		return errors.Wrap(err, "failed to read stack version flags")
 	}
