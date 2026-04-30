@@ -47,8 +47,9 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// Get the stack version flags
-	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	// Resolve stack version: --stack-version (new) or legacy flags.
+	// Bare --stack-version requires prefix form (tag:/branch:/sha:) since no stack-ref is available here.
+	tag, branch, hash, err := cyargs.ResolveStackVersionArg(cmd, m, org, "")
 	if err != nil {
 		return errors.Wrap(err, "failed to read stack version flags")
 	}

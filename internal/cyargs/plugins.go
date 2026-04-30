@@ -459,11 +459,15 @@ func ResolveRegistryPluginID(org string, registryID uint32, nameOrID string, m m
 // Internal helpers
 // ---------------------------------------------------------------------------
 
+// noMatchPrefix is the sentinel prefix used by resolveUnique for not-found errors.
+const noMatchPrefix = "no "
+
 // resolveUnique returns the single ID from matches, or a descriptive error.
+// Not-found errors are detectable via IsNoMatchError.
 func resolveUnique(kind, nameOrID string, matches []uint32) (uint32, error) {
 	switch len(matches) {
 	case 0:
-		return 0, fmt.Errorf("no %s found matching %q; use a numeric ID or check spelling", kind, nameOrID)
+		return 0, fmt.Errorf(noMatchPrefix+"%s found matching %q; use a numeric ID or check spelling", kind, nameOrID)
 	case 1:
 		return matches[0], nil
 	default:
@@ -478,8 +482,10 @@ func resolveUnique(kind, nameOrID string, matches []uint32) (uint32, error) {
 	}
 }
 
-// IsNoMatchError returns true when err is the "no X found matching" sentinel
-// from resolveUnique, indicating the resource simply does not exist yet.
+// IsNoMatchError reports whether err is a "not found" error from resolveUnique.
 func IsNoMatchError(err error) bool {
-	return err != nil && strings.Contains(err.Error(), "found matching")
+	if err == nil {
+		return false
+	}
+	return strings.HasPrefix(err.Error(), noMatchPrefix)
 }
