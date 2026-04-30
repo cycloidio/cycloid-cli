@@ -52,12 +52,12 @@ func TestResolveStackVersionArg(t *testing.T) {
 	const stackRef = "myorg:mystack"
 
 	cases := []struct {
-		name      string
-		args      []string
-		wantTag   string
+		name       string
+		args       []string
+		wantTag    string
 		wantBranch string
-		wantHash  string
-		wantErr   string
+		wantHash   string
+		wantErr    string
 	}{
 		{
 			name:    "empty returns empty triple",
@@ -65,9 +65,9 @@ func TestResolveStackVersionArg(t *testing.T) {
 			wantTag: "", wantBranch: "", wantHash: "",
 		},
 		{
-			name:      "tag prefix resolved client-side",
-			args:      []string{"--stack-version", "tag:v1.0.0"},
-			wantTag:   "v1.0.0",
+			name:    "tag prefix resolved client-side",
+			args:    []string{"--stack-version", "tag:v1.0.0"},
+			wantTag: "v1.0.0",
 		},
 		{
 			name:       "branch prefix resolved client-side",
@@ -95,8 +95,8 @@ func TestResolveStackVersionArg(t *testing.T) {
 			wantBranch: "main",
 		},
 		{
-			name:    "bare short hash resolves to commit",
-			args:    []string{"--stack-version", "aabbccd"},
+			name:     "bare short hash resolves to commit",
+			args:     []string{"--stack-version", "aabbccd"},
 			wantHash: "aabbccdd1234567",
 		},
 		{
