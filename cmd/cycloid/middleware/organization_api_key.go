@@ -7,7 +7,9 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
-// ListAPIKeys will request API to list generated API keys
+// ListAPIKeys lists API keys for an organization.
+//
+// Supported LHS filter attributes: organization_canonical, user_canonical.
 func (m *middleware) ListAPIKeys(org string, filters ...LHSFilter) ([]*models.APIKey, *http.Response, error) {
 	var result []*models.APIKey
 	resp, err := m.GenericRequest(Request{

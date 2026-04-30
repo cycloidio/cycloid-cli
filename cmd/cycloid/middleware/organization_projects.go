@@ -7,6 +7,11 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
+// ListProjects lists projects for an organization.
+//
+// Supported LHS filter attributes: project_canonical, project_name,
+// project_description, project_created_at, project_config_repository_canonical,
+// environment_canonical, user_canonical.
 func (m *middleware) ListProjects(org string, filters ...LHSFilter) ([]*models.Project, *http.Response, error) {
 	var result []*models.Project
 	resp, err := m.GenericRequest(Request{
@@ -21,6 +26,9 @@ func (m *middleware) ListProjects(org string, filters ...LHSFilter) ([]*models.P
 	return result, resp, nil
 }
 
+// ListProjectsEnv lists environments for a project.
+//
+// Supported LHS filter attributes: environment_canonical, environment_created_at.
 func (m *middleware) ListProjectsEnv(org, project string, filters ...LHSFilter) ([]*models.Environment, *http.Response, error) {
 	var result []*models.Environment
 	resp, err := m.GenericRequest(Request{

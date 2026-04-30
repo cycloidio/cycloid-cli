@@ -170,6 +170,12 @@ type Middleware interface {
 	CreateRole(org string, name, canonical, description *string, rules []*models.NewRule) (*models.NewRole, *http.Response, error)
 	UpdateRole(org, roleCanonical string, name, canonical, description *string, rules []*models.NewRule) (*models.Role, *http.Response, error)
 
+	// inventory
+	ListInventoryResources(org string, filters ...LHSFilter) ([]*models.InventoryResource, *http.Response, error)
+	ListInventoryOutputs(org string, filters ...LHSFilter) ([]*InventoryOutput, *http.Response, error)
+	CreateInventoryResource(org string, body *models.NewInventoryResource) (*models.InventoryResource, *http.Response, error)
+	DeleteInventoryResource(org string, id uint32) (*http.Response, error)
+
 	// ApiKeys
 	ListAPIKeys(org string, filters ...LHSFilter) ([]*models.APIKey, *http.Response, error)
 	GetAPIKey(org, canonical string) (*models.APIKey, *http.Response, error)
