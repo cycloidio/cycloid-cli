@@ -156,7 +156,7 @@ format-sh:
 .PHONY: ci-test
 .ONEFILE:
 ci-test:
-	$(MAKEFILE_DIR)/scripts/ci-tests.sh
+	$(MAKEFILE_DIR)scripts/ci-tests.sh
 
 .git/hooks/pre-commit:
 	pre-commit-install
