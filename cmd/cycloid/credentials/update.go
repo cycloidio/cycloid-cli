@@ -12,8 +12,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewUpdateCommand() *cobra.Command {
@@ -241,17 +241,6 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	switch credT {
 	case "ssh":
 		sshKeyPath, err := cyargs.GetCredentialSSHKey(cmd)
@@ -438,9 +427,5 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	outCred, _, err := m.UpdateCredential(org, name, credT, rawCred, credentialPath, credential, description)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to update credential", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, outCred, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, outCred, err, "unable to update credential", printer.Options{})
 }

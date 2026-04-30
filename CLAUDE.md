@@ -44,7 +44,8 @@ cmd/cycloid/<feature>/*.go  →  cmd/cycloid/middleware/  →  GenericRequest()
 - **`cmd/cycloid/middleware/`** — The `Middleware` interface (`middleware.go`) makes HTTP calls via `GenericRequest` (`generic_client.go`). Each feature gets its own file (e.g., `organization_projects.go`).
 - **`cmd/cycloid/<feature>/`** — Cobra command definitions. Each feature directory has: `cmd.go` (registers subcommands), plus one file per verb (`list.go`, `get.go`, `create.go`, `update.go`, `delete.go`), and `common.go` for shared logic.
 - **`internal/cyargs/`** — All shared flag definitions and completion functions. Every flag used by multiple commands must be declared here.
-- **`printer/`** — Output formatting. Use `printer.SmartPrint(p, obj, err, errStr, opts, writer)` — success to `cmd.OutOrStdout()`, errors to `cmd.OutOrStderr()`.
+- **`printer/`** — Output formatting. Use `cyout.PrintWithOptions(cmd, obj, err, errMsg, opts)` — routes errors to `cmd.ErrOrStderr()`, results to `cmd.OutOrStdout()`. Direct `printer.SmartPrint` calls are legacy; migrate on touch.
+- **`internal/cyout/`** — One-liner print helpers (`cyout.Print`, `cyout.PrintWithOptions`) and `cyout.RegisterModel` for `--output` shell completion.
 - **`e2e/`** — End-to-end tests that run real CLI commands against a live backend.
 
 ## Hard Rules
@@ -56,7 +57,7 @@ These are invariants that LLM agents and new contributors must not violate:
 3. **NEVER call `NewMiddleware` outside a cobra `RunE` function** — not at package init, not in tests directly.
 4. **ALWAYS parse ALL flags via `cyargs.Get*` BEFORE calling `common.NewAPI()` and `NewMiddleware()`** — `GenericRequest` reads `verbosity` from Viper at call time; unparsed flags produce stale values.
 5. **ALWAYS add shared flags to `internal/cyargs/`** — never inline a flag used by more than one command.
-6. **ALWAYS use `printer.SmartPrint`** — errors go to `OutOrStderr()`, results go to `OutOrStdout()`.
+6. **ALWAYS use `cyout.PrintWithOptions` (or `cyout.Print`)** — errors go to `ErrOrStderr()`, results go to `OutOrStdout()`. Do not call `printer.SmartPrint` directly in new code.
 7. **E2E tests require a running backend** (`make be-start`). Never run e2e in parallel.
 8. **Run `make format && make lint` after every code change.**
 9. **Ship tests with every feature** — in the same change, add or extend coverage for what you introduce: new or changed middleware in `cmd/cycloid/middleware/*_test.go` (or focused unit tests where appropriate), and user-facing CLI behavior in `e2e/*_test.go` when that resource already has e2e tests. Do not land behavior-only changes without tests.
@@ -96,31 +97,29 @@ Always return the `*http.Response` so callers can inspect status codes. Assign `
 ## Command pattern
 
 ```go
+var projectTableOptions = printer.Options{
+    Columns:    []string{"Canonical", "Name", "Description", "Owner.Username"},
+    Identifier: "Canonical",
+}
+
 func getProject(cmd *cobra.Command, args []string) error {
     // Step 1: ALL flags first
     org, err := cyargs.GetOrg(cmd)
     if err != nil { return err }
     project, err := cyargs.GetProject(cmd)
     if err != nil { return err }
-    output, err := cmd.Flags().GetString("output")
-    if err != nil { return errors.Wrap(err, "unable to get output flag") }
 
-    // Step 2: printer
-    p, err := factory.GetPrinter(output)
-    if err != nil { return errors.Wrap(err, "unable to get printer") }
-
-    // Step 3: API + middleware
+    // Step 2: API + middleware
     api := common.NewAPI()
     m := middleware.NewMiddleware(api)
 
-    // Step 4: call + print
+    // Step 3: call + print (cyout handles printer selection and error routing)
     result, _, err := m.GetProject(org, project)
-    if err != nil {
-        return printer.SmartPrint(p, nil, err, "unable to get project", printer.Options{}, cmd.OutOrStderr())
-    }
-    return printer.SmartPrint(p, result, nil, "", printer.Options{}, cmd.OutOrStdout())
+    return cyout.PrintWithOptions(cmd, result, err, "unable to get project", projectTableOptions)
 }
 ```
+
+`cyout.PrintWithOptions` handles everything: reads `--output`, picks the printer, routes errors to stderr and results to stdout. For commands with no column customisation, use `cyout.Print(cmd, obj, err, errMsg)`.
 
 ## `cyargs` flags
 

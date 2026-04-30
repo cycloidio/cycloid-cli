@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/spf13/cobra"
 )
 
 func NewTeamMemberAssignCommand() *cobra.Command {
@@ -38,16 +39,6 @@ func assignTeamMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return fmt.Errorf("failed to get printer for output type %q: %w", output, err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -62,9 +53,9 @@ func assignTeamMember(cmd *cobra.Command, args []string) error {
 
 		outMembers[i], _, err = m.AssignMemberToTeam(org, team, username, email)
 		if err != nil {
-			return printer.SmartPrint(p, outMembers, fmt.Errorf("failed to assign member %q in team %q: %w", id, team, err), "", printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, outMembers, fmt.Errorf("failed to assign member %q in team %q: %w", id, team, err), "", printer.Options{})
 		}
 	}
 
-	return printer.SmartPrint(p, outMembers, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, outMembers, nil, "", printer.Options{})
 }

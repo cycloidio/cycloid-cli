@@ -1,14 +1,13 @@
 package pipelines
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewPipelinePauseCommand() *cobra.Command {
@@ -36,24 +35,9 @@ func pause(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	_, err = m.PausePipeline(org, project, env, component, pipeline)
-	if err != nil {
-		printer.SmartPrint(p, nil, err, "failed to pause pipeline", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, nil, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, nil, err, "failed to pause pipeline", printer.Options{})
 }

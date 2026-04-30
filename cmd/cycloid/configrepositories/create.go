@@ -5,14 +5,13 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateCommand() *cobra.Command {
@@ -84,16 +83,6 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -102,27 +91,21 @@ func createConfigRepository(cmd *cobra.Command, args []string) error {
 	if getErr != nil {
 		var apiErr *middleware.APIResponseError
 		if !stderrors.As(getErr, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
-			return printer.SmartPrint(p, nil, getErr, "failed to check if config repository exists", printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, getErr, "failed to check if config repository exists", printer.Options{})
 		}
 	}
 
 	if exists && !update {
-		return printer.SmartPrint(p, nil,
+		return cyout.PrintWithOptions(cmd, nil,
 			fmt.Errorf("config repository %q already exists; use --update or `cy config-repo update`", repoCanonical),
-			"unable to create config repository", printer.Options{}, cmd.OutOrStderr())
+			"unable to create config repository", printer.Options{})
 	}
 
 	if exists {
 		cr, _, err := m.UpdateConfigRepository(org, repoCanonical, cred, displayName, url, branch, setDefault)
-		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to update config repository", printer.Options{}, cmd.OutOrStderr())
-		}
-		return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
+		return cyout.PrintWithOptions(cmd, cr, err, "unable to update config repository", printer.Options{})
 	}
 
 	cr, _, err := m.CreateConfigRepository(org, displayName, repoCanonical, url, branch, cred, setDefault)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to create config repository", printer.Options{}, cmd.OutOrStderr())
-	}
-	return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, cr, err, "unable to create config repository", printer.Options{})
 }

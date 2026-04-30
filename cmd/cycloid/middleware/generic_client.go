@@ -94,7 +94,7 @@ func (m *middleware) GenericRequest(req Request, response any) (*http.Response, 
 
 	// Handle non-2xx responses
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return resp, newAPIResponseError(resp, respBody)
+		return resp, newAPIResponseError(resp, respBody, sanitizeBody(bodyBytes), req.Method)
 	}
 
 	// Unwrap {"data": ...} envelope

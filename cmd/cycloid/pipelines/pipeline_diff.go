@@ -4,14 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewPipelineDiffCommand() *cobra.Command {
@@ -50,17 +49,6 @@ func diff(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	rawPipeline, err := os.ReadFile(pipelinePath)
 	if err != nil {
 		return fmt.Errorf("failed to open pipeline config at path %q: %w", pipelinePath, err)
@@ -75,9 +63,5 @@ func diff(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	pipelineDiff, _, err := m.DiffPipeline(org, project, env, component, pipeline, string(rawPipeline), string(rawVars), false)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to get pipeline diff", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, pipelineDiff, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, pipelineDiff, err, "failed to get pipeline diff", printer.Options{})
 }

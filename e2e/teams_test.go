@@ -5,11 +5,12 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
 	"github.com/sanity-io/litter"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 func TestTeams(t *testing.T) {

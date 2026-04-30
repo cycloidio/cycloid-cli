@@ -2,8 +2,6 @@ package cycloid_test
 
 import (
 	"bytes"
-	"encoding/base64"
-	"encoding/json"
 	"strings"
 	"testing"
 
@@ -13,7 +11,8 @@ import (
 )
 
 // TestVersion_JSONWithBadAPIURL runs `cy version -o json` against a non-API host.
-// The response body is HTML; JSON output must include HTTP context and a snippet of that HTML.
+// The response body is HTML; errors are always shown in human-readable format on stderr
+// regardless of --output flag, so the HTML content should appear in the error block.
 func TestVersion_JSONWithBadAPIURL(t *testing.T) {
 	t.Setenv("CY_API_URL", "http://google.com")
 	t.Setenv("CY_API_KEY", "")
@@ -28,33 +27,17 @@ func TestVersion_JSONWithBadAPIURL(t *testing.T) {
 	require.Error(t, err)
 
 	rawErr := strings.TrimSpace(stderr.String())
-	require.NotEmpty(t, rawErr, "expected error JSON on stderr (stdout=%q)", stdout.String())
+	require.NotEmpty(t, rawErr, "expected error output on stderr (stdout=%q)", stdout.String())
 
-	var payload map[string]any
-	require.NoError(t, json.Unmarshal([]byte(rawErr), &payload), "stderr should be JSON: %q", rawErr)
+	// Errors are always rendered as a human-readable block, not JSON
+	lower := strings.ToLower(rawErr)
+	require.True(t,
+		strings.Contains(lower, "api error"),
+		"expected 'API Error' header in error output, got: %q", truncateRunes(rawErr, 200))
 
-	htmlSample := htmlFromVersionErrorPayload(payload)
-	require.NotEmpty(t, htmlSample, "expected HTML snippet in JSON payload: %#v", payload)
-
-	lower := strings.ToLower(htmlSample)
 	require.True(t,
 		strings.Contains(lower, "<!doctype") || strings.Contains(lower, "<html"),
-		"expected HTML document prefix in API body preview, got: %q", truncateRunes(htmlSample, 120))
-}
-
-func htmlFromVersionErrorPayload(payload map[string]any) string {
-	// Non-2xx: *APIResponseError — Body is base64 in JSON.
-	if bodyStr, ok := payload["Body"].(string); ok && bodyStr != "" {
-		raw, err := base64.StdEncoding.DecodeString(bodyStr)
-		if err == nil && len(raw) > 0 {
-			return string(raw)
-		}
-	}
-	// 2xx decode failure diagnostic (JSON printer fallback).
-	if v, ok := payload["api_response_preview"].(string); ok {
-		return v
-	}
-	return ""
+		"expected HTML snippet in error output body, got: %q", truncateRunes(rawErr, 200))
 }
 
 func truncateRunes(s string, max int) string {

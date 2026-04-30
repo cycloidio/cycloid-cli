@@ -9,8 +9,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewPipelineUpdateCommand() *cobra.Command {
@@ -55,17 +55,6 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	rawPipeline, err := os.ReadFile(pipelinePath)
 	if err != nil {
 		return errors.Wrap(err, "unable to read pipeline file")
@@ -77,9 +66,5 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	resp, _, err := m.UpdatePipeline(org, project, env, component, pipeline, string(rawPipeline), string(rawVars), false)
-	if err != nil {
-		return err
-	}
-
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, resp, err, "unable to update pipeline", printer.Options{})
 }

@@ -4,15 +4,14 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // NewCreateCommand returns the cobra command holding
@@ -90,16 +89,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("failed to read rules argument as JSON: %w", err)
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return fmt.Errorf("unable to get output flag: %w", err)
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	_, _, getErr := m.GetAPIKey(org, apiKey)
 	if getErr == nil {
 		if !recreate {
@@ -107,13 +96,10 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 		_, err := m.DeleteAPIKey(org, apiKey)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to delete existing API key before recreation", printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to delete existing API key before recreation", printer.Options{})
 		}
 	}
 
 	key, _, err := m.CreateAPIKey(org, apiKey, description, owner, &apiKeyName, rulesModel)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to create API key", printer.Options{}, cmd.OutOrStderr())
-	}
-	return printer.SmartPrint(p, key, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, key, err, "unable to create API key", printer.Options{})
 }

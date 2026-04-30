@@ -15,8 +15,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/buildwatch"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewBuildCreateCommand() *cobra.Command {
@@ -88,12 +87,6 @@ func createBuild(cmd *cobra.Command, args []string) error {
 		return errors.New("--watch-cancel-on-timeout requires --timeout to be set")
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -152,7 +145,7 @@ func createBuild(cmd *cobra.Command, args []string) error {
 		)
 	}
 
-	return printer.SmartPrint(p, build, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.Print(cmd, build, nil, "")
 }
 
 // resolveConsoleURL returns CY_CONSOLE_URL when set, otherwise the default (https://console.cycloid.io).

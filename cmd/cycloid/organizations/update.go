@@ -7,8 +7,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // This command have been Hidden because it is not compatible with API key login.
@@ -44,19 +44,6 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable get org flag")
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	o, _, err := m.UpdateOrganization(org, name)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to update organization", printer.Options{}, cmd.OutOrStderr())
-	}
-	return printer.SmartPrint(p, o, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, o, err, "unable to update organization", printer.Options{})
 }

@@ -20,7 +20,7 @@ func TestNewAPIResponseError_PathFallback(t *testing.T) {
 		},
 	}
 
-	apiErr := newAPIResponseError(resp, []byte("raw backend error"))
+	apiErr := newAPIResponseError(resp, []byte("raw backend error"), nil, "GET")
 	assert.Equal(t, http.StatusBadRequest, apiErr.StatusCode)
 	assert.Equal(t, "/organizations/org/projects/project?foo=bar", apiErr.Path)
 	assert.Equal(t, "API error 400 on \"/organizations/org/projects/project?foo=bar\": raw backend error", apiErr.Error())

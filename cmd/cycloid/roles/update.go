@@ -1,8 +1,9 @@
 package roles
 
 import (
-	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 )
 
 func NewUpdateCommand() *cobra.Command {

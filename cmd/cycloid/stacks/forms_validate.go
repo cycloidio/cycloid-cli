@@ -11,8 +11,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewFormsValidateCommand() *cobra.Command {
@@ -57,16 +57,6 @@ func validateForm(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -79,18 +69,18 @@ func validateForm(cmd *cobra.Command, args []string) error {
 
 		validation, _, err := m.ValidateForm(org, rawForm)
 		if err != nil {
-			return printer.SmartPrint(p, validation, err, fmt.Sprintf("form validation failed for %s", formsPath), printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, validation, err, fmt.Sprintf("form validation failed for %s", formsPath), printer.Options{})
 		}
 
 		if len(validation.Errors) == 0 {
-			if err := printer.SmartPrint(p, nil, nil, fmt.Sprintf("%s: ok", formsPath), printer.Options{}, cmd.OutOrStderr()); err != nil {
+			if err := cyout.PrintWithOptions(cmd, nil, nil, fmt.Sprintf("%s: ok", formsPath), printer.Options{}); err != nil {
 				return err
 			}
 			continue
 		}
 
 		hasErrors = true
-		if err := printer.SmartPrint(p, validation, nil, "", printer.Options{}, cmd.OutOrStdout()); err != nil {
+		if err := cyout.PrintWithOptions(cmd, validation, nil, "", printer.Options{}); err != nil {
 			return err
 		}
 	}

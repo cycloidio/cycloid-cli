@@ -15,8 +15,9 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"golang.org/x/term"
+
+	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
 const (
@@ -81,6 +82,12 @@ type Options struct {
 	StatusWriter io.Writer
 	// DisableInterruptHandler skips OS signal handling (tests).
 	DisableInterruptHandler bool
+	// ReadOnly disables AbortBuild on first Ctrl+C. First interrupt immediately exits (code 130).
+	// Use this when streaming logs of an existing build without intending to control it.
+	ReadOnly bool
+	// Watch enables tailing mode in StreamLogs: reconnects on disconnect and polls for completion.
+	// When false, StreamLogs dumps available events and returns after an idle timeout.
+	Watch bool
 }
 
 // IsTerminalWriter reports whether w is an *os.File open on a terminal.
@@ -126,6 +133,12 @@ func Watch(
 					return
 				case <-sigCh:
 					interrupts++
+					if options.ReadOnly {
+						// Read-only watch: first Ctrl+C exits immediately without aborting.
+						userStop.Store(true)
+						cancel()
+						return
+					}
 					if interrupts == 1 {
 						_, err := m.AbortBuild(org, project, env, component, pipeline, job, buildID)
 						if options.StatusWriter != nil {

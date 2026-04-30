@@ -11,8 +11,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -68,17 +68,6 @@ func del(cmd *cobra.Command, args []string) error {
 
 	credList := append(args, credentialFlag)
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	for _, credential := range credList {
 		if credential == "" {
 			continue
@@ -86,11 +75,11 @@ func del(cmd *cobra.Command, args []string) error {
 
 		_, err := m.DeleteCredential(org, credential)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, fmt.Sprintf("unable to delete credential '%s'", credential), printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, fmt.Sprintf("unable to delete credential '%s'", credential), printer.Options{})
 		}
 
 		fmt.Fprintf(cmd.OutOrStderr(), "successfully deleted credential '%s'\n", credential)
 	}
 
-	return printer.SmartPrint(p, nil, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return nil
 }

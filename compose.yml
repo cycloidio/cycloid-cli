@@ -43,8 +43,7 @@ services:
       exec /go/youdeploy-http-api server --config-file /ci/config.yml
 
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.10"
+      - cycloid
 
     depends_on:
       database:
@@ -73,8 +72,7 @@ services:
       retries: 30
     tmpfs: [/var/lib/mysql]
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.2"
+      - cycloid
 
   ## Email
   email-smtp-no-tls-auth:
@@ -83,9 +81,9 @@ services:
     restart: always
     environment:
       MP_SMTP_AUTH: admin:admin
+      MP_SMTP_AUTH_ALLOW_INSECURE: "1"
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.3"
+      - cycloid
 
   ## Vault
   vault:
@@ -99,8 +97,7 @@ services:
     cap_add: [IPC_LOCK]
     tmpfs: [/vault/file]
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.4"
+      - cycloid
 
   # Override vault entrypoint adding a post script to init our approles
   vault-init:
@@ -109,7 +106,7 @@ services:
     tmpfs: [/vault/file]
     depends_on: [vault]
     environment:
-      VAULT_ADDR: "http://${DOCKER_IPAM:-192.168.10}.4:8200"
+      VAULT_ADDR: "http://vault:8200"
       VAULT_TOKEN: root_token
       VAULT_SKIP_VERIFY: true
     entrypoint:
@@ -130,8 +127,7 @@ services:
       vault write auth/approle/role/cycloid/custom-secret-id secret_id=custom-secret-id >/dev/null 2>&1 || true
 
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.5"
+      - cycloid
 
 
   redis:
@@ -161,8 +157,7 @@ services:
       target: /etc/redis/tls/key
     tmpfs: [/data]
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.6"
+      - cycloid
 
 
   git-server:
@@ -170,8 +165,7 @@ services:
     attach: false
     restart: always
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.7"
+      - cycloid
     tmpfs:
     - /git-server/repos:exec
     - /git-server/keys
@@ -187,8 +181,7 @@ services:
     # warning: starting at version 18, change this path to /var/lib/postgresql
     tmpfs: [/var/lib/postgresql/data]
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.8"
+      - cycloid
 
   concourse-web:
     image: concourse/concourse:7.9.1
@@ -197,8 +190,7 @@ services:
     depends_on: [concourse-db, vault, vault-init]
     attach: false
     networks:
-      cycloid:
-        ipv4_address: "${DOCKER_IPAM:-192.168.10}.9"
+      - cycloid
     configs:
     - source: base_resource_types_defaults.yml
       target: /brt/base_resource_types_defaults.yml
@@ -218,18 +210,87 @@ services:
       CONCOURSE_MAIN_TEAM_LOCAL_USER: concourse
       CONCOURSE_BIND_PORT: 8080
       # Important CF https://github.com/concourse/concourse/issues/2463 "error : named cookie not present"
-      CONCOURSE_EXTERNAL_URL: "http://${DOCKER_IPAM:-192.168.10}.9:8080"
-      CONCOURSE_POSTGRES_HOST: "${DOCKER_IPAM:-192.168.10}.8"
+      CONCOURSE_EXTERNAL_URL: "http://localhost:8080"
+      CONCOURSE_POSTGRES_HOST: "concourse-db"
       CONCOURSE_POSTGRES_USER: concourse
       CONCOURSE_POSTGRES_PASSWORD: concourse
       CONCOURSE_POSTGRES_DATABASE: concourse
       CONCOURSE_BASE_RESOURCE_TYPE_DEFAULTS: /brt/base_resource_types_defaults.yml
-      CONCOURSE_VAULT_URL: "http://${DOCKER_IPAM:-192.168.10}.4:8200"
+      CONCOURSE_VAULT_URL: "http://vault:8200"
       CONCOURSE_VAULT_AUTH_BACKEND: token
       CONCOURSE_VAULT_CLIENT_TOKEN: root_token
       CONCOURSE_VAULT_PATH_PREFIX: /cycloid
       CONCOURSE_VAULT_AUTH_BACKEND_MAX_TTL: 3600s
       CONCOURSE_CLUSTER_NAME: dev
+
+  ## Plugin registry (docker image store for plugins)
+  docker-registry:
+    image: registry:3.0.0
+    ports:
+      - "${DOCKER_REGISTRY_HOST_PORT:-5000}:5000"
+    volumes:
+      - ./docker/auth:/auth
+    environment:
+      REGISTRY_AUTH: htpasswd
+      REGISTRY_AUTH_HTPASSWD_REALM: cycloid
+      REGISTRY_AUTH_HTPASSWD_PATH: /auth/htpasswd
+    networks:
+      - cycloid
+
+  ## Plugin registry service
+  plugin-registry:
+    image: cycloid/plugin-registry:latest
+    environment:
+      PORT: "4000"
+      DB_HOST: database
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: youdeploy
+      DB_NAME: registry_develop
+      REDIS_URI: redis://redis:6379
+      ORGS_CANS: cycloid
+      CY_URL: http://youdeploy-api:3001
+      REGISTRY_URI: docker-registry:5000
+      REGISTRY_USERNAME: cycloid
+      REGISTRY_PASSWORD: cycloid123
+      RUN_MIGRATIONS: "true"
+    privileged: true
+    networks:
+      - cycloid
+    depends_on:
+      database:
+        condition: service_healthy
+      youdeploy-api:
+        condition: service_healthy
+
+  ## Plugin manager service
+  plugin-manager:
+    image: cycloid/plugin-manager:latest
+    environment:
+      LOG_LEVEL: debug
+      PORT: "4000"
+      DB_HOST: database
+      DB_PORT: "3306"
+      DB_USER: root
+      DB_PASSWORD: youdeploy
+      DB_NAME: manager_develop
+      REDIS_URI: redis://redis:6379
+      CY_URL: http://youdeploy-api:3001
+      CY_TOKEN_SECRET: local-test-secret
+      ORGS_CANS: cycloid
+      ADMIN_USERNAME: cycloid
+      ADMIN_PASSWORD: cycloid123
+      RUN_MIGRATIONS: "true"
+      PLUGIN_MANAGER_NAME: test-plugin-manager
+      PLUGIN_MANAGER_BASE_URL: http://plugin-manager:4000
+    privileged: true
+    networks:
+      - cycloid
+    depends_on:
+      database:
+        condition: service_healthy
+      youdeploy-api:
+        condition: service_healthy
 
 configs:
   ## Mysql
@@ -369,7 +430,7 @@ configs:
       log-level: "INFO"
       log-svc-level: "INFO"
 
-      db-host: ${DOCKER_IPAM:-192.168.10}.2
+      db-host: database
       db-port: 3306
       db-user: root
       db-pwd: youdeploy
@@ -378,7 +439,7 @@ configs:
       db-max-idle-conns: 10
       db-max-lifetime-conn: 5m
 
-      concourse-url: "http://${DOCKER_IPAM:-192.168.10}.9"
+      concourse-url: "http://concourse-web"
       concourse-port: 8080
       concourse-username: concourse
       concourse-password: concourse
@@ -386,14 +447,14 @@ configs:
 
       vault-role-id: custom-role-id
       vault-secret-id: custom-secret-id
-      vault-url: "http://${DOCKER_IPAM:-192.168.10}.4:8200"
+      vault-url: "http://vault:8200"
 
       frontend-base-url: "http://localhost:3000"
-      backend-base-url: "http://${DOCKER_IPAM:-192.168.10}.10:3001"
+      backend-base-url: "http://youdeploy-api:3001"
 
-      redis-uri: "redis://${DOCKER_IPAM:-192.168.10}.6:6379"
+      redis-uri: "redis://redis:6379"
 
-      email-smtp-svr-addr: "${DOCKER_IPAM:-192.168.10}.3:1025"
+      email-smtp-svr-addr: "email-smtp-no-tls-auth:1025"
       email-smtp-username: admin
       email-smtp-password: admin
       email-addr-from: "Cycloid Platform <noreply@cycloid.io>"
@@ -469,9 +530,5 @@ configs:
       -----END PRIVATE KEY-----
 
 networks:
-  cycloid:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: "${DOCKER_IPAM:-192.168.10}.0/24"
+  cycloid: {}
 

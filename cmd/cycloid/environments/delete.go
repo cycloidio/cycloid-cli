@@ -6,18 +6,23 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "delete",
-		Args:    cobra.NoArgs,
+		Use:     "delete [canonical...]",
+		Args:    cyargs.RequireArgsOrFlag("env"),
 		Aliases: []string{"del", "rm"},
-		Short:   "delete a environment",
-		Example: `cy --org my-org environment delete --env my-environment`,
-		RunE:    deleteEnvironment,
+		Short:   "delete an environment",
+		Example: `
+	# delete an environment using the --env flag
+	cy --org my-org environment delete --project my-proj --env my-env
+
+	# delete multiple environments using positional args
+	cy --org my-org environment delete --project my-proj env-a env-b
+`,
+		RunE: deleteEnvironment,
 	}
 
 	cyargs.AddProjectFlag(cmd)
@@ -39,22 +44,28 @@ func deleteEnvironment(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	env, err := cyargs.GetEnv(cmd)
-	if err != nil {
+	if envFlag, err := cyargs.GetEnv(cmd); err != nil {
 		return err
+	} else if envFlag != "" {
+		found := false
+		for _, a := range args {
+			if a == envFlag {
+				found = true
+				break
+			}
+		}
+		if !found {
+			args = append(args, envFlag)
+		}
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
+	envs := args
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return err
+	for _, env := range envs {
+		_, err = m.DeleteEnv(org, project, env)
+		if err != nil {
+			return cyout.Print(cmd, nil, err, "unable to delete environment "+env)
+		}
 	}
-
-	_, err = m.DeleteEnv(org, project, env)
-	return printer.SmartPrint(p, nil, err, "unable to delete environment", printer.Options{}, cmd.OutOrStdout())
+	return nil
 }

@@ -3,13 +3,13 @@ package roles
 import (
 	"fmt"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/pkg/errors"
-	"github.com/spf13/cobra"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -39,25 +39,18 @@ func deleteRole(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
+	deleted := make([]string, 0, len(args))
 	for _, role := range args {
 		_, err := m.DeleteRole(org, role)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, fmt.Sprintf("failed to delete role %q", role), printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, deleted, err, fmt.Sprintf("failed to delete role %q", role), printer.Options{})
 		}
+
+		deleted = append(deleted, role)
 	}
 
-	return printer.SmartPrint(p, nil, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{Columns: []string{"Canonical"}})
 }

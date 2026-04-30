@@ -1,15 +1,13 @@
 package cycloid
 
 import (
-	"os"
-
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewStatusCmd() *cobra.Command {
@@ -20,26 +18,20 @@ func NewStatusCmd() *cobra.Command {
 	# show the status of Cycloid services
 	cy status
 `,
-		RunE: func(cmd *cobra.Command, args []string) error {
-			output, err := cmd.Flags().GetString("output")
-			if err != nil {
-				return errors.Wrap(err, "unable to get output flag")
-			}
-
-			return status(output)
-		},
+		RunE: getStatus,
 	}
-
 }
 
-func status(output string) error {
+func getStatus(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	services, _, err := m.GetStatus()
 	if err != nil {
-		return errors.Wrap(err, "unable to get status")
+		return cyout.PrintWithOptions(cmd, nil, err, "unable to get status", printer.Options{})
 	}
+
+	output, _ := cyargs.GetOutput(cmd)
 
 	// for a better table display, we process the result
 	// in order to add some colors following the service
@@ -51,7 +43,7 @@ func status(output string) error {
 			// orange
 			unknown = "\033[0;33mUnknown\033[0m"
 			// red
-			err = "\033[0;31mError\033[0m"
+			errColor = "\033[0;31mError\033[0m"
 		)
 		for _, service := range services.Checks {
 			switch *service.Status {
@@ -60,20 +52,10 @@ func status(output string) error {
 			case "Unknown":
 				service.Status = &unknown
 			case "Error":
-				service.Status = &err
+				service.Status = &errColor
 			}
 		}
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
-	// print the result on the standard output
-	if err := p.Print(services.Checks, printer.Options{}, os.Stdout); err != nil {
-		return errors.Wrap(err, "unable to print result")
-	}
-	return nil
+	return cyout.PrintWithOptions(cmd, services.Checks, nil, "", printer.Options{})
 }

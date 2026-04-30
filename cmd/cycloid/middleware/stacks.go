@@ -6,9 +6,10 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/pkg/errors"
+
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"github.com/pkg/errors"
 )
 
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, *http.Response, error) {
