@@ -266,6 +266,8 @@ services:
   ## Plugin manager service
   plugin-manager:
     image: cycloid/plugin-manager:latest
+    ports:
+      - "${PLUGIN_MANAGER_HOST_PORT:-4000}:4000"
     environment:
       LOG_LEVEL: debug
       PORT: "4000"

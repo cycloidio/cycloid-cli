@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: "`cy beta plugin` commands promoted to top-level `cy plugin`"
+time: 2026-04-29T00:00:00Z
+custom:
+  DETAILS: "Plugin management commands are no longer experimental. `cy beta plugin` is removed; use `cy plugin` instead. This release also adds `cy plugin registry update`, `cy plugin registry plugin update`, `cy plugin component list/relation-set`, `cy plugin widget list/query`, and `cy plugin component widget list/query`."
+  PR: "426"
+  TYPE: CLI
