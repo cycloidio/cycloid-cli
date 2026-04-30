@@ -8,6 +8,10 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
+// ListCatalogRepositories lists catalog repositories for an organization.
+//
+// NOTE: the backend handler for this route does not call lhs.ParseQuery, so
+// LHS filters are accepted by the middleware but silently ignored server-side.
 func (m *middleware) ListCatalogRepositories(org string, filters ...LHSFilter) ([]*models.ServiceCatalogSource, *http.Response, error) {
 	var result []*models.ServiceCatalogSource
 	resp, err := m.GenericRequest(Request{

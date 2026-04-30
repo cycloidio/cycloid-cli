@@ -36,6 +36,11 @@ func (m *middleware) GetComponent(org, project, env, component string) (*models.
 	return result, resp, nil
 }
 
+// ListComponents lists components for a project environment.
+//
+// Supported LHS filter attributes: component_canonical, service_catalog_ref,
+// service_catalog_source_canonical, environment_canonical, project_canonical,
+// component_version_type, component_version_status, component_version_name.
 func (m *middleware) ListComponents(org, project, env string, filters ...LHSFilter) ([]*models.Component, *http.Response, error) {
 	var result []*models.Component
 	resp, err := m.GenericRequest(Request{

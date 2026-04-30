@@ -16,6 +16,9 @@ var (
 	Descending TeamOrderByParam = "desc"
 )
 
+// ListTeams lists teams for an organization.
+//
+// Supported LHS filter attributes: team_canonical, team_name, team_description, team_created_at.
 func (m *middleware) ListTeams(org string, teamNameFilter *string, createdAtFilter *uint64, memberIDFilter *uint32, orderBy *TeamOrderByParam, filters ...LHSFilter) ([]*models.Team, *http.Response, error) {
 	query := url.Values{}
 	if teamNameFilter != nil {

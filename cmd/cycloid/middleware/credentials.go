@@ -86,6 +86,10 @@ func (m *middleware) DeleteCredential(org, credential string) (*http.Response, e
 	return resp, err
 }
 
+// ListCredentials lists credentials for an organization.
+//
+// NOTE: the backend handler for this route does not call lhs.ParseQuery, so
+// LHS filters are accepted by the middleware but silently ignored server-side.
 func (m *middleware) ListCredentials(org, credentialType string, filters ...LHSFilter) ([]*models.CredentialSimple, *http.Response, error) {
 	// Explicit pagination matches swagger defaults (page_size 1000) so callers such as
 	// `credential create --update` do not miss an existing credential on backends that

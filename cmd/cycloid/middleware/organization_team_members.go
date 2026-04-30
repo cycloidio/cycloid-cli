@@ -8,6 +8,10 @@ import (
 	"github.com/cycloidio/cycloid-cli/client/models"
 )
 
+// ListTeamMembers lists members of a team.
+//
+// NOTE: the backend handler for this route does not call lhs.ParseQuery, so
+// LHS filters are accepted by the middleware but silently ignored server-side.
 func (m *middleware) ListTeamMembers(org string, team string, filters ...LHSFilter) ([]*models.MemberTeam, *http.Response, error) {
 	var result []*models.MemberTeam
 	resp, err := m.GenericRequest(Request{

@@ -21,6 +21,18 @@ type StackVersion struct {
 	Usage      *int64  `json:"usage"`
 }
 
+// InventoryOutput is the local representation of a terraform state output.
+// The model is not yet generated in the swagger client.
+type InventoryOutput struct {
+	ID          uint32      `json:"id"`
+	Key         string      `json:"key"`
+	Value       interface{} `json:"value,omitempty"`
+	Type        interface{} `json:"type,omitempty"`
+	Description string      `json:"description,omitempty"`
+	Sensitive   bool        `json:"sensitive,omitempty"`
+	Pinned      bool        `json:"pinned,omitempty"`
+}
+
 // StackUseCase is the local representation of a stack use case.
 // The model was removed from the generated swagger client.
 type StackUseCase struct {

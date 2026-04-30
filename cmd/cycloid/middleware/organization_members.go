@@ -10,6 +10,10 @@ import (
 	"github.com/go-openapi/strfmt"
 )
 
+// ListMembers lists organization members.
+//
+// Supported LHS filter attributes: user_canonical, user_full_name,
+// invitation_state, invitation_created_at, role_name.
 func (m *middleware) ListMembers(org string, filters ...LHSFilter) ([]*models.MemberOrg, *http.Response, error) {
 	var result []*models.MemberOrg
 	resp, err := m.GenericRequest(Request{

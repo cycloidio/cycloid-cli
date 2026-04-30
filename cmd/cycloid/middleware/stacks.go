@@ -24,6 +24,11 @@ func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, *http.Re
 	return result, resp, nil
 }
 
+// ListStacks lists service catalog stacks for an organization.
+//
+// Supported LHS filter attributes: service_catalog_ref, service_catalog_visibility
+// (values: local, shared, hidden), service_catalog_author, service_catalog_blueprint,
+// service_catalog_form_enabled, service_catalog_source_canonical, user_canonical.
 func (m *middleware) ListStacks(org string, filters ...LHSFilter) ([]*models.ServiceCatalog, *http.Response, error) {
 	var result []*models.ServiceCatalog
 	resp, err := m.GenericRequest(Request{
@@ -93,6 +98,10 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 	return 0, "", fmt.Errorf("stack version commit hash %q not found", versionCommitHash)
 }
 
+// ListStackUseCases lists use cases for a stack version.
+//
+// NOTE: the backend handler for this route does not call lhs.ParseQuery, so
+// LHS filters are accepted by the middleware but silently ignored server-side.
 func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, versionCommitHash string, filters ...LHSFilter) ([]*StackUseCase, *http.Response, error) {
 	// Resolve version parameters to ID
 	versionID, _, err := m.resolveStackVersion(org, ref, versionTag, versionBranch, versionCommitHash)
@@ -118,6 +127,10 @@ func (m *middleware) ListStackUseCases(org, ref, versionTag, versionBranch, vers
 	return result, resp, nil
 }
 
+// ListStackVersions lists versions for a stack.
+//
+// NOTE: the backend handler for this route does not call lhs.ParseQuery, so
+// LHS filters are accepted by the middleware but silently ignored server-side.
 func (m *middleware) ListStackVersions(org, ref string, filters ...LHSFilter) ([]*StackVersion, *http.Response, error) {
 	var result []*StackVersion
 	resp, err := m.GenericRequest(Request{
@@ -177,8 +190,12 @@ func (m *middleware) getDefaultCatalogVersion(org, ref string) (*StackVersion, e
 	return nil, fmt.Errorf("failed to find the default version")
 }
 
-// ListBlueprints lists stacks that are flagged as blueprint using the LHS filter
-// service_catalog_blueprint[eq]=true. Additional caller-supplied filters are merged in.
+// ListBlueprints lists stacks flagged as blueprints (service_catalog_blueprint=true).
+// Additional caller-supplied filters are merged in.
+//
+// Supported LHS filter attributes: same as ListStacks (service_catalog_ref,
+// service_catalog_visibility, service_catalog_author, service_catalog_source_canonical,
+// user_canonical). service_catalog_blueprint is always set to true internally.
 func (m *middleware) ListBlueprints(org string, filters ...LHSFilter) ([]*models.ServiceCatalog, *http.Response, error) {
 	lhsFilters := append(
 		[]LHSFilter{{Attribute: "service_catalog_blueprint", Condition: "eq", Value: "true"}},
