@@ -6,6 +6,8 @@ go_version="${GOLANG_VERSION:-$(grep -i '^go ' go.mod | cut -d' ' -f2)}"
 
 docker run -it --rm \
 	-e API_LICENCE_KEY \
+	-e CY_TEST_PROVISION_API \
+	-e "CY_TEST_API_URL=${CY_TEST_API_URL:-http://youdeploy-api:3001}" \
 	--network "$network" \
 	-v "${TEST_REPO_PATH:-$(pwd)}:${code_path}" \
 	-w "${code_path}" \
