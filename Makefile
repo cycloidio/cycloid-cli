@@ -120,7 +120,7 @@ docker-pull: .env
 
 .PHONY: be-start be-stop be-reset
 be-start: ## start the local backend
-	$(DOCKER_COMPOSE) up -dV --wait
+	$(DOCKER_COMPOSE) up -dV
 
 be-stop: ## stop the local backend
 	$(DOCKER_COMPOSE) down -v
