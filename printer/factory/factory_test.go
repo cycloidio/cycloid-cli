@@ -24,9 +24,11 @@ func TestGetPrinter(t *testing.T) {
 		assert.Implements(t, (*printer.Printer)(nil), p)
 		assert.IsType(t, json.JSON{}, p)
 	})
-	t.Run("ErrorNotSupported", func(t *testing.T) {
+	t.Run("FieldExtractor", func(t *testing.T) {
+		// Unknown output values fall through to the field extractor, not an error
 		p, err := GetPrinter("not a printer")
-		require.Nil(t, p)
-		assert.Error(t, err)
+		require.NoError(t, err)
+		assert.NotNil(t, p)
+		assert.Implements(t, (*printer.Printer)(nil), p)
 	})
 }
