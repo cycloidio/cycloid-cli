@@ -23,8 +23,10 @@ REPO_PATH ?= github.com/cycloidio/cycloid-cli
 
 # GO
 # Setup the -ldflags build option for go here, interpolate the variable values
+GO_BUILD_FLAGS ?= -trimpath
 GO_LDFLAGS ?= -ldflags \
-	"-X $(REPO_PATH)/internal/version.Version=$(VERSION)\
+	"-s -w\
+	 -X $(REPO_PATH)/internal/version.Version=$(VERSION)\
 	 -X $(REPO_PATH)/internal/version.Revision=$(REVISION)\
 	 -X $(REPO_PATH)/internal/version.Branch=$(BRANCH)\
 	 -X $(REPO_PATH)/internal/version.BuildOrigin=$(BUILD_ORIGIN)\
@@ -65,12 +67,12 @@ source-env: ## source the local env to use cycloid
 
 .PHONY: build
 build: ## Build all the binaries
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o $(BINARY)-linux-amd64 $(GO_LDFLAGS) $(REPO_PATH)
-	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o $(BINARY)-linux-arm64 $(GO_LDFLAGS) $(REPO_PATH)
-	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o $(BINARY)-windows-amd64 $(GO_LDFLAGS) $(REPO_PATH)
-	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o $(BINARY)-darwin-arm64 $(GO_LDFLAGS) $(REPO_PATH)
-	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o $(BINARY)-darwin-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(GO_BUILD_FLAGS) -o $(BINARY) $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build $(GO_BUILD_FLAGS) -o $(BINARY)-linux-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build $(GO_BUILD_FLAGS) -o $(BINARY)-linux-arm64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build $(GO_BUILD_FLAGS) -o $(BINARY)-windows-amd64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build $(GO_BUILD_FLAGS) -o $(BINARY)-darwin-arm64 $(GO_LDFLAGS) $(REPO_PATH)
+	GO111MODULE=on CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build $(GO_BUILD_FLAGS) -o $(BINARY)-darwin-amd64 $(GO_LDFLAGS) $(REPO_PATH)
 
 .PHONY: clean
 clean: test-clean

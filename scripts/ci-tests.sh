@@ -9,5 +9,5 @@ docker run -it --rm \
 	--network "$network" \
 	-v "${TEST_REPO_PATH:-$(pwd)}:${code_path}" \
 	-w "${code_path}" \
-	"cycloid/golang:${go_version}" \
+	"golang:${go_version}" \
 	go test -v ./... -p 1 -failfast
