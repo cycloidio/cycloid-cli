@@ -31,9 +31,6 @@ func NewQueryCommand() *cobra.Command {
 }
 
 func queryComponentPluginWidget(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -53,6 +50,9 @@ func queryComponentPluginWidget(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	n, err := strconv.ParseUint(args[0], 10, 32)
 	if err != nil {

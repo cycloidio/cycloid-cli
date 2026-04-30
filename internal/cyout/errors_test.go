@@ -21,12 +21,12 @@ type fakeAPIError struct {
 	payload    *models.ErrorPayload
 }
 
-func (e *fakeAPIError) Error() string           { return "fake api error" }
-func (e *fakeAPIError) HTTPStatusCode() int     { return e.statusCode }
-func (e *fakeAPIError) HTTPRequestMethod() string { return e.method }
-func (e *fakeAPIError) HTTPRequestPath() string  { return e.path }
-func (e *fakeAPIError) HTTPRequestBody() []byte  { return e.reqBody }
-func (e *fakeAPIError) HTTPResponseBody() []byte { return e.respBody }
+func (e *fakeAPIError) Error() string                    { return "fake api error" }
+func (e *fakeAPIError) HTTPStatusCode() int              { return e.statusCode }
+func (e *fakeAPIError) HTTPRequestMethod() string        { return e.method }
+func (e *fakeAPIError) HTTPRequestPath() string          { return e.path }
+func (e *fakeAPIError) HTTPRequestBody() []byte          { return e.reqBody }
+func (e *fakeAPIError) HTTPResponseBody() []byte         { return e.respBody }
 func (e *fakeAPIError) GetPayload() *models.ErrorPayload { return e.payload }
 
 func ptrString(s string) *string { return &s }

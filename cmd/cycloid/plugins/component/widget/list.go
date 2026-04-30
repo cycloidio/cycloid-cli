@@ -28,9 +28,6 @@ func NewListCommand() *cobra.Command {
 }
 
 func listComponentPluginWidgets(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -50,6 +47,9 @@ func listComponentPluginWidgets(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	result, _, err := m.ListComponentPluginWidgets(org, project, env, component)
 	return cyout.PrintWithOptions(cmd, result, err, "unable to list component plugin widgets", printer.Options{})

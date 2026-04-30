@@ -2,7 +2,6 @@ package plugin
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -26,7 +25,7 @@ func NewCreateCommand() *cobra.Command {
 		RunE: createRegistryPlugin,
 	}
 
-	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
+	_ = cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
 	cmd.Flags().Bool("update", false, "update the plugin if it already exists in the registry")
 	return cmd
 }
@@ -58,7 +57,7 @@ func createRegistryPlugin(cmd *cobra.Command, args []string) error {
 	// Check if a plugin with this name already exists in the registry.
 	existingID, resolveErr := cyargs.ResolveRegistryPluginID(org, registryID, name, m)
 	exists := resolveErr == nil
-	if resolveErr != nil && !isNoMatchError(resolveErr) {
+	if resolveErr != nil && !cyargs.IsNoMatchError(resolveErr) {
 		return cyout.PrintWithOptions(cmd, nil, resolveErr, "failed to check if registry plugin exists", printer.Options{})
 	}
 
@@ -75,10 +74,4 @@ func createRegistryPlugin(cmd *cobra.Command, args []string) error {
 
 	result, _, err := m.CreateRegistryPlugin(org, registryID, name)
 	return cyout.PrintWithOptions(cmd, result, err, "unable to create registry plugin", printer.Options{})
-}
-
-// isNoMatchError returns true when err is the "no X found matching" sentinel
-// from cyargs.resolveUnique — indicating the resource simply does not exist yet.
-func isNoMatchError(err error) bool {
-	return err != nil && strings.Contains(err.Error(), "found matching")
 }

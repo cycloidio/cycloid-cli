@@ -13,35 +13,29 @@ import (
 
 func NewPublishCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:               "publish <registry> <plugin>",
-		Args:              cobra.ExactArgs(2),
-		ValidArgsFunction: cyargs.CompleteRegistryPluginID,
+		Use:               "publish",
+		Args:              cobra.NoArgs,
+		ValidArgsFunction: cyargs.CompletePluginVersionID,
 		Short:             "Publish a new version of a plugin",
 		Example: `
   # Publish an archive-based plugin version
-  cy plugin registry plugin version publish my-registry my-plugin --url https://example.com/plugin-v1.2.tar.gz
+  cy plugin registry plugin version publish --registry my-registry --plugin my-plugin --url https://example.com/plugin-v1.2.tar.gz
 
   # Publish a Docker image-based plugin version
-  cy plugin registry plugin version publish my-registry my-plugin --docker-image docker-registry:5000/org/plugin:42
+  cy plugin registry plugin version publish --registry my-registry --plugin my-plugin --docker-image docker-registry:5000/org/plugin:42
 `,
 		RunE: publishVersion,
 	}
 
+	_ = cmd.MarkFlagRequired(cyargs.AddRegistryFlag(cmd))
+	_ = cmd.MarkFlagRequired(cyargs.AddPluginFlag(cmd))
 	cyargs.AddURLFlag(cmd, "URL of the plugin version archive (mutually exclusive with --docker-image)")
 	cyargs.AddDockerImageFlag(cmd)
 	return cmd
 }
 
 func publishVersion(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
-	if err != nil {
-		return err
-	}
-
-	registryID, pluginID, err := resolveRegistryAndPlugin(org, args, m)
 	if err != nil {
 		return err
 	}
@@ -66,6 +60,14 @@ func publishVersion(cmd *cobra.Command, args []string) error {
 	versionURL := url
 	if dockerImage != "" {
 		versionURL = dockerImage
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	registryID, pluginID, err := resolveRegistryAndPlugin(org, cmd, m)
+	if err != nil {
+		return err
 	}
 
 	result, _, err := m.CreatePluginVersion(org, registryID, pluginID, versionURL)

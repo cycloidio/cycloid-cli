@@ -115,32 +115,6 @@ func (m *middleware) GetPlugin(org string, id uint32) (*models.PluginInstall, *h
 	return result, resp, nil
 }
 
-// createPluginBody is a superset of models.NewPluginInstall that optionally
-// includes a version ID. The generated model is not used here so that we can
-// add fields without editing auto-generated code.
-type createPluginBody struct {
-	Configuration   map[string]string `json:"configuration"`
-	PluginVersionID *uint32           `json:"plugin_version_id,omitempty"`
-}
-
-func (m *middleware) CreatePlugin(org string, versionID *uint32, config map[string]string) (*models.PluginInstall, *http.Response, error) {
-	body := &createPluginBody{
-		Configuration:   config,
-		PluginVersionID: versionID,
-	}
-	var result *models.PluginInstall
-	resp, err := m.GenericRequest(Request{
-		Method:       "POST",
-		Organization: &org,
-		Route:        []string{"organizations", org, "plugins"},
-		Body:         body,
-	}, &result)
-	if err != nil {
-		return nil, resp, err
-	}
-	return result, resp, nil
-}
-
 func (m *middleware) UpdatePlugin(org string, id, versionID uint32, config map[string]string) (*models.PluginInstall, *http.Response, error) {
 	body := &models.UpdatePluginInstall{
 		Configuration:   config,
@@ -196,17 +170,19 @@ func (m *middleware) ListPluginRegistries(org string) ([]*models.PluginRegistry,
 	return result, resp, nil
 }
 
+// GetPluginRegistry retrieves a single plugin registry by ID.
+// The API has no GET-by-ID endpoint for registries, so this lists all and filters.
 func (m *middleware) GetPluginRegistry(org string, id uint32) (*models.PluginRegistry, *http.Response, error) {
-	var result *models.PluginRegistry
-	resp, err := m.GenericRequest(Request{
-		Method:       "GET",
-		Organization: &org,
-		Route:        []string{"organizations", org, "plugin_registries", fmt.Sprint(id)},
-	}, &result)
+	regs, resp, err := m.ListPluginRegistries(org)
 	if err != nil {
 		return nil, resp, err
 	}
-	return result, resp, nil
+	for _, r := range regs {
+		if r.ID != nil && *r.ID == id {
+			return r, resp, nil
+		}
+	}
+	return nil, resp, fmt.Errorf("plugin registry %d not found", id)
 }
 
 func (m *middleware) CreatePluginRegistry(org, name, url string) (*models.PluginRegistry, *http.Response, error) {
@@ -254,15 +230,19 @@ func (m *middleware) DeletePluginRegistry(org string, id uint32) (*http.Response
 
 // --- Registry Plugins ---
 
+// ListRegistryPlugins lists plugins belonging to a specific registry.
+// The API has no GET /plugin_registries/{id}/plugins endpoint (only POST for create),
+// so we list all plugins and filter by registry ID.
 func (m *middleware) ListRegistryPlugins(org string, registryID uint32) ([]*models.Plugin, *http.Response, error) {
-	var result []*models.Plugin
-	resp, err := m.GenericRequest(Request{
-		Method:       "GET",
-		Organization: &org,
-		Route:        registryPluginsRoute(org, registryID),
-	}, &result)
+	all, resp, err := m.ListPlugins(org)
 	if err != nil {
 		return nil, resp, err
+	}
+	var result []*models.Plugin
+	for _, p := range all {
+		if p.Registry != nil && p.Registry.ID != nil && *p.Registry.ID == registryID {
+			result = append(result, p)
+		}
 	}
 	return result, resp, nil
 }

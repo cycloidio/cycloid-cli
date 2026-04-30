@@ -29,13 +29,13 @@ func acceptPluginManager(cmd *cobra.Command, args []string) error {
 }
 
 func updateInviteStatus(cmd *cobra.Command, args []string, status string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	id, err := cyargs.ResolvePluginManagerID(org, args[0], m)
 	if err != nil {

@@ -23,25 +23,25 @@ func NewUpdateCommand() *cobra.Command {
 		RunE: updatePluginRegistry,
 	}
 
-	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
+	_ = cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
 	return cmd
 }
 
 func updatePluginRegistry(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	id, err := cyargs.ResolvePluginRegistryID(org, args[0], m)
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := cyargs.GetName(cmd)
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	id, err := cyargs.ResolvePluginRegistryID(org, args[0], m)
 	if err != nil {
 		return err
 	}

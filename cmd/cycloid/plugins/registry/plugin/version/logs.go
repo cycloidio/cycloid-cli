@@ -11,33 +11,36 @@ import (
 )
 
 func NewLogsCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:               "logs <registry> <plugin> <version-id>",
-		Args:              cobra.ExactArgs(3),
-		ValidArgsFunction: cyargs.CompleteRegistryPluginID,
+	cmd := &cobra.Command{
+		Use:               "logs <version-id>",
+		Args:              cobra.ExactArgs(1),
+		ValidArgsFunction: cyargs.CompletePluginVersionID,
 		Short:             "Show installation logs for a plugin version",
 		Example: `
-  cy plugin registry plugin version logs my-registry my-plugin 7
+  cy plugin registry plugin version logs 7 --registry my-registry --plugin my-plugin
 `,
 		RunE: versionLogs,
 	}
+	_ = cmd.MarkFlagRequired(cyargs.AddRegistryFlag(cmd))
+	_ = cmd.MarkFlagRequired(cyargs.AddPluginFlag(cmd))
+	return cmd
 }
 
 func versionLogs(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	registryID, pluginID, err := resolveRegistryAndPlugin(org, args, m)
+	versionID, err := parseVersionID(args[0])
 	if err != nil {
 		return err
 	}
 
-	versionID, err := parseVersionID(args[2])
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	registryID, pluginID, err := resolveRegistryAndPlugin(org, cmd, m)
 	if err != nil {
 		return err
 	}

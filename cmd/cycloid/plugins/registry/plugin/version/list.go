@@ -11,28 +11,31 @@ import (
 )
 
 func NewListCommand() *cobra.Command {
-	return &cobra.Command{
-		Use:               "list <registry> <plugin>",
-		Args:              cobra.ExactArgs(2),
-		ValidArgsFunction: cyargs.CompleteRegistryPluginID,
+	cmd := &cobra.Command{
+		Use:               "list",
+		Args:              cobra.NoArgs,
+		ValidArgsFunction: cyargs.CompletePluginVersionID,
 		Short:             "List versions of a plugin",
 		Example: `
-  cy plugin registry plugin version list my-registry my-plugin
+  cy plugin registry plugin version list --registry my-registry --plugin my-plugin
 `,
 		RunE: listVersions,
 	}
+	_ = cmd.MarkFlagRequired(cyargs.AddRegistryFlag(cmd))
+	_ = cmd.MarkFlagRequired(cyargs.AddPluginFlag(cmd))
+	return cmd
 }
 
 func listVersions(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	registryID, pluginID, err := resolveRegistryAndPlugin(org, args, m)
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	registryID, pluginID, err := resolveRegistryAndPlugin(org, cmd, m)
 	if err != nil {
 		return err
 	}

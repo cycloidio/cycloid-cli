@@ -50,9 +50,9 @@ func NewConfig(testName string) (*Config, error) {
 			"-----END OPENSSH PRIVATE KEY-----",
 		}, "\n")
 		localGitCredential    = "local-git"
-		configRepoName   = "cli-test-config"
-		configRepository = "cli-test-config"
-		configRepoURL    = "git@git-server:/git-server/repos/backend-test-config-repo.git"
+		configRepoName        = "cli-test-config"
+		configRepository      = "cli-test-config"
+		configRepoURL         = "git@git-server:/git-server/repos/backend-test-config-repo.git"
 		configRepoBranch      = "master"
 		isDefault             = true
 		gitCred               = "github"

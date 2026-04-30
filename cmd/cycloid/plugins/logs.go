@@ -1,6 +1,7 @@
 package plugins
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -48,6 +49,9 @@ func pluginLogs(cmd *cobra.Command, args []string) error {
 	interval, err := cmd.Flags().GetDuration("watch-interval")
 	if err != nil {
 		return err
+	}
+	if interval < 500*time.Millisecond {
+		return fmt.Errorf("--watch-interval must be at least 500ms, got %s", interval)
 	}
 
 	org, err := cyargs.GetOrg(cmd)

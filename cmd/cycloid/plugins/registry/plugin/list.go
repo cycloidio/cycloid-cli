@@ -25,13 +25,13 @@ func NewListCommand() *cobra.Command {
 }
 
 func listRegistryPlugins(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	registryID, err := cyargs.ResolvePluginRegistryID(org, args[0], m)
 	if err != nil {

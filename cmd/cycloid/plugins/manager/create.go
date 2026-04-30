@@ -2,7 +2,6 @@ package manager
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -26,9 +25,9 @@ func NewCreateCommand() *cobra.Command {
 		RunE: createPluginManager,
 	}
 
-	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
+	_ = cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
 	cyargs.AddURLFlag(cmd, "URL of the plugin manager instance (required)")
-	cmd.MarkFlagRequired("url")
+	_ = cmd.MarkFlagRequired("url")
 	cmd.Flags().Bool("update", false, "if the plugin manager already exists, return it without failing (idempotent create)")
 	return cmd
 }
@@ -60,7 +59,7 @@ func createPluginManager(cmd *cobra.Command, args []string) error {
 	// Check if a manager with this name already exists.
 	existingID, resolveErr := cyargs.ResolvePluginManagerID(org, name, m)
 	exists := resolveErr == nil
-	if resolveErr != nil && !isNoMatchError(resolveErr) {
+	if resolveErr != nil && !cyargs.IsNoMatchError(resolveErr) {
 		return cyout.PrintWithOptions(cmd, nil, resolveErr, "failed to check if plugin manager exists", printer.Options{})
 	}
 
@@ -71,18 +70,13 @@ func createPluginManager(cmd *cobra.Command, args []string) error {
 	}
 
 	if exists {
-		// UpdatePluginManager only changes invite status, not name/url.
-		// With --update we return the existing manager without re-inviting.
+		if cmd.Flags().Changed("url") {
+			fmt.Fprintln(cmd.ErrOrStderr(), "note: --url cannot be changed via the API; existing URL is kept")
+		}
 		result, _, err := m.GetPluginManager(org, existingID)
 		return cyout.PrintWithOptions(cmd, result, err, "unable to get existing plugin manager", printer.Options{})
 	}
 
 	result, _, err := m.CreatePluginManager(org, name, url)
 	return cyout.PrintWithOptions(cmd, result, err, "unable to create plugin manager", printer.Options{})
-}
-
-// isNoMatchError returns true when err is the "no X found matching" sentinel
-// from cyargs.resolveUnique — indicating the resource simply does not exist yet.
-func isNoMatchError(err error) bool {
-	return err != nil && strings.Contains(err.Error(), "found matching")
 }

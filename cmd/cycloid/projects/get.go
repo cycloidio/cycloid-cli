@@ -43,7 +43,7 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if projectFlag, err := cyargs.GetProject(cmd); err != nil {
+	if projectFlag, err := cyargs.GetProjectOrEmpty(cmd); err != nil {
 		return err
 	} else if projectFlag != "" {
 		found := false

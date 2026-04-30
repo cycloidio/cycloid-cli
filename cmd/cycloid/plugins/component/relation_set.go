@@ -31,9 +31,6 @@ func NewRelationSetCommand() *cobra.Command {
 }
 
 func setComponentPluginRelation(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -54,12 +51,15 @@ func setComponentPluginRelation(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	pluginInstallID, err := cyargs.ResolvePluginInstallID(org, args[0], m)
+	enabled, err := cmd.Flags().GetBool("enabled")
 	if err != nil {
 		return err
 	}
 
-	enabled, err := cmd.Flags().GetBool("enabled")
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	pluginInstallID, err := cyargs.ResolvePluginInstallID(org, args[0], m)
 	if err != nil {
 		return err
 	}

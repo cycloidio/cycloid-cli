@@ -26,13 +26,13 @@ func NewDeleteCommand() *cobra.Command {
 }
 
 func deletePluginManager(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	for _, arg := range args {
 		id, err := cyargs.ResolvePluginManagerID(org, arg, m)

@@ -43,13 +43,13 @@ Use 'cy plugin widget list' to discover widget IDs and their configured queries.
 }
 
 func queryPluginWidget(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	n, err := strconv.ParseUint(args[0], 10, 32)
 	if err != nil {

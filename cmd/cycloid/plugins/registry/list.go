@@ -23,13 +23,13 @@ func NewListCommand() *cobra.Command {
 }
 
 func listPluginRegistries(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
 	result, _, err := m.ListPluginRegistries(org)
 	return cyout.PrintWithOptions(cmd, result, err, "unable to list plugin registries", printer.Options{})

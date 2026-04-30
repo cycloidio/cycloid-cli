@@ -29,11 +29,11 @@ type apiErrorPayloader interface {
 }
 
 var (
-	styleHeader    = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("9"))  // bold red
-	styleDim       = lipgloss.NewStyle().Foreground(lipgloss.Color("8"))             // dim gray
-	styleEndpoint  = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))            // yellow
-	styleCode      = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("8"))  // bold dim
-	styleCmdHint   = lipgloss.NewStyle().Foreground(lipgloss.Color("8")).Italic(true) // dim italic
+	styleHeader   = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("9"))   // bold red
+	styleDim      = lipgloss.NewStyle().Foreground(lipgloss.Color("8"))              // dim gray
+	styleEndpoint = lipgloss.NewStyle().Foreground(lipgloss.Color("11"))             // yellow
+	styleCode     = lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("8"))   // bold dim
+	styleCmdHint  = lipgloss.NewStyle().Foreground(lipgloss.Color("8")).Italic(true) // dim italic
 )
 
 // printError writes a formatted error block to cmd's stderr.

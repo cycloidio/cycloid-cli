@@ -3,7 +3,6 @@ package cyargs
 import (
 	"encoding/json"
 	"fmt"
-	"net/http"
 	"os"
 	"strconv"
 	"strings"
@@ -13,6 +12,38 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
+
+// ---------------------------------------------------------------------------
+// Registry context flag (--registry, used by plugin and version subcommands)
+// ---------------------------------------------------------------------------
+
+// AddRegistryFlag registers a --registry flag and returns the flag name for use
+// with MarkFlagRequired.
+func AddRegistryFlag(cmd *cobra.Command) string {
+	cmd.Flags().String("registry", "", "plugin registry name, ID, or URL")
+	return "registry"
+}
+
+// GetRegistry reads the --registry flag value.
+func GetRegistry(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("registry")
+}
+
+// ---------------------------------------------------------------------------
+// Plugin context flag (--plugin, used by version subcommands)
+// ---------------------------------------------------------------------------
+
+// AddPluginFlag registers a --plugin flag and returns the flag name for use
+// with MarkFlagRequired.
+func AddPluginFlag(cmd *cobra.Command) string {
+	cmd.Flags().String("plugin", "", "plugin name or ID within the registry")
+	return "plugin"
+}
+
+// GetPlugin reads the --plugin flag value.
+func GetPlugin(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("plugin")
+}
 
 // ---------------------------------------------------------------------------
 // URL flag (registry add, manager create, version publish)
@@ -293,6 +324,79 @@ func ResolvePluginRegistryID(org, nameOrID string, m middleware.Middleware) (uin
 	return resolveUnique("plugin registry", nameOrID, matches)
 }
 
+// CompletePluginIDFromRegistryFlag completes plugin names/IDs by reading the registry
+// from the --registry flag rather than positional args.
+func CompletePluginIDFromRegistryFlag(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	registryStr, _ := cmd.Flags().GetString("registry")
+	if registryStr == "" {
+		return cobra.AppendActiveHelp(nil, "provide --registry first"), cobra.ShellCompDirectiveNoFileComp
+	}
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "missing org: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
+	}
+	m := middleware.NewMiddleware(common.NewAPI())
+	registryID, err := ResolvePluginRegistryID(org, registryStr, m)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to resolve registry: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
+	}
+	plugins, _, err := m.ListRegistryPlugins(org, registryID)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to list plugins: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
+	}
+	completions := make([]cobra.Completion, 0, len(plugins)*2)
+	for _, p := range plugins {
+		if p.ID == nil || p.Name == nil {
+			continue
+		}
+		idStr := strconv.Itoa(int(*p.ID))
+		completions = append(completions,
+			cobra.CompletionWithDesc(idStr, *p.Name),
+			cobra.CompletionWithDesc(*p.Name, "id:"+idStr),
+		)
+	}
+	return completions, cobra.ShellCompDirectiveNoFileComp
+}
+
+// CompletePluginVersionID completes version IDs by reading registry and plugin from flags.
+func CompletePluginVersionID(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	registryStr, _ := cmd.Flags().GetString("registry")
+	pluginStr, _ := cmd.Flags().GetString("plugin")
+	if registryStr == "" || pluginStr == "" {
+		return cobra.AppendActiveHelp(nil, "provide --registry and --plugin first"), cobra.ShellCompDirectiveNoFileComp
+	}
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "missing org: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
+	}
+	m := middleware.NewMiddleware(common.NewAPI())
+	registryID, err := ResolvePluginRegistryID(org, registryStr, m)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to resolve registry: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
+	}
+	pluginID, err := ResolveRegistryPluginID(org, registryID, pluginStr, m)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to resolve plugin: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
+	}
+	versions, _, err := m.ListPluginVersions(org, registryID, pluginID)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to list versions: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
+	}
+	completions := make([]cobra.Completion, 0, len(versions))
+	for _, v := range versions {
+		if v.ID == nil {
+			continue
+		}
+		idStr := strconv.Itoa(int(*v.ID))
+		desc := ""
+		if v.Status != nil {
+			desc = *v.Status
+		}
+		completions = append(completions, cobra.CompletionWithDesc(idStr, desc))
+	}
+	return completions, cobra.ShellCompDirectiveNoFileComp
+}
+
 // CompleteRegistryPluginID offers ID and name completions for plugins within a registry.
 // The registry must already be resolved from args[0].
 func CompleteRegistryPluginID(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
@@ -374,5 +478,8 @@ func resolveUnique(kind, nameOrID string, matches []uint32) (uint32, error) {
 	}
 }
 
-// httpResponseToError is a no-op import guard for http in this file.
-var _ = (*http.Response)(nil)
+// IsNoMatchError returns true when err is the "no X found matching" sentinel
+// from resolveUnique, indicating the resource simply does not exist yet.
+func IsNoMatchError(err error) bool {
+	return err != nil && strings.Contains(err.Error(), "found matching")
+}
