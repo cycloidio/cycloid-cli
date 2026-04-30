@@ -1,25 +1,27 @@
 package projects
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:               "get [canonical...]",
-		Args:              cobra.MaximumNArgs(1),
+		Args:              cyargs.RequireArgsOrFlag("project"),
 		ValidArgsFunction: cyargs.CompleteProject,
 		Short:             "get a project",
 		Example: `
 	# get a project by canonical
 	cy --org my-org project get my-project
+
+	# get multiple projects
+	cy --org my-org project get proj-a proj-b
 
 	# get a project using the --project flag or CY_PROJECT env var
 	cy --org my-org project get --project my-project -o yaml
@@ -28,6 +30,7 @@ func NewGetCommand() *cobra.Command {
 	}
 
 	cyargs.AddProjectFlag(cmd)
+	cyout.RegisterModel(cmd, models.Project{})
 	return cmd
 }
 
@@ -40,29 +43,33 @@ func get(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var project string
-	if len(args) == 1 {
-		project = args[0]
-	} else {
-		project, err = cyargs.GetProject(cmd)
-		if err != nil {
-			return err
+	if projectFlag, err := cyargs.GetProject(cmd); err != nil {
+		return err
+	} else if projectFlag != "" {
+		found := false
+		for _, a := range args {
+			if a == projectFlag {
+				found = true
+				break
+			}
+		}
+		if !found {
+			args = append(args, projectFlag)
 		}
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+	if len(args) == 1 {
+		proj, _, err := m.GetProject(org, args[0])
+		return cyout.PrintWithOptions(cmd, proj, err, "unable to get project", projectTableOptions)
 	}
 
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
+	results := make([]*models.Project, 0, len(args))
+	for _, canonical := range args {
+		proj, _, err := m.GetProject(org, canonical)
+		if err != nil {
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to get project "+canonical, projectTableOptions)
+		}
+		results = append(results, proj)
 	}
-
-	proj, _, err := m.GetProject(org, project)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to get project", printer.Options{}, cmd.OutOrStderr())
-	}
-	return printer.SmartPrint(p, proj, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, results, nil, "", projectTableOptions)
 }

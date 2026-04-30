@@ -3,14 +3,13 @@ package apikey
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 // NewGetCommand returns the cobra command holding
@@ -37,6 +36,7 @@ func NewGetCommand() *cobra.Command {
 	// Keep --canonical for backward compatibility
 	can := cyargs.AddAPIKeyCanonicalFlag(cmd)
 	_ = cmd.Flags().MarkHidden(can)
+	cyout.RegisterModel(cmd, models.APIKey{})
 
 	return cmd
 }
@@ -49,46 +49,36 @@ func get(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to get org flag: %w", err)
 	}
 
-	// Support --canonical for backward compat; positional args take precedence
-	if len(args) == 0 {
-		can, err := cyargs.GetAPIKeyCanonical(cmd)
-		if err != nil {
-			return fmt.Errorf("unable to get canonical flag: %w", err)
+	if can, err := cyargs.GetAPIKeyCanonical(cmd); err != nil {
+		return fmt.Errorf("unable to get canonical flag: %w", err)
+	} else if can != "" {
+		found := false
+		for _, a := range args {
+			if a == can {
+				found = true
+				break
+			}
 		}
-		args = []string{can}
-	}
-
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return fmt.Errorf("unable to get output flag: %w", err)
+		if !found {
+			args = append(args, can)
+		}
 	}
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	if len(args) == 1 {
 		key, _, err := m.GetAPIKey(org, args[0])
-		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to get API key", printer.Options{}, cmd.OutOrStderr())
-		}
-		return printer.SmartPrint(p, key, nil, "", printer.Options{}, cmd.OutOrStdout())
+		return cyout.PrintWithOptions(cmd, key, err, "unable to get API key", apiKeyTableOptions)
 	}
 
-	results := make([]interface{}, 0, len(args))
+	results := make([]*models.APIKey, 0, len(args))
 	for _, canonical := range args {
 		key, _, err := m.GetAPIKey(org, canonical)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to get API key "+canonical, printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to get API key "+canonical, apiKeyTableOptions)
 		}
 		results = append(results, key)
 	}
-	if output == "table" {
-		p, _ = factory.GetPrinter("json")
-	}
-	return printer.SmartPrint(p, results, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, results, nil, "", apiKeyTableOptions)
 }

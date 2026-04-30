@@ -3,12 +3,13 @@ package teams
 import (
 	"fmt"
 
+	"github.com/spf13/cobra"
+
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
-	"github.com/spf13/cobra"
 )
 
 func NewDeleteTeamCommand() *cobra.Command {
@@ -29,19 +30,6 @@ func deleteTeam(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-	if output == "table" {
-		output = "json"
-	}
-
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return fmt.Errorf("failed to get printer for output type %q: %w", output, err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -49,11 +37,11 @@ func deleteTeam(cmd *cobra.Command, args []string) error {
 	for i, team := range args {
 		_, err = m.DeleteTeam(org, team)
 		if err != nil {
-			return printer.SmartPrint(p, deleted, err, fmt.Sprintf("failed to delete team %q: %s", team, err.Error()), printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, deleted, err, fmt.Sprintf("failed to delete team %q: %s", team, err.Error()), printer.Options{})
 		}
 
 		deleted[i] = team
 	}
 
-	return printer.SmartPrint(p, deleted, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{Columns: []string{"Canonical"}})
 }

@@ -6,8 +6,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -43,35 +43,28 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// If no positional args, fall back to --project flag / CY_PROJECT
-	if len(args) == 0 {
-		project, err := cyargs.GetProject(cmd)
-		if err != nil {
-			return err
+	if projectFlag, err := cyargs.GetProject(cmd); err != nil {
+		return err
+	} else if projectFlag != "" {
+		found := false
+		for _, a := range args {
+			if a == projectFlag {
+				found = true
+				break
+			}
 		}
-		args = []string{project}
-	}
-
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	if output == "table" {
-		output = "json"
-	}
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return err
+		if !found {
+			args = append(args, projectFlag)
+		}
 	}
 
 	deleted := make([]string, 0, len(args))
 	for _, project := range args {
 		_, err = m.DeleteProject(org, project)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to delete project "+project, printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to delete project "+project, printer.Options{})
 		}
 		deleted = append(deleted, project)
 	}
-	return printer.SmartPrint(p, deleted, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{Columns: []string{"Canonical"}})
 }

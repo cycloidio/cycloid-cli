@@ -1,25 +1,26 @@
 package organizations
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "delete",
-		Args:  cobra.NoArgs,
+		Use:   "delete [canonical...]",
+		Args:  cobra.ArbitraryArgs,
 		Short: "delete an organization (require root API_KEY)",
 		Example: `
-	# delete an organization with canonical name my-org
+	# delete the organization set via --org flag
 	# The API_KEY must be obtained from the root organization
 	cy organization delete --org my-org
+
+	# delete multiple organizations by canonical
+	cy organization delete my-org-a my-org-b
 `,
 		RunE: del,
 	}
@@ -31,22 +32,22 @@ func del(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	org, err := cyargs.GetOrg(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable get org flag")
+	var orgs []string
+	if len(args) > 0 {
+		orgs = args
+	} else {
+		org, err := cyargs.GetOrg(cmd)
+		if err != nil {
+			return err
+		}
+		orgs = []string{org}
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
+	for _, org := range orgs {
+		_, err := m.DeleteOrganization(org)
+		if err != nil {
+			return cyout.Print(cmd, nil, err, "unable to delete organization "+org)
+		}
 	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
-	_, err = m.DeleteOrganization(org)
-	return printer.SmartPrint(p, nil, err, "unable to delete organization", printer.Options{}, cmd.OutOrStdout())
+	return nil
 }

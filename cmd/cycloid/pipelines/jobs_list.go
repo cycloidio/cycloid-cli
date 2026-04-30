@@ -3,14 +3,13 @@ package pipelines
 import (
 	"fmt"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewJobsListCommand() *cobra.Command {
@@ -24,6 +23,7 @@ func NewJobsListCommand() *cobra.Command {
 
 	cyargs.AddCyContext(cmd)
 	cyargs.AddPipeline(cmd)
+	cyout.RegisterModel(cmd, models.Job{})
 	return cmd
 }
 
@@ -38,24 +38,10 @@ func listJobs(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
 	jobs, _, err := m.GetJobs(org, project, env, component, pipeline)
-	if err != nil {
-		return fmt.Errorf("failed to fetch jobs for pipeline %q: %w", pipeline, err)
-	}
-
-	return printer.SmartPrint(p, jobs, nil, "", printer.Options{}, cmd.OutOrStdout())
+	errMsg := fmt.Sprintf("failed to fetch jobs for pipeline %q", pipeline)
+	return cyout.PrintWithOptions(cmd, jobs, err, errMsg, jobTableOptions)
 }

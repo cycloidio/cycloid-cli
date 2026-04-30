@@ -1,15 +1,20 @@
 package catalogrepositories
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
+
+var catalogSourceTableOptions = printer.Options{
+	Columns:    []string{"Canonical", "Name", "URL", "Branch", "StackCount"},
+	Identifier: "Canonical",
+}
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
@@ -22,7 +27,7 @@ func NewListCommand() *cobra.Command {
 `,
 		RunE: listCatalogRepositories,
 	}
-
+	cyout.RegisterModel(cmd, models.ServiceCatalogSource{})
 	return cmd
 }
 
@@ -35,17 +40,6 @@ func listCatalogRepositories(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	crs, _, err := m.ListCatalogRepositories(org)
-	return printer.SmartPrint(p, crs, err, "unable to list catalog repositories", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, crs, err, "unable to list catalog repositories", catalogSourceTableOptions)
 }

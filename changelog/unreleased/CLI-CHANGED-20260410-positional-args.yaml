@@ -3,6 +3,6 @@ kind: CHANGED
 body: "get/delete commands now accept resource canonicals as positional arguments"
 time: 2026-04-10T00:00:01Z
 custom:
-  DETAILS: "Affected commands: `catalog-repo get/delete/refresh`, `config-repo get/delete`, `api-key get/delete`, `project get/delete`. The previous `--canonical` / `--project` flags are still accepted for backward compatibility. Example: `cy catalog-repo get my-repo` instead of `cy catalog-repo get --canonical my-repo`. Multiple args are supported: `cy catalog-repo delete repo-a repo-b`."
+  DETAILS: "Affected commands: `catalog-repo get/delete/refresh`, `config-repo get/delete`, `api-key get/delete`, `project get/delete`, `credentials get`, `roles get`, `environments get/delete`, `components get/delete`, `organizations get/delete`, `members get/delete`. The previous flags (`--canonical`, `--project`, `--env`, `--component`, `--org`, `--id`, etc.) are still accepted for backward compatibility. Example: `cy catalog-repo get my-repo` instead of `cy catalog-repo get --canonical my-repo`. Multiple args are supported: `cy project delete proj-a proj-b`. Pipe pattern: `cy project delete $(cy project list -o canonical)`."
   PR: "999"
   TYPE: CLI

@@ -9,8 +9,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/custommodels"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewListCommand() *cobra.Command {
@@ -35,11 +35,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
 	blueprint, err := cmd.Flags().GetBool("blueprint")
 	if err != nil {
 		return err
@@ -49,37 +44,16 @@ func list(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return fmt.Errorf("unable to get printer: %w", err)
-	}
-
 	// list standard stacks
 	if !blueprint {
 		stacks, _, err := m.ListStacks(org)
-		if err != nil {
-			return printer.SmartPrint(p, nil, err, "failed to list stacks from API", printer.Options{}, cmd.OutOrStderr())
-		}
-
-		return printer.SmartPrint(p, stacks, nil, "", printer.Options{}, cmd.OutOrStdout())
+		return cyout.PrintWithOptions(cmd, stacks, err, "failed to list stacks from API", printer.Options{})
 	}
 
 	// list --blueprints
-	// table output is broken with composed structs so we force jso
-	if output == "table" {
-		output = "json"
-	}
-
-	// Re-init the printer
-	p, err = factory.GetPrinter(output)
-	if err != nil {
-		return fmt.Errorf("unable to get printer: %w", err)
-	}
-
 	stacks, _, err := m.ListBlueprints(org)
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to list blueprints from API", printer.Options{}, cmd.OutOrStderr())
+		return cyout.PrintWithOptions(cmd, nil, err, "failed to list blueprints from API", printer.Options{})
 	}
 
 	var blueprints = make([]*custommodels.Blueprint, len(stacks))
@@ -106,5 +80,5 @@ func list(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	return printer.SmartPrint(p, blueprints, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, blueprints, nil, "failed to list blueprints from API", printer.Options{})
 }

@@ -176,6 +176,56 @@ type Middleware interface {
 	CreateAPIKey(org, canonical, description, owner string, name *string, rules []*models.NewRule) (*models.APIKey, *http.Response, error)
 	DeleteAPIKey(org, canonical string) (*http.Response, error)
 
+	// organization_plugin_managers
+	ListPluginManagers(org string) ([]*models.PluginManager, *http.Response, error)
+	GetPluginManager(org string, id uint32) (*models.PluginManager, *http.Response, error)
+	CreatePluginManager(org, name, url string) (*models.PluginManager, *http.Response, error)
+	UpdatePluginManager(org string, id uint32, inviteStatus string) (*models.PluginManager, *http.Response, error)
+	DeletePluginManager(org string, id uint32) (*http.Response, error)
+
+	// organization_plugins (installs)
+	ListPlugins(org string) ([]*models.Plugin, *http.Response, error)
+	GetPlugin(org string, id uint32) (*models.PluginInstall, *http.Response, error)
+	CreatePlugin(org string, versionID *uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
+	UpdatePlugin(org string, id, versionID uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
+	DeletePlugin(org string, id uint32) (*http.Response, error)
+	ListPluginLogs(org string, id uint32) (*models.PluginLogs, *http.Response, error)
+
+	// organization_plugin_registries
+	ListPluginRegistries(org string) ([]*models.PluginRegistry, *http.Response, error)
+	GetPluginRegistry(org string, id uint32) (*models.PluginRegistry, *http.Response, error)
+	CreatePluginRegistry(org, name, url string) (*models.PluginRegistry, *http.Response, error)
+	UpdatePluginRegistry(org string, id uint32, name string) (*models.PluginRegistry, *http.Response, error)
+	DeletePluginRegistry(org string, id uint32) (*http.Response, error)
+
+	// organization_plugin_registries — plugins
+	ListRegistryPlugins(org string, registryID uint32) ([]*models.Plugin, *http.Response, error)
+	GetRegistryPlugin(org string, registryID, pluginID uint32) (*models.Plugin, *http.Response, error)
+	CreateRegistryPlugin(org string, registryID uint32, name string) (*models.Plugin, *http.Response, error)
+	UpdateRegistryPlugin(org string, registryID, pluginID uint32, name string) (*models.Plugin, *http.Response, error)
+	DeleteRegistryPlugin(org string, registryID, pluginID uint32) (*http.Response, error)
+
+	// organization_plugin_registries — versions
+	ListPluginVersions(org string, registryID, pluginID uint32) ([]*models.PluginVersion, *http.Response, error)
+	GetPluginVersion(org string, registryID, pluginID, versionID uint32) (*models.PluginVersion, *http.Response, error)
+	CreatePluginVersion(org string, registryID, pluginID uint32, url string) (*models.PluginVersion, *http.Response, error)
+	DeletePluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
+	InstallPluginVersion(org string, registryID, pluginID, versionID uint32, configuration map[string]string) (*http.Response, error)
+	RetryPluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
+	ListPluginVersionLogs(org string, registryID, pluginID, versionID uint32) ([]*models.PluginVersionLog, *http.Response, error)
+
+	// component plugins
+	ListComponentPlugins(org, project, env, component string) ([]*models.Plugin, *http.Response, error)
+	SetComponentPluginRelation(org, project, env, component string, pluginInstallID uint32, enabled bool) (*models.PluginRelation, *http.Response, error)
+
+	// org plugin widgets
+	ListPluginWidgets(org, placement string) ([]*models.PluginWidget, *http.Response, error)
+	QueryPluginWidget(org string, widgetID uint32) (*models.PluginWidgetData, *http.Response, error)
+
+	// component plugin widgets
+	ListComponentPluginWidgets(org, project, env, component string) ([]*models.PluginWidget, *http.Response, error)
+	QueryComponentPluginWidget(org, project, env, component string, widgetID uint32) (*models.PluginWidgetData, *http.Response, error)
+
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, *http.Response, error)
 

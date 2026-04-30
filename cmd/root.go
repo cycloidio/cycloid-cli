@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+
 	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
@@ -18,16 +21,17 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/output"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/plugins"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/teams"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/internal/version"
-	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
@@ -68,6 +72,7 @@ CY_PROJECT   | Set the current project
 CY_ENV       | Set the current environment
 CY_COMPONENT | Set the current component
 CY_API_KEY   | Set the current API Key to use
+CY_OUTPUT    | Set the default output format (table, json, yaml, table:border, etc.)
 CY_VERBOSITY | Set the verbosity level (debug, info, warning, error), default warning.
              | Setting debug will print every HTTP request and response to stderr,
              | including headers and bodies. ⚠️  Output will contain credentials
@@ -78,10 +83,46 @@ NO_PROXY     | List of hosts that must bypass proxy configuration
 `,
 	}
 
-	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", "The formatting style for command output: json|yaml|table")
+	rootCmd.PersistentFlags().StringVarP(&userOutput, "output", "o", "table", `Output format: table, table=col1,col2, table:noheader, table:border, json, yaml, jq=<expr>, <field>. Use --jq as shorthand for jq=<expr>.`)
+	rootCmd.PersistentFlags().String("jq", "", `Shorthand for --output jq=<expr>. Runs a jq expression over the full JSON response.`)
 	viper.BindPFlag("output", rootCmd.PersistentFlags().Lookup("output"))
 	rootCmd.RegisterFlagCompletionFunc("output", func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		return []cobra.Completion{"json", "table", "yaml"}, cobra.ShellCompDirectiveDefault
+		base := []cobra.Completion{"json", "yaml", "table", "table=", "table:", "table:border", "table:noheader", "jq="}
+		fields := cyout.GetModelFields(cmd)
+
+		switch {
+		case strings.HasPrefix(toComplete, "jq="):
+			// After jq=. or jq=[]., suggest field names
+			dotPos := strings.LastIndex(toComplete, ".")
+			if dotPos >= 0 {
+				stem := toComplete[:dotPos+1]
+				comps := make([]cobra.Completion, len(fields))
+				for i, f := range fields {
+					comps[i] = stem + f
+				}
+				return comps, cobra.ShellCompDirectiveNoSpace
+			}
+			return nil, cobra.ShellCompDirectiveNoSpace
+
+		case strings.HasPrefix(toComplete, "table=") || strings.HasPrefix(toComplete, "table:cols="):
+			// After table= or table:cols=, suggest field names; after comma, keep stem
+			stem := toComplete
+			if comma := strings.LastIndex(toComplete, ","); comma >= 0 {
+				stem = toComplete[:comma+1]
+			}
+			comps := make([]cobra.Completion, len(fields))
+			for i, f := range fields {
+				comps[i] = stem + f
+			}
+			return comps, cobra.ShellCompDirectiveNoSpace
+
+		case strings.HasPrefix(toComplete, "table:"):
+			return []cobra.Completion{"table:noheader", "table:cols="}, cobra.ShellCompDirectiveNoSpace
+
+		default:
+			// Offer static printers + model field names (for -o canonical, -o name, etc.)
+			return append(base, fields...), cobra.ShellCompDirectiveNoSpace
+		}
 	})
 
 	rootCmd.PersistentFlags().StringP("verbosity", "v", "warning", "Override the default verbosity for this command. VERBOSITY must be one of: debug, info, warning, error, critical, none.")
@@ -123,6 +164,7 @@ func AttachCommands(cmd *cobra.Command) {
 		members.NewCommands(),
 		organizations.NewCommands(),
 		pipelines.NewCommands(),
+		plugins.NewCommands(),
 		projects.NewCommands(),
 		environments.NewCommands(),
 		components.NewCommands(),
@@ -130,6 +172,7 @@ func AttachCommands(cmd *cobra.Command) {
 		roles.NewCommands(),
 		stacks.NewCommands(),
 		login.NewCommands(),
+		output.NewOutputCmd(),
 		terracost.NewCommands(),
 		beta.NewCommands(),
 		uri.NewURICommands(),

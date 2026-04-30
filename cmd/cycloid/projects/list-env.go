@@ -6,8 +6,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewListEnvCommand() *cobra.Command {
@@ -37,17 +36,6 @@ func listEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return err
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return err
-	}
-
 	projects, _, err := m.ListProjectsEnv(org, project)
-	return printer.SmartPrint(p, projects, err, "unable to listenv project", printer.Options{}, cmd.OutOrStdout())
+	return cyout.Print(cmd, projects, err, "unable to listenv project")
 }

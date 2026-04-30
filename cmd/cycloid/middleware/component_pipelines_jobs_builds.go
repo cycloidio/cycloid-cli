@@ -133,7 +133,7 @@ func (m *middleware) OpenBuildEventsStream(
 		if readErr != nil {
 			return nil, resp, fmt.Errorf("failed to read error response body: %w", readErr)
 		}
-		return nil, resp, newAPIResponseError(resp, bytes.TrimSpace(body))
+		return nil, resp, newAPIResponseError(resp, bytes.TrimSpace(body), nil, "GET")
 	}
 
 	return resp.Body, resp, nil

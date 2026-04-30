@@ -415,7 +415,7 @@ func AddOwnerFlag(cmd *cobra.Command) string {
 			if strings.HasPrefix(member.Username, toComplete) {
 				owners[index] = cobra.CompletionWithDesc(
 					member.Username,
-					fmt.Sprintf("%s %s (%s)", member.GivenName, member.FamilyName, member.Email.String()),
+					fmt.Sprintf("(%s)", member.Email.String()),
 				)
 			}
 		}
@@ -459,7 +459,7 @@ func GetOrg(cmd *cobra.Command) (string, error) {
 
 // RequireArgsOrFlag returns a cobra.PositionalArgs validator that accepts positional
 // arguments OR falls back gracefully when the named flag is provided instead.
-// This enables backward compatibility when a flag is deprecated in favour of positional args.
+// This enables backward compatibility when a flag is deprecated in favor of positional args.
 func RequireArgsOrFlag(flagName string) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
 		if len(args) > 0 {

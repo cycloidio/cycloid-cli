@@ -3,14 +3,13 @@ package events
 import (
 	"time"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewListCommand() *cobra.Command {
@@ -65,21 +64,6 @@ func list(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	events, _, err := m.ListEvents(org, eventType, eventSeverity, begin*1000, end*1000)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to list events", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, events, err, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, events, err, "failed to list events", printer.Options{})
 }

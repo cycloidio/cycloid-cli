@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/require"
 
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
-	"github.com/cycloidio/cycloid-cli/internal/testcfg"
+	"github.com/cycloidio/cycloid-cli/pkg/testcfg"
 )
 
 func TestTeamMembersCRUD(t *testing.T) {

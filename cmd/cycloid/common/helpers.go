@@ -9,10 +9,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/config"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+
+	"github.com/cycloidio/cycloid-cli/config"
 )
 
 var orgRe = regexp.MustCompile(`\(\$ organization_canonical \$\)`)
@@ -101,7 +102,7 @@ func NewAPI(opts ...APIOptions) *APIClient {
 		o(&acfg)
 	}
 
-	if !strings.HasPrefix(acfg.URL, "https://") {
+	if !strings.HasPrefix(acfg.URL, "https://") && !strings.HasPrefix(acfg.URL, "http://") {
 		if strings.Contains(acfg.URL, "localhost") {
 			// This handles the weird case of localhost:3001
 			// being interpreted as scheme=localhost by url.Parse

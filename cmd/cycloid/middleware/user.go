@@ -59,7 +59,7 @@ func (m *middleware) UserLogin(org, email *string, password string) (*models.Use
 
 	if email != nil {
 		emailFmt := strfmt.Email(*email)
-		body.Email = emailFmt
+		body.Email = &emailFmt
 	}
 
 	if org != nil {
@@ -82,7 +82,7 @@ func (m *middleware) UserLogin(org, email *string, password string) (*models.Use
 func (m *middleware) UserLoginToOrg(org, email, password string) (*models.UserSession, *http.Response, error) {
 	emailFmt := strfmt.Email(email)
 	body := models.UserLogin{
-		Email:                 emailFmt,
+		Email:                 &emailFmt,
 		OrganizationCanonical: org,
 		Password:              (*strfmt.Password)(&password),
 	}
