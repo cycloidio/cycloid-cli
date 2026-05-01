@@ -1,8 +1,0 @@
-component: CLI
-kind: CHANGED
-body: "Shell completion improvements across all normalized commands"
-time: 2026-04-10T00:00:05Z
-custom:
-  DETAILS: "get/delete commands now complete resource canonicals from the API. `stack forms validate` completion is restricted to `.yml` / `.yaml` files only. `members` command gains `member` alias; `events` `e` alias removed (was conflicting with `environments`)."
-  PR: "999"
-  TYPE: CLI
