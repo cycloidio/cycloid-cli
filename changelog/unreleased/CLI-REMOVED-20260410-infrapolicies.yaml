@@ -1,8 +1,0 @@
-component: CLI
-kind: REMOVED
-body: "`infra-policy` commands removed (get, list, create, update, delete, validate)"
-time: 2026-04-10T00:00:00Z
-custom:
-  DETAILS: "The infra-policy feature has been dropped from the CLI. Remove any scripts using `cy infra-policy` commands."
-  PR: "999"
-  TYPE: CLI
