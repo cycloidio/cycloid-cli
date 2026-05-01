@@ -21,7 +21,7 @@ func NewStacksGetComponentStackConfig() *cobra.Command {
 cy --org my-org stacks get-config -p my-project -e my-env -c my-component my-usecase
 `,
 		RunE: getConfig,
-		Args: cobra.RangeArgs(0, 2),
+		Args: cobra.MaximumNArgs(1),
 	}
 	cyargs.AddCyContext(cmd)
 	cyargs.AddUseCaseFlag(cmd)
@@ -38,8 +38,8 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	}
 
 	useCase, _ := cyargs.GetUseCase(cmd)
-	if len(args) == 2 && useCase == "" {
-		useCase = args[1]
+	if len(args) >= 1 && useCase == "" {
+		useCase = args[0]
 	} else if useCase == "" {
 		return fmt.Errorf("missing use-case argument")
 	}

@@ -13,17 +13,26 @@ import (
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
-		Args:  cobra.NoArgs,
-		Short: "get a config repository",
+		Use:               "get [canonical...]",
+		Args:              cyargs.RequireArgsOrFlag("canonical"),
+		ValidArgsFunction: cyargs.CompleteConfigRepository,
+		Short:             "get a config repository",
 		Example: `
-	# get the config repository with the canonical my-config-repo and display the result in YAML
-	cy  --org my-org config-repo get --canonical my-config-repo -o yaml
+	# get a config repository by canonical
+	cy --org my-org config-repo get my-config-repo
+
+	# get multiple config repositories at once
+	cy --org my-org config-repo get repo-one repo-two
+
+	# get using the deprecated --canonical flag
+	cy --org my-org config-repo get --canonical my-config-repo -o yaml
 `,
 		RunE: getConfigRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagCan, cmd)
+	// Keep --canonical for backward compatibility
+	can := cyargs.AddConfigRepoCanonicalFlag(cmd)
+	_ = cmd.Flags().MarkHidden(can)
 
 	return cmd
 }
@@ -37,21 +46,43 @@ func getConfigRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	can, err := cmd.Flags().GetString("canonical")
-	if err != nil {
-		return err
+	// Support --canonical for backward compat; positional args take precedence
+	if len(args) == 0 {
+		can, err := cyargs.GetConfigRepoCanonical(cmd)
+		if err != nil {
+			return err
+		}
+		args = []string{can}
 	}
-	output, err := cmd.Flags().GetString("output")
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, _, err := m.GetConfigRepository(org, can)
-	return printer.SmartPrint(p, cr, err, "unable to get config repository", printer.Options{}, cmd.OutOrStdout())
+	if len(args) == 1 {
+		cr, _, err := m.GetConfigRepository(org, args[0])
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to get config repository", printer.Options{}, cmd.OutOrStderr())
+		}
+		return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	results := make([]interface{}, 0, len(args))
+	for _, can := range args {
+		cr, _, err := m.GetConfigRepository(org, can)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to get config repository "+can, printer.Options{}, cmd.OutOrStderr())
+		}
+		results = append(results, cr)
+	}
+	if output == "table" {
+		p, _ = factory.GetPrinter("json")
+	}
+	return printer.SmartPrint(p, results, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

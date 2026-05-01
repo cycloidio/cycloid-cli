@@ -17,18 +17,27 @@ import (
 // the get API key subcommand
 func NewGetCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "get",
-		Args:  cobra.NoArgs,
-		Short: "get API key",
+		Use:               "get [canonical...]",
+		Args:              cyargs.RequireArgsOrFlag("canonical"),
+		ValidArgsFunction: cyargs.CompleteAPIKeyCanonical,
+		Short:             "get API key",
 		Example: `
 	# get API key 'my-key' in the org my-org
-	cy api-key get --org my-org --canonical my-key
+	cy --org my-org api-key get my-key
+
+	# get multiple API keys
+	cy --org my-org api-key get key-one key-two
+
+	# get using the deprecated --canonical flag
+	cy --org my-org api-key get --canonical my-key
 `,
 		RunE: get,
 	}
 
-	cyargs.AddAPIKeyCanonicalFlag(cmd)
-	cmd.MarkFlagRequired("canonical")
+	// Keep --canonical for backward compatibility
+	can := cyargs.AddAPIKeyCanonicalFlag(cmd)
+	_ = cmd.Flags().MarkHidden(can)
+
 	return cmd
 }
 
@@ -40,29 +49,46 @@ func get(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unable to get org flag: %w", err)
 	}
 
+	// Support --canonical for backward compat; positional args take precedence
+	if len(args) == 0 {
+		can, err := cyargs.GetAPIKeyCanonical(cmd)
+		if err != nil {
+			return fmt.Errorf("unable to get canonical flag: %w", err)
+		}
+		args = []string{can}
+	}
+
 	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return fmt.Errorf("unable to get output flag: %w", err)
 	}
 
-	canonical, err := cyargs.GetAPIKeyCanonical(cmd)
-	if err != nil {
-		return fmt.Errorf("unable to get canonical flag: %w", err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	key, _, err := m.GetAPIKey(org, canonical)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to get API key", printer.Options{}, cmd.OutOrStderr())
+	if len(args) == 1 {
+		key, _, err := m.GetAPIKey(org, args[0])
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to get API key", printer.Options{}, cmd.OutOrStderr())
+		}
+		return printer.SmartPrint(p, key, nil, "", printer.Options{}, cmd.OutOrStdout())
 	}
 
-	return printer.SmartPrint(p, key, nil, "", printer.Options{}, cmd.OutOrStdout())
+	results := make([]interface{}, 0, len(args))
+	for _, canonical := range args {
+		key, _, err := m.GetAPIKey(org, canonical)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to get API key "+canonical, printer.Options{}, cmd.OutOrStderr())
+		}
+		results = append(results, key)
+	}
+	if output == "table" {
+		p, _ = factory.GetPrinter("json")
+	}
+	return printer.SmartPrint(p, results, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

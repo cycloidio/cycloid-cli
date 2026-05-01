@@ -1,0 +1,8 @@
+component: StackForms
+kind: FIXED
+body: "`stack get-config <use-case>` positional argument now works correctly"
+time: 2026-04-10T00:00:06Z
+custom:
+  DETAILS: "Passing the use-case as a positional argument (e.g. `cy stack get-config -p proj -e env -c comp my-usecase`) was silently ignored and produced a \"missing use-case argument\" error. The `--use-case` flag is still supported."
+  PR: "999"
+  TYPE: CLI

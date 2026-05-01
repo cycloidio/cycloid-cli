@@ -13,17 +13,26 @@ import (
 
 func NewGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:   "get",
-		Args:  cobra.NoArgs,
-		Short: "get a catalog repository",
+		Use:               "get [canonical...]",
+		Args:              cyargs.RequireArgsOrFlag("canonical"),
+		ValidArgsFunction: cyargs.CompleteCatalogRepository,
+		Short:             "get a catalog repository",
 		Example: `
-	# get the catalog repository with the canonical 123 and display the result in YAML
-	cy  --org my-org cr get --canonical my-catalog-repository -o yaml
+	# get a catalog repository by canonical
+	cy --org my-org catalog-repo get my-catalog-repository
+
+	# get a catalog repository using the deprecated --canonical flag
+	cy --org my-org catalog-repo get --canonical my-catalog-repository
+
+	# get multiple catalog repositories at once
+	cy --org my-org catalog-repo get repo-one repo-two
 `,
 		RunE: getCatalogRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagCan, cmd)
+	// Keep --canonical for backward compatibility
+	can := cyargs.AddCatalogRepoCanonicalFlag(cmd)
+	_ = cmd.Flags().MarkHidden(can)
 
 	return cmd
 }
@@ -37,21 +46,43 @@ func getCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	can, err := cmd.Flags().GetString("canonical")
-	if err != nil {
-		return err
+	// Support --canonical for backward compat; positional args take precedence
+	if len(args) == 0 {
+		can, err := cyargs.GetCatalogRepoCanonical(cmd)
+		if err != nil {
+			return err
+		}
+		args = []string{can}
 	}
-	output, err := cmd.Flags().GetString("output")
+
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
-	cr, _, err := m.GetCatalogRepository(org, can)
-	return printer.SmartPrint(p, cr, err, "unable to get catalog repository", printer.Options{}, cmd.OutOrStdout())
+	if len(args) == 1 {
+		cr, _, err := m.GetCatalogRepository(org, args[0])
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to get catalog repository", printer.Options{}, cmd.OutOrStderr())
+		}
+		return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
+	}
+
+	results := make([]interface{}, 0, len(args))
+	for _, can := range args {
+		cr, _, err := m.GetCatalogRepository(org, can)
+		if err != nil {
+			return printer.SmartPrint(p, nil, err, "unable to get catalog repository "+can, printer.Options{}, cmd.OutOrStderr())
+		}
+		results = append(results, cr)
+	}
+	if output == "table" {
+		p, _ = factory.GetPrinter("json")
+	}
+	return printer.SmartPrint(p, results, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

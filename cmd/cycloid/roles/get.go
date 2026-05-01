@@ -34,7 +34,7 @@ func NewGetCommand() *cobra.Command {
 	// keep legacy flag just in case
 	// TODO: deprecate in next update
 	cmd.Flags().String("canonical", "", "the role canonical")
-	cmd.Flags().MarkDeprecated("canonical", "use --role or pass the canonical as argument directly")
+	cmd.Flags().MarkHidden("canonical")
 
 	return cmd
 }

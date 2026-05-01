@@ -84,9 +84,9 @@ func TeamMembersCompletionHelper(cmd *cobra.Command) ([]*models.MemberTeam, erro
 		return nil, fmt.Errorf("missing org for completion: %w", err)
 	}
 
-	team, err := GetOrg(cmd)
+	team, err := GetTeam(cmd)
 	if err != nil {
-		return nil, fmt.Errorf("missing team canoncal for completion: %w", err)
+		return nil, fmt.Errorf("missing team canonical for completion: %w", err)
 	}
 
 	api := common.NewAPI()
@@ -244,7 +244,7 @@ func GetTeamMemberID(cmd *cobra.Command) (uint32, error) {
 func AddTeamMemberUsernameFlag(cmd *cobra.Command) string {
 	cmd.Flags().StringP(teamMemberFlagName, "m", "", "specify a team member by its username")
 	cmd.RegisterFlagCompletionFunc(teamMemberFlagName, CompleteTeamMemberUsername)
-	return teamMemberIDFlagName
+	return teamMemberFlagName
 }
 
 func GetTeamMember(cmd *cobra.Command) (string, error) {
@@ -262,8 +262,8 @@ func GetTeamMemberUsername(cmd *cobra.Command) (string, error) {
 }
 
 func AddTeamCreatedAt(cmd *cobra.Command) string {
-	cmd.Flags().Time(teamCreatedAtFlagName, time.UnixMilli(0), []string{}, "team member email")
-	return teamMemberEmailFlagName
+	cmd.Flags().Time(teamCreatedAtFlagName, time.UnixMilli(0), []string{}, "filter by creation timestamp")
+	return teamCreatedAtFlagName
 }
 
 func GetTeamCreatedAt(cmd *cobra.Command) (*uint64, error) {
@@ -277,7 +277,7 @@ func GetTeamCreatedAt(cmd *cobra.Command) (*uint64, error) {
 func AddTeamOrderBy(cmd *cobra.Command) string {
 	cmd.Flags().String(teamOrderByFlagName, "asc", "specify the output order, asc for ascending and desc for descending")
 	cmd.RegisterFlagCompletionFunc(teamOrderByFlagName, cobra.FixedCompletions([]string{"asc", "desc"}, cobra.ShellCompDirectiveNoFileComp))
-	return teamCreatedAtFlagName
+	return teamOrderByFlagName
 }
 
 func GetTeamOrderBy(cmd *cobra.Command) (*middleware.TeamOrderByParam, error) {

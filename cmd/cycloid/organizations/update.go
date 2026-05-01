@@ -25,7 +25,7 @@ func NewUpdateCommand() *cobra.Command {
 		RunE: update,
 	}
 
-	common.RequiredFlag(WithFlagName, cmd)
+	cmd.MarkFlagRequired(cyargs.AddOrgNameFlag(cmd))
 
 	return cmd
 }
@@ -34,7 +34,7 @@ func update(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	name, err := cmd.Flags().GetString("name")
+	name, err := cyargs.GetOrgName(cmd)
 	if err != nil {
 		return err
 	}
@@ -44,17 +44,19 @@ func update(cmd *cobra.Command, args []string) error {
 		return errors.Wrap(err, "unable get org flag")
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
 	o, _, err := m.UpdateOrganization(org, name)
-	return printer.SmartPrint(p, o, err, "unable to update organization", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to update organization", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, o, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

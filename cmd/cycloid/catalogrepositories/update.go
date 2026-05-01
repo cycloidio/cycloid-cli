@@ -18,18 +18,16 @@ func NewUpdateCommand() *cobra.Command {
 		Short: "update a catalog repository",
 		Example: `
 	# update a catalog repository
-	cy  --org my-org cr update --branch my-branch --cred 1234 --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-catalog-repository
+	cy --org my-org cr update --branch my-branch --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-catalog-repository
 `,
 		RunE: updateCatalogRepository,
 	}
 
-	common.RequiredFlag(common.WithFlagCan, cmd)
-	common.RequiredFlag(common.WithFlagCred, cmd)
-	common.RequiredFlag(WithFlagName, cmd)
-	common.RequiredFlag(WithFlagBranch, cmd)
-	common.RequiredFlag(WithFlagURL, cmd)
-
-	//TODO : dont Required flags and if not set, use value from the getConfigRepository
+	cmd.MarkFlagRequired(cyargs.AddCatalogRepoCanonicalFlag(cmd))
+	cyargs.AddRepoCredFlag(cmd)
+	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddRepoBranchFlag(cmd))
+	cmd.MarkFlagRequired(cyargs.AddRepoURLFlag(cmd))
 
 	return cmd
 }
@@ -43,42 +41,44 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	can, err := cmd.Flags().GetString("canonical")
+	can, err := cyargs.GetCatalogRepoCanonical(cmd)
 	if err != nil {
 		return err
 	}
 
-	name, err := cmd.Flags().GetString("name")
+	name, err := cyargs.GetName(cmd)
 	if err != nil {
 		return err
 	}
 
-	url, err := cmd.Flags().GetString("url")
+	url, err := cyargs.GetRepoURL(cmd)
 	if err != nil {
 		return err
 	}
 
-	branch, err := cmd.Flags().GetString("branch")
+	branch, err := cyargs.GetRepoBranch(cmd)
 	if err != nil {
 		return err
 	}
 
-	cred, err := cmd.Flags().GetString("cred")
+	cred, err := cyargs.GetRepoCred(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cmd.Flags().GetString("output")
+	output, err := cyargs.GetOutput(cmd)
 	if err != nil {
 		return errors.Wrap(err, "unable to get output flag")
 	}
 
-	// fetch the printer from the factory
 	p, err := factory.GetPrinter(output)
 	if err != nil {
 		return errors.Wrap(err, "unable to get printer")
 	}
 
 	cr, _, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred, nil)
-	return printer.SmartPrint(p, cr, err, "unable to update catalog repository", printer.Options{}, cmd.OutOrStdout())
+	if err != nil {
+		return printer.SmartPrint(p, nil, err, "unable to update catalog repository", printer.Options{}, cmd.OutOrStderr())
+	}
+	return printer.SmartPrint(p, cr, nil, "", printer.Options{}, cmd.OutOrStdout())
 }

@@ -7,8 +7,8 @@ func NewCommands() *cobra.Command {
 		Use:  "components",
 		Args: cobra.NoArgs,
 		Aliases: []string{
-			"comp",
 			"component",
+			"comp",
 		},
 		Short: "Manage components.",
 	}

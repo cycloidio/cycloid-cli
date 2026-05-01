@@ -176,14 +176,6 @@ type Middleware interface {
 	CreateAPIKey(org, canonical, description, owner string, name *string, rules []*models.NewRule) (*models.APIKey, *http.Response, error)
 	DeleteAPIKey(org, canonical string) (*http.Response, error)
 
-	// ValidateInfraPolicies will validate the TF plan against OPA policies defined on the Cycloid server
-	ValidateInfraPolicies(org, project, env string, plan []byte) (*models.InfraPoliciesValidationResult, *http.Response, error)
-	CreateInfraPolicy(org, policyFile, policyCanonical, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, *http.Response, error)
-	DeleteInfraPolicy(org, policycanonical string) (*http.Response, error)
-	ListInfraPolicies(org string) ([]*models.InfraPolicy, *http.Response, error)
-	GetInfraPolicy(org, infraPolicy string) (*models.InfraPolicy, *http.Response, error)
-	UpdateInfraPolicy(org, infraPolicy, policyFile, description, policyName, ownercanonical, severity string, enabled bool) (*models.InfraPolicy, *http.Response, error)
-
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, *http.Response, error)
 

@@ -31,6 +31,11 @@ func GetCatalogRepoCanonical(cmd *cobra.Command) (string, error) {
 	return cmd.Flags().GetString("canonical")
 }
 
+// GetConfigRepoCanonical returns the optional config repository canonical (empty if unset).
+func GetConfigRepoCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("canonical")
+}
+
 func GetCatalogRepository(cmd *cobra.Command) (string, error) {
 	catalogRepository, err := cmd.Flags().GetString("catalog-repository")
 	if err != nil {
@@ -67,30 +72,40 @@ func CompleteCatalogRepository(cmd *cobra.Command, args []string, toComplete str
 func AddConfigRepositoryFlag(cmd *cobra.Command) string {
 	flagName := "config-repository"
 	cmd.Flags().String(flagName, "", "canonical of a config repository, if empty will use the default one in the current org.")
-	cmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
-		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
-
-		org, err := GetOrg(cmd)
-		if err != nil {
-			return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
-		}
-
-		stacks, _, err := m.ListConfigRepositories(org)
-		if err != nil {
-			return cobra.AppendActiveHelp(nil, "failed to list config repositories for completion in org '"+org+"' :"+err.Error()), cobra.ShellCompDirectiveError
-		}
-
-		var configRepositories = make([]string, len(stacks))
-		for index, configRepository := range stacks {
-			if configRepository.Canonical != nil {
-				configRepositories[index] = cobra.CompletionWithDesc(*configRepository.Canonical, *configRepository.Name+" - branch: "+configRepository.Branch)
-			}
-		}
-
-		return configRepositories, cobra.ShellCompDirectiveNoFileComp
-	})
+	cmd.RegisterFlagCompletionFunc(flagName, CompleteConfigRepository)
 	return flagName
+}
+
+// AddConfigRepoCanonicalFlag registers --canonical for config-repository get/delete/update commands.
+func AddConfigRepoCanonicalFlag(cmd *cobra.Command) string {
+	const flagName = "canonical"
+	cmd.Flags().String(flagName, "", "config repository canonical")
+	_ = cmd.RegisterFlagCompletionFunc(flagName, CompleteConfigRepository)
+	return flagName
+}
+
+func CompleteConfigRepository(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
+	}
+
+	stacks, _, err := m.ListConfigRepositories(org)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to list config repositories for completion in org '"+org+"': "+err.Error()), cobra.ShellCompDirectiveError
+	}
+
+	var configRepositories = make([]cobra.Completion, len(stacks))
+	for index, configRepository := range stacks {
+		if configRepository.Canonical != nil {
+			configRepositories[index] = cobra.CompletionWithDesc(*configRepository.Canonical, *configRepository.Name+" - branch: "+configRepository.Branch)
+		}
+	}
+
+	return configRepositories, cobra.ShellCompDirectiveNoFileComp
 }
 
 // GetConfigRepository return the config repository flag, if empty, will try to return

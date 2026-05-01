@@ -1,0 +1,8 @@
+component: Service Catalog
+kind: ADDED
+body: "`catalog-repo refresh` now accepts multiple repository canonicals at once"
+time: 2026-04-10T00:00:03Z
+custom:
+  DETAILS: "Refresh several catalog repositories in a single command: `cy catalog-repo refresh repo-a repo-b repo-c`. Previously only one canonical was accepted."
+  PR: "999"
+  TYPE: CLI
