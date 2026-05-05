@@ -219,6 +219,7 @@ func paintLogLines(source, payload string, t StreamTheme) string {
 	var b strings.Builder
 	for _, line := range lines {
 		if strings.TrimSpace(line) == "" {
+			b.WriteByte('\n')
 			continue
 		}
 		if t.Reset == "" {
