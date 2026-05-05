@@ -26,11 +26,6 @@ type PluginInstallRuntimeLog struct {
 	// Text of the log line
 	// Required: true
 	Message *string `json:"message"`
-
-	// Timestamp of the log line
-	// Required: true
-	// Format: date-time
-	Timestamp *strfmt.DateTime `json:"timestamp"`
 }
 
 // Validate validates this plugin install runtime log
@@ -42,10 +37,6 @@ func (m *PluginInstallRuntimeLog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateMessage(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateTimestamp(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -71,19 +62,6 @@ func (m *PluginInstallRuntimeLog) validateID(formats strfmt.Registry) error {
 func (m *PluginInstallRuntimeLog) validateMessage(formats strfmt.Registry) error {
 
 	if err := validate.Required("message", "body", m.Message); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *PluginInstallRuntimeLog) validateTimestamp(formats strfmt.Registry) error {
-
-	if err := validate.Required("timestamp", "body", m.Timestamp); err != nil {
-		return err
-	}
-
-	if err := validate.FormatOf("timestamp", "body", "date-time", m.Timestamp.String(), formats); err != nil {
 		return err
 	}
 
