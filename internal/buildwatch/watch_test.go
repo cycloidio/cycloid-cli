@@ -269,7 +269,7 @@ func TestFormatHumanBuildEventRawPassthroughInvalidJSON(t *testing.T) {
 	assert.Equal(t, "not-json\n", out)
 }
 
-func TestFormatHumanBuildEventLogSkipsEmptyAndWhitespaceLines(t *testing.T) {
+func TestFormatHumanBuildEventLogPreservesBlankLines(t *testing.T) {
 	t.Parallel()
 
 	opts := consumeOpts{
@@ -278,15 +278,18 @@ func TestFormatHumanBuildEventLogSkipsEmptyAndWhitespaceLines(t *testing.T) {
 		stripLogANSI: true,
 	}
 
+	// Blank lines within a payload are preserved as bare newlines so
+	// meaningful output separators (e.g. ls column groups) are not lost.
 	multi := `{"data":{"origin":{"source":"stdout"},"payload":"hello\n\n\nworld\n"},"event":"log","version":"1.0"}`
 	out, ok := formatHumanBuildEvent(multi, opts)
 	require.True(t, ok)
 	assert.Contains(t, out, "[stdout] hello")
 	assert.Contains(t, out, "[stdout] world")
-	assert.NotContains(t, out, "[stdout] \n")
-	lineCount := strings.Count(out, "[stdout]")
-	assert.Equal(t, 2, lineCount)
+	assert.NotContains(t, out, "[stdout] \n") // blank lines must not get the [stdout] prefix
+	assert.Equal(t, 2, strings.Count(out, "[stdout]"))
+	assert.Greater(t, strings.Count(out, "\n"), 2) // blank lines are present as bare newlines
 
+	// Fully-whitespace payloads are suppressed entirely.
 	emptyPayload := `{"data":{"origin":{"source":"stdout"},"payload":"\n"},"event":"log","version":"1.0"}`
 	_, ok = formatHumanBuildEvent(emptyPayload, opts)
 	assert.False(t, ok)
