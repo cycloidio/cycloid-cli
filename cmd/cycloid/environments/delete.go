@@ -27,19 +27,22 @@ func NewDeleteCommand() *cobra.Command {
 
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
+	cyargs.AddDeleteFlags(cmd)
 	return cmd
 }
 
 func deleteEnvironment(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
 	project, err := cyargs.GetProject(cmd)
+	if err != nil {
+		return err
+	}
+
+	force, skipHooks, ignoreConfigFilesErr, err := cyargs.GetDeleteFlags(cmd)
 	if err != nil {
 		return err
 	}
@@ -59,10 +62,12 @@ func deleteEnvironment(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	envs := args
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
-	for _, env := range envs {
-		_, err = m.DeleteEnv(org, project, env)
+	opts := middleware.DeleteOptions{Force: force, SkipHooks: skipHooks, IgnoreConfigFilesErr: ignoreConfigFilesErr}
+	for _, env := range args {
+		_, err = m.DeleteEnv(org, project, env, opts)
 		if err != nil {
 			return cyout.Print(cmd, nil, err, "unable to delete environment "+env)
 		}

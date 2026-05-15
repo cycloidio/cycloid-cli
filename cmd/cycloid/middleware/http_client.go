@@ -42,6 +42,29 @@ type StackUseCase struct {
 	UseCase       *string `json:"use_case"`
 }
 
+// DeleteOptions carries the caller-facing flags for delete operations.
+// Force is sugar for enabling both SkipHooks and IgnoreConfigFilesErr.
+// Resolve expands Force before building the API query.
+type DeleteOptions struct {
+	Force                bool
+	SkipHooks            bool
+	IgnoreConfigFilesErr bool
+}
+
+// deleteQuery is the wire representation sent as URL query params.
+type deleteQuery struct {
+	SkipHooks            bool `url:"skip_hooks"`
+	IgnoreConfigFilesErr bool `url:"ignore_config_files_err"`
+}
+
+// Resolve returns the effective deleteQuery, merging Force into both fields.
+func (o DeleteOptions) Resolve() deleteQuery {
+	return deleteQuery{
+		SkipHooks:            o.SkipHooks || o.Force,
+		IgnoreConfigFilesErr: o.IgnoreConfigFilesErr || o.Force,
+	}
+}
+
 // Request represents an HTTP request to the Cycloid API.
 type Request struct {
 	Method       string

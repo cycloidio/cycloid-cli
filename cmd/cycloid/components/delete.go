@@ -26,6 +26,7 @@ func NewDeleteComponentCommand() *cobra.Command {
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
 	cyargs.AddComponentFlag(cmd)
+	cyargs.AddDeleteFlags(cmd)
 	return cmd
 }
 
@@ -41,6 +42,11 @@ func deleteComponent(cmd *cobra.Command, args []string) error {
 	}
 
 	env, err := cyargs.GetEnv(cmd)
+	if err != nil {
+		return err
+	}
+
+	force, skipHooks, ignoreConfigFilesErr, err := cyargs.GetDeleteFlags(cmd)
 	if err != nil {
 		return err
 	}
@@ -63,10 +69,9 @@ func deleteComponent(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	components := args
-
-	for _, component := range components {
-		_, err = m.DeleteComponent(org, project, env, component)
+	opts := middleware.DeleteOptions{Force: force, SkipHooks: skipHooks, IgnoreConfigFilesErr: ignoreConfigFilesErr}
+	for _, component := range args {
+		_, err = m.DeleteComponent(org, project, env, component, opts)
 		if err != nil {
 			return cyout.Print(cmd, nil, err, "failed to delete component '"+component+"'")
 		}
