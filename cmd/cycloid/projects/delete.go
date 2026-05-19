@@ -31,14 +31,17 @@ func NewDeleteCommand() *cobra.Command {
 	}
 
 	cyargs.AddProjectFlag(cmd)
+	cyargs.AddDeleteFlags(cmd)
 	return cmd
 }
 
 func deleteProject(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
+	if err != nil {
+		return err
+	}
+
+	force, skipHooks, ignoreConfigFilesErr, err := cyargs.GetDeleteFlags(cmd)
 	if err != nil {
 		return err
 	}
@@ -58,9 +61,13 @@ func deleteProject(cmd *cobra.Command, args []string) error {
 		}
 	}
 
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	opts := middleware.DeleteOptions{Force: force, SkipHooks: skipHooks, IgnoreConfigFilesErr: ignoreConfigFilesErr}
 	deleted := make([]string, 0, len(args))
 	for _, project := range args {
-		_, err = m.DeleteProject(org, project)
+		_, err = m.DeleteProject(org, project, opts)
 		if err != nil {
 			return cyout.PrintWithOptions(cmd, nil, err, "unable to delete project "+project, printer.Options{})
 		}

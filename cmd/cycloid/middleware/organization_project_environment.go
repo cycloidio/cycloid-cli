@@ -63,11 +63,14 @@ func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*model
 	return result, resp, nil
 }
 
-func (m *middleware) DeleteEnv(org, project, env string) (*http.Response, error) {
-	resp, err := m.GenericRequest(Request{
+func (m *middleware) DeleteEnv(org, project, env string, opts DeleteOptions) (*http.Response, error) {
+	req := Request{
 		Method:       "DELETE",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments", env},
-	}, nil)
-	return resp, err
+	}
+	if q := opts.Resolve(); q.SkipHooks || q.IgnoreConfigFilesErr {
+		req.Query = q
+	}
+	return m.GenericRequest(req, nil)
 }
