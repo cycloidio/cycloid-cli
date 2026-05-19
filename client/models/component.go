@@ -70,6 +70,10 @@ type Component struct {
 	// Required: true
 	ServiceCatalog *ServiceCatalog `json:"service_catalog"`
 
+	// Unix timestamp of when the component was last configured via StackForms. Absent if the component has never been configured or the information is unavailable.
+	// Minimum: 0
+	StackformUpdatedAt *uint64 `json:"stackform_updated_at,omitempty"`
+
 	// updated at
 	// Required: true
 	// Minimum: 0
@@ -123,6 +127,10 @@ func (m *Component) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateServiceCatalog(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStackformUpdatedAt(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -339,6 +347,18 @@ func (m *Component) validateServiceCatalog(formats strfmt.Registry) error {
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Component) validateStackformUpdatedAt(formats strfmt.Registry) error {
+	if swag.IsZero(m.StackformUpdatedAt) { // not required
+		return nil
+	}
+
+	if err := validate.MinimumUint("stackform_updated_at", "body", *m.StackformUpdatedAt, 0, false); err != nil {
+		return err
 	}
 
 	return nil
