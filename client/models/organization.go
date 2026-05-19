@@ -96,6 +96,12 @@ type Organization struct {
 	// Min Length: 3
 	Name *string `json:"name"`
 
+	// Canonical of the immediate parent organization. Omitted when this organization is root.
+	// Max Length: 100
+	// Min Length: 3
+	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	ParentCanonical *string `json:"parent_canonical,omitempty"`
+
 	// When true, SSO users can only join the organization if they have been explicitly invited
 	SsoInviteOnly *bool `json:"sso_invite_only,omitempty"`
 
@@ -181,6 +187,10 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateParentCanonical(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -413,6 +423,26 @@ func (m *Organization) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateParentCanonical(formats strfmt.Registry) error {
+	if swag.IsZero(m.ParentCanonical) { // not required
+		return nil
+	}
+
+	if err := validate.MinLength("parent_canonical", "body", *m.ParentCanonical, 3); err != nil {
+		return err
+	}
+
+	if err := validate.MaxLength("parent_canonical", "body", *m.ParentCanonical, 100); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("parent_canonical", "body", *m.ParentCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

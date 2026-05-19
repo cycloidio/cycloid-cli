@@ -70,7 +70,7 @@ type Component struct {
 	// Required: true
 	ServiceCatalog *ServiceCatalog `json:"service_catalog"`
 
-	// Unix timestamp of when the component was last configured via StackForms. Absent if the component has never been configured or the information is unavailable.
+	// Unix timestamp in milliseconds of when the component was last configured via StackForms. Absent if the component has never been configured or the information is unavailable.
 	// Minimum: 0
 	StackformUpdatedAt *uint64 `json:"stackform_updated_at,omitempty"`
 
