@@ -109,11 +109,14 @@ func (m *middleware) UpdateProject(org, projectName, project, description, confi
 	return result, resp, nil
 }
 
-func (m *middleware) DeleteProject(org, project string) (*http.Response, error) {
-	resp, err := m.GenericRequest(Request{
+func (m *middleware) DeleteProject(org, project string, opts DeleteOptions) (*http.Response, error) {
+	req := Request{
 		Method:       "DELETE",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project},
-	}, nil)
-	return resp, err
+	}
+	if q := opts.Resolve(); q.SkipHooks || q.IgnoreConfigFilesErr {
+		req.Query = q
+	}
+	return m.GenericRequest(req, nil)
 }

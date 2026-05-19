@@ -144,7 +144,7 @@ type Middleware interface {
 	// Project
 	CreateProject(org, projectName, project, description, configRepository, owner, team, color, icon string) (*models.Project, *http.Response, error)
 	UpdateProject(org, projectName, project, description, configRepository, owner, team, color, icon, cloudProvider string) (*models.Project, *http.Response, error)
-	DeleteProject(org, project string) (*http.Response, error)
+	DeleteProject(org, project string, opts DeleteOptions) (*http.Response, error)
 	GetProject(org string, project string) (*models.Project, *http.Response, error)
 	ListProjects(org string, filters ...LHSFilter) ([]*models.Project, *http.Response, error)
 	ListProjectsEnv(org, project string, filters ...LHSFilter) ([]*models.Environment, *http.Response, error)
@@ -153,14 +153,14 @@ type Middleware interface {
 	GetEnv(org, project, env string) (*models.Environment, *http.Response, error)
 	CreateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error)
 	UpdateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error)
-	DeleteEnv(org, project, env string) (*http.Response, error)
+	DeleteEnv(org, project, env string, opts DeleteOptions) (*http.Response, error)
 
 	// Component
 	CreateOrUpdateComponent(org, project, env, component, description, name, stackRef, versionTag, versionBranch, versionCommitHash, useCase, cloudProvider string, vars models.FormVariables) (*models.Component, *http.Response, error)
 	ListComponents(org, project, env string, filters ...LHSFilter) ([]*models.Component, *http.Response, error)
 	GetComponent(org, project, env, component string) (*models.Component, *http.Response, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, *http.Response, error)
-	DeleteComponent(org, project, env, component string) (*http.Response, error)
+	DeleteComponent(org, project, env, component string, opts DeleteOptions) (*http.Response, error)
 	GetComponentConfig(org, project, env, component string) (models.FormVariables, *http.Response, error)
 	GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, *http.Response, error)
 

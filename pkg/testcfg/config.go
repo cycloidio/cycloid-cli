@@ -256,7 +256,7 @@ func (config *Config) NewTestProject(identifier string) (*models.Project, error)
 	}
 
 	config.AppendCleanup(func() {
-		_, err := m.DeleteProject(config.Org, project)
+		_, err := m.DeleteProject(config.Org, project, middleware.DeleteOptions{})
 		if err != nil {
 			log.Fatalf("cannot cleanup projet %q for test %q: %v", project, identifier, err)
 			return
@@ -283,7 +283,7 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 	}
 
 	config.AppendCleanup(func() {
-		_, err := m.DeleteEnv(config.Org, project, env)
+		_, err := m.DeleteEnv(config.Org, project, env, middleware.DeleteOptions{})
 		if err != nil {
 			log.Fatalf("cannot cleanup env %q for test %q: %v", env, identifier, err)
 			return
@@ -331,7 +331,7 @@ func (config *Config) NewTestComponent(project, env, identifier, stackRef, useCa
 	}
 
 	config.AppendCleanup(func() {
-		if _, err := m.DeleteComponent(config.Org, project, env, component); err != nil {
+		if _, err := m.DeleteComponent(config.Org, project, env, component, middleware.DeleteOptions{}); err != nil {
 			log.Printf("failed to cleanup component for test %q: %v", identifier, err)
 		}
 	})

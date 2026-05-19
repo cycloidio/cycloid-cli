@@ -35,11 +35,11 @@ func TestLHSFilterDiscovery(t *testing.T) {
 
 		_, _, err := m.CreateProject(org, nameA, projA, "desc a", configRepo, "", "", "default", "world")
 		require.NoError(t, err, "setup: create projA")
-		defer func() { _, _ = m.DeleteProject(org, projA) }()
+		defer func() { _, _ = m.DeleteProject(org, projA, middleware.DeleteOptions{}) }()
 
 		_, _, err = m.CreateProject(org, nameB, projB, "desc b", configRepo, "", "", "default", "world")
 		require.NoError(t, err, "setup: create projB")
-		defer func() { _, _ = m.DeleteProject(org, projB) }()
+		defer func() { _, _ = m.DeleteProject(org, projB, middleware.DeleteOptions{}) }()
 
 		t.Run("project_canonical[eq]", func(t *testing.T) {
 			results, _, err := m.ListProjects(org, middleware.LHSFilter{Attribute: "project_canonical", Condition: "eq", Value: projA})
