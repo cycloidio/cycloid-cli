@@ -101,7 +101,7 @@ func TestComponentCRUD(t *testing.T) {
 		}
 
 		defer func() {
-			_, err := m.DeleteComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical)
+			_, err := m.DeleteComponent(config.Org, *config.Project.Canonical, *config.Environment.Canonical, *createdComponent.Canonical, middleware.DeleteOptions{})
 			if err != nil {
 				log.Fatalf("Failed to delete component '%s': %v", *createdComponent.Canonical, err)
 				return

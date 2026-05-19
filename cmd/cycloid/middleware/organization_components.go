@@ -127,13 +127,16 @@ func (m *middleware) MigrateComponent(org, project, env, component, targetProjec
 	return result, resp, nil
 }
 
-func (m *middleware) DeleteComponent(org, project, env, component string) (*http.Response, error) {
-	resp, err := m.GenericRequest(Request{
+func (m *middleware) DeleteComponent(org, project, env, component string, opts DeleteOptions) (*http.Response, error) {
+	req := Request{
 		Method:       "DELETE",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component},
-	}, nil)
-	return resp, err
+	}
+	if q := opts.Resolve(); q.SkipHooks || q.IgnoreConfigFilesErr {
+		req.Query = q
+	}
+	return m.GenericRequest(req, nil)
 }
 
 func (m *middleware) GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, *http.Response, error) {

@@ -19,15 +19,15 @@ func pluginsEnabled() bool {
 	return os.Getenv("CY_TEST_E2E_PLUGINS") == "1"
 }
 
-// pollPluginRunning polls GetPlugin until Status == "running" or timeout.
-// Returns true if "running" was reached, false on timeout (plugin-manager may lack
+// pollPluginInstalled polls GetPlugin until Status == "installed" or timeout.
+// Returns true if "installed" was reached, false on timeout (plugin-manager may lack
 // a container runtime in the compose test environment).
-func pollPluginRunning(t *testing.T, org string, installID uint32) bool {
+func pollPluginInstalled(t *testing.T, org string, installID uint32) bool {
 	t.Helper()
 	deadline := time.Now().Add(90 * time.Second)
 	for time.Now().Before(deadline) {
 		install, _, err := config.Middleware.GetPlugin(org, installID)
-		if err == nil && install != nil && install.Status != nil && *install.Status == "running" {
+		if err == nil && install != nil && install.Status != nil && *install.Status == "installed" {
 			return true
 		}
 		if err == nil && install != nil && install.Status != nil && *install.Status == "failed" {
@@ -36,7 +36,7 @@ func pollPluginRunning(t *testing.T, org string, installID uint32) bool {
 		}
 		time.Sleep(3 * time.Second)
 	}
-	t.Logf("plugin install %d did not reach running state within 90s (plugin-manager may lack container runtime)", installID)
+	t.Logf("plugin install %d did not reach installed state within 90s (plugin-manager may lack container runtime)", installID)
 	return false
 }
 
@@ -383,14 +383,14 @@ func TestPluginInstallLifecycle(t *testing.T) {
 		require.NotZero(t, installID, "install record not found after install")
 	})
 
-	var pluginRunning bool
-	t.Run("PollRunning", func(t *testing.T) {
+	var pluginInstalled bool
+	t.Run("PollInstalled", func(t *testing.T) {
 		if installID == 0 {
 			t.Skip("install step did not complete")
 		}
-		pluginRunning = pollPluginRunning(t, org, installID)
-		if !pluginRunning {
-			t.Skip("plugin did not reach running state (plugin-manager may lack container runtime)")
+		pluginInstalled = pollPluginInstalled(t, org, installID)
+		if !pluginInstalled {
+			t.Skip("plugin did not reach installed state (plugin-manager may lack container runtime)")
 		}
 	})
 
@@ -463,7 +463,7 @@ func TestPluginWidgets(t *testing.T) {
 	require.NoError(t, err)
 	versionID := *version.ID
 
-	// Install and wait for running.
+	// Install and wait for installed.
 	_, err = executeCommand([]string{
 		"plugin", "registry", "plugin", "version", "install",
 		fmt.Sprint(versionID),
@@ -487,11 +487,11 @@ func TestPluginWidgets(t *testing.T) {
 		_, _ = config.Middleware.DeletePlugin(org, installID)
 	})
 
-	running := pollPluginRunning(t, org, installID)
+	installed := pollPluginInstalled(t, org, installID)
 
 	t.Run("ListWidgets", func(t *testing.T) {
-		if !running {
-			t.Skip("plugin not running — skipping widget test (plugin-manager may lack container runtime)")
+		if !installed {
+			t.Skip("plugin not installed — skipping widget test (plugin-manager may lack container runtime)")
 		}
 		out, err := executeCommand([]string{
 			"plugin", "widget", "list",
@@ -505,8 +505,8 @@ func TestPluginWidgets(t *testing.T) {
 	})
 
 	t.Run("IframeServedContent", func(t *testing.T) {
-		if !running {
-			t.Skip("plugin not running — skipping iframe test (plugin-manager may lack container runtime)")
+		if !installed {
+			t.Skip("plugin not installed — skipping iframe test (plugin-manager may lack container runtime)")
 		}
 		// Resolve the widget URL from the plugin widget list and verify it
 		// serves HTML containing "Hello World".

@@ -40,7 +40,7 @@ type PluginInstall struct {
 
 	// Status of the Plugin deployment process on Plugin Manager
 	// Required: true
-	// Enum: ["pending","running","failed"]
+	// Enum: ["pending","installed","failed"]
 	Status *string `json:"status"`
 
 	// updated at
@@ -147,7 +147,7 @@ var pluginInstallTypeStatusPropEnum []any
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["pending","running","failed"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["pending","installed","failed"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -160,8 +160,8 @@ const (
 	// PluginInstallStatusPending captures enum value "pending"
 	PluginInstallStatusPending string = "pending"
 
-	// PluginInstallStatusRunning captures enum value "running"
-	PluginInstallStatusRunning string = "running"
+	// PluginInstallStatusInstalled captures enum value "installed"
+	PluginInstallStatusInstalled string = "installed"
 
 	// PluginInstallStatusFailed captures enum value "failed"
 	PluginInstallStatusFailed string = "failed"

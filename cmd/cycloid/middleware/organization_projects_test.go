@@ -32,7 +32,7 @@ func TestProjectCrud(t *testing.T) {
 	}
 
 	defer func() {
-		_, err := m.DeleteProject(config.Org, project)
+		_, err := m.DeleteProject(config.Org, project, middleware.DeleteOptions{})
 		if err != nil {
 			t.Errorf("Failed to delete project '%s': %v", project, err)
 		}
