@@ -17,6 +17,7 @@ type Middleware interface {
 	UserSignup(username, email, password, fullName string) (*http.Response, error)
 	RefreshToken(org, childOrg *string, token string) (*models.UserSession, *http.Response, error)
 
+	GetLicence(org string) (*models.Licence, *http.Response, error)
 	ActivateLicence(org, licence string) (*http.Response, error)
 
 	// cycloid
