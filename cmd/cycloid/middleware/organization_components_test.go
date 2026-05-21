@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
 
 func TestComponentCRUD(t *testing.T) {
