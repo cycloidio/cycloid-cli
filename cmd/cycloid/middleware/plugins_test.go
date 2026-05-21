@@ -266,7 +266,7 @@ func TestPluginInstallAndGet(t *testing.T) {
 		require.NoError(t, err)
 		assert.Equal(t, http.StatusOK, resp.StatusCode)
 		require.NotNil(t, install)
-		// The plugin-manager deploys asynchronously; status may be pending/installed.
+		// The plugin-manager deploys asynchronously; status may be pending/running.
 		assert.NotNil(t, install.ID)
 	})
 
