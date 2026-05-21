@@ -42,11 +42,12 @@ func (m *middleware) GetPluginManager(org string, id uint32) (*models.PluginMana
 	return result, resp, nil
 }
 
-func (m *middleware) CreatePluginManager(org, name, url string) (*models.PluginManager, *http.Response, error) {
+func (m *middleware) CreatePluginManager(org, name, url string, autoRegister bool) (*models.PluginManager, *http.Response, error) {
 	u := strfmt.URI(url)
 	body := &models.NewPluginManager{
-		Name: &name,
-		URL:  &u,
+		AutoRegister: autoRegister,
+		Name:         &name,
+		URL:          &u,
 	}
 	var result *models.PluginManager
 	resp, err := m.GenericRequest(Request{

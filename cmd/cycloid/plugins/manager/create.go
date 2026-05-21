@@ -17,7 +17,7 @@ func NewCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "create",
 		Args:  cobra.NoArgs,
-		Short: "Invite a plugin manager to the organization",
+		Short: "Register a plugin manager with the organization",
 		Example: `
   cy plugin manager create --name my-manager --url https://pm.example.com
   cy plugin manager create --name my-manager --url https://pm.example.com --update
@@ -77,6 +77,6 @@ func createPluginManager(cmd *cobra.Command, args []string) error {
 		return cyout.PrintWithOptions(cmd, result, err, "unable to get existing plugin manager", printer.Options{})
 	}
 
-	result, _, err := m.CreatePluginManager(org, name, url)
+	result, _, err := m.CreatePluginManager(org, name, url, true)
 	return cyout.PrintWithOptions(cmd, result, err, "unable to create plugin manager", printer.Options{})
 }
