@@ -185,7 +185,7 @@ type Middleware interface {
 	// organization_plugin_managers
 	ListPluginManagers(org string) ([]*models.PluginManager, *http.Response, error)
 	GetPluginManager(org string, id uint32) (*models.PluginManager, *http.Response, error)
-	CreatePluginManager(org, name, url string) (*models.PluginManager, *http.Response, error)
+	CreatePluginManager(org, name, url string, autoRegister bool) (*models.PluginManager, *http.Response, error)
 	UpdatePluginManager(org string, id uint32, inviteStatus string) (*models.PluginManager, *http.Response, error)
 	DeletePluginManager(org string, id uint32) (*http.Response, error)
 
