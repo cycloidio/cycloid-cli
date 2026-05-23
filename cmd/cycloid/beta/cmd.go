@@ -3,6 +3,7 @@ package beta
 import (
 	"github.com/spf13/cobra"
 
+	bootstrapfirstorg "github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/bootstrap_first_org"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/config"
 )
 
@@ -16,6 +17,7 @@ Those commands are feature in testing, retro-compatibility is not guaranteed.`,
 
 	cmd.AddCommand(
 		config.NewCommands(),
+		bootstrapfirstorg.NewCommands(),
 	)
 	return cmd
 }
