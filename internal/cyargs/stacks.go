@@ -1,12 +1,14 @@
 package cyargs
 
 import (
-
+	"fmt"
 	"strings"
+
+	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/spf13/cobra"
+	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
 func ValidateForms(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
@@ -127,24 +129,42 @@ func GetStack(cmd *cobra.Command) (string, error) {
 	return cmd.Flags().GetString("stack")
 }
 
-// AddStackVersionFlags adds mutually exclusive flags for specifying stack versions.
-// Similar to AddStackFormsInputFlags, this groups related version flags together.
-// At least one of these flags must be provided.
+// AddStackVersionFlags adds flags for specifying stack versions.
+// The primary flag is --stack-version, which accepts a bare name (resolved via API)
+// or a typed prefix: tag:<name>, branch:<name>, sha:<hash>.
+// Legacy flags --stack-tag, --stack-branch, --stack-commit-hash are kept for
+// backward compatibility but are deprecated and will be removed in a future major release.
 func AddStackVersionFlags(cmd *cobra.Command) {
+	cmd.Flags().String("stack-version", "", "stack version (tag, branch, or commit hash). "+
+		"Use type prefixes to avoid ambiguity: tag:<name>, branch:<name>, sha:<hash>")
+	cmd.RegisterFlagCompletionFunc("stack-version", CompleteStackVersionUnified)
+
+	// Legacy flags — kept for backward compatibility.
 	cmd.Flags().String("stack-tag", "", "the stack version tag to use (e.g., v1.0.0)")
 	cmd.Flags().String("stack-branch", "", "the stack version branch to use (e.g., main)")
 	cmd.Flags().String("stack-commit-hash", "", "the stack version commit hash to use")
 
-	// Register completion functions
+	//nolint:errcheck
+	cmd.Flags().MarkDeprecated("stack-tag", "use --stack-version=tag:<value> instead (will be removed in a future major release)")
+	//nolint:errcheck
+	cmd.Flags().MarkDeprecated("stack-branch", "use --stack-version=branch:<value> instead (will be removed in a future major release)")
+	//nolint:errcheck
+	cmd.Flags().MarkDeprecated("stack-commit-hash", "use --stack-version=sha:<value> instead (will be removed in a future major release)")
+
 	cmd.RegisterFlagCompletionFunc("stack-tag", CompleteStackVersionTag)
 	cmd.RegisterFlagCompletionFunc("stack-branch", CompleteStackVersionBranch)
 	cmd.RegisterFlagCompletionFunc("stack-commit-hash", CompleteCatalogRepoCommitHash)
 
-	// Make flags mutually exclusive
+	// Mutual exclusion: --stack-version vs each legacy flag
+	cmd.MarkFlagsMutuallyExclusive("stack-version", "stack-tag")
+	cmd.MarkFlagsMutuallyExclusive("stack-version", "stack-branch")
+	cmd.MarkFlagsMutuallyExclusive("stack-version", "stack-commit-hash")
+	// Legacy flags remain mutually exclusive with each other
 	cmd.MarkFlagsMutuallyExclusive("stack-tag", "stack-branch", "stack-commit-hash")
 }
 
-// GetStackVersionFlags reads the stack version flags from the command.
+// GetStackVersionFlags reads the legacy stack version flags from the command.
+// Prefer ResolveStackVersionArg for new code.
 func GetStackVersionFlags(cmd *cobra.Command) (tag, branch, hash string, err error) {
 	tag, err = cmd.Flags().GetString("stack-tag")
 	if err != nil {
@@ -164,36 +184,206 @@ func GetStackVersionFlags(cmd *cobra.Command) (tag, branch, hash string, err err
 	return tag, branch, hash, nil
 }
 
-// CompleteCatalogRepoCommitHash provides completion for the catalog-repo-commit-hash flag.
-// It fetches available commit hashes from the stack's catalog repository versions.
-// For component create: uses the required stack-ref flag.
-// For component update: uses stack-ref flag if provided, otherwise fetches it from the existing component.
+// ResolveStackVersionArg resolves the --stack-version flag (or legacy flags) to
+// the (tag, branch, hash) triple expected by middleware methods.
+//
+// Resolution order:
+//  1. Legacy flags (--stack-tag / --stack-branch / --stack-commit-hash) — returned as-is.
+//  2. --stack-version is empty — returns ("", "", "", nil); callers should preserve the current version.
+//  3. --stack-version has a type prefix (tag: / branch: / sha: / commit:) — parsed client-side, no API call.
+//  4. Bare value — calls m.ListStackVersions to resolve; requires a non-empty stackRef.
+//     Precedence: tag > branch > commit-hash-prefix (min 7 chars).
+//     Collision (same name matches both tag and branch) → error with disambiguation hint.
+func ResolveStackVersionArg(cmd *cobra.Command, m middleware.Middleware, org, stackRef string) (tag, branch, hash string, err error) {
+	// Legacy flags take priority; Cobra already emits the deprecation notice.
+	tag, branch, hash, err = GetStackVersionFlags(cmd)
+	if err != nil || tag != "" || branch != "" || hash != "" {
+		return
+	}
+
+	v, err := cmd.Flags().GetString("stack-version")
+	if err != nil {
+		return "", "", "", err
+	}
+	if v == "" {
+		return "", "", "", nil
+	}
+
+	// Typed prefix form — no API call needed.
+	typeHint, value, hasPrefix := strings.Cut(v, ":")
+	if hasPrefix {
+		switch strings.ToLower(typeHint) {
+		case "tag":
+			return value, "", "", nil
+		case "branch":
+			return "", value, "", nil
+		case "sha", "commit":
+			return "", "", value, nil
+		}
+		// Unknown prefix: fall through and attempt bare resolution on the full value.
+	}
+
+	// Bare form requires the stack ref to query available versions.
+	if stackRef == "" {
+		return "", "", "", fmt.Errorf(
+			"cannot auto-detect version type for %q without a stack reference; "+
+				"use --stack-version=tag:<value>, --stack-version=branch:<value>, or --stack-version=sha:<value>", v)
+	}
+
+	versions, _, err := m.ListStackVersions(org, stackRef)
+	if err != nil {
+		return "", "", "", fmt.Errorf("failed to resolve --stack-version=%q: %w", v, err)
+	}
+
+	var matchTag, matchBranch, matchCommit string
+	for _, ver := range versions {
+		name := ptr.Value(ver.Name)
+		if name == v {
+			if ptr.Value(ver.Type) == "tag" {
+				matchTag = name
+			} else {
+				matchBranch = name
+			}
+		}
+		if commitHash := ptr.Value(ver.CommitHash); commitHash != "" && len(v) >= 7 && strings.HasPrefix(commitHash, v) {
+			matchCommit = commitHash
+		}
+	}
+
+	switch {
+	case matchTag != "" && matchBranch != "":
+		return "", "", "", fmt.Errorf(
+			"ambiguous version %q (matches both a tag and a branch); "+
+				"use --stack-version=tag:%s or --stack-version=branch:%s", v, v, v)
+	case matchTag != "":
+		return matchTag, "", "", nil
+	case matchBranch != "":
+		return "", matchBranch, "", nil
+	case matchCommit != "":
+		return "", "", matchCommit, nil
+	default:
+		return "", "", "", fmt.Errorf("version %q not found in stack %q", v, stackRef)
+	}
+}
+
+// CompleteStackVersionUnified provides prefix-aware completion for --stack-version.
+//
+// - No prefix typed (e.g. "v1"): lists all versions with type in description.
+// - "tag:<TAB>": lists only tags, formatted as "tag:<name>".
+// - "branch:<TAB>": lists only branches, formatted as "branch:<name>".
+// - "sha:<TAB>": lists only commit hashes (short), formatted as "sha:<hash>".
+func CompleteStackVersionUnified(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "missing org for completion: "+err.Error()), cobra.ShellCompDirectiveError
+	}
+
+	stackRef := resolveStackRefForCompletion(cmd, org)
+	if stackRef == "" {
+		return cobra.AppendActiveHelp(nil, "missing stack-ref for completion: please provide --stack-ref flag"),
+			cobra.ShellCompDirectiveNoFileComp
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	versions, _, err := m.ListStackVersions(org, stackRef)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "cannot find versions for stack: "+stackRef+", err: "+err.Error()),
+			cobra.ShellCompDirectiveNoFileComp
+	}
+
+	typeHint, valuePrefix, hasPrefix := strings.Cut(toComplete, ":")
+
+	var completions []cobra.Completion
+	for _, ver := range versions {
+		if ver.Name == nil || ver.Type == nil {
+			continue
+		}
+		name := *ver.Name
+		vType := *ver.Type
+
+		if hasPrefix {
+			switch strings.ToLower(typeHint) {
+			case "tag":
+				if vType == "tag" && strings.HasPrefix(name, valuePrefix) {
+					completions = append(completions, cobra.CompletionWithDesc("tag:"+name, versionDesc(ver)))
+				}
+			case "branch":
+				if vType == "branch" && strings.HasPrefix(name, valuePrefix) {
+					completions = append(completions, cobra.CompletionWithDesc("branch:"+name, versionDesc(ver)))
+				}
+			case "sha", "commit":
+				if ver.CommitHash != nil {
+					h := shortHash(*ver.CommitHash)
+					if strings.HasPrefix(h, valuePrefix) {
+						completions = append(completions, cobra.CompletionWithDesc("sha:"+h, versionDesc(ver)))
+					}
+				}
+			}
+		} else {
+			if strings.HasPrefix(name, toComplete) {
+				completions = append(completions, cobra.CompletionWithDesc(name, "("+vType+") "+versionDesc(ver)))
+			}
+		}
+	}
+
+	return completions, cobra.ShellCompDirectiveNoFileComp
+}
+
+// resolveStackRefForCompletion tries to determine the stack ref for completion functions.
+// It checks --stack-ref first, then falls back to fetching it from the existing component.
+func resolveStackRefForCompletion(cmd *cobra.Command, org string) string {
+	stackRef, _ := GetStackRef(cmd)
+	if stackRef != "" {
+		return stackRef
+	}
+
+	project, errProj := GetProject(cmd)
+	env, errEnv := GetEnv(cmd)
+	component, errComp := GetComponent(cmd)
+	if errProj != nil || errEnv != nil || errComp != nil {
+		return ""
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+	currentComponent, _, errGet := m.GetComponent(org, project, env, component)
+	if errGet == nil && currentComponent.ServiceCatalog != nil && currentComponent.ServiceCatalog.Ref != nil {
+		return *currentComponent.ServiceCatalog.Ref
+	}
+	return ""
+}
+
+func versionDesc(ver *middleware.StackVersion) string {
+	desc := ""
+	if ver.CommitHash != nil {
+		desc = shortHash(*ver.CommitHash)
+	}
+	if ptr.Value(ver.IsLatest) {
+		if desc != "" {
+			desc += " "
+		}
+		desc += "[latest]"
+	}
+	return desc
+}
+
+func shortHash(h string) string {
+	if len(h) > 8 {
+		return h[:8]
+	}
+	return h
+}
+
+// CompleteCatalogRepoCommitHash provides completion for the --stack-commit-hash flag.
 func CompleteCatalogRepoCommitHash(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	org, err := GetOrg(cmd)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "missing org for completion: "+err.Error()), cobra.ShellCompDirectiveError
 	}
 
-	var stackRef string
-	stackRef, _ = GetStackRef(cmd)
-
-	// If stack-ref is not provided, try to get it from the component (for update command)
-	if stackRef == "" {
-		project, errProj := GetProject(cmd)
-		env, errEnv := GetEnv(cmd)
-		component, errComp := GetComponent(cmd)
-
-		if errProj == nil && errEnv == nil && errComp == nil {
-			api := common.NewAPI()
-			m := middleware.NewMiddleware(api)
-
-			currentComponent, _, errGet := m.GetComponent(org, project, env, component)
-			if errGet == nil && currentComponent.ServiceCatalog != nil && currentComponent.ServiceCatalog.Ref != nil {
-				stackRef = *currentComponent.ServiceCatalog.Ref
-			}
-		}
-	}
-
+	stackRef := resolveStackRefForCompletion(cmd, org)
 	if stackRef == "" {
 		return cobra.AppendActiveHelp(nil, "missing stack-ref for completion: please provide --stack-ref flag"),
 			cobra.ShellCompDirectiveNoFileComp
@@ -211,22 +401,17 @@ func CompleteCatalogRepoCommitHash(cmd *cobra.Command, args []string, toComplete
 	var commitHashes []string
 	for _, version := range versions {
 		if version.CommitHash != nil && strings.HasPrefix(*version.CommitHash, toComplete) {
-			// Build description with version name and type
-			desc := ""
-			if version.Name != nil {
-				desc = *version.Name
-			}
-			if version.Type != nil {
+			desc := ptr.Value(version.Name)
+			if t := ptr.Value(version.Type); t != "" {
 				if desc != "" {
-					desc = desc + " (" + *version.Type + ")"
+					desc = desc + " (" + t + ")"
 				} else {
-					desc = *version.Type
+					desc = t
 				}
 			}
-			if version.IsLatest != nil && *version.IsLatest {
+			if ptr.Value(version.IsLatest) {
 				desc = desc + " [latest]"
 			}
-
 			commitHashes = append(commitHashes, cobra.CompletionWithDesc(*version.CommitHash, desc))
 		}
 	}
@@ -234,34 +419,14 @@ func CompleteCatalogRepoCommitHash(cmd *cobra.Command, args []string, toComplete
 	return commitHashes, cobra.ShellCompDirectiveNoFileComp
 }
 
-// CompleteStackVersionTag provides completion for the stack-tag flag.
-// It fetches available tags from the stack's catalog repository versions.
+// CompleteStackVersionTag provides completion for the --stack-tag flag.
 func CompleteStackVersionTag(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	org, err := GetOrg(cmd)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "missing org for completion: "+err.Error()), cobra.ShellCompDirectiveError
 	}
 
-	var stackRef string
-	stackRef, _ = GetStackRef(cmd)
-
-	// If stack-ref is not provided, try to get it from the component (for update command)
-	if stackRef == "" {
-		project, errProj := GetProject(cmd)
-		env, errEnv := GetEnv(cmd)
-		component, errComp := GetComponent(cmd)
-
-		if errProj == nil && errEnv == nil && errComp == nil {
-			api := common.NewAPI()
-			m := middleware.NewMiddleware(api)
-
-			currentComponent, _, errGet := m.GetComponent(org, project, env, component)
-			if errGet == nil && currentComponent.ServiceCatalog != nil && currentComponent.ServiceCatalog.Ref != nil {
-				stackRef = *currentComponent.ServiceCatalog.Ref
-			}
-		}
-	}
-
+	stackRef := resolveStackRefForCompletion(cmd, org)
 	if stackRef == "" {
 		return cobra.AppendActiveHelp(nil, "missing stack-ref for completion: please provide --stack-ref flag"),
 			cobra.ShellCompDirectiveNoFileComp
@@ -278,55 +443,22 @@ func CompleteStackVersionTag(cmd *cobra.Command, args []string, toComplete strin
 
 	var tags []string
 	for _, version := range versions {
-		if version.Type != nil && *version.Type == "tag" && version.Name != nil && strings.HasPrefix(*version.Name, toComplete) {
-			// Build description with commit hash
-			desc := ""
-			if version.CommitHash != nil {
-				commitHashShort := *version.CommitHash
-				if len(commitHashShort) > 8 {
-					commitHashShort = commitHashShort[:8]
-				}
-				desc = commitHashShort
-			}
-			if version.IsLatest != nil && *version.IsLatest {
-				desc = desc + " [latest]"
-			}
-
-			tags = append(tags, cobra.CompletionWithDesc(*version.Name, desc))
+		if ptr.Value(version.Type) == "tag" && version.Name != nil && strings.HasPrefix(*version.Name, toComplete) {
+			tags = append(tags, cobra.CompletionWithDesc(*version.Name, versionDesc(version)))
 		}
 	}
 
 	return tags, cobra.ShellCompDirectiveNoFileComp
 }
 
-// CompleteStackVersionBranch provides completion for the stack-branch flag.
-// It fetches available branches from the stack's catalog repository versions.
+// CompleteStackVersionBranch provides completion for the --stack-branch flag.
 func CompleteStackVersionBranch(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	org, err := GetOrg(cmd)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "missing org for completion: "+err.Error()), cobra.ShellCompDirectiveError
 	}
 
-	var stackRef string
-	stackRef, _ = GetStackRef(cmd)
-
-	// If stack-ref is not provided, try to get it from the component (for update command)
-	if stackRef == "" {
-		project, errProj := GetProject(cmd)
-		env, errEnv := GetEnv(cmd)
-		component, errComp := GetComponent(cmd)
-
-		if errProj == nil && errEnv == nil && errComp == nil {
-			api := common.NewAPI()
-			m := middleware.NewMiddleware(api)
-
-			currentComponent, _, errGet := m.GetComponent(org, project, env, component)
-			if errGet == nil && currentComponent.ServiceCatalog != nil && currentComponent.ServiceCatalog.Ref != nil {
-				stackRef = *currentComponent.ServiceCatalog.Ref
-			}
-		}
-	}
-
+	stackRef := resolveStackRefForCompletion(cmd, org)
 	if stackRef == "" {
 		return cobra.AppendActiveHelp(nil, "missing stack-ref for completion: please provide --stack-ref flag"),
 			cobra.ShellCompDirectiveNoFileComp
@@ -343,18 +475,8 @@ func CompleteStackVersionBranch(cmd *cobra.Command, args []string, toComplete st
 
 	var branches []string
 	for _, version := range versions {
-		if version.Type != nil && *version.Type == "branch" && version.Name != nil && strings.HasPrefix(*version.Name, toComplete) {
-			// Build description with commit hash
-			desc := ""
-			if version.CommitHash != nil {
-				commitHashShort := *version.CommitHash
-				if len(commitHashShort) > 8 {
-					commitHashShort = commitHashShort[:8]
-				}
-				desc = commitHashShort
-			}
-
-			branches = append(branches, cobra.CompletionWithDesc(*version.Name, desc))
+		if ptr.Value(version.Type) == "branch" && version.Name != nil && strings.HasPrefix(*version.Name, toComplete) {
+			branches = append(branches, cobra.CompletionWithDesc(*version.Name, versionDesc(version)))
 		}
 	}
 

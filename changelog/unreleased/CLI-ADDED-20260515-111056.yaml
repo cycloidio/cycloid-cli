@@ -1,0 +1,8 @@
+component: CLI
+kind: ADDED
+body: Added delete options (skip-hooks, ignore-config-files-err) to delete component/environment/project
+time: 2026-05-15T11:10:56.466023954Z
+custom:
+  DETAILS: ""
+  PR: "440"
+  TYPE: CLI

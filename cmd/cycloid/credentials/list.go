@@ -1,15 +1,20 @@
 package credentials
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
+
+var credentialTableOptions = printer.Options{
+	Columns:    []string{"Canonical", "Name", "Type", "Path", "Keys"},
+	Identifier: "Canonical",
+}
 
 func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
@@ -21,6 +26,7 @@ func NewListCommand() *cobra.Command {
 	}
 
 	cyargs.AddCredentialTypeFlag(cmd)
+	cyout.RegisterModel(cmd, models.CredentialSimple{})
 	return cmd
 }
 
@@ -36,21 +42,7 @@ func list(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
 
 	creds, _, err := m.ListCredentials(org, credT)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to list credential", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, creds, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, creds, err, "unable to list credentials", credentialTableOptions)
 }

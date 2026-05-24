@@ -1,14 +1,13 @@
 package environments
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewUpdateCommand() *cobra.Command {
@@ -56,20 +55,9 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	currentEnv, _, err := m.GetEnv(org, project, env)
 	if err != nil {
-		return printer.SmartPrint(p, currentEnv, err, "environment not found", printer.Options{}, cmd.OutOrStderr())
+		return cyout.PrintWithOptions(cmd, currentEnv, err, "environment not found", printer.Options{})
 	}
 
 	// Make the update use the current color if not explicitly set by the user
@@ -87,8 +75,5 @@ func update(cmd *cobra.Command, args []string) error {
 	}
 
 	resp, _, err := m.UpdateEnv(org, project, env, name, color)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
-	}
-	return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, resp, err, "", printer.Options{})
 }

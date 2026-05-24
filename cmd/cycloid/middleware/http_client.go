@@ -21,6 +21,18 @@ type StackVersion struct {
 	Usage      *int64  `json:"usage"`
 }
 
+// InventoryOutput is the local representation of a terraform state output.
+// The model is not yet generated in the swagger client.
+type InventoryOutput struct {
+	ID          uint32      `json:"id"`
+	Key         string      `json:"key"`
+	Value       interface{} `json:"value,omitempty"`
+	Type        interface{} `json:"type,omitempty"`
+	Description string      `json:"description,omitempty"`
+	Sensitive   bool        `json:"sensitive,omitempty"`
+	Pinned      bool        `json:"pinned,omitempty"`
+}
+
 // StackUseCase is the local representation of a stack use case.
 // The model was removed from the generated swagger client.
 type StackUseCase struct {
@@ -30,16 +42,40 @@ type StackUseCase struct {
 	UseCase       *string `json:"use_case"`
 }
 
+// DeleteOptions carries the caller-facing flags for delete operations.
+// Force is sugar for enabling both SkipHooks and IgnoreConfigFilesErr.
+// Resolve expands Force before building the API query.
+type DeleteOptions struct {
+	Force                bool
+	SkipHooks            bool
+	IgnoreConfigFilesErr bool
+}
+
+// deleteQuery is the wire representation sent as URL query params.
+type deleteQuery struct {
+	SkipHooks            bool `url:"skip_hooks"`
+	IgnoreConfigFilesErr bool `url:"ignore_config_files_err"`
+}
+
+// Resolve returns the effective deleteQuery, merging Force into both fields.
+func (o DeleteOptions) Resolve() deleteQuery {
+	return deleteQuery{
+		SkipHooks:            o.SkipHooks || o.Force,
+		IgnoreConfigFilesErr: o.IgnoreConfigFilesErr || o.Force,
+	}
+}
+
 // Request represents an HTTP request to the Cycloid API.
 type Request struct {
 	Method       string
-	Organization *string  // used for auth token lookup
-	NoAuth       bool     // disables auth header
-	Route        []string // joined onto base URL: ["organizations", org, "projects"]
-	Query        any      // url.Values or struct with `url` tags
+	Organization *string     // used for auth token lookup
+	NoAuth       bool        // disables auth header
+	Route        []string    // joined onto base URL: ["organizations", org, "projects"]
+	Query        any         // url.Values or struct with `url` tags
+	LHSFilters   []LHSFilter // LHS bracket filters: encoded as attribute[condition]=value with literal brackets
 	Headers      map[string]string
 	Accept       *string // overrides default Accept header
-	Body         any     // JSON-marshalled when non-nil
+	Body         any     // JSON-marshaled when non-nil
 }
 
 // APIResponseError is returned when the API returns a non-2xx response.
@@ -49,6 +85,8 @@ type APIResponseError struct {
 	Body       []byte
 	Payload    *models.ErrorPayload
 	Path       string
+	Method     string // HTTP method of the failed request
+	ReqBody    []byte // sanitized request body (sensitive fields redacted)
 }
 
 func (e *APIResponseError) Error() string {
@@ -87,11 +125,23 @@ func (e *APIResponseError) HTTPRequestPath() string {
 	return e.Path
 }
 
-func newAPIResponseError(resp *http.Response, body []byte) *APIResponseError {
+// HTTPRequestMethod returns the HTTP method of the failed request.
+func (e *APIResponseError) HTTPRequestMethod() string {
+	return e.Method
+}
+
+// HTTPRequestBody returns the sanitized request body (sensitive fields redacted).
+func (e *APIResponseError) HTTPRequestBody() []byte {
+	return e.ReqBody
+}
+
+func newAPIResponseError(resp *http.Response, body, reqBody []byte, method string) *APIResponseError {
 	apiErr := &APIResponseError{
 		StatusCode: resp.StatusCode,
 		Status:     resp.Status,
 		Body:       body,
+		Method:     method,
+		ReqBody:    reqBody,
 	}
 	if resp.Request != nil && resp.Request.URL != nil {
 		apiErr.Path = resp.Request.URL.RequestURI()

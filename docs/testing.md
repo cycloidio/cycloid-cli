@@ -40,18 +40,38 @@ E2E tests are **not run in parallel** — the backend uses git under the hood an
 
 | Variable | Purpose |
 |----------|---------|
-| `CY_API_URL` | Backend URL (default: from `make be-reset` output) |
+| `CY_TEST_API_URL` | Backend URL (default: `http://localhost:3001` — youdeploy-api host port mapped by compose) |
 | `CY_API_KEY` | API key for authentication |
 | `CY_TEST_ROOT_ORG` | Root org canonical for provisioning |
 | `API_LICENCE_KEY` | Licence key (required by some backend features) |
 | `CY_TEST_PROVISION_API` | Set to `true` to provision test fixtures via API |
 | `CY_TEST_VERBOSITY` | Set to `debug` to enable HTTP debug logs |
 
+### Generating `.env` from prod credentials
+
+The repo ships an `.env.sample` with `cy://` URIs that resolve to real secrets. Generate a local `.env` by interpolating against your prod org:
+
+```bash
+# 1. Point cy at prod (uses bao-backed cyset shell function)
+cyset API_prod_cycloid
+
+# 2. Interpolate — resolves cy:// URIs to real values
+cy uri interpolate .env.sample > .env
+```
+
+`.env` is git-ignored. Re-run step 2 whenever secrets rotate. The file is sourced automatically by `docker compose` when you run `make be-reset`.
+
+The compose stack now uses Docker auto-IPAM (no static `192.168.10.0/24`); services
+talk to each other via service DNS names (e.g. `youdeploy-api:3001`,
+`docker-registry:5000`). Only `youdeploy-api` (port `3001`) and `docker-registry`
+(port `${DOCKER_REGISTRY_HOST_PORT:-5000}`) are bound to the host — everything
+else is internal-only.
+
 `CY_TEST_VERBOSITY=debug` propagates to `CY_VERBOSITY=debug` inside `TestMain`, enabling full request/response logging. Logs include credentials (redacted to last 5 chars of the token).
 
 ## `testcfg` package
 
-`internal/testcfg` manages test fixture provisioning. It creates a real org, project, environment, and component against the backend.
+`pkg/testcfg` manages test fixture provisioning. It creates a real org, project, environment, and component against the backend.
 
 ### `NewConfig(name string)`
 
@@ -258,3 +278,30 @@ Shared test fixtures are defined in `e2e/helpers_test.go`:
 - `TestPipelineVariables` — matching pipeline vars YAML
 - `TestInfraPolicySample` — Rego policy
 - `TestTerraformPlanSample` — minimal Terraform JSON plan (used by terracost + infra policies)
+
+## Plugin services
+
+`make be-reset` brings up three additional services for plugin testing:
+
+| Service | Port (internal) | Host port | Purpose |
+|---|---|---|---|
+| `plugin-manager` | 4000 | — | Schedules plugin containers via containerd (privileged) |
+| `plugin-registry` | 4000 | — | REST API metadata store for plugin definitions |
+| `docker-registry` | 5000 | `${DOCKER_REGISTRY_HOST_PORT:-5000}` | OCI image store (htpasswd auth) |
+
+The docker-registry uses basic auth seeded from `docker/auth/htpasswd`
+(`cycloid` / `cycloid123`). The plugin-manager auto-registers itself on
+startup as `test-plugin-manager` against the youdeploy-api at
+`http://youdeploy-api:3001` using `CY_URL` from compose.
+
+Smoke-test the plugin lifecycle with:
+
+```bash
+docker login localhost:5000 -u cycloid -p cycloid123
+docker pull docker.io/cycloid/plugin-hello-world
+docker tag  docker.io/cycloid/plugin-hello-world localhost:5000/plugin-hello-world:1.0.0
+docker push localhost:5000/plugin-hello-world:1.0.0
+```
+
+Plugin version tags **must** match `\d+\.\d+\.\d+` — `latest` is rejected by
+`plugin registry plugin version publish`.

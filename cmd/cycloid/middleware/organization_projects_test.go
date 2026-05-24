@@ -5,7 +5,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/cycloidio/cycloid-cli/internal/testcfg"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/pkg/testcfg"
 )
 
 func TestProjectCrud(t *testing.T) {
@@ -32,7 +33,7 @@ func TestProjectCrud(t *testing.T) {
 	}
 
 	defer func() {
-		_, err := m.DeleteProject(config.Org, project)
+		_, err := m.DeleteProject(config.Org, project, middleware.DeleteOptions{})
 		if err != nil {
 			t.Errorf("Failed to delete project '%s': %v", project, err)
 		}

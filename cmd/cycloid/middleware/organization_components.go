@@ -36,12 +36,18 @@ func (m *middleware) GetComponent(org, project, env, component string) (*models.
 	return result, resp, nil
 }
 
-func (m *middleware) ListComponents(org, project, env string) ([]*models.Component, *http.Response, error) {
+// ListComponents lists components for a project environment.
+//
+// Supported LHS filter attributes: component_canonical, service_catalog_ref,
+// service_catalog_source_canonical, environment_canonical, project_canonical,
+// component_version_type, component_version_status, component_version_name.
+func (m *middleware) ListComponents(org, project, env string, filters ...LHSFilter) ([]*models.Component, *http.Response, error) {
 	var result []*models.Component
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments", env, "components"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err
@@ -121,13 +127,16 @@ func (m *middleware) MigrateComponent(org, project, env, component, targetProjec
 	return result, resp, nil
 }
 
-func (m *middleware) DeleteComponent(org, project, env, component string) (*http.Response, error) {
-	resp, err := m.GenericRequest(Request{
+func (m *middleware) DeleteComponent(org, project, env, component string, opts DeleteOptions) (*http.Response, error) {
+	req := Request{
 		Method:       "DELETE",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component},
-	}, nil)
-	return resp, err
+	}
+	if q := opts.Resolve(); q.SkipHooks || q.IgnoreConfigFilesErr {
+		req.Query = q
+	}
+	return m.GenericRequest(req, nil)
 }
 
 func (m *middleware) GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, *http.Response, error) {

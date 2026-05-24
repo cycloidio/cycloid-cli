@@ -31,3 +31,7 @@ gst
 # direnv
 .direnv
 
+# Local tooling artifacts
+.claude/
+.gitnexus/
+

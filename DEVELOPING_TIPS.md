@@ -100,7 +100,7 @@ This is meant mostly to detect any API dift or issues. This way it will enable
 developper to differenciate more easily server and client issues.
 
 Testing setup is done on the [TestMain function](./cmd/cycloid/middleware/middleware_test.go)
-that will use the [testcfg package](./internal/testcfg/config.go) to initialize
+that will use the [testcfg package](./pkg/testcfg/config.go) to initialize
 the backend, provision the required tools and give you all the required context
 for testing (api key, org, api url, basic stuff like project/env/component, config
 and catalog repo, etc...).
@@ -190,7 +190,7 @@ This about the UX for the command line:
 To test commands, do it in the [e2e test packages](./e2e/e2e_test.go). It has
 all the required function an context for testing the command directly.
 
-It also uses the [testcfg package](./internal/testcfg/config.go) to initialize
+It also uses the [testcfg package](./pkg/testcfg/config.go) to initialize
 the backend, provision the required tools and give you all the required context
 for testing (api key, org, api url, basic stuff like project/env/component, config
 and catalog repo, etc...).

@@ -31,7 +31,7 @@ func (m *middleware) UnpausePipeline(org, project, env, component, pipelineName 
 
 func (m *middleware) DiffPipeline(org, project, env, component, pipelineName, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.PipelineDiffs, *http.Response, error) {
 	body := &models.UpdatePipeline{
-		PassedConfig:     &yamlPipeline,
+		PassedConfig:     yamlPipeline,
 		YamlVars:         yamlVariables,
 		CheckCredentials: checkCredentials,
 	}
@@ -113,7 +113,7 @@ func (m *middleware) GetPipeline(org, project, env, component, pipeline string) 
 
 func (m *middleware) UpdatePipeline(org, project, env, component, pipelineName, yamlPipeline, yamlVariables string, checkCredentials bool) (*models.Pipeline, *http.Response, error) {
 	body := &models.UpdatePipeline{
-		PassedConfig:     &yamlPipeline,
+		PassedConfig:     yamlPipeline,
 		YamlVars:         yamlVariables,
 		CheckCredentials: checkCredentials,
 	}

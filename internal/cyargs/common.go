@@ -415,7 +415,7 @@ func AddOwnerFlag(cmd *cobra.Command) string {
 			if strings.HasPrefix(member.Username, toComplete) {
 				owners[index] = cobra.CompletionWithDesc(
 					member.Username,
-					fmt.Sprintf("%s %s (%s)", member.GivenName, member.FamilyName, member.Email.String()),
+					fmt.Sprintf("(%s)", member.Email.String()),
 				)
 			}
 		}
@@ -448,6 +448,23 @@ func GetDescription(cmd *cobra.Command) (string, error) {
 	return description, nil
 }
 
+func AddDeleteFlags(cmd *cobra.Command) {
+	cmd.Flags().Bool("force", false, "shorthand for --skip-hooks --ignore-config-files-err")
+		cmd.Flags().Bool("skip-hooks", false, "skip component on_delete hooks (sets skip_hooks=true)")
+	cmd.Flags().Bool("ignore-config-files-err", false, "ignore possible errors on config repository update (sets ignore_config_files_err=true)")
+}
+
+func GetDeleteFlags(cmd *cobra.Command) (force, skipHooks, ignoreConfigFilesErr bool, err error) {
+	if force, err = cmd.Flags().GetBool("force"); err != nil {
+		return
+	}
+	if skipHooks, err = cmd.Flags().GetBool("skip-hooks"); err != nil {
+		return
+	}
+	ignoreConfigFilesErr, err = cmd.Flags().GetBool("ignore-config-files-err")
+	return
+}
+
 func GetOrg(cmd *cobra.Command) (string, error) {
 	org := v.GetString("org")
 	if org == "" {
@@ -459,7 +476,7 @@ func GetOrg(cmd *cobra.Command) (string, error) {
 
 // RequireArgsOrFlag returns a cobra.PositionalArgs validator that accepts positional
 // arguments OR falls back gracefully when the named flag is provided instead.
-// This enables backward compatibility when a flag is deprecated in favour of positional args.
+// This enables backward compatibility when a flag is deprecated in favor of positional args.
 func RequireArgsOrFlag(flagName string) cobra.PositionalArgs {
 	return func(cmd *cobra.Command, args []string) error {
 		if len(args) > 0 {

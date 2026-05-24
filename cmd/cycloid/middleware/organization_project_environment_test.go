@@ -6,7 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/cycloidio/cycloid-cli/internal/testcfg"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/pkg/testcfg"
 )
 
 func TestEnvCrud(t *testing.T) {
@@ -25,7 +26,7 @@ func TestEnvCrud(t *testing.T) {
 	)
 
 	defer func() {
-		_, err := m.DeleteProject(config.Org, project)
+		_, err := m.DeleteProject(config.Org, project, middleware.DeleteOptions{})
 		if err != nil {
 			log.Fatalf("Failed to decomission project '%s' from CRUD tests: %v", project, err)
 			return
@@ -52,7 +53,7 @@ func TestEnvCrud(t *testing.T) {
 
 	// delete
 	defer func() {
-		_, err := m.DeleteEnv(config.Org, *createdProject.Canonical, *createdEnv.Canonical)
+		_, err := m.DeleteEnv(config.Org, *createdProject.Canonical, *createdEnv.Canonical, middleware.DeleteOptions{})
 		if err != nil {
 			log.Fatalf("Failed to delete env '%s': %v", env, err)
 			return

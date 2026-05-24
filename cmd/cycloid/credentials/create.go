@@ -12,8 +12,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateCommand() *cobra.Command {
@@ -215,17 +215,6 @@ func create(cmd *cobra.Command, args []string) error {
 	description, err := cyargs.GetCredentialDescription(cmd)
 	if err != nil {
 		return err
-	}
-
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
 	}
 
 	api := common.NewAPI()
@@ -454,11 +443,7 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	outCredential, _, err := m.CreateCredential(org, name, credentialTypes, rawCred, credentialPath, credential, description)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to create credential", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, outCredential, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, outCredential, err, "unable to create credential", printer.Options{})
 }
 
 func defaultCredentialPath(path, canonical, name string) string {

@@ -10,6 +10,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
 
 func TestComponentCmd(t *testing.T) {
@@ -375,7 +376,7 @@ func TestComponentCmd(t *testing.T) {
 			t.FailNow()
 		}
 		defer m.DeleteComponent(config.Org, *created.Project.Canonical,
-			*created.Environment.Canonical, *created.Canonical)
+			*created.Environment.Canonical, *created.Canonical, middleware.DeleteOptions{})
 
 		args := []string{
 			"--output", "json",
@@ -411,7 +412,7 @@ func TestComponentCmd(t *testing.T) {
 			t.FailNow()
 		}
 		defer m.DeleteComponent(config.Org, *created.Project.Canonical,
-			*created.Environment.Canonical, *created.Canonical)
+			*created.Environment.Canonical, *created.Canonical, middleware.DeleteOptions{})
 
 		args := []string{
 			"--output", "json",
@@ -448,7 +449,7 @@ func TestComponentCmd(t *testing.T) {
 			t.FailNow()
 		}
 		defer m.DeleteComponent(config.Org, *created.Project.Canonical,
-			*created.Environment.Canonical, *created.Canonical)
+			*created.Environment.Canonical, *created.Canonical, middleware.DeleteOptions{})
 
 		versionBefore := created.ServiceCatalog.Version
 

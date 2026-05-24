@@ -8,12 +8,17 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
-func (m *middleware) ListRoles(org string) ([]*models.Role, *http.Response, error) {
+// ListRoles lists roles for an organization.
+//
+// NOTE: the backend handler for this route does not call lhs.ParseQuery, so
+// LHS filters are accepted by the middleware but silently ignored server-side.
+func (m *middleware) ListRoles(org string, filters ...LHSFilter) ([]*models.Role, *http.Response, error) {
 	var result []*models.Role
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "roles"},
+		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
 		return nil, resp, err

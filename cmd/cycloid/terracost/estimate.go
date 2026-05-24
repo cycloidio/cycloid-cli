@@ -9,8 +9,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 // NewEstimateCommands returns a cobra implementation
@@ -34,23 +34,13 @@ func estimate(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return fmt.Errorf("unable to get plan path flag: %w", err)
 	}
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return fmt.Errorf("unable to get output flag: %w", err)
-	}
 	plan, err := os.ReadFile(planPath)
 	if err != nil {
 		return fmt.Errorf("unable to read terraform plan file: %w", err)
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return fmt.Errorf("unable to get printer: %w", err)
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 	res, _, err := m.CostEstimation(org, plan)
-	return printer.SmartPrint(p, res, err, "unable to estimate terraform plan file", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, res, err, "unable to estimate terraform plan file", printer.Options{})
 }

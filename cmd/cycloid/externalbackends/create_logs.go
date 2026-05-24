@@ -4,15 +4,14 @@ import (
 	"fmt"
 
 	"github.com/go-openapi/strfmt"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func createLogs(cmd *cobra.Command, args []string) error {
@@ -33,10 +32,6 @@ func createLogs(cmd *cobra.Command, args []string) error {
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
-	}
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
 	}
 	cred, err = cmd.Flags().GetString("cred")
 	if err != nil {
@@ -125,14 +120,8 @@ func createLogs(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("unexpected backend name")
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	// Set env to empty cause is not used to create log eb
 	envP := ""
 	resp, _, err := m.CreateExternalBackends(org, project, envP, purpose, cred, noDefault, ebC)
-	return printer.SmartPrint(p, resp, err, "unable to create external backend", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, resp, err, "unable to create external backend", printer.Options{})
 }

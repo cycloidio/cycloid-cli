@@ -1,0 +1,8 @@
+component: CLI
+kind: CHANGED
+body: "Table output has been reworked: configurable borders, dynamic column expansion, and persistent default output format"
+time: 2026-04-12T00:00:02Z
+custom:
+  DETAILS: "The default table uses a kubectl-style separator (─) between header and rows. A new `table:border` option switches to nushell-style rounded-border grid (`╭─┬─╮`). On wide terminals, extra struct fields are shown beyond the curated defaults; as the terminal narrows, extra columns are dropped first while curated columns are preserved. Nested structs render as `{record N fields}` instead of the type name. A new `cy output set <value>` command persists the default output format to `~/.config/cycloid-cli/config.yaml`; `cy output get` shows the current effective value; `cy output reset` clears it. The `CY_OUTPUT` environment variable sets the default at runtime. Priority: `--jq` > `--output` > `CY_OUTPUT` > `cy output set` > `table`."
+  PR: "999"
+  TYPE: CLI

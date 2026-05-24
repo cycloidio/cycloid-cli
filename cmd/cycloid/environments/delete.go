@@ -6,29 +6,32 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
-	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 )
 
 func NewDeleteCommand() *cobra.Command {
 	var cmd = &cobra.Command{
-		Use:     "delete",
-		Args:    cobra.NoArgs,
+		Use:     "delete [canonical...]",
+		Args:    cyargs.RequireArgsOrFlag("env"),
 		Aliases: []string{"del", "rm"},
-		Short:   "delete a environment",
-		Example: `cy --org my-org environment delete --env my-environment`,
-		RunE:    deleteEnvironment,
+		Short:   "delete an environment",
+		Example: `
+	# delete an environment using the --env flag
+	cy --org my-org environment delete --project my-proj --env my-env
+
+	# delete multiple environments using positional args
+	cy --org my-org environment delete --project my-proj env-a env-b
+`,
+		RunE: deleteEnvironment,
 	}
 
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
+	cyargs.AddDeleteFlags(cmd)
 	return cmd
 }
 
 func deleteEnvironment(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -39,22 +42,35 @@ func deleteEnvironment(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	env, err := cyargs.GetEnv(cmd)
+	force, skipHooks, ignoreConfigFilesErr, err := cyargs.GetDeleteFlags(cmd)
 	if err != nil {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
+	if envFlag, err := cyargs.GetEnv(cmd); err != nil {
 		return err
+	} else if envFlag != "" {
+		found := false
+		for _, a := range args {
+			if a == envFlag {
+				found = true
+				break
+			}
+		}
+		if !found {
+			args = append(args, envFlag)
+		}
 	}
 
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return err
-	}
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
 
-	_, err = m.DeleteEnv(org, project, env)
-	return printer.SmartPrint(p, nil, err, "unable to delete environment", printer.Options{}, cmd.OutOrStdout())
+	opts := middleware.DeleteOptions{Force: force, SkipHooks: skipHooks, IgnoreConfigFilesErr: ignoreConfigFilesErr}
+	for _, env := range args {
+		_, err = m.DeleteEnv(org, project, env, opts)
+		if err != nil {
+			return cyout.Print(cmd, nil, err, "unable to delete environment "+env)
+		}
+	}
+	return nil
 }

@@ -16,6 +16,9 @@ import (
 // If apiKeyCanonical != nil, will also create an api key admin and add it to a
 // credential.
 func (m *middleware) InitFirstOrg(org, userName, fullName, email, password, licence string, apiKeyCanonical *string) (*FirstOrgData, *http.Response, error) {
+	originalToken := m.api.Config.Token
+	defer func() { m.api.Config.Token = originalToken }()
+
 	_, err := m.UserSignup(userName, email, password, fullName)
 	var signupErr *APIResponseError
 	if errors.As(err, &signupErr) {
@@ -62,7 +65,7 @@ func (m *middleware) InitFirstOrg(org, userName, fullName, email, password, lice
 		return output, nil, nil
 	}
 
-	refresh, _, err = m.RefreshToken(&org, nil, *login.Token)
+	refresh, _, err = m.RefreshToken(&org, nil, *refresh.Token)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed to refresh token: %w", err)
 	}

@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewCreateCommand() *cobra.Command {
@@ -67,17 +66,6 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -101,11 +89,7 @@ func create(cmd *cobra.Command, args []string) error {
 			}
 
 			resp, _, err := m.UpdateEnv(org, project, env, name, color)
-			if err != nil {
-				return printer.SmartPrint(p, nil, err, "", printer.Options{}, cmd.OutOrStderr())
-			}
-
-			return printer.SmartPrint(p, resp, err, "", printer.Options{}, cmd.OutOrStdout())
+			return cyout.PrintWithOptions(cmd, resp, err, "", printer.Options{})
 		}
 	}
 
@@ -114,9 +98,5 @@ func create(cmd *cobra.Command, args []string) error {
 	}
 
 	resp, _, err := m.CreateEnv(org, project, env, name, color)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to create environment", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, resp, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, resp, err, "failed to create environment", printer.Options{})
 }

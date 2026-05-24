@@ -2,6 +2,8 @@ package organizations
 
 import (
 	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations/licence"
 )
 
 func NewCommands() *cobra.Command {
@@ -24,6 +26,7 @@ func NewCommands() *cobra.Command {
 		NewCreateChildCommand(),
 		NewGetCommand(),
 		NewSubscriptionCommands(),
+		licence.NewCommands(),
 	)
 	return cmd
 }

@@ -9,8 +9,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewStacksGetComponentStackConfig() *cobra.Command {
@@ -44,34 +44,19 @@ func getConfig(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("missing use-case argument")
 	}
 
-	output, err := cmd.Flags().GetString("output")
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	// Default output is in JSON
-	if output == "table" {
-		output = "json"
-	}
-
-	// fetch the printer from the factory
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	// Get the stack version flags
-	tag, branch, hash, err := cyargs.GetStackVersionFlags(cmd)
+	// Resolve stack version: --stack-version (new) or legacy flags.
+	// Bare --stack-version requires prefix form (tag:/branch:/sha:) since no stack-ref is available here.
+	tag, branch, hash, err := cyargs.ResolveStackVersionArg(cmd, m, org, "")
 	if err != nil {
 		return errors.Wrap(err, "failed to read stack version flags")
 	}
 
 	stackConfigs, _, err := m.GetComponentStackConfig(org, project, environment, component, useCase, tag, branch, hash)
 	if err != nil {
-		return printer.SmartPrint(p, nil, err, "unable to get the stack configuration", printer.Options{}, cmd.OutOrStderr())
+		return cyout.PrintWithOptions(cmd, nil, err, "unable to get the stack configuration", printer.Options{})
 	}
 
 	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, useCase)
@@ -80,9 +65,5 @@ func getConfig(cmd *cobra.Command, args []string) error {
 	}
 
 	config, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
-	if err != nil {
-		return printer.SmartPrint(p, nil, err, "failed to fetch stack config.", printer.Options{}, cmd.OutOrStderr())
-	}
-
-	return printer.SmartPrint(p, config, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, config, err, "failed to fetch stack config.", printer.Options{})
 }

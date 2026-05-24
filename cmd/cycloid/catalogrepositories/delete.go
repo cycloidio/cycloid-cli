@@ -1,14 +1,13 @@
 package catalogrepositories
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/printer"
-	"github.com/cycloidio/cycloid-cli/printer/factory"
 )
 
 func NewDeleteCommand() *cobra.Command {
@@ -47,35 +46,28 @@ func deleteCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	// Support --canonical for backward compat; positional args take precedence
-	if len(args) == 0 {
-		can, err := cyargs.GetCatalogRepoCanonical(cmd)
-		if err != nil {
-			return err
+	if can, err := cyargs.GetCatalogRepoCanonical(cmd); err != nil {
+		return err
+	} else if can != "" {
+		found := false
+		for _, a := range args {
+			if a == can {
+				found = true
+				break
+			}
 		}
-		args = []string{can}
-	}
-
-	output, err := cyargs.GetOutput(cmd)
-	if err != nil {
-		return errors.Wrap(err, "unable to get output flag")
-	}
-
-	if output == "table" {
-		output = "json"
-	}
-	p, err := factory.GetPrinter(output)
-	if err != nil {
-		return errors.Wrap(err, "unable to get printer")
+		if !found {
+			args = append(args, can)
+		}
 	}
 
 	deleted := make([]string, 0, len(args))
 	for _, canonical := range args {
 		_, err = m.DeleteCatalogRepository(org, canonical)
 		if err != nil {
-			return printer.SmartPrint(p, nil, err, "unable to delete catalog repository "+canonical, printer.Options{}, cmd.OutOrStderr())
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to delete catalog repository "+canonical, printer.Options{})
 		}
 		deleted = append(deleted, canonical)
 	}
-	return printer.SmartPrint(p, deleted, nil, "", printer.Options{}, cmd.OutOrStdout())
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{Columns: []string{"Canonical"}})
 }
