@@ -1,8 +1,0 @@
-component: Pipelines Overview
-kind: ADDED
-body: "`cy pipeline builds logs` and `cy pipeline job logs` to stream build event logs from past and in-progress builds"
-time: 2026-04-11T00:00:02Z
-custom:
-  DETAILS: "`builds logs --build-id <id>` dumps the event log for a specific build (or tails it with `--watch`). `job logs` fetches the latest build's logs for a job; with `--watch` it continuously tails future builds as they start, polling at a configurable `--poll-interval`."
-  PR: "426"
-  TYPE: CLI

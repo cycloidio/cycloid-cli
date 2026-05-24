@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: '`--stack-version` flag on `cy component create`, `cy component update`, `cy stacks get-config`, and `cy beta config interpolate` unifies stack version selection. Accepts a bare value (auto-detected as tag, branch, or commit hash) or an explicit type prefix: `tag:<name>`, `branch:<name>`, `sha:<hash>`. Shell completion is prefix-aware: `--stack-version=tag:<TAB>` lists tags only.'
-time: 2026-04-30T00:00:00Z
-custom:
-  DETAILS: "Bare values are resolved via ListStackVersions with precedence tag > branch > commit-hash-prefix (min 7 chars). Collisions between a tag and branch of the same name produce an actionable error with prefix-form hints. Prefixed values require no API call."
-  PR: ""
-  TYPE: CLI

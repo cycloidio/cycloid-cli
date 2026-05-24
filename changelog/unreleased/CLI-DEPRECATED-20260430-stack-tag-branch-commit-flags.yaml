@@ -1,8 +1,0 @@
-component: CLI
-kind: DEPRECATED
-body: '`--stack-tag`, `--stack-branch`, and `--stack-commit-hash` flags are deprecated in favour of `--stack-version`. They remain functional and will be removed in the next major release.'
-time: 2026-04-30T00:00:01Z
-custom:
-  DETAILS: "Migrate: --stack-tag=v1.0.0 → --stack-version=tag:v1.0.0 | --stack-branch=main → --stack-version=branch:main | --stack-commit-hash=abc123 → --stack-version=sha:abc123"
-  PR: ""
-  TYPE: CLI
