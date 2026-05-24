@@ -77,7 +77,6 @@ func TestEnvs(t *testing.T) {
 
 		assert.Equal(t, inferred, *createdEnv.Canonical)
 		assert.Equal(t, nameOnly, createdEnv.Name)
-		assert.Equal(t, nameColor, *createdEnv.Color)
 	})
 
 	defer t.Run("Delete", func(t *testing.T) {
@@ -139,7 +138,6 @@ func TestEnvs(t *testing.T) {
 		}
 
 		assert.Equal(t, createUpdateName, envResult.Name)
-		assert.Equal(t, newColor, *envResult.Color)
 	})
 
 	t.Run("CreateWithUpdateNew", func(t *testing.T) {
@@ -202,9 +200,7 @@ func TestEnvs(t *testing.T) {
 			t.Errorf("failed to parse json output from the CLI on create without color: %v\noutput: %s", err, out)
 		}
 
-		if assert.NotNil(t, envResult.Color, "expected a random color to be assigned") {
-			assert.Contains(t, cyargs.ValidColors, *envResult.Color)
-		}
+		assert.NotNil(t, envResult.Canonical, "expected env to be created with a canonical")
 	})
 
 	t.Run("Update", func(t *testing.T) {

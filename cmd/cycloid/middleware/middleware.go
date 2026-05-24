@@ -155,6 +155,7 @@ type Middleware interface {
 	CreateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error)
 	UpdateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error)
 	DeleteEnv(org, project, env string, opts DeleteOptions) (*http.Response, error)
+	DeleteOrgEnv(org, env string) (*http.Response, error)
 
 	// Component
 	CreateOrUpdateComponent(org, project, env, component, description, name, stackRef, versionTag, versionBranch, versionCommitHash, useCase, cloudProvider string, vars models.FormVariables) (*models.Component, *http.Response, error)

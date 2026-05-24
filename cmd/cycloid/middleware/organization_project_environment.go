@@ -25,18 +25,59 @@ func (m *middleware) CreateEnv(org, project, env, envName, color string) (*model
 		return nil, nil, err
 	}
 
-	envBody := models.NewEnvironment{
-		Name:      &envName,
-		Canonical: env,
-		Color:     color,
+	type createOrgEnvBody struct {
+		Canonical string `json:"canonical,omitempty"`
+		Name      string `json:"name"`
+		Type      string `json:"type"`
 	}
 
 	var result *models.Environment
 	resp, err := m.GenericRequest(Request{
 		Method:       "POST",
 		Organization: &org,
+		Route:        []string{"organizations", org, "environments"},
+		Body: &createOrgEnvBody{
+			Canonical: env,
+			Name:      envName,
+			Type:      "production",
+		},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	type linkEnvBody struct {
+		EnvironmentCanonical string `json:"environment_canonical"`
+	}
+
+	resp, err = m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments"},
-		Body:         &envBody,
+		Body:         &linkEnvBody{EnvironmentCanonical: env},
+	}, nil)
+	if err != nil {
+		return nil, resp, err
+	}
+
+	return result, resp, nil
+}
+
+func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error) {
+	type updateOrgEnvBody struct {
+		Name string `json:"name"`
+		Type string `json:"type"`
+	}
+
+	var result *models.Environment
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "environments", env},
+		Body: &updateOrgEnvBody{
+			Name: envName,
+			Type: "production",
+		},
 	}, &result)
 	if err != nil {
 		return nil, resp, err
@@ -44,23 +85,12 @@ func (m *middleware) CreateEnv(org, project, env, envName, color string) (*model
 	return result, resp, nil
 }
 
-func (m *middleware) UpdateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error) {
-	envBody := models.UpdateEnvironment{
-		Name:  &envName,
-		Color: color,
-	}
-
-	var result *models.Environment
-	resp, err := m.GenericRequest(Request{
-		Method:       "PUT",
+func (m *middleware) DeleteOrgEnv(org, env string) (*http.Response, error) {
+	return m.GenericRequest(Request{
+		Method:       "DELETE",
 		Organization: &org,
-		Route:        []string{"organizations", org, "projects", project, "environments", env},
-		Body:         &envBody,
-	}, &result)
-	if err != nil {
-		return nil, resp, err
-	}
-	return result, resp, nil
+		Route:        []string{"organizations", org, "environments", env},
+	}, nil)
 }
 
 func (m *middleware) DeleteEnv(org, project, env string, opts DeleteOptions) (*http.Response, error) {

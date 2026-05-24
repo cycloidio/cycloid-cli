@@ -53,10 +53,16 @@ func TestEnvCrud(t *testing.T) {
 
 	// delete
 	defer func() {
+		if createdEnv == nil {
+			return
+		}
 		_, err := m.DeleteEnv(config.Org, *createdProject.Canonical, *createdEnv.Canonical, middleware.DeleteOptions{})
 		if err != nil {
-			log.Fatalf("Failed to delete env '%s': %v", env, err)
-			return
+			log.Printf("Failed to unlink env '%s': %v", env, err)
+		}
+		_, err = m.DeleteOrgEnv(config.Org, *createdEnv.Canonical)
+		if err != nil {
+			log.Fatalf("Failed to delete org env '%s': %v", env, err)
 		}
 	}()
 
@@ -72,5 +78,4 @@ func TestEnvCrud(t *testing.T) {
 	}
 
 	assert.Equal(t, newEnvName, updatedEnv.Name)
-	assert.Equal(t, newEnvColor, *updatedEnv.Color)
 }
