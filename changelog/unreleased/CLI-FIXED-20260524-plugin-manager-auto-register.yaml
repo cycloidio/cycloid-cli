@@ -1,8 +1,0 @@
-component: CLI
-kind: FIXED
-body: "`cy plugin manager create` now fully registers the plugin manager instead of leaving an unresolvable pending invitation"
-time: 2026-05-24T00:00:00Z
-custom:
-  DETAILS: "Previously the create command sent the invitation-only request, producing an `invite_pending` row that the Plugin Manager never received and that could not be accepted or deleted. The command now sends `auto_register: true` so the Plugin Manager is contacted and activated in one step."
-  PR: "443"
-  TYPE: CLI

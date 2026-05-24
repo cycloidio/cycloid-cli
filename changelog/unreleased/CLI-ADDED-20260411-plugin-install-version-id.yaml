@@ -1,8 +1,0 @@
-component: CLI
-kind: ADDED
-body: "`cy plugin registry plugin version install --retry` to idempotently install a plugin version"
-time: 2026-04-11T00:00:00Z
-custom:
-  DETAILS: "Adds `--retry` flag to `cy plugin registry plugin version install`. When the install returns HTTP 409 (already installed), the command retries via the retry endpoint instead of failing. Safe for use in CI/CD pipelines."
-  PR: "432"
-  TYPE: CLI
