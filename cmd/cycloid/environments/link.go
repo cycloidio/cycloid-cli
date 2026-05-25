@@ -18,10 +18,10 @@ func NewLinkCommand() *cobra.Command {
 		RunE:    link,
 	}
 
-	cmd.MarkFlagRequired("project")
-	cmd.MarkFlagRequired("env")
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
+	cmd.MarkFlagRequired("project")
+	cmd.MarkFlagRequired("env")
 	return cmd
 }
 
@@ -57,10 +57,10 @@ func NewUnlinkCommand() *cobra.Command {
 		RunE:    unlink,
 	}
 
-	cmd.MarkFlagRequired("project")
-	cmd.MarkFlagRequired("env")
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
+	cmd.MarkFlagRequired("project")
+	cmd.MarkFlagRequired("env")
 	cyargs.AddDeleteFlags(cmd)
 	return cmd
 }

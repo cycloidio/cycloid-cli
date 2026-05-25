@@ -19,9 +19,6 @@ func NewCreateCommand() *cobra.Command {
 		RunE:    create,
 	}
 
-	cmd.MarkFlagsOneRequired("name", "env")
-	cyargs.AddNameFlag(cmd)
-	cyargs.AddEnvFlag(cmd)
 	cyargs.AddEnvironmentTypeFlag(cmd)
 	cyargs.AddDescriptionFlag(cmd)
 	cyargs.AddEnvironmentOwnerFlag(cmd)
@@ -30,6 +27,9 @@ func NewCreateCommand() *cobra.Command {
 	cyargs.AddEnvironmentVariablesFileFlag(cmd)
 	cyargs.AddColorFlag(cmd)
 	cmd.Flags().Bool("update", false, "if set, will update the environment if it exists.")
+	cyargs.AddNameFlag(cmd)
+	cyargs.AddEnvFlag(cmd)
+	cmd.MarkFlagsOneRequired("name", "env")
 	return cmd
 }
 

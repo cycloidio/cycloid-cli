@@ -24,11 +24,12 @@ func NewCreateCommand() *cobra.Command {
 		Args:    cobra.NoArgs,
 	}
 
-	cmd.MarkFlagsOneRequired("environment-type-name", "environment-type")
-	cyargs.AddEnvironmentTypeNameFlag(cmd)
-	cyargs.AddEnvironmentTypeCanonicalFlag(cmd)
-	cmd.MarkFlagRequired("color")
+	cmd.MarkFlagsOneRequired(
+		cyargs.AddEnvironmentTypeNameFlag(cmd),
+		cyargs.AddEnvironmentTypeCanonicalFlag(cmd),
+	)
 	cyargs.AddColorFlag(cmd)
+	cmd.MarkFlagRequired("color")
 	cmd.Flags().Bool("update", false, "update the environment type if it already exists")
 	return cmd
 }
@@ -90,8 +91,8 @@ func NewUpdateCommand() *cobra.Command {
 		Args:    cobra.NoArgs,
 	}
 
-	cmd.MarkFlagRequired("environment-type")
 	cyargs.AddEnvironmentTypeCanonicalFlag(cmd)
+	cmd.MarkFlagRequired("environment-type")
 	cyargs.AddEnvironmentTypeNameFlag(cmd)
 	cyargs.AddColorFlag(cmd)
 	return cmd

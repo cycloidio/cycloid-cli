@@ -19,8 +19,8 @@ func NewUpdateCommand() *cobra.Command {
 		RunE:    update,
 	}
 
-	cmd.MarkFlagRequired("env")
 	cyargs.AddEnvFlag(cmd)
+	cmd.MarkFlagRequired("env")
 	cyargs.AddNameFlag(cmd)
 	cyargs.AddEnvironmentTypeFlag(cmd)
 	cyargs.AddDescriptionFlag(cmd)

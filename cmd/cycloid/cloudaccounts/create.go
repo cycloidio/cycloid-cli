@@ -25,11 +25,12 @@ func NewCreateCommand() *cobra.Command {
 		Args:    cobra.NoArgs,
 	}
 
-	cmd.MarkFlagsOneRequired("name", "cloud-account")
-	cyargs.AddNameFlag(cmd)
-	cyargs.AddCloudAccountFlag(cmd)
-	cmd.MarkFlagRequired("cloud-provider")
+	cmd.MarkFlagsOneRequired(
+		cyargs.AddNameFlag(cmd),
+		cyargs.AddCloudAccountFlag(cmd),
+	)
 	cyargs.AddCloudProviderFlag(cmd)
+	cmd.MarkFlagRequired("cloud-provider")
 	cyargs.AddExistingCredentialFlag(cmd)
 	cyargs.AddNewCredentialTypeFlag(cmd)
 	cyargs.AddDescriptionFlag(cmd)
