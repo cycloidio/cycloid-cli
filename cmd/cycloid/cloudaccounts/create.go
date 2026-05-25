@@ -1,8 +1,8 @@
 package cloudaccounts
 
 import (
-	"fmt"
 	stderrors "errors"
+	"fmt"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -29,14 +29,13 @@ func NewCreateCommand() *cobra.Command {
 		cyargs.AddNameFlag(cmd),
 		cyargs.AddCloudAccountFlag(cmd),
 	)
-	cyargs.AddCloudProviderFlag(cmd)
-	cmd.MarkFlagRequired("cloud-provider")
+	cmd.MarkFlagRequired(cyargs.AddCloudProviderFlag(cmd))
 	cyargs.AddExistingCredentialFlag(cmd)
 	cyargs.AddNewCredentialTypeFlag(cmd)
 	cyargs.AddDescriptionFlag(cmd)
 	cyargs.AddOwnerFlag(cmd)
 	addCredentialFlags(cmd)
-	cmd.Flags().Bool("update", false, "update the cloud account if it already exists")
+	cyargs.AddUpdateFlag(cmd, "update the cloud account if it already exists")
 	return cmd
 }
 
@@ -84,28 +83,34 @@ func create(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("either --credential or --new-credential must be set")
 	}
 
-	description, _ := cyargs.GetDescription(cmd)
-	owner, _ := cyargs.GetOwner(cmd)
-	allowUpdate, _ := cmd.Flags().GetBool("update")
+	description, err := cyargs.GetDescription(cmd)
+	if err != nil {
+		return err
+	}
+	owner, err := cyargs.GetOwner(cmd)
+	if err != nil {
+		return err
+	}
 
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	if allowUpdate {
-		if _, _, err := m.GetCloudAccount(org, canonical); err == nil {
+	if cyargs.GetUpdate(cmd) {
+		_, _, getErr := m.GetCloudAccount(org, canonical)
+		if getErr == nil {
 			return updateCloudAccount(cmd, args)
 		}
 		var apiErr *middleware.APIResponseError
-		if !stderrors.As(err, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
-			return cyout.PrintWithOptions(cmd, nil, err, "failed to check existing cloud account", printer.Options{})
+		if !stderrors.As(getErr, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
+			return cyout.PrintWithOptions(cmd, nil, getErr, "failed to check existing cloud account", printer.Options{})
 		}
 	}
 
 	var result *models.CloudAccount
 	if newCredentialType != "" {
-		accessCredential, err := buildAccessCredential(cmd, newCredentialType, name+" access", "")
-		if err != nil {
-			return err
+		accessCredential, buildErr := buildAccessCredential(cmd, newCredentialType, name+" access", "")
+		if buildErr != nil {
+			return buildErr
 		}
 		body := &models.NewCloudAccountWithCredentials{
 			Canonical:        canonical,

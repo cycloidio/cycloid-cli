@@ -288,9 +288,10 @@ func GetComponent(cmd *cobra.Command) (string, error) {
 	return component, nil
 }
 
-func AddColorFlag(cmd *cobra.Command) {
-	cmd.Flags().String("color", DefaultColor, "set the color.")
-	cmd.RegisterFlagCompletionFunc("color", func(cmd *cobra.Command, args []cobra.Completion, toComplete string) ([]string, cobra.ShellCompDirective) {
+func AddColorFlag(cmd *cobra.Command) string {
+	flagName := "color"
+	cmd.Flags().String(flagName, DefaultColor, "set the color.")
+	cmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []cobra.Completion, toComplete string) ([]string, cobra.ShellCompDirective) {
 		var completions []cobra.Completion
 		for _, color := range ValidColors {
 			if strings.HasPrefix(color, toComplete) {
@@ -300,6 +301,7 @@ func AddColorFlag(cmd *cobra.Command) {
 
 		return completions, cobra.ShellCompDirectiveNoFileComp
 	})
+	return flagName
 }
 
 func GetColor(cmd *cobra.Command) (string, error) {

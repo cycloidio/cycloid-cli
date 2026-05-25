@@ -9,15 +9,18 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
 
+// CloudAccountFlag is the canonical flag name for cloud-account targeting,
+// exposed so callers can build cobra Args validators without hardcoding strings.
+const CloudAccountFlag = "cloud-account"
+
 func AddCloudAccountFlag(cmd *cobra.Command) string {
-	flagName := "cloud-account"
-	cmd.Flags().StringP(flagName, "a", "", "cloud account canonical")
-	_ = cmd.RegisterFlagCompletionFunc(flagName, CompleteCloudAccountCanonical)
-	return flagName
+	cmd.Flags().StringP(CloudAccountFlag, "a", "", "cloud account canonical")
+	_ = cmd.RegisterFlagCompletionFunc(CloudAccountFlag, CompleteCloudAccountCanonical)
+	return CloudAccountFlag
 }
 
 func GetCloudAccount(cmd *cobra.Command) (string, error) {
-	return cmd.Flags().GetString("cloud-account")
+	return cmd.Flags().GetString(CloudAccountFlag)
 }
 
 func AddExistingCredentialFlag(cmd *cobra.Command) string {

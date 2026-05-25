@@ -26,7 +26,7 @@ func NewCreateCommand() *cobra.Command {
 	cyargs.AddEnvironmentVariablesFlag(cmd)
 	cyargs.AddEnvironmentVariablesFileFlag(cmd)
 	cyargs.AddColorFlag(cmd)
-	cmd.Flags().Bool("update", false, "if set, will update the environment if it exists.")
+	cyargs.AddUpdateFlag(cmd, "if set, will update the environment if it exists.")
 	cyargs.AddNameFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
 	cmd.MarkFlagsOneRequired("name", "env")
@@ -46,14 +46,9 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	update, err := cmd.Flags().GetBool("update")
-	if err != nil {
-		return err
-	}
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	result, err := createOrUpdateEnvironment(cmd, m, org, env, update)
+	result, err := createOrUpdateEnvironment(cmd, m, org, env, cyargs.GetUpdate(cmd))
 	return cyout.PrintWithOptions(cmd, result, err, "failed to create environment", printer.Options{})
 }

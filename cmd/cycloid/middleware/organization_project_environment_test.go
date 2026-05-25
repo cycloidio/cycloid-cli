@@ -39,7 +39,7 @@ func TestEnvCrud(t *testing.T) {
 	}
 
 	var (
-		env     = "test-crud"
+		env     = testcfg.RandomCanonical("test-crud")
 		envName = "TestCRUD"
 	)
 
@@ -57,8 +57,13 @@ func TestEnvCrud(t *testing.T) {
 		if createdEnv == nil {
 			return
 		}
-		_, err := m.DeleteOrgEnv(config.Org, *createdEnv.Canonical)
-		if err != nil {
+		// Org-level envs cannot be deleted while still linked to a project
+		// (backend returns 409). Unlink first so cleanup is best-effort even
+		// when the test panics mid-flight.
+		if _, err := m.UnlinkEnvFromProject(config.Org, *createdProject.Canonical, *createdEnv.Canonical, middleware.DeleteOptions{}); err != nil {
+			log.Printf("Warning: failed to unlink env %q from project %q during cleanup: %v", env, *createdProject.Canonical, err)
+		}
+		if _, err := m.DeleteOrgEnv(config.Org, *createdEnv.Canonical); err != nil {
 			log.Fatalf("Failed to delete org env %q: %v", env, err)
 		}
 	}()

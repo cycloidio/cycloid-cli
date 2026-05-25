@@ -16,14 +16,13 @@ import (
 
 func NewUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "update",
-		Short:   "Update a cloud account",
-		RunE:    updateCloudAccount,
-		Args:    cobra.NoArgs,
+		Use:   "update",
+		Short: "Update a cloud account",
+		RunE:  updateCloudAccount,
+		Args:  cobra.NoArgs,
 	}
 
-	cyargs.AddCloudAccountFlag(cmd)
-	cmd.MarkFlagRequired("cloud-account")
+	cmd.MarkFlagRequired(cyargs.AddCloudAccountFlag(cmd))
 	cyargs.AddNameFlag(cmd)
 	cyargs.AddExistingCredentialFlag(cmd)
 	cyargs.AddNewCredentialTypeFlag(cmd)
@@ -52,6 +51,10 @@ func updateCloudAccount(cmd *cobra.Command, args []string) error {
 		return cyout.PrintWithOptions(cmd, nil, err, "cloud account not found", cloudAccountTableOptions)
 	}
 
+	// Flag readers below ignore their err return on purpose: cobra guarantees
+	// these flags are registered as the right type, so GetString/GetBool can
+	// only fail on a programmer mistake (wrong type lookup), not user input.
+	// Treating them as best-effort lookups keeps the PATCH-style merge readable.
 	name, _ := cyargs.GetName(cmd)
 	description, _ := cyargs.GetDescription(cmd)
 	owner, _ := cyargs.GetOwner(cmd)
@@ -74,6 +77,7 @@ func updateCloudAccount(cmd *cobra.Command, args []string) error {
 	} else if current.Owner != nil && current.Owner.Username != nil {
 		body.Owner = *current.Owner.Username
 	}
+
 	switch {
 	case newCredentialType != "":
 		credName := utils.CoalesceNonZero(name, ptrValue(current.Name)) + " access"

@@ -28,9 +28,8 @@ func NewCreateCommand() *cobra.Command {
 		cyargs.AddEnvironmentTypeNameFlag(cmd),
 		cyargs.AddEnvironmentTypeCanonicalFlag(cmd),
 	)
-	cyargs.AddColorFlag(cmd)
-	cmd.MarkFlagRequired("color")
-	cmd.Flags().Bool("update", false, "update the environment type if it already exists")
+	cmd.MarkFlagRequired(cyargs.AddColorFlag(cmd))
+	cyargs.AddUpdateFlag(cmd, "update the environment type if it already exists")
 	return cmd
 }
 
@@ -59,18 +58,17 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	allowUpdate, _ := cmd.Flags().GetBool("update")
-
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	if allowUpdate {
-		if _, _, err := m.GetEnvironmentType(org, canonical); err == nil {
+	if cyargs.GetUpdate(cmd) {
+		_, _, getErr := m.GetEnvironmentType(org, canonical)
+		if getErr == nil {
 			return updateEnvironmentType(cmd, args)
 		}
 		var apiErr *middleware.APIResponseError
-		if !stderrors.As(err, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
-			return cyout.PrintWithOptions(cmd, nil, err, "failed to check existing environment type", printer.Options{})
+		if !stderrors.As(getErr, &apiErr) || apiErr.StatusCode != http.StatusNotFound {
+			return cyout.PrintWithOptions(cmd, nil, getErr, "failed to check existing environment type", printer.Options{})
 		}
 	}
 
