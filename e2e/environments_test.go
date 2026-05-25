@@ -192,4 +192,60 @@ func TestEnvs(t *testing.T) {
 
 		assert.Equal(t, newName, envResult.Name)
 	})
+
+	t.Run("UpdateUpsertNew", func(t *testing.T) {
+		upsertEnv := randomCanonical("e2e-upsert")
+		upsertName := "Upserted Environment"
+		args := []string{
+			"-o", "json",
+			"env", "update",
+			"--env", upsertEnv,
+			"--name", upsertName,
+		}
+		out, err := executeCommand(args)
+		if err != nil {
+			t.Errorf("failed to upsert env %q via update: %v", upsertEnv, err)
+		}
+
+		defer t.Run("DeleteUpsertedEnv", func(t *testing.T) {
+			args := []string{
+				"env", "delete",
+				"--env", upsertEnv,
+			}
+			_, err := executeCommand(args)
+			if err != nil {
+				t.Errorf("failed to delete upserted env %q: %v", upsertEnv, err)
+			}
+		})
+
+		var envResult models.Environment
+		err = json.Unmarshal([]byte(out), &envResult)
+		if err != nil {
+			t.Errorf("failed to parse json output from update upsert: %v\noutput: %s", err, out)
+		}
+
+		assert.Equal(t, upsertEnv, *envResult.Canonical)
+		assert.Equal(t, upsertName, envResult.Name)
+	})
+
+	t.Run("UpdateExplicitEmptyCloudAccounts", func(t *testing.T) {
+		args := []string{
+			"-o", "json",
+			"env", "update",
+			"--env", env,
+			"--cloud-account", "",
+		}
+		out, err := executeCommand(args)
+		if err != nil {
+			t.Errorf("failed to clear cloud accounts on env %q: %v", env, err)
+		}
+
+		var envResult models.Environment
+		err = json.Unmarshal([]byte(out), &envResult)
+		if err != nil {
+			t.Errorf("failed to parse json output from explicit empty cloud-account update: %v\noutput: %s", err, out)
+		}
+
+		assert.Empty(t, envResult.CloudAccounts)
+	})
 }

@@ -48,16 +48,6 @@ func update(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	current, _, err := m.GetOrgEnv(org, env)
-	if err != nil {
-		return cyout.PrintWithOptions(cmd, nil, err, "environment not found", printer.Options{})
-	}
-
-	updateBody, err := buildUpdateEnvironment(cmd, current)
-	if err != nil {
-		return err
-	}
-
-	result, _, err := m.UpdateOrgEnv(org, env, updateBody)
+	result, err := createOrUpdateEnvironment(cmd, m, org, env, true)
 	return cyout.PrintWithOptions(cmd, result, err, "failed to update environment", printer.Options{})
 }

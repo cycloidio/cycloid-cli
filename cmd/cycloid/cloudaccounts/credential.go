@@ -9,9 +9,27 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
+
+func createInlineCredential(cmd *cobra.Command, m middleware.Middleware, org, credType, name string) (*models.Credential, error) {
+	raw, err := buildCredentialRaw(cmd, credType)
+	if err != nil {
+		return nil, err
+	}
+
+	description, _ := cyargs.GetDescription(cmd)
+	path, _ := cyargs.GetCredentialPath(cmd)
+	canonical, _ := cyargs.GetCredentialCanonical(cmd)
+
+	cred, _, err := m.CreateCredential(org, name, credType, raw, path, canonical, description)
+	if err != nil {
+		return nil, err
+	}
+	return cred, nil
+}
 
 func buildAccessCredential(cmd *cobra.Command, credType, name, canonical string) (*models.NewCloudAccountCredential, error) {
 	raw, err := buildCredentialRaw(cmd, credType)
