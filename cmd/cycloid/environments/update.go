@@ -14,28 +14,28 @@ func NewUpdateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "update",
 		Args:    cobra.NoArgs,
-		Short:   "update a environment",
-		Example: `cy --org my-org environment update --env"my-environment" --name "NewName"`,
+		Short:   "update an environment",
+		Example: `cy --org my-org environment update --env my-environment --name "New Name"`,
 		RunE:    update,
 	}
 
-	cyargs.AddNameFlag(cmd)
-	cyargs.AddProjectFlag(cmd)
+	cmd.MarkFlagRequired("env")
 	cyargs.AddEnvFlag(cmd)
+	cyargs.AddNameFlag(cmd)
+	cyargs.AddEnvironmentTypeFlag(cmd)
+	cyargs.AddDescriptionFlag(cmd)
+	cyargs.AddEnvironmentOwnerFlag(cmd)
+	cyargs.AddCloudAccountCanonicalsFlag(cmd)
+	cyargs.AddEnvironmentVariablesFlag(cmd)
+	cyargs.AddEnvironmentVariablesFileFlag(cmd)
 	cyargs.AddColorFlag(cmd)
 	return cmd
 }
 
 func update(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	warnDeprecatedColor(cmd)
 
 	org, err := cyargs.GetOrg(cmd)
-	if err != nil {
-		return err
-	}
-
-	project, err := cyargs.GetProject(cmd)
 	if err != nil {
 		return err
 	}
@@ -45,35 +45,19 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	name, err := cyargs.GetName(cmd)
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	current, _, err := m.GetOrgEnv(org, env)
+	if err != nil {
+		return cyout.PrintWithOptions(cmd, nil, err, "environment not found", printer.Options{})
+	}
+
+	updateBody, err := buildUpdateEnvironment(cmd, current)
 	if err != nil {
 		return err
 	}
 
-	color, err := cyargs.GetColor(cmd)
-	if err != nil {
-		return err
-	}
-
-	currentEnv, _, err := m.GetEnv(org, project, env)
-	if err != nil {
-		return cyout.PrintWithOptions(cmd, currentEnv, err, "environment not found", printer.Options{})
-	}
-
-	// Make the update use the current color if not explicitly set by the user
-	if color == cyargs.DefaultColor {
-		if currentEnv.Color != nil {
-			color = *currentEnv.Color
-		} else {
-			// Use a random one if none is set
-			color = cyargs.PickRandomColor(&env)
-		}
-	}
-
-	if name == "" {
-		name = currentEnv.Name
-	}
-
-	resp, _, err := m.UpdateEnv(org, project, env, name, color)
-	return cyout.PrintWithOptions(cmd, resp, err, "", printer.Options{})
+	result, _, err := m.UpdateOrgEnv(org, env, updateBody)
+	return cyout.PrintWithOptions(cmd, result, err, "failed to update environment", printer.Options{})
 }

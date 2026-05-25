@@ -1,12 +1,8 @@
 package environments
 
 import (
-	"fmt"
-	"slices"
-
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
@@ -18,45 +14,34 @@ func NewCreateCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "create",
 		Args:    cobra.NoArgs,
-		Short:   "create a environment",
-		Example: `cy --org my-org environment create --env "my-environment"`,
+		Short:   "create an environment",
+		Example: `cy --org my-org environment create --env my-environment --name "My Environment"`,
 		RunE:    create,
 	}
 
+	cmd.MarkFlagsOneRequired("name", "env")
 	cyargs.AddNameFlag(cmd)
-	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
+	cyargs.AddEnvironmentTypeFlag(cmd)
+	cyargs.AddDescriptionFlag(cmd)
+	cyargs.AddEnvironmentOwnerFlag(cmd)
+	cyargs.AddCloudAccountCanonicalsFlag(cmd)
+	cyargs.AddEnvironmentVariablesFlag(cmd)
+	cyargs.AddEnvironmentVariablesFileFlag(cmd)
 	cyargs.AddColorFlag(cmd)
 	cmd.Flags().Bool("update", false, "if set, will update the environment if it exists.")
 	return cmd
 }
 
 func create(cmd *cobra.Command, args []string) error {
+	warnDeprecatedColor(cmd)
+
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
 	}
 
-	project, err := cyargs.GetProject(cmd)
-	if err != nil {
-		return err
-	}
-
 	env, err := cyargs.GetEnvOrEmpty(cmd)
-	if err != nil {
-		return err
-	}
-
-	name, err := cyargs.GetName(cmd)
-	if err != nil {
-		return err
-	}
-	name, env, err = middleware.NameOrCanonical(&name, &env)
-	if err != nil {
-		return err
-	}
-
-	color, err := cyargs.GetColor(cmd)
 	if err != nil {
 		return err
 	}
@@ -69,34 +54,6 @@ func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	if update {
-		environments, _, err := m.ListProjectsEnv(org, project)
-		if err != nil {
-			return fmt.Errorf("failed to create --update environment, cannot check for existing environment %q: %w", env, err)
-		}
-
-		currentIndex := slices.IndexFunc(environments, func(e *models.Environment) bool { return *e.Canonical == env })
-		if currentIndex != -1 {
-			current := environments[currentIndex]
-			// Make the update use the current color if not explicitly set by the user
-			if color == cyargs.DefaultColor {
-				if current.Color != nil {
-					color = *current.Color
-				} else {
-					// Use a random one if none is set
-					color = cyargs.PickRandomColor(nil)
-				}
-			}
-
-			resp, _, err := m.UpdateEnv(org, project, env, name, color)
-			return cyout.PrintWithOptions(cmd, resp, err, "", printer.Options{})
-		}
-	}
-
-	if color == cyargs.DefaultColor {
-		color = cyargs.PickRandomColor(nil)
-	}
-
-	resp, _, err := m.CreateEnv(org, project, env, name, color)
-	return cyout.PrintWithOptions(cmd, resp, err, "failed to create environment", printer.Options{})
+	result, err := createOrUpdateEnvironment(cmd, m, org, env, update)
+	return cyout.PrintWithOptions(cmd, result, err, "failed to create environment", printer.Options{})
 }

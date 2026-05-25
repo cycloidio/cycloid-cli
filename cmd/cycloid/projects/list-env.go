@@ -36,6 +36,6 @@ func listEnv(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	projects, _, err := m.ListProjectsEnv(org, project)
-	return cyout.Print(cmd, projects, err, "unable to listenv project")
+	projectEnvs, _, err := m.ListProjectEnvs(org, project)
+	return cyout.Print(cmd, projectEnvs, err, "unable to listenv project")
 }
