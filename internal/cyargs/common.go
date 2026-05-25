@@ -193,7 +193,7 @@ func AddEnvFlag(cmd *cobra.Command) {
 		api := common.NewAPI()
 		m := middleware.NewMiddleware(api)
 
-		envs, _, err := m.ListProjectsEnv(org, project)
+		envs, _, err := m.ListProjectEnvs(org, project)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to list env from org '"+org+"' in project '"+project+"' for completion: "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
