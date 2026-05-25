@@ -14,12 +14,12 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// Environment Environment
+// ProjectEnvironment Project Environment
 //
-// Represent an environment that belongs to an organization. This is the base environment entity without project-specific relations.
+// Represent an environment linked to a project with its associated components. This extends the base Environment with project-specific relations.
 //
-// swagger:model Environment
-type Environment struct {
+// swagger:model ProjectEnvironment
+type ProjectEnvironment struct {
 
 	// canonical
 	// Required: true
@@ -62,25 +62,17 @@ type Environment struct {
 	//
 	Owner *User `json:"owner,omitempty"`
 
-	// The total count of resources attributed to this environment
-	// Required: true
-	// Minimum: 0
-	ResourcesCount *uint32 `json:"resources_count"`
-
 	// updated at
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
 
-	// Full set of environment variables attached to this environment, available under the `.environment.variables` template path during interpolation.
-	Variables []*EnvironmentVariableItem `json:"variables"`
-
-	// Aggregated value of the Components Version.Status in this environment. Only populated when the environment is returned alongside a Project.
+	// When the environment is returned alongside Project this will be set with the aggregated value of the Components Version.Status it has
 	VersionStatus []string `json:"version_status"`
 }
 
-// Validate validates this environment
-func (m *Environment) Validate(formats strfmt.Registry) error {
+// Validate validates this project environment
+func (m *ProjectEnvironment) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateCanonical(formats); err != nil {
@@ -119,15 +111,7 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateResourcesCount(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateUpdatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateVariables(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -141,7 +125,7 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateCanonical(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Required("canonical", "body", m.Canonical); err != nil {
 		return err
@@ -162,7 +146,7 @@ func (m *Environment) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateCloudAccounts(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateCloudAccounts(formats strfmt.Registry) error {
 	if swag.IsZero(m.CloudAccounts) { // not required
 		return nil
 	}
@@ -192,7 +176,7 @@ func (m *Environment) validateCloudAccounts(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateComponents(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateComponents(formats strfmt.Registry) error {
 	if swag.IsZero(m.Components) { // not required
 		return nil
 	}
@@ -222,7 +206,7 @@ func (m *Environment) validateComponents(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateCreatedAt(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("created_at", "body", m.CreatedAt); err != nil {
 		return err
@@ -235,7 +219,7 @@ func (m *Environment) validateCreatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateDescription(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateDescription(formats strfmt.Registry) error {
 	if swag.IsZero(m.Description) { // not required
 		return nil
 	}
@@ -247,7 +231,7 @@ func (m *Environment) validateDescription(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateEnvironmentType(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateEnvironmentType(formats strfmt.Registry) error {
 	if swag.IsZero(m.EnvironmentType) { // not required
 		return nil
 	}
@@ -270,7 +254,7 @@ func (m *Environment) validateEnvironmentType(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateID(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
 		return err
@@ -283,7 +267,7 @@ func (m *Environment) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateName(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateName(formats strfmt.Registry) error {
 	if swag.IsZero(m.Name) { // not required
 		return nil
 	}
@@ -299,7 +283,7 @@ func (m *Environment) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateOwner(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateOwner(formats strfmt.Registry) error {
 	if swag.IsZero(m.Owner) { // not required
 		return nil
 	}
@@ -322,20 +306,7 @@ func (m *Environment) validateOwner(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateResourcesCount(formats strfmt.Registry) error {
-
-	if err := validate.Required("resources_count", "body", m.ResourcesCount); err != nil {
-		return err
-	}
-
-	if err := validate.MinimumUint("resources_count", "body", uint64(*m.ResourcesCount), 0, false); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
 		return err
@@ -348,37 +319,7 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateVariables(formats strfmt.Registry) error {
-	if swag.IsZero(m.Variables) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Variables); i++ {
-		if swag.IsZero(m.Variables[i]) { // not required
-			continue
-		}
-
-		if m.Variables[i] != nil {
-			if err := m.Variables[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("variables" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("variables" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-var environmentVersionStatusItemsEnum []any
+var projectEnvironmentVersionStatusItemsEnum []any
 
 func init() {
 	var res []string
@@ -386,18 +327,18 @@ func init() {
 		panic(err)
 	}
 	for _, v := range res {
-		environmentVersionStatusItemsEnum = append(environmentVersionStatusItemsEnum, v)
+		projectEnvironmentVersionStatusItemsEnum = append(projectEnvironmentVersionStatusItemsEnum, v)
 	}
 }
 
-func (m *Environment) validateVersionStatusItemsEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, environmentVersionStatusItemsEnum, true); err != nil {
+func (m *ProjectEnvironment) validateVersionStatusItemsEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, projectEnvironmentVersionStatusItemsEnum, true); err != nil {
 		return err
 	}
 	return nil
 }
 
-func (m *Environment) validateVersionStatus(formats strfmt.Registry) error {
+func (m *ProjectEnvironment) validateVersionStatus(formats strfmt.Registry) error {
 	if swag.IsZero(m.VersionStatus) { // not required
 		return nil
 	}
@@ -414,8 +355,8 @@ func (m *Environment) validateVersionStatus(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validate this environment based on the context it is used
-func (m *Environment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+// ContextValidate validate this project environment based on the context it is used
+func (m *ProjectEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.contextValidateCloudAccounts(ctx, formats); err != nil {
@@ -434,17 +375,13 @@ func (m *Environment) ContextValidate(ctx context.Context, formats strfmt.Regist
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateVariables(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
 	return nil
 }
 
-func (m *Environment) contextValidateCloudAccounts(ctx context.Context, formats strfmt.Registry) error {
+func (m *ProjectEnvironment) contextValidateCloudAccounts(ctx context.Context, formats strfmt.Registry) error {
 
 	for i := 0; i < len(m.CloudAccounts); i++ {
 
@@ -473,7 +410,7 @@ func (m *Environment) contextValidateCloudAccounts(ctx context.Context, formats 
 	return nil
 }
 
-func (m *Environment) contextValidateComponents(ctx context.Context, formats strfmt.Registry) error {
+func (m *ProjectEnvironment) contextValidateComponents(ctx context.Context, formats strfmt.Registry) error {
 
 	for i := 0; i < len(m.Components); i++ {
 
@@ -502,7 +439,7 @@ func (m *Environment) contextValidateComponents(ctx context.Context, formats str
 	return nil
 }
 
-func (m *Environment) contextValidateEnvironmentType(ctx context.Context, formats strfmt.Registry) error {
+func (m *ProjectEnvironment) contextValidateEnvironmentType(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.EnvironmentType != nil {
 
@@ -527,7 +464,7 @@ func (m *Environment) contextValidateEnvironmentType(ctx context.Context, format
 	return nil
 }
 
-func (m *Environment) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+func (m *ProjectEnvironment) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
 
 	if m.Owner != nil {
 
@@ -552,37 +489,8 @@ func (m *Environment) contextValidateOwner(ctx context.Context, formats strfmt.R
 	return nil
 }
 
-func (m *Environment) contextValidateVariables(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Variables); i++ {
-
-		if m.Variables[i] != nil {
-
-			if swag.IsZero(m.Variables[i]) { // not required
-				return nil
-			}
-
-			if err := m.Variables[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("variables" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("variables" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
 // MarshalBinary interface implementation
-func (m *Environment) MarshalBinary() ([]byte, error) {
+func (m *ProjectEnvironment) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
@@ -590,8 +498,8 @@ func (m *Environment) MarshalBinary() ([]byte, error) {
 }
 
 // UnmarshalBinary interface implementation
-func (m *Environment) UnmarshalBinary(b []byte) error {
-	var res Environment
+func (m *ProjectEnvironment) UnmarshalBinary(b []byte) error {
+	var res ProjectEnvironment
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}
