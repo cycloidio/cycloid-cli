@@ -84,6 +84,15 @@ func TestEnvs(t *testing.T) {
 	})
 
 	defer t.Run("Delete", func(t *testing.T) {
+		unlinkArgs := []string{
+			"env", "unlink",
+			"-p", project,
+			"-e", env,
+		}
+		if _, err := executeCommand(unlinkArgs); err != nil {
+			t.Errorf("failed to unlink env %q: %v", env, err)
+		}
+
 		args := []string{
 			"env", "delete",
 			"-e", env,

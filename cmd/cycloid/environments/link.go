@@ -45,7 +45,10 @@ func link(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	_, err = m.LinkEnvToProject(org, project, env)
-	return cyout.Print(cmd, map[string]string{"project": project, "environment": env}, err, "failed to link environment to project")
+	if err != nil {
+		return cyout.Print(cmd, nil, err, "failed to link environment to project")
+	}
+	return nil
 }
 
 func NewUnlinkCommand() *cobra.Command {
@@ -91,5 +94,8 @@ func unlink(cmd *cobra.Command, args []string) error {
 
 	opts := middleware.DeleteOptions{Force: force, SkipHooks: skipHooks, IgnoreConfigFilesErr: ignoreConfigFilesErr}
 	_, err = m.UnlinkEnvFromProject(org, project, env, opts)
-	return cyout.Print(cmd, map[string]string{"project": project, "environment": env}, err, "failed to unlink environment from project")
+	if err != nil {
+		return cyout.Print(cmd, nil, err, "failed to unlink environment from project")
+	}
+	return nil
 }

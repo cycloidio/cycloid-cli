@@ -290,6 +290,9 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 	}
 
 	config.AppendCleanup(func() {
+		if project != "" {
+			_, _ = m.UnlinkEnvFromProject(config.Org, project, env, middleware.DeleteOptions{})
+		}
 		_, err := m.DeleteOrgEnv(config.Org, env)
 		if err != nil {
 			log.Fatalf("cannot cleanup env %q for test %q: %v", env, identifier, err)

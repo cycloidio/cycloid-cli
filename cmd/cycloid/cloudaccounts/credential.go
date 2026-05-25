@@ -19,7 +19,7 @@ func buildAccessCredential(cmd *cobra.Command, credType, name, canonical string)
 		return nil, err
 	}
 
-	description, err := cyargs.GetCredentialDescription(cmd)
+	description, err := cyargs.GetDescription(cmd)
 	if err != nil {
 		return nil, err
 	}
@@ -184,7 +184,6 @@ func buildCredentialRaw(cmd *cobra.Command, credType string) (*models.Credential
 }
 
 func addCredentialFlags(cmd *cobra.Command) {
-	cyargs.AddCredentialDescriptionFlag(cmd)
 	cyargs.AddCredentialCanonicalFlag(cmd)
 	cyargs.AddCredentialPathFlag(cmd)
 	cyargs.AddCredentialSSHKeyFlag(cmd)
