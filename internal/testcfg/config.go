@@ -267,19 +267,30 @@ func (config *Config) NewTestProject(identifier string) (*models.Project, error)
 // The func will always be returned so even if err != nil, defer the func.
 func (config *Config) NewTestEnv(identifier, project string) (*models.Environment, error) {
 	var (
-		env   = RandomCanonical(identifier)
-		color = "default"
+		env     = RandomCanonical(identifier)
+		envType = "production"
 	)
 
 	m := config.Middleware
 
-	out, _, err := m.CreateEnv(config.Org, project, env, env, color)
+	body := &models.NewEnvironment{
+		Canonical: env,
+		Name:      ptr.Ptr(env),
+		Type:      ptr.Ptr(envType),
+	}
+	out, _, err := m.CreateOrgEnv(config.Org, body)
 	if err != nil {
 		return nil, fmt.Errorf("failed to setup test environment: %w", err)
 	}
 
+	if project != "" {
+		if _, err := m.LinkEnvToProject(config.Org, project, env); err != nil {
+			return nil, fmt.Errorf("failed to link test environment to project: %w", err)
+		}
+	}
+
 	config.AppendCleanup(func() {
-		_, err := m.DeleteEnv(config.Org, project, env, middleware.DeleteOptions{})
+		_, err := m.DeleteOrgEnv(config.Org, env)
 		if err != nil {
 			log.Fatalf("cannot cleanup env %q for test %q: %v", env, identifier, err)
 			return
