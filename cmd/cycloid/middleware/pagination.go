@@ -11,6 +11,7 @@ import (
 )
 
 const defaultPageSize = 100
+const maxPages = 1_000
 
 type paginatedListResponse[T any] struct {
 	Data       []T                `json:"data"`
@@ -28,7 +29,7 @@ func paginatedList[T any](m *middleware, req Request, pageSize int) ([]T, *http.
 		lastResp *http.Response
 	)
 
-	for page := 1; ; page++ {
+	for page := 1; page <= maxPages; page++ {
 		query := url.Values{}
 		if req.Query != nil {
 			encoded, err := encodeQuery(req.Query)

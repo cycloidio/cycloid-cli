@@ -20,8 +20,8 @@ func NewLinkCommand() *cobra.Command {
 
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
-	cmd.MarkFlagRequired("project")
-	cmd.MarkFlagRequired("env")
+	_ = cmd.MarkFlagRequired("project")
+	_ = cmd.MarkFlagRequired("env")
 	return cmd
 }
 
@@ -62,8 +62,8 @@ func NewUnlinkCommand() *cobra.Command {
 
 	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
-	cmd.MarkFlagRequired("project")
-	cmd.MarkFlagRequired("env")
+	_ = cmd.MarkFlagRequired("project")
+	_ = cmd.MarkFlagRequired("env")
 	cyargs.AddDeleteFlags(cmd)
 	return cmd
 }

@@ -28,7 +28,7 @@ func NewCreateCommand() *cobra.Command {
 		cyargs.AddEnvironmentTypeNameFlag(cmd),
 		cyargs.AddEnvironmentTypeCanonicalFlag(cmd),
 	)
-	cmd.MarkFlagRequired(cyargs.AddColorFlag(cmd))
+	_ = cmd.MarkFlagRequired(cyargs.AddColorFlag(cmd))
 	cyargs.AddUpdateFlag(cmd, "update the environment type if it already exists")
 	return cmd
 }
@@ -83,14 +83,14 @@ func create(cmd *cobra.Command, args []string) error {
 
 func NewUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "update",
-		Short:   "Update an environment type",
-		RunE:    updateEnvironmentType,
-		Args:    cobra.NoArgs,
+		Use:   "update",
+		Short: "Update an environment type",
+		RunE:  updateEnvironmentType,
+		Args:  cobra.NoArgs,
 	}
 
 	cyargs.AddEnvironmentTypeCanonicalFlag(cmd)
-	cmd.MarkFlagRequired("environment-type")
+	_ = cmd.MarkFlagRequired("environment-type")
 	cyargs.AddEnvironmentTypeNameFlag(cmd)
 	cyargs.AddColorFlag(cmd)
 	return cmd
@@ -115,7 +115,7 @@ func updateEnvironmentType(cmd *cobra.Command, args []string) error {
 		return cyout.PrintWithOptions(cmd, nil, err, "environment type not found", environmentTypeTableOptions)
 	}
 
-	name := ptrValue(current.Name)
+	name := ptr.Value(current.Name)
 	if cyargs.IsSet(cmd, "environment-type-name") {
 		value, err := cyargs.GetEnvironmentTypeName(cmd)
 		if err != nil {
@@ -126,7 +126,7 @@ func updateEnvironmentType(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	color := ptrValue(current.Color)
+	color := ptr.Value(current.Color)
 	if cyargs.IsSet(cmd, "color") {
 		value, err := cyargs.GetColor(cmd)
 		if err != nil {
@@ -141,11 +141,4 @@ func updateEnvironmentType(cmd *cobra.Command, args []string) error {
 	}
 	result, _, err := m.UpdateEnvironmentType(org, canonical, body)
 	return cyout.PrintWithOptions(cmd, result, err, "failed to update environment type", environmentTypeTableOptions)
-}
-
-func ptrValue(value *string) string {
-	if value == nil {
-		return ""
-	}
-	return *value
 }

@@ -1,8 +1,8 @@
 package environments
 
 import (
-	"fmt"
 	stderrors "errors"
+	"fmt"
 	"net/http"
 
 	"github.com/spf13/cobra"
@@ -14,12 +14,6 @@ import (
 )
 
 const defaultEnvType = "production" // TODO(meta-gov-env): remove once backend infers type from canonical
-
-func warnDeprecatedColor(cmd *cobra.Command) {
-	if cmd.Flags().Changed("color") {
-		fmt.Fprintln(cmd.ErrOrStderr(), "warning: --color is no longer supported on environments and will be ignored; color now lives on environment-type")
-	}
-}
 
 func envTypeFromCurrent(current *models.Environment) string {
 	if current != nil && current.EnvironmentType != nil && current.EnvironmentType.Canonical != nil {

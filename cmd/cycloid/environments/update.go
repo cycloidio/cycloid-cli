@@ -20,7 +20,7 @@ func NewUpdateCommand() *cobra.Command {
 	}
 
 	cyargs.AddEnvFlag(cmd)
-	cmd.MarkFlagRequired("env")
+	_ = cmd.MarkFlagRequired("env")
 	cyargs.AddNameFlag(cmd)
 	cyargs.AddEnvironmentTypeFlag(cmd)
 	cyargs.AddDescriptionFlag(cmd)
@@ -28,13 +28,11 @@ func NewUpdateCommand() *cobra.Command {
 	cyargs.AddCloudAccountCanonicalsFlag(cmd)
 	cyargs.AddEnvironmentVariablesFlag(cmd)
 	cyargs.AddEnvironmentVariablesFileFlag(cmd)
-	cyargs.AddColorFlag(cmd)
+	_ = cmd.Flags().MarkDeprecated(cyargs.AddColorFlag(cmd), "color now lives on environment-type and will be ignored")
 	return cmd
 }
 
 func update(cmd *cobra.Command, args []string) error {
-	warnDeprecatedColor(cmd)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err

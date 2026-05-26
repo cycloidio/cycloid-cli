@@ -75,7 +75,7 @@ func (m *middleware) LinkEnvToProject(org, project, env string) (*http.Response,
 	}
 	for _, linked := range envs {
 		if linked.Canonical != nil && *linked.Canonical == env {
-			return &http.Response{StatusCode: http.StatusOK}, nil
+			return nil, nil
 		}
 	}
 

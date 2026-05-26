@@ -29,7 +29,11 @@ func (m *middleware) GetEnvironmentType(org, canonical string) (*models.Environm
 			return envType, resp, nil
 		}
 	}
-	return nil, resp, fmt.Errorf("environment type %q not found", canonical)
+	return nil, resp, &APIResponseError{
+		StatusCode: http.StatusNotFound,
+		Status:     "404 Not Found",
+		Body:       []byte(fmt.Sprintf("environment type %q not found", canonical)),
+	}
 }
 
 func (m *middleware) CreateEnvironmentType(org string, body *models.NewEnvironmentType) (*models.EnvironmentType, *http.Response, error) {
