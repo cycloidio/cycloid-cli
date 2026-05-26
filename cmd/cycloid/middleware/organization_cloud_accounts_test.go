@@ -80,5 +80,6 @@ func TestGetCloudAccount_NotFound(t *testing.T) {
 
 	_, resp, err := m.GetCloudAccount(config.Org, "nonexistent-cloud-account-xyz")
 	assert.Error(t, err, "GetCloudAccount should return an error for an unknown canonical")
+	require.NotNil(t, resp)
 	assert.Equal(t, 404, resp.StatusCode)
 }

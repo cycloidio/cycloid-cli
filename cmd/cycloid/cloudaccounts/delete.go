@@ -1,6 +1,8 @@
 package cloudaccounts
 
 import (
+	"fmt"
+
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -34,6 +36,7 @@ func deleteCloudAccount(cmd *cobra.Command, args []string) error {
 		if _, err := m.DeleteCloudAccount(org, canonical); err != nil {
 			return cyout.Print(cmd, nil, err, "failed to delete cloud account "+canonical)
 		}
+		fmt.Fprintf(cmd.OutOrStdout(), "deleted %s\n", canonical)
 	}
-	return cyout.Print(cmd, map[string]string{"status": "ok"}, nil, "")
+	return nil
 }

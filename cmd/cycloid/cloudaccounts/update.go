@@ -61,11 +61,11 @@ func updateCloudAccount(cmd *cobra.Command, args []string) error {
 	existingCredential, _ := cyargs.GetExistingCredential(cmd)
 	newCredentialType, _ := cyargs.GetNewCredentialType(cmd)
 	if existingCredential != "" && newCredentialType != "" {
-		return cyout.PrintWithOptions(cmd, nil, fmt.Errorf("cannot use --credential and --new-credential at the same time"), "", cloudAccountTableOptions)
+		return fmt.Errorf("cannot use --credential and --new-credential at the same time")
 	}
 
 	body := &models.UpdateCloudAccount{
-		Name: ptr.Ptr(utils.CoalesceNonZero(name, ptrValue(current.Name))),
+		Name: ptr.Ptr(utils.CoalesceNonZero(name, ptr.Value(current.Name))),
 	}
 	if cyargs.IsSet(cmd, "description") {
 		body.Description = description
@@ -80,7 +80,7 @@ func updateCloudAccount(cmd *cobra.Command, args []string) error {
 
 	switch {
 	case newCredentialType != "":
-		credName := utils.CoalesceNonZero(name, ptrValue(current.Name)) + " access"
+		credName := utils.CoalesceNonZero(name, ptr.Value(current.Name)) + " access"
 		credential, err := createInlineCredential(cmd, m, org, newCredentialType, credName)
 		if err != nil {
 			return cyout.PrintWithOptions(cmd, nil, err, "failed to create inline credential", cloudAccountTableOptions)
@@ -94,11 +94,4 @@ func updateCloudAccount(cmd *cobra.Command, args []string) error {
 
 	result, _, err := m.UpdateCloudAccount(org, canonical, body)
 	return cyout.PrintWithOptions(cmd, result, err, "failed to update cloud account", cloudAccountTableOptions)
-}
-
-func ptrValue(value *string) string {
-	if value == nil {
-		return ""
-	}
-	return *value
 }
