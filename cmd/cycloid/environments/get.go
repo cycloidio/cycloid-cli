@@ -17,15 +17,14 @@ func NewGetCommand() *cobra.Command {
 		Short: "get an environment",
 		Example: `
 	# get an environment using the --env flag
-	cy --org my-org environment get --project my-proj --env my-env -o yaml
+	cy --org my-org environment get --env my-env -o yaml
 
 	# get multiple environments using positional args
-	cy --org my-org environment get --project my-proj env-a env-b
+	cy --org my-org environment get env-a env-b
 `,
 		RunE: get,
 	}
 
-	cyargs.AddProjectFlag(cmd)
 	cyargs.AddEnvFlag(cmd)
 	cyout.RegisterModel(cmd, models.Environment{})
 	return cmd
@@ -36,11 +35,6 @@ func get(cmd *cobra.Command, args []string) error {
 	m := middleware.NewMiddleware(api)
 
 	org, err := cyargs.GetOrg(cmd)
-	if err != nil {
-		return err
-	}
-
-	project, err := cyargs.GetProject(cmd)
 	if err != nil {
 		return err
 	}
@@ -61,17 +55,36 @@ func get(cmd *cobra.Command, args []string) error {
 	}
 
 	if len(args) == 1 {
-		e, _, err := m.GetEnv(org, project, args[0])
+		e, _, err := m.GetOrgEnv(org, args[0])
 		return cyout.PrintWithOptions(cmd, e, err, "unable to get environment", environmentTableOptions)
 	}
 
 	results := make([]*models.Environment, 0, len(args))
 	for _, env := range args {
-		e, _, err := m.GetEnv(org, project, env)
+		e, _, err := m.GetOrgEnv(org, env)
 		if err != nil {
 			return cyout.PrintWithOptions(cmd, nil, err, "unable to get environment "+env, environmentTableOptions)
 		}
 		results = append(results, e)
 	}
 	return cyout.PrintWithOptions(cmd, results, nil, "", environmentTableOptions)
+}
+
+func projectEnvToEnvironment(env *models.ProjectEnvironment) *models.Environment {
+	if env == nil {
+		return nil
+	}
+	return &models.Environment{
+		Canonical:       env.Canonical,
+		CloudAccounts:   env.CloudAccounts,
+		Components:      env.Components,
+		CreatedAt:       env.CreatedAt,
+		Description:     env.Description,
+		EnvironmentType: env.EnvironmentType,
+		ID:              env.ID,
+		Name:            env.Name,
+		Owner:           env.Owner,
+		UpdatedAt:       env.UpdatedAt,
+		VersionStatus:   env.VersionStatus,
+	}
 }

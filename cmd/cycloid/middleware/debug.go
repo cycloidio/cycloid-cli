@@ -28,7 +28,7 @@ func (l *requestLogger) logRequest(req *http.Request, body []byte) {
 	}
 	if len(body) > 0 {
 		sb.WriteString("Request Body:\n")
-		sb.WriteString(prettyJSON(body))
+		sb.WriteString(prettyJSON(sanitizeBody(body)))
 		sb.WriteString("\n")
 	}
 	fmt.Fprint(os.Stderr, sb.String())
@@ -44,7 +44,7 @@ func (l *requestLogger) logResponse(resp *http.Response, body []byte, elapsed ti
 	}
 	if len(body) > 0 {
 		sb.WriteString("Response Body:\n")
-		sb.WriteString(prettyJSON(body))
+		sb.WriteString(prettyJSON(sanitizeBody(body)))
 		sb.WriteString("\n")
 	}
 	fmt.Fprint(os.Stderr, sb.String())

@@ -16,7 +16,7 @@ import (
 
 // Environment Environment
 //
-// # Represent an environment with may be related to a Project and Pipeline
+// Represent an environment that belongs to an organization. This is the base environment entity without project-specific relations.
 //
 // swagger:model Environment
 type Environment struct {
@@ -28,10 +28,8 @@ type Environment struct {
 	// Pattern: ^[\da-zA-Z]+(?:[\da-zA-Z\-._]+[\da-zA-Z]|[\da-zA-Z])$
 	Canonical *string `json:"canonical"`
 
-	// color
-	// Required: true
-	// Max Length: 64
-	Color *string `json:"color"`
+	// cloud accounts
+	CloudAccounts []*CloudAccountSimple `json:"cloud_accounts"`
 
 	// components
 	Components []*Component `json:"components"`
@@ -41,22 +39,43 @@ type Environment struct {
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at"`
 
+	// Optional description of the environment
+	// Max Length: 1000
+	Description string `json:"description,omitempty"`
+
+	// environment type
+	EnvironmentType *EnvironmentType `json:"environment_type,omitempty"`
+
 	// id
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
-	// Only available in project's context\
+	// The display name of the environment
 	// Max Length: 100
 	// Min Length: 1
 	Name string `json:"name,omitempty"`
+
+	// Organization member that owns this environment. When a user is the owner of an
+	// environment it has all the permissions on it.
+	// In the event where the user has been deleted this field might be empty.
+	//
+	Owner *User `json:"owner,omitempty"`
+
+	// The total count of resources attributed to this environment
+	// Required: true
+	// Minimum: 0
+	ResourcesCount *uint32 `json:"resources_count"`
 
 	// updated at
 	// Required: true
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
 
-	// When the environment is returned alongside Project this will be set with the aggregated value of the Components Version.Status it has
+	// Full set of environment variables attached to this environment, available under the `.environment.variables` template path during interpolation.
+	Variables []*EnvironmentVariableItem `json:"variables"`
+
+	// Aggregated value of the Components Version.Status in this environment. Only populated when the environment is returned alongside a Project.
 	VersionStatus []string `json:"version_status"`
 }
 
@@ -68,7 +87,7 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateColor(formats); err != nil {
+	if err := m.validateCloudAccounts(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -80,6 +99,14 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateDescription(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateEnvironmentType(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateID(formats); err != nil {
 		res = append(res, err)
 	}
@@ -88,7 +115,19 @@ func (m *Environment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateOwner(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateResourcesCount(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateUpdatedAt(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVariables(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -123,14 +162,31 @@ func (m *Environment) validateCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *Environment) validateColor(formats strfmt.Registry) error {
-
-	if err := validate.Required("color", "body", m.Color); err != nil {
-		return err
+func (m *Environment) validateCloudAccounts(formats strfmt.Registry) error {
+	if swag.IsZero(m.CloudAccounts) { // not required
+		return nil
 	}
 
-	if err := validate.MaxLength("color", "body", *m.Color, 64); err != nil {
-		return err
+	for i := 0; i < len(m.CloudAccounts); i++ {
+		if swag.IsZero(m.CloudAccounts[i]) { // not required
+			continue
+		}
+
+		if m.CloudAccounts[i] != nil {
+			if err := m.CloudAccounts[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("cloud_accounts" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("cloud_accounts" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -179,6 +235,41 @@ func (m *Environment) validateCreatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Environment) validateDescription(formats strfmt.Registry) error {
+	if swag.IsZero(m.Description) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("description", "body", m.Description, 1000); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *Environment) validateEnvironmentType(formats strfmt.Registry) error {
+	if swag.IsZero(m.EnvironmentType) { // not required
+		return nil
+	}
+
+	if m.EnvironmentType != nil {
+		if err := m.EnvironmentType.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("environment_type")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("environment_type")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *Environment) validateID(formats strfmt.Registry) error {
 
 	if err := validate.Required("id", "body", m.ID); err != nil {
@@ -208,6 +299,42 @@ func (m *Environment) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Environment) validateOwner(formats strfmt.Registry) error {
+	if swag.IsZero(m.Owner) { // not required
+		return nil
+	}
+
+	if m.Owner != nil {
+		if err := m.Owner.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("owner")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("owner")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Environment) validateResourcesCount(formats strfmt.Registry) error {
+
+	if err := validate.Required("resources_count", "body", m.ResourcesCount); err != nil {
+		return err
+	}
+
+	if err := validate.MinimumUint("resources_count", "body", uint64(*m.ResourcesCount), 0, false); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.Required("updated_at", "body", m.UpdatedAt); err != nil {
@@ -216,6 +343,36 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 
 	if err := validate.MinimumUint("updated_at", "body", *m.UpdatedAt, 0, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *Environment) validateVariables(formats strfmt.Registry) error {
+	if swag.IsZero(m.Variables) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Variables); i++ {
+		if swag.IsZero(m.Variables[i]) { // not required
+			continue
+		}
+
+		if m.Variables[i] != nil {
+			if err := m.Variables[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("variables" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("variables" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -261,13 +418,58 @@ func (m *Environment) validateVersionStatus(formats strfmt.Registry) error {
 func (m *Environment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateCloudAccounts(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateComponents(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateEnvironmentType(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateOwner(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateVariables(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *Environment) contextValidateCloudAccounts(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.CloudAccounts); i++ {
+
+		if m.CloudAccounts[i] != nil {
+
+			if swag.IsZero(m.CloudAccounts[i]) { // not required
+				return nil
+			}
+
+			if err := m.CloudAccounts[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("cloud_accounts" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("cloud_accounts" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -289,6 +491,85 @@ func (m *Environment) contextValidateComponents(ctx context.Context, formats str
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("components" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Environment) contextValidateEnvironmentType(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.EnvironmentType != nil {
+
+		if swag.IsZero(m.EnvironmentType) { // not required
+			return nil
+		}
+
+		if err := m.EnvironmentType.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("environment_type")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("environment_type")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Environment) contextValidateOwner(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Owner != nil {
+
+		if swag.IsZero(m.Owner) { // not required
+			return nil
+		}
+
+		if err := m.Owner.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("owner")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("owner")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Environment) contextValidateVariables(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Variables); i++ {
+
+		if m.Variables[i] != nil {
+
+			if swag.IsZero(m.Variables[i]) { // not required
+				return nil
+			}
+
+			if err := m.Variables[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("variables" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("variables" + "." + strconv.Itoa(i))
 				}
 
 				return err

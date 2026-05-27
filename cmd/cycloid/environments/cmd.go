@@ -12,7 +12,7 @@ func NewCommands() *cobra.Command {
 			"env",
 			"environments",
 		},
-		Short: "Manage the environments of a project.",
+		Short: "Manage organization environments.",
 	}
 
 	cmd.AddCommand(
@@ -21,6 +21,8 @@ func NewCommands() *cobra.Command {
 		NewListCommand(),
 		NewGetCommand(),
 		NewUpdateCommand(),
+		NewLinkCommand(),
+		NewUnlinkCommand(),
 	)
 
 	return cmd
