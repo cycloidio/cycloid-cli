@@ -19,10 +19,6 @@ import (
 // swagger:model UpdateCloudCostManagementAccount
 type UpdateCloudCostManagementAccount struct {
 
-	// enabled
-	// Required: true
-	Enabled *bool `json:"enabled"`
-
 	// external backend
 	// Required: true
 	ExternalBackend *UpdateExternalBackend `json:"external_backend"`
@@ -35,10 +31,6 @@ type UpdateCloudCostManagementAccount struct {
 func (m *UpdateCloudCostManagementAccount) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateEnabled(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateExternalBackend(formats); err != nil {
 		res = append(res, err)
 	}
@@ -46,15 +38,6 @@ func (m *UpdateCloudCostManagementAccount) Validate(formats strfmt.Registry) err
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *UpdateCloudCostManagementAccount) validateEnabled(formats strfmt.Registry) error {
-
-	if err := validate.Required("enabled", "body", m.Enabled); err != nil {
-		return err
-	}
-
 	return nil
 }
 

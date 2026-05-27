@@ -20,8 +20,8 @@ func NewListCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:     "list",
 		Args:    cobra.NoArgs,
-		Short:   "list the environments of a project",
-		Example: `cy --org my-org environments list -p project -o json`,
+		Short:   "list environments",
+		Example: `cy --org my-org environments list -o json`,
 		RunE:    list,
 	}
 
@@ -39,11 +39,23 @@ func list(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	project, err := cyargs.GetProject(cmd)
+	project, err := cyargs.GetProjectOrEmpty(cmd)
 	if err != nil {
 		return err
 	}
 
-	environments, _, err := m.ListProjectsEnv(org, project)
+	if project != "" {
+		projectEnvs, _, err := m.ListProjectEnvs(org, project)
+		if err != nil {
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to list project environments", environmentTableOptions)
+		}
+		environments := make([]*models.Environment, 0, len(projectEnvs))
+		for _, env := range projectEnvs {
+			environments = append(environments, projectEnvToEnvironment(env))
+		}
+		return cyout.PrintWithOptions(cmd, environments, nil, "", environmentTableOptions)
+	}
+
+	environments, _, err := m.ListOrgEnvs(org)
 	return cyout.PrintWithOptions(cmd, environments, err, "unable to list environments", environmentTableOptions)
 }

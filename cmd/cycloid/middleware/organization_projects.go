@@ -26,17 +26,16 @@ func (m *middleware) ListProjects(org string, filters ...LHSFilter) ([]*models.P
 	return result, resp, nil
 }
 
-// ListProjectsEnv lists environments for a project.
+// ListProjectEnvs lists environments linked to a project.
 //
 // Supported LHS filter attributes: environment_canonical, environment_created_at.
-func (m *middleware) ListProjectsEnv(org, project string, filters ...LHSFilter) ([]*models.Environment, *http.Response, error) {
-	var result []*models.Environment
-	resp, err := m.GenericRequest(Request{
+func (m *middleware) ListProjectEnvs(org, project string, filters ...LHSFilter) ([]*models.ProjectEnvironment, *http.Response, error) {
+	result, resp, err := paginatedList[*models.ProjectEnvironment](m, Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments"},
 		LHSFilters:   filters,
-	}, &result)
+	}, defaultPageSize)
 	if err != nil {
 		return nil, resp, err
 	}

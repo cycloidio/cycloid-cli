@@ -2,10 +2,7 @@ package credentials
 
 import (
 	"fmt"
-	"os"
-	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
@@ -49,9 +46,8 @@ func NewCreateCommand() *cobra.Command {
 	cyargs.AddCredentialDescriptionPersistentFlag(cmd)
 	cmd.MarkFlagRequired(cyargs.AddCredentialCanonicalPersistentFlag(cmd))
 	cyargs.AddCredentialPathPersistentFlag(cmd)
-	cmd.PersistentFlags().Bool("update", false, "update this credential if it already exists.")
+	cmd.PersistentFlags().Bool(cyargs.UpdateFlag, false, "update this credential if it already exists.")
 
-	// SSH
 	var sshCmd = &cobra.Command{
 		Use:  "ssh",
 		Args: cobra.NoArgs,
@@ -63,7 +59,6 @@ func NewCreateCommand() *cobra.Command {
 	}
 	sshCmd.MarkFlagRequired(cyargs.AddCredentialSSHKeyFlag(sshCmd))
 
-	// Basic auth
 	var basicAuthCmd = &cobra.Command{
 		Use:  "basic_auth",
 		Args: cobra.NoArgs,
@@ -76,7 +71,6 @@ func NewCreateCommand() *cobra.Command {
 	cyargs.AddCredentialUsernameFlag(basicAuthCmd)
 	cyargs.AddCredentialPasswordFlag(basicAuthCmd)
 
-	// Custom
 	var customCmd = &cobra.Command{
 		Use:  "custom",
 		Args: cobra.NoArgs,
@@ -86,11 +80,9 @@ func NewCreateCommand() *cobra.Command {
 	cy --org my-org credential create custom --name foo --field my-key=my-value --field my-key2=my-value2 --field-file my-key3=/file/path
 `,
 	}
-
 	cyargs.AddCredentialFieldFlag(customCmd)
 	cyargs.AddCredentialFieldFileFlag(customCmd)
 
-	// AWS
 	var awsCmd = &cobra.Command{
 		Use:  "aws",
 		Args: cobra.NoArgs,
@@ -103,7 +95,6 @@ func NewCreateCommand() *cobra.Command {
 	awsCmd.MarkFlagRequired(cyargs.AddCredentialAccessKeyFlag(awsCmd))
 	awsCmd.MarkFlagRequired(cyargs.AddCredentialSecretKeyFlag(awsCmd))
 
-	// Azure
 	var azureCmd = &cobra.Command{
 		Use:  "azure",
 		Args: cobra.NoArgs,
@@ -118,7 +109,6 @@ func NewCreateCommand() *cobra.Command {
 	azureCmd.MarkFlagRequired(cyargs.AddCredentialSubscriptionIDFlag(azureCmd))
 	azureCmd.MarkFlagRequired(cyargs.AddCredentialTenantIDFlag(azureCmd))
 
-	// Azure Storage
 	var azureStorageCmd = &cobra.Command{
 		Use:  "azure_storage",
 		Args: cobra.NoArgs,
@@ -131,7 +121,6 @@ func NewCreateCommand() *cobra.Command {
 	azureStorageCmd.MarkFlagRequired(cyargs.AddCredentialAccountNameFlag(azureStorageCmd))
 	azureStorageCmd.MarkFlagRequired(cyargs.AddCredentialAccessKeyFlag(azureStorageCmd))
 
-	// GCP
 	var gcpCmd = &cobra.Command{
 		Use:  "gcp",
 		Args: cobra.NoArgs,
@@ -143,7 +132,6 @@ func NewCreateCommand() *cobra.Command {
 	}
 	gcpCmd.MarkFlagRequired(cyargs.AddCredentialJSONKeyFlag(gcpCmd))
 
-	// Swift
 	var swiftCmd = &cobra.Command{
 		Use:  "swift",
 		Args: cobra.NoArgs,
@@ -159,7 +147,6 @@ func NewCreateCommand() *cobra.Command {
 	swiftCmd.MarkFlagRequired(cyargs.AddCredentialAuthURLFlag(swiftCmd))
 	swiftCmd.MarkFlagRequired(cyargs.AddCredentialDomainIDFlag(swiftCmd))
 
-	// Elasticsearch
 	var elasticsearchCmd = &cobra.Command{
 		Use:  "elasticsearch",
 		Args: cobra.NoArgs,
@@ -173,7 +160,6 @@ func NewCreateCommand() *cobra.Command {
 	cyargs.AddCredentialPasswordFlag(elasticsearchCmd)
 	elasticsearchCmd.MarkFlagRequired(cyargs.AddCredentialCaCertFlag(elasticsearchCmd))
 
-	// Command
 	cmd.AddCommand(
 		customCmd,
 		basicAuthCmd,
@@ -190,10 +176,7 @@ func NewCreateCommand() *cobra.Command {
 }
 
 func create(cmd *cobra.Command, args []string) error {
-	var err error
-	var rawCred *models.CredentialRaw
-
-	credentialTypes := cmd.CalledAs()
+	credentialType := cmd.CalledAs()
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -220,14 +203,14 @@ func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	if updateAllowed, _ := cmd.Flags().GetBool("update"); updateAllowed {
-		credentials, _, err := m.ListCredentials(org, credentialTypes)
+	if cyargs.GetUpdate(cmd) {
+		creds, _, err := m.ListCredentials(org, credentialType)
 		if err != nil {
 			return fmt.Errorf("failed to create --update credential, cannot check for existing credential (canonical=%q path=%q name=%q): %w",
 				credential, credentialPath, name, err)
 		}
 
-		existingCredential := findCredentialForUpdate(credentials, credential, credentialPath, name)
+		existingCredential := findCredentialForUpdate(creds, credential, credentialPath, name)
 		if existingCredential != nil {
 			// update requires the canonical in the route: infer it when the user identified
 			// the credential by path/name (the common create --name --update flow).
@@ -242,207 +225,12 @@ func create(cmd *cobra.Command, args []string) error {
 		}
 	}
 
-	switch credentialTypes {
-	case "ssh":
-		sshKeyPath, err := cyargs.GetCredentialSSHKey(cmd)
-		if err != nil {
-			return err
-		}
-
-		sshKey, err := os.ReadFile(sshKeyPath)
-		if err != nil {
-			return errors.Wrap(err, "unable to read SSH key")
-		}
-
-		rawCred = &models.CredentialRaw{
-			SSHKey: string(sshKey),
-		}
-
-	case "basic_auth":
-		username, err := cyargs.GetCredentialUsername(cmd)
-		if err != nil {
-			return err
-		}
-
-		password, err := cyargs.GetCredentialPassword(cmd)
-		if err != nil {
-			return err
-		}
-
-		rawCred = &models.CredentialRaw{
-			Username: username,
-			Password: password,
-		}
-	case "custom":
-		fields, err := cyargs.GetCredentialField(cmd)
-		if err != nil {
-			return err
-		}
-
-		fileFields, err := cyargs.GetCredentialFieldFile(cmd)
-		if err != nil {
-			return err
-		}
-
-		if len(fields) == 0 && len(fileFields) == 0 {
-			return fmt.Errorf("at least one --field or --field-file has to be specified")
-		}
-
-		// Read file fields
-		if len(fileFields) > 0 {
-			for field, path := range fileFields {
-				fc, err := os.ReadFile(path)
-				if err != nil {
-					return errors.Wrap(err, fmt.Sprintf("unable to read file at path '%s'", path))
-				}
-
-				fields[field] = strings.TrimSuffix(string(fc), "\n")
-			}
-		}
-
-		rawCred = &models.CredentialRaw{
-			Raw: fields,
-		}
-
-	case "aws":
-		accessKey, err := cyargs.GetCredentialAccessKey(cmd)
-		if err != nil {
-			return err
-		}
-
-		secretKey, err := cyargs.GetCredentialSecretKey(cmd)
-		if err != nil {
-			return err
-		}
-
-		rawCred = &models.CredentialRaw{
-			AccessKey: accessKey,
-			SecretKey: secretKey,
-		}
-
-	case "azure":
-		clientID, err := cyargs.GetCredentialClientID(cmd)
-		if err != nil {
-			return err
-		}
-
-		clientSecret, err := cyargs.GetCredentialClientSecret(cmd)
-		if err != nil {
-			return err
-		}
-
-		subscriptionID, err := cyargs.GetCredentialSubscriptionID(cmd)
-		if err != nil {
-			return err
-		}
-
-		tenantID, err := cyargs.GetCredentialTenantID(cmd)
-		if err != nil {
-			return err
-		}
-
-		rawCred = &models.CredentialRaw{
-			ClientID:       clientID,
-			ClientSecret:   clientSecret,
-			SubscriptionID: subscriptionID,
-			TenantID:       tenantID,
-		}
-	case "azure_storage":
-		accessKey, err := cyargs.GetCredentialAccessKey(cmd)
-		if err != nil {
-			return err
-		}
-
-		accountName, err := cyargs.GetCredentialAccountName(cmd)
-		if err != nil {
-			return err
-		}
-
-		rawCred = &models.CredentialRaw{
-			AccessKey:   accessKey,
-			AccountName: accountName,
-		}
-
-	case "gcp":
-		jsonKeyPath, err := cyargs.GetCredentialJSONKey(cmd)
-		if err != nil {
-			return err
-		}
-
-		jsonKey, err := os.ReadFile(jsonKeyPath)
-		if err != nil {
-			return errors.Wrap(err, "unable to read JSON key")
-		}
-
-		rawCred = &models.CredentialRaw{
-			JSONKey: string(jsonKey),
-		}
-	case "swift":
-		username, err := cyargs.GetCredentialUsername(cmd)
-		if err != nil {
-			return err
-		}
-
-		password, err := cyargs.GetCredentialPassword(cmd)
-		if err != nil {
-			return err
-		}
-
-		authURL, err := cyargs.GetCredentialAuthURL(cmd)
-		if err != nil {
-			return err
-		}
-
-		domainID, err := cyargs.GetCredentialDomainID(cmd)
-		if err != nil {
-			return err
-		}
-
-		tenantID, err := cyargs.GetCredentialTenantID(cmd)
-		if err != nil {
-			return err
-		}
-
-		rawCred = &models.CredentialRaw{
-			Username: username,
-			Password: password,
-			AuthURL:  authURL,
-			DomainID: domainID,
-			TenantID: tenantID,
-		}
-
-	case "elasticsearch":
-		caCertPath, err := cyargs.GetCredentialCaCert(cmd)
-		if err != nil {
-			return err
-		}
-
-		caCert, err := os.ReadFile(caCertPath)
-		if err != nil {
-			return errors.Wrap(err, "unable to read CA cert file")
-		}
-
-		username, err := cyargs.GetCredentialUsername(cmd)
-		if err != nil {
-			return err
-		}
-
-		password, err := cyargs.GetCredentialPassword(cmd)
-		if err != nil {
-			return err
-		}
-
-		rawCred = &models.CredentialRaw{
-			Username: username,
-			Password: password,
-			CaCert:   string(caCert),
-		}
-
-	default:
-		return fmt.Errorf("unsupported credential type %q", credentialTypes)
+	rawCred, err := BuildCredentialRaw(cmd, credentialType)
+	if err != nil {
+		return err
 	}
 
-	outCredential, _, err := m.CreateCredential(org, name, credentialTypes, rawCred, credentialPath, credential, description)
+	outCredential, _, err := m.CreateCredential(org, name, credentialType, rawCred, credentialPath, credential, description)
 	return cyout.PrintWithOptions(cmd, outCredential, err, "unable to create credential", printer.Options{})
 }
 
@@ -459,9 +247,9 @@ func defaultCredentialPath(path, canonical, name string) string {
 	return ""
 }
 
-func findCredentialForUpdate(credentials []*models.CredentialSimple, canonical, path, name string) *models.CredentialSimple {
+func findCredentialForUpdate(creds []*models.CredentialSimple, canonical, path, name string) *models.CredentialSimple {
 	if canonical != "" {
-		for _, credential := range credentials {
+		for _, credential := range creds {
 			if credential != nil && credential.Canonical != nil && *credential.Canonical == canonical {
 				return credential
 			}
@@ -469,7 +257,7 @@ func findCredentialForUpdate(credentials []*models.CredentialSimple, canonical, 
 	}
 
 	if path != "" {
-		for _, credential := range credentials {
+		for _, credential := range creds {
 			if credential != nil && credential.Path != nil && *credential.Path == path {
 				return credential
 			}
@@ -477,7 +265,7 @@ func findCredentialForUpdate(credentials []*models.CredentialSimple, canonical, 
 	}
 
 	if name != "" {
-		for _, credential := range credentials {
+		for _, credential := range creds {
 			if credential != nil && credential.Name != nil && *credential.Name == name {
 				return credential
 			}

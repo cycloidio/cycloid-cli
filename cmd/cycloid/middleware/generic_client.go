@@ -14,6 +14,88 @@ import (
 	"github.com/spf13/viper"
 )
 
+// genericRequestRaw sends an HTTP request and returns the raw response body on success.
+func (m *middleware) genericRequestRaw(req Request) (*http.Response, []byte, error) {
+	baseURL, err := url.Parse(m.api.Config.URL)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to parse base url from %q, this means that CY_API_URL is probably invalid: %w", m.api.Config.URL, err)
+	}
+
+	routeParts := make([]string, 0, len(req.Route)+1)
+	routeParts = append(routeParts, baseURL.Path)
+	routeParts = append(routeParts, req.Route...)
+	baseURL.Path = path.Join(routeParts...)
+
+	var rawQueryParts []string
+	if req.Query != nil {
+		qv, err := encodeQuery(req.Query)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to encode query params: %w", err)
+		}
+		if encoded := qv.Encode(); encoded != "" {
+			rawQueryParts = append(rawQueryParts, encoded)
+		}
+	}
+	if len(req.LHSFilters) > 0 {
+		rawQueryParts = append(rawQueryParts, buildLHSFilterQuery(req.LHSFilters))
+	}
+	if len(rawQueryParts) > 0 {
+		baseURL.RawQuery = strings.Join(rawQueryParts, "&")
+	}
+
+	var bodyBytes []byte
+	if req.Body != nil {
+		bodyBytes, err = json.Marshal(req.Body)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to serialize body to JSON for HTTP request: %w", err)
+		}
+	}
+
+	httpReq, err := http.NewRequest(req.Method, baseURL.String(), bytes.NewReader(bodyBytes))
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to create request with method %q and url %q: %w", req.Method, baseURL.String(), err)
+	}
+
+	for k, v := range req.Headers {
+		httpReq.Header.Add(k, v)
+	}
+	httpReq.Header.Set("Content-Type", "application/json")
+	if req.Accept != nil {
+		httpReq.Header.Set("Accept", *req.Accept)
+	}
+	if !req.NoAuth {
+		httpReq.Header.Set("Authorization", "Bearer "+m.api.GetToken(req.Organization))
+	}
+
+	debug := viper.GetString("verbosity") == "debug"
+	if debug {
+		httpDebugLogger.logRequest(httpReq, bodyBytes)
+	}
+
+	start := time.Now()
+	resp, err := m.GenericClient.Do(httpReq)
+	if err != nil {
+		return nil, nil, fmt.Errorf("HTTP request failed: %w", err)
+	}
+	elapsed := time.Since(start)
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, nil, fmt.Errorf("failed to read body from HTTP response: %w", err)
+	}
+
+	if debug {
+		httpDebugLogger.logResponse(resp, respBody, elapsed)
+	}
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return resp, respBody, newAPIResponseError(resp, respBody, sanitizeBody(bodyBytes), req.Method)
+	}
+
+	return resp, respBody, nil
+}
+
 // GenericRequest sends an HTTP request to the Cycloid API.
 // It adds default authentication headers and handles JSON marshaling/unmarshaling.
 // On non-2xx responses, it returns an *APIResponseError.

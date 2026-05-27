@@ -4,6 +4,8 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -18,26 +20,55 @@ import (
 // swagger:model UpdateEnvironment
 type UpdateEnvironment struct {
 
-	// color
-	// Max Length: 64
-	Color string `json:"color,omitempty"`
+	// Canonicals of cloud accounts to link. Omit or set to empty array to unlink all.
+	CloudAccountCanonicals []string `json:"cloud_account_canonicals"`
+
+	// Optional description of the environment
+	// Max Length: 1000
+	Description string `json:"description,omitempty"`
 
 	// name
 	// Required: true
 	// Max Length: 100
 	// Min Length: 1
 	Name *string `json:"name"`
+
+	// User canonical that owns this environment. Only the owner or an
+	// organization admin can update this field. When a user is the owner
+	// of an environment it has all the permissions on it.
+	//
+	Owner string `json:"owner,omitempty"`
+
+	// type
+	// Example: production
+	// Required: true
+	Type *string `json:"type"`
+
+	// Full replacement list of environment variables. Omit the field to leave existing variables untouched; pass an empty array to wipe all variables; pass a non-empty array to replace them.
+	Variables []*EnvironmentVariableItem `json:"variables"`
 }
 
 // Validate validates this update environment
 func (m *UpdateEnvironment) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateColor(formats); err != nil {
+	if err := m.validateCloudAccountCanonicals(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateDescription(formats); err != nil {
 		res = append(res, err)
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVariables(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -47,12 +78,32 @@ func (m *UpdateEnvironment) Validate(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *UpdateEnvironment) validateColor(formats strfmt.Registry) error {
-	if swag.IsZero(m.Color) { // not required
+func (m *UpdateEnvironment) validateCloudAccountCanonicals(formats strfmt.Registry) error {
+	if swag.IsZero(m.CloudAccountCanonicals) { // not required
 		return nil
 	}
 
-	if err := validate.MaxLength("color", "body", m.Color, 64); err != nil {
+	for i := 0; i < len(m.CloudAccountCanonicals); i++ {
+
+		if err := validate.MinLength("cloud_account_canonicals"+"."+strconv.Itoa(i), "body", m.CloudAccountCanonicals[i], 3); err != nil {
+			return err
+		}
+
+		if err := validate.MaxLength("cloud_account_canonicals"+"."+strconv.Itoa(i), "body", m.CloudAccountCanonicals[i], 100); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UpdateEnvironment) validateDescription(formats strfmt.Registry) error {
+	if swag.IsZero(m.Description) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("description", "body", m.Description, 1000); err != nil {
 		return err
 	}
 
@@ -76,8 +127,85 @@ func (m *UpdateEnvironment) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this update environment based on context it is used
+func (m *UpdateEnvironment) validateType(formats strfmt.Registry) error {
+
+	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *UpdateEnvironment) validateVariables(formats strfmt.Registry) error {
+	if swag.IsZero(m.Variables) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Variables); i++ {
+		if swag.IsZero(m.Variables[i]) { // not required
+			continue
+		}
+
+		if m.Variables[i] != nil {
+			if err := m.Variables[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("variables" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("variables" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update environment based on the context it is used
 func (m *UpdateEnvironment) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateVariables(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UpdateEnvironment) contextValidateVariables(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Variables); i++ {
+
+		if m.Variables[i] != nil {
+
+			if swag.IsZero(m.Variables[i]) { // not required
+				return nil
+			}
+
+			if err := m.Variables[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("variables" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("variables" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 

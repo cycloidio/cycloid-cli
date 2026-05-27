@@ -148,13 +148,31 @@ type Middleware interface {
 	DeleteProject(org, project string, opts DeleteOptions) (*http.Response, error)
 	GetProject(org string, project string) (*models.Project, *http.Response, error)
 	ListProjects(org string, filters ...LHSFilter) ([]*models.Project, *http.Response, error)
-	ListProjectsEnv(org, project string, filters ...LHSFilter) ([]*models.Environment, *http.Response, error)
+	ListProjectEnvs(org, project string, filters ...LHSFilter) ([]*models.ProjectEnvironment, *http.Response, error)
 
-	// Env
-	GetEnv(org, project, env string) (*models.Environment, *http.Response, error)
-	CreateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error)
-	UpdateEnv(org, project, env, envName, color string) (*models.Environment, *http.Response, error)
-	DeleteEnv(org, project, env string, opts DeleteOptions) (*http.Response, error)
+	// Env (org-scoped)
+	ListOrgEnvs(org string, filters ...LHSFilter) ([]*models.Environment, *http.Response, error)
+	GetOrgEnv(org, env string) (*models.Environment, *http.Response, error)
+	CreateOrgEnv(org string, body *models.NewEnvironment) (*models.Environment, *http.Response, error)
+	UpdateOrgEnv(org, env string, body *models.UpdateEnvironment) (*models.Environment, *http.Response, error)
+	DeleteOrgEnv(org, env string) (*http.Response, error)
+	LinkEnvToProject(org, project, env string) (*http.Response, error)
+	UnlinkEnvFromProject(org, project, env string, opts DeleteOptions) (*http.Response, error)
+
+	// Cloud accounts
+	ListCloudAccounts(org string) ([]*models.CloudAccountDetail, *http.Response, error)
+	GetCloudAccount(org, canonical string) (*models.CloudAccountDetail, *http.Response, error)
+	CreateCloudAccount(org string, body *models.NewCloudAccount) (*models.CloudAccount, *http.Response, error)
+	CreateCloudAccountWithCredentials(org string, body *models.NewCloudAccountWithCredentials) (*models.CloudAccount, *http.Response, error)
+	UpdateCloudAccount(org, canonical string, body *models.UpdateCloudAccount) (*models.CloudAccount, *http.Response, error)
+	DeleteCloudAccount(org, canonical string) (*http.Response, error)
+
+	// Environment types
+	ListEnvironmentTypes(org string) ([]*models.EnvironmentType, *http.Response, error)
+	GetEnvironmentType(org, canonical string) (*models.EnvironmentType, *http.Response, error)
+	CreateEnvironmentType(org string, body *models.NewEnvironmentType) (*models.EnvironmentType, *http.Response, error)
+	UpdateEnvironmentType(org, canonical string, body *models.UpdateEnvironmentType) (*models.EnvironmentType, *http.Response, error)
+	DeleteEnvironmentType(org, canonical string) (*http.Response, error)
 
 	// Component
 	CreateOrUpdateComponent(org, project, env, component, description, name, stackRef, versionTag, versionBranch, versionCommitHash, useCase, cloudProvider string, vars models.FormVariables) (*models.Component, *http.Response, error)

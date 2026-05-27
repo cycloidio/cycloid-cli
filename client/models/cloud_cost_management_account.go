@@ -40,9 +40,6 @@ type CloudCostManagementAccount struct {
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at"`
 
-	// credential
-	Credential *CredentialSimple `json:"credential,omitempty"`
-
 	// enabled
 	// Required: true
 	Enabled *bool `json:"enabled"`
@@ -66,9 +63,6 @@ type CloudCostManagementAccount struct {
 	// A user-defined name for the account
 	// Required: true
 	Name *string `json:"name"`
-
-	// The ID of the parent account on the CP
-	ParentAccountID string `json:"parent_account_id,omitempty"`
 
 	// phase
 	// Enum: ["green","blue"]
@@ -108,10 +102,6 @@ func (m *CloudCostManagementAccount) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCreatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateCredential(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -219,29 +209,6 @@ func (m *CloudCostManagementAccount) validateCreatedAt(formats strfmt.Registry) 
 
 	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (m *CloudCostManagementAccount) validateCredential(formats strfmt.Registry) error {
-	if swag.IsZero(m.Credential) { // not required
-		return nil
-	}
-
-	if m.Credential != nil {
-		if err := m.Credential.Validate(formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("credential")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("credential")
-			}
-
-			return err
-		}
 	}
 
 	return nil
@@ -434,10 +401,6 @@ func (m *CloudCostManagementAccount) ContextValidate(ctx context.Context, format
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateCredential(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateExternalBackend(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -460,31 +423,6 @@ func (m *CloudCostManagementAccount) contextValidateCloudProvider(ctx context.Co
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
-			}
-
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (m *CloudCostManagementAccount) contextValidateCredential(ctx context.Context, formats strfmt.Registry) error {
-
-	if m.Credential != nil {
-
-		if swag.IsZero(m.Credential) { // not required
-			return nil
-		}
-
-		if err := m.Credential.ContextValidate(ctx, formats); err != nil {
-			ve := new(errors.Validation)
-			if stderrors.As(err, &ve) {
-				return ve.ValidateName("credential")
-			}
-			ce := new(errors.CompositeError)
-			if stderrors.As(err, &ce) {
-				return ce.ValidateName("credential")
 			}
 
 			return err

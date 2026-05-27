@@ -11,9 +11,11 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalogrepositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/cloudaccounts"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/configrepositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/credentials"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environmenttypes"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environments"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/externalbackends"
@@ -167,6 +169,8 @@ func AttachCommands(cmd *cobra.Command) {
 		plugins.NewCommands(),
 		projects.NewCommands(),
 		environments.NewCommands(),
+		environmenttypes.NewCommands(),
+		cloudaccounts.NewCommands(),
 		components.NewCommands(),
 		kpis.NewCommands(),
 		roles.NewCommands(),

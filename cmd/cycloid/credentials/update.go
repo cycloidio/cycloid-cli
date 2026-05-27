@@ -2,13 +2,9 @@ package credentials
 
 import (
 	"fmt"
-	"os"
-	"strings"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
@@ -52,9 +48,8 @@ func NewUpdateCommand() *cobra.Command {
 	cyargs.AddCredentialDescriptionPersistentFlag(cmd)
 	cyargs.AddCredentialCanonicalPersistentFlag(cmd)
 	cyargs.AddCredentialPathPersistentFlag(cmd)
-	cmd.PersistentFlags().Bool("update", false, "update this credential if it already exists.")
-	err := cmd.PersistentFlags().MarkHidden("update")
-	if err != nil {
+	cmd.PersistentFlags().Bool(cyargs.UpdateFlag, false, "update this credential if it already exists.")
+	if err := cmd.PersistentFlags().MarkHidden(cyargs.UpdateFlag); err != nil {
 		panic(fmt.Sprintf("We should be able to mark this flag hidden: %s", err.Error()))
 	}
 
@@ -212,9 +207,6 @@ func update(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	var err error
-	var rawCred *models.CredentialRaw
-
 	credT := cmd.CalledAs()
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
@@ -241,189 +233,9 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	switch credT {
-	case "ssh":
-		sshKeyPath, err := cyargs.GetCredentialSSHKey(cmd)
-		if err != nil {
-			return err
-		}
-
-		sshKey, err := os.ReadFile(sshKeyPath)
-		if err != nil {
-			return errors.Wrap(err, "unable to read SSH key")
-		}
-
-		rawCred = &models.CredentialRaw{
-			SSHKey: string(sshKey),
-		}
-	case "basic_auth":
-		username, err := cyargs.GetCredentialUsername(cmd)
-		if err != nil {
-			return err
-		}
-		password, err := cyargs.GetCredentialPassword(cmd)
-		if err != nil {
-			return err
-		}
-		rawCred = &models.CredentialRaw{
-			Username: username,
-			Password: password,
-		}
-	case "custom":
-		fields, err := cyargs.GetCredentialField(cmd)
-		if err != nil {
-			return err
-		}
-		fileFields, err := cyargs.GetCredentialFieldFile(cmd)
-		if err != nil {
-			return err
-		}
-
-		if len(fields) == 0 && len(fileFields) == 0 {
-			return fmt.Errorf("at least one --field or --field-file has to be specified")
-		}
-
-		// Read file fields
-		if len(fileFields) > 0 {
-			for f, p := range fileFields {
-				fc, err := os.ReadFile(p)
-				if err != nil {
-					return errors.Wrap(err, fmt.Sprintf("unable to read file path %s", p))
-				}
-
-				fields[f] = strings.TrimSuffix(string(fc), "\n")
-			}
-		}
-
-		rawCred = &models.CredentialRaw{
-			Raw: fields,
-		}
-	case "aws":
-		accessKey, err := cyargs.GetCredentialAccessKey(cmd)
-		if err != nil {
-			return err
-		}
-		secretKey, err := cyargs.GetCredentialSecretKey(cmd)
-		if err != nil {
-			return err
-		}
-		rawCred = &models.CredentialRaw{
-			AccessKey: accessKey,
-			SecretKey: secretKey,
-		}
-	case "azure":
-		clientID, err := cyargs.GetCredentialClientID(cmd)
-		if err != nil {
-			return err
-		}
-		clientSecret, err := cyargs.GetCredentialClientSecret(cmd)
-		if err != nil {
-			return err
-		}
-		subscriptionID, err := cyargs.GetCredentialSubscriptionID(cmd)
-		if err != nil {
-			return err
-		}
-		tenantID, err := cyargs.GetCredentialTenantID(cmd)
-		if err != nil {
-			return err
-		}
-		rawCred = &models.CredentialRaw{
-			ClientID:       clientID,
-			ClientSecret:   clientSecret,
-			SubscriptionID: subscriptionID,
-			TenantID:       tenantID,
-		}
-	case "azure_storage":
-		accessKey, err := cyargs.GetCredentialAccessKey(cmd)
-		if err != nil {
-			return err
-		}
-		accountName, err := cyargs.GetCredentialAccountName(cmd)
-		if err != nil {
-			return err
-		}
-		rawCred = &models.CredentialRaw{
-			AccessKey:   accessKey,
-			AccountName: accountName,
-		}
-	case "gcp":
-		jsonKeyPath, err := cyargs.GetCredentialJSONKey(cmd)
-		if err != nil {
-			return err
-		}
-
-		jsonKey, err := os.ReadFile(jsonKeyPath)
-		if err != nil {
-			return errors.Wrap(err, "unable to read JSON key")
-		}
-
-		rawCred = &models.CredentialRaw{
-			JSONKey: string(jsonKey),
-		}
-	case "swift":
-		username, err := cyargs.GetCredentialUsername(cmd)
-		if err != nil {
-			return err
-		}
-
-		password, err := cyargs.GetCredentialPassword(cmd)
-		if err != nil {
-			return err
-		}
-
-		authURL, err := cyargs.GetCredentialAuthURL(cmd)
-		if err != nil {
-			return err
-		}
-
-		domainID, err := cyargs.GetCredentialDomainID(cmd)
-		if err != nil {
-			return err
-		}
-
-		tenantID, err := cyargs.GetCredentialTenantID(cmd)
-		if err != nil {
-			return err
-		}
-
-		rawCred = &models.CredentialRaw{
-			Username: username,
-			Password: password,
-			AuthURL:  authURL,
-			DomainID: domainID,
-			TenantID: tenantID,
-		}
-
-	case "elasticsearch":
-		caCertPath, err := cyargs.GetCredentialCaCert(cmd)
-		if err != nil {
-			return err
-		}
-
-		caCert, err := os.ReadFile(caCertPath)
-		if err != nil {
-			return errors.Wrap(err, "unable to read CA cert file")
-		}
-
-		username, err := cyargs.GetCredentialUsername(cmd)
-		if err != nil {
-			return err
-		}
-
-		password, err := cyargs.GetCredentialPassword(cmd)
-		if err != nil {
-			return err
-		}
-
-		rawCred = &models.CredentialRaw{
-			Username: username,
-			Password: password,
-			CaCert:   string(caCert),
-		}
-
-	default:
-		return fmt.Errorf("unsupported credential type: %s", credT)
+	rawCred, err := BuildCredentialRaw(cmd, credT)
+	if err != nil {
+		return err
 	}
 
 	outCred, _, err := m.UpdateCredential(org, name, credT, rawCred, credentialPath, credential, description)

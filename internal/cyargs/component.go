@@ -23,8 +23,10 @@ func GetComponentDescription(cmd *cobra.Command) (*string, error) {
 	return &description, nil
 }
 
-func AddCloudProviderFlag(cmd *cobra.Command) {
-	cmd.Flags().String("cloud-provider", "", "set the cloud provider of the component")
+func AddCloudProviderFlag(cmd *cobra.Command) string {
+	flagName := "cloud-provider"
+	cmd.Flags().String(flagName, "", "set the cloud provider of the component")
+	return flagName
 }
 
 func GetCloudProvider(cmd *cobra.Command) (*string, error) {
