@@ -23,8 +23,9 @@ func TestCloudAccountCRUD(t *testing.T) {
 	require.NoError(t, err, "CreateCredential should succeed")
 	require.NotNil(t, cred)
 	defer func() {
-		_, err := m.DeleteCredential(config.Org, *cred.Canonical)
-		require.NoError(t, err, "DeleteCredential cleanup should succeed")
+		// The backend cascades credential deletion when a cloud account is deleted,
+		// so a 404 here is expected when the cloud account cleanup ran first.
+		_, _ = m.DeleteCredential(config.Org, *cred.Canonical)
 	}()
 
 	// Create
