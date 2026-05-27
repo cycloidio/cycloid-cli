@@ -67,7 +67,7 @@ func create(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	_, _, getErr := m.GetOrganization(canonical)
+	existingOrg, _, getErr := m.GetOrganization(canonical)
 	exists := getErr == nil
 	if getErr != nil {
 		var apiErr *middleware.APIResponseError
@@ -84,6 +84,15 @@ func create(cmd *cobra.Command, args []string) error {
 
 	var outOrg *models.Organization
 	if exists {
+		if parentOrg != "" && (existingOrg.ParentCanonical == nil || *existingOrg.ParentCanonical != parentOrg) {
+			existingParent := ""
+			if existingOrg.ParentCanonical != nil {
+				existingParent = *existingOrg.ParentCanonical
+			}
+			return cyout.PrintWithOptions(cmd, nil,
+				fmt.Errorf("organization %q already exists under parent %q; cannot change parent with --update", canonical, existingParent),
+				"failed to update organization", printer.Options{})
+		}
 		outOrg, _, err = m.UpdateOrganization(canonical, name)
 		return cyout.PrintWithOptions(cmd, outOrg, err, "failed to update organization", printer.Options{})
 	}
