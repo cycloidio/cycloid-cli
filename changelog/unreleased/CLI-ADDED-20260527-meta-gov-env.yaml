@@ -1,8 +1,0 @@
-component: Environments
-kind: ADDED
-body: "Org-scoped environment management commands: `cy environment`, `cy cloud-account`, and `cy environment-type`"
-time: 2026-05-27T00:00:00Z
-custom:
-  DETAILS: "New commands let you create, update, get, list, and delete org-level environments (decoupled from pipelines), attach cloud accounts, set environment types, and link/unlink environments to projects. Environment type on create is now optional — the API auto-detects it from canonical keywords."
-  PR: "445"
-  TYPE: CLI
