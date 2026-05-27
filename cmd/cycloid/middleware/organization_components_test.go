@@ -11,6 +11,9 @@ import (
 )
 
 func TestComponentCRUD(t *testing.T) {
+	if config.Environment == nil {
+		t.Skip("skipping: env fixture unavailable")
+	}
 	m := config.Middleware
 	for index := range 2 { // Made only two to speed up tests
 		var (

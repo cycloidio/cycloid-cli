@@ -10,6 +10,9 @@ import (
 )
 
 func TestComponentPipeline(t *testing.T) {
+	if config.Environment == nil {
+		t.Skip("skipping: env fixture unavailable")
+	}
 	m := config.Middleware
 
 	component, err := config.NewTestComponent(
