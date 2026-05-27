@@ -13,13 +13,11 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
-const defaultEnvType = "production" // TODO(meta-gov-env): remove once backend infers type from canonical
-
 func envTypeFromCurrent(current *models.Environment) string {
 	if current != nil && current.EnvironmentType != nil && current.EnvironmentType.Canonical != nil {
 		return *current.EnvironmentType.Canonical
 	}
-	return defaultEnvType
+	return ""
 }
 
 func ownerFromCurrent(current *models.Environment) string {
@@ -50,21 +48,21 @@ func variablesFromCurrent(current *models.Environment) []*models.EnvironmentVari
 }
 
 func buildNewEnvironment(cmd *cobra.Command, name, canonical string, current *models.Environment) (*models.NewEnvironment, error) {
-	envType := defaultEnvType
+	body := &models.NewEnvironment{
+		Canonical: canonical,
+		Name:      ptr.Ptr(name),
+	}
+
 	if cyargs.IsSet(cmd, "type") {
 		value, err := cyargs.GetEnvironmentType(cmd)
 		if err != nil {
 			return nil, err
 		}
-		envType = value
+		body.Type = ptr.Ptr(value)
 	} else if current != nil {
-		envType = envTypeFromCurrent(current)
-	}
-
-	body := &models.NewEnvironment{
-		Canonical: canonical,
-		Name:      ptr.Ptr(name),
-		Type:      ptr.Ptr(envType),
+		if t := envTypeFromCurrent(current); t != "" {
+			body.Type = ptr.Ptr(t)
+		}
 	}
 
 	if cyargs.IsSet(cmd, "description") {
@@ -122,18 +120,18 @@ func buildUpdateEnvironment(cmd *cobra.Command, current *models.Environment) (*m
 		}
 	}
 
-	envType := envTypeFromCurrent(current)
+	body := &models.UpdateEnvironment{
+		Name: ptr.Ptr(name),
+	}
+
 	if cyargs.IsSet(cmd, "type") {
 		value, err := cyargs.GetEnvironmentType(cmd)
 		if err != nil {
 			return nil, err
 		}
-		envType = value
-	}
-
-	body := &models.UpdateEnvironment{
-		Name: ptr.Ptr(name),
-		Type: ptr.Ptr(envType),
+		body.Type = ptr.Ptr(value)
+	} else if t := envTypeFromCurrent(current); t != "" {
+		body.Type = ptr.Ptr(t)
 	}
 
 	if cyargs.IsSet(cmd, "description") {
