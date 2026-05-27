@@ -109,9 +109,6 @@ func TestLHSFilterDiscovery(t *testing.T) {
 	})
 
 	t.Run("Components", func(t *testing.T) {
-		if config.Component == nil || config.Environment == nil {
-			t.Skip("skipping: env/component fixtures unavailable")
-		}
 		knownCanonical := *config.Component.Canonical
 		proj := *config.Project.Canonical
 		env := *config.Environment.Canonical

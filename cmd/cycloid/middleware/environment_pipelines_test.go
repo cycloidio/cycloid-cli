@@ -8,9 +8,6 @@ import (
 )
 
 func TestGetEnvPipelines(t *testing.T) {
-	if config.Environment == nil {
-		t.Skip("skipping: env fixture unavailable")
-	}
 	m := config.Middleware
 
 	pipelines, _, err := m.GetEnvPipelines(config.Org, *config.Project.Canonical, *config.Environment.Canonical)

@@ -10,9 +10,6 @@ import (
 )
 
 func TestGetProjectPipelines(t *testing.T) {
-	if config.Component == nil {
-		t.Skip("skipping: component fixture unavailable")
-	}
 	m := config.Middleware
 
 	got, _, err := m.GetProjectPipelines(config.Org, *config.Project.Canonical)

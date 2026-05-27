@@ -17,9 +17,6 @@ var (
 )
 
 func TestGetOrgPipelines(t *testing.T) {
-	if config.Environment == nil || config.Component == nil {
-		t.Skip("skipping: env/component fixtures unavailable")
-	}
 	m := config.Middleware
 
 	pipelineName := fmt.Sprintf("%s-%s-%s", *config.Project.Canonical, *config.Environment.Canonical, *config.Component.Canonical)
