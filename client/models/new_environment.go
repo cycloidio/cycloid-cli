@@ -45,10 +45,14 @@ type NewEnvironment struct {
 	//
 	Owner string `json:"owner,omitempty"`
 
-	// type
+	// Canonical of the environment type. When omitted, it is auto-detected
+	// from the environment canonical by matching the keywords
+	// `production`/`prod`/`prd`/`live`, `pre-prod`/`preprod`/`staging`/`stage`/`stg`/`uat`,
+	// `development`/`dev`/`test`/`qa`/`sandbox`, or `preview`/`prev`.
+	// When no keyword is recognised, it defaults to `production`.
+	//
 	// Example: production
-	// Required: true
-	Type *string `json:"type"`
+	Type string `json:"type,omitempty"`
 
 	// Environment variables to attach to the new environment. Keys must not contain dots and must include at least one alphanumeric character. Omit or pass an empty array to create the environment without variables.
 	Variables []*EnvironmentVariableItem `json:"variables"`
@@ -71,10 +75,6 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -151,15 +151,6 @@ func (m *NewEnvironment) validateName(formats strfmt.Registry) error {
 	}
 
 	if err := validate.MaxLength("name", "body", *m.Name, 100); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *NewEnvironment) validateType(formats strfmt.Registry) error {
-
-	if err := validate.Required("type", "body", m.Type); err != nil {
 		return err
 	}
 
