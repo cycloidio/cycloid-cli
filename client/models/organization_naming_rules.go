@@ -7,7 +7,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -78,7 +79,7 @@ func (m *OrganizationNamingRules) Validate(formats strfmt.Registry) error {
 }
 
 func (m *OrganizationNamingRules) validateComponentMessage(formats strfmt.Registry) error {
-	if swag.IsZero(m.ComponentMessage) { // not required
+	if typeutils.IsZero(m.ComponentMessage) { // not required
 		return nil
 	}
 
@@ -90,7 +91,7 @@ func (m *OrganizationNamingRules) validateComponentMessage(formats strfmt.Regist
 }
 
 func (m *OrganizationNamingRules) validateComponentRegex(formats strfmt.Registry) error {
-	if swag.IsZero(m.ComponentRegex) { // not required
+	if typeutils.IsZero(m.ComponentRegex) { // not required
 		return nil
 	}
 
@@ -102,7 +103,7 @@ func (m *OrganizationNamingRules) validateComponentRegex(formats strfmt.Registry
 }
 
 func (m *OrganizationNamingRules) validateEnvMessage(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvMessage) { // not required
+	if typeutils.IsZero(m.EnvMessage) { // not required
 		return nil
 	}
 
@@ -114,7 +115,7 @@ func (m *OrganizationNamingRules) validateEnvMessage(formats strfmt.Registry) er
 }
 
 func (m *OrganizationNamingRules) validateEnvRegex(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvRegex) { // not required
+	if typeutils.IsZero(m.EnvRegex) { // not required
 		return nil
 	}
 
@@ -126,7 +127,7 @@ func (m *OrganizationNamingRules) validateEnvRegex(formats strfmt.Registry) erro
 }
 
 func (m *OrganizationNamingRules) validateProjectMessage(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectMessage) { // not required
+	if typeutils.IsZero(m.ProjectMessage) { // not required
 		return nil
 	}
 
@@ -138,7 +139,7 @@ func (m *OrganizationNamingRules) validateProjectMessage(formats strfmt.Registry
 }
 
 func (m *OrganizationNamingRules) validateProjectRegex(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectRegex) { // not required
+	if typeutils.IsZero(m.ProjectRegex) { // not required
 		return nil
 	}
 
@@ -159,13 +160,13 @@ func (m *OrganizationNamingRules) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *OrganizationNamingRules) UnmarshalBinary(b []byte) error {
 	var res OrganizationNamingRules
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

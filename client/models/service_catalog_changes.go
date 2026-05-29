@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -76,7 +77,7 @@ func (m *ServiceCatalogChanges) validateCreated(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Created); i++ {
-		if swag.IsZero(m.Created[i]) { // not required
+		if typeutils.IsZero(m.Created[i]) { // not required
 			continue
 		}
 
@@ -107,7 +108,7 @@ func (m *ServiceCatalogChanges) validateDeleted(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Deleted); i++ {
-		if swag.IsZero(m.Deleted[i]) { // not required
+		if typeutils.IsZero(m.Deleted[i]) { // not required
 			continue
 		}
 
@@ -132,12 +133,12 @@ func (m *ServiceCatalogChanges) validateDeleted(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalogChanges) validateErrored(formats strfmt.Registry) error {
-	if swag.IsZero(m.Errored) { // not required
+	if typeutils.IsZero(m.Errored) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Errored); i++ {
-		if swag.IsZero(m.Errored[i]) { // not required
+		if typeutils.IsZero(m.Errored[i]) { // not required
 			continue
 		}
 
@@ -168,7 +169,7 @@ func (m *ServiceCatalogChanges) validateUpdated(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Updated); i++ {
-		if swag.IsZero(m.Updated[i]) { // not required
+		if typeutils.IsZero(m.Updated[i]) { // not required
 			continue
 		}
 
@@ -193,12 +194,12 @@ func (m *ServiceCatalogChanges) validateUpdated(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalogChanges) validateVersions(formats strfmt.Registry) error {
-	if swag.IsZero(m.Versions) { // not required
+	if typeutils.IsZero(m.Versions) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Versions); i++ {
-		if swag.IsZero(m.Versions[i]) { // not required
+		if typeutils.IsZero(m.Versions[i]) { // not required
 			continue
 		}
 
@@ -258,7 +259,7 @@ func (m *ServiceCatalogChanges) contextValidateCreated(ctx context.Context, form
 
 		if m.Created[i] != nil {
 
-			if swag.IsZero(m.Created[i]) { // not required
+			if typeutils.IsZero(m.Created[i]) { // not required
 				return nil
 			}
 
@@ -287,7 +288,7 @@ func (m *ServiceCatalogChanges) contextValidateDeleted(ctx context.Context, form
 
 		if m.Deleted[i] != nil {
 
-			if swag.IsZero(m.Deleted[i]) { // not required
+			if typeutils.IsZero(m.Deleted[i]) { // not required
 				return nil
 			}
 
@@ -316,7 +317,7 @@ func (m *ServiceCatalogChanges) contextValidateErrored(ctx context.Context, form
 
 		if m.Errored[i] != nil {
 
-			if swag.IsZero(m.Errored[i]) { // not required
+			if typeutils.IsZero(m.Errored[i]) { // not required
 				return nil
 			}
 
@@ -345,7 +346,7 @@ func (m *ServiceCatalogChanges) contextValidateUpdated(ctx context.Context, form
 
 		if m.Updated[i] != nil {
 
-			if swag.IsZero(m.Updated[i]) { // not required
+			if typeutils.IsZero(m.Updated[i]) { // not required
 				return nil
 			}
 
@@ -374,7 +375,7 @@ func (m *ServiceCatalogChanges) contextValidateVersions(ctx context.Context, for
 
 		if m.Versions[i] != nil {
 
-			if swag.IsZero(m.Versions[i]) { // not required
+			if typeutils.IsZero(m.Versions[i]) { // not required
 				return nil
 			}
 
@@ -402,13 +403,13 @@ func (m *ServiceCatalogChanges) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ServiceCatalogChanges) UnmarshalBinary(b []byte) error {
 	var res ServiceCatalogChanges
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

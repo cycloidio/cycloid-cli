@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -174,7 +175,7 @@ func (m *MemberOrg) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateEmail(formats strfmt.Registry) error {
-	if swag.IsZero(m.Email) { // not required
+	if typeutils.IsZero(m.Email) { // not required
 		return nil
 	}
 
@@ -199,7 +200,7 @@ func (m *MemberOrg) validateID(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateInvitationEmail(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitationEmail) { // not required
+	if typeutils.IsZero(m.InvitationEmail) { // not required
 		return nil
 	}
 
@@ -211,7 +212,7 @@ func (m *MemberOrg) validateInvitationEmail(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateInvitationResentAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitationResentAt) { // not required
+	if typeutils.IsZero(m.InvitationResentAt) { // not required
 		return nil
 	}
 
@@ -255,7 +256,7 @@ func (m *MemberOrg) validateInvitationStateEnum(path, location string, value str
 }
 
 func (m *MemberOrg) validateInvitationState(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitationState) { // not required
+	if typeutils.IsZero(m.InvitationState) { // not required
 		return nil
 	}
 
@@ -268,7 +269,7 @@ func (m *MemberOrg) validateInvitationState(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateInvitedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitedAt) { // not required
+	if typeutils.IsZero(m.InvitedAt) { // not required
 		return nil
 	}
 
@@ -280,7 +281,7 @@ func (m *MemberOrg) validateInvitedAt(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateInvitedBy(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitedBy) { // not required
+	if typeutils.IsZero(m.InvitedBy) { // not required
 		return nil
 	}
 
@@ -303,7 +304,7 @@ func (m *MemberOrg) validateInvitedBy(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateLastLoginAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.LastLoginAt) { // not required
+	if typeutils.IsZero(m.LastLoginAt) { // not required
 		return nil
 	}
 
@@ -347,7 +348,7 @@ func (m *MemberOrg) validateLocaleEnum(path, location string, value string) erro
 }
 
 func (m *MemberOrg) validateLocale(formats strfmt.Registry) error {
-	if swag.IsZero(m.Locale) { // not required
+	if typeutils.IsZero(m.Locale) { // not required
 		return nil
 	}
 
@@ -360,7 +361,7 @@ func (m *MemberOrg) validateLocale(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validatePictureURL(formats strfmt.Registry) error {
-	if swag.IsZero(m.PictureURL) { // not required
+	if typeutils.IsZero(m.PictureURL) { // not required
 		return nil
 	}
 
@@ -396,12 +397,12 @@ func (m *MemberOrg) validateRole(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateTeams(formats strfmt.Registry) error {
-	if swag.IsZero(m.Teams) { // not required
+	if typeutils.IsZero(m.Teams) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Teams); i++ {
-		if swag.IsZero(m.Teams[i]) { // not required
+		if typeutils.IsZero(m.Teams[i]) { // not required
 			continue
 		}
 
@@ -426,7 +427,7 @@ func (m *MemberOrg) validateTeams(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+	if typeutils.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
@@ -438,7 +439,7 @@ func (m *MemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *MemberOrg) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
+	if typeutils.IsZero(m.Username) { // not required
 		return nil
 	}
 
@@ -483,7 +484,7 @@ func (m *MemberOrg) contextValidateInvitedBy(ctx context.Context, formats strfmt
 
 	if m.InvitedBy != nil {
 
-		if swag.IsZero(m.InvitedBy) { // not required
+		if typeutils.IsZero(m.InvitedBy) { // not required
 			return nil
 		}
 
@@ -531,7 +532,7 @@ func (m *MemberOrg) contextValidateTeams(ctx context.Context, formats strfmt.Reg
 
 		if m.Teams[i] != nil {
 
-			if swag.IsZero(m.Teams[i]) { // not required
+			if typeutils.IsZero(m.Teams[i]) { // not required
 				return nil
 			}
 
@@ -559,13 +560,13 @@ func (m *MemberOrg) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *MemberOrg) UnmarshalBinary(b []byte) error {
 	var res MemberOrg
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

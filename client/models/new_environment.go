@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -45,10 +46,14 @@ type NewEnvironment struct {
 	//
 	Owner string `json:"owner,omitempty"`
 
-	// type
+	// Canonical of the environment type. When omitted, it is auto-detected
+	// from the environment canonical by matching the keywords
+	// `production`/`prod`/`prd`/`live`, `pre-prod`/`preprod`/`staging`/`stage`/`stg`/`uat`,
+	// `development`/`dev`/`test`/`qa`/`sandbox`, or `preview`/`prev`.
+	// When no keyword is recognised, it defaults to `production`.
+	//
 	// Example: production
-	// Required: true
-	Type *string `json:"type"`
+	Type string `json:"type,omitempty"`
 
 	// Environment variables to attach to the new environment. Keys must not contain dots and must include at least one alphanumeric character. Omit or pass an empty array to create the environment without variables.
 	Variables []*EnvironmentVariableItem `json:"variables"`
@@ -74,10 +79,6 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateType(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateVariables(formats); err != nil {
 		res = append(res, err)
 	}
@@ -89,7 +90,7 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.Canonical) { // not required
+	if typeutils.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
@@ -109,7 +110,7 @@ func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *NewEnvironment) validateCloudAccountCanonicals(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudAccountCanonicals) { // not required
+	if typeutils.IsZero(m.CloudAccountCanonicals) { // not required
 		return nil
 	}
 
@@ -129,7 +130,7 @@ func (m *NewEnvironment) validateCloudAccountCanonicals(formats strfmt.Registry)
 }
 
 func (m *NewEnvironment) validateDescription(formats strfmt.Registry) error {
-	if swag.IsZero(m.Description) { // not required
+	if typeutils.IsZero(m.Description) { // not required
 		return nil
 	}
 
@@ -157,22 +158,13 @@ func (m *NewEnvironment) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
-func (m *NewEnvironment) validateType(formats strfmt.Registry) error {
-
-	if err := validate.Required("type", "body", m.Type); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *NewEnvironment) validateVariables(formats strfmt.Registry) error {
-	if swag.IsZero(m.Variables) { // not required
+	if typeutils.IsZero(m.Variables) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Variables); i++ {
-		if swag.IsZero(m.Variables[i]) { // not required
+		if typeutils.IsZero(m.Variables[i]) { // not required
 			continue
 		}
 
@@ -216,7 +208,7 @@ func (m *NewEnvironment) contextValidateVariables(ctx context.Context, formats s
 
 		if m.Variables[i] != nil {
 
-			if swag.IsZero(m.Variables[i]) { // not required
+			if typeutils.IsZero(m.Variables[i]) { // not required
 				return nil
 			}
 
@@ -244,13 +236,13 @@ func (m *NewEnvironment) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewEnvironment) UnmarshalBinary(b []byte) error {
 	var res NewEnvironment
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

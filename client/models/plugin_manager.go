@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -244,49 +244,18 @@ func (m *PluginManager) ContextValidate(ctx context.Context, formats strfmt.Regi
 	return nil
 }
 
-// UnmarshalJSON implements json.Unmarshaler with a workaround for backends that
-// serialize the status field as an integer (iota) instead of a string. This is
-// a known API bug in v6.10.8-rc (fix is entities/plugin.go:83 in meta-gov-env).
-// TODO: remove after meta-gov-env merges to develop and swagger client is regenerated.
-func (m *PluginManager) UnmarshalJSON(b []byte) error {
-	var raw map[string]json.RawMessage
-	if err := json.Unmarshal(b, &raw); err != nil {
-		return err
-	}
-	if statusRaw, ok := raw["status"]; ok && len(statusRaw) > 0 && statusRaw[0] != '"' {
-		var idx int
-		if err := json.Unmarshal(statusRaw, &idx); err == nil {
-			names := []string{"offline", "connected"}
-			if idx >= 0 && idx < len(names) {
-				raw["status"] = json.RawMessage(`"` + names[idx] + `"`)
-			}
-		}
-	}
-	normalized, err := json.Marshal(raw)
-	if err != nil {
-		return err
-	}
-	type alias PluginManager
-	var a alias
-	if err := json.Unmarshal(normalized, &a); err != nil {
-		return err
-	}
-	*m = PluginManager(a)
-	return nil
-}
-
 // MarshalBinary interface implementation
 func (m *PluginManager) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *PluginManager) UnmarshalBinary(b []byte) error {
 	var res PluginManager
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

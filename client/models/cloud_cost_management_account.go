@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -224,7 +225,7 @@ func (m *CloudCostManagementAccount) validateEnabled(formats strfmt.Registry) er
 }
 
 func (m *CloudCostManagementAccount) validateExternalBackend(formats strfmt.Registry) error {
-	if swag.IsZero(m.ExternalBackend) { // not required
+	if typeutils.IsZero(m.ExternalBackend) { // not required
 		return nil
 	}
 
@@ -260,7 +261,7 @@ func (m *CloudCostManagementAccount) validateID(formats strfmt.Registry) error {
 }
 
 func (m *CloudCostManagementAccount) validateLastIngestionEndedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.LastIngestionEndedAt) { // not required
+	if typeutils.IsZero(m.LastIngestionEndedAt) { // not required
 		return nil
 	}
 
@@ -272,7 +273,7 @@ func (m *CloudCostManagementAccount) validateLastIngestionEndedAt(formats strfmt
 }
 
 func (m *CloudCostManagementAccount) validateLastIngestionStartedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.LastIngestionStartedAt) { // not required
+	if typeutils.IsZero(m.LastIngestionStartedAt) { // not required
 		return nil
 	}
 
@@ -322,7 +323,7 @@ func (m *CloudCostManagementAccount) validatePhaseEnum(path, location string, va
 }
 
 func (m *CloudCostManagementAccount) validatePhase(formats strfmt.Registry) error {
-	if swag.IsZero(m.Phase) { // not required
+	if typeutils.IsZero(m.Phase) { // not required
 		return nil
 	}
 
@@ -436,7 +437,7 @@ func (m *CloudCostManagementAccount) contextValidateExternalBackend(ctx context.
 
 	if m.ExternalBackend != nil {
 
-		if swag.IsZero(m.ExternalBackend) { // not required
+		if typeutils.IsZero(m.ExternalBackend) { // not required
 			return nil
 		}
 
@@ -462,13 +463,13 @@ func (m *CloudCostManagementAccount) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *CloudCostManagementAccount) UnmarshalBinary(b []byte) error {
 	var res CloudCostManagementAccount
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

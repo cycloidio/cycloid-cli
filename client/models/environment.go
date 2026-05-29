@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -163,12 +164,12 @@ func (m *Environment) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateCloudAccounts(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudAccounts) { // not required
+	if typeutils.IsZero(m.CloudAccounts) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.CloudAccounts); i++ {
-		if swag.IsZero(m.CloudAccounts[i]) { // not required
+		if typeutils.IsZero(m.CloudAccounts[i]) { // not required
 			continue
 		}
 
@@ -193,12 +194,12 @@ func (m *Environment) validateCloudAccounts(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateComponents(formats strfmt.Registry) error {
-	if swag.IsZero(m.Components) { // not required
+	if typeutils.IsZero(m.Components) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Components); i++ {
-		if swag.IsZero(m.Components[i]) { // not required
+		if typeutils.IsZero(m.Components[i]) { // not required
 			continue
 		}
 
@@ -236,7 +237,7 @@ func (m *Environment) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateDescription(formats strfmt.Registry) error {
-	if swag.IsZero(m.Description) { // not required
+	if typeutils.IsZero(m.Description) { // not required
 		return nil
 	}
 
@@ -248,7 +249,7 @@ func (m *Environment) validateDescription(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateEnvironmentType(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvironmentType) { // not required
+	if typeutils.IsZero(m.EnvironmentType) { // not required
 		return nil
 	}
 
@@ -284,7 +285,7 @@ func (m *Environment) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateName(formats strfmt.Registry) error {
-	if swag.IsZero(m.Name) { // not required
+	if typeutils.IsZero(m.Name) { // not required
 		return nil
 	}
 
@@ -300,7 +301,7 @@ func (m *Environment) validateName(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateOwner(formats strfmt.Registry) error {
-	if swag.IsZero(m.Owner) { // not required
+	if typeutils.IsZero(m.Owner) { // not required
 		return nil
 	}
 
@@ -349,12 +350,12 @@ func (m *Environment) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *Environment) validateVariables(formats strfmt.Registry) error {
-	if swag.IsZero(m.Variables) { // not required
+	if typeutils.IsZero(m.Variables) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Variables); i++ {
-		if swag.IsZero(m.Variables[i]) { // not required
+		if typeutils.IsZero(m.Variables[i]) { // not required
 			continue
 		}
 
@@ -398,7 +399,7 @@ func (m *Environment) validateVersionStatusItemsEnum(path, location string, valu
 }
 
 func (m *Environment) validateVersionStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.VersionStatus) { // not required
+	if typeutils.IsZero(m.VersionStatus) { // not required
 		return nil
 	}
 
@@ -450,7 +451,7 @@ func (m *Environment) contextValidateCloudAccounts(ctx context.Context, formats 
 
 		if m.CloudAccounts[i] != nil {
 
-			if swag.IsZero(m.CloudAccounts[i]) { // not required
+			if typeutils.IsZero(m.CloudAccounts[i]) { // not required
 				return nil
 			}
 
@@ -479,7 +480,7 @@ func (m *Environment) contextValidateComponents(ctx context.Context, formats str
 
 		if m.Components[i] != nil {
 
-			if swag.IsZero(m.Components[i]) { // not required
+			if typeutils.IsZero(m.Components[i]) { // not required
 				return nil
 			}
 
@@ -506,7 +507,7 @@ func (m *Environment) contextValidateEnvironmentType(ctx context.Context, format
 
 	if m.EnvironmentType != nil {
 
-		if swag.IsZero(m.EnvironmentType) { // not required
+		if typeutils.IsZero(m.EnvironmentType) { // not required
 			return nil
 		}
 
@@ -531,7 +532,7 @@ func (m *Environment) contextValidateOwner(ctx context.Context, formats strfmt.R
 
 	if m.Owner != nil {
 
-		if swag.IsZero(m.Owner) { // not required
+		if typeutils.IsZero(m.Owner) { // not required
 			return nil
 		}
 
@@ -558,7 +559,7 @@ func (m *Environment) contextValidateVariables(ctx context.Context, formats strf
 
 		if m.Variables[i] != nil {
 
-			if swag.IsZero(m.Variables[i]) { // not required
+			if typeutils.IsZero(m.Variables[i]) { // not required
 				return nil
 			}
 
@@ -586,13 +587,13 @@ func (m *Environment) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Environment) UnmarshalBinary(b []byte) error {
 	var res Environment
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
