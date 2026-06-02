@@ -3,6 +3,7 @@ package oidc
 import (
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/oidc/integration"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/oidc/mappings"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta/oidc/settings"
 )
@@ -17,6 +18,7 @@ settings. These commands are experimental; backwards-compatibility is not guaran
 	}
 
 	cmd.AddCommand(
+		integration.NewCommands(),
 		mappings.NewCommands(),
 		settings.NewCommands(),
 	)

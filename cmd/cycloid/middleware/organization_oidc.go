@@ -137,3 +137,69 @@ func (m *middleware) UpdateOIDCOrganizationSettings(org string, settings UpdateO
 	}
 	return result, resp, nil
 }
+
+// OIDCIntegration is the AuthenticationOIDC SSO integration config as returned by
+// the API. Secrets are never returned: oidc_client_secret / oidc_ca_cert are
+// replaced by the read-only HasSecret / HasCaCertificate presence booleans. These
+// types live in the middleware package because several fields (oidc_discovery_url,
+// oidc_allow_insecure_discovery, oidc_groups_claim_name, oidc_session_ttl_seconds)
+// are not in the published swagger / generated models.AuthenticationOIDC yet.
+type OIDCIntegration struct {
+	Type                       string  `json:"type,omitempty"`
+	Enabled                    bool    `json:"enabled"`
+	OidcDisplayName            string  `json:"oidc_display_name,omitempty"`
+	OidcClientID               string  `json:"oidc_client_id,omitempty"`
+	OidcIssuer                 string  `json:"oidc_issuer,omitempty"`
+	OidcIcon                   string  `json:"oidc_icon,omitempty"`
+	OidcClientSecretJwt        bool    `json:"oidc_client_secret_jwt,omitempty"`
+	OidcUseCaCert              bool    `json:"oidc_use_ca_cert,omitempty"`
+	OidcSkipTLSVerify          bool    `json:"oidc_skip_tls_verify,omitempty"`
+	OidcDiscoveryURL           *string `json:"oidc_discovery_url,omitempty"`
+	OidcAllowInsecureDiscovery *bool   `json:"oidc_allow_insecure_discovery,omitempty"`
+	OidcGroupsClaimName        string  `json:"oidc_groups_claim_name,omitempty"`
+	OidcSessionTTLSeconds      *int64  `json:"oidc_session_ttl_seconds,omitempty"`
+	// Read-only presence flags — the API never returns the secret/cert values.
+	HasSecret        *bool `json:"has_secret,omitempty"`
+	HasCaCertificate *bool `json:"has_ca_certificate,omitempty"`
+}
+
+// authenticationEnvelope wraps an OIDCIntegration in the API's {"config": {...}}
+// Authentication envelope used by the /authentications/{type} routes.
+type authenticationEnvelope struct {
+	Config *OIDCIntegration `json:"config"`
+}
+
+// GetOIDCIntegration returns the org's AuthenticationOIDC SSO integration config.
+// The secret and CA cert are never included (HasSecret / HasCaCertificate report
+// presence only).
+func (m *middleware) GetOIDCIntegration(org string) (*OIDCIntegration, *http.Response, error) {
+	var result authenticationEnvelope
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "authentications", "AuthenticationOIDC"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result.Config, resp, nil
+}
+
+// UpdateOIDCIntegration creates-or-updates the org's AuthenticationOIDC config.
+// config carries the fields to apply; always include "type" ("AuthenticationOIDC")
+// and "enabled". The backend MERGES: any key absent from config keeps its stored
+// value, and an absent/empty oidc_client_secret or oidc_ca_cert preserves the
+// stored secret. Pass only the keys you intend to change.
+func (m *middleware) UpdateOIDCIntegration(org string, config map[string]interface{}) (*OIDCIntegration, *http.Response, error) {
+	var result authenticationEnvelope
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "authentications", "AuthenticationOIDC"},
+		Body:         map[string]interface{}{"config": config},
+	}, &result)
+	if err != nil {
+		return nil, resp, fmt.Errorf("failed to update OIDC integration: %w", err)
+	}
+	return result.Config, resp, nil
+}

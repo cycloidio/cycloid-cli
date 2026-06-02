@@ -9,16 +9,37 @@ import (
 // always redacted when displaying request bodies in error output.
 // These cover credentials, tokens, and secrets across all Cycloid API models.
 var sensitiveKeys = map[string]bool{
-	"ssh_key":       true,
-	"password":      true,
-	"secret_key":    true,
-	"access_key":    true,
-	"client_secret": true,
-	"json_key":      true,
-	"token":         true,
-	"ca_cert":       true,
-	"raw":           true, // CredentialRaw.Raw — custom catch-all
-	"current":       true, // password_update.current
+	"ssh_key":            true,
+	"password":           true,
+	"secret_key":         true,
+	"access_key":         true,
+	"client_secret":      true,
+	"oidc_client_secret": true, // OIDC integration client secret
+	"json_key":           true,
+	"token":              true,
+	"ca_cert":            true,
+	"oidc_ca_cert":       true, // OIDC integration CA certificate (PEM)
+	"raw":                true, // CredentialRaw.Raw — custom catch-all
+	"current":            true, // password_update.current
+}
+
+// sensitiveKeySuffixes redacts any field whose (lowercased) name ends with one
+// of these, so prefixed provider variants (oidc_client_secret, saml_client_secret,
+// ...) are redacted by default rather than leaking into debug/error output.
+var sensitiveKeySuffixes = []string{"_secret", "_ca_cert"}
+
+// isSensitiveKey reports whether a JSON field name's value must be redacted.
+func isSensitiveKey(k string) bool {
+	lk := strings.ToLower(k)
+	if sensitiveKeys[lk] {
+		return true
+	}
+	for _, suf := range sensitiveKeySuffixes {
+		if strings.HasSuffix(lk, suf) {
+			return true
+		}
+	}
+	return false
 }
 
 // sanitizeBody returns a compact JSON copy of body with sensitive field values
@@ -45,7 +66,9 @@ func sanitizeValue(v interface{}) interface{} {
 	case map[string]interface{}:
 		out := make(map[string]interface{}, len(val))
 		for k, child := range val {
-			if sensitiveKeys[strings.ToLower(k)] {
+			// isSensitiveKey is the single redaction gate (exact-match map +
+			// suffix net). Do not reintroduce a direct sensitiveKeys lookup here.
+			if isSensitiveKey(k) {
 				out[k] = "[REDACTED]"
 			} else {
 				out[k] = sanitizeValue(child)

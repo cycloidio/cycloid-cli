@@ -94,6 +94,8 @@ type Middleware interface {
 	DeleteOIDCGroupMapping(org string, id uint32) (*http.Response, error)
 	GetOIDCOrganizationSettings(org string) (*OIDCOrganizationSettings, *http.Response, error)
 	UpdateOIDCOrganizationSettings(org string, settings UpdateOIDCOrganizationSettings) (*OIDCOrganizationSettings, *http.Response, error)
+	GetOIDCIntegration(org string) (*OIDCIntegration, *http.Response, error)
+	UpdateOIDCIntegration(org string, config map[string]interface{}) (*OIDCIntegration, *http.Response, error)
 
 	// organizations
 	CreateOrganization(name string) (*models.Organization, *http.Response, error)

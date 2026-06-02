@@ -161,4 +161,43 @@ func TestOIDC(t *testing.T) {
 		require.NoError(t, err, "output should parse as JSON")
 		assert.Equal(t, "keep_membership", s.OIDCNoMatchPolicy, "no-match-policy should persist")
 	})
+
+	// --------------------------------------------------------------------
+	// Integration get / set
+	// --------------------------------------------------------------------
+
+	t.Run("SuccessOIDCIntegrationSet", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"beta", "oidc", "integration", "set",
+			"--issuer", "https://idp.example.com",
+			"--client-id", "test-client",
+			"--enabled",
+		})
+		require.NoError(t, cmdErr, "integration set should succeed")
+
+		var i middleware.OIDCIntegration
+		err := json.Unmarshal([]byte(cmdOut), &i)
+		require.NoError(t, err, "output should be a valid OIDCIntegration JSON")
+		assert.True(t, i.Enabled, "integration should be enabled")
+		assert.Equal(t, "test-client", i.OidcClientID, "client ID should match")
+		assert.Equal(t, "https://idp.example.com", i.OidcIssuer, "issuer should match")
+	})
+
+	t.Run("SuccessOIDCIntegrationGet", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"beta", "oidc", "integration", "get",
+		})
+		require.NoError(t, cmdErr, "integration get should succeed")
+
+		var i middleware.OIDCIntegration
+		err := json.Unmarshal([]byte(cmdOut), &i)
+		require.NoError(t, err, "output should be a valid OIDCIntegration JSON")
+		assert.True(t, i.Enabled, "integration should still be enabled after get")
+		assert.Equal(t, "test-client", i.OidcClientID, "client ID should persist")
+		assert.Equal(t, "https://idp.example.com", i.OidcIssuer, "issuer should persist")
+	})
 }
