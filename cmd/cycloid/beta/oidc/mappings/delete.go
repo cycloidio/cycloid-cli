@@ -1,0 +1,46 @@
+package mappings
+
+import (
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
+)
+
+// NewDeleteCommand returns the `mappings delete` command.
+func NewDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:     "delete",
+		Aliases: []string{"rm"},
+		Args:    cobra.NoArgs,
+		Short:   "Delete an OIDC group-to-team mapping by ID",
+		Example: `
+  # Delete OIDC group mapping with ID 42 in my-org
+  cy --org my-org beta oidc mappings delete --mapping-id 42
+`,
+		RunE: deleteMapping,
+	}
+
+	cmd.MarkFlagRequired(cyargs.AddOIDCMappingIDFlag(cmd))
+	return cmd
+}
+
+func deleteMapping(cmd *cobra.Command, args []string) error {
+	org, err := cyargs.GetOrg(cmd)
+	if err != nil {
+		return err
+	}
+
+	id, err := cyargs.GetOIDCMappingID(cmd)
+	if err != nil {
+		return err
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	_, err = m.DeleteOIDCGroupMapping(org, id)
+	return cyout.Print(cmd, nil, err, "unable to delete OIDC group mapping")
+}
