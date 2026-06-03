@@ -12,7 +12,8 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -220,7 +221,7 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	return swag.ConcatJSON(b1, b2, b3), nil
+	return jsonutils.ConcatJSON(b1, b2, b3), nil
 }
 
 // Validate validates this external backend
@@ -274,7 +275,7 @@ func (m *ExternalBackend) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ExternalBackend) validateComponentCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ComponentCanonical) { // not required
+	if typeutils.IsZero(m.ComponentCanonical) { // not required
 		return nil
 	}
 
@@ -316,7 +317,7 @@ func (m *ExternalBackend) validateConfiguration(formats strfmt.Registry) error {
 }
 
 func (m *ExternalBackend) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
+	if typeutils.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
@@ -328,7 +329,7 @@ func (m *ExternalBackend) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *ExternalBackend) validateCredentialCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.CredentialCanonical) { // not required
+	if typeutils.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
@@ -357,7 +358,7 @@ func (m *ExternalBackend) validateDefault(formats strfmt.Registry) error {
 }
 
 func (m *ExternalBackend) validateEnvironmentCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.EnvironmentCanonical) { // not required
+	if typeutils.IsZero(m.EnvironmentCanonical) { // not required
 		return nil
 	}
 
@@ -377,7 +378,7 @@ func (m *ExternalBackend) validateEnvironmentCanonical(formats strfmt.Registry) 
 }
 
 func (m *ExternalBackend) validateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ID) { // not required
+	if typeutils.IsZero(m.ID) { // not required
 		return nil
 	}
 
@@ -389,7 +390,7 @@ func (m *ExternalBackend) validateID(formats strfmt.Registry) error {
 }
 
 func (m *ExternalBackend) validateProjectCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ProjectCanonical) { // not required
+	if typeutils.IsZero(m.ProjectCanonical) { // not required
 		return nil
 	}
 
@@ -418,7 +419,7 @@ func (m *ExternalBackend) validatePurpose(formats strfmt.Registry) error {
 }
 
 func (m *ExternalBackend) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+	if typeutils.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
@@ -466,13 +467,13 @@ func (m *ExternalBackend) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ExternalBackend) UnmarshalBinary(b []byte) error {
 	var res ExternalBackend
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

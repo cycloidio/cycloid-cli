@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -142,7 +143,7 @@ func (m *MemberTeam) validateEmail(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateFullName(formats strfmt.Registry) error {
-	if swag.IsZero(m.FullName) { // not required
+	if typeutils.IsZero(m.FullName) { // not required
 		return nil
 	}
 
@@ -171,7 +172,7 @@ func (m *MemberTeam) validateID(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitedBy) { // not required
+	if typeutils.IsZero(m.InvitedBy) { // not required
 		return nil
 	}
 
@@ -194,7 +195,7 @@ func (m *MemberTeam) validateInvitedBy(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateLastLoginAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.LastLoginAt) { // not required
+	if typeutils.IsZero(m.LastLoginAt) { // not required
 		return nil
 	}
 
@@ -215,7 +216,7 @@ func (m *MemberTeam) validateMfaEnabled(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validatePictureURL(formats strfmt.Registry) error {
-	if swag.IsZero(m.PictureURL) { // not required
+	if typeutils.IsZero(m.PictureURL) { // not required
 		return nil
 	}
 
@@ -227,7 +228,7 @@ func (m *MemberTeam) validatePictureURL(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+	if typeutils.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
@@ -239,7 +240,7 @@ func (m *MemberTeam) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *MemberTeam) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
+	if typeutils.IsZero(m.Username) { // not required
 		return nil
 	}
 
@@ -276,7 +277,7 @@ func (m *MemberTeam) contextValidateInvitedBy(ctx context.Context, formats strfm
 
 	if m.InvitedBy != nil {
 
-		if swag.IsZero(m.InvitedBy) { // not required
+		if typeutils.IsZero(m.InvitedBy) { // not required
 			return nil
 		}
 
@@ -302,13 +303,13 @@ func (m *MemberTeam) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *MemberTeam) UnmarshalBinary(b []byte) error {
 	var res MemberTeam
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

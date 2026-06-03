@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -199,12 +200,12 @@ func (m *Pipeline) validateEnvironment(formats strfmt.Registry) error {
 }
 
 func (m *Pipeline) validateGroups(formats strfmt.Registry) error {
-	if swag.IsZero(m.Groups) { // not required
+	if typeutils.IsZero(m.Groups) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Groups); i++ {
-		if swag.IsZero(m.Groups[i]) { // not required
+		if typeutils.IsZero(m.Groups[i]) { // not required
 			continue
 		}
 
@@ -244,7 +245,7 @@ func (m *Pipeline) validateJobs(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Jobs); i++ {
-		if swag.IsZero(m.Jobs[i]) { // not required
+		if typeutils.IsZero(m.Jobs[i]) { // not required
 			continue
 		}
 
@@ -419,7 +420,7 @@ func (m *Pipeline) contextValidateGroups(ctx context.Context, formats strfmt.Reg
 
 		if m.Groups[i] != nil {
 
-			if swag.IsZero(m.Groups[i]) { // not required
+			if typeutils.IsZero(m.Groups[i]) { // not required
 				return nil
 			}
 
@@ -448,7 +449,7 @@ func (m *Pipeline) contextValidateJobs(ctx context.Context, formats strfmt.Regis
 
 		if m.Jobs[i] != nil {
 
-			if swag.IsZero(m.Jobs[i]) { // not required
+			if typeutils.IsZero(m.Jobs[i]) { // not required
 				return nil
 			}
 
@@ -497,13 +498,13 @@ func (m *Pipeline) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Pipeline) UnmarshalBinary(b []byte) error {
 	var res Pipeline
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

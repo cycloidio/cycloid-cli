@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -209,12 +210,12 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateAdmins(formats strfmt.Registry) error {
-	if swag.IsZero(m.Admins) { // not required
+	if typeutils.IsZero(m.Admins) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Admins); i++ {
-		if swag.IsZero(m.Admins[i]) { // not required
+		if typeutils.IsZero(m.Admins[i]) { // not required
 			continue
 		}
 
@@ -239,7 +240,7 @@ func (m *Organization) validateAdmins(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateAppearance(formats strfmt.Registry) error {
-	if swag.IsZero(m.Appearance) { // not required
+	if typeutils.IsZero(m.Appearance) { // not required
 		return nil
 	}
 
@@ -430,7 +431,7 @@ func (m *Organization) validateName(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateParentCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ParentCanonical) { // not required
+	if typeutils.IsZero(m.ParentCanonical) { // not required
 		return nil
 	}
 
@@ -450,7 +451,7 @@ func (m *Organization) validateParentCanonical(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateSubscription(formats strfmt.Registry) error {
-	if swag.IsZero(m.Subscription) { // not required
+	if typeutils.IsZero(m.Subscription) { // not required
 		return nil
 	}
 
@@ -513,7 +514,7 @@ func (m *Organization) contextValidateAdmins(ctx context.Context, formats strfmt
 
 		if m.Admins[i] != nil {
 
-			if swag.IsZero(m.Admins[i]) { // not required
+			if typeutils.IsZero(m.Admins[i]) { // not required
 				return nil
 			}
 
@@ -540,7 +541,7 @@ func (m *Organization) contextValidateAppearance(ctx context.Context, formats st
 
 	if m.Appearance != nil {
 
-		if swag.IsZero(m.Appearance) { // not required
+		if typeutils.IsZero(m.Appearance) { // not required
 			return nil
 		}
 
@@ -565,7 +566,7 @@ func (m *Organization) contextValidateSubscription(ctx context.Context, formats 
 
 	if m.Subscription != nil {
 
-		if swag.IsZero(m.Subscription) { // not required
+		if typeutils.IsZero(m.Subscription) { // not required
 			return nil
 		}
 
@@ -591,13 +592,13 @@ func (m *Organization) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Organization) UnmarshalBinary(b []byte) error {
 	var res Organization
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

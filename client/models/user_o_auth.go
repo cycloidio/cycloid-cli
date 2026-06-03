@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // UserOAuth User's OAuth information
@@ -40,7 +41,7 @@ func (m *UserOAuth) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UserOAuth) validateUser(formats strfmt.Registry) error {
-	if swag.IsZero(m.User) { // not required
+	if typeutils.IsZero(m.User) { // not required
 		return nil
 	}
 
@@ -80,7 +81,7 @@ func (m *UserOAuth) contextValidateUser(ctx context.Context, formats strfmt.Regi
 
 	if m.User != nil {
 
-		if swag.IsZero(m.User) { // not required
+		if typeutils.IsZero(m.User) { // not required
 			return nil
 		}
 
@@ -106,13 +107,13 @@ func (m *UserOAuth) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *UserOAuth) UnmarshalBinary(b []byte) error {
 	var res UserOAuth
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

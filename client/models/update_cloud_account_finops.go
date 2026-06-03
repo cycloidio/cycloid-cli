@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -53,7 +54,7 @@ func (m *UpdateCloudAccountFinops) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UpdateCloudAccountFinops) validateFinopsConfig(formats strfmt.Registry) error {
-	if swag.IsZero(m.FinopsConfig) { // not required
+	if typeutils.IsZero(m.FinopsConfig) { // not required
 		return nil
 	}
 
@@ -76,7 +77,7 @@ func (m *UpdateCloudAccountFinops) validateFinopsConfig(formats strfmt.Registry)
 }
 
 func (m *UpdateCloudAccountFinops) validateFinopsCredential(formats strfmt.Registry) error {
-	if swag.IsZero(m.FinopsCredential) { // not required
+	if typeutils.IsZero(m.FinopsCredential) { // not required
 		return nil
 	}
 
@@ -129,7 +130,7 @@ func (m *UpdateCloudAccountFinops) contextValidateFinopsConfig(ctx context.Conte
 
 	if m.FinopsConfig != nil {
 
-		if swag.IsZero(m.FinopsConfig) { // not required
+		if typeutils.IsZero(m.FinopsConfig) { // not required
 			return nil
 		}
 
@@ -154,7 +155,7 @@ func (m *UpdateCloudAccountFinops) contextValidateFinopsCredential(ctx context.C
 
 	if m.FinopsCredential != nil {
 
-		if swag.IsZero(m.FinopsCredential) { // not required
+		if typeutils.IsZero(m.FinopsCredential) { // not required
 			return nil
 		}
 
@@ -180,13 +181,13 @@ func (m *UpdateCloudAccountFinops) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *UpdateCloudAccountFinops) UnmarshalBinary(b []byte) error {
 	var res UpdateCloudAccountFinops
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

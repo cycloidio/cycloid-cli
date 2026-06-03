@@ -8,7 +8,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -18,6 +18,9 @@ import (
 //
 // swagger:model FormEntity
 type FormEntity struct {
+
+	// Optional condition expression that gates whether this widget is displayed. Same V2 syntax as Group.condition (e.g. "$other_field == 'aws'"). Variables prefixed with "ctx_" are runtime-injected and bypass the entity-existence validation.
+	Condition string `json:"condition,omitempty"`
 
 	// The current value that was previously configured for this variable upon creation or update. In case of shared variables having different values, it will be empty, and 'mismatch_values' will be filled instead.
 	Current any `json:"current,omitempty"`
@@ -332,13 +335,13 @@ func (m *FormEntity) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *FormEntity) UnmarshalBinary(b []byte) error {
 	var res FormEntity
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

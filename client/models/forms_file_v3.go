@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -52,7 +53,7 @@ func (m *FormsFileV3) validateUseCases(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.UseCases); i++ {
-		if swag.IsZero(m.UseCases[i]) { // not required
+		if typeutils.IsZero(m.UseCases[i]) { // not required
 			continue
 		}
 
@@ -105,7 +106,7 @@ func (m *FormsFileV3) contextValidateUseCases(ctx context.Context, formats strfm
 
 		if m.UseCases[i] != nil {
 
-			if swag.IsZero(m.UseCases[i]) { // not required
+			if typeutils.IsZero(m.UseCases[i]) { // not required
 				return nil
 			}
 
@@ -133,13 +134,13 @@ func (m *FormsFileV3) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *FormsFileV3) UnmarshalBinary(b []byte) error {
 	var res FormsFileV3
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

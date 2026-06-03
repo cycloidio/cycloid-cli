@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -94,7 +95,7 @@ func (m *NewUserAccount) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewUserAccount) validateCountryCode(formats strfmt.Registry) error {
-	if swag.IsZero(m.CountryCode) { // not required
+	if typeutils.IsZero(m.CountryCode) { // not required
 		return nil
 	}
 
@@ -136,7 +137,7 @@ func (m *NewUserAccount) validateFullName(formats strfmt.Registry) error {
 }
 
 func (m *NewUserAccount) validateInvitationToken(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitationToken) { // not required
+	if typeutils.IsZero(m.InvitationToken) { // not required
 		return nil
 	}
 
@@ -180,7 +181,7 @@ func (m *NewUserAccount) validateLocaleEnum(path, location string, value string)
 }
 
 func (m *NewUserAccount) validateLocale(formats strfmt.Registry) error {
-	if swag.IsZero(m.Locale) { // not required
+	if typeutils.IsZero(m.Locale) { // not required
 		return nil
 	}
 
@@ -210,7 +211,7 @@ func (m *NewUserAccount) validatePassword(formats strfmt.Registry) error {
 }
 
 func (m *NewUserAccount) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
+	if typeutils.IsZero(m.Username) { // not required
 		return nil
 	}
 
@@ -239,13 +240,13 @@ func (m *NewUserAccount) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewUserAccount) UnmarshalBinary(b []byte) error {
 	var res NewUserAccount
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

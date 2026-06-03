@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -159,7 +160,7 @@ func (m *ServiceCatalogSource) validateCanonical(formats strfmt.Registry) error 
 }
 
 func (m *ServiceCatalogSource) validateChanges(formats strfmt.Registry) error {
-	if swag.IsZero(m.Changes) { // not required
+	if typeutils.IsZero(m.Changes) { // not required
 		return nil
 	}
 
@@ -182,7 +183,7 @@ func (m *ServiceCatalogSource) validateChanges(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalogSource) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
+	if typeutils.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
@@ -194,7 +195,7 @@ func (m *ServiceCatalogSource) validateCreatedAt(formats strfmt.Registry) error 
 }
 
 func (m *ServiceCatalogSource) validateCredentialCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.CredentialCanonical) { // not required
+	if typeutils.IsZero(m.CredentialCanonical) { // not required
 		return nil
 	}
 
@@ -260,7 +261,7 @@ func (m *ServiceCatalogSource) validateOwner(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalogSource) validateRefreshedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.RefreshedAt) { // not required
+	if typeutils.IsZero(m.RefreshedAt) { // not required
 		return nil
 	}
 
@@ -272,12 +273,12 @@ func (m *ServiceCatalogSource) validateRefreshedAt(formats strfmt.Registry) erro
 }
 
 func (m *ServiceCatalogSource) validateServiceCatalogs(formats strfmt.Registry) error {
-	if swag.IsZero(m.ServiceCatalogs) { // not required
+	if typeutils.IsZero(m.ServiceCatalogs) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.ServiceCatalogs); i++ {
-		if swag.IsZero(m.ServiceCatalogs[i]) { // not required
+		if typeutils.IsZero(m.ServiceCatalogs[i]) { // not required
 			continue
 		}
 
@@ -315,7 +316,7 @@ func (m *ServiceCatalogSource) validateStackCount(formats strfmt.Registry) error
 }
 
 func (m *ServiceCatalogSource) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+	if typeutils.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
@@ -365,7 +366,7 @@ func (m *ServiceCatalogSource) contextValidateChanges(ctx context.Context, forma
 
 	if m.Changes != nil {
 
-		if swag.IsZero(m.Changes) { // not required
+		if typeutils.IsZero(m.Changes) { // not required
 			return nil
 		}
 
@@ -413,7 +414,7 @@ func (m *ServiceCatalogSource) contextValidateServiceCatalogs(ctx context.Contex
 
 		if m.ServiceCatalogs[i] != nil {
 
-			if swag.IsZero(m.ServiceCatalogs[i]) { // not required
+			if typeutils.IsZero(m.ServiceCatalogs[i]) { // not required
 				return nil
 			}
 
@@ -441,13 +442,13 @@ func (m *ServiceCatalogSource) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ServiceCatalogSource) UnmarshalBinary(b []byte) error {
 	var res ServiceCatalogSource
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

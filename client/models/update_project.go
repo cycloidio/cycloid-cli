@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -136,7 +137,7 @@ func (m *UpdateProject) validateCloudProviderEnum(path, location string, value s
 }
 
 func (m *UpdateProject) validateCloudProvider(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudProvider) { // not required
+	if typeutils.IsZero(m.CloudProvider) { // not required
 		return nil
 	}
 
@@ -149,7 +150,7 @@ func (m *UpdateProject) validateCloudProvider(formats strfmt.Registry) error {
 }
 
 func (m *UpdateProject) validateColor(formats strfmt.Registry) error {
-	if swag.IsZero(m.Color) { // not required
+	if typeutils.IsZero(m.Color) { // not required
 		return nil
 	}
 
@@ -161,7 +162,7 @@ func (m *UpdateProject) validateColor(formats strfmt.Registry) error {
 }
 
 func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ConfigRepositoryCanonical) { // not required
+	if typeutils.IsZero(m.ConfigRepositoryCanonical) { // not required
 		return nil
 	}
 
@@ -181,7 +182,7 @@ func (m *UpdateProject) validateConfigRepositoryCanonical(formats strfmt.Registr
 }
 
 func (m *UpdateProject) validateIcon(formats strfmt.Registry) error {
-	if swag.IsZero(m.Icon) { // not required
+	if typeutils.IsZero(m.Icon) { // not required
 		return nil
 	}
 
@@ -215,13 +216,13 @@ func (m *UpdateProject) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *UpdateProject) UnmarshalBinary(b []byte) error {
 	var res UpdateProject
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
