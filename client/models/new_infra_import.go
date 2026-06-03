@@ -12,7 +12,8 @@ import (
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/runtime"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -208,7 +209,7 @@ func (m NewInfraImport) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	return swag.ConcatJSON(b1, b2, b3), nil
+	return jsonutils.ConcatJSON(b1, b2, b3), nil
 }
 
 // Validate validates this new infra import
@@ -250,7 +251,7 @@ func (m *NewInfraImport) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewInfraImport) validateComponent(formats strfmt.Registry) error {
-	if swag.IsZero(m.Component) { // not required
+	if typeutils.IsZero(m.Component) { // not required
 		return nil
 	}
 
@@ -316,7 +317,7 @@ func (m *NewInfraImport) validateCredentialCanonical(formats strfmt.Registry) er
 }
 
 func (m *NewInfraImport) validateEnvironment(formats strfmt.Registry) error {
-	if swag.IsZero(m.Environment) { // not required
+	if typeutils.IsZero(m.Environment) { // not required
 		return nil
 	}
 
@@ -339,7 +340,7 @@ func (m *NewInfraImport) validateEnvironment(formats strfmt.Registry) error {
 }
 
 func (m *NewInfraImport) validateExternalBackend(formats strfmt.Registry) error {
-	if swag.IsZero(m.ExternalBackend) { // not required
+	if typeutils.IsZero(m.ExternalBackend) { // not required
 		return nil
 	}
 
@@ -362,7 +363,7 @@ func (m *NewInfraImport) validateExternalBackend(formats strfmt.Registry) error 
 }
 
 func (m *NewInfraImport) validateProject(formats strfmt.Registry) error {
-	if swag.IsZero(m.Project) { // not required
+	if typeutils.IsZero(m.Project) { // not required
 		return nil
 	}
 
@@ -446,7 +447,7 @@ func (m *NewInfraImport) contextValidateComponent(ctx context.Context, formats s
 
 	if m.Component != nil {
 
-		if swag.IsZero(m.Component) { // not required
+		if typeutils.IsZero(m.Component) { // not required
 			return nil
 		}
 
@@ -489,7 +490,7 @@ func (m *NewInfraImport) contextValidateEnvironment(ctx context.Context, formats
 
 	if m.Environment != nil {
 
-		if swag.IsZero(m.Environment) { // not required
+		if typeutils.IsZero(m.Environment) { // not required
 			return nil
 		}
 
@@ -514,7 +515,7 @@ func (m *NewInfraImport) contextValidateExternalBackend(ctx context.Context, for
 
 	if m.ExternalBackend != nil {
 
-		if swag.IsZero(m.ExternalBackend) { // not required
+		if typeutils.IsZero(m.ExternalBackend) { // not required
 			return nil
 		}
 
@@ -539,7 +540,7 @@ func (m *NewInfraImport) contextValidateProject(ctx context.Context, formats str
 
 	if m.Project != nil {
 
-		if swag.IsZero(m.Project) { // not required
+		if typeutils.IsZero(m.Project) { // not required
 			return nil
 		}
 
@@ -586,13 +587,13 @@ func (m *NewInfraImport) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewInfraImport) UnmarshalBinary(b []byte) error {
 	var res NewInfraImport
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -54,7 +55,7 @@ func (m *BuildInputsOutputs) validateInputs(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Inputs); i++ {
-		if swag.IsZero(m.Inputs[i]) { // not required
+		if typeutils.IsZero(m.Inputs[i]) { // not required
 			continue
 		}
 
@@ -85,7 +86,7 @@ func (m *BuildInputsOutputs) validateOutputs(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Outputs); i++ {
-		if swag.IsZero(m.Outputs[i]) { // not required
+		if typeutils.IsZero(m.Outputs[i]) { // not required
 			continue
 		}
 
@@ -133,7 +134,7 @@ func (m *BuildInputsOutputs) contextValidateInputs(ctx context.Context, formats 
 
 		if m.Inputs[i] != nil {
 
-			if swag.IsZero(m.Inputs[i]) { // not required
+			if typeutils.IsZero(m.Inputs[i]) { // not required
 				return nil
 			}
 
@@ -162,7 +163,7 @@ func (m *BuildInputsOutputs) contextValidateOutputs(ctx context.Context, formats
 
 		if m.Outputs[i] != nil {
 
-			if swag.IsZero(m.Outputs[i]) { // not required
+			if typeutils.IsZero(m.Outputs[i]) { // not required
 				return nil
 			}
 
@@ -190,13 +191,13 @@ func (m *BuildInputsOutputs) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *BuildInputsOutputs) UnmarshalBinary(b []byte) error {
 	var res BuildInputsOutputs
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

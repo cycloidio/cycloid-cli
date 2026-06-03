@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -116,12 +117,12 @@ func (m *Plan) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateDo(formats strfmt.Registry) error {
-	if swag.IsZero(m.Do) { // not required
+	if typeutils.IsZero(m.Do) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Do); i++ {
-		if swag.IsZero(m.Do[i]) { // not required
+		if typeutils.IsZero(m.Do[i]) { // not required
 			continue
 		}
 
@@ -146,7 +147,7 @@ func (m *Plan) validateDo(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateEnsure(formats strfmt.Registry) error {
-	if swag.IsZero(m.Ensure) { // not required
+	if typeutils.IsZero(m.Ensure) { // not required
 		return nil
 	}
 
@@ -169,7 +170,7 @@ func (m *Plan) validateEnsure(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateGet(formats strfmt.Registry) error {
-	if swag.IsZero(m.Get) { // not required
+	if typeutils.IsZero(m.Get) { // not required
 		return nil
 	}
 
@@ -201,7 +202,7 @@ func (m *Plan) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateOnFailure(formats strfmt.Registry) error {
-	if swag.IsZero(m.OnFailure) { // not required
+	if typeutils.IsZero(m.OnFailure) { // not required
 		return nil
 	}
 
@@ -224,7 +225,7 @@ func (m *Plan) validateOnFailure(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateOnSuccess(formats strfmt.Registry) error {
-	if swag.IsZero(m.OnSuccess) { // not required
+	if typeutils.IsZero(m.OnSuccess) { // not required
 		return nil
 	}
 
@@ -247,7 +248,7 @@ func (m *Plan) validateOnSuccess(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validatePut(formats strfmt.Registry) error {
-	if swag.IsZero(m.Put) { // not required
+	if typeutils.IsZero(m.Put) { // not required
 		return nil
 	}
 
@@ -270,12 +271,12 @@ func (m *Plan) validatePut(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateRetry(formats strfmt.Registry) error {
-	if swag.IsZero(m.Retry) { // not required
+	if typeutils.IsZero(m.Retry) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Retry); i++ {
-		if swag.IsZero(m.Retry[i]) { // not required
+		if typeutils.IsZero(m.Retry[i]) { // not required
 			continue
 		}
 
@@ -300,7 +301,7 @@ func (m *Plan) validateRetry(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateTask(formats strfmt.Registry) error {
-	if swag.IsZero(m.Task) { // not required
+	if typeutils.IsZero(m.Task) { // not required
 		return nil
 	}
 
@@ -323,7 +324,7 @@ func (m *Plan) validateTask(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateTimeout(formats strfmt.Registry) error {
-	if swag.IsZero(m.Timeout) { // not required
+	if typeutils.IsZero(m.Timeout) { // not required
 		return nil
 	}
 
@@ -346,7 +347,7 @@ func (m *Plan) validateTimeout(formats strfmt.Registry) error {
 }
 
 func (m *Plan) validateTry(formats strfmt.Registry) error {
-	if swag.IsZero(m.Try) { // not required
+	if typeutils.IsZero(m.Try) { // not required
 		return nil
 	}
 
@@ -424,7 +425,7 @@ func (m *Plan) contextValidateDo(ctx context.Context, formats strfmt.Registry) e
 
 		if m.Do[i] != nil {
 
-			if swag.IsZero(m.Do[i]) { // not required
+			if typeutils.IsZero(m.Do[i]) { // not required
 				return nil
 			}
 
@@ -451,7 +452,7 @@ func (m *Plan) contextValidateEnsure(ctx context.Context, formats strfmt.Registr
 
 	if m.Ensure != nil {
 
-		if swag.IsZero(m.Ensure) { // not required
+		if typeutils.IsZero(m.Ensure) { // not required
 			return nil
 		}
 
@@ -476,7 +477,7 @@ func (m *Plan) contextValidateGet(ctx context.Context, formats strfmt.Registry) 
 
 	if m.Get != nil {
 
-		if swag.IsZero(m.Get) { // not required
+		if typeutils.IsZero(m.Get) { // not required
 			return nil
 		}
 
@@ -501,7 +502,7 @@ func (m *Plan) contextValidateOnFailure(ctx context.Context, formats strfmt.Regi
 
 	if m.OnFailure != nil {
 
-		if swag.IsZero(m.OnFailure) { // not required
+		if typeutils.IsZero(m.OnFailure) { // not required
 			return nil
 		}
 
@@ -526,7 +527,7 @@ func (m *Plan) contextValidateOnSuccess(ctx context.Context, formats strfmt.Regi
 
 	if m.OnSuccess != nil {
 
-		if swag.IsZero(m.OnSuccess) { // not required
+		if typeutils.IsZero(m.OnSuccess) { // not required
 			return nil
 		}
 
@@ -551,7 +552,7 @@ func (m *Plan) contextValidatePut(ctx context.Context, formats strfmt.Registry) 
 
 	if m.Put != nil {
 
-		if swag.IsZero(m.Put) { // not required
+		if typeutils.IsZero(m.Put) { // not required
 			return nil
 		}
 
@@ -578,7 +579,7 @@ func (m *Plan) contextValidateRetry(ctx context.Context, formats strfmt.Registry
 
 		if m.Retry[i] != nil {
 
-			if swag.IsZero(m.Retry[i]) { // not required
+			if typeutils.IsZero(m.Retry[i]) { // not required
 				return nil
 			}
 
@@ -605,7 +606,7 @@ func (m *Plan) contextValidateTask(ctx context.Context, formats strfmt.Registry)
 
 	if m.Task != nil {
 
-		if swag.IsZero(m.Task) { // not required
+		if typeutils.IsZero(m.Task) { // not required
 			return nil
 		}
 
@@ -630,7 +631,7 @@ func (m *Plan) contextValidateTimeout(ctx context.Context, formats strfmt.Regist
 
 	if m.Timeout != nil {
 
-		if swag.IsZero(m.Timeout) { // not required
+		if typeutils.IsZero(m.Timeout) { // not required
 			return nil
 		}
 
@@ -655,7 +656,7 @@ func (m *Plan) contextValidateTry(ctx context.Context, formats strfmt.Registry) 
 
 	if m.Try != nil {
 
-		if swag.IsZero(m.Try) { // not required
+		if typeutils.IsZero(m.Try) { // not required
 			return nil
 		}
 
@@ -681,13 +682,13 @@ func (m *Plan) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Plan) UnmarshalBinary(b []byte) error {
 	var res Plan
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

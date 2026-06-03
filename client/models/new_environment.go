@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -89,7 +90,7 @@ func (m *NewEnvironment) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.Canonical) { // not required
+	if typeutils.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
@@ -109,7 +110,7 @@ func (m *NewEnvironment) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *NewEnvironment) validateCloudAccountCanonicals(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudAccountCanonicals) { // not required
+	if typeutils.IsZero(m.CloudAccountCanonicals) { // not required
 		return nil
 	}
 
@@ -129,7 +130,7 @@ func (m *NewEnvironment) validateCloudAccountCanonicals(formats strfmt.Registry)
 }
 
 func (m *NewEnvironment) validateDescription(formats strfmt.Registry) error {
-	if swag.IsZero(m.Description) { // not required
+	if typeutils.IsZero(m.Description) { // not required
 		return nil
 	}
 
@@ -158,12 +159,12 @@ func (m *NewEnvironment) validateName(formats strfmt.Registry) error {
 }
 
 func (m *NewEnvironment) validateVariables(formats strfmt.Registry) error {
-	if swag.IsZero(m.Variables) { // not required
+	if typeutils.IsZero(m.Variables) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Variables); i++ {
-		if swag.IsZero(m.Variables[i]) { // not required
+		if typeutils.IsZero(m.Variables[i]) { // not required
 			continue
 		}
 
@@ -207,7 +208,7 @@ func (m *NewEnvironment) contextValidateVariables(ctx context.Context, formats s
 
 		if m.Variables[i] != nil {
 
-			if swag.IsZero(m.Variables[i]) { // not required
+			if typeutils.IsZero(m.Variables[i]) { // not required
 				return nil
 			}
 
@@ -235,13 +236,13 @@ func (m *NewEnvironment) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewEnvironment) UnmarshalBinary(b []byte) error {
 	var res NewEnvironment
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
