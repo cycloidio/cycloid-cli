@@ -32,7 +32,7 @@ func NewGetCommand() *cobra.Command {
 		Short: "Get the org's OIDC SSO integration config",
 		Example: `
   # Get the OIDC SSO integration for my-org
-  cy --org my-org beta oidc integration get
+  cy --org my-org oidc integration get
 `,
 		RunE: getIntegration,
 	}

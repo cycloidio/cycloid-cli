@@ -46,7 +46,7 @@ func TestOIDC(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "mappings", "create",
+			"oidc", "mappings", "create",
 			"--group-name", "my-oidc-group",
 			"--team", teamCan,
 		})
@@ -67,7 +67,7 @@ func TestOIDC(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "mappings", "list",
+			"oidc", "mappings", "list",
 		})
 		require.NoError(t, cmdErr, "mappings list should succeed")
 
@@ -90,7 +90,7 @@ func TestOIDC(t *testing.T) {
 		_, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "mappings", "delete",
+			"oidc", "mappings", "delete",
 			"--mapping-id", strconv.FormatUint(uint64(mappingID), 10),
 		})
 		require.NoError(t, cmdErr, "mappings delete should succeed")
@@ -101,7 +101,7 @@ func TestOIDC(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "mappings", "list",
+			"oidc", "mappings", "list",
 		})
 		require.NoError(t, cmdErr, "mappings list after delete should succeed")
 
@@ -122,7 +122,7 @@ func TestOIDC(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "settings", "get",
+			"oidc", "settings", "get",
 		})
 		require.NoError(t, cmdErr, "settings get should succeed")
 
@@ -135,7 +135,7 @@ func TestOIDC(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "settings", "set",
+			"oidc", "settings", "set",
 			"--oidc-managed=false",
 			"--no-match-policy", "keep_membership",
 		})
@@ -152,7 +152,7 @@ func TestOIDC(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "settings", "get",
+			"oidc", "settings", "get",
 		})
 		require.NoError(t, cmdErr, "settings get after set should succeed")
 
@@ -170,7 +170,7 @@ func TestOIDC(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "integration", "set",
+			"oidc", "integration", "set",
 			"--issuer", "https://idp.example.com",
 			"--client-id", "test-client",
 			"--enabled",
@@ -189,7 +189,7 @@ func TestOIDC(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
-			"beta", "oidc", "integration", "get",
+			"oidc", "integration", "get",
 		})
 		require.NoError(t, cmdErr, "integration get should succeed")
 

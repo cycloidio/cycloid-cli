@@ -22,7 +22,7 @@ func NewGetCommand() *cobra.Command {
 		Short: "Get OIDC organization settings",
 		Example: `
   # Get OIDC settings for my-org
-  cy --org my-org beta oidc settings get
+  cy --org my-org oidc settings get
 `,
 		RunE: getSettings,
 	}

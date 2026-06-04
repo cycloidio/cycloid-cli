@@ -15,13 +15,14 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/configrepositories"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/credentials"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environmenttypes"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environments"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environmenttypes"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/externalbackends"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/oidc"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/output"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
@@ -179,6 +180,7 @@ func AttachCommands(cmd *cobra.Command) {
 		output.NewOutputCmd(),
 		terracost.NewCommands(),
 		beta.NewCommands(),
+		oidc.NewCommands(),
 		uri.NewURICommands(),
 		teams.NewTeamsCommands(),
 	)

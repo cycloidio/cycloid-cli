@@ -33,19 +33,19 @@ environment variable; the CA certificate via CY_OIDC_CA_CERT.`,
 		Example: `
   # Recommended: pass the secret via env var to keep it out of shell history
   export CY_OIDC_CLIENT_SECRET="$(cat ./oidc-secret)"
-  cy --org my-org beta oidc integration set \
+  cy --org my-org oidc integration set \
     --enabled \
     --issuer https://idp.example.com \
     --client-id my-client-id
 
   # Flag form (secret is visible in shell history / process list — avoid on shared hosts)
-  cy --org my-org beta oidc integration set --client-secret "$MY_SECRET"
+  cy --org my-org oidc integration set --client-secret "$MY_SECRET"
 
   # Update only the groups claim name (all other settings unchanged)
-  cy --org my-org beta oidc integration set --groups-claim-name groups
+  cy --org my-org oidc integration set --groups-claim-name groups
 
   # Use the alias 'config' instead of 'integration'
-  cy --org my-org beta oidc config set --enabled=false
+  cy --org my-org oidc config set --enabled=false
 `,
 		RunE: setIntegration,
 	}

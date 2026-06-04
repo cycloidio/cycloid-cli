@@ -23,7 +23,7 @@ func NewListCommand() *cobra.Command {
 		Short: "List OIDC group-to-team mappings",
 		Example: `
   # List all OIDC group mappings for my-org
-  cy --org my-org beta oidc mappings list
+  cy --org my-org oidc mappings list
 `,
 		RunE: listMappings,
 	}

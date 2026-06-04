@@ -17,7 +17,7 @@ func NewCreateCommand() *cobra.Command {
 		Short: "Create an OIDC group-to-team mapping",
 		Example: `
   # Map OIDC group "devs" to team "dev-team" in my-org
-  cy --org my-org beta oidc mappings create --group-name devs --team dev-team
+  cy --org my-org oidc mappings create --group-name devs --team dev-team
 `,
 		RunE: createMapping,
 	}

@@ -25,10 +25,10 @@ Only the flags you pass are changed; unset flags keep their current value
 the API returns HTTP 422 otherwise.`,
 		Example: `
   # Enable OIDC-managed mode and eject members with no matching group
-  cy --org my-org beta oidc settings set --oidc-managed --no-match-policy eject
+  cy --org my-org oidc settings set --oidc-managed --no-match-policy eject
 
   # Set a default role for OIDC-provisioned members (other settings untouched)
-  cy --org my-org beta oidc settings set --default-role organization-member
+  cy --org my-org oidc settings set --default-role organization-member
 `,
 		RunE: setSettings,
 	}

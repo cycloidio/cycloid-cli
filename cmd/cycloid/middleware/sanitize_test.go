@@ -90,7 +90,7 @@ func TestSanitizeBody(t *testing.T) {
 	})
 
 	t.Run("RedactsOIDCSecrets", func(t *testing.T) {
-		// `beta oidc integration set` sends oidc_client_secret / oidc_ca_cert in
+		// `oidc integration set` sends oidc_client_secret / oidc_ca_cert in
 		// the request body; these must never reach DEBUG or error output. Non-secret
 		// OIDC fields must stay visible so debugging stays useful.
 		input := []byte(`{"config":{"type":"AuthenticationOIDC","enabled":true,"oidc_issuer":"https://idp.example.com","oidc_client_id":"public-id","oidc_client_secret":"s3cr3t","oidc_ca_cert":"-----BEGIN CERTIFICATE-----"}}`)

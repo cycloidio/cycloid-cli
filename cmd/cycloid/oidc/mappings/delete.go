@@ -18,7 +18,7 @@ func NewDeleteCommand() *cobra.Command {
 		Short:   "Delete an OIDC group-to-team mapping by ID",
 		Example: `
   # Delete OIDC group mapping with ID 42 in my-org
-  cy --org my-org beta oidc mappings delete --mapping-id 42
+  cy --org my-org oidc mappings delete --mapping-id 42
 `,
 		RunE: deleteMapping,
 	}
