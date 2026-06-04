@@ -276,7 +276,7 @@ func (config *Config) NewTestProject(identifier string) (*models.Project, error)
 // The func will always be returned so even if err != nil, defer the func.
 func (config *Config) NewTestEnv(identifier, project string) (*models.Environment, error) {
 	var (
-		env   = RandomCanonical(identifier)
+		env     = RandomCanonical(identifier)
 		envType = "production"
 	)
 
@@ -285,7 +285,7 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 	body := &models.NewEnvironment{
 		Canonical: env,
 		Name:      ptr.Ptr(env),
-		Type:      ptr.Ptr(envType),
+		Type:      envType,
 	}
 	out, _, err := m.CreateOrgEnv(config.Org, body)
 	if err != nil {
