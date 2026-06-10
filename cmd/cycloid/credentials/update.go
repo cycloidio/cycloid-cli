@@ -238,6 +238,20 @@ func update(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	// If --canonical was not provided, resolve it from --name/--path by listing
+	// the org's credentials — mirrors the create --update lookup (CLI-123).
+	if credential == "" {
+		creds, _, listErr := m.ListCredentials(org, credT)
+		if listErr != nil {
+			return fmt.Errorf("unable to resolve credential from --name %q: %w", name, listErr)
+		}
+		existing := findCredentialForUpdate(creds, credential, credentialPath, name)
+		if existing == nil || existing.Canonical == nil {
+			return fmt.Errorf("no credential found matching --name %q; pass --canonical to target it directly", name)
+		}
+		credential = *existing.Canonical
+	}
+
 	outCred, _, err := m.UpdateCredential(org, name, credT, rawCred, credentialPath, credential, description)
 	return cyout.PrintWithOptions(cmd, outCred, err, "unable to update credential", printer.Options{})
 }
