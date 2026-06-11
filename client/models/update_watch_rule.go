@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -56,12 +57,12 @@ func (m *UpdateWatchRule) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UpdateWatchRule) validateFilters(formats strfmt.Registry) error {
-	if swag.IsZero(m.Filters) { // not required
+	if typeutils.IsZero(m.Filters) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Filters); i++ {
-		if swag.IsZero(m.Filters[i]) { // not required
+		if typeutils.IsZero(m.Filters[i]) { // not required
 			continue
 		}
 
@@ -127,7 +128,7 @@ func (m *UpdateWatchRule) contextValidateFilters(ctx context.Context, formats st
 
 		if m.Filters[i] != nil {
 
-			if swag.IsZero(m.Filters[i]) { // not required
+			if typeutils.IsZero(m.Filters[i]) { // not required
 				return nil
 			}
 
@@ -155,13 +156,13 @@ func (m *UpdateWatchRule) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *UpdateWatchRule) UnmarshalBinary(b []byte) error {
 	var res UpdateWatchRule
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

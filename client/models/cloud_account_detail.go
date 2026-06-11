@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // CloudAccountDetail Cloud Account Detail
@@ -34,7 +35,7 @@ type CloudAccountDetail struct {
 func (m *CloudAccountDetail) UnmarshalJSON(raw []byte) error {
 	// AO0
 	var aO0 CloudAccount
-	if err := swag.ReadJSON(raw, &aO0); err != nil {
+	if err := jsonutils.ReadJSON(raw, &aO0); err != nil {
 		return err
 	}
 	m.CloudAccount = aO0
@@ -47,7 +48,7 @@ func (m *CloudAccountDetail) UnmarshalJSON(raw []byte) error {
 
 		FinopsEnabled bool `json:"finops_enabled,omitempty"`
 	}
-	if err := swag.ReadJSON(raw, &dataAO1); err != nil {
+	if err := jsonutils.ReadJSON(raw, &dataAO1); err != nil {
 		return err
 	}
 
@@ -64,7 +65,7 @@ func (m *CloudAccountDetail) UnmarshalJSON(raw []byte) error {
 func (m CloudAccountDetail) MarshalJSON() ([]byte, error) {
 	_parts := make([][]byte, 0, 2)
 
-	aO0, err := swag.WriteJSON(m.CloudAccount)
+	aO0, err := jsonutils.WriteJSON(m.CloudAccount)
 	if err != nil {
 		return nil, err
 	}
@@ -83,12 +84,12 @@ func (m CloudAccountDetail) MarshalJSON() ([]byte, error) {
 
 	dataAO1.FinopsEnabled = m.FinopsEnabled
 
-	jsonDataAO1, errAO1 := swag.WriteJSON(dataAO1)
+	jsonDataAO1, errAO1 := jsonutils.WriteJSON(dataAO1)
 	if errAO1 != nil {
 		return nil, errAO1
 	}
 	_parts = append(_parts, jsonDataAO1)
-	return swag.ConcatJSON(_parts...), nil
+	return jsonutils.ConcatJSON(_parts...), nil
 }
 
 // Validate validates this cloud account detail
@@ -116,12 +117,12 @@ func (m *CloudAccountDetail) Validate(formats strfmt.Registry) error {
 
 func (m *CloudAccountDetail) validateEnvironments(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Environments) { // not required
+	if typeutils.IsZero(m.Environments) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Environments); i++ {
-		if swag.IsZero(m.Environments[i]) { // not required
+		if typeutils.IsZero(m.Environments[i]) { // not required
 			continue
 		}
 
@@ -147,7 +148,7 @@ func (m *CloudAccountDetail) validateEnvironments(formats strfmt.Registry) error
 
 func (m *CloudAccountDetail) validateFinopsAccount(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.FinopsAccount) { // not required
+	if typeutils.IsZero(m.FinopsAccount) { // not required
 		return nil
 	}
 
@@ -198,7 +199,7 @@ func (m *CloudAccountDetail) contextValidateEnvironments(ctx context.Context, fo
 
 		if m.Environments[i] != nil {
 
-			if swag.IsZero(m.Environments[i]) { // not required
+			if typeutils.IsZero(m.Environments[i]) { // not required
 				return nil
 			}
 
@@ -225,7 +226,7 @@ func (m *CloudAccountDetail) contextValidateFinopsAccount(ctx context.Context, f
 
 	if m.FinopsAccount != nil {
 
-		if swag.IsZero(m.FinopsAccount) { // not required
+		if typeutils.IsZero(m.FinopsAccount) { // not required
 			return nil
 		}
 
@@ -251,13 +252,13 @@ func (m *CloudAccountDetail) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *CloudAccountDetail) UnmarshalBinary(b []byte) error {
 	var res CloudAccountDetail
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
