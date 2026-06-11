@@ -2,6 +2,7 @@ package cyargs
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -268,6 +269,24 @@ func ResolveStackVersionArg(cmd *cobra.Command, m middleware.Middleware, org, st
 	default:
 		return "", "", "", fmt.Errorf("version %q not found in stack %q", v, stackRef)
 	}
+}
+
+// GetStackVersionID parses --stack-version=version:<id> and returns the numeric catalog
+// version ID. Returns (id, true, nil) when that form is used, (0, false, nil) otherwise.
+func GetStackVersionID(cmd *cobra.Command) (uint32, bool, error) {
+	v, err := cmd.Flags().GetString("stack-version")
+	if err != nil || v == "" {
+		return 0, false, err
+	}
+	idStr, ok := strings.CutPrefix(v, "version:")
+	if !ok {
+		return 0, false, nil
+	}
+	id64, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		return 0, false, fmt.Errorf("--stack-version=version:<id>: expected a numeric ID, got %q", idStr)
+	}
+	return uint32(id64), true, nil
 }
 
 // CompleteStackVersionUnified provides prefix-aware completion for --stack-version.

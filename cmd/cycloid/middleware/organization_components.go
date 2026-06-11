@@ -14,9 +14,6 @@ func (m *middleware) GetComponentConfig(org, project, env, component, versionTag
 	var result models.FormVariables
 
 	if versionID == 0 {
-		// Resolve component's stack ref to find the right catalog version.
-		// When all version args are empty this returns the default (latest branch head),
-		// matching console behavior (?service_catalog_source_version_id=<latest>).
 		comp, _, err := m.GetComponent(org, project, env, component)
 		if err != nil {
 			return nil, nil, fmt.Errorf("failed to get component to resolve stack version: %w", err)

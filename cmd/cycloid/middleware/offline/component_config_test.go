@@ -1,7 +1,7 @@
 package offline_test
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -12,72 +12,9 @@ import (
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware/offline/mockserver"
 )
 
-// componentConfigServer builds a test server that mocks the resolution chain for
-// GetComponentConfig. It returns the stack version whose (type, name) matches
-// wantType/wantName for explicit resolution, or returns the branch head when
-// catalogRepoBranch matches a branch-type version (default/auto-resolve path).
-func componentConfigServer(t *testing.T, capturedQuery *string) *httptest.Server {
-	t.Helper()
-	const (
-		stackRef   = "myorg:my-stack"
-		catRepo    = "my-catalog-repo"
-		branchName = "main"
-		branchID   = uint32(99)
-		tagName    = "v1.2.3"
-		tagID      = uint32(77)
-	)
-
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		path := r.URL.Path
-
-		writeJSON := func(v any) {
-			_ = json.NewEncoder(w).Encode(map[string]any{"data": v})
-		}
-
-		switch {
-		case strings.HasSuffix(path, "/components/mycomp/config"):
-			*capturedQuery = r.URL.RawQuery
-			writeJSON(map[string]any{})
-
-		case strings.HasSuffix(path, "/components/mycomp"):
-			writeJSON(map[string]any{
-				"service_catalog": map[string]any{
-					"ref":                              stackRef,
-					"service_catalog_source_canonical": catRepo,
-				},
-			})
-
-		case strings.Contains(path, "service_catalogs") && strings.HasSuffix(path, "/versions"):
-			writeJSON([]map[string]any{
-				{"id": branchID, "type": "branch", "name": branchName, "commit_hash": "abc123"},
-				{"id": tagID, "type": "tag", "name": tagName, "commit_hash": "def456"},
-			})
-
-		case strings.Contains(path, "service_catalogs"):
-			writeJSON(map[string]any{
-				"ref":                              stackRef,
-				"service_catalog_source_canonical": catRepo,
-			})
-
-		case strings.Contains(path, "service_catalog_sources"):
-			writeJSON(map[string]any{
-				"canonical": catRepo,
-				"branch":    branchName,
-			})
-
-		default:
-			http.NotFound(w, r)
-		}
-	}))
-	return srv
-}
-
-// TestGetComponentConfig_RawVersionID verifies that when a non-zero versionID is
-// provided (from --stack-version=version:<id>), GetComponentConfig sends it directly
-// to the config endpoint with no extra resolution API calls.
 func TestGetComponentConfig_RawVersionID(t *testing.T) {
 	var capturedQuery string
 	callCount := 0
@@ -96,49 +33,39 @@ func TestGetComponentConfig_RawVersionID(t *testing.T) {
 
 	_, _, err := m.GetComponentConfig("org", "proj", "env", "comp", "", "", "", 14)
 	require.NoError(t, err)
-	assert.Equal(t, "service_catalog_source_version_id=14", capturedQuery,
-		"raw version ID 14 must be passed directly without resolution")
+	assert.Equal(t, "service_catalog_source_version_id=14", capturedQuery)
 	assert.Equal(t, 1, callCount, "raw version ID must not trigger extra API calls")
 }
 
-// TestGetComponentConfig_BranchResolvesVersion verifies that passing an explicit
-// branch name resolves to that branch's version ID in the config request.
 func TestGetComponentConfig_BranchResolvesVersion(t *testing.T) {
 	var capturedQuery string
-	srv := componentConfigServer(t, &capturedQuery)
+	srv := mockserver.ComponentConfigServer(t, &capturedQuery)
 	defer srv.Close()
 
 	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
 	m := middleware.NewMiddleware(api)
 
-	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", "main", "", 0)
+	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", mockserver.BranchName, "", 0)
 	require.NoError(t, err)
-	assert.Equal(t, "service_catalog_source_version_id=99", capturedQuery,
-		"branch 'main' should resolve to ID 99")
+	assert.Equal(t, fmt.Sprintf("service_catalog_source_version_id=%d", mockserver.BranchVersionID), capturedQuery)
 }
 
-// TestGetComponentConfig_TagResolvesVersion verifies that passing a tag name
-// resolves to that tag's version ID in the config request.
 func TestGetComponentConfig_TagResolvesVersion(t *testing.T) {
 	var capturedQuery string
-	srv := componentConfigServer(t, &capturedQuery)
+	srv := mockserver.ComponentConfigServer(t, &capturedQuery)
 	defer srv.Close()
 
 	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
 	m := middleware.NewMiddleware(api)
 
-	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "v1.2.3", "", "", 0)
+	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", mockserver.TagName, "", "", 0)
 	require.NoError(t, err)
-	assert.Equal(t, "service_catalog_source_version_id=77", capturedQuery,
-		"tag 'v1.2.3' should resolve to ID 77")
+	assert.Equal(t, fmt.Sprintf("service_catalog_source_version_id=%d", mockserver.TagVersionID), capturedQuery)
 }
 
-// TestGetComponentConfig_AutoResolvesLatestVersion verifies that when no version
-// is specified, GetComponentConfig resolves the catalog-repo branch head and
-// passes the corresponding service_catalog_source_version_id to the config endpoint.
 func TestGetComponentConfig_AutoResolvesLatestVersion(t *testing.T) {
 	var capturedQuery string
-	srv := componentConfigServer(t, &capturedQuery)
+	srv := mockserver.ComponentConfigServer(t, &capturedQuery)
 	defer srv.Close()
 
 	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
@@ -146,6 +73,5 @@ func TestGetComponentConfig_AutoResolvesLatestVersion(t *testing.T) {
 
 	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", "", "", 0)
 	require.NoError(t, err)
-	assert.Equal(t, "service_catalog_source_version_id=99", capturedQuery,
-		"default (no version specified) should resolve to catalog branch head ID 99")
+	assert.Equal(t, fmt.Sprintf("service_catalog_source_version_id=%d", mockserver.BranchVersionID), capturedQuery)
 }
