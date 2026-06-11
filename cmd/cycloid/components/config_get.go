@@ -1,6 +1,10 @@
 package components
 
 import (
+	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -32,11 +36,24 @@ func getComponentConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	tag, branch, hash, err := cyargs.ResolveStackVersionArg(cmd, m, org, "")
-	if err != nil {
-		return err
+	// version:<id> passes the catalog version ID directly to the API, bypassing
+	// stack ref resolution. Useful when debugging a known version ID.
+	var tag, branch, hash string
+	var versionID uint32
+	rawVersion, _ := cmd.Flags().GetString("stack-version")
+	if idStr, ok := strings.CutPrefix(rawVersion, "version:"); ok {
+		id64, err := strconv.ParseUint(idStr, 10, 32)
+		if err != nil {
+			return fmt.Errorf("--stack-version=version:<id>: expected a numeric ID, got %q", idStr)
+		}
+		versionID = uint32(id64)
+	} else {
+		tag, branch, hash, err = cyargs.ResolveStackVersionArg(cmd, m, org, "")
+		if err != nil {
+			return err
+		}
 	}
 
-	config, _, err := m.GetComponentConfig(org, project, env, component, tag, branch, hash)
+	config, _, err := m.GetComponentConfig(org, project, env, component, tag, branch, hash, versionID)
 	return cyout.PrintWithOptions(cmd, config, err, "failed to fetch config of component '"+component+"'", printer.Options{})
 }
