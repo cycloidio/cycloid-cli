@@ -19,7 +19,7 @@ func NewComponentConfigGetCommand() *cobra.Command {
 		Example: "cy config get -p project -e env -c component",
 	}
 	cyargs.AddCyContext(cmd)
-	cmd.Flags().Uint32("service-catalog-source-version-id", 0, "service catalog source version ID (default: latest)")
+	cyargs.AddStackVersionFlags(cmd)
 	return cmd
 }
 
@@ -29,14 +29,14 @@ func getComponentConfig(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	versionID, err := cmd.Flags().GetUint32("service-catalog-source-version-id")
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
+	tag, branch, hash, err := cyargs.ResolveStackVersionArg(cmd, m, org, "")
 	if err != nil {
 		return err
 	}
 
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
-	config, _, err := m.GetComponentConfig(org, project, env, component, versionID)
+	config, _, err := m.GetComponentConfig(org, project, env, component, tag, branch, hash)
 	return cyout.PrintWithOptions(cmd, config, err, "failed to fetch config of component '"+component+"'", printer.Options{})
 }

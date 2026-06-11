@@ -14,47 +14,20 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 )
 
-// TestGetComponentConfig_ExplicitVersionID verifies that when an explicit versionID is
-// provided, GetComponentConfig sends exactly ?service_catalog_source_version_id=<id>
-// without any extra resolution calls.
-func TestGetComponentConfig_ExplicitVersionID(t *testing.T) {
-	var capturedQuery string
-	callCount := 0
-	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		callCount++
-		w.Header().Set("Content-Type", "application/json")
-		if strings.HasSuffix(r.URL.Path, "/config") {
-			capturedQuery = r.URL.RawQuery
-		}
-		_, _ = w.Write([]byte(`{"data":{}}`))
-	}))
-	defer srv.Close()
-
-	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
-	m := middleware.NewMiddleware(api)
-
-	_, _, err := m.GetComponentConfig("org", "proj", "env", "comp", 42)
-	require.NoError(t, err)
-	assert.Equal(t, "service_catalog_source_version_id=42", capturedQuery)
-	assert.Equal(t, 1, callCount, "explicit version ID must not trigger extra API calls")
-}
-
-// TestGetComponentConfig_AutoResolvesLatestVersion verifies that when versionID == 0,
-// GetComponentConfig resolves the component's latest stack version and passes the
-// resolved service_catalog_source_version_id to the config endpoint.
-func TestGetComponentConfig_AutoResolvesLatestVersion(t *testing.T) {
+// componentConfigServer builds a test server that mocks the resolution chain for
+// GetComponentConfig. It returns the stack version whose (type, name) matches
+// wantType/wantName for explicit resolution, or returns the branch head when
+// catalogRepoBranch matches a branch-type version (default/auto-resolve path).
+func componentConfigServer(t *testing.T, capturedQuery *string) *httptest.Server {
+	t.Helper()
 	const (
-		org       = "myorg"
-		project   = "myproj"
-		env       = "prod"
-		component = "mycomp"
-		stackRef  = "myorg:my-stack"
-		catRepo   = "my-catalog-repo"
-		branch    = "main"
-		wantID    = uint32(99)
+		stackRef   = "myorg:my-stack"
+		catRepo    = "my-catalog-repo"
+		branchName = "main"
+		branchID   = uint32(99)
+		tagName    = "v1.2.3"
+		tagID      = uint32(77)
 	)
-
-	var capturedConfigQuery string
 
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
@@ -65,11 +38,11 @@ func TestGetComponentConfig_AutoResolvesLatestVersion(t *testing.T) {
 		}
 
 		switch {
-		case strings.HasSuffix(path, "/components/"+component+"/config"):
-			capturedConfigQuery = r.URL.RawQuery
+		case strings.HasSuffix(path, "/components/mycomp/config"):
+			*capturedQuery = r.URL.RawQuery
 			writeJSON(map[string]any{})
 
-		case strings.HasSuffix(path, "/components/"+component):
+		case strings.HasSuffix(path, "/components/mycomp"):
 			writeJSON(map[string]any{
 				"service_catalog": map[string]any{
 					"ref":                              stackRef,
@@ -79,7 +52,8 @@ func TestGetComponentConfig_AutoResolvesLatestVersion(t *testing.T) {
 
 		case strings.Contains(path, "service_catalogs") && strings.HasSuffix(path, "/versions"):
 			writeJSON([]map[string]any{
-				{"id": wantID, "type": "branch", "name": branch, "commit_hash": "abc123def456"},
+				{"id": branchID, "type": "branch", "name": branchName, "commit_hash": "abc123"},
+				{"id": tagID, "type": "tag", "name": tagName, "commit_hash": "def456"},
 			})
 
 		case strings.Contains(path, "service_catalogs"):
@@ -91,20 +65,61 @@ func TestGetComponentConfig_AutoResolvesLatestVersion(t *testing.T) {
 		case strings.Contains(path, "service_catalog_sources"):
 			writeJSON(map[string]any{
 				"canonical": catRepo,
-				"branch":    branch,
+				"branch":    branchName,
 			})
 
 		default:
 			http.NotFound(w, r)
 		}
 	}))
+	return srv
+}
+
+// TestGetComponentConfig_BranchResolvesVersion verifies that passing an explicit
+// branch name resolves to that branch's version ID in the config request.
+func TestGetComponentConfig_BranchResolvesVersion(t *testing.T) {
+	var capturedQuery string
+	srv := componentConfigServer(t, &capturedQuery)
 	defer srv.Close()
 
 	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
 	m := middleware.NewMiddleware(api)
 
-	_, _, err := m.GetComponentConfig(org, project, env, component, 0)
+	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", "main", "")
 	require.NoError(t, err)
-	assert.Equal(t, "service_catalog_source_version_id=99", capturedConfigQuery,
-		"auto-resolve must pass the resolved version ID (99) to the config endpoint")
+	assert.Equal(t, "service_catalog_source_version_id=99", capturedQuery,
+		"branch 'main' should resolve to ID 99")
+}
+
+// TestGetComponentConfig_TagResolvesVersion verifies that passing a tag name
+// resolves to that tag's version ID in the config request.
+func TestGetComponentConfig_TagResolvesVersion(t *testing.T) {
+	var capturedQuery string
+	srv := componentConfigServer(t, &capturedQuery)
+	defer srv.Close()
+
+	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
+	m := middleware.NewMiddleware(api)
+
+	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "v1.2.3", "", "")
+	require.NoError(t, err)
+	assert.Equal(t, "service_catalog_source_version_id=77", capturedQuery,
+		"tag 'v1.2.3' should resolve to ID 77")
+}
+
+// TestGetComponentConfig_AutoResolvesLatestVersion verifies that when no version
+// is specified, GetComponentConfig resolves the catalog-repo branch head and
+// passes the corresponding service_catalog_source_version_id to the config endpoint.
+func TestGetComponentConfig_AutoResolvesLatestVersion(t *testing.T) {
+	var capturedQuery string
+	srv := componentConfigServer(t, &capturedQuery)
+	defer srv.Close()
+
+	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
+	m := middleware.NewMiddleware(api)
+
+	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", "", "")
+	require.NoError(t, err)
+	assert.Equal(t, "service_catalog_source_version_id=99", capturedQuery,
+		"default (no version specified) should resolve to catalog branch head ID 99")
 }
