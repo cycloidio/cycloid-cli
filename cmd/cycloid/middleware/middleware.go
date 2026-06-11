@@ -190,7 +190,7 @@ type Middleware interface {
 	GetComponent(org, project, env, component string) (*models.Component, *http.Response, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, *http.Response, error)
 	DeleteComponent(org, project, env, component string, opts DeleteOptions) (*http.Response, error)
-	GetComponentConfig(org, project, env, component string, versionID uint32) (models.FormVariables, *http.Response, error)
+	GetComponentConfig(org, project, env, component, versionTag, versionBranch, versionCommitHash string) (models.FormVariables, *http.Response, error)
 	GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, *http.Response, error)
 
 	DeleteRole(org, role string) (*http.Response, error)
