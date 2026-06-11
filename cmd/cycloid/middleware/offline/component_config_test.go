@@ -75,6 +75,32 @@ func componentConfigServer(t *testing.T, capturedQuery *string) *httptest.Server
 	return srv
 }
 
+// TestGetComponentConfig_RawVersionID verifies that when a non-zero versionID is
+// provided (from --stack-version=version:<id>), GetComponentConfig sends it directly
+// to the config endpoint with no extra resolution API calls.
+func TestGetComponentConfig_RawVersionID(t *testing.T) {
+	var capturedQuery string
+	callCount := 0
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		callCount++
+		w.Header().Set("Content-Type", "application/json")
+		if strings.HasSuffix(r.URL.Path, "/config") {
+			capturedQuery = r.URL.RawQuery
+		}
+		_, _ = w.Write([]byte(`{"data":{}}`))
+	}))
+	defer srv.Close()
+
+	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
+	m := middleware.NewMiddleware(api)
+
+	_, _, err := m.GetComponentConfig("org", "proj", "env", "comp", "", "", "", 14)
+	require.NoError(t, err)
+	assert.Equal(t, "service_catalog_source_version_id=14", capturedQuery,
+		"raw version ID 14 must be passed directly without resolution")
+	assert.Equal(t, 1, callCount, "raw version ID must not trigger extra API calls")
+}
+
 // TestGetComponentConfig_BranchResolvesVersion verifies that passing an explicit
 // branch name resolves to that branch's version ID in the config request.
 func TestGetComponentConfig_BranchResolvesVersion(t *testing.T) {
@@ -85,7 +111,7 @@ func TestGetComponentConfig_BranchResolvesVersion(t *testing.T) {
 	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
 	m := middleware.NewMiddleware(api)
 
-	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", "main", "")
+	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", "main", "", 0)
 	require.NoError(t, err)
 	assert.Equal(t, "service_catalog_source_version_id=99", capturedQuery,
 		"branch 'main' should resolve to ID 99")
@@ -101,7 +127,7 @@ func TestGetComponentConfig_TagResolvesVersion(t *testing.T) {
 	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
 	m := middleware.NewMiddleware(api)
 
-	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "v1.2.3", "", "")
+	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "v1.2.3", "", "", 0)
 	require.NoError(t, err)
 	assert.Equal(t, "service_catalog_source_version_id=77", capturedQuery,
 		"tag 'v1.2.3' should resolve to ID 77")
@@ -118,7 +144,7 @@ func TestGetComponentConfig_AutoResolvesLatestVersion(t *testing.T) {
 	api := common.NewAPI(common.WithURL(srv.URL), common.WithToken("test-token"))
 	m := middleware.NewMiddleware(api)
 
-	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", "", "")
+	_, _, err := m.GetComponentConfig("myorg", "myproj", "myenv", "mycomp", "", "", "", 0)
 	require.NoError(t, err)
 	assert.Equal(t, "service_catalog_source_version_id=99", capturedQuery,
 		"default (no version specified) should resolve to catalog branch head ID 99")

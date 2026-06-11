@@ -10,19 +10,21 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
-func (m *middleware) GetComponentConfig(org, project, env, component, versionTag, versionBranch, versionCommitHash string) (models.FormVariables, *http.Response, error) {
+func (m *middleware) GetComponentConfig(org, project, env, component, versionTag, versionBranch, versionCommitHash string, versionID uint32) (models.FormVariables, *http.Response, error) {
 	var result models.FormVariables
 
-	// Resolve component's stack ref first, then use it to find the right version.
-	// When all version args are empty this returns the default (latest branch head),
-	// matching console behavior (?service_catalog_source_version_id=<latest>).
-	comp, _, err := m.GetComponent(org, project, env, component)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to get component to resolve stack version: %w", err)
-	}
-	versionID, _, err := m.resolveStackVersion(org, *comp.ServiceCatalog.Ref, versionTag, versionBranch, versionCommitHash)
-	if err != nil {
-		return nil, nil, fmt.Errorf("failed to resolve stack version: %w", err)
+	if versionID == 0 {
+		// Resolve component's stack ref to find the right catalog version.
+		// When all version args are empty this returns the default (latest branch head),
+		// matching console behavior (?service_catalog_source_version_id=<latest>).
+		comp, _, err := m.GetComponent(org, project, env, component)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to get component to resolve stack version: %w", err)
+		}
+		versionID, _, err = m.resolveStackVersion(org, *comp.ServiceCatalog.Ref, versionTag, versionBranch, versionCommitHash)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to resolve stack version: %w", err)
+		}
 	}
 
 	query := url.Values{

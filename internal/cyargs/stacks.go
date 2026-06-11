@@ -136,7 +136,7 @@ func GetStack(cmd *cobra.Command) (string, error) {
 // backward compatibility but are deprecated and will be removed in a future major release.
 func AddStackVersionFlags(cmd *cobra.Command) {
 	cmd.Flags().String("stack-version", "", "stack version (tag, branch, or commit hash). "+
-		"Use type prefixes to avoid ambiguity: tag:<name>, branch:<name>, sha:<hash>")
+		"Use type prefixes to avoid ambiguity: tag:<name>, branch:<name>, sha:<hash>, version:<id>")
 	cmd.RegisterFlagCompletionFunc("stack-version", CompleteStackVersionUnified)
 
 	// Legacy flags — kept for backward compatibility.
@@ -219,6 +219,10 @@ func ResolveStackVersionArg(cmd *cobra.Command, m middleware.Middleware, org, st
 			return "", value, "", nil
 		case "sha", "commit":
 			return "", "", value, nil
+		case "version":
+			return "", "", "", fmt.Errorf(
+				"--stack-version=version:<id> is only supported by 'cy component config get'; " +
+					"use tag:<name>, branch:<name>, or sha:<hash> for other commands")
 		}
 		// Unknown prefix: fall through and attempt bare resolution on the full value.
 	}
