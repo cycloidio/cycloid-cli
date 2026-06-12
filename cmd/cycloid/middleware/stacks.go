@@ -1,16 +1,39 @@
 package middleware
 
 import (
+	stdErrors "errors"
 	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
-	"github.com/pkg/errors"
+	pkgerrors "github.com/pkg/errors"
 
 	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
+
+var stackVersionResolveRetryDelays = []time.Duration{
+	500 * time.Millisecond,
+	1 * time.Second,
+	2 * time.Second,
+	4 * time.Second,
+}
+
+type stackVersionNotFoundError struct {
+	kind  string
+	value string
+}
+
+func (e *stackVersionNotFoundError) Error() string {
+	return fmt.Sprintf("stack version %s %q not found", e.kind, e.value)
+}
+
+func isStackVersionNotFoundError(err error) bool {
+	var notFoundErr *stackVersionNotFoundError
+	return stdErrors.As(err, &notFoundErr)
+}
 
 func (m *middleware) GetStack(org, ref string) (*models.ServiceCatalog, *http.Response, error) {
 	var result *models.ServiceCatalog
@@ -48,6 +71,26 @@ func (m *middleware) ListStacks(org string, filters ...LHSFilter) ([]*models.Ser
 // Priority: tag > branch > commitHash (whichever is provided first)
 // If all parameters are empty, uses the default catalog version (latest tag or branch HEAD).
 func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranch, versionCommitHash string) (versionID uint32, commitHash string, err error) {
+	versionID, commitHash, err = m.resolveStackVersionOnce(org, stackRef, versionTag, versionBranch, versionCommitHash)
+	if err == nil || !isStackVersionNotFoundError(err) {
+		return versionID, commitHash, err
+	}
+
+	// Catalog repository creation/refresh is eventually consistent: the stack can
+	// exist before its freshly fetched branch appears in the versions endpoint.
+	for _, delay := range stackVersionResolveRetryDelays {
+		time.Sleep(delay)
+
+		versionID, commitHash, err = m.resolveStackVersionOnce(org, stackRef, versionTag, versionBranch, versionCommitHash)
+		if err == nil || !isStackVersionNotFoundError(err) {
+			return versionID, commitHash, err
+		}
+	}
+
+	return versionID, commitHash, err
+}
+
+func (m *middleware) resolveStackVersionOnce(org, stackRef, versionTag, versionBranch, versionCommitHash string) (versionID uint32, commitHash string, err error) {
 	// If all are empty, use default version
 	if versionTag == "" && versionBranch == "" && versionCommitHash == "" {
 		defaultVersion, err := m.getDefaultCatalogVersion(org, stackRef)
@@ -56,7 +99,7 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 		}
 
 		if defaultVersion == nil || defaultVersion.ID == nil || defaultVersion.CommitHash == nil {
-			return 0, "", errors.New("no stack catalog version found")
+			return 0, "", pkgerrors.New("no stack catalog version found")
 		}
 
 		return *defaultVersion.ID, *defaultVersion.CommitHash, nil
@@ -76,7 +119,7 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 				return *version.ID, *version.CommitHash, nil
 			}
 		}
-		return 0, "", fmt.Errorf("stack version tag %q not found", versionTag)
+		return 0, "", &stackVersionNotFoundError{kind: "tag", value: versionTag}
 	}
 
 	// Priority 2: branch
@@ -87,7 +130,7 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 				return *version.ID, *version.CommitHash, nil
 			}
 		}
-		return 0, "", fmt.Errorf("stack version branch %q not found", versionBranch)
+		return 0, "", &stackVersionNotFoundError{kind: "branch", value: versionBranch}
 	}
 
 	// Priority 3: commit hash
@@ -96,7 +139,7 @@ func (m *middleware) resolveStackVersion(org, stackRef, versionTag, versionBranc
 			return *version.ID, *version.CommitHash, nil
 		}
 	}
-	return 0, "", fmt.Errorf("stack version commit hash %q not found", versionCommitHash)
+	return 0, "", &stackVersionNotFoundError{kind: "commit hash", value: versionCommitHash}
 }
 
 // ListStackUseCases lists use cases for a stack version.
@@ -188,7 +231,7 @@ func (m *middleware) getDefaultCatalogVersion(org, ref string) (*StackVersion, e
 		return branchVersion, nil
 	}
 
-	return nil, fmt.Errorf("failed to find the default version")
+	return nil, &stackVersionNotFoundError{kind: "default branch", value: catalogRepoBranch}
 }
 
 // ListBlueprints lists stacks flagged as blueprints (service_catalog_blueprint=true).
@@ -232,7 +275,7 @@ func (m *middleware) CreateStackFromBlueprint(org, blueprintRef, name, stack, ca
 		Body:         body,
 	}, &result)
 	if err != nil {
-		return nil, resp, errors.Wrap(err, "failed to create stack from blueprint")
+		return nil, resp, pkgerrors.Wrap(err, "failed to create stack from blueprint")
 	}
 	return result, resp, nil
 }
@@ -261,7 +304,7 @@ func (m *middleware) UpdateStack(
 	// Remove this condition when backend will be fixed
 	// If the team attribute is nil, this means that the backend did not found the maitainer canonical
 	if teamCanonical != "" && result.Team == nil {
-		return result, resp, errors.Errorf(
+		return result, resp, pkgerrors.Errorf(
 			"maintainer with canonical '%s' may not exists, maintainer on stack ref '%s' has been removed, please check you team canonical argument and ensure that the team exists.",
 			teamCanonical, ref,
 		)
