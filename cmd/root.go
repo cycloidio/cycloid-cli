@@ -32,6 +32,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/teams"
+	"github.com/cycloidio/cycloid-cli/cmd/cycloid/template"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
 	"github.com/cycloidio/cycloid-cli/internal/cyout"
@@ -178,6 +179,7 @@ func AttachCommands(cmd *cobra.Command) {
 		kpis.NewCommands(),
 		roles.NewCommands(),
 		stacks.NewCommands(),
+		template.NewCommands(),
 		login.NewCommands(),
 		output.NewOutputCmd(),
 		terracost.NewCommands(),
