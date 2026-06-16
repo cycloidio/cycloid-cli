@@ -1,6 +1,7 @@
 package catalogrepositories
 
 import (
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -18,6 +19,9 @@ func NewUpdateCommand() *cobra.Command {
 		Example: `
 	# update a catalog repository
 	cy --org my-org cr update --branch my-branch --cred my-cred --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-catalog-repository
+
+	# update and immediately re-index all branches/tags so they are resolvable
+	cy --org my-org cr update --branch my-branch --url "git@github.com:my/repo.git" --name my-catalog-name --canonical my-catalog-repository --refresh
 `,
 		RunE: updateCatalogRepository,
 	}
@@ -27,14 +31,12 @@ func NewUpdateCommand() *cobra.Command {
 	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
 	cmd.MarkFlagRequired(cyargs.AddRepoBranchFlag(cmd))
 	cmd.MarkFlagRequired(cyargs.AddRepoURLFlag(cmd))
+	cmd.Flags().Bool("refresh", false, "trigger a synchronous version re-index after update to make all branches and tags immediately resolvable")
 
 	return cmd
 }
 
 func updateCatalogRepository(cmd *cobra.Command, args []string) error {
-	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
-
 	org, err := cyargs.GetOrg(cmd)
 	if err != nil {
 		return err
@@ -65,6 +67,24 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	refresh, err := cmd.Flags().GetBool("refresh")
+	if err != nil {
+		return errors.Wrap(err, "unable to get refresh flag")
+	}
+
+	api := common.NewAPI()
+	m := middleware.NewMiddleware(api)
+
 	cr, _, err := m.UpdateCatalogRepository(org, can, name, url, branch, cred, nil)
-	return cyout.PrintWithOptions(cmd, cr, err, "unable to update catalog repository", printer.Options{})
+	if err != nil {
+		return cyout.PrintWithOptions(cmd, nil, err, "unable to update catalog repository", printer.Options{})
+	}
+
+	if refresh {
+		if _, _, refreshErr := m.RefreshCatalogRepositoryVersions(org, can); refreshErr != nil {
+			return cyout.PrintWithOptions(cmd, nil, refreshErr, "unable to refresh catalog repository versions", printer.Options{})
+		}
+	}
+
+	return cyout.PrintWithOptions(cmd, cr, nil, "", printer.Options{})
 }

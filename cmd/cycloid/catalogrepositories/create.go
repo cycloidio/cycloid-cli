@@ -26,6 +26,9 @@ func NewCreateCommand() *cobra.Command {
 
 	# create a catalog repository using public git repository
 	cy --org my-org catalog-repo create --branch stacks --url "https://github.com:my/repo.git" --name my-catalog-name
+
+	# create and immediately re-index all branches/tags so they are resolvable (fixes branch-stack presence race)
+	cy --org my-org catalog-repo create --branch stacks --url "git@github.com:my/repo.git" --name my-catalog-name --refresh
 `,
 		RunE: createCatalogRepository,
 	}
@@ -39,6 +42,7 @@ func NewCreateCommand() *cobra.Command {
 	cmd.Flags().String("visibility", "", "set the stacks base visibility in the catalog. accepted values are 'local', 'shared' or 'hidden' (default: local)")
 	cmd.Flags().String("team", "", "set the team canonical to be set as maintener of the stacks")
 	cmd.Flags().Bool("update", false, "update the catalog repository if it already exists")
+	cmd.Flags().Bool("refresh", false, "trigger a synchronous version re-index after create (or update) to make all branches and tags immediately resolvable")
 
 	return cmd
 }
@@ -97,6 +101,11 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
+	refresh, err := cmd.Flags().GetBool("refresh")
+	if err != nil {
+		return errors.Wrap(err, "unable to get refresh flag")
+	}
+
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
@@ -115,11 +124,21 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 			"unable to create catalog repository", printer.Options{})
 	}
 
+	var cr interface{}
 	if exists {
-		cr, _, err := m.UpdateCatalogRepository(org, repoCanonical, displayName, url, branch, cred, nil)
-		return cyout.PrintWithOptions(cmd, cr, err, "unable to update catalog repository", printer.Options{})
+		cr, _, err = m.UpdateCatalogRepository(org, repoCanonical, displayName, url, branch, cred, nil)
+	} else {
+		cr, _, err = m.CreateCatalogRepository(org, displayName, url, branch, cred, visibility, teamCanonical)
+	}
+	if err != nil {
+		return cyout.PrintWithOptions(cmd, nil, err, "unable to create catalog repository", printer.Options{})
 	}
 
-	cr, _, err := m.CreateCatalogRepository(org, displayName, url, branch, cred, visibility, teamCanonical)
-	return cyout.PrintWithOptions(cmd, cr, err, "unable to create catalog repository", printer.Options{})
+	if refresh {
+		if _, _, refreshErr := m.RefreshCatalogRepositoryVersions(org, repoCanonical); refreshErr != nil {
+			return cyout.PrintWithOptions(cmd, nil, refreshErr, "unable to refresh catalog repository versions", printer.Options{})
+		}
+	}
+
+	return cyout.PrintWithOptions(cmd, cr, nil, "", printer.Options{})
 }
