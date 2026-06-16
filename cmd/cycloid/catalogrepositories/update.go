@@ -1,7 +1,6 @@
 package catalogrepositories
 
 import (
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -69,7 +68,7 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 
 	refresh, err := cmd.Flags().GetBool("refresh")
 	if err != nil {
-		return errors.Wrap(err, "unable to get refresh flag")
+		return err
 	}
 
 	api := common.NewAPI()

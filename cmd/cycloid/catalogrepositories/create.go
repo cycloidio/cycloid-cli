@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
@@ -88,12 +87,12 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 
 	visibility, err := cmd.Flags().GetString("visibility")
 	if err != nil {
-		return errors.Wrap(err, "unable to get visibility flag")
+		return err
 	}
 
 	teamCanonical, err := cmd.Flags().GetString("team")
 	if err != nil {
-		return errors.Wrap(err, "unable to get team flag")
+		return err
 	}
 
 	update, err := cmd.Flags().GetBool("update")
@@ -103,7 +102,7 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 
 	refresh, err := cmd.Flags().GetBool("refresh")
 	if err != nil {
-		return errors.Wrap(err, "unable to get refresh flag")
+		return err
 	}
 
 	api := common.NewAPI()
@@ -136,6 +135,7 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 
 	if refresh {
 		if _, _, refreshErr := m.RefreshCatalogRepositoryVersions(org, repoCanonical); refreshErr != nil {
+			_ = cyout.PrintWithOptions(cmd, cr, nil, "", printer.Options{})
 			return cyout.PrintWithOptions(cmd, nil, refreshErr, "unable to refresh catalog repository versions", printer.Options{})
 		}
 	}
