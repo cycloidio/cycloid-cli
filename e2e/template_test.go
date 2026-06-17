@@ -19,8 +19,8 @@ type report struct {
 	Error    string   `json:"error"`
 }
 
-// TestTemplateRender exercises `cy template render` end to end. The command is
-// fully offline (no API calls), so it does not depend on backend fixtures.
+// TestTemplateRender exercises `cy beta template render` end to end. The command
+// is fully offline (no API calls), so it does not depend on backend fixtures.
 func TestTemplateRender(t *testing.T) {
 	dir := t.TempDir()
 	tplPath := filepath.Join(dir, "main.tpl")
@@ -28,7 +28,7 @@ func TestTemplateRender(t *testing.T) {
 		[]byte("project=($ .project $)\nenv=($ .env $)\nupper=($ .project | upper $)\n"), 0o600))
 
 	t.Run("set flags and placeholder for unset known var", func(t *testing.T) {
-		out, err := executeCommand([]string{"template", "render", "-f", tplPath, "--set", "project=my-app", "-o", "json"})
+		out, err := executeCommand([]string{"beta", "template", "render", "-f", tplPath, "--set", "project=my-app", "-o", "json"})
 		require.NoError(t, err)
 		var r report
 		require.NoError(t, json.Unmarshal([]byte(out), &r))
@@ -42,7 +42,7 @@ func TestTemplateRender(t *testing.T) {
 		rtpl := filepath.Join(dir, "r.tpl")
 		require.NoError(t, os.WriteFile(rtpl, []byte("r=($ .env_vars.region $) z=($ .env_vars.zone $)\n"), 0o600))
 
-		out, err := executeCommand([]string{"template", "render", "-f", rtpl, "--context-file", ctxPath, "--set", "env_vars.region=eu", "-o", "json"})
+		out, err := executeCommand([]string{"beta", "template", "render", "-f", rtpl, "--context-file", ctxPath, "--set", "env_vars.region=eu", "-o", "json"})
 		require.NoError(t, err)
 		var r report
 		require.NoError(t, json.Unmarshal([]byte(out), &r))
@@ -52,7 +52,7 @@ func TestTemplateRender(t *testing.T) {
 
 	t.Run("stdin json context", func(t *testing.T) {
 		out, _, err := executeCommandStdin(`{"project":"piped"}`,
-			[]string{"template", "render", "-f", tplPath, "-o", "json"})
+			[]string{"beta", "template", "render", "-f", tplPath, "-o", "json"})
 		require.NoError(t, err)
 		var r report
 		require.NoError(t, json.Unmarshal([]byte(out), &r))
@@ -62,7 +62,7 @@ func TestTemplateRender(t *testing.T) {
 	t.Run("parse error sets error field and nonzero exit", func(t *testing.T) {
 		bad := filepath.Join(dir, "bad.tpl")
 		require.NoError(t, os.WriteFile(bad, []byte("($ range .items $)"), 0o600))
-		out, err := executeCommand([]string{"template", "render", "-f", bad, "-o", "json"})
+		out, err := executeCommand([]string{"beta", "template", "render", "-f", bad, "-o", "json"})
 		assert.Error(t, err)
 		var r report
 		require.NoError(t, json.Unmarshal([]byte(out), &r))

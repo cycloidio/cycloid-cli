@@ -30,13 +30,13 @@ Variables referenced by a template but not provided render as the literal
 warnings when unknown.`,
 		Example: `
   # render a file with a couple of variables
-  cy template render -f main.tf.tpl --set project=my-app --set env=prod
+  cy beta template render -f main.tf.tpl --set project=my-app --set env=prod
 
   # pull-once-iterate-locally: real context from a file, tweak one var
-  cy template render -f main.tf.tpl --context-file ctx.yaml --set env_vars.region=eu-west-1
+  cy beta template render -f main.tf.tpl --context-file ctx.yaml --set env_vars.region=eu-west-1
 
   # render from stdin context, template from a directory, JSON output
-  cat ctx.json | cy template render --dir ./templates -o json`,
+  cat ctx.json | cy beta template render --dir ./templates -o json`,
 		RunE: runRender,
 		Args: cobra.NoArgs,
 	}
