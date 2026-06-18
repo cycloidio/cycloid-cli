@@ -81,6 +81,8 @@ func updateCatalogRepository(cmd *cobra.Command, args []string) error {
 
 	if refresh {
 		if _, _, refreshErr := m.RefreshCatalogRepositoryVersions(org, can); refreshErr != nil {
+			// Print the successful update result before returning the refresh error
+			_ = cyout.PrintWithOptions(cmd, cr, nil, "", printer.Options{})
 			return cyout.PrintWithOptions(cmd, nil, refreshErr, "unable to refresh catalog repository versions", printer.Options{})
 		}
 	}

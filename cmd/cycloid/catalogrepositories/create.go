@@ -7,6 +7,7 @@ import (
 
 	"github.com/spf13/cobra"
 
+	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
 	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
@@ -123,18 +124,23 @@ func createCatalogRepository(cmd *cobra.Command, args []string) error {
 			"unable to create catalog repository", printer.Options{})
 	}
 
-	var cr interface{}
+	var cr *models.ServiceCatalogSource
 	if exists {
 		cr, _, err = m.UpdateCatalogRepository(org, repoCanonical, displayName, url, branch, cred, nil)
 	} else {
 		cr, _, err = m.CreateCatalogRepository(org, displayName, url, branch, cred, visibility, teamCanonical)
 	}
 	if err != nil {
-		return cyout.PrintWithOptions(cmd, nil, err, "unable to create catalog repository", printer.Options{})
+		errMsg := "unable to create catalog repository"
+		if exists {
+			errMsg = "unable to update catalog repository"
+		}
+		return cyout.PrintWithOptions(cmd, nil, err, errMsg, printer.Options{})
 	}
 
 	if refresh {
 		if _, _, refreshErr := m.RefreshCatalogRepositoryVersions(org, repoCanonical); refreshErr != nil {
+			// Print the successful create/update result before returning the refresh error
 			_ = cyout.PrintWithOptions(cmd, cr, nil, "", printer.Options{})
 			return cyout.PrintWithOptions(cmd, nil, refreshErr, "unable to refresh catalog repository versions", printer.Options{})
 		}
