@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -150,7 +151,7 @@ func (m *Credential) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *Credential) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
+	if typeutils.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
@@ -175,7 +176,7 @@ func (m *Credential) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Credential) validateInUse(formats strfmt.Registry) error {
-	if swag.IsZero(m.InUse) { // not required
+	if typeutils.IsZero(m.InUse) { // not required
 		return nil
 	}
 
@@ -216,7 +217,7 @@ func (m *Credential) validateName(formats strfmt.Registry) error {
 }
 
 func (m *Credential) validateOwner(formats strfmt.Registry) error {
-	if swag.IsZero(m.Owner) { // not required
+	if typeutils.IsZero(m.Owner) { // not required
 		return nil
 	}
 
@@ -339,7 +340,7 @@ func (m *Credential) validateType(formats strfmt.Registry) error {
 }
 
 func (m *Credential) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+	if typeutils.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
@@ -376,7 +377,7 @@ func (m *Credential) contextValidateInUse(ctx context.Context, formats strfmt.Re
 
 	if m.InUse != nil {
 
-		if swag.IsZero(m.InUse) { // not required
+		if typeutils.IsZero(m.InUse) { // not required
 			return nil
 		}
 
@@ -401,7 +402,7 @@ func (m *Credential) contextValidateOwner(ctx context.Context, formats strfmt.Re
 
 	if m.Owner != nil {
 
-		if swag.IsZero(m.Owner) { // not required
+		if typeutils.IsZero(m.Owner) { // not required
 			return nil
 		}
 
@@ -448,13 +449,13 @@ func (m *Credential) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Credential) UnmarshalBinary(b []byte) error {
 	var res Credential
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

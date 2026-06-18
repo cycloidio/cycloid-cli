@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -138,7 +139,7 @@ func (m *ComponentSimple) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *ComponentSimple) validateCloudProvider(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudProvider) { // not required
+	if typeutils.IsZero(m.CloudProvider) { // not required
 		return nil
 	}
 
@@ -237,7 +238,7 @@ func (m *ComponentSimple) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *ComponentSimple) validateUseCase(formats strfmt.Registry) error {
-	if swag.IsZero(m.UseCase) { // not required
+	if typeutils.IsZero(m.UseCase) { // not required
 		return nil
 	}
 
@@ -306,7 +307,7 @@ func (m *ComponentSimple) contextValidateCloudProvider(ctx context.Context, form
 
 	if m.CloudProvider != nil {
 
-		if swag.IsZero(m.CloudProvider) { // not required
+		if typeutils.IsZero(m.CloudProvider) { // not required
 			return nil
 		}
 
@@ -374,13 +375,13 @@ func (m *ComponentSimple) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ComponentSimple) UnmarshalBinary(b []byte) error {
 	var res ComponentSimple
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

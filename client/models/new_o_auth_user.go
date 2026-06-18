@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -27,9 +28,6 @@ type NewOAuthUser struct {
 	// Required: true
 	// Format: email
 	Email *strfmt.Email `json:"email"`
-
-	// User's email has been verified
-	EmailVerified bool `json:"email_verified,omitempty"`
 
 	// full name
 	// Required: true
@@ -106,7 +104,7 @@ func (m *NewOAuthUser) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewOAuthUser) validateCountryCode(formats strfmt.Registry) error {
-	if swag.IsZero(m.CountryCode) { // not required
+	if typeutils.IsZero(m.CountryCode) { // not required
 		return nil
 	}
 
@@ -148,7 +146,7 @@ func (m *NewOAuthUser) validateFullName(formats strfmt.Registry) error {
 }
 
 func (m *NewOAuthUser) validateInvitationToken(formats strfmt.Registry) error {
-	if swag.IsZero(m.InvitationToken) { // not required
+	if typeutils.IsZero(m.InvitationToken) { // not required
 		return nil
 	}
 
@@ -192,7 +190,7 @@ func (m *NewOAuthUser) validateLocaleEnum(path, location string, value string) e
 }
 
 func (m *NewOAuthUser) validateLocale(formats strfmt.Registry) error {
-	if swag.IsZero(m.Locale) { // not required
+	if typeutils.IsZero(m.Locale) { // not required
 		return nil
 	}
 
@@ -205,7 +203,7 @@ func (m *NewOAuthUser) validateLocale(formats strfmt.Registry) error {
 }
 
 func (m *NewOAuthUser) validatePictureURL(formats strfmt.Registry) error {
-	if swag.IsZero(m.PictureURL) { // not required
+	if typeutils.IsZero(m.PictureURL) { // not required
 		return nil
 	}
 
@@ -226,7 +224,7 @@ func (m *NewOAuthUser) validateSocialID(formats strfmt.Registry) error {
 }
 
 func (m *NewOAuthUser) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
+	if typeutils.IsZero(m.Username) { // not required
 		return nil
 	}
 
@@ -255,13 +253,13 @@ func (m *NewOAuthUser) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewOAuthUser) UnmarshalBinary(b []byte) error {
 	var res NewOAuthUser
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

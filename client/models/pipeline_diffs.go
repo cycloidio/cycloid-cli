@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // PipelineDiffs PipelineDiffs
@@ -59,12 +60,12 @@ func (m *PipelineDiffs) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PipelineDiffs) validateGroups(formats strfmt.Registry) error {
-	if swag.IsZero(m.Groups) { // not required
+	if typeutils.IsZero(m.Groups) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Groups); i++ {
-		if swag.IsZero(m.Groups[i]) { // not required
+		if typeutils.IsZero(m.Groups[i]) { // not required
 			continue
 		}
 
@@ -89,12 +90,12 @@ func (m *PipelineDiffs) validateGroups(formats strfmt.Registry) error {
 }
 
 func (m *PipelineDiffs) validateJobs(formats strfmt.Registry) error {
-	if swag.IsZero(m.Jobs) { // not required
+	if typeutils.IsZero(m.Jobs) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Jobs); i++ {
-		if swag.IsZero(m.Jobs[i]) { // not required
+		if typeutils.IsZero(m.Jobs[i]) { // not required
 			continue
 		}
 
@@ -119,12 +120,12 @@ func (m *PipelineDiffs) validateJobs(formats strfmt.Registry) error {
 }
 
 func (m *PipelineDiffs) validateResourceTypes(formats strfmt.Registry) error {
-	if swag.IsZero(m.ResourceTypes) { // not required
+	if typeutils.IsZero(m.ResourceTypes) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.ResourceTypes); i++ {
-		if swag.IsZero(m.ResourceTypes[i]) { // not required
+		if typeutils.IsZero(m.ResourceTypes[i]) { // not required
 			continue
 		}
 
@@ -149,12 +150,12 @@ func (m *PipelineDiffs) validateResourceTypes(formats strfmt.Registry) error {
 }
 
 func (m *PipelineDiffs) validateResources(formats strfmt.Registry) error {
-	if swag.IsZero(m.Resources) { // not required
+	if typeutils.IsZero(m.Resources) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Resources); i++ {
-		if swag.IsZero(m.Resources[i]) { // not required
+		if typeutils.IsZero(m.Resources[i]) { // not required
 			continue
 		}
 
@@ -210,7 +211,7 @@ func (m *PipelineDiffs) contextValidateGroups(ctx context.Context, formats strfm
 
 		if m.Groups[i] != nil {
 
-			if swag.IsZero(m.Groups[i]) { // not required
+			if typeutils.IsZero(m.Groups[i]) { // not required
 				return nil
 			}
 
@@ -239,7 +240,7 @@ func (m *PipelineDiffs) contextValidateJobs(ctx context.Context, formats strfmt.
 
 		if m.Jobs[i] != nil {
 
-			if swag.IsZero(m.Jobs[i]) { // not required
+			if typeutils.IsZero(m.Jobs[i]) { // not required
 				return nil
 			}
 
@@ -268,7 +269,7 @@ func (m *PipelineDiffs) contextValidateResourceTypes(ctx context.Context, format
 
 		if m.ResourceTypes[i] != nil {
 
-			if swag.IsZero(m.ResourceTypes[i]) { // not required
+			if typeutils.IsZero(m.ResourceTypes[i]) { // not required
 				return nil
 			}
 
@@ -297,7 +298,7 @@ func (m *PipelineDiffs) contextValidateResources(ctx context.Context, formats st
 
 		if m.Resources[i] != nil {
 
-			if swag.IsZero(m.Resources[i]) { // not required
+			if typeutils.IsZero(m.Resources[i]) { // not required
 				return nil
 			}
 
@@ -325,13 +326,13 @@ func (m *PipelineDiffs) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *PipelineDiffs) UnmarshalBinary(b []byte) error {
 	var res PipelineDiffs
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
