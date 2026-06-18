@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"net/url"
 
 	"github.com/pkg/errors"
 
@@ -138,6 +139,9 @@ func (m *middleware) RefreshCatalogRepositoryVersions(org, catalogRepo string) (
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo, "versions", "refresh"},
+		Query: url.Values{
+			"sync_presence": []string{"true"},
+		},
 	}, &result)
 	if err != nil {
 		return nil, resp, err

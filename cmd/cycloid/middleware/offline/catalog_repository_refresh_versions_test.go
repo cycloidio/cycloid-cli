@@ -35,6 +35,7 @@ func TestRefreshCatalogRepositoryVersions_CalledOnceWithFlag(t *testing.T) {
 		switch {
 		case r.Method == http.MethodGet && r.URL.Path == "/organizations/org/service_catalog_sources/my-catalog/versions/refresh":
 			atomic.AddInt32(&refreshCalls, 1)
+			assert.Equal(t, "true", r.URL.Query().Get("sync_presence"), "sync_presence query param must be true")
 			fmt.Fprint(w, versionsRefreshResponse())
 		default:
 			http.NotFound(w, r)
