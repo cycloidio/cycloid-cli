@@ -156,6 +156,7 @@ type OIDCIntegration struct {
 	OidcSkipTLSVerify          bool    `json:"oidc_skip_tls_verify,omitempty"`
 	OidcDiscoveryURL           *string `json:"oidc_discovery_url,omitempty"`
 	OidcAllowInsecureDiscovery *bool   `json:"oidc_allow_insecure_discovery,omitempty"`
+	OidcAdoptManualMembers     *bool   `json:"oidc_adopt_manual_members,omitempty"`
 	OidcGroupsClaimName        string  `json:"oidc_groups_claim_name,omitempty"`
 	OidcSessionTTLSeconds      *int64  `json:"oidc_session_ttl_seconds,omitempty"`
 	// Read-only presence flags — the API never returns the secret/cert values.

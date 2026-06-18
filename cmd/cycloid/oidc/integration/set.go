@@ -64,6 +64,7 @@ environment variable; the CA certificate via CY_OIDC_CA_CERT.`,
 	cyargs.AddOIDCCaCertFlag(cmd)
 	cyargs.AddOIDCSkipTLSVerifyFlag(cmd)
 	cyargs.AddOIDCAllowInsecureDiscoveryFlag(cmd)
+	cyargs.AddOIDCAdoptManualMembersFlag(cmd)
 
 	cyout.RegisterModel(cmd, middleware.OIDCIntegration{})
 	return cmd
@@ -129,6 +130,10 @@ func setIntegration(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	allowInsecureDiscovery, err := cyargs.GetOIDCAllowInsecureDiscovery(cmd)
+	if err != nil {
+		return err
+	}
+	adoptManualMembers, err := cyargs.GetOIDCAdoptManualMembers(cmd)
 	if err != nil {
 		return err
 	}
@@ -198,6 +203,9 @@ func setIntegration(cmd *cobra.Command, args []string) error {
 	}
 	if cmd.Flags().Changed(cyargs.OIDCAllowInsecureDiscoveryFlagName) {
 		config["oidc_allow_insecure_discovery"] = allowInsecureDiscovery
+	}
+	if cmd.Flags().Changed(cyargs.OIDCAdoptManualMembersFlagName) {
+		config["oidc_adopt_manual_members"] = adoptManualMembers
 	}
 
 	// Secrets: send only when a non-empty value was supplied. The backend

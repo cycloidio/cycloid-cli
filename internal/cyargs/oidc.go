@@ -251,3 +251,15 @@ func AddOIDCEnabledFlag(cmd *cobra.Command) {
 func GetOIDCEnabled(cmd *cobra.Command) (bool, error) {
 	return cmd.Flags().GetBool(OIDCEnabledFlagName)
 }
+
+const OIDCAdoptManualMembersFlagName = "adopt-manual-members"
+
+// AddOIDCAdoptManualMembersFlag registers --adopt-manual-members for OIDC integration commands.
+func AddOIDCAdoptManualMembersFlag(cmd *cobra.Command) {
+	cmd.Flags().Bool(OIDCAdoptManualMembersFlagName, false, "Adopt manually-invited members on OIDC login (flips their source to 'oidc' so group mapping manages them)")
+}
+
+// GetOIDCAdoptManualMembers reads the --adopt-manual-members flag.
+func GetOIDCAdoptManualMembers(cmd *cobra.Command) (bool, error) {
+	return cmd.Flags().GetBool(OIDCAdoptManualMembersFlagName)
+}
