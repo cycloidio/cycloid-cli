@@ -31,6 +31,7 @@ type Middleware interface {
 	DeleteCatalogRepository(org, catalogRepo string) (*http.Response, error)
 	UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string, visibility *string) (*models.ServiceCatalogSource, *http.Response, error)
 	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, *http.Response, error)
+	RefreshCatalogRepositoryVersions(org, catalogRepo string) ([]*StackVersion, *http.Response, error)
 
 	CreateConfigRepository(org, name, canonical, url, branch, cred string, setDefault bool) (*models.ConfigRepository, *http.Response, error)
 	DeleteConfigRepository(org, configRepo string) (*http.Response, error)

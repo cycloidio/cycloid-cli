@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"net/http"
+	"net/url"
 
 	"github.com/pkg/errors"
 
@@ -119,6 +120,28 @@ func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.
 		Method:       "POST",
 		Organization: &org,
 		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo, "refresh"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+// RefreshCatalogRepositoryVersions triggers an immediate re-index of all branches and tags
+// for the given catalog repository. The backend clones the git repository, fetches all refs,
+// and updates the service_catalog_source_versions table synchronously before returning.
+//
+// This resolves the eventual-consistency race where a freshly created catalog repository has no
+// version rows yet (the background cron that populates them runs every ~10 minutes by default).
+func (m *middleware) RefreshCatalogRepositoryVersions(org, catalogRepo string) ([]*StackVersion, *http.Response, error) {
+	var result []*StackVersion
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo, "versions", "refresh"},
+		Query: url.Values{
+			"sync_presence": []string{"true"},
+		},
 	}, &result)
 	if err != nil {
 		return nil, resp, err
