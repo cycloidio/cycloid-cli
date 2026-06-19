@@ -69,6 +69,8 @@ func setSettings(cmd *cobra.Command, args []string) error {
 	// override only the flags the user explicitly set, so an unspecified flag
 	// never silently resets live state. A not-yet-configured org (404) starts
 	// from defaults.
+	// Default for fresh-create (404 on read). Must stay in sync with the
+	// server-side default in the OIDC organization settings endpoint.
 	merged := middleware.UpdateOIDCOrganizationSettings{
 		OIDCNoMatchPolicy: "keep_membership",
 	}

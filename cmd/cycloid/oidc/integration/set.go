@@ -208,9 +208,11 @@ func setIntegration(cmd *cobra.Command, args []string) error {
 		config["oidc_adopt_manual_members"] = adoptManualMembers
 	}
 
-	// Secrets: send only when a non-empty value was supplied. The backend
-	// preserves the stored secret when the key is absent or the value is empty.
-	// Never log these values.
+	// Secrets: send only when a non-empty value was supplied (via --client-secret
+	// flag or CY_OIDC_CLIENT_SECRET env var). The backend preserves the stored
+	// secret when the key is absent or the value is empty. Note: if the env var
+	// is set in the shell, the secret will be sent on every invocation — this is
+	// intentional (the user opted in by exporting the var).
 	if clientSecret != "" {
 		config["oidc_client_secret"] = clientSecret
 	}

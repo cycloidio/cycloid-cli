@@ -98,6 +98,7 @@ const (
 	OIDCSkipTLSVerifyFlagName          = "skip-tls-verify"
 	OIDCAllowInsecureDiscoveryFlagName = "allow-insecure-discovery"
 	OIDCEnabledFlagName                = "enabled"
+	OIDCAdoptManualMembersFlagName     = "adopt-manual-members"
 )
 
 // AddOIDCIssuerFlag registers --issuer for OIDC integration commands.
@@ -244,15 +245,13 @@ func GetOIDCAllowInsecureDiscovery(cmd *cobra.Command) (bool, error) {
 
 // AddOIDCEnabledFlag registers --enabled for OIDC integration commands.
 func AddOIDCEnabledFlag(cmd *cobra.Command) {
-	cmd.Flags().Bool(OIDCEnabledFlagName, false, "Enable the OIDC SSO integration")
+	cmd.Flags().Bool(OIDCEnabledFlagName, false, "Enable or disable the OIDC SSO integration (use --enabled=false to disable)")
 }
 
 // GetOIDCEnabled reads the --enabled flag.
 func GetOIDCEnabled(cmd *cobra.Command) (bool, error) {
 	return cmd.Flags().GetBool(OIDCEnabledFlagName)
 }
-
-const OIDCAdoptManualMembersFlagName = "adopt-manual-members"
 
 // AddOIDCAdoptManualMembersFlag registers --adopt-manual-members for OIDC integration commands.
 func AddOIDCAdoptManualMembersFlag(cmd *cobra.Command) {

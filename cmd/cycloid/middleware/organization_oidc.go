@@ -72,7 +72,7 @@ func (m *middleware) ListOIDCGroupMappings(org string, filters ...LHSFilter) ([]
 		LHSFilters:   filters,
 	}, &result)
 	if err != nil {
-		return nil, resp, err
+		return nil, resp, fmt.Errorf("failed to list OIDC group mappings: %w", err)
 	}
 	return result, resp, nil
 }
@@ -105,7 +105,10 @@ func (m *middleware) DeleteOIDCGroupMapping(org string, id uint32) (*http.Respon
 		Organization: &org,
 		Route:        []string{"organizations", org, "oidc-group-mappings", strconv.FormatUint(uint64(id), 10)},
 	}, nil)
-	return resp, err
+	if err != nil {
+		return resp, fmt.Errorf("failed to delete OIDC group mapping: %w", err)
+	}
+	return resp, nil
 }
 
 // GetOIDCOrganizationSettings returns the per-org OIDC reconciliation settings.
@@ -117,7 +120,7 @@ func (m *middleware) GetOIDCOrganizationSettings(org string) (*OIDCOrganizationS
 		Route:        []string{"organizations", org, "oidc-organization-settings"},
 	}, &result)
 	if err != nil {
-		return nil, resp, err
+		return nil, resp, fmt.Errorf("failed to get OIDC organization settings: %w", err)
 	}
 	return result, resp, nil
 }
@@ -181,7 +184,7 @@ func (m *middleware) GetOIDCIntegration(org string) (*OIDCIntegration, *http.Res
 		Route:        []string{"organizations", org, "authentications", "AuthenticationOIDC"},
 	}, &result)
 	if err != nil {
-		return nil, resp, err
+		return nil, resp, fmt.Errorf("failed to get OIDC integration: %w", err)
 	}
 	return result.Config, resp, nil
 }

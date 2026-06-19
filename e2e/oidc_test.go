@@ -32,6 +32,8 @@ func TestOIDC(t *testing.T) {
 		require.NoError(t, cmdErr, "setup: team create should succeed")
 	})
 
+	// defer t.Run ensures cleanup runs after all subtests, even on failure.
+	// This is safe because t is still alive when deferred functions execute.
 	defer t.Run("TeardownTeam", func(t *testing.T) {
 		executeCommand([]string{ //nolint:errcheck
 			"--output", "json",
@@ -64,6 +66,7 @@ func TestOIDC(t *testing.T) {
 	})
 
 	t.Run("SuccessOIDCMappingList", func(t *testing.T) {
+		require.NotZero(t, mappingID, "create test must have run successfully first")
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,
@@ -87,6 +90,7 @@ func TestOIDC(t *testing.T) {
 	})
 
 	t.Run("SuccessOIDCMappingDelete", func(t *testing.T) {
+		require.NotZero(t, mappingID, "create test must have run successfully first")
 		_, cmdErr := executeCommand([]string{
 			"--output", "json",
 			"--org", config.Org,

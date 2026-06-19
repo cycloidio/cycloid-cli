@@ -88,7 +88,7 @@ type Middleware interface {
 	AssignMemberToTeam(org, team string, username, email *string) (*models.MemberTeam, *http.Response, error)
 	UnAssignMemberFromTeam(org, team string, memberID uint32) (*http.Response, error)
 
-	// organization_oidc (beta) — OIDC group->team mappings + per-org reconciliation settings
+	// organization_oidc — OIDC group->team mappings + per-org reconciliation settings
 	ListOIDCGroupMappings(org string, filters ...LHSFilter) ([]*OIDCGroupMapping, *http.Response, error)
 	CreateOIDCGroupMapping(org, groupName, teamCanonical string) (*OIDCGroupMapping, *http.Response, error)
 	DeleteOIDCGroupMapping(org string, id uint32) (*http.Response, error)
