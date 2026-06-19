@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -143,7 +144,7 @@ func (m *InventoryResource) Validate(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateComponent(formats strfmt.Registry) error {
-	if swag.IsZero(m.Component) { // not required
+	if typeutils.IsZero(m.Component) { // not required
 		return nil
 	}
 
@@ -166,7 +167,7 @@ func (m *InventoryResource) validateComponent(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateCPU(formats strfmt.Registry) error {
-	if swag.IsZero(m.CPU) { // not required
+	if typeutils.IsZero(m.CPU) { // not required
 		return nil
 	}
 
@@ -178,7 +179,7 @@ func (m *InventoryResource) validateCPU(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateEnvironment(formats strfmt.Registry) error {
-	if swag.IsZero(m.Environment) { // not required
+	if typeutils.IsZero(m.Environment) { // not required
 		return nil
 	}
 
@@ -201,7 +202,7 @@ func (m *InventoryResource) validateEnvironment(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ID) { // not required
+	if typeutils.IsZero(m.ID) { // not required
 		return nil
 	}
 
@@ -213,7 +214,7 @@ func (m *InventoryResource) validateID(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateImage(formats strfmt.Registry) error {
-	if swag.IsZero(m.Image) { // not required
+	if typeutils.IsZero(m.Image) { // not required
 		return nil
 	}
 
@@ -225,7 +226,7 @@ func (m *InventoryResource) validateImage(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateMemory(formats strfmt.Registry) error {
-	if swag.IsZero(m.Memory) { // not required
+	if typeutils.IsZero(m.Memory) { // not required
 		return nil
 	}
 
@@ -246,7 +247,7 @@ func (m *InventoryResource) validateName(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateProject(formats strfmt.Registry) error {
-	if swag.IsZero(m.Project) { // not required
+	if typeutils.IsZero(m.Project) { // not required
 		return nil
 	}
 
@@ -278,7 +279,7 @@ func (m *InventoryResource) validateProvider(formats strfmt.Registry) error {
 }
 
 func (m *InventoryResource) validateStorage(formats strfmt.Registry) error {
-	if swag.IsZero(m.Storage) { // not required
+	if typeutils.IsZero(m.Storage) { // not required
 		return nil
 	}
 
@@ -324,7 +325,7 @@ func (m *InventoryResource) contextValidateComponent(ctx context.Context, format
 
 	if m.Component != nil {
 
-		if swag.IsZero(m.Component) { // not required
+		if typeutils.IsZero(m.Component) { // not required
 			return nil
 		}
 
@@ -349,7 +350,7 @@ func (m *InventoryResource) contextValidateEnvironment(ctx context.Context, form
 
 	if m.Environment != nil {
 
-		if swag.IsZero(m.Environment) { // not required
+		if typeutils.IsZero(m.Environment) { // not required
 			return nil
 		}
 
@@ -374,7 +375,7 @@ func (m *InventoryResource) contextValidateProject(ctx context.Context, formats 
 
 	if m.Project != nil {
 
-		if swag.IsZero(m.Project) { // not required
+		if typeutils.IsZero(m.Project) { // not required
 			return nil
 		}
 
@@ -400,13 +401,13 @@ func (m *InventoryResource) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *InventoryResource) UnmarshalBinary(b []byte) error {
 	var res InventoryResource
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

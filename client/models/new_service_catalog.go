@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -125,7 +126,7 @@ func (m *NewServiceCatalog) validateAuthor(formats strfmt.Registry) error {
 }
 
 func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.Canonical) { // not required
+	if typeutils.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
@@ -145,12 +146,12 @@ func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *NewServiceCatalog) validateDependencies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Dependencies) { // not required
+	if typeutils.IsZero(m.Dependencies) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Dependencies); i++ {
-		if swag.IsZero(m.Dependencies[i]) { // not required
+		if typeutils.IsZero(m.Dependencies[i]) { // not required
 			continue
 		}
 
@@ -175,7 +176,7 @@ func (m *NewServiceCatalog) validateDependencies(formats strfmt.Registry) error 
 }
 
 func (m *NewServiceCatalog) validateImage(formats strfmt.Registry) error {
-	if swag.IsZero(m.Image) { // not required
+	if typeutils.IsZero(m.Image) { // not required
 		return nil
 	}
 
@@ -226,7 +227,7 @@ func (m *NewServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt
 }
 
 func (m *NewServiceCatalog) validateTeamCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.TeamCanonical) { // not required
+	if typeutils.IsZero(m.TeamCanonical) { // not required
 		return nil
 	}
 
@@ -246,12 +247,12 @@ func (m *NewServiceCatalog) validateTeamCanonical(formats strfmt.Registry) error
 }
 
 func (m *NewServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Technologies) { // not required
+	if typeutils.IsZero(m.Technologies) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Technologies); i++ {
-		if swag.IsZero(m.Technologies[i]) { // not required
+		if typeutils.IsZero(m.Technologies[i]) { // not required
 			continue
 		}
 
@@ -299,7 +300,7 @@ func (m *NewServiceCatalog) contextValidateDependencies(ctx context.Context, for
 
 		if m.Dependencies[i] != nil {
 
-			if swag.IsZero(m.Dependencies[i]) { // not required
+			if typeutils.IsZero(m.Dependencies[i]) { // not required
 				return nil
 			}
 
@@ -328,7 +329,7 @@ func (m *NewServiceCatalog) contextValidateTechnologies(ctx context.Context, for
 
 		if m.Technologies[i] != nil {
 
-			if swag.IsZero(m.Technologies[i]) { // not required
+			if typeutils.IsZero(m.Technologies[i]) { // not required
 				return nil
 			}
 
@@ -356,13 +357,13 @@ func (m *NewServiceCatalog) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewServiceCatalog) UnmarshalBinary(b []byte) error {
 	var res NewServiceCatalog
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

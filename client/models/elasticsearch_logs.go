@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -145,7 +146,7 @@ func (m ElasticsearchLogs) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	return swag.ConcatJSON(b1, b2, b3), nil
+	return jsonutils.ConcatJSON(b1, b2, b3), nil
 }
 
 // Validate validates this elasticsearch logs
@@ -277,13 +278,13 @@ func (m *ElasticsearchLogs) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ElasticsearchLogs) UnmarshalBinary(b []byte) error {
 	var res ElasticsearchLogs
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -327,7 +328,7 @@ func (m *ElasticsearchLogsSourcesAnon) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ElasticsearchLogsSourcesAnon) validateMapping(formats strfmt.Registry) error {
-	if swag.IsZero(m.Mapping) { // not required
+	if typeutils.IsZero(m.Mapping) { // not required
 		return nil
 	}
 
@@ -367,7 +368,7 @@ func (m *ElasticsearchLogsSourcesAnon) contextValidateMapping(ctx context.Contex
 
 	if m.Mapping != nil {
 
-		if swag.IsZero(m.Mapping) { // not required
+		if typeutils.IsZero(m.Mapping) { // not required
 			return nil
 		}
 
@@ -393,13 +394,13 @@ func (m *ElasticsearchLogsSourcesAnon) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ElasticsearchLogsSourcesAnon) UnmarshalBinary(b []byte) error {
 	var res ElasticsearchLogsSourcesAnon
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -487,13 +488,13 @@ func (m *ElasticsearchLogsSourcesAnonMapping) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ElasticsearchLogsSourcesAnonMapping) UnmarshalBinary(b []byte) error {
 	var res ElasticsearchLogsSourcesAnonMapping
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

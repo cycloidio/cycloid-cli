@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -102,7 +103,7 @@ func (m *UpdateUserAccount) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UpdateUserAccount) validateCountryCode(formats strfmt.Registry) error {
-	if swag.IsZero(m.CountryCode) { // not required
+	if typeutils.IsZero(m.CountryCode) { // not required
 		return nil
 	}
 
@@ -114,7 +115,7 @@ func (m *UpdateUserAccount) validateCountryCode(formats strfmt.Registry) error {
 }
 
 func (m *UpdateUserAccount) validateEmails(formats strfmt.Registry) error {
-	if swag.IsZero(m.Emails) { // not required
+	if typeutils.IsZero(m.Emails) { // not required
 		return nil
 	}
 
@@ -125,7 +126,7 @@ func (m *UpdateUserAccount) validateEmails(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Emails); i++ {
-		if swag.IsZero(m.Emails[i]) { // not required
+		if typeutils.IsZero(m.Emails[i]) { // not required
 			continue
 		}
 
@@ -222,7 +223,7 @@ func (m *UpdateUserAccount) validateMfaEnabled(formats strfmt.Registry) error {
 }
 
 func (m *UpdateUserAccount) validatePasswordUpdate(formats strfmt.Registry) error {
-	if swag.IsZero(m.PasswordUpdate) { // not required
+	if typeutils.IsZero(m.PasswordUpdate) { // not required
 		return nil
 	}
 
@@ -245,7 +246,7 @@ func (m *UpdateUserAccount) validatePasswordUpdate(formats strfmt.Registry) erro
 }
 
 func (m *UpdateUserAccount) validatePictureURL(formats strfmt.Registry) error {
-	if swag.IsZero(m.PictureURL) { // not required
+	if typeutils.IsZero(m.PictureURL) { // not required
 		return nil
 	}
 
@@ -301,7 +302,7 @@ func (m *UpdateUserAccount) contextValidateEmails(ctx context.Context, formats s
 
 		if m.Emails[i] != nil {
 
-			if swag.IsZero(m.Emails[i]) { // not required
+			if typeutils.IsZero(m.Emails[i]) { // not required
 				return nil
 			}
 
@@ -328,7 +329,7 @@ func (m *UpdateUserAccount) contextValidatePasswordUpdate(ctx context.Context, f
 
 	if m.PasswordUpdate != nil {
 
-		if swag.IsZero(m.PasswordUpdate) { // not required
+		if typeutils.IsZero(m.PasswordUpdate) { // not required
 			return nil
 		}
 
@@ -354,13 +355,13 @@ func (m *UpdateUserAccount) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *UpdateUserAccount) UnmarshalBinary(b []byte) error {
 	var res UpdateUserAccount
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
@@ -447,13 +448,13 @@ func (m *UpdateUserAccountPasswordUpdate) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *UpdateUserAccountPasswordUpdate) UnmarshalBinary(b []byte) error {
 	var res UpdateUserAccountPasswordUpdate
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

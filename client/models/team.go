@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -183,7 +184,7 @@ func (m *Team) validateMembersPreview(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.MembersPreview); i++ {
-		if swag.IsZero(m.MembersPreview[i]) { // not required
+		if typeutils.IsZero(m.MembersPreview[i]) { // not required
 			continue
 		}
 
@@ -221,7 +222,7 @@ func (m *Team) validateName(formats strfmt.Registry) error {
 }
 
 func (m *Team) validateOwner(formats strfmt.Registry) error {
-	if swag.IsZero(m.Owner) { // not required
+	if typeutils.IsZero(m.Owner) { // not required
 		return nil
 	}
 
@@ -256,7 +257,7 @@ func (m *Team) validateRoles(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Roles); i++ {
-		if swag.IsZero(m.Roles[i]) { // not required
+		if typeutils.IsZero(m.Roles[i]) { // not required
 			continue
 		}
 
@@ -321,7 +322,7 @@ func (m *Team) contextValidateMembersPreview(ctx context.Context, formats strfmt
 
 		if m.MembersPreview[i] != nil {
 
-			if swag.IsZero(m.MembersPreview[i]) { // not required
+			if typeutils.IsZero(m.MembersPreview[i]) { // not required
 				return nil
 			}
 
@@ -348,7 +349,7 @@ func (m *Team) contextValidateOwner(ctx context.Context, formats strfmt.Registry
 
 	if m.Owner != nil {
 
-		if swag.IsZero(m.Owner) { // not required
+		if typeutils.IsZero(m.Owner) { // not required
 			return nil
 		}
 
@@ -375,7 +376,7 @@ func (m *Team) contextValidateRoles(ctx context.Context, formats strfmt.Registry
 
 		if m.Roles[i] != nil {
 
-			if swag.IsZero(m.Roles[i]) { // not required
+			if typeutils.IsZero(m.Roles[i]) { // not required
 				return nil
 			}
 
@@ -403,13 +404,13 @@ func (m *Team) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Team) UnmarshalBinary(b []byte) error {
 	var res Team
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

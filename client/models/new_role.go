@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -63,7 +64,7 @@ func (m *NewRole) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewRole) validateCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.Canonical) { // not required
+	if typeutils.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
@@ -106,7 +107,7 @@ func (m *NewRole) validateRules(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Rules); i++ {
-		if swag.IsZero(m.Rules[i]) { // not required
+		if typeutils.IsZero(m.Rules[i]) { // not required
 			continue
 		}
 
@@ -150,7 +151,7 @@ func (m *NewRole) contextValidateRules(ctx context.Context, formats strfmt.Regis
 
 		if m.Rules[i] != nil {
 
-			if swag.IsZero(m.Rules[i]) { // not required
+			if typeutils.IsZero(m.Rules[i]) { // not required
 				return nil
 			}
 
@@ -178,13 +179,13 @@ func (m *NewRole) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewRole) UnmarshalBinary(b []byte) error {
 	var res NewRole
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
