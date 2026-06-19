@@ -31,6 +31,7 @@ type Middleware interface {
 	DeleteCatalogRepository(org, catalogRepo string) (*http.Response, error)
 	UpdateCatalogRepository(org, catalogRepo string, name, url, branch, cred string, visibility *string) (*models.ServiceCatalogSource, *http.Response, error)
 	RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, *http.Response, error)
+	RefreshCatalogRepositoryVersions(org, catalogRepo string) ([]*StackVersion, *http.Response, error)
 
 	CreateConfigRepository(org, name, canonical, url, branch, cred string, setDefault bool) (*models.ConfigRepository, *http.Response, error)
 	DeleteConfigRepository(org, configRepo string) (*http.Response, error)
@@ -87,6 +88,15 @@ type Middleware interface {
 	GetTeamMember(org string, team string, memberID uint32) (*models.MemberTeam, *http.Response, error)
 	AssignMemberToTeam(org, team string, username, email *string) (*models.MemberTeam, *http.Response, error)
 	UnAssignMemberFromTeam(org, team string, memberID uint32) (*http.Response, error)
+
+	// organization_oidc — OIDC group->team mappings + per-org reconciliation settings
+	ListOIDCGroupMappings(org string, filters ...LHSFilter) ([]*OIDCGroupMapping, *http.Response, error)
+	CreateOIDCGroupMapping(org, groupName, teamCanonical string) (*OIDCGroupMapping, *http.Response, error)
+	DeleteOIDCGroupMapping(org string, id uint32) (*http.Response, error)
+	GetOIDCOrganizationSettings(org string) (*OIDCOrganizationSettings, *http.Response, error)
+	UpdateOIDCOrganizationSettings(org string, settings UpdateOIDCOrganizationSettings) (*OIDCOrganizationSettings, *http.Response, error)
+	GetOIDCIntegration(org string) (*OIDCIntegration, *http.Response, error)
+	UpdateOIDCIntegration(org string, config map[string]interface{}) (*OIDCIntegration, *http.Response, error)
 
 	// organizations
 	CreateOrganization(name string) (*models.Organization, *http.Response, error)

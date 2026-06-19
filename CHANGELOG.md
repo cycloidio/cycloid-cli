@@ -1,3 +1,12 @@
+## [Unreleased]
+
+- **ADDED**
+  - `cy catalog-repository create` and `cy catalog-repository update` now accept a `--refresh` flag.
+    When set, a synchronous version re-index (`GET .../versions/refresh?sync_presence=true`) is triggered
+    immediately after the create or update succeeds, making all branches and tags resolvable without
+    waiting for the background cron (~10 min). This fixes the branch-stack presence race.
+    ([CLI-128](https://linear.app/cycloid/issue/CLI-128))
+
   ## [v3.1.3] _2022-06-17_
   - **CHANGED**
     - Update client to version v3.1.3
