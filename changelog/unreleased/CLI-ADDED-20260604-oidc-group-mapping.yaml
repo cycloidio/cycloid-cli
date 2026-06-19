@@ -1,8 +1,0 @@
-component: Authentication
-kind: ADDED
-body: "OIDC group mapping commands: `cy oidc mappings`, `cy oidc settings`, and `cy oidc integration`"
-time: 2026-06-04T00:00:00Z
-custom:
-  DETAILS: "Manage OIDC-driven org access from the CLI: map IdP group claims to teams (`cy oidc mappings create|list|delete`), configure per-org reconciliation (`cy oidc settings set` — default role, oidc-managed mode, no-match policy), and set up the OIDC SSO integration including the groups claim name (`cy oidc integration set`)."
-  PR: "452"
-  TYPE: CLI
