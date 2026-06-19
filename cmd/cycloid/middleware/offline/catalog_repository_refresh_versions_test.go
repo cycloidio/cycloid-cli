@@ -70,6 +70,7 @@ func TestCreateCatalogRepository_RefreshCalledWhenFlagSet(t *testing.T) {
 			fmt.Fprint(w, catalogRepoResponse("my-catalog"))
 		case r.Method == http.MethodGet && r.URL.Path == "/organizations/org/service_catalog_sources/my-catalog/versions/refresh":
 			atomic.AddInt32(&refreshCalls, 1)
+			assert.Equal(t, "true", r.URL.Query().Get("sync_presence"), "sync_presence query param must be true")
 			fmt.Fprint(w, versionsRefreshResponse())
 		default:
 			http.NotFound(w, r)
@@ -105,6 +106,7 @@ func TestUpdateCatalogRepository_RefreshCalledWhenFlagSet(t *testing.T) {
 			fmt.Fprint(w, catalogRepoResponse("my-catalog"))
 		case r.Method == http.MethodGet && r.URL.Path == "/organizations/org/service_catalog_sources/my-catalog/versions/refresh":
 			atomic.AddInt32(&refreshCalls, 1)
+			assert.Equal(t, "true", r.URL.Query().Get("sync_presence"), "sync_presence query param must be true")
 			fmt.Fprint(w, versionsRefreshResponse())
 		default:
 			http.NotFound(w, r)
@@ -180,4 +182,19 @@ func TestUpdateCatalogRepository_NoRefreshWithoutFlag(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, cr)
 	assert.Equal(t, int32(0), atomic.LoadInt32(&refreshCalls), "zero refresh calls without --refresh flag")
+}
+
+// TestRefreshCatalogRepositoryVersions_PropagatesError verifies that a non-2xx response
+// from the versions/refresh endpoint is propagated as an error to the caller.
+func TestRefreshCatalogRepositoryVersions_PropagatesError(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, `{"errors":[{"code":"ServerError","message":"backend error"}]}`, http.StatusInternalServerError)
+	}))
+	defer srv.Close()
+
+	m := middleware.NewMiddleware(common.NewAPI(common.WithURL(srv.URL), common.WithToken("token")))
+
+	versions, _, err := m.RefreshCatalogRepositoryVersions("org", "my-catalog")
+	require.Error(t, err)
+	assert.Nil(t, versions)
 }
