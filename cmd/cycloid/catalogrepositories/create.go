@@ -42,7 +42,7 @@ func NewCreateCommand() *cobra.Command {
 	cmd.Flags().String("visibility", "", "set the stacks base visibility in the catalog. accepted values are 'local', 'shared' or 'hidden' (default: local)")
 	cmd.Flags().String("team", "", "set the team canonical to be set as maintener of the stacks")
 	cmd.Flags().Bool("update", false, "update the catalog repository if it already exists")
-	cmd.Flags().Bool("refresh", false, "trigger a synchronous version re-index after create (or update) to make all branches and tags immediately resolvable")
+	cmd.Flags().Bool("refresh", true, "trigger a synchronous version re-index after create (or update) to make all branches and tags immediately resolvable")
 
 	return cmd
 }

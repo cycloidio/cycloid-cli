@@ -30,7 +30,7 @@ func NewUpdateCommand() *cobra.Command {
 	cmd.MarkFlagRequired(cyargs.AddNameFlag(cmd))
 	cmd.MarkFlagRequired(cyargs.AddRepoBranchFlag(cmd))
 	cmd.MarkFlagRequired(cyargs.AddRepoURLFlag(cmd))
-	cmd.Flags().Bool("refresh", false, "trigger a synchronous version re-index after update to make all branches and tags immediately resolvable")
+	cmd.Flags().Bool("refresh", true, "trigger a synchronous version re-index after update to make all branches and tags immediately resolvable")
 
 	return cmd
 }
