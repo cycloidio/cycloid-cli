@@ -88,4 +88,32 @@ func TestSanitizeBody(t *testing.T) {
 		assert.Equal(t, "foo", m["name"])
 		assert.Equal(t, "bar", m["canonical"])
 	})
+
+	t.Run("RedactsOIDCSecrets", func(t *testing.T) {
+		// `oidc integration set` sends oidc_client_secret / oidc_ca_cert in
+		// the request body; these must never reach DEBUG or error output. Non-secret
+		// OIDC fields must stay visible so debugging stays useful.
+		input := []byte(`{"config":{"type":"AuthenticationOIDC","enabled":true,"oidc_issuer":"https://idp.example.com","oidc_client_id":"public-id","oidc_client_secret":"s3cr3t","oidc_ca_cert":"-----BEGIN CERTIFICATE-----"}}`)
+		out := sanitizeBody(input)
+		var m map[string]interface{}
+		require.NoError(t, json.Unmarshal(out, &m))
+		cfg := m["config"].(map[string]interface{})
+		assert.Equal(t, "[REDACTED]", cfg["oidc_client_secret"], "oidc_client_secret must be redacted")
+		assert.Equal(t, "[REDACTED]", cfg["oidc_ca_cert"], "oidc_ca_cert must be redacted")
+		assert.Equal(t, "https://idp.example.com", cfg["oidc_issuer"], "non-secret oidc_issuer must stay visible")
+		assert.Equal(t, "public-id", cfg["oidc_client_id"], "non-secret oidc_client_id must stay visible")
+	})
+
+	t.Run("RedactsSecretSuffixKeys", func(t *testing.T) {
+		// Defense-in-depth: any *_secret / *_ca_cert field is redacted by suffix,
+		// so a new provider's secret field does not leak by default.
+		input := []byte(`{"saml_client_secret":"x","some_secret":"y","azure_ca_cert":"z","name":"ok"}`)
+		out := sanitizeBody(input)
+		var m map[string]interface{}
+		require.NoError(t, json.Unmarshal(out, &m))
+		assert.Equal(t, "[REDACTED]", m["saml_client_secret"])
+		assert.Equal(t, "[REDACTED]", m["some_secret"])
+		assert.Equal(t, "[REDACTED]", m["azure_ca_cert"])
+		assert.Equal(t, "ok", m["name"])
+	})
 }
