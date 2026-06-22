@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -65,7 +66,7 @@ func (m *Subscription) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Subscription) validateCurrentMembers(formats strfmt.Registry) error {
-	if swag.IsZero(m.CurrentMembers) { // not required
+	if typeutils.IsZero(m.CurrentMembers) { // not required
 		return nil
 	}
 
@@ -90,7 +91,7 @@ func (m *Subscription) validateExpiresAt(formats strfmt.Registry) error {
 }
 
 func (m *Subscription) validateMembersCount(formats strfmt.Registry) error {
-	if swag.IsZero(m.MembersCount) { // not required
+	if typeutils.IsZero(m.MembersCount) { // not required
 		return nil
 	}
 
@@ -165,13 +166,13 @@ func (m *Subscription) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Subscription) UnmarshalBinary(b []byte) error {
 	var res Subscription
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

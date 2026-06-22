@@ -4,12 +4,12 @@ package models
 
 import (
 	"context"
-	"encoding/json"
 	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -49,10 +49,6 @@ type Component struct {
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
-
-	// The import process status.
-	// Enum: ["succeeded","failed","importing"]
-	ImportStatus string `json:"import_status,omitempty"`
 
 	// The status of the component.
 	IsConfigured bool `json:"is_configured,omitempty"`
@@ -114,10 +110,6 @@ func (m *Component) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateImportStatus(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -174,7 +166,7 @@ func (m *Component) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *Component) validateCloudProvider(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudProvider) { // not required
+	if typeutils.IsZero(m.CloudProvider) { // not required
 		return nil
 	}
 
@@ -246,51 +238,6 @@ func (m *Component) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
-var componentTypeImportStatusPropEnum []any
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["succeeded","failed","importing"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		componentTypeImportStatusPropEnum = append(componentTypeImportStatusPropEnum, v)
-	}
-}
-
-const (
-
-	// ComponentImportStatusSucceeded captures enum value "succeeded"
-	ComponentImportStatusSucceeded string = "succeeded"
-
-	// ComponentImportStatusFailed captures enum value "failed"
-	ComponentImportStatusFailed string = "failed"
-
-	// ComponentImportStatusImporting captures enum value "importing"
-	ComponentImportStatusImporting string = "importing"
-)
-
-// prop value enum
-func (m *Component) validateImportStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, componentTypeImportStatusPropEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *Component) validateImportStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.ImportStatus) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateImportStatusEnum("import_status", "body", m.ImportStatus); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 func (m *Component) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -353,7 +300,7 @@ func (m *Component) validateServiceCatalog(formats strfmt.Registry) error {
 }
 
 func (m *Component) validateStackformUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.StackformUpdatedAt) { // not required
+	if typeutils.IsZero(m.StackformUpdatedAt) { // not required
 		return nil
 	}
 
@@ -378,7 +325,7 @@ func (m *Component) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *Component) validateUseCase(formats strfmt.Registry) error {
-	if swag.IsZero(m.UseCase) { // not required
+	if typeutils.IsZero(m.UseCase) { // not required
 		return nil
 	}
 
@@ -455,7 +402,7 @@ func (m *Component) contextValidateCloudProvider(ctx context.Context, formats st
 
 	if m.CloudProvider != nil {
 
-		if swag.IsZero(m.CloudProvider) { // not required
+		if typeutils.IsZero(m.CloudProvider) { // not required
 			return nil
 		}
 
@@ -565,13 +512,13 @@ func (m *Component) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Component) UnmarshalBinary(b []byte) error {
 	var res Component
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

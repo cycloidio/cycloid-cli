@@ -4,10 +4,12 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -29,6 +31,9 @@ type PluginWidget struct {
 	// Placement configuration of the widget
 	// Required: true
 	Placement any `json:"placement"`
+
+	// relation
+	Relation *PluginRelation `json:"relation,omitempty"`
 
 	// Type of the widget
 	// Required: true
@@ -55,6 +60,10 @@ func (m *PluginWidget) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateRelation(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
@@ -70,7 +79,7 @@ func (m *PluginWidget) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PluginWidget) validateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ID) { // not required
+	if typeutils.IsZero(m.ID) { // not required
 		return nil
 	}
 
@@ -99,6 +108,29 @@ func (m *PluginWidget) validatePlacement(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *PluginWidget) validateRelation(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.Relation) { // not required
+		return nil
+	}
+
+	if m.Relation != nil {
+		if err := m.Relation.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("relation")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("relation")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *PluginWidget) validateType(formats strfmt.Registry) error {
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
@@ -117,8 +149,42 @@ func (m *PluginWidget) validateWidget(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this plugin widget based on context it is used
+// ContextValidate validate this plugin widget based on the context it is used
 func (m *PluginWidget) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateRelation(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PluginWidget) contextValidateRelation(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Relation != nil {
+
+		if typeutils.IsZero(m.Relation) { // not required
+			return nil
+		}
+
+		if err := m.Relation.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("relation")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("relation")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -127,13 +193,13 @@ func (m *PluginWidget) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *PluginWidget) UnmarshalBinary(b []byte) error {
 	var res PluginWidget
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

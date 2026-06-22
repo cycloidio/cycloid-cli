@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -105,6 +106,14 @@ type Organization struct {
 	// When true, SSO users can only join the organization if they have been explicitly invited
 	SsoInviteOnly *bool `json:"sso_invite_only,omitempty"`
 
+	// Glob patterns (filepath.Match syntax). Versions matching any of these are hidden from non-team-member users.
+	// Max Items: 50
+	StackBranchExcludePatterns []string `json:"stack_branch_exclude_patterns"`
+
+	// Glob patterns (filepath.Match syntax). When set, only versions whose name matches at least one pattern are shown to non-team-member users. Empty means show all.
+	// Max Items: 50
+	StackBranchIncludePatterns []string `json:"stack_branch_include_patterns"`
+
 	// subscription
 	Subscription *Subscription `json:"subscription,omitempty"`
 
@@ -194,6 +203,14 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateStackBranchExcludePatterns(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStackBranchIncludePatterns(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateSubscription(formats); err != nil {
 		res = append(res, err)
 	}
@@ -209,12 +226,12 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateAdmins(formats strfmt.Registry) error {
-	if swag.IsZero(m.Admins) { // not required
+	if typeutils.IsZero(m.Admins) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Admins); i++ {
-		if swag.IsZero(m.Admins[i]) { // not required
+		if typeutils.IsZero(m.Admins[i]) { // not required
 			continue
 		}
 
@@ -239,7 +256,7 @@ func (m *Organization) validateAdmins(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateAppearance(formats strfmt.Registry) error {
-	if swag.IsZero(m.Appearance) { // not required
+	if typeutils.IsZero(m.Appearance) { // not required
 		return nil
 	}
 
@@ -430,7 +447,7 @@ func (m *Organization) validateName(formats strfmt.Registry) error {
 }
 
 func (m *Organization) validateParentCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ParentCanonical) { // not required
+	if typeutils.IsZero(m.ParentCanonical) { // not required
 		return nil
 	}
 
@@ -449,8 +466,52 @@ func (m *Organization) validateParentCanonical(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Organization) validateStackBranchExcludePatterns(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.StackBranchExcludePatterns) { // not required
+		return nil
+	}
+
+	iStackBranchExcludePatternsSize := int64(len(m.StackBranchExcludePatterns))
+
+	if err := validate.MaxItems("stack_branch_exclude_patterns", "body", iStackBranchExcludePatternsSize, 50); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.StackBranchExcludePatterns); i++ {
+
+		if err := validate.MaxLength("stack_branch_exclude_patterns"+"."+strconv.Itoa(i), "body", m.StackBranchExcludePatterns[i], 200); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (m *Organization) validateStackBranchIncludePatterns(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.StackBranchIncludePatterns) { // not required
+		return nil
+	}
+
+	iStackBranchIncludePatternsSize := int64(len(m.StackBranchIncludePatterns))
+
+	if err := validate.MaxItems("stack_branch_include_patterns", "body", iStackBranchIncludePatternsSize, 50); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.StackBranchIncludePatterns); i++ {
+
+		if err := validate.MaxLength("stack_branch_include_patterns"+"."+strconv.Itoa(i), "body", m.StackBranchIncludePatterns[i], 200); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
 func (m *Organization) validateSubscription(formats strfmt.Registry) error {
-	if swag.IsZero(m.Subscription) { // not required
+	if typeutils.IsZero(m.Subscription) { // not required
 		return nil
 	}
 
@@ -513,7 +574,7 @@ func (m *Organization) contextValidateAdmins(ctx context.Context, formats strfmt
 
 		if m.Admins[i] != nil {
 
-			if swag.IsZero(m.Admins[i]) { // not required
+			if typeutils.IsZero(m.Admins[i]) { // not required
 				return nil
 			}
 
@@ -540,7 +601,7 @@ func (m *Organization) contextValidateAppearance(ctx context.Context, formats st
 
 	if m.Appearance != nil {
 
-		if swag.IsZero(m.Appearance) { // not required
+		if typeutils.IsZero(m.Appearance) { // not required
 			return nil
 		}
 
@@ -565,7 +626,7 @@ func (m *Organization) contextValidateSubscription(ctx context.Context, formats 
 
 	if m.Subscription != nil {
 
-		if swag.IsZero(m.Subscription) { // not required
+		if typeutils.IsZero(m.Subscription) { // not required
 			return nil
 		}
 
@@ -591,13 +652,13 @@ func (m *Organization) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Organization) UnmarshalBinary(b []byte) error {
 	var res Organization
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
