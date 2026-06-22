@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -54,7 +55,7 @@ func (m *InfrastructureGraph) validateEdges(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Edges); i++ {
-		if swag.IsZero(m.Edges[i]) { // not required
+		if typeutils.IsZero(m.Edges[i]) { // not required
 			continue
 		}
 
@@ -85,7 +86,7 @@ func (m *InfrastructureGraph) validateNodes(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Nodes); i++ {
-		if swag.IsZero(m.Nodes[i]) { // not required
+		if typeutils.IsZero(m.Nodes[i]) { // not required
 			continue
 		}
 
@@ -133,7 +134,7 @@ func (m *InfrastructureGraph) contextValidateEdges(ctx context.Context, formats 
 
 		if m.Edges[i] != nil {
 
-			if swag.IsZero(m.Edges[i]) { // not required
+			if typeutils.IsZero(m.Edges[i]) { // not required
 				return nil
 			}
 
@@ -162,7 +163,7 @@ func (m *InfrastructureGraph) contextValidateNodes(ctx context.Context, formats 
 
 		if m.Nodes[i] != nil {
 
-			if swag.IsZero(m.Nodes[i]) { // not required
+			if typeutils.IsZero(m.Nodes[i]) { // not required
 				return nil
 			}
 
@@ -190,13 +191,13 @@ func (m *InfrastructureGraph) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *InfrastructureGraph) UnmarshalBinary(b []byte) error {
 	var res InfrastructureGraph
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

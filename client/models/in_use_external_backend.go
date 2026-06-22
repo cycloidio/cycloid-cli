@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -68,7 +69,7 @@ func (m *InUseExternalBackend) Validate(formats strfmt.Registry) error {
 }
 
 func (m *InUseExternalBackend) validateComponent(formats strfmt.Registry) error {
-	if swag.IsZero(m.Component) { // not required
+	if typeutils.IsZero(m.Component) { // not required
 		return nil
 	}
 
@@ -100,7 +101,7 @@ func (m *InUseExternalBackend) validateEngine(formats strfmt.Registry) error {
 }
 
 func (m *InUseExternalBackend) validateEnvironment(formats strfmt.Registry) error {
-	if swag.IsZero(m.Environment) { // not required
+	if typeutils.IsZero(m.Environment) { // not required
 		return nil
 	}
 
@@ -123,7 +124,7 @@ func (m *InUseExternalBackend) validateEnvironment(formats strfmt.Registry) erro
 }
 
 func (m *InUseExternalBackend) validateProject(formats strfmt.Registry) error {
-	if swag.IsZero(m.Project) { // not required
+	if typeutils.IsZero(m.Project) { // not required
 		return nil
 	}
 
@@ -180,7 +181,7 @@ func (m *InUseExternalBackend) contextValidateComponent(ctx context.Context, for
 
 	if m.Component != nil {
 
-		if swag.IsZero(m.Component) { // not required
+		if typeutils.IsZero(m.Component) { // not required
 			return nil
 		}
 
@@ -205,7 +206,7 @@ func (m *InUseExternalBackend) contextValidateEnvironment(ctx context.Context, f
 
 	if m.Environment != nil {
 
-		if swag.IsZero(m.Environment) { // not required
+		if typeutils.IsZero(m.Environment) { // not required
 			return nil
 		}
 
@@ -230,7 +231,7 @@ func (m *InUseExternalBackend) contextValidateProject(ctx context.Context, forma
 
 	if m.Project != nil {
 
-		if swag.IsZero(m.Project) { // not required
+		if typeutils.IsZero(m.Project) { // not required
 			return nil
 		}
 
@@ -256,13 +257,13 @@ func (m *InUseExternalBackend) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *InUseExternalBackend) UnmarshalBinary(b []byte) error {
 	var res InUseExternalBackend
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

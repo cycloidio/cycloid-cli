@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -173,7 +174,7 @@ func (m *Project) validateColor(formats strfmt.Registry) error {
 }
 
 func (m *Project) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ConfigRepositoryCanonical) { // not required
+	if typeutils.IsZero(m.ConfigRepositoryCanonical) { // not required
 		return nil
 	}
 
@@ -212,7 +213,7 @@ func (m *Project) validateEnvironments(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Environments); i++ {
-		if swag.IsZero(m.Environments[i]) { // not required
+		if typeutils.IsZero(m.Environments[i]) { // not required
 			continue
 		}
 
@@ -276,7 +277,7 @@ func (m *Project) validateName(formats strfmt.Registry) error {
 }
 
 func (m *Project) validateOwner(formats strfmt.Registry) error {
-	if swag.IsZero(m.Owner) { // not required
+	if typeutils.IsZero(m.Owner) { // not required
 		return nil
 	}
 
@@ -331,7 +332,7 @@ func (m *Project) validateVersionStatusItemsEnum(path, location string, value st
 }
 
 func (m *Project) validateVersionStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.VersionStatus) { // not required
+	if typeutils.IsZero(m.VersionStatus) { // not required
 		return nil
 	}
 
@@ -371,7 +372,7 @@ func (m *Project) contextValidateEnvironments(ctx context.Context, formats strfm
 
 		if m.Environments[i] != nil {
 
-			if swag.IsZero(m.Environments[i]) { // not required
+			if typeutils.IsZero(m.Environments[i]) { // not required
 				return nil
 			}
 
@@ -398,7 +399,7 @@ func (m *Project) contextValidateOwner(ctx context.Context, formats strfmt.Regis
 
 	if m.Owner != nil {
 
-		if swag.IsZero(m.Owner) { // not required
+		if typeutils.IsZero(m.Owner) { // not required
 			return nil
 		}
 
@@ -424,13 +425,13 @@ func (m *Project) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Project) UnmarshalBinary(b []byte) error {
 	var res Project
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

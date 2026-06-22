@@ -5,10 +5,13 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -18,6 +21,9 @@ import (
 //
 // swagger:model FormEntity
 type FormEntity struct {
+
+	// Optional condition expression that gates whether this widget is displayed. Same V2 syntax as Group.condition (e.g. "$other_field == 'aws'"). Variables prefixed with "ctx_" are runtime-injected and bypass the entity-existence validation.
+	Condition string `json:"condition,omitempty"`
 
 	// The current value that was previously configured for this variable upon creation or update. In case of shared variables having different values, it will be empty, and 'mismatch_values' will be filled instead.
 	Current any `json:"current,omitempty"`
@@ -41,6 +47,9 @@ type FormEntity struct {
 
 	// Whether or not the entity should be displayed to the user. This entity must be usable as such (not required, or with a default if required)
 	Folded bool `json:"folded,omitempty"`
+
+	// Sub-entity definitions for the repeatable widget. Each item defines a field that users can fill N times. Only valid when widget is 'repeatable'.
+	Items []*FormEntity `json:"items"`
 
 	// The key is the name of variables for the ansible/pipeline/terraform technologies. If this is a first level variable then: keyX. If you have multiple terraform modules then use: module.Y.keyX to help identify the unique variable.
 	// Required: true
@@ -95,7 +104,7 @@ type FormEntity struct {
 
 	// The widget used to display the data in the most suitable way
 	// Required: true
-	// Enum: ["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","date_time","hidden"]
+	// Enum: ["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","date_time","hidden","repeatable"]
 	Widget *string `json:"widget"`
 
 	// Some specific configuration that could be applied to that widget. Currently only a few widgets can be configured:
@@ -132,12 +141,20 @@ type FormEntity struct {
 	//       * 'environment' (string): Linked environment canonical
 	//       * 'component' (string): Linked component canonical
 	//       * 'service_catalogs' (list(string)): Linked service catalog (stack) canonicals
+	//   * repeatable
+	//     * 'min_items' (int): minimum number of repeatable instances (0 = no minimum)
+	//     * 'max_items' (int): maximum number of repeatable instances (0 = no maximum)
+	//     * 'item_label' (string): label template for each instance
 	WidgetConfig any `json:"widget_config,omitempty"`
 }
 
 // Validate validates this form entity
 func (m *FormEntity) Validate(formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.validateItems(formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.validateKey(formats); err != nil {
 		res = append(res, err)
@@ -158,6 +175,36 @@ func (m *FormEntity) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *FormEntity) validateItems(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.Items) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Items); i++ {
+		if typeutils.IsZero(m.Items[i]) { // not required
+			continue
+		}
+
+		if m.Items[i] != nil {
+			if err := m.Items[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("items" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("items" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -238,7 +285,7 @@ var formEntityTypeWidgetPropEnum []any
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","date_time","hidden"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","date_time","hidden","repeatable"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -298,6 +345,9 @@ const (
 
 	// FormEntityWidgetHidden captures enum value "hidden"
 	FormEntityWidgetHidden string = "hidden"
+
+	// FormEntityWidgetRepeatable captures enum value "repeatable"
+	FormEntityWidgetRepeatable string = "repeatable"
 )
 
 // prop value enum
@@ -322,8 +372,46 @@ func (m *FormEntity) validateWidget(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this form entity based on context it is used
+// ContextValidate validate this form entity based on the context it is used
 func (m *FormEntity) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateItems(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *FormEntity) contextValidateItems(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Items); i++ {
+
+		if m.Items[i] != nil {
+
+			if typeutils.IsZero(m.Items[i]) { // not required
+				return nil
+			}
+
+			if err := m.Items[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("items" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("items" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -332,13 +420,13 @@ func (m *FormEntity) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *FormEntity) UnmarshalBinary(b []byte) error {
 	var res FormEntity
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

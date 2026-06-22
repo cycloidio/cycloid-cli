@@ -10,7 +10,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -95,7 +96,7 @@ func (m *NewEvent) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewEvent) validateColor(formats strfmt.Registry) error {
-	if swag.IsZero(m.Color) { // not required
+	if typeutils.IsZero(m.Color) { // not required
 		return nil
 	}
 
@@ -115,7 +116,7 @@ func (m *NewEvent) validateColor(formats strfmt.Registry) error {
 }
 
 func (m *NewEvent) validateIcon(formats strfmt.Registry) error {
-	if swag.IsZero(m.Icon) { // not required
+	if typeutils.IsZero(m.Icon) { // not required
 		return nil
 	}
 
@@ -195,7 +196,7 @@ func (m *NewEvent) validateTags(formats strfmt.Registry) error {
 	}
 
 	for i := 0; i < len(m.Tags); i++ {
-		if swag.IsZero(m.Tags[i]) { // not required
+		if typeutils.IsZero(m.Tags[i]) { // not required
 			continue
 		}
 
@@ -301,7 +302,7 @@ func (m *NewEvent) contextValidateTags(ctx context.Context, formats strfmt.Regis
 
 		if m.Tags[i] != nil {
 
-			if swag.IsZero(m.Tags[i]) { // not required
+			if typeutils.IsZero(m.Tags[i]) { // not required
 				return nil
 			}
 
@@ -329,13 +330,13 @@ func (m *NewEvent) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewEvent) UnmarshalBinary(b []byte) error {
 	var res NewEvent
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

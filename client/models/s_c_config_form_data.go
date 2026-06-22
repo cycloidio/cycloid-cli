@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -69,7 +69,7 @@ func (m SCConfigFormData) ContextValidate(ctx context.Context, formats strfmt.Re
 
 			for i := 0; i < len(m[k][kk]); i++ {
 
-				if swag.IsZero(m[k][kk][i]) { // not required
+				if typeutils.IsZero(m[k][kk][i]) { // not required
 					return nil
 				}
 

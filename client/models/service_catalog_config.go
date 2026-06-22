@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -91,7 +92,7 @@ func (m *ServiceCatalogConfig) Validate(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalogConfig) validateAnsible(formats strfmt.Registry) error {
-	if swag.IsZero(m.Ansible) { // not required
+	if typeutils.IsZero(m.Ansible) { // not required
 		return nil
 	}
 
@@ -123,7 +124,7 @@ func (m *ServiceCatalogConfig) validateCloudProvider(formats strfmt.Registry) er
 }
 
 func (m *ServiceCatalogConfig) validateCustom(formats strfmt.Registry) error {
-	if swag.IsZero(m.Custom) { // not required
+	if typeutils.IsZero(m.Custom) { // not required
 		return nil
 	}
 
@@ -155,7 +156,7 @@ func (m *ServiceCatalogConfig) validateDescription(formats strfmt.Registry) erro
 }
 
 func (m *ServiceCatalogConfig) validateForms(formats strfmt.Registry) error {
-	if swag.IsZero(m.Forms) { // not required
+	if typeutils.IsZero(m.Forms) { // not required
 		return nil
 	}
 
@@ -211,7 +212,7 @@ func (m *ServiceCatalogConfig) validatePipeline(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalogConfig) validateTerraform(formats strfmt.Registry) error {
-	if swag.IsZero(m.Terraform) { // not required
+	if typeutils.IsZero(m.Terraform) { // not required
 		return nil
 	}
 
@@ -265,7 +266,7 @@ func (m *ServiceCatalogConfig) ContextValidate(ctx context.Context, formats strf
 
 func (m *ServiceCatalogConfig) contextValidateAnsible(ctx context.Context, formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Ansible) { // not required
+	if typeutils.IsZero(m.Ansible) { // not required
 		return nil
 	}
 
@@ -289,7 +290,7 @@ func (m *ServiceCatalogConfig) contextValidateCustom(ctx context.Context, format
 
 	if m.Custom != nil {
 
-		if swag.IsZero(m.Custom) { // not required
+		if typeutils.IsZero(m.Custom) { // not required
 			return nil
 		}
 
@@ -314,7 +315,7 @@ func (m *ServiceCatalogConfig) contextValidateForms(ctx context.Context, formats
 
 	if m.Forms != nil {
 
-		if swag.IsZero(m.Forms) { // not required
+		if typeutils.IsZero(m.Forms) { // not required
 			return nil
 		}
 
@@ -358,7 +359,7 @@ func (m *ServiceCatalogConfig) contextValidatePipeline(ctx context.Context, form
 
 func (m *ServiceCatalogConfig) contextValidateTerraform(ctx context.Context, formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Terraform) { // not required
+	if typeutils.IsZero(m.Terraform) { // not required
 		return nil
 	}
 
@@ -383,13 +384,13 @@ func (m *ServiceCatalogConfig) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ServiceCatalogConfig) UnmarshalBinary(b []byte) error {
 	var res ServiceCatalogConfig
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

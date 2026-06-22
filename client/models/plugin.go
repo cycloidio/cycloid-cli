@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -105,7 +106,7 @@ func (m *Plugin) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Plugin) validateInstall(formats strfmt.Registry) error {
-	if swag.IsZero(m.Install) { // not required
+	if typeutils.IsZero(m.Install) { // not required
 		return nil
 	}
 
@@ -128,7 +129,7 @@ func (m *Plugin) validateInstall(formats strfmt.Registry) error {
 }
 
 func (m *Plugin) validateLatest(formats strfmt.Registry) error {
-	if swag.IsZero(m.Latest) { // not required
+	if typeutils.IsZero(m.Latest) { // not required
 		return nil
 	}
 
@@ -193,7 +194,7 @@ func (m *Plugin) validateRegistry(formats strfmt.Registry) error {
 }
 
 func (m *Plugin) validateRelation(formats strfmt.Registry) error {
-	if swag.IsZero(m.Relation) { // not required
+	if typeutils.IsZero(m.Relation) { // not required
 		return nil
 	}
 
@@ -245,7 +246,7 @@ func (m *Plugin) contextValidateInstall(ctx context.Context, formats strfmt.Regi
 
 	if m.Install != nil {
 
-		if swag.IsZero(m.Install) { // not required
+		if typeutils.IsZero(m.Install) { // not required
 			return nil
 		}
 
@@ -270,7 +271,7 @@ func (m *Plugin) contextValidateLatest(ctx context.Context, formats strfmt.Regis
 
 	if m.Latest != nil {
 
-		if swag.IsZero(m.Latest) { // not required
+		if typeutils.IsZero(m.Latest) { // not required
 			return nil
 		}
 
@@ -316,7 +317,7 @@ func (m *Plugin) contextValidateRelation(ctx context.Context, formats strfmt.Reg
 
 	if m.Relation != nil {
 
-		if swag.IsZero(m.Relation) { // not required
+		if typeutils.IsZero(m.Relation) { // not required
 			return nil
 		}
 
@@ -342,13 +343,13 @@ func (m *Plugin) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Plugin) UnmarshalBinary(b []byte) error {
 	var res Plugin
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

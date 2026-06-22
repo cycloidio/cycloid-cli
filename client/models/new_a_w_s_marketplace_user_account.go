@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -108,7 +109,7 @@ func (m *NewAWSMarketplaceUserAccount) validateAwsMarketplaceToken(formats strfm
 }
 
 func (m *NewAWSMarketplaceUserAccount) validateCountryCode(formats strfmt.Registry) error {
-	if swag.IsZero(m.CountryCode) { // not required
+	if typeutils.IsZero(m.CountryCode) { // not required
 		return nil
 	}
 
@@ -182,7 +183,7 @@ func (m *NewAWSMarketplaceUserAccount) validateLocaleEnum(path, location string,
 }
 
 func (m *NewAWSMarketplaceUserAccount) validateLocale(formats strfmt.Registry) error {
-	if swag.IsZero(m.Locale) { // not required
+	if typeutils.IsZero(m.Locale) { // not required
 		return nil
 	}
 
@@ -212,7 +213,7 @@ func (m *NewAWSMarketplaceUserAccount) validatePassword(formats strfmt.Registry)
 }
 
 func (m *NewAWSMarketplaceUserAccount) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
+	if typeutils.IsZero(m.Username) { // not required
 		return nil
 	}
 
@@ -241,13 +242,13 @@ func (m *NewAWSMarketplaceUserAccount) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewAWSMarketplaceUserAccount) UnmarshalBinary(b []byte) error {
 	var res NewAWSMarketplaceUserAccount
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
