@@ -1,6 +1,6 @@
 package custommodels
 
-import "github.com/cycloidio/cycloid-cli/client/models"
+import "github.com/cycloidio/cycloid-cli/gen/models"
 
 type Blueprint struct {
 	// Added use cases for blueprint make it more usable output

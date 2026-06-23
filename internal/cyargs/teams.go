@@ -8,10 +8,10 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/gen/models"
+	"github.com/cycloidio/cycloid-cli/utils/ptr"
 )
 
 const (
@@ -46,7 +46,7 @@ func CompleteTeam(cmd *cobra.Command, args []string, toComplete string) ([]cobra
 	orderBy, _ := GetTeamOrderBy(cmd)
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	teams, _, err := m.ListTeams(org, &name, createdAt, &memberID, orderBy)
 	if err != nil {
@@ -91,7 +91,7 @@ func TeamMembersCompletionHelper(cmd *cobra.Command) ([]*models.MemberTeam, erro
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	teams, _, err := m.ListTeamMembers(org, team)
 	if err != nil {
@@ -277,17 +277,17 @@ func AddTeamOrderBy(cmd *cobra.Command) string {
 	return teamOrderByFlagName
 }
 
-func GetTeamOrderBy(cmd *cobra.Command) (*middleware.TeamOrderByParam, error) {
+func GetTeamOrderBy(cmd *cobra.Command) (*apiclient.TeamOrderByParam, error) {
 	orderByStr, err := cmd.Flags().GetString(teamOrderByFlagName)
 	if err != nil {
-		return &middleware.Ascending, err
+		return &apiclient.Ascending, err
 	}
 
 	switch orderByStr {
 	case "desc", "descending":
-		return &middleware.Descending, nil
+		return &apiclient.Descending, nil
 	default:
-		return &middleware.Ascending, nil
+		return &apiclient.Ascending, nil
 	}
 }
 
@@ -304,7 +304,7 @@ func CompleteTeamOwnerCanonical(cmd *cobra.Command, args []string, toComplete st
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	users, _, err := m.ListMembers(org)
 	if err != nil {

@@ -6,9 +6,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/utils/ptr"
 )
 
 func ValidateForms(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
@@ -24,7 +24,7 @@ func AddStackRefFlag(cmd *cobra.Command) string {
 
 func CompleteStackRef(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	org, err := GetOrg(cmd)
 	if err != nil {
@@ -38,7 +38,7 @@ func CompleteStackRef(cmd *cobra.Command, args []string, toComplete string) ([]c
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
-	var stackRefs = make([]string, len(stacks))
+	stackRefs := make([]string, len(stacks))
 	for index, stack := range stacks {
 		if stack.Ref != nil && strings.HasPrefix(*stack.Ref, toComplete) {
 			desc := *stack.Name
@@ -91,7 +91,7 @@ func CompleteBlueprint(cmd *cobra.Command, args []string, toComplete string) ([]
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	blueprints, _, err := m.ListBlueprints(org)
 	if err != nil {
@@ -99,7 +99,7 @@ func CompleteBlueprint(cmd *cobra.Command, args []string, toComplete string) ([]
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
-	var completions = make([]cobra.Completion, len(blueprints))
+	completions := make([]cobra.Completion, len(blueprints))
 	for index, blueprint := range blueprints {
 		if blueprint.Ref != nil && strings.HasPrefix(*blueprint.Ref, toComplete) {
 			completions[index] = cobra.CompletionWithDesc(*blueprint.Ref, *blueprint.Name+" - "+blueprint.Description)
@@ -194,11 +194,11 @@ func GetStackVersionFlags(cmd *cobra.Command) (tag, branch, hash string, err err
 //  4. Bare value — calls m.ListStackVersions to resolve; requires a non-empty stackRef.
 //     Precedence: tag > branch > commit-hash-prefix (min 7 chars).
 //     Collision (same name matches both tag and branch) → error with disambiguation hint.
-func ResolveStackVersionArg(cmd *cobra.Command, m middleware.Middleware, org, stackRef string) (tag, branch, hash string, err error) {
+func ResolveStackVersionArg(cmd *cobra.Command, m apiclient.Middleware, org, stackRef string) (tag, branch, hash string, err error) {
 	// Legacy flags take priority; Cobra already emits the deprecation notice.
 	tag, branch, hash, err = GetStackVersionFlags(cmd)
 	if err != nil || tag != "" || branch != "" || hash != "" {
-		return
+		return tag, branch, hash, err
 	}
 
 	v, err := cmd.Flags().GetString("stack-version")
@@ -285,7 +285,7 @@ func CompleteStackVersionUnified(cmd *cobra.Command, args []string, toComplete s
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	versions, _, err := m.ListStackVersions(org, stackRef)
 	if err != nil {
@@ -347,7 +347,7 @@ func resolveStackRefForCompletion(cmd *cobra.Command, org string) string {
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 	currentComponent, _, errGet := m.GetComponent(org, project, env, component)
 	if errGet == nil && currentComponent.ServiceCatalog != nil && currentComponent.ServiceCatalog.Ref != nil {
 		return *currentComponent.ServiceCatalog.Ref
@@ -355,7 +355,7 @@ func resolveStackRefForCompletion(cmd *cobra.Command, org string) string {
 	return ""
 }
 
-func versionDesc(ver *middleware.StackVersion) string {
+func versionDesc(ver *apiclient.StackVersion) string {
 	desc := ""
 	if ver.CommitHash != nil {
 		desc = shortHash(*ver.CommitHash)
@@ -390,7 +390,7 @@ func CompleteCatalogRepoCommitHash(cmd *cobra.Command, args []string, toComplete
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	versions, _, err := m.ListStackVersions(org, stackRef)
 	if err != nil {
@@ -433,7 +433,7 @@ func CompleteStackVersionTag(cmd *cobra.Command, args []string, toComplete strin
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	versions, _, err := m.ListStackVersions(org, stackRef)
 	if err != nil {
@@ -465,7 +465,7 @@ func CompleteStackVersionBranch(cmd *cobra.Command, args []string, toComplete st
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	versions, _, err := m.ListStackVersions(org, stackRef)
 	if err != nil {

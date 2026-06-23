@@ -8,10 +8,10 @@ import (
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
-	"github.com/cycloidio/cycloid-cli/internal/ptr"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/gen/models"
+	"github.com/cycloidio/cycloid-cli/utils/ptr"
 )
 
 func AddEnvironmentTypeFlag(cmd *cobra.Command) string {
@@ -33,7 +33,7 @@ func CompleteEnvironmentType(cmd *cobra.Command, args []string, toComplete strin
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 	types, _, err := m.ListEnvironmentTypes(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list environment types: "+err.Error()),
@@ -72,7 +72,7 @@ func CompleteCloudAccountCanonical(cmd *cobra.Command, args []string, toComplete
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 	accounts, _, err := m.ListCloudAccounts(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list cloud accounts: "+err.Error()),

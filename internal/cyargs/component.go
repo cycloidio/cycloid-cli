@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
 )
 
 func AddComponentDescriptionFlag(cmd *cobra.Command) {
@@ -80,7 +80,7 @@ func CompleteUseCase(cmd *cobra.Command, args []string, toComplete string) ([]st
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	// Try to get the stack use cases using the provided flags
 	// If none are provided yet, this will use default version

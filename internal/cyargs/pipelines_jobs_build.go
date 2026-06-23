@@ -8,22 +8,20 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
-var (
-	validPipelineStatuses = []string{
-		"aborted",
-		"errored",
-		"failed",
-		"paused",
-		"pending",
-		"started",
-		"succeeded",
-	}
-)
+var validPipelineStatuses = []string{
+	"aborted",
+	"errored",
+	"failed",
+	"paused",
+	"pending",
+	"started",
+	"succeeded",
+}
 
 func AddPipelineStatuses(cmd *cobra.Command) string {
 	flagName := "statuses"
@@ -68,14 +66,14 @@ func AddPipeline(cmd *cobra.Command) string {
 		env, _ := GetEnv(cmd)
 
 		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
+		m := apiclient.NewMiddleware(api)
 		pipelines, _, err := m.GetEnvPipelines(org, project, env)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, "failed to fetch pipeline list for completion in org '"+org+"': "+err.Error()),
 				cobra.ShellCompDirectiveNoFileComp
 		}
 
-		var names = make([]cobra.Completion, len(pipelines))
+		names := make([]cobra.Completion, len(pipelines))
 		for index, pipeline := range pipelines {
 			if pipeline.Name != nil && strings.HasPrefix(*pipeline.Name, toComplete) {
 				names[index] = cobra.CompletionWithDesc(*pipeline.Name,
@@ -103,7 +101,7 @@ func GetPipeline(cmd *cobra.Command) (string, error) {
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	pipelines, _, err := m.GetEnvPipelines(org, project, environment)
 	if err != nil {
@@ -159,7 +157,7 @@ func AddPipelineJob(cmd *cobra.Command) string {
 		pipeline, _ := GetPipeline(cmd)
 
 		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
+		m := apiclient.NewMiddleware(api)
 		jobs, _, err := m.GetJobs(org, project, env, component, pipeline)
 		if err != nil {
 			return cobra.AppendActiveHelp(nil, fmt.Sprintf(
@@ -215,7 +213,7 @@ func AddPipelineBuildID(cmd *cobra.Command) string {
 			job, _ := GetPipelineJob(cmd)
 
 			api := common.NewAPI()
-			m := middleware.NewMiddleware(api)
+			m := apiclient.NewMiddleware(api)
 
 			builds, _, err := m.GetBuilds(org, project, env, component, pipeline, job)
 			if err != nil {

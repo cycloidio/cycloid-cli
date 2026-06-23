@@ -8,17 +8,15 @@ import (
 
 type Transformer func(input string, options []string) (string, error)
 
-var (
-	AvailableTransformers = map[string]Transformer{
-		"indent":       Indent,
-		"nindent":      NIndent,
-		"base64":       Base64,
-		"base64encode": Base64,
-	}
-)
+var AvailableTransformers = map[string]Transformer{
+	"indent":       Indent,
+	"nindent":      NIndent,
+	"base64":       Base64,
+	"base64encode": Base64,
+}
 
 func Transform(input string, params map[string][]string) (string, error) {
-	var out = input
+	out := input
 	var err error
 	for param, options := range params {
 		if ts, ok := AvailableTransformers[param]; ok {
@@ -34,7 +32,7 @@ func Transform(input string, params map[string][]string) (string, error) {
 
 func Indent(input string, options []string) (string, error) {
 	var out string
-	var pad = 0
+	pad := 0
 	if len(options) >= 1 {
 		pad, _ = strconv.Atoi(options[0])
 	}

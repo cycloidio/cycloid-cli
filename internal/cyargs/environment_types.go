@@ -5,8 +5,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
 )
 
 func AddEnvironmentTypeNameFlag(cmd *cobra.Command) string {
@@ -27,7 +27,7 @@ func CompleteEnvironmentTypeCanonical(cmd *cobra.Command, args []string, toCompl
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 	types, _, err := m.ListEnvironmentTypes(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list environment types: "+err.Error()),

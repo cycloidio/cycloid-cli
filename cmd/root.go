@@ -7,32 +7,31 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	root "github.com/cycloidio/cycloid-cli/cmd/cycloid"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/apikey"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/beta"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/catalogrepositories"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/cloudaccounts"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/components"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/configrepositories"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/credentials"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environments"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/environmenttypes"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/events"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/externalbackends"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/kpis"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/login"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/members"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/oidc"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/organizations"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/output"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/pipelines"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/plugins"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/projects"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/roles"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/stacks"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/teams"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/terracost"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/uri"
+	"github.com/cycloidio/cycloid-cli/cmd/apikey"
+	"github.com/cycloidio/cycloid-cli/cmd/beta"
+	"github.com/cycloidio/cycloid-cli/cmd/catalogrepositories"
+	"github.com/cycloidio/cycloid-cli/cmd/cloudaccounts"
+	"github.com/cycloidio/cycloid-cli/cmd/components"
+	"github.com/cycloidio/cycloid-cli/cmd/configrepositories"
+	"github.com/cycloidio/cycloid-cli/cmd/credentials"
+	"github.com/cycloidio/cycloid-cli/cmd/environments"
+	"github.com/cycloidio/cycloid-cli/cmd/environmenttypes"
+	"github.com/cycloidio/cycloid-cli/cmd/events"
+	"github.com/cycloidio/cycloid-cli/cmd/externalbackends"
+	"github.com/cycloidio/cycloid-cli/cmd/kpis"
+	"github.com/cycloidio/cycloid-cli/cmd/login"
+	"github.com/cycloidio/cycloid-cli/cmd/members"
+	"github.com/cycloidio/cycloid-cli/cmd/oidc"
+	"github.com/cycloidio/cycloid-cli/cmd/organizations"
+	"github.com/cycloidio/cycloid-cli/cmd/output"
+	"github.com/cycloidio/cycloid-cli/cmd/pipelines"
+	"github.com/cycloidio/cycloid-cli/cmd/plugins"
+	"github.com/cycloidio/cycloid-cli/cmd/projects"
+	"github.com/cycloidio/cycloid-cli/cmd/roles"
+	"github.com/cycloidio/cycloid-cli/cmd/stacks"
+	"github.com/cycloidio/cycloid-cli/cmd/teams"
+	"github.com/cycloidio/cycloid-cli/cmd/terracost"
+	"github.com/cycloidio/cycloid-cli/cmd/uri"
 	"github.com/cycloidio/cycloid-cli/internal/cyout"
 	"github.com/cycloidio/cycloid-cli/internal/version"
 )
@@ -154,10 +153,10 @@ NO_PROXY     | List of hosts that must bypass proxy configuration
 
 func AttachCommands(cmd *cobra.Command) {
 	cmd.AddCommand(
-		root.NewVersionCmd(),
-		root.NewStatusCmd(),
-		root.NewCompletionCmd(),
-		root.NewGetCommand(),
+		NewVersionCmd(),
+		NewStatusCmd(),
+		NewCompletionCmd(),
+		NewGetCommand(),
 		apikey.NewCommands(),
 		catalogrepositories.NewCommands(),
 		configrepositories.NewCommands(),

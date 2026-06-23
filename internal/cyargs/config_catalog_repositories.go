@@ -6,9 +6,9 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
 func AddCatalogRepositoryFlag(cmd *cobra.Command) string {
@@ -51,7 +51,7 @@ func CompleteCatalogRepository(cmd *cobra.Command, args []string, toComplete str
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	stacks, _, err := m.ListCatalogRepositories(org)
 	if err != nil {
@@ -59,7 +59,7 @@ func CompleteCatalogRepository(cmd *cobra.Command, args []string, toComplete str
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
-	var catalogRepositories = make([]cobra.Completion, len(stacks))
+	catalogRepositories := make([]cobra.Completion, len(stacks))
 	for index, catalogRepository := range stacks {
 		if catalogRepository.Canonical != nil {
 			catalogRepositories[index] = cobra.CompletionWithDesc(*catalogRepository.Canonical, *catalogRepository.Name+" - branch: "+catalogRepository.Branch)
@@ -86,7 +86,7 @@ func AddConfigRepoCanonicalFlag(cmd *cobra.Command) string {
 
 func CompleteConfigRepository(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	org, err := GetOrg(cmd)
 	if err != nil {
@@ -98,7 +98,7 @@ func CompleteConfigRepository(cmd *cobra.Command, args []string, toComplete stri
 		return cobra.AppendActiveHelp(nil, "failed to list config repositories for completion in org '"+org+"': "+err.Error()), cobra.ShellCompDirectiveError
 	}
 
-	var configRepositories = make([]cobra.Completion, len(stacks))
+	configRepositories := make([]cobra.Completion, len(stacks))
 	for index, configRepository := range stacks {
 		if configRepository.Canonical != nil {
 			configRepositories[index] = cobra.CompletionWithDesc(*configRepository.Canonical, *configRepository.Name+" - branch: "+configRepository.Branch)
@@ -121,7 +121,7 @@ func GetConfigRepository(cmd *cobra.Command) (string, error) {
 
 func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	org, err := GetOrg(cmd)
 	if err != nil {

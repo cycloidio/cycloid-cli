@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
 )
 
 // AddMemberIDFlag registers --id for member get/delete/update commands.
@@ -56,7 +56,7 @@ func CompleteMemberID(cmd *cobra.Command, args []string, toComplete string) ([]c
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	members, _, err := m.ListMembers(org)
 	if err != nil {
@@ -88,7 +88,7 @@ func CompleteMemberEmail(cmd *cobra.Command, args []string, toComplete string) (
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	members, _, err := m.ListMembers(org)
 	if err != nil {

@@ -1,9 +1,9 @@
 package yaml
 
 import (
+	"fmt"
 	"io"
 
-	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 
 	"github.com/cycloidio/cycloid-cli/printer"
@@ -16,10 +16,10 @@ type YAML struct{}
 func (y YAML) Print(obj interface{}, opts printer.Options, w io.Writer) error {
 	yml, err := yaml.Marshal(obj)
 	if err != nil {
-		return errors.Wrap(err, "unable to marshal object")
+		return fmt.Errorf("unable to marshal object: %w", err)
 	}
 	if _, err = w.Write(yml); err != nil {
-		return errors.Wrap(err, "unable to write YAML in the writer")
+		return fmt.Errorf("unable to write YAML in the writer: %w", err)
 	}
 	return nil
 }

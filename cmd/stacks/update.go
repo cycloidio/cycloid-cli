@@ -1,0 +1,86 @@
+package stacks
+
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
+	"github.com/cycloidio/cycloid-cli/printer"
+)
+
+func NewUpdateCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update",
+		Args:  cobra.NoArgs,
+		Short: "update the visibility of a stack",
+		Example: `cy stacks update --stack-ref org:myStack --visibility shared
+
+# Full args example
+cy stacks update \
+	--stack-ref my:stack-ref \
+	--visibility "hidden" \
+	--team "teamCanonical"
+`,
+		RunE: update,
+	}
+
+	cmd.MarkFlagRequired(cyargs.AddStackRefFlag(cmd))
+	cyargs.AddVisibilityFlag(cmd)
+	cyargs.AddTeamFlag(cmd)
+	return cmd
+}
+
+func update(cmd *cobra.Command, args []string) error {
+	org, err := cyargs.GetOrg(cmd)
+	if err != nil {
+		return err
+	}
+
+	stackRef, err := cyargs.GetStackRef(cmd)
+	if err != nil {
+		return err
+	}
+
+	api := common.NewAPI()
+	m := apiclient.NewMiddleware(api)
+
+	// Fetch the current stack state
+	stack, _, err := m.GetStack(org, stackRef)
+	if err != nil {
+		return cyout.PrintWithOptions(cmd, nil, err, fmt.Sprintf("failed to retrieve the stack with stack ref: %s", stackRef), printer.Options{})
+	}
+
+	// Manage optional parameters
+	flagSet := cmd.Flags()
+
+	var visibility *string
+	var team string
+	if flagSet.Changed("visibility") {
+		visibilityStr, err := cyargs.GetVisibility(cmd)
+		if err != nil {
+			return err
+		}
+		visibility = &visibilityStr
+	} else {
+		visibility = stack.Visibility
+	}
+
+	if flagSet.Changed("team") {
+		team, err = cyargs.GetTeam(cmd)
+		if err != nil {
+			return err
+		}
+	} else {
+		if stack.Team != nil {
+			team = *stack.Team.Canonical
+		}
+	}
+
+	// Send request
+	s, _, err := m.UpdateStack(org, stackRef, team, visibility)
+	return cyout.PrintWithOptions(cmd, s, err, fmt.Sprintf("fail to update stack with ref: %s", stackRef), printer.Options{})
+}

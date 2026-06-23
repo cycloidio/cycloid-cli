@@ -9,8 +9,8 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
 )
 
 var (
@@ -133,7 +133,7 @@ func CompleteProject(cmd *cobra.Command, args []string, toComplete string) ([]co
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	projects, _, err := m.ListProjects(org)
 	if err != nil {
@@ -141,7 +141,7 @@ func CompleteProject(cmd *cobra.Command, args []string, toComplete string) ([]co
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
-	var canonicals = make([]cobra.Completion, len(projects))
+	canonicals := make([]cobra.Completion, len(projects))
 	for index, project := range projects {
 		if project.Canonical != nil && strings.HasPrefix(*project.Canonical, toComplete) {
 			canonicals[index] = cobra.CompletionWithDesc(*project.Canonical, *project.Name)
@@ -191,7 +191,7 @@ func AddEnvFlag(cmd *cobra.Command) {
 		}
 
 		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
+		m := apiclient.NewMiddleware(api)
 
 		envs, _, err := m.ListProjectEnvs(org, project)
 		if err != nil {
@@ -199,7 +199,7 @@ func AddEnvFlag(cmd *cobra.Command) {
 				cobra.ShellCompDirectiveNoFileComp
 		}
 
-		var canonicals = make([]cobra.Completion, len(envs))
+		canonicals := make([]cobra.Completion, len(envs))
 		for index, env := range envs {
 			if env.Canonical != nil && strings.HasPrefix(*env.Canonical, toComplete) {
 				canonicals[index] = cobra.CompletionWithDesc(*env.Canonical, env.Name)
@@ -255,7 +255,7 @@ func AddComponentFlag(cmd *cobra.Command) {
 		}
 
 		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
+		m := apiclient.NewMiddleware(api)
 
 		components, _, err := m.ListComponents(org, project, env)
 		if err != nil {
@@ -263,7 +263,7 @@ func AddComponentFlag(cmd *cobra.Command) {
 				cobra.ShellCompDirectiveNoFileComp
 		}
 
-		var canonicals = make([]string, len(components))
+		canonicals := make([]string, len(components))
 		for index, component := range components {
 			if component.Canonical != nil && strings.HasPrefix(*component.Canonical, toComplete) {
 				canonicals[index] = cobra.CompletionWithDesc(*component.Canonical, *component.Name)
@@ -398,7 +398,7 @@ func AddOwnerFlag(cmd *cobra.Command) string {
 	cmd.Flags().String(flagName, "", "canonical of a user to set as owner, will be the user attached to the current api key if empty.")
 	cmd.RegisterFlagCompletionFunc(flagName, func(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 		api := common.NewAPI()
-		m := middleware.NewMiddleware(api)
+		m := apiclient.NewMiddleware(api)
 
 		org, err := GetOrg(cmd)
 		if err != nil {
@@ -412,7 +412,7 @@ func AddOwnerFlag(cmd *cobra.Command) string {
 				cobra.ShellCompDirectiveNoFileComp
 		}
 
-		var owners = make([]cobra.Completion, len(members))
+		owners := make([]cobra.Completion, len(members))
 		for index, member := range members {
 			if strings.HasPrefix(member.Username, toComplete) {
 				owners[index] = cobra.CompletionWithDesc(
@@ -452,23 +452,26 @@ func GetDescription(cmd *cobra.Command) (string, error) {
 
 func AddDeleteFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool("force", false, "shorthand for --skip-hooks --ignore-config-files-err")
-		cmd.Flags().Bool("skip-hooks", false, "skip component on_delete hooks (sets skip_hooks=true)")
+	cmd.Flags().Bool("skip-hooks", false, "skip component on_delete hooks (sets skip_hooks=true)")
 	cmd.Flags().Bool("ignore-config-files-err", false, "ignore possible errors on config repository update (sets ignore_config_files_err=true)")
 }
 
 func GetDeleteFlags(cmd *cobra.Command) (force, skipHooks, ignoreConfigFilesErr bool, err error) {
 	if force, err = cmd.Flags().GetBool("force"); err != nil {
-		return
+		return force, skipHooks, ignoreConfigFilesErr, err
 	}
 	if skipHooks, err = cmd.Flags().GetBool("skip-hooks"); err != nil {
-		return
+		return force, skipHooks, ignoreConfigFilesErr, err
 	}
 	ignoreConfigFilesErr, err = cmd.Flags().GetBool("ignore-config-files-err")
-	return
+	return force, skipHooks, ignoreConfigFilesErr, err
 }
 
 func GetOrg(cmd *cobra.Command) (string, error) {
-	org := v.GetString("org")
+	// The --org flag is bound to the global viper instance in root.go, so we
+	// use viper.GetString instead of the package-level v.GetString to always
+	// read from the current global instance (important after viper.Reset in tests).
+	org := viper.GetString("org")
 	if org == "" {
 		return "", fmt.Errorf("org is not set, use --org flag or CY_ORG env var, current value: %q", org)
 	}

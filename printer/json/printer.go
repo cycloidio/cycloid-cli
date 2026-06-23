@@ -2,10 +2,9 @@ package json
 
 import (
 	"encoding/json"
-	stderrors "errors"
+	"errors"
+	"fmt"
 	"io"
-
-	"github.com/pkg/errors"
 
 	"github.com/cycloidio/cycloid-cli/printer"
 )
@@ -21,10 +20,10 @@ func (j JSON) Print(obj interface{}, opts printer.Options, w io.Writer) error {
 	if err != nil {
 		asErr, ok := obj.(error)
 		if !ok {
-			return errors.Wrap(err, "unable to marshal object")
+			return fmt.Errorf("unable to marshal object: %w", err)
 		}
 		var httpErr printer.ErrHTTPResponse
-		if stderrors.As(asErr, &httpErr) {
+		if errors.As(asErr, &httpErr) {
 			diag := struct {
 				CLIMarshalError    string `json:"cli_marshal_error"`
 				HTTPStatus         int    `json:"http_status"`
@@ -42,22 +41,22 @@ func (j JSON) Print(obj interface{}, opts printer.Options, w io.Writer) error {
 			}
 			payload, err = json.MarshalIndent(diag, "", "  ")
 			if err != nil {
-				return errors.Wrap(err, "unable to marshal object")
+				return fmt.Errorf("unable to marshal object: %w", err)
 			}
 			payload = append(payload, '\n')
 			if _, werr := w.Write(payload); werr != nil {
-				return errors.Wrap(werr, "unable to write JSON in the writer")
+				return fmt.Errorf("unable to write JSON in the writer: %w", werr)
 			}
 			return nil
 		}
-		return errors.Wrap(err, "unable to marshal object")
+		return fmt.Errorf("unable to marshal object: %w", err)
 	}
 
 	// Add a newline to avoid ugly console output for user
 	payload = append(payload, '\n')
 
 	if _, err = w.Write(payload); err != nil {
-		return errors.Wrap(err, "unable to write JSON in the writer")
+		return fmt.Errorf("unable to write JSON in the writer: %w", err)
 	}
 	return nil
 }

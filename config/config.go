@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/adrg/xdg"
-	"github.com/pkg/errors"
 	"gopkg.in/yaml.v3"
 )
 
@@ -14,68 +13,60 @@ var (
 	path    = "config.yaml"
 )
 
-// Config is the structure handling the config
-// of the CLI
+// Config handles the CLI configuration
 type Config struct {
-	// Organizations is the list of Organization where the user
-	// is currently logged in
 	Organizations map[string]Organization `yaml:"organizations"`
-	// Output is the default output format (e.g. "table", "json", "table:border").
-	// Overridden by CY_OUTPUT env var or the --output / --jq flags at runtime.
-	Output string `yaml:"output,omitempty"`
+	Output        string                  `yaml:"output,omitempty"`
 }
 
-// Organization is an organization where the user
-// is logged in
+// Organization represents a logged-in organization session
 type Organization struct {
-	// Organization token
 	Token string `yaml:"token"`
 }
 
 func GetConfigPath() (string, error) {
 	configFilePath, err := xdg.ConfigFile(fmt.Sprintf("%s/%s", appName, path))
 	if err != nil {
-		return "", err
+		return "", fmt.Errorf("invalid config: unable to find XDG config path: %w", err)
 	}
 
 	return configFilePath, nil
 }
 
-// Read will read the config from the
-// path and returns a config struct
+// Read reads the config from the XDG path and returns a Config struct
 func Read() (*Config, error) {
 	configFilePath, err := xdg.ConfigFile(fmt.Sprintf("%s/%s", appName, path))
 	if err != nil {
 		return &Config{
 			Organizations: make(map[string]Organization),
-		}, errors.Wrap(err, "unable to find XDG config path")
+		}, fmt.Errorf("invalid config: unable to find XDG config path: %w", err)
 	}
 	content, err := os.ReadFile(configFilePath)
 	if err != nil {
-		// we return an empty Config in case it's the first time we try to access
-		// the config and it does not exist yet
 		return &Config{
 			Organizations: make(map[string]Organization),
-		}, errors.Wrap(err, "unable to read config from file")
+		}, fmt.Errorf("invalid config: unable to read config from file: %w", err)
 	}
 	var c Config
 	if err := yaml.Unmarshal(content, &c); err != nil {
-		return nil, errors.Wrap(err, "unable to decode config from file")
+		return nil, fmt.Errorf("invalid config: unable to decode config from file: %w", err)
 	}
 	return &c, nil
 }
 
-// Write will write the config into the
-// path location
+// Write writes the config into the XDG path
 func Write(c *Config) error {
 	content, err := yaml.Marshal(c)
 	if err != nil {
-		return errors.Wrap(err, "unable to marshal config structure")
+		return fmt.Errorf("invalid config: unable to marshal config structure: %w", err)
 	}
 	configFilePath, err := xdg.ConfigFile(fmt.Sprintf("%s/%s", appName, path))
 	if err != nil {
-		return errors.Wrap(err, "unable to find XDG config path")
+		return fmt.Errorf("invalid config: unable to find XDG config path: %w", err)
 	}
 
-	return os.WriteFile(configFilePath, content, 0600)
+	if err := os.WriteFile(configFilePath, content, 0o600); err != nil {
+		return fmt.Errorf("invalid config: unable to write config file: %w", err)
+	}
+	return nil
 }

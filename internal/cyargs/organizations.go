@@ -10,9 +10,9 @@ import (
 	"github.com/spf13/cobra"
 	"go.yaml.in/yaml/v4"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
 func AddOrgNameFlag(cmd *cobra.Command) string {
@@ -27,7 +27,7 @@ func GetOrgName(cmd *cobra.Command) (string, error) {
 
 func CompleteOrg(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	org, err := GetOrg(cmd)
 	if err != nil {
@@ -93,7 +93,7 @@ func CompleteRoleCanonical(cmd *cobra.Command, args []string, toComplete string)
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewMiddleware(api)
 
 	roles, _, err := m.ListRoles(org)
 	if err != nil {
@@ -141,7 +141,7 @@ func GetRoleRulesJSON(cmd *cobra.Command) ([]*models.NewRule, error) {
 		return nil, err
 	}
 
-	var rules = make([]*models.NewRule, len(rulesJSON))
+	rules := make([]*models.NewRule, len(rulesJSON))
 	for i, ruleJSON := range rulesJSON {
 		var rule models.NewRule
 		err := json.Unmarshal([]byte(ruleJSON), &rule)
@@ -161,7 +161,7 @@ func GetRoleRulesFiles(cmd *cobra.Command) ([]*models.NewRule, error) {
 		return nil, err
 	}
 
-	var rules = []*models.NewRule{}
+	rules := []*models.NewRule{}
 	for _, ruleFile := range rulesFiles {
 		var content []byte
 		if ruleFile == "-" && common.DetectStdinInput() {

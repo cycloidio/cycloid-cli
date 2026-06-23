@@ -20,14 +20,14 @@ type JSONFormatter struct {
 
 // New will parse params and return a JSONFormatter
 func New(params map[string][]string) *JSONFormatter {
-	var f = &JSONFormatter{
+	f := &JSONFormatter{
 		indentSize: 2,
 		escape:     false,
 		compact:    false,
 	}
 
 	for option, valueArray := range params {
-		var value = ""
+		value := ""
 		if len(valueArray) > 0 {
 			value = valueArray[0]
 		}
