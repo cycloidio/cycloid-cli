@@ -1,0 +1,141 @@
+package apiclient
+
+import (
+	"fmt"
+	"net/http"
+	"net/url"
+
+	"github.com/cycloidio/cycloid-cli/gen/models"
+)
+
+// ListCatalogRepositories lists catalog repositories for an organization.
+//
+// NOTE: the backend handler for this route does not call lhs.ParseQuery, so
+// LHS filters are accepted by the middleware but silently ignored server-side.
+func (m *middleware) ListCatalogRepositories(org string, filters ...LHSFilter) ([]*models.ServiceCatalogSource, *http.Response, error) {
+	var result []*models.ServiceCatalogSource
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources"},
+		LHSFilters:   filters,
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *middleware) GetCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogSource, *http.Response, error) {
+	var result *models.ServiceCatalogSource
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *middleware) DeleteCatalogRepository(org, catalogRepo string) (*http.Response, error) {
+	resp, err := m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo},
+	}, nil)
+	return resp, err
+}
+
+func (m *middleware) CreateCatalogRepository(org, name, url, branch, cred, visibility, teamCanonical string) (*models.ServiceCatalogSource, *http.Response, error) {
+	var body *models.NewServiceCatalogSource
+
+	if len(cred) != 0 {
+		body = &models.NewServiceCatalogSource{
+			Branch:              &branch,
+			CredentialCanonical: cred,
+			Name:                &name,
+			URL:                 &url,
+		}
+	} else {
+		body = &models.NewServiceCatalogSource{
+			Branch: &branch,
+			Name:   &name,
+			URL:    &url,
+		}
+	}
+
+	switch visibility {
+	case "shared", "local", "hidden":
+		body.Visibility = visibility
+	case "":
+		break
+	default:
+		return nil, nil, fmt.Errorf("invalid visibility parameter for CreateCatalogRepository, accepted values are 'local', 'shared' or 'hidden'")
+	}
+
+	if teamCanonical != "" {
+		body.TeamCanonical = teamCanonical
+	}
+
+	var result *models.ServiceCatalogSource
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources"},
+		Body:         body,
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *middleware) UpdateCatalogRepository(org, catalogRepo, name, url, branch, cred string, visibility *string) (*models.ServiceCatalogSource, *http.Response, error) {
+	body := &models.UpdateServiceCatalogSource{
+		Branch:              branch,
+		CredentialCanonical: cred,
+		Name:                &name,
+		URL:                 &url,
+	}
+
+	var result *models.ServiceCatalogSource
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo},
+		Body:         body,
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *middleware) RefreshCatalogRepository(org, catalogRepo string) (*models.ServiceCatalogChanges, *http.Response, error) {
+	var result *models.ServiceCatalogChanges
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo, "refresh"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *middleware) RefreshCatalogRepositoryVersions(org, catalogRepo string) ([]*models.ServiceCatalogSourceVersion, *http.Response, error) {
+	var result []*models.ServiceCatalogSourceVersion
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "service_catalog_sources", catalogRepo, "versions", "refresh"},
+		Query:        url.Values{"sync_presence": []string{"true"}},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}

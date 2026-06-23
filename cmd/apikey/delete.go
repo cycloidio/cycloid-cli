@@ -1,0 +1,77 @@
+package apikey
+
+import (
+	"fmt"
+
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
+	"github.com/cycloidio/cycloid-cli/printer"
+)
+
+// NewDeleteCommand returns the cobra command holding
+// the delete API key subcommand
+func NewDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:               "delete [canonical...]",
+		Aliases:           []string{"rm"},
+		Args:              cyargs.RequireArgsOrFlag("canonical"),
+		ValidArgsFunction: cyargs.CompleteAPIKeyCanonical,
+		Short:             "delete an API key",
+		Example: `# delete the API key 'my-key' in the org my-org
+	cy --org my-org api-key delete my-key
+
+	# delete multiple API keys at once
+	cy --org my-org api-key delete key-one key-two
+
+	# delete using the deprecated --canonical flag
+	cy --org my-org api-key delete --canonical my-key`,
+		RunE: remove,
+	}
+
+	// Keep --canonical for backward compatibility
+	can := cyargs.AddAPIKeyCanonicalFlag(cmd)
+	_ = cmd.Flags().MarkHidden(can)
+
+	return cmd
+}
+
+// remove will send the DELETE request to the API in order to
+// delete a generated token
+func remove(cmd *cobra.Command, args []string) error {
+	org, err := cyargs.GetOrg(cmd)
+	if err != nil {
+		return fmt.Errorf("unable to get org flag: %w", err)
+	}
+
+	if can, err := cyargs.GetAPIKeyCanonical(cmd); err != nil {
+		return fmt.Errorf("unable to get canonical flag: %w", err)
+	} else if can != "" {
+		found := false
+		for _, a := range args {
+			if a == can {
+				found = true
+				break
+			}
+		}
+		if !found {
+			args = append(args, can)
+		}
+	}
+
+	api := common.NewAPI()
+	m := apiclient.NewMiddleware(api)
+
+	deleted := make([]string, 0, len(args))
+	for _, canonical := range args {
+		_, err = m.DeleteAPIKey(org, canonical)
+		if err != nil {
+			return cyout.PrintWithOptions(cmd, nil, err, "unable to delete API key "+canonical, printer.Options{})
+		}
+		deleted = append(deleted, canonical)
+	}
+	return cyout.PrintWithOptions(cmd, deleted, nil, "", printer.Options{Columns: []string{"Canonical"}})
+}

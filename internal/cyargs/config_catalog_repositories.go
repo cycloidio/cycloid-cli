@@ -1,0 +1,152 @@
+package cyargs
+
+import (
+	"fmt"
+	"slices"
+
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/gen/models"
+)
+
+func AddCatalogRepositoryFlag(cmd *cobra.Command) string {
+	flagName := "catalog-repository"
+	cmd.Flags().String(flagName, "", "canonical of a catalog repository")
+	cmd.RegisterFlagCompletionFunc("catalog-repository", CompleteCatalogRepository)
+	return flagName
+}
+
+// AddCatalogRepoCanonicalFlag registers optional --canonical on catalog-repo create (identity for upsert).
+func AddCatalogRepoCanonicalFlag(cmd *cobra.Command) string {
+	const flagName = "canonical"
+	cmd.Flags().String(flagName, "", "catalog repository canonical; if omitted, derived from --name")
+	_ = cmd.RegisterFlagCompletionFunc(flagName, CompleteCatalogRepository)
+	return flagName
+}
+
+// GetCatalogRepoCanonical returns the optional catalog repository canonical from create (empty if unset).
+func GetCatalogRepoCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("canonical")
+}
+
+// GetConfigRepoCanonical returns the optional config repository canonical (empty if unset).
+func GetConfigRepoCanonical(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString("canonical")
+}
+
+func GetCatalogRepository(cmd *cobra.Command) (string, error) {
+	catalogRepository, err := cmd.Flags().GetString("catalog-repository")
+	if err != nil {
+		return "", err
+	}
+	return catalogRepository, err
+}
+
+func CompleteCatalogRepository(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
+	}
+
+	api := common.NewAPI()
+	m := apiclient.NewMiddleware(api)
+
+	stacks, _, err := m.ListCatalogRepositories(org)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to list catalog repositories for completion in org '"+org+"': "+err.Error()),
+			cobra.ShellCompDirectiveNoFileComp
+	}
+
+	catalogRepositories := make([]cobra.Completion, len(stacks))
+	for index, catalogRepository := range stacks {
+		if catalogRepository.Canonical != nil {
+			catalogRepositories[index] = cobra.CompletionWithDesc(*catalogRepository.Canonical, *catalogRepository.Name+" - branch: "+catalogRepository.Branch)
+		}
+	}
+
+	return catalogRepositories, cobra.ShellCompDirectiveNoFileComp
+}
+
+func AddConfigRepositoryFlag(cmd *cobra.Command) string {
+	flagName := "config-repository"
+	cmd.Flags().String(flagName, "", "canonical of a config repository, if empty will use the default one in the current org.")
+	cmd.RegisterFlagCompletionFunc(flagName, CompleteConfigRepository)
+	return flagName
+}
+
+// AddConfigRepoCanonicalFlag registers --canonical for config-repository get/delete/update commands.
+func AddConfigRepoCanonicalFlag(cmd *cobra.Command) string {
+	const flagName = "canonical"
+	cmd.Flags().String(flagName, "", "config repository canonical")
+	_ = cmd.RegisterFlagCompletionFunc(flagName, CompleteConfigRepository)
+	return flagName
+}
+
+func CompleteConfigRepository(cmd *cobra.Command, args []string, toComplete string) ([]cobra.Completion, cobra.ShellCompDirective) {
+	api := common.NewAPI()
+	m := apiclient.NewMiddleware(api)
+
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "completion failed: "+err.Error()), cobra.ShellCompDirectiveError
+	}
+
+	stacks, _, err := m.ListConfigRepositories(org)
+	if err != nil {
+		return cobra.AppendActiveHelp(nil, "failed to list config repositories for completion in org '"+org+"': "+err.Error()), cobra.ShellCompDirectiveError
+	}
+
+	configRepositories := make([]cobra.Completion, len(stacks))
+	for index, configRepository := range stacks {
+		if configRepository.Canonical != nil {
+			configRepositories[index] = cobra.CompletionWithDesc(*configRepository.Canonical, *configRepository.Name+" - branch: "+configRepository.Branch)
+		}
+	}
+
+	return configRepositories, cobra.ShellCompDirectiveNoFileComp
+}
+
+// GetConfigRepository return the config repository flag, if empty, will try to return
+// the current org default config repository
+func GetConfigRepository(cmd *cobra.Command) (string, error) {
+	configRepository, err := cmd.Flags().GetString("config-repository")
+	if err != nil {
+		return "", err
+	}
+
+	return configRepository, err
+}
+
+func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
+	api := common.NewAPI()
+	m := apiclient.NewMiddleware(api)
+
+	org, err := GetOrg(cmd)
+	if err != nil {
+		return "", fmt.Errorf("failed to get default config repository, missing org argument: %w", err)
+	}
+
+	configRepository, _ := GetConfigRepository(cmd)
+	if configRepository != "" {
+		return configRepository, nil
+	}
+
+	// TODO: This behavior will be pushed to backend
+	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
+	catalogRepos, _, err := m.ListConfigRepositories(org)
+	if err != nil {
+		return "", fmt.Errorf("failed to get the default config repository: %w", err)
+	}
+
+	index := slices.IndexFunc(catalogRepos, func(c *models.ConfigRepository) bool {
+		return *c.Default
+	})
+	if index == -1 {
+		docURL := "https://docs.cycloid.io/reference/config-and-catalog-repository/"
+		return "", fmt.Errorf("error: seems like your org %q does not have a default config repository, please add one using this doc: %q", org, docURL)
+	}
+
+	return *catalogRepos[index].Canonical, nil
+}

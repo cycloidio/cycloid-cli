@@ -1,0 +1,70 @@
+package pipelines
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
+	"github.com/cycloidio/cycloid-cli/printer"
+)
+
+func NewPipelineUpdateCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "update",
+		Short: "update a running pipeline",
+		Example: `
+	# update a running pipeline
+	cy --org my-org pp update --project my-project --env my-env --vars /path/to/vars.yml --pipeline /path/to/pipeline.yml
+`,
+		RunE: update,
+		Args: cobra.NoArgs,
+	}
+	cyargs.AddCyContext(cmd)
+	cyargs.AddPipeline(cmd)
+	cyargs.AddPipelineConfig(cmd)
+	cyargs.AddPipelineVars(cmd)
+	return cmd
+}
+
+func update(cmd *cobra.Command, args []string) error {
+	api := common.NewAPI()
+	m := apiclient.NewMiddleware(api)
+
+	org, project, env, component, err := cyargs.GetCyContext(cmd)
+	if err != nil {
+		return err
+	}
+
+	pipeline, err := cyargs.GetPipeline(cmd)
+	if err != nil {
+		return err
+	}
+
+	pipelinePath, err := cyargs.GetPipelineConfig(cmd)
+	if err != nil {
+		return err
+	}
+
+	pipelineVarsPath, err := cyargs.GetPipelineVars(cmd)
+	if err != nil {
+		return err
+	}
+
+	rawPipeline, err := os.ReadFile(pipelinePath)
+	if err != nil {
+		return fmt.Errorf("unable to read pipeline file: %w", err)
+	}
+
+	rawVars, err := os.ReadFile(pipelineVarsPath)
+	if err != nil {
+		return fmt.Errorf("unable to read variables file: %w", err)
+	}
+
+	resp, _, err := m.UpdatePipeline(org, project, env, component, pipeline, string(rawPipeline), string(rawVars), false)
+	return cyout.PrintWithOptions(cmd, resp, err, "unable to update pipeline", printer.Options{})
+}
