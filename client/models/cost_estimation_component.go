@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -76,7 +77,7 @@ func (m *CostEstimationComponent) validateLabel(formats strfmt.Registry) error {
 }
 
 func (m *CostEstimationComponent) validatePlanned(formats strfmt.Registry) error {
-	if swag.IsZero(m.Planned) { // not required
+	if typeutils.IsZero(m.Planned) { // not required
 		return nil
 	}
 
@@ -99,7 +100,7 @@ func (m *CostEstimationComponent) validatePlanned(formats strfmt.Registry) error
 }
 
 func (m *CostEstimationComponent) validatePrior(formats strfmt.Registry) error {
-	if swag.IsZero(m.Prior) { // not required
+	if typeutils.IsZero(m.Prior) { // not required
 		return nil
 	}
 
@@ -152,7 +153,7 @@ func (m *CostEstimationComponent) contextValidatePlanned(ctx context.Context, fo
 
 	if m.Planned != nil {
 
-		if swag.IsZero(m.Planned) { // not required
+		if typeutils.IsZero(m.Planned) { // not required
 			return nil
 		}
 
@@ -177,7 +178,7 @@ func (m *CostEstimationComponent) contextValidatePrior(ctx context.Context, form
 
 	if m.Prior != nil {
 
-		if swag.IsZero(m.Prior) { // not required
+		if typeutils.IsZero(m.Prior) { // not required
 			return nil
 		}
 
@@ -203,13 +204,13 @@ func (m *CostEstimationComponent) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *CostEstimationComponent) UnmarshalBinary(b []byte) error {
 	var res CostEstimationComponent
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

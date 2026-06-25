@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -89,7 +90,7 @@ func (m *CloudProvider) Validate(formats strfmt.Registry) error {
 }
 
 func (m *CloudProvider) validateAbbreviation(formats strfmt.Registry) error {
-	if swag.IsZero(m.Abbreviation) { // not required
+	if typeutils.IsZero(m.Abbreviation) { // not required
 		return nil
 	}
 
@@ -190,7 +191,7 @@ func (m *CloudProvider) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *CloudProvider) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
+	if typeutils.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
@@ -202,7 +203,7 @@ func (m *CloudProvider) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *CloudProvider) validateID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ID) { // not required
+	if typeutils.IsZero(m.ID) { // not required
 		return nil
 	}
 
@@ -231,7 +232,7 @@ func (m *CloudProvider) validateName(formats strfmt.Registry) error {
 }
 
 func (m *CloudProvider) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+	if typeutils.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
@@ -252,13 +253,13 @@ func (m *CloudProvider) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *CloudProvider) UnmarshalBinary(b []byte) error {
 	var res CloudProvider
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

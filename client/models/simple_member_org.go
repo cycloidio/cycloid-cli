@@ -7,7 +7,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -133,7 +134,7 @@ func (m *SimpleMemberOrg) validateID(formats strfmt.Registry) error {
 }
 
 func (m *SimpleMemberOrg) validateLastLoginAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.LastLoginAt) { // not required
+	if typeutils.IsZero(m.LastLoginAt) { // not required
 		return nil
 	}
 
@@ -145,7 +146,7 @@ func (m *SimpleMemberOrg) validateLastLoginAt(formats strfmt.Registry) error {
 }
 
 func (m *SimpleMemberOrg) validatePictureURL(formats strfmt.Registry) error {
-	if swag.IsZero(m.PictureURL) { // not required
+	if typeutils.IsZero(m.PictureURL) { // not required
 		return nil
 	}
 
@@ -157,7 +158,7 @@ func (m *SimpleMemberOrg) validatePictureURL(formats strfmt.Registry) error {
 }
 
 func (m *SimpleMemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+	if typeutils.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
@@ -169,7 +170,7 @@ func (m *SimpleMemberOrg) validateUpdatedAt(formats strfmt.Registry) error {
 }
 
 func (m *SimpleMemberOrg) validateUsername(formats strfmt.Registry) error {
-	if swag.IsZero(m.Username) { // not required
+	if typeutils.IsZero(m.Username) { // not required
 		return nil
 	}
 
@@ -198,13 +199,13 @@ func (m *SimpleMemberOrg) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *SimpleMemberOrg) UnmarshalBinary(b []byte) error {
 	var res SimpleMemberOrg
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

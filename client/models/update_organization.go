@@ -4,10 +4,12 @@ package models
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -40,6 +42,14 @@ type UpdateOrganization struct {
 
 	// When true, SSO users can only join the organization if they have been explicitly invited
 	SsoInviteOnly *bool `json:"sso_invite_only,omitempty"`
+
+	// Glob patterns (filepath.Match syntax). Versions matching any of these are hidden from non-team-member users. Omitting this field or sending null preserves the current value. Send an empty array [] to clear all patterns.
+	// Max Items: 50
+	StackBranchExcludePatterns []string `json:"stack_branch_exclude_patterns"`
+
+	// Glob patterns (filepath.Match syntax). When set, only versions whose name matches at least one pattern are shown to non-team-member users. Empty means show all. Omitting this field or sending null preserves the current value. Send an empty array [] to clear all patterns.
+	// Max Items: 50
+	StackBranchIncludePatterns []string `json:"stack_branch_include_patterns"`
 }
 
 // Validate validates this update organization
@@ -47,6 +57,14 @@ func (m *UpdateOrganization) Validate(formats strfmt.Registry) error {
 	var res []error
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStackBranchExcludePatterns(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateStackBranchIncludePatterns(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -69,6 +87,50 @@ func (m *UpdateOrganization) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *UpdateOrganization) validateStackBranchExcludePatterns(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.StackBranchExcludePatterns) { // not required
+		return nil
+	}
+
+	iStackBranchExcludePatternsSize := int64(len(m.StackBranchExcludePatterns))
+
+	if err := validate.MaxItems("stack_branch_exclude_patterns", "body", iStackBranchExcludePatternsSize, 50); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.StackBranchExcludePatterns); i++ {
+
+		if err := validate.MaxLength("stack_branch_exclude_patterns"+"."+strconv.Itoa(i), "body", m.StackBranchExcludePatterns[i], 200); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
+func (m *UpdateOrganization) validateStackBranchIncludePatterns(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.StackBranchIncludePatterns) { // not required
+		return nil
+	}
+
+	iStackBranchIncludePatternsSize := int64(len(m.StackBranchIncludePatterns))
+
+	if err := validate.MaxItems("stack_branch_include_patterns", "body", iStackBranchIncludePatternsSize, 50); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.StackBranchIncludePatterns); i++ {
+
+		if err := validate.MaxLength("stack_branch_include_patterns"+"."+strconv.Itoa(i), "body", m.StackBranchIncludePatterns[i], 200); err != nil {
+			return err
+		}
+
+	}
+
+	return nil
+}
+
 // ContextValidate validates this update organization based on context it is used
 func (m *UpdateOrganization) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	return nil
@@ -79,13 +141,13 @@ func (m *UpdateOrganization) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *UpdateOrganization) UnmarshalBinary(b []byte) error {
 	var res UpdateOrganization
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

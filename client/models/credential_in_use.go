@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // CredentialInUse Credential in use
@@ -52,12 +53,12 @@ func (m *CredentialInUse) Validate(formats strfmt.Registry) error {
 }
 
 func (m *CredentialInUse) validateConfigRepositories(formats strfmt.Registry) error {
-	if swag.IsZero(m.ConfigRepositories) { // not required
+	if typeutils.IsZero(m.ConfigRepositories) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.ConfigRepositories); i++ {
-		if swag.IsZero(m.ConfigRepositories[i]) { // not required
+		if typeutils.IsZero(m.ConfigRepositories[i]) { // not required
 			continue
 		}
 
@@ -82,12 +83,12 @@ func (m *CredentialInUse) validateConfigRepositories(formats strfmt.Registry) er
 }
 
 func (m *CredentialInUse) validateExternalBackends(formats strfmt.Registry) error {
-	if swag.IsZero(m.ExternalBackends) { // not required
+	if typeutils.IsZero(m.ExternalBackends) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.ExternalBackends); i++ {
-		if swag.IsZero(m.ExternalBackends[i]) { // not required
+		if typeutils.IsZero(m.ExternalBackends[i]) { // not required
 			continue
 		}
 
@@ -112,12 +113,12 @@ func (m *CredentialInUse) validateExternalBackends(formats strfmt.Registry) erro
 }
 
 func (m *CredentialInUse) validateServiceCatalogSources(formats strfmt.Registry) error {
-	if swag.IsZero(m.ServiceCatalogSources) { // not required
+	if typeutils.IsZero(m.ServiceCatalogSources) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.ServiceCatalogSources); i++ {
-		if swag.IsZero(m.ServiceCatalogSources[i]) { // not required
+		if typeutils.IsZero(m.ServiceCatalogSources[i]) { // not required
 			continue
 		}
 
@@ -169,7 +170,7 @@ func (m *CredentialInUse) contextValidateConfigRepositories(ctx context.Context,
 
 		if m.ConfigRepositories[i] != nil {
 
-			if swag.IsZero(m.ConfigRepositories[i]) { // not required
+			if typeutils.IsZero(m.ConfigRepositories[i]) { // not required
 				return nil
 			}
 
@@ -198,7 +199,7 @@ func (m *CredentialInUse) contextValidateExternalBackends(ctx context.Context, f
 
 		if m.ExternalBackends[i] != nil {
 
-			if swag.IsZero(m.ExternalBackends[i]) { // not required
+			if typeutils.IsZero(m.ExternalBackends[i]) { // not required
 				return nil
 			}
 
@@ -227,7 +228,7 @@ func (m *CredentialInUse) contextValidateServiceCatalogSources(ctx context.Conte
 
 		if m.ServiceCatalogSources[i] != nil {
 
-			if swag.IsZero(m.ServiceCatalogSources[i]) { // not required
+			if typeutils.IsZero(m.ServiceCatalogSources[i]) { // not required
 				return nil
 			}
 
@@ -255,13 +256,13 @@ func (m *CredentialInUse) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *CredentialInUse) UnmarshalBinary(b []byte) error {
 	var res CredentialInUse
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

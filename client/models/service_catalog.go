@@ -4,13 +4,13 @@ package models
 
 import (
 	"context"
-	"encoding/json"
 	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -67,10 +67,6 @@ type ServiceCatalog struct {
 	// image
 	// Format: uri
 	Image strfmt.URI `json:"image,omitempty"`
-
-	// The import process status.
-	// Enum: ["succeeded","failed","importing"]
-	ImportStatus string `json:"import_status,omitempty"`
 
 	// keywords
 	// Required: true
@@ -167,10 +163,6 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateImportStatus(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateKeywords(formats); err != nil {
 		res = append(res, err)
 	}
@@ -256,12 +248,12 @@ func (m *ServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateCloudProviders(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudProviders) { // not required
+	if typeutils.IsZero(m.CloudProviders) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.CloudProviders); i++ {
-		if swag.IsZero(m.CloudProviders[i]) { // not required
+		if typeutils.IsZero(m.CloudProviders[i]) { // not required
 			continue
 		}
 
@@ -286,7 +278,7 @@ func (m *ServiceCatalog) validateCloudProviders(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateCreatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.CreatedAt) { // not required
+	if typeutils.IsZero(m.CreatedAt) { // not required
 		return nil
 	}
 
@@ -298,12 +290,12 @@ func (m *ServiceCatalog) validateCreatedAt(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Dependencies) { // not required
+	if typeutils.IsZero(m.Dependencies) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Dependencies); i++ {
-		if swag.IsZero(m.Dependencies[i]) { // not required
+		if typeutils.IsZero(m.Dependencies[i]) { // not required
 			continue
 		}
 
@@ -359,56 +351,11 @@ func (m *ServiceCatalog) validateID(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateImage(formats strfmt.Registry) error {
-	if swag.IsZero(m.Image) { // not required
+	if typeutils.IsZero(m.Image) { // not required
 		return nil
 	}
 
 	if err := validate.FormatOf("image", "body", "uri", m.Image.String(), formats); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-var serviceCatalogTypeImportStatusPropEnum []any
-
-func init() {
-	var res []string
-	if err := json.Unmarshal([]byte(`["succeeded","failed","importing"]`), &res); err != nil {
-		panic(err)
-	}
-	for _, v := range res {
-		serviceCatalogTypeImportStatusPropEnum = append(serviceCatalogTypeImportStatusPropEnum, v)
-	}
-}
-
-const (
-
-	// ServiceCatalogImportStatusSucceeded captures enum value "succeeded"
-	ServiceCatalogImportStatusSucceeded string = "succeeded"
-
-	// ServiceCatalogImportStatusFailed captures enum value "failed"
-	ServiceCatalogImportStatusFailed string = "failed"
-
-	// ServiceCatalogImportStatusImporting captures enum value "importing"
-	ServiceCatalogImportStatusImporting string = "importing"
-)
-
-// prop value enum
-func (m *ServiceCatalog) validateImportStatusEnum(path, location string, value string) error {
-	if err := validate.EnumCase(path, location, value, serviceCatalogTypeImportStatusPropEnum, true); err != nil {
-		return err
-	}
-	return nil
-}
-
-func (m *ServiceCatalog) validateImportStatus(formats strfmt.Registry) error {
-	if swag.IsZero(m.ImportStatus) { // not required
-		return nil
-	}
-
-	// value enum
-	if err := m.validateImportStatusEnum("import_status", "body", m.ImportStatus); err != nil {
 		return err
 	}
 
@@ -473,7 +420,7 @@ func (m *ServiceCatalog) validateRef(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.ServiceCatalogSourceCanonical) { // not required
+	if typeutils.IsZero(m.ServiceCatalogSourceCanonical) { // not required
 		return nil
 	}
 
@@ -493,7 +440,7 @@ func (m *ServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt.Re
 }
 
 func (m *ServiceCatalog) validateTeam(formats strfmt.Registry) error {
-	if swag.IsZero(m.Team) { // not required
+	if typeutils.IsZero(m.Team) { // not required
 		return nil
 	}
 
@@ -516,12 +463,12 @@ func (m *ServiceCatalog) validateTeam(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateTechnologies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Technologies) { // not required
+	if typeutils.IsZero(m.Technologies) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Technologies); i++ {
-		if swag.IsZero(m.Technologies[i]) { // not required
+		if typeutils.IsZero(m.Technologies[i]) { // not required
 			continue
 		}
 
@@ -555,7 +502,7 @@ func (m *ServiceCatalog) validateTrusted(formats strfmt.Registry) error {
 }
 
 func (m *ServiceCatalog) validateUpdatedAt(formats strfmt.Registry) error {
-	if swag.IsZero(m.UpdatedAt) { // not required
+	if typeutils.IsZero(m.UpdatedAt) { // not required
 		return nil
 	}
 
@@ -616,7 +563,7 @@ func (m *ServiceCatalog) contextValidateCloudProviders(ctx context.Context, form
 
 		if m.CloudProviders[i] != nil {
 
-			if swag.IsZero(m.CloudProviders[i]) { // not required
+			if typeutils.IsZero(m.CloudProviders[i]) { // not required
 				return nil
 			}
 
@@ -645,7 +592,7 @@ func (m *ServiceCatalog) contextValidateDependencies(ctx context.Context, format
 
 		if m.Dependencies[i] != nil {
 
-			if swag.IsZero(m.Dependencies[i]) { // not required
+			if typeutils.IsZero(m.Dependencies[i]) { // not required
 				return nil
 			}
 
@@ -672,7 +619,7 @@ func (m *ServiceCatalog) contextValidateTeam(ctx context.Context, formats strfmt
 
 	if m.Team != nil {
 
-		if swag.IsZero(m.Team) { // not required
+		if typeutils.IsZero(m.Team) { // not required
 			return nil
 		}
 
@@ -699,7 +646,7 @@ func (m *ServiceCatalog) contextValidateTechnologies(ctx context.Context, format
 
 		if m.Technologies[i] != nil {
 
-			if swag.IsZero(m.Technologies[i]) { // not required
+			if typeutils.IsZero(m.Technologies[i]) { // not required
 				return nil
 			}
 
@@ -727,13 +674,13 @@ func (m *ServiceCatalog) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *ServiceCatalog) UnmarshalBinary(b []byte) error {
 	var res ServiceCatalog
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

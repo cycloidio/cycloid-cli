@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -29,6 +29,12 @@ type AuthenticationOIDC struct {
 	// Read Only: true
 	HasSecret *bool `json:"has_secret,omitempty"`
 
+	// Allow oidc_discovery_url to use plain HTTP when oidc_issuer is HTTPS. Set to true only when the network path between the Cycloid backend and the discovery URL is privately trusted (VPC, internal LAN, service mesh). Equivalent security trade-off to oidc_skip_tls_verify, scoped to the discovery URL.
+	OidcAllowInsecureDiscovery *bool `json:"oidc_allow_insecure_discovery,omitempty"`
+
+	// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438). Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
+	OidcAutoCreate bool `json:"oidc_auto_create,omitempty"`
+
 	// PEM-encoded CA certificate to verify the OIDC provider's TLS certificate.
 	OidcCaCert string `json:"oidc_ca_cert,omitempty"`
 
@@ -39,16 +45,25 @@ type AuthenticationOIDC struct {
 	OidcClientSecret string `json:"oidc_client_secret,omitempty"`
 
 	// Enables client authentication via signed JWT (HS512) using the client secret, as per RFC 7523.
-	OidcClientSecretJwt bool `json:"oidc_client_secret_jwt,omitempty"`
+	OidcClientSecretJwt *bool `json:"oidc_client_secret_jwt,omitempty"`
+
+	// Optional base URL override for the OIDC provider as seen from the Cycloid backend. The backend appends /.well-known/openid-configuration to fetch the discovery document. Defaults to oidc_issuer when omitted. The discovery document's issuer field MUST equal oidc_issuer (enforced server-side). Useful when the backend reaches the IdP via a different network path than user browsers (corporate DMZ, K8s ingress vs cluster DNS, split-horizon DNS). Send an empty string to clear a previously stored override.
+	OidcDiscoveryURL *string `json:"oidc_discovery_url,omitempty"`
 
 	// The friendly name shown on the login button
 	OidcDisplayName string `json:"oidc_display_name,omitempty"`
+
+	// Name of the OIDC token claim listing the user's group memberships, used for OIDC group mapping. Defaults to "groups" when omitted. The IdP must be configured to include this claim in the issued ID token — group mapping has no effect if the provider omits it. Enterprise IdPs such as Keycloak, Okta, Azure AD/Entra ID, and Auth0 support configurable group claims; consumer providers such as Google Workspace and GitHub do not include group claims in standard OIDC tokens.
+	OidcGroupsClaimName string `json:"oidc_groups_claim_name,omitempty"`
 
 	// URL of the icon to display on the OIDC authentication login screen.
 	OidcIcon string `json:"oidc_icon,omitempty"`
 
 	// The base URL of the OIDC provider. Used for automatic endpoint discovery.
 	OidcIssuer string `json:"oidc_issuer,omitempty"`
+
+	// Session lifetime in seconds for JWTs issued from a login through this OIDC integration (BE-1424). The backend clamps the effective value to the range 5 minutes .. 30 days. When omitted or null the global default session TTL applies.
+	OidcSessionTTLSeconds *int64 `json:"oidc_session_ttl_seconds,omitempty"`
 
 	// Disables TLS certificate verification when connecting to the OIDC provider. Use only in development or with self-signed certificates.
 	OidcSkipTLSVerify bool `json:"oidc_skip_tls_verify,omitempty"`
@@ -88,6 +103,12 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 		// Read Only: true
 		HasSecret *bool `json:"has_secret,omitempty"`
 
+		// Allow oidc_discovery_url to use plain HTTP when oidc_issuer is HTTPS. Set to true only when the network path between the Cycloid backend and the discovery URL is privately trusted (VPC, internal LAN, service mesh). Equivalent security trade-off to oidc_skip_tls_verify, scoped to the discovery URL.
+		OidcAllowInsecureDiscovery *bool `json:"oidc_allow_insecure_discovery,omitempty"`
+
+		// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438). Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
+		OidcAutoCreate bool `json:"oidc_auto_create,omitempty"`
+
 		// PEM-encoded CA certificate to verify the OIDC provider's TLS certificate.
 		OidcCaCert string `json:"oidc_ca_cert,omitempty"`
 
@@ -98,16 +119,25 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 		OidcClientSecret string `json:"oidc_client_secret,omitempty"`
 
 		// Enables client authentication via signed JWT (HS512) using the client secret, as per RFC 7523.
-		OidcClientSecretJwt bool `json:"oidc_client_secret_jwt,omitempty"`
+		OidcClientSecretJwt *bool `json:"oidc_client_secret_jwt,omitempty"`
+
+		// Optional base URL override for the OIDC provider as seen from the Cycloid backend. The backend appends /.well-known/openid-configuration to fetch the discovery document. Defaults to oidc_issuer when omitted. The discovery document's issuer field MUST equal oidc_issuer (enforced server-side). Useful when the backend reaches the IdP via a different network path than user browsers (corporate DMZ, K8s ingress vs cluster DNS, split-horizon DNS). Send an empty string to clear a previously stored override.
+		OidcDiscoveryURL *string `json:"oidc_discovery_url,omitempty"`
 
 		// The friendly name shown on the login button
 		OidcDisplayName string `json:"oidc_display_name,omitempty"`
+
+		// Name of the OIDC token claim listing the user's group memberships, used for OIDC group mapping. Defaults to "groups" when omitted. The IdP must be configured to include this claim in the issued ID token — group mapping has no effect if the provider omits it. Enterprise IdPs such as Keycloak, Okta, Azure AD/Entra ID, and Auth0 support configurable group claims; consumer providers such as Google Workspace and GitHub do not include group claims in standard OIDC tokens.
+		OidcGroupsClaimName string `json:"oidc_groups_claim_name,omitempty"`
 
 		// URL of the icon to display on the OIDC authentication login screen.
 		OidcIcon string `json:"oidc_icon,omitempty"`
 
 		// The base URL of the OIDC provider. Used for automatic endpoint discovery.
 		OidcIssuer string `json:"oidc_issuer,omitempty"`
+
+		// Session lifetime in seconds for JWTs issued from a login through this OIDC integration (BE-1424). The backend clamps the effective value to the range 5 minutes .. 30 days. When omitted or null the global default session TTL applies.
+		OidcSessionTTLSeconds *int64 `json:"oidc_session_ttl_seconds,omitempty"`
 
 		// Disables TLS certificate verification when connecting to the OIDC provider. Use only in development or with self-signed certificates.
 		OidcSkipTLSVerify bool `json:"oidc_skip_tls_verify,omitempty"`
@@ -149,13 +179,18 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 
 	result.HasCaCertificate = data.HasCaCertificate
 	result.HasSecret = data.HasSecret
+	result.OidcAllowInsecureDiscovery = data.OidcAllowInsecureDiscovery
+	result.OidcAutoCreate = data.OidcAutoCreate
 	result.OidcCaCert = data.OidcCaCert
 	result.OidcClientID = data.OidcClientID
 	result.OidcClientSecret = data.OidcClientSecret
 	result.OidcClientSecretJwt = data.OidcClientSecretJwt
+	result.OidcDiscoveryURL = data.OidcDiscoveryURL
 	result.OidcDisplayName = data.OidcDisplayName
+	result.OidcGroupsClaimName = data.OidcGroupsClaimName
 	result.OidcIcon = data.OidcIcon
 	result.OidcIssuer = data.OidcIssuer
+	result.OidcSessionTTLSeconds = data.OidcSessionTTLSeconds
 	result.OidcSkipTLSVerify = data.OidcSkipTLSVerify
 	result.OidcUseCaCert = data.OidcUseCaCert
 
@@ -178,6 +213,12 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 		// Read Only: true
 		HasSecret *bool `json:"has_secret,omitempty"`
 
+		// Allow oidc_discovery_url to use plain HTTP when oidc_issuer is HTTPS. Set to true only when the network path between the Cycloid backend and the discovery URL is privately trusted (VPC, internal LAN, service mesh). Equivalent security trade-off to oidc_skip_tls_verify, scoped to the discovery URL.
+		OidcAllowInsecureDiscovery *bool `json:"oidc_allow_insecure_discovery,omitempty"`
+
+		// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438). Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
+		OidcAutoCreate bool `json:"oidc_auto_create,omitempty"`
+
 		// PEM-encoded CA certificate to verify the OIDC provider's TLS certificate.
 		OidcCaCert string `json:"oidc_ca_cert,omitempty"`
 
@@ -188,16 +229,25 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 		OidcClientSecret string `json:"oidc_client_secret,omitempty"`
 
 		// Enables client authentication via signed JWT (HS512) using the client secret, as per RFC 7523.
-		OidcClientSecretJwt bool `json:"oidc_client_secret_jwt,omitempty"`
+		OidcClientSecretJwt *bool `json:"oidc_client_secret_jwt,omitempty"`
+
+		// Optional base URL override for the OIDC provider as seen from the Cycloid backend. The backend appends /.well-known/openid-configuration to fetch the discovery document. Defaults to oidc_issuer when omitted. The discovery document's issuer field MUST equal oidc_issuer (enforced server-side). Useful when the backend reaches the IdP via a different network path than user browsers (corporate DMZ, K8s ingress vs cluster DNS, split-horizon DNS). Send an empty string to clear a previously stored override.
+		OidcDiscoveryURL *string `json:"oidc_discovery_url,omitempty"`
 
 		// The friendly name shown on the login button
 		OidcDisplayName string `json:"oidc_display_name,omitempty"`
+
+		// Name of the OIDC token claim listing the user's group memberships, used for OIDC group mapping. Defaults to "groups" when omitted. The IdP must be configured to include this claim in the issued ID token — group mapping has no effect if the provider omits it. Enterprise IdPs such as Keycloak, Okta, Azure AD/Entra ID, and Auth0 support configurable group claims; consumer providers such as Google Workspace and GitHub do not include group claims in standard OIDC tokens.
+		OidcGroupsClaimName string `json:"oidc_groups_claim_name,omitempty"`
 
 		// URL of the icon to display on the OIDC authentication login screen.
 		OidcIcon string `json:"oidc_icon,omitempty"`
 
 		// The base URL of the OIDC provider. Used for automatic endpoint discovery.
 		OidcIssuer string `json:"oidc_issuer,omitempty"`
+
+		// Session lifetime in seconds for JWTs issued from a login through this OIDC integration (BE-1424). The backend clamps the effective value to the range 5 minutes .. 30 days. When omitted or null the global default session TTL applies.
+		OidcSessionTTLSeconds *int64 `json:"oidc_session_ttl_seconds,omitempty"`
 
 		// Disables TLS certificate verification when connecting to the OIDC provider. Use only in development or with self-signed certificates.
 		OidcSkipTLSVerify bool `json:"oidc_skip_tls_verify,omitempty"`
@@ -210,6 +260,10 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 
 		HasSecret: m.HasSecret,
 
+		OidcAllowInsecureDiscovery: m.OidcAllowInsecureDiscovery,
+
+		OidcAutoCreate: m.OidcAutoCreate,
+
 		OidcCaCert: m.OidcCaCert,
 
 		OidcClientID: m.OidcClientID,
@@ -218,11 +272,17 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 
 		OidcClientSecretJwt: m.OidcClientSecretJwt,
 
+		OidcDiscoveryURL: m.OidcDiscoveryURL,
+
 		OidcDisplayName: m.OidcDisplayName,
+
+		OidcGroupsClaimName: m.OidcGroupsClaimName,
 
 		OidcIcon: m.OidcIcon,
 
 		OidcIssuer: m.OidcIssuer,
+
+		OidcSessionTTLSeconds: m.OidcSessionTTLSeconds,
 
 		OidcSkipTLSVerify: m.OidcSkipTLSVerify,
 
@@ -245,7 +305,7 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	return swag.ConcatJSON(b1, b2, b3), nil
+	return jsonutils.ConcatJSON(b1, b2, b3), nil
 }
 
 // Validate validates this authentication o ID c
@@ -312,13 +372,13 @@ func (m *AuthenticationOIDC) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *AuthenticationOIDC) UnmarshalBinary(b []byte) error {
 	var res AuthenticationOIDC
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
