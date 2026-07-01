@@ -98,6 +98,10 @@ type Middleware interface {
 	GetOIDCIntegration(org string) (*OIDCIntegration, *http.Response, error)
 	UpdateOIDCIntegration(org string, config map[string]interface{}) (*OIDCIntegration, *http.Response, error)
 
+	// organization_nav — per-org sidebar nav ordering
+	GetOrgNav(org string) (*NavConfig, *http.Response, error)
+	UpdateOrgNav(org string, items []*NavItem) (*NavConfig, *http.Response, error)
+
 	// organizations
 	CreateOrganization(name string) (*models.Organization, *http.Response, error)
 	UpdateOrganization(org, name string) (*models.Organization, *http.Response, error)
