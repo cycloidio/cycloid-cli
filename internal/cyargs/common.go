@@ -452,7 +452,7 @@ func GetDescription(cmd *cobra.Command) (string, error) {
 
 func AddDeleteFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool("force", false, "shorthand for --skip-hooks --ignore-config-files-err")
-		cmd.Flags().Bool("skip-hooks", false, "skip component on_delete hooks (sets skip_hooks=true)")
+	cmd.Flags().Bool("skip-hooks", false, "skip component on_delete hooks (sets skip_hooks=true)")
 	cmd.Flags().Bool("ignore-config-files-err", false, "ignore possible errors on config repository update (sets ignore_config_files_err=true)")
 }
 
