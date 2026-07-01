@@ -36,7 +36,7 @@ func deleteEnvironment(cmd *cobra.Command, args []string) error {
 	if cyargs.IsSet(cmd, "project") {
 		return fmt.Errorf(`--project is no longer accepted on environment delete.
 Did you mean cy environment unlink --project %s --env <env>?
-Use cy environment delete --env <env> to destroy the org-level environment.`, cmd.Flag("project").Value.String())
+Use cy environment delete --env <env> to destroy the org-level environment`, cmd.Flag("project").Value.String())
 	}
 
 	org, err := cyargs.GetOrg(cmd)

@@ -179,17 +179,19 @@ func NewConfig(testName string) (*Config, error) {
 		}
 	}
 
-	_, _, err = m.RefreshCatalogRepository(config.Org, *config.CatalogRepo.Canonical)
-	if err != nil {
-		return config, fmt.Errorf("failed to refresh catalog repo: %w", err)
+	stackRef := config.Org + ":" + defaultStackCanonical
+	// A fresh catalog has no version-presence rows until a background cron runs
+	// (~10 min), so on a cold backend ListStackVersions misses the branch version
+	// (BE-1344 / CLI-127). versions/refresh?sync_presence=true re-indexes them
+	// synchronously — the call `cy catalog-repository create` makes for this race.
+	if _, _, err = m.RefreshCatalogRepositoryVersions(config.Org, *config.CatalogRepo.Canonical); err != nil {
+		return config, fmt.Errorf("failed to refresh catalog repo versions: %w", err)
 	}
 
-	stackRef := config.Org + ":" + defaultStackCanonical
 	stackVersions, _, err := m.ListStackVersions(config.Org, stackRef)
 	if err != nil {
 		return config, fmt.Errorf("failed to list stack versions: %w", err)
 	}
-
 	for _, v := range stackVersions {
 		if ptr.Value(v.Name) == catalogRepoBranch {
 			config.CatalogRepoVersionStacks = v
@@ -276,7 +278,7 @@ func (config *Config) NewTestProject(identifier string) (*models.Project, error)
 // The func will always be returned so even if err != nil, defer the func.
 func (config *Config) NewTestEnv(identifier, project string) (*models.Environment, error) {
 	var (
-		env   = RandomCanonical(identifier)
+		env     = RandomCanonical(identifier)
 		envType = "production"
 	)
 

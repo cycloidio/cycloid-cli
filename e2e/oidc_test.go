@@ -122,19 +122,9 @@ func TestOIDC(t *testing.T) {
 	// Settings get / set
 	// --------------------------------------------------------------------
 
-	t.Run("SuccessOIDCSettingsGet", func(t *testing.T) {
-		cmdOut, cmdErr := executeCommand([]string{
-			"--output", "json",
-			"--org", config.Org,
-			"oidc", "settings", "get",
-		})
-		require.NoError(t, cmdErr, "settings get should succeed")
-
-		var s middleware.OIDCOrganizationSettings
-		err := json.Unmarshal([]byte(cmdOut), &s)
-		require.NoError(t, err, "output should be a valid OIDCOrganizationSettings JSON")
-	})
-
+	// OIDC organization settings are created on first `set` — a freshly
+	// provisioned org has no settings row, so a bare `get` 404s. Run `set`
+	// first to establish the settings, then `get` reads them back.
 	t.Run("SuccessOIDCSettingsSet", func(t *testing.T) {
 		cmdOut, cmdErr := executeCommand([]string{
 			"--output", "json",
@@ -150,6 +140,19 @@ func TestOIDC(t *testing.T) {
 		require.NoError(t, err, "output should be a valid OIDCOrganizationSettings JSON")
 		assert.Equal(t, "keep_membership", s.OIDCNoMatchPolicy)
 		assert.False(t, s.OIDCManaged)
+	})
+
+	t.Run("SuccessOIDCSettingsGet", func(t *testing.T) {
+		cmdOut, cmdErr := executeCommand([]string{
+			"--output", "json",
+			"--org", config.Org,
+			"oidc", "settings", "get",
+		})
+		require.NoError(t, cmdErr, "settings get should succeed")
+
+		var s middleware.OIDCOrganizationSettings
+		err := json.Unmarshal([]byte(cmdOut), &s)
+		require.NoError(t, err, "output should be a valid OIDCOrganizationSettings JSON")
 	})
 
 	t.Run("SuccessOIDCSettingsGetAfterSet", func(t *testing.T) {

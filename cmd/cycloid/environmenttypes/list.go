@@ -14,10 +14,10 @@ import (
 
 func NewListCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "list",
-		Short:   "List environment types",
-		RunE:    list,
-		Args:    cobra.NoArgs,
+		Use:   "list",
+		Short: "List environment types",
+		RunE:  list,
+		Args:  cobra.NoArgs,
 	}
 
 	cyout.RegisterModel(cmd, models.EnvironmentType{})
