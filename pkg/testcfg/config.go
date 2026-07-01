@@ -287,7 +287,7 @@ func (config *Config) NewTestEnv(identifier, project string) (*models.Environmen
 	body := &models.NewEnvironment{
 		Canonical: env,
 		Name:      ptr.Ptr(env),
-		Type:      ptr.Ptr(envType),
+		Type:      envType,
 	}
 	out, _, err := m.CreateOrgEnv(config.Org, body)
 	if err != nil {

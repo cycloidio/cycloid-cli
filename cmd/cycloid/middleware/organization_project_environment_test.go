@@ -46,7 +46,7 @@ func TestEnvCrud(t *testing.T) {
 	createBody := &models.NewEnvironment{
 		Canonical: env,
 		Name:      ptr.Ptr(envName),
-		Type:      ptr.Ptr("production"),
+		Type:      "production",
 	}
 	createdEnv, _, err := m.CreateOrgEnv(config.Org, createBody)
 	if err != nil {
