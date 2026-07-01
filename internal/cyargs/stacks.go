@@ -2,6 +2,7 @@ package cyargs
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/cobra"
@@ -136,7 +137,7 @@ func GetStack(cmd *cobra.Command) (string, error) {
 // backward compatibility but are deprecated and will be removed in a future major release.
 func AddStackVersionFlags(cmd *cobra.Command) {
 	cmd.Flags().String("stack-version", "", "stack version (tag, branch, or commit hash). "+
-		"Use type prefixes to avoid ambiguity: tag:<name>, branch:<name>, sha:<hash>")
+		"Use type prefixes to avoid ambiguity: tag:<name>, branch:<name>, sha:<hash>, version:<id>")
 	cmd.RegisterFlagCompletionFunc("stack-version", CompleteStackVersionUnified)
 
 	// Legacy flags — kept for backward compatibility.
@@ -219,6 +220,10 @@ func ResolveStackVersionArg(cmd *cobra.Command, m middleware.Middleware, org, st
 			return "", value, "", nil
 		case "sha", "commit":
 			return "", "", value, nil
+		case "version":
+			return "", "", "", fmt.Errorf(
+				"--stack-version=version:<id> is only supported by 'cy component config get'; " +
+					"use tag:<name>, branch:<name>, or sha:<hash> for other commands")
 		}
 		// Unknown prefix: fall through and attempt bare resolution on the full value.
 	}
@@ -264,6 +269,24 @@ func ResolveStackVersionArg(cmd *cobra.Command, m middleware.Middleware, org, st
 	default:
 		return "", "", "", fmt.Errorf("version %q not found in stack %q", v, stackRef)
 	}
+}
+
+// GetStackVersionID parses --stack-version=version:<id> and returns the numeric catalog
+// version ID. Returns (id, true, nil) when that form is used, (0, false, nil) otherwise.
+func GetStackVersionID(cmd *cobra.Command) (uint32, bool, error) {
+	v, err := cmd.Flags().GetString("stack-version")
+	if err != nil || v == "" {
+		return 0, false, err
+	}
+	idStr, ok := strings.CutPrefix(v, "version:")
+	if !ok {
+		return 0, false, nil
+	}
+	id64, err := strconv.ParseUint(idStr, 10, 32)
+	if err != nil {
+		return 0, false, fmt.Errorf("--stack-version=version:<id>: expected a numeric ID, got %q", idStr)
+	}
+	return uint32(id64), true, nil
 }
 
 // CompleteStackVersionUnified provides prefix-aware completion for --stack-version.
