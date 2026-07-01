@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -148,7 +149,7 @@ func (m *SimpleTeam) validateName(formats strfmt.Registry) error {
 }
 
 func (m *SimpleTeam) validateOwner(formats strfmt.Registry) error {
-	if swag.IsZero(m.Owner) { // not required
+	if typeutils.IsZero(m.Owner) { // not required
 		return nil
 	}
 
@@ -201,7 +202,7 @@ func (m *SimpleTeam) contextValidateOwner(ctx context.Context, formats strfmt.Re
 
 	if m.Owner != nil {
 
-		if swag.IsZero(m.Owner) { // not required
+		if typeutils.IsZero(m.Owner) { // not required
 			return nil
 		}
 
@@ -227,13 +228,13 @@ func (m *SimpleTeam) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *SimpleTeam) UnmarshalBinary(b []byte) error {
 	var res SimpleTeam
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

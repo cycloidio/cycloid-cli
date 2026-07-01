@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // InfraPoliciesValidationResult Infra policies validation results.
@@ -52,12 +53,12 @@ func (m *InfraPoliciesValidationResult) Validate(formats strfmt.Registry) error 
 }
 
 func (m *InfraPoliciesValidationResult) validateAdvisories(formats strfmt.Registry) error {
-	if swag.IsZero(m.Advisories) { // not required
+	if typeutils.IsZero(m.Advisories) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Advisories); i++ {
-		if swag.IsZero(m.Advisories[i]) { // not required
+		if typeutils.IsZero(m.Advisories[i]) { // not required
 			continue
 		}
 
@@ -82,12 +83,12 @@ func (m *InfraPoliciesValidationResult) validateAdvisories(formats strfmt.Regist
 }
 
 func (m *InfraPoliciesValidationResult) validateCriticals(formats strfmt.Registry) error {
-	if swag.IsZero(m.Criticals) { // not required
+	if typeutils.IsZero(m.Criticals) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Criticals); i++ {
-		if swag.IsZero(m.Criticals[i]) { // not required
+		if typeutils.IsZero(m.Criticals[i]) { // not required
 			continue
 		}
 
@@ -112,12 +113,12 @@ func (m *InfraPoliciesValidationResult) validateCriticals(formats strfmt.Registr
 }
 
 func (m *InfraPoliciesValidationResult) validateWarnings(formats strfmt.Registry) error {
-	if swag.IsZero(m.Warnings) { // not required
+	if typeutils.IsZero(m.Warnings) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Warnings); i++ {
-		if swag.IsZero(m.Warnings[i]) { // not required
+		if typeutils.IsZero(m.Warnings[i]) { // not required
 			continue
 		}
 
@@ -169,7 +170,7 @@ func (m *InfraPoliciesValidationResult) contextValidateAdvisories(ctx context.Co
 
 		if m.Advisories[i] != nil {
 
-			if swag.IsZero(m.Advisories[i]) { // not required
+			if typeutils.IsZero(m.Advisories[i]) { // not required
 				return nil
 			}
 
@@ -198,7 +199,7 @@ func (m *InfraPoliciesValidationResult) contextValidateCriticals(ctx context.Con
 
 		if m.Criticals[i] != nil {
 
-			if swag.IsZero(m.Criticals[i]) { // not required
+			if typeutils.IsZero(m.Criticals[i]) { // not required
 				return nil
 			}
 
@@ -227,7 +228,7 @@ func (m *InfraPoliciesValidationResult) contextValidateWarnings(ctx context.Cont
 
 		if m.Warnings[i] != nil {
 
-			if swag.IsZero(m.Warnings[i]) { // not required
+			if typeutils.IsZero(m.Warnings[i]) { // not required
 				return nil
 			}
 
@@ -255,13 +256,13 @@ func (m *InfraPoliciesValidationResult) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *InfraPoliciesValidationResult) UnmarshalBinary(b []byte) error {
 	var res InfraPoliciesValidationResult
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

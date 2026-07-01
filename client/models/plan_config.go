@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // PlanConfig PlanConfig
@@ -85,12 +86,12 @@ func (m *PlanConfig) Validate(formats strfmt.Registry) error {
 }
 
 func (m *PlanConfig) validateAggregate(formats strfmt.Registry) error {
-	if swag.IsZero(m.Aggregate) { // not required
+	if typeutils.IsZero(m.Aggregate) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Aggregate); i++ {
-		if swag.IsZero(m.Aggregate[i]) { // not required
+		if typeutils.IsZero(m.Aggregate[i]) { // not required
 			continue
 		}
 
@@ -115,12 +116,12 @@ func (m *PlanConfig) validateAggregate(formats strfmt.Registry) error {
 }
 
 func (m *PlanConfig) validateDo(formats strfmt.Registry) error {
-	if swag.IsZero(m.Do) { // not required
+	if typeutils.IsZero(m.Do) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Do); i++ {
-		if swag.IsZero(m.Do[i]) { // not required
+		if typeutils.IsZero(m.Do[i]) { // not required
 			continue
 		}
 
@@ -145,7 +146,7 @@ func (m *PlanConfig) validateDo(formats strfmt.Registry) error {
 }
 
 func (m *PlanConfig) validateTaskConfig(formats strfmt.Registry) error {
-	if swag.IsZero(m.TaskConfig) { // not required
+	if typeutils.IsZero(m.TaskConfig) { // not required
 		return nil
 	}
 
@@ -195,7 +196,7 @@ func (m *PlanConfig) contextValidateAggregate(ctx context.Context, formats strfm
 
 		if m.Aggregate[i] != nil {
 
-			if swag.IsZero(m.Aggregate[i]) { // not required
+			if typeutils.IsZero(m.Aggregate[i]) { // not required
 				return nil
 			}
 
@@ -224,7 +225,7 @@ func (m *PlanConfig) contextValidateDo(ctx context.Context, formats strfmt.Regis
 
 		if m.Do[i] != nil {
 
-			if swag.IsZero(m.Do[i]) { // not required
+			if typeutils.IsZero(m.Do[i]) { // not required
 				return nil
 			}
 
@@ -251,7 +252,7 @@ func (m *PlanConfig) contextValidateTaskConfig(ctx context.Context, formats strf
 
 	if m.TaskConfig != nil {
 
-		if swag.IsZero(m.TaskConfig) { // not required
+		if typeutils.IsZero(m.TaskConfig) { // not required
 			return nil
 		}
 
@@ -277,13 +278,13 @@ func (m *PlanConfig) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *PlanConfig) UnmarshalBinary(b []byte) error {
 	var res PlanConfig
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

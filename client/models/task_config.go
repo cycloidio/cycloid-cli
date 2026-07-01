@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // TaskConfig TaskConfig
@@ -57,12 +58,12 @@ func (m *TaskConfig) Validate(formats strfmt.Registry) error {
 }
 
 func (m *TaskConfig) validateInputs(formats strfmt.Registry) error {
-	if swag.IsZero(m.Inputs) { // not required
+	if typeutils.IsZero(m.Inputs) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Inputs); i++ {
-		if swag.IsZero(m.Inputs[i]) { // not required
+		if typeutils.IsZero(m.Inputs[i]) { // not required
 			continue
 		}
 
@@ -87,7 +88,7 @@ func (m *TaskConfig) validateInputs(formats strfmt.Registry) error {
 }
 
 func (m *TaskConfig) validateRun(formats strfmt.Registry) error {
-	if swag.IsZero(m.Run) { // not required
+	if typeutils.IsZero(m.Run) { // not required
 		return nil
 	}
 
@@ -133,7 +134,7 @@ func (m *TaskConfig) contextValidateInputs(ctx context.Context, formats strfmt.R
 
 		if m.Inputs[i] != nil {
 
-			if swag.IsZero(m.Inputs[i]) { // not required
+			if typeutils.IsZero(m.Inputs[i]) { // not required
 				return nil
 			}
 
@@ -160,7 +161,7 @@ func (m *TaskConfig) contextValidateRun(ctx context.Context, formats strfmt.Regi
 
 	if m.Run != nil {
 
-		if swag.IsZero(m.Run) { // not required
+		if typeutils.IsZero(m.Run) { // not required
 			return nil
 		}
 
@@ -186,13 +187,13 @@ func (m *TaskConfig) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *TaskConfig) UnmarshalBinary(b []byte) error {
 	var res TaskConfig
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

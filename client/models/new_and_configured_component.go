@@ -8,7 +8,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -91,7 +92,7 @@ func (m *NewAndConfiguredComponent) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewAndConfiguredComponent) validateCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.Canonical) { // not required
+	if typeutils.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
@@ -111,7 +112,7 @@ func (m *NewAndConfiguredComponent) validateCanonical(formats strfmt.Registry) e
 }
 
 func (m *NewAndConfiguredComponent) validateCloudProviderCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudProviderCanonical) { // not required
+	if typeutils.IsZero(m.CloudProviderCanonical) { // not required
 		return nil
 	}
 
@@ -144,7 +145,7 @@ func (m *NewAndConfiguredComponent) validateName(formats strfmt.Registry) error 
 }
 
 func (m *NewAndConfiguredComponent) validateServiceCatalogSourceVersionID(formats strfmt.Registry) error {
-	if swag.IsZero(m.ServiceCatalogSourceVersionID) { // not required
+	if typeutils.IsZero(m.ServiceCatalogSourceVersionID) { // not required
 		return nil
 	}
 
@@ -156,7 +157,7 @@ func (m *NewAndConfiguredComponent) validateServiceCatalogSourceVersionID(format
 }
 
 func (m *NewAndConfiguredComponent) validateUseCase(formats strfmt.Registry) error {
-	if swag.IsZero(m.UseCase) { // not required
+	if typeutils.IsZero(m.UseCase) { // not required
 		return nil
 	}
 
@@ -176,7 +177,7 @@ func (m *NewAndConfiguredComponent) validateUseCase(formats strfmt.Registry) err
 }
 
 func (m *NewAndConfiguredComponent) validateVars(formats strfmt.Registry) error {
-	if swag.IsZero(m.Vars) { // not required
+	if typeutils.IsZero(m.Vars) { // not required
 		return nil
 	}
 
@@ -214,7 +215,7 @@ func (m *NewAndConfiguredComponent) ContextValidate(ctx context.Context, formats
 
 func (m *NewAndConfiguredComponent) contextValidateVars(ctx context.Context, formats strfmt.Registry) error {
 
-	if swag.IsZero(m.Vars) { // not required
+	if typeutils.IsZero(m.Vars) { // not required
 		return nil
 	}
 
@@ -239,13 +240,13 @@ func (m *NewAndConfiguredComponent) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewAndConfiguredComponent) UnmarshalBinary(b []byte) error {
 	var res NewAndConfiguredComponent
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

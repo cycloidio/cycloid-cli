@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -79,7 +80,7 @@ func (m *UpdateEnvironment) Validate(formats strfmt.Registry) error {
 }
 
 func (m *UpdateEnvironment) validateCloudAccountCanonicals(formats strfmt.Registry) error {
-	if swag.IsZero(m.CloudAccountCanonicals) { // not required
+	if typeutils.IsZero(m.CloudAccountCanonicals) { // not required
 		return nil
 	}
 
@@ -99,7 +100,7 @@ func (m *UpdateEnvironment) validateCloudAccountCanonicals(formats strfmt.Regist
 }
 
 func (m *UpdateEnvironment) validateDescription(formats strfmt.Registry) error {
-	if swag.IsZero(m.Description) { // not required
+	if typeutils.IsZero(m.Description) { // not required
 		return nil
 	}
 
@@ -137,12 +138,12 @@ func (m *UpdateEnvironment) validateType(formats strfmt.Registry) error {
 }
 
 func (m *UpdateEnvironment) validateVariables(formats strfmt.Registry) error {
-	if swag.IsZero(m.Variables) { // not required
+	if typeutils.IsZero(m.Variables) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Variables); i++ {
-		if swag.IsZero(m.Variables[i]) { // not required
+		if typeutils.IsZero(m.Variables[i]) { // not required
 			continue
 		}
 
@@ -186,7 +187,7 @@ func (m *UpdateEnvironment) contextValidateVariables(ctx context.Context, format
 
 		if m.Variables[i] != nil {
 
-			if swag.IsZero(m.Variables[i]) { // not required
+			if typeutils.IsZero(m.Variables[i]) { // not required
 				return nil
 			}
 
@@ -214,13 +215,13 @@ func (m *UpdateEnvironment) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *UpdateEnvironment) UnmarshalBinary(b []byte) error {
 	var res UpdateEnvironment
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

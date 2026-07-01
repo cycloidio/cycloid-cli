@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -134,7 +135,7 @@ func (m AuthenticationSAML) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 
-	return swag.ConcatJSON(b1, b2, b3), nil
+	return jsonutils.ConcatJSON(b1, b2, b3), nil
 }
 
 // Validate validates this authentication s a m l
@@ -166,7 +167,7 @@ func (m *AuthenticationSAML) validateEnabled(formats strfmt.Registry) error {
 
 func (m *AuthenticationSAML) validateSsoURL(formats strfmt.Registry) error {
 
-	if swag.IsZero(m.SsoURL) { // not required
+	if typeutils.IsZero(m.SsoURL) { // not required
 		return nil
 	}
 
@@ -192,13 +193,13 @@ func (m *AuthenticationSAML) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *AuthenticationSAML) UnmarshalBinary(b []byte) error {
 	var res AuthenticationSAML
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res
