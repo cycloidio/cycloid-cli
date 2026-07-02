@@ -58,10 +58,10 @@ func buildNewEnvironment(cmd *cobra.Command, name, canonical string, current *mo
 		if err != nil {
 			return nil, err
 		}
-		body.Type = ptr.Ptr(value)
+		body.Type = value
 	} else if current != nil {
 		if t := envTypeFromCurrent(current); t != "" {
-			body.Type = ptr.Ptr(t)
+			body.Type = t
 		}
 	}
 

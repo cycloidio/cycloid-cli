@@ -288,6 +288,20 @@ func GetComponent(cmd *cobra.Command) (string, error) {
 	return component, nil
 }
 
+// GetComponentOrEmpty returns the component canonical, or an empty string when
+// neither the --component flag nor the CY_COMPONENT env var is set. Use this for
+// optional component scoping (e.g. filters) where absence is not an error.
+func GetComponentOrEmpty(cmd *cobra.Command) (string, error) {
+	component, err := cmd.Flags().GetString("component")
+	if err != nil {
+		return "", err
+	}
+	if component != "" {
+		return component, nil
+	}
+	return v.GetString("component"), nil
+}
+
 func AddColorFlag(cmd *cobra.Command) string {
 	flagName := "color"
 	cmd.Flags().String(flagName, DefaultColor, "set the color.")
@@ -452,7 +466,7 @@ func GetDescription(cmd *cobra.Command) (string, error) {
 
 func AddDeleteFlags(cmd *cobra.Command) {
 	cmd.Flags().Bool("force", false, "shorthand for --skip-hooks --ignore-config-files-err")
-		cmd.Flags().Bool("skip-hooks", false, "skip component on_delete hooks (sets skip_hooks=true)")
+	cmd.Flags().Bool("skip-hooks", false, "skip component on_delete hooks (sets skip_hooks=true)")
 	cmd.Flags().Bool("ignore-config-files-err", false, "ignore possible errors on config repository update (sets ignore_config_files_err=true)")
 }
 

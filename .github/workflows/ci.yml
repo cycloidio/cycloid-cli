@@ -1,0 +1,219 @@
+name: CI
+
+# Runs on Cycloid's dedicated self-hosted runner (tags: self-hosted, cycloid).
+# The runner provides nix + docker + the `devenv` binary. Every `run:` step
+# executes inside the devenv toolchain via the default shell below, so scripts
+# are plain commands — no per-step `devenv shell --` wrapper, no apt installs,
+# no setup-go. The toolchain is pinned in devenv.nix (single source of truth).
+#
+# SECURITY: this is a PUBLIC repo with a SELF-HOSTED runner. The `authorize`
+# gate makes every real job depend on the PR branch living in this repo (a
+# same-repo branch implies write access), so untrusted fork PRs are skipped by
+# GitHub before any code (or secret) reaches the runner. Defense-in-depth: also
+# set Settings > Actions > "Require approval for all external contributors".
+
+on:
+  # Mainline gets push CI; feature branches are covered by their PR (pull_request)
+  # so a branch push + open PR doesn't run the heavy e2e twice on one runner.
+  push:
+    branches: [develop, master]
+  pull_request:
+
+# Run every step's script inside the devenv shell (mirrors GitHub's default
+# bash flags: -e + pipefail). `{0}` is the generated script file.
+defaults:
+  run:
+    shell: devenv shell -- bash --noprofile --norc -eo pipefail {0}
+
+# Cancel superseded runs on the same ref.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Authorization gate. Every other job `needs: authorize`, so an untrusted PR
+  # is skipped before its code is ever checked out on Cycloid infra. This job
+  # does NO checkout — just an inline trust-check — so it is safe on the
+  # self-hosted runner (we run entirely on our own runner, no GitHub-hosted use).
+  #
+  # Trust signal: the PR branch lives in THIS repo. GitHub only lets you push a
+  # branch to a repo you have write access to, so a same-repo PR is necessarily
+  # authored by a Cycloid member / collaborator. (We deliberately do NOT use
+  # author_association: GitHub reports PRIVATE org members as CONTRIBUTOR in the
+  # event payload, which would wrongly block real maintainers.)
+  # ---------------------------------------------------------------------------
+  authorize:
+    name: Authorize
+    runs-on: [self-hosted, cycloid]
+    steps:
+      - name: Require the PR to originate from this repo (not a fork)
+        shell: bash
+        env:
+          EVENT: ${{ github.event_name }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+          BASE_REPO: ${{ github.repository }}
+          ACTOR: ${{ github.actor }}
+        run: |
+          if [ "$EVENT" != "pull_request" ]; then
+            echo "event=$EVENT by $ACTOR implies write access — allowed"; exit 0
+          fi
+          if [ "$HEAD_REPO" = "$BASE_REPO" ]; then
+            echo "PR branch lives in $BASE_REPO ($ACTOR has write access) — allowed"; exit 0
+          fi
+          echo "::error::PR head '$HEAD_REPO' is a fork. CI runs on a self-hosted runner and is not run automatically for fork PRs; a maintainer must re-run it from an internal branch (or approve via the repo's Actions fork-PR settings)."
+          exit 1
+
+  # ---------------------------------------------------------------------------
+  # Secret preflight. The `test` job pulls the backend image from Scaleway and
+  # resolves the licence via `cy uri interpolate`, both of which need the
+  # CY_API_KEY repo secret (the cycloid SaaS key). On forks / before the secret
+  # is provisioned it is empty — this job lets `test` SKIP cleanly instead of
+  # failing red. Just an env check, no checkout, so it runs on the self-hosted
+  # runner like everything else.
+  # ---------------------------------------------------------------------------
+  preflight:
+    name: Preflight (secrets)
+    runs-on: [self-hosted, cycloid]
+    outputs:
+      has_secret: ${{ steps.check.outputs.has_secret }}
+    steps:
+      - id: check
+        shell: bash
+        env:
+          CY_API_KEY: ${{ secrets.CY_API_KEY }}
+        run: |
+          if [ -n "$CY_API_KEY" ]; then
+            echo "has_secret=true" >> "$GITHUB_OUTPUT"
+            echo "CY_API_KEY present — backend test job will run."
+          else
+            echo "has_secret=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::CY_API_KEY is not set — the backend 'test' job will be skipped. Add it in repo Settings > Secrets > Actions to enable e2e."
+          fi
+
+  # ---------------------------------------------------------------------------
+  # Lint + build + vet. No backend needed. `make lint` == golangci-lint +
+  # shellcheck (the repo's own pre-commit hook target).
+  # ---------------------------------------------------------------------------
+  lint-build:
+    name: Lint / Build
+    needs: authorize
+    runs-on: [self-hosted, cycloid]
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: make lint (golangci-lint + shellcheck)
+        run: make lint
+
+      - name: go vet
+        run: go vet ./...
+
+      - name: go build
+        run: go build ./...
+
+  # ---------------------------------------------------------------------------
+  # Full test suite against the local docker-compose backend stack. The CLI's
+  # middleware AND e2e tests both provision against a live backend (testcfg,
+  # CY_TEST_PROVISION_API=1), so there is no backend-free "unit" subset worth a
+  # separate job — `go test ./...` runs them all with the stack up.
+  # Skipped (not failed) when CY_API_KEY is absent (see preflight).
+  # ---------------------------------------------------------------------------
+  test:
+    name: Test (e2e, compose backend)
+    needs: [authorize, preflight]
+    if: needs.preflight.outputs.has_secret == 'true'
+    runs-on: [self-hosted, cycloid]
+    timeout-minutes: 60
+    env:
+      # Isolate containers / network / volumes per run. NOTE: compose.yml binds
+      # host port 3001 statically, so two backend jobs cannot run concurrently
+      # on one runner — the concurrency group above cancels superseded same-ref
+      # runs; cross-PR overlap relies on the single-runner serial execution.
+      COMPOSE_PROJECT_NAME: cyclicli-${{ github.run_id }}-${{ github.run_attempt }}
+      # testcfg.NewConfig contract.
+      CY_TEST_PROVISION_API: "1"
+      CY_TEST_API_URL: http://localhost:3001
+      CY_TEST_ROOT_ORG: cycloid
+      # Let testcfg write .api_key (ephemeral CI checkout) so the on-failure
+      # diagnostic can authenticate and introspect the backend catalog state.
+      CY_TEST_WRITE_API_KEY_FILE: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Mint .env (resolve licence + registry creds via cy uri interpolate)
+        # Exactly the `make .env` path local devs use: interpolate .env.sample's
+        # cy:// URIs against the cycloid SaaS, then log in to the Scaleway
+        # registry so `docker compose pull` can fetch the backend image.
+        env:
+          CY_SAAS_API_KEY: ${{ secrets.CY_API_KEY }}
+        run: |
+          # Build cy from this very checkout and use it for interpolation.
+          go build -o "$RUNNER_TEMP/cy" .
+          export PATH="$RUNNER_TEMP:$PATH"
+
+          CY_API_KEY="$CY_SAAS_API_KEY" CY_API_URL=https://http-api.cycloid.io CY_ORG=cycloid \
+            cy uri interpolate .env.sample > .env
+
+          set -a; . ./.env; set +a
+          if [ -z "${API_LICENCE_KEY:-}" ] || [ -z "${SECRET_ACCESS:-}" ] || [ -z "${ACCESS_KEY:-}" ]; then
+            echo "::error::cy uri interpolate left a blank value — check .env.sample URIs / CY_API_KEY secret"; exit 1
+          fi
+          echo "::add-mask::$API_LICENCE_KEY"
+          echo "::add-mask::$SECRET_ACCESS"
+          echo "API_LICENCE_KEY=$API_LICENCE_KEY" >> "$GITHUB_ENV"
+
+          echo "$SECRET_ACCESS" | docker login rg.fr-par.scw.cloud/cycloidio/cycloid-backend \
+            -u "$ACCESS_KEY" --password-stdin
+
+      - name: Pull + start backend stack (docker compose)
+        run: |
+          docker compose pull --quiet
+          make be-start
+
+      - name: Wait for youdeploy-api healthy
+        run: |
+          api_id="$(docker compose ps -q youdeploy-api)"
+          for i in $(seq 1 60); do
+            status="$(docker inspect --format '{{.State.Health.Status}}' "$api_id" 2>/dev/null || echo unknown)"
+            if [ "$status" = "healthy" ]; then echo "backend healthy"; exit 0; fi
+            echo "waiting for backend ($i/60): $status"; sleep 5
+          done
+          echo "::error::backend did not become healthy"
+          docker compose ps || true
+          docker compose logs youdeploy-api | tail -100 || true
+          exit 1
+
+      - name: go test ./... (middleware + e2e)
+        # -p 1: e2e tests are not parallel-safe (shared backend git writes).
+        run: go test ./... -p 1 -failfast
+
+      - name: Diagnose (on failure)
+        if: failure()
+        run: |
+          CY="$RUNNER_TEMP/cy"
+          echo "=== api container egress ==="
+          docker compose exec -T youdeploy-api sh -c '
+            getent hosts github.com || echo DNS-FAIL
+            git ls-remote https://github.com/cycloidio/cycloid-cli-test-catalog.git stacks 2>&1 | head -2
+          ' 2>&1 | sed "s/^/[api] /" || true
+          if [ -f .api_key ]; then
+            set -a; . ./.api_key; set +a
+            echo "=== catalog-repository list ==="
+            "$CY" catalog-repository list --output json 2>&1 | head -80 || true
+            echo "=== catalog-repository get cli-test-stacks ==="
+            "$CY" catalog-repository get cli-test-stacks --output json 2>&1 | head -100 || true
+            echo "=== stack list ==="
+            "$CY" stack list --output json 2>&1 | head -80 || true
+          else
+            echo "no .api_key (config setup failed before InitFirstOrg)"
+          fi
+          echo "=== backend catalog/scan/sync/worker logs ==="
+          docker compose logs --no-color youdeploy-api 2>&1 \
+            | grep -iE "catalog|stack|scan|sync|asynq|task|worker|enqueu|refresh" \
+            | tail -100 || true
+
+      # Always tear the stack down, even on failure / cancellation.
+      - name: Tear down backend stack
+        if: always()
+        run: make be-stop

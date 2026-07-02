@@ -52,7 +52,7 @@ print-version:
 	echo $$BACKEND_TAG
 
 .PHONY: install
-install: .env .git/hooks/pre-commit ## install all pre-requisites
+install: .env ## install all pre-requisites (git hooks auto-install via devenv shell)
 
 .PHONY: .env
 .env: ## generate the .env files with the required secrets for this repo
@@ -157,6 +157,3 @@ format-sh:
 .ONEFILE:
 ci-test:
 	$(MAKEFILE_DIR)scripts/ci-tests.sh
-
-.git/hooks/pre-commit:
-	pre-commit-install

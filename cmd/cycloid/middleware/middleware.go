@@ -98,6 +98,10 @@ type Middleware interface {
 	GetOIDCIntegration(org string) (*OIDCIntegration, *http.Response, error)
 	UpdateOIDCIntegration(org string, config map[string]interface{}) (*OIDCIntegration, *http.Response, error)
 
+	// organization_nav — per-org sidebar nav ordering
+	GetOrgNav(org string) (*NavConfig, *http.Response, error)
+	UpdateOrgNav(org string, items []*NavItem) (*NavConfig, *http.Response, error)
+
 	// organizations
 	CreateOrganization(name string) (*models.Organization, *http.Response, error)
 	UpdateOrganization(org, name string) (*models.Organization, *http.Response, error)
@@ -190,7 +194,7 @@ type Middleware interface {
 	GetComponent(org, project, env, component string) (*models.Component, *http.Response, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, *http.Response, error)
 	DeleteComponent(org, project, env, component string, opts DeleteOptions) (*http.Response, error)
-	GetComponentConfig(org, project, env, component string) (models.FormVariables, *http.Response, error)
+	GetComponentConfig(org, project, env, component, versionTag, versionBranch, versionCommitHash string, versionID uint32) (models.FormVariables, *http.Response, error)
 	GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, *http.Response, error)
 
 	DeleteRole(org, role string) (*http.Response, error)

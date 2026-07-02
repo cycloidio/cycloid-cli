@@ -10,12 +10,29 @@ import (
 	"github.com/cycloidio/cycloid-cli/internal/ptr"
 )
 
-func (m *middleware) GetComponentConfig(org, project, env, component string) (models.FormVariables, *http.Response, error) {
+func (m *middleware) GetComponentConfig(org, project, env, component, versionTag, versionBranch, versionCommitHash string, versionID uint32) (models.FormVariables, *http.Response, error) {
 	var result models.FormVariables
+
+	if versionID == 0 {
+		comp, _, err := m.GetComponent(org, project, env, component)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to get component to resolve stack version: %w", err)
+		}
+		versionID, _, err = m.resolveStackVersion(org, *comp.ServiceCatalog.Ref, versionTag, versionBranch, versionCommitHash)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to resolve stack version: %w", err)
+		}
+	}
+
+	query := url.Values{
+		"service_catalog_source_version_id": []string{strconv.FormatUint(uint64(versionID), 10)},
+	}
+
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
 		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "config"},
+		Query:        query,
 	}, &result)
 	if err != nil {
 		return nil, resp, err

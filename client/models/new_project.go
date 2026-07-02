@@ -7,7 +7,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -87,7 +88,7 @@ func (m *NewProject) Validate(formats strfmt.Registry) error {
 }
 
 func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
-	if swag.IsZero(m.Canonical) { // not required
+	if typeutils.IsZero(m.Canonical) { // not required
 		return nil
 	}
 
@@ -107,7 +108,7 @@ func (m *NewProject) validateCanonical(formats strfmt.Registry) error {
 }
 
 func (m *NewProject) validateColor(formats strfmt.Registry) error {
-	if swag.IsZero(m.Color) { // not required
+	if typeutils.IsZero(m.Color) { // not required
 		return nil
 	}
 
@@ -140,7 +141,7 @@ func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) 
 }
 
 func (m *NewProject) validateIcon(formats strfmt.Registry) error {
-	if swag.IsZero(m.Icon) { // not required
+	if typeutils.IsZero(m.Icon) { // not required
 		return nil
 	}
 
@@ -174,13 +175,13 @@ func (m *NewProject) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *NewProject) UnmarshalBinary(b []byte) error {
 	var res NewProject
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

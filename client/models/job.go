@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -107,7 +108,7 @@ func (m *Job) Validate(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateFinishedBuild(formats strfmt.Registry) error {
-	if swag.IsZero(m.FinishedBuild) { // not required
+	if typeutils.IsZero(m.FinishedBuild) { // not required
 		return nil
 	}
 
@@ -139,12 +140,12 @@ func (m *Job) validateID(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateInputs(formats strfmt.Registry) error {
-	if swag.IsZero(m.Inputs) { // not required
+	if typeutils.IsZero(m.Inputs) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Inputs); i++ {
-		if swag.IsZero(m.Inputs[i]) { // not required
+		if typeutils.IsZero(m.Inputs[i]) { // not required
 			continue
 		}
 
@@ -178,7 +179,7 @@ func (m *Job) validateName(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateNextBuild(formats strfmt.Registry) error {
-	if swag.IsZero(m.NextBuild) { // not required
+	if typeutils.IsZero(m.NextBuild) { // not required
 		return nil
 	}
 
@@ -201,12 +202,12 @@ func (m *Job) validateNextBuild(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateOutputs(formats strfmt.Registry) error {
-	if swag.IsZero(m.Outputs) { // not required
+	if typeutils.IsZero(m.Outputs) { // not required
 		return nil
 	}
 
 	for i := 0; i < len(m.Outputs); i++ {
-		if swag.IsZero(m.Outputs[i]) { // not required
+		if typeutils.IsZero(m.Outputs[i]) { // not required
 			continue
 		}
 
@@ -231,7 +232,7 @@ func (m *Job) validateOutputs(formats strfmt.Registry) error {
 }
 
 func (m *Job) validateTransitionBuild(formats strfmt.Registry) error {
-	if swag.IsZero(m.TransitionBuild) { // not required
+	if typeutils.IsZero(m.TransitionBuild) { // not required
 		return nil
 	}
 
@@ -287,7 +288,7 @@ func (m *Job) contextValidateFinishedBuild(ctx context.Context, formats strfmt.R
 
 	if m.FinishedBuild != nil {
 
-		if swag.IsZero(m.FinishedBuild) { // not required
+		if typeutils.IsZero(m.FinishedBuild) { // not required
 			return nil
 		}
 
@@ -314,7 +315,7 @@ func (m *Job) contextValidateInputs(ctx context.Context, formats strfmt.Registry
 
 		if m.Inputs[i] != nil {
 
-			if swag.IsZero(m.Inputs[i]) { // not required
+			if typeutils.IsZero(m.Inputs[i]) { // not required
 				return nil
 			}
 
@@ -341,7 +342,7 @@ func (m *Job) contextValidateNextBuild(ctx context.Context, formats strfmt.Regis
 
 	if m.NextBuild != nil {
 
-		if swag.IsZero(m.NextBuild) { // not required
+		if typeutils.IsZero(m.NextBuild) { // not required
 			return nil
 		}
 
@@ -368,7 +369,7 @@ func (m *Job) contextValidateOutputs(ctx context.Context, formats strfmt.Registr
 
 		if m.Outputs[i] != nil {
 
-			if swag.IsZero(m.Outputs[i]) { // not required
+			if typeutils.IsZero(m.Outputs[i]) { // not required
 				return nil
 			}
 
@@ -395,7 +396,7 @@ func (m *Job) contextValidateTransitionBuild(ctx context.Context, formats strfmt
 
 	if m.TransitionBuild != nil {
 
-		if swag.IsZero(m.TransitionBuild) { // not required
+		if typeutils.IsZero(m.TransitionBuild) { // not required
 			return nil
 		}
 
@@ -421,13 +422,13 @@ func (m *Job) MarshalBinary() ([]byte, error) {
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *Job) UnmarshalBinary(b []byte) error {
 	var res Job
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

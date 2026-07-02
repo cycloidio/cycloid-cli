@@ -9,7 +9,8 @@ import (
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
-	"github.com/go-openapi/swag"
+	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 )
 
 // AWSInfrastructureResourcesAggregation AWS Infrastructure Resources Aggregation
@@ -229,7 +230,7 @@ func (m AWSInfrastructureResourcesAggregation) MarshalJSON() ([]byte, error) {
 	}
 
 	// concatenate the 2 objects
-	return swag.ConcatJSON(props, additional), nil
+	return jsonutils.ConcatJSON(props, additional), nil
 }
 
 // Validate validates this a w s infrastructure resources aggregation
@@ -242,12 +243,12 @@ func (m *AWSInfrastructureResourcesAggregation) Validate(formats strfmt.Registry
 	}
 
 	props := make(map[string]json.RawMessage, 12+10)
-	j, err := swag.WriteJSON(m)
+	j, err := jsonutils.WriteJSON(m)
 	if err != nil {
 		return err
 	}
 
-	if err = swag.ReadJSON(j, &props); err != nil {
+	if err = jsonutils.ReadJSON(j, &props); err != nil {
 		return err
 	}
 
@@ -318,7 +319,7 @@ func (m *AWSInfrastructureResourcesAggregation) Validate(formats strfmt.Registry
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateBuckets(formats strfmt.Registry) error {
-	if swag.IsZero(m.Buckets) { // not required
+	if typeutils.IsZero(m.Buckets) { // not required
 		return nil
 	}
 
@@ -341,7 +342,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateBuckets(formats strfmt.R
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateCacheClusters(formats strfmt.Registry) error {
-	if swag.IsZero(m.CacheClusters) { // not required
+	if typeutils.IsZero(m.CacheClusters) { // not required
 		return nil
 	}
 
@@ -364,7 +365,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateCacheClusters(formats st
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateDbInstances(formats strfmt.Registry) error {
-	if swag.IsZero(m.DbInstances) { // not required
+	if typeutils.IsZero(m.DbInstances) { // not required
 		return nil
 	}
 
@@ -387,7 +388,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateDbInstances(formats strf
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateImages(formats strfmt.Registry) error {
-	if swag.IsZero(m.Images) { // not required
+	if typeutils.IsZero(m.Images) { // not required
 		return nil
 	}
 
@@ -410,7 +411,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateImages(formats strfmt.Re
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateInstances(formats strfmt.Registry) error {
-	if swag.IsZero(m.Instances) { // not required
+	if typeutils.IsZero(m.Instances) { // not required
 		return nil
 	}
 
@@ -433,7 +434,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateInstances(formats strfmt
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV1(formats strfmt.Registry) error {
-	if swag.IsZero(m.LoadBalancersV1) { // not required
+	if typeutils.IsZero(m.LoadBalancersV1) { // not required
 		return nil
 	}
 
@@ -456,7 +457,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV1(formats 
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV2(formats strfmt.Registry) error {
-	if swag.IsZero(m.LoadBalancersV2) { // not required
+	if typeutils.IsZero(m.LoadBalancersV2) { // not required
 		return nil
 	}
 
@@ -479,7 +480,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateLoadBalancersV2(formats 
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateSecurityGroups(formats strfmt.Registry) error {
-	if swag.IsZero(m.SecurityGroups) { // not required
+	if typeutils.IsZero(m.SecurityGroups) { // not required
 		return nil
 	}
 
@@ -502,7 +503,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateSecurityGroups(formats s
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateSnapshots(formats strfmt.Registry) error {
-	if swag.IsZero(m.Snapshots) { // not required
+	if typeutils.IsZero(m.Snapshots) { // not required
 		return nil
 	}
 
@@ -525,7 +526,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateSnapshots(formats strfmt
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateSubnets(formats strfmt.Registry) error {
-	if swag.IsZero(m.Subnets) { // not required
+	if typeutils.IsZero(m.Subnets) { // not required
 		return nil
 	}
 
@@ -548,7 +549,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateSubnets(formats strfmt.R
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateVolumes(formats strfmt.Registry) error {
-	if swag.IsZero(m.Volumes) { // not required
+	if typeutils.IsZero(m.Volumes) { // not required
 		return nil
 	}
 
@@ -571,7 +572,7 @@ func (m *AWSInfrastructureResourcesAggregation) validateVolumes(formats strfmt.R
 }
 
 func (m *AWSInfrastructureResourcesAggregation) validateVpcs(formats strfmt.Registry) error {
-	if swag.IsZero(m.Vpcs) { // not required
+	if typeutils.IsZero(m.Vpcs) { // not required
 		return nil
 	}
 
@@ -655,7 +656,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateBuckets(ctx conte
 
 	if m.Buckets != nil {
 
-		if swag.IsZero(m.Buckets) { // not required
+		if typeutils.IsZero(m.Buckets) { // not required
 			return nil
 		}
 
@@ -680,7 +681,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateCacheClusters(ctx
 
 	if m.CacheClusters != nil {
 
-		if swag.IsZero(m.CacheClusters) { // not required
+		if typeutils.IsZero(m.CacheClusters) { // not required
 			return nil
 		}
 
@@ -705,7 +706,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateDbInstances(ctx c
 
 	if m.DbInstances != nil {
 
-		if swag.IsZero(m.DbInstances) { // not required
+		if typeutils.IsZero(m.DbInstances) { // not required
 			return nil
 		}
 
@@ -730,7 +731,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateImages(ctx contex
 
 	if m.Images != nil {
 
-		if swag.IsZero(m.Images) { // not required
+		if typeutils.IsZero(m.Images) { // not required
 			return nil
 		}
 
@@ -755,7 +756,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateInstances(ctx con
 
 	if m.Instances != nil {
 
-		if swag.IsZero(m.Instances) { // not required
+		if typeutils.IsZero(m.Instances) { // not required
 			return nil
 		}
 
@@ -780,7 +781,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateLoadBalancersV1(c
 
 	if m.LoadBalancersV1 != nil {
 
-		if swag.IsZero(m.LoadBalancersV1) { // not required
+		if typeutils.IsZero(m.LoadBalancersV1) { // not required
 			return nil
 		}
 
@@ -805,7 +806,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateLoadBalancersV2(c
 
 	if m.LoadBalancersV2 != nil {
 
-		if swag.IsZero(m.LoadBalancersV2) { // not required
+		if typeutils.IsZero(m.LoadBalancersV2) { // not required
 			return nil
 		}
 
@@ -830,7 +831,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateSecurityGroups(ct
 
 	if m.SecurityGroups != nil {
 
-		if swag.IsZero(m.SecurityGroups) { // not required
+		if typeutils.IsZero(m.SecurityGroups) { // not required
 			return nil
 		}
 
@@ -855,7 +856,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateSnapshots(ctx con
 
 	if m.Snapshots != nil {
 
-		if swag.IsZero(m.Snapshots) { // not required
+		if typeutils.IsZero(m.Snapshots) { // not required
 			return nil
 		}
 
@@ -880,7 +881,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateSubnets(ctx conte
 
 	if m.Subnets != nil {
 
-		if swag.IsZero(m.Subnets) { // not required
+		if typeutils.IsZero(m.Subnets) { // not required
 			return nil
 		}
 
@@ -905,7 +906,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateVolumes(ctx conte
 
 	if m.Volumes != nil {
 
-		if swag.IsZero(m.Volumes) { // not required
+		if typeutils.IsZero(m.Volumes) { // not required
 			return nil
 		}
 
@@ -930,7 +931,7 @@ func (m *AWSInfrastructureResourcesAggregation) contextValidateVpcs(ctx context.
 
 	if m.Vpcs != nil {
 
-		if swag.IsZero(m.Vpcs) { // not required
+		if typeutils.IsZero(m.Vpcs) { // not required
 			return nil
 		}
 
@@ -956,13 +957,13 @@ func (m *AWSInfrastructureResourcesAggregation) MarshalBinary() ([]byte, error) 
 	if m == nil {
 		return nil, nil
 	}
-	return swag.WriteJSON(m)
+	return jsonutils.WriteJSON(m)
 }
 
 // UnmarshalBinary interface implementation
 func (m *AWSInfrastructureResourcesAggregation) UnmarshalBinary(b []byte) error {
 	var res AWSInfrastructureResourcesAggregation
-	if err := swag.ReadJSON(b, &res); err != nil {
+	if err := jsonutils.ReadJSON(b, &res); err != nil {
 		return err
 	}
 	*m = res

@@ -19,6 +19,7 @@ func NewComponentConfigGetCommand() *cobra.Command {
 		Example: "cy config get -p project -e env -c component",
 	}
 	cyargs.AddCyContext(cmd)
+	cyargs.AddStackVersionFlags(cmd)
 	return cmd
 }
 
@@ -31,6 +32,18 @@ func getComponentConfig(cmd *cobra.Command, args []string) error {
 	api := common.NewAPI()
 	m := middleware.NewMiddleware(api)
 
-	config, _, err := m.GetComponentConfig(org, project, env, component)
+	var tag, branch, hash string
+	versionID, ok, err := cyargs.GetStackVersionID(cmd)
+	if err != nil {
+		return err
+	}
+	if !ok {
+		tag, branch, hash, err = cyargs.ResolveStackVersionArg(cmd, m, org, "")
+		if err != nil {
+			return err
+		}
+	}
+
+	config, _, err := m.GetComponentConfig(org, project, env, component, tag, branch, hash, versionID)
 	return cyout.PrintWithOptions(cmd, config, err, "failed to fetch config of component '"+component+"'", printer.Options{})
 }
