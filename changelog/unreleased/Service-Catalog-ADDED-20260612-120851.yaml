@@ -1,8 +1,0 @@
-component: Service Catalog
-kind: ADDED
-body: New `cy beta template render` command to render Cycloid stack templates locally, with no backend. Supports layered context (component base < context file < stdin/string < `--set` overrides), placeholder rendering for unset variables, and multi-file/`--dir`/stdin input.
-time: 2026-06-12T11:30:00Z
-custom:
-  TYPE: CLI
-  PR: 459
-  DETAILS: ""

@@ -1,8 +1,0 @@
-component: Inventory
-kind: ADDED
-body: New `cy inventory` commands to browse Terraform state inventory. `cy inventory outputs list` and `cy inventory resources list` support project/environment/component scoping, curated filter flags, and a generic repeatable `--filter 'attribute[condition]=value'`. `cy inventory outputs get <key>` prints the raw output value (scriptable), or the full object with `-o json`.
-time: 2026-06-30T12:53:38Z
-custom:
-  TYPE: CLI
-  PR: 469
-  DETAILS: ""
