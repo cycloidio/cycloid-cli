@@ -72,6 +72,9 @@ type ServiceCatalog struct {
 	// Required: true
 	Keywords []string `json:"keywords"`
 
+	// Structured key:value labels declared in the stack's .cycloid.yml
+	Labels []*ServiceCatalogLabel `json:"labels"`
+
 	// Indicates if the stack uses the latest version
 	// Required: true
 	Latest *bool `json:"latest"`
@@ -164,6 +167,10 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateKeywords(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLabels(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -371,6 +378,36 @@ func (m *ServiceCatalog) validateKeywords(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *ServiceCatalog) validateLabels(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.Labels) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Labels); i++ {
+		if typeutils.IsZero(m.Labels[i]) { // not required
+			continue
+		}
+
+		if m.Labels[i] != nil {
+			if err := m.Labels[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("labels" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("labels" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
 func (m *ServiceCatalog) validateLatest(formats strfmt.Registry) error {
 
 	if err := validate.Required("latest", "body", m.Latest); err != nil {
@@ -543,6 +580,10 @@ func (m *ServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Reg
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateLabels(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateTeam(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -604,6 +645,35 @@ func (m *ServiceCatalog) contextValidateDependencies(ctx context.Context, format
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) contextValidateLabels(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Labels); i++ {
+
+		if m.Labels[i] != nil {
+
+			if typeutils.IsZero(m.Labels[i]) { // not required
+				return nil
+			}
+
+			if err := m.Labels[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("labels" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("labels" + "." + strconv.Itoa(i))
 				}
 
 				return err
