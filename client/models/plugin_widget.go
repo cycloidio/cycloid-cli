@@ -39,6 +39,9 @@ type PluginWidget struct {
 	// Required: true
 	Type *string `json:"type"`
 
+	// URL-friendly slug derived from the widget title
+	URLSlug string `json:"url_slug,omitempty"`
+
 	// Widget configuration
 	// Required: true
 	Widget any `json:"widget"`

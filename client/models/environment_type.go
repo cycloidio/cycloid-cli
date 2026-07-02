@@ -4,10 +4,12 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
 	"github.com/go-openapi/swag/jsonutils"
+	"github.com/go-openapi/swag/typeutils"
 	"github.com/go-openapi/validate"
 )
 
@@ -48,6 +50,9 @@ type EnvironmentType struct {
 	// Required: true
 	IsDefault *bool `json:"is_default"`
 
+	// Optional label selector constraining which stacks are offered in environments of this type. Absent means no constraint.
+	LabelSelector *LabelSelector `json:"label_selector,omitempty"`
+
 	// name
 	// Required: true
 	// Max Length: 255
@@ -85,6 +90,10 @@ func (m *EnvironmentType) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateIsDefault(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLabelSelector(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -180,6 +189,29 @@ func (m *EnvironmentType) validateIsDefault(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *EnvironmentType) validateLabelSelector(formats strfmt.Registry) error {
+	if typeutils.IsZero(m.LabelSelector) { // not required
+		return nil
+	}
+
+	if m.LabelSelector != nil {
+		if err := m.LabelSelector.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("label_selector")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("label_selector")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *EnvironmentType) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -210,8 +242,42 @@ func (m *EnvironmentType) validateUpdatedAt(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this environment type based on context it is used
+// ContextValidate validate this environment type based on the context it is used
 func (m *EnvironmentType) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateLabelSelector(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *EnvironmentType) contextValidateLabelSelector(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.LabelSelector != nil {
+
+		if typeutils.IsZero(m.LabelSelector) { // not required
+			return nil
+		}
+
+		if err := m.LabelSelector.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("label_selector")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("label_selector")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
