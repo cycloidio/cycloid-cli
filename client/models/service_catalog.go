@@ -113,6 +113,9 @@ type ServiceCatalog struct {
 	// Required: true
 	Trusted *bool `json:"trusted"`
 
+	// Determines if the stack can be instantiated only once per organization, project and environment
+	Unique bool `json:"unique,omitempty"`
+
 	// updated at
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at,omitempty"`
