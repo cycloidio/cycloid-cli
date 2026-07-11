@@ -7,7 +7,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/cycloidio/youdeploy-http-api/cli/cmd"
+	"github.com/cycloidio/cycloid-cli/cmd"
 )
 
 type exitCoder interface {
