@@ -8,7 +8,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
 	"github.com/cycloidio/cycloid-cli/interpolator/resolvers"
 	"github.com/cycloidio/cycloid-cli/interpolator/resources"
 )
@@ -80,7 +80,7 @@ func (r HTTPResolver) Resolve(ref *resources.Reference) ([]any, error) {
 
 		return data, nil
 	default:
-		var details = make([]string, len(apiResponse.Errors))
+		details := make([]string, len(apiResponse.Errors))
 		for index, apiErr := range apiResponse.Errors {
 			details[index] = apiErr.String()
 		}

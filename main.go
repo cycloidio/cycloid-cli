@@ -5,15 +5,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/cycloidio/cycloid-cli/cmd"
-)
-
-var (
-	// Used for flags.
-	rootCmd *cobra.Command
+	"github.com/cycloidio/youdeploy-http-api/cli/cmd"
 )
 
 type exitCoder interface {
@@ -24,8 +18,10 @@ func inRed(msg string) string {
 	return fmt.Sprintf("\033[1;31m%s\033[0m", msg)
 }
 
-// Execute runs the CLI root command.
-func Execute() {
+func main() {
+	rootCmd := cmd.NewRootCommand()
+	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
+
 	if err := rootCmd.Execute(); err != nil {
 		rootCmd.PrintErrln(inRed("Error:"), err.Error())
 		var codedErr exitCoder
@@ -34,11 +30,4 @@ func Execute() {
 		}
 		os.Exit(1)
 	}
-}
-
-func main() {
-	rootCmd = cmd.NewRootCommand()
-	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
-
-	Execute()
 }

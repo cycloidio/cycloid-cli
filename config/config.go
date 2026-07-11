@@ -77,5 +77,5 @@ func Write(c *Config) error {
 		return errors.Wrap(err, "unable to find XDG config path")
 	}
 
-	return os.WriteFile(configFilePath, content, 0600)
+	return os.WriteFile(configFilePath, content, 0o600)
 }

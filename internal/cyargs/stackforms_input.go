@@ -14,13 +14,11 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
-var (
-	StackformsEnvVarName = "CY_STACKFORMS_VARS"
-)
+var StackformsEnvVarName = "CY_STACKFORMS_VARS"
 
 func AddStackFormsInputFlags(cmd *cobra.Command) {
 	cmd.Flags().StringArrayP("json-file", "f", []string{}, "path to a JSON file containing Stackform input. Can be '-' to read from stdin. This flag can be set multiple times.")
@@ -81,7 +79,7 @@ func GetStackformsVars(cmd *cobra.Command, defaults models.FormVariables) (model
 	}
 
 	jsonFromEnv, ok := os.LookupEnv(StackformsEnvVarName)
-	var varsFromEnv = make(models.FormVariables)
+	varsFromEnv := make(models.FormVariables)
 	if ok {
 		decoder := json.NewDecoder(strings.NewReader(jsonFromEnv))
 		err := decoder.Decode(&varsFromEnv)
@@ -110,7 +108,7 @@ func GetStackformsVars(cmd *cobra.Command, defaults models.FormVariables) (model
 // MergeStackformsVars will parse and merge all variables inputs in the following order of
 // precedence:
 // file < jsonString < keyValueField
-func MergeStackformsVars(defaults models.FormVariables, envVars models.FormVariables, jsonFiles, jsonStrings []string, keyValueField map[string]string) (models.FormVariables, error) {
+func MergeStackformsVars(defaults, envVars models.FormVariables, jsonFiles, jsonStrings []string, keyValueField map[string]string) (models.FormVariables, error) {
 	if defaults == nil {
 		defaults = make(models.FormVariables)
 	}
@@ -152,7 +150,7 @@ func MergeStackformsVars(defaults models.FormVariables, envVars models.FormVaria
 
 // MergeJSONFileVars will read and merge the Stackforms vars from the `json-file` arg
 func MergeJSONFileVars(jsonFiles []string) (models.FormVariables, error) {
-	var output = make(models.FormVariables)
+	output := make(models.FormVariables)
 
 	for _, filename := range jsonFiles {
 		var decoder *json.Decoder
@@ -165,7 +163,7 @@ func MergeJSONFileVars(jsonFiles []string) (models.FormVariables, error) {
 		decoder = json.NewDecoder(reader)
 
 		for {
-			var extractedVars = make(models.FormVariables)
+			extractedVars := make(models.FormVariables)
 			err := decoder.Decode(&extractedVars)
 			if err == io.EOF {
 				break
@@ -185,13 +183,13 @@ func MergeJSONFileVars(jsonFiles []string) (models.FormVariables, error) {
 
 // MergeJSONVars expect an array of valid JSON string as stackforms input and return a models.FormVariables
 func MergeJSONVars(jsonVars []string) (models.FormVariables, error) {
-	var output = make(models.FormVariables)
+	output := make(models.FormVariables)
 	for _, jsonString := range jsonVars {
 		if jsonString == "" {
 			continue
 		}
 
-		var extractedVars = make(models.FormVariables)
+		extractedVars := make(models.FormVariables)
 
 		err := json.Unmarshal([]byte(jsonString), &extractedVars)
 		if err != nil {
@@ -208,13 +206,13 @@ func MergeJSONVars(jsonVars []string) (models.FormVariables, error) {
 
 // UpdateFormVar will take a Stackform variable ref in the format section.group.var
 // and update its value. The value is passed as string but can be any valid 'JSON' type.
-func UpdateFormVar(field string, value string, vars models.FormVariables) error {
+func UpdateFormVar(field, value string, vars models.FormVariables) error {
 	keys := strings.Split(field, ".")
 	if len(keys) != 3 {
 		return errors.New("key=val update failed, you can only update a value using `section.group.var=value` syntax")
 	}
 
-	var section, group, key = keys[0], keys[1], keys[2]
+	section, group, key := keys[0], keys[1], keys[2]
 
 	if vars == nil {
 		vars = models.FormVariables{section: {group: {key: nil}}}

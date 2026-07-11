@@ -17,7 +17,7 @@ import (
 
 	"golang.org/x/term"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
 const (
@@ -40,7 +40,7 @@ const (
 	OutputRaw
 )
 
-// Client is the minimal middleware surface required for watch (implemented by middleware.Middleware).
+// Client is the minimal apiclient surface required for watch (implemented by apiclient.APIClient).
 type Client interface {
 	GetBuild(org, project, env, component, pipeline, job, buildID string) (*models.Build, *http.Response, error)
 	AbortBuild(org, project, env, component, pipeline, job, buildID string) (*http.Response, error)

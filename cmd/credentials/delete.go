@@ -1,0 +1,85 @@
+package credentials
+
+import (
+	"fmt"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+	"golang.org/x/exp/slices"
+
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
+	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/gen/models"
+)
+
+func NewDeleteCommand() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:               "delete [canonicals...]",
+		Args:              cobra.OnlyValidArgs,
+		ValidArgsFunction: cyargs.CompleteCredentialCanonical,
+		Short:             "delete a credential",
+		Example: `# Delete 3 credentials:
+cy --org my-org credential delete credential-canonical-1 credential-canonical-2 --canonical credential-canonical-3`,
+		RunE: del,
+	}
+
+	cyargs.AddCredentialCanonicalFlag(cmd)
+	cyargs.AddCredentialPathFlag(cmd)
+	return cmd
+}
+
+func del(cmd *cobra.Command, args []string) error {
+	api := common.NewAPI()
+	m := apiclient.NewAPIClient(api)
+
+	org, err := cyargs.GetOrg(cmd)
+	if err != nil {
+		return err
+	}
+
+	credentialFlag, _ := cyargs.GetCredentialCanonical(cmd)
+	credentialPath, _ := cyargs.GetCredentialPath(cmd)
+	if credentialPath == "" && credentialFlag == "" && len(args) == 0 {
+		return errors.New("please fill --canonical or --path flags or pass canonicals as arguments")
+	}
+
+	if credentialPath != "" && credentialFlag == "" {
+		credList, _, err := m.ListCredentials(org, "")
+		if err != nil {
+			return fmt.Errorf("failed to fetch cred list to match credential by path %q: %w", credentialPath, err)
+		}
+
+		index := slices.IndexFunc(credList, func(c *models.CredentialSimple) bool {
+			if c.Path != nil {
+				return *c.Path == credentialPath
+			} else {
+				return false
+			}
+		})
+		if index == -1 || credList[index].Canonical == nil {
+			return fmt.Errorf("credential with path %q not found in org %q", credentialPath, org)
+		}
+
+		credentialFlag = *credList[index].Canonical
+	}
+
+	credList := append(args, credentialFlag)
+
+	for _, credential := range credList {
+		if credential == "" {
+			continue
+		}
+
+		_, err := m.DeleteCredential(org, credential)
+		if err != nil {
+			return cyout.PrintWithOptions(cmd, nil, err, fmt.Sprintf("unable to delete credential '%s'", credential), printer.Options{})
+		}
+
+		fmt.Fprintf(cmd.OutOrStderr(), "successfully deleted credential '%s'\n", credential)
+	}
+
+	return nil
+}

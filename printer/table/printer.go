@@ -15,8 +15,8 @@ import (
 	libtable "github.com/charmbracelet/lipgloss/table"
 	"golang.org/x/term"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
 	"github.com/cycloidio/cycloid-cli/printer"
+	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
 // Table is the default printer, rendering structured data as a terminal table.

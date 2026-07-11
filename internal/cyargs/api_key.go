@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
 )
 
 func AddAPIKeyDescriptionFlag(cmd *cobra.Command) string {
@@ -55,14 +55,14 @@ func CompleteAPIKeyCanonical(cmd *cobra.Command, args []string, toComplete strin
 	}
 
 	api := common.NewAPI()
-	m := middleware.NewMiddleware(api)
+	m := apiclient.NewAPIClient(api)
 	APIKeys, _, err := m.ListAPIKeys(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list API Keys: "+err.Error()),
 			cobra.ShellCompDirectiveNoFileComp
 	}
 
-	var APIKeysComp = make([]cobra.Completion, len(APIKeys))
+	APIKeysComp := make([]cobra.Completion, len(APIKeys))
 	for index, apiKey := range APIKeys {
 		if apiKey.Canonical != nil && strings.HasPrefix(*apiKey.Canonical, toComplete) {
 			APIKeysComp[index] = cobra.CompletionWithDesc(*apiKey.Canonical, fmt.Sprintf("%s from %s: %s", *apiKey.Name, *apiKey.Owner.Username, apiKey.Description))

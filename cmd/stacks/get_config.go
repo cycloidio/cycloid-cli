@@ -1,0 +1,69 @@
+package stacks
+
+import (
+	"fmt"
+
+	"github.com/pkg/errors"
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
+	"github.com/cycloidio/cycloid-cli/printer"
+)
+
+func NewStacksGetComponentStackConfig() *cobra.Command {
+	cmd := &cobra.Command{
+		Use:   "get-config -p project -e env -c component <use-case?> [flags]",
+		Short: "Output a stack configuration in JSON",
+		Example: `
+cy --org my-org stacks get-config -p my-project -e my-env -c my-component my-usecase
+`,
+		RunE: getConfig,
+		Args: cobra.MaximumNArgs(1),
+	}
+	cyargs.AddCyContext(cmd)
+	cyargs.AddUseCaseFlag(cmd)
+	cyargs.AddStackVersionFlags(cmd)
+	cyargs.AddStackFormsInputFlags(cmd)
+
+	return cmd
+}
+
+func getConfig(cmd *cobra.Command, args []string) error {
+	org, project, environment, component, err := cyargs.GetCyContext(cmd)
+	if err != nil {
+		return err
+	}
+
+	useCase, _ := cyargs.GetUseCase(cmd)
+	if len(args) >= 1 && useCase == "" {
+		useCase = args[0]
+	} else if useCase == "" {
+		return fmt.Errorf("missing use-case argument")
+	}
+
+	api := common.NewAPI()
+	m := apiclient.NewAPIClient(api)
+
+	// Resolve stack version: --stack-version (new) or legacy flags.
+	// Bare --stack-version requires prefix form (tag:/branch:/sha:) since no stack-ref is available here.
+	tag, branch, hash, err := cyargs.ResolveStackVersionArg(cmd, m, org, "")
+	if err != nil {
+		return errors.Wrap(err, "failed to read stack version flags")
+	}
+
+	stackConfigs, _, err := m.GetComponentStackConfig(org, project, environment, component, useCase, tag, branch, hash)
+	if err != nil {
+		return cyout.PrintWithOptions(cmd, nil, err, "unable to get the stack configuration", printer.Options{})
+	}
+
+	useCaseConfig, err := common.FormUseCaseToFormVars(stackConfigs, useCase)
+	if err != nil {
+		return fmt.Errorf("failed to parse default form values for component %q with use-case %q: %w", component, useCase, err)
+	}
+
+	config, err := cyargs.GetStackformsVars(cmd, useCaseConfig)
+	return cyout.PrintWithOptions(cmd, config, err, "failed to fetch stack config.", printer.Options{})
+}

@@ -16,7 +16,7 @@ type YAMLFormatter struct {
 
 // New will parse params and return a YAMLFormatter
 func New(params map[string][]string) *YAMLFormatter {
-	var f = &YAMLFormatter{
+	f := &YAMLFormatter{
 		indentSize: 2,
 	}
 

@@ -9,8 +9,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/common"
-	"github.com/cycloidio/cycloid-cli/cmd/cycloid/middleware"
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
 )
 
 // ---------------------------------------------------------------------------
@@ -148,7 +148,7 @@ func CompletePluginInstallID(cmd *cobra.Command, args []string, toComplete strin
 		return cobra.AppendActiveHelp(nil, "missing org: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}
 
-	m := middleware.NewMiddleware(common.NewAPI())
+	m := apiclient.NewAPIClient(common.NewAPI())
 	plugins, _, err := m.ListPlugins(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list plugins: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
@@ -178,7 +178,7 @@ func CompletePluginInstallID(cmd *cobra.Command, args []string, toComplete strin
 
 // ResolvePluginInstallID resolves a numeric ID string or name to a uint32 plugin install ID.
 // The install ID lives at Plugin.Install.ID (not Plugin.ID which is the registry plugin ID).
-func ResolvePluginInstallID(org, nameOrID string, m middleware.Middleware) (uint32, error) {
+func ResolvePluginInstallID(org, nameOrID string, m apiclient.APIClient) (uint32, error) {
 	if id, err := strconv.ParseUint(nameOrID, 10, 32); err == nil {
 		return uint32(id), nil
 	}
@@ -209,7 +209,7 @@ func CompletePluginManagerID(cmd *cobra.Command, args []string, toComplete strin
 		return cobra.AppendActiveHelp(nil, "missing org: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}
 
-	m := middleware.NewMiddleware(common.NewAPI())
+	m := apiclient.NewAPIClient(common.NewAPI())
 	managers, _, err := m.ListPluginManagers(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list plugin managers: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
@@ -232,7 +232,7 @@ func CompletePluginManagerID(cmd *cobra.Command, args []string, toComplete strin
 }
 
 // ResolvePluginManagerID resolves a numeric ID, name, or URL to a plugin manager ID.
-func ResolvePluginManagerID(org, nameOrID string, m middleware.Middleware) (uint32, error) {
+func ResolvePluginManagerID(org, nameOrID string, m apiclient.APIClient) (uint32, error) {
 	if id, err := strconv.ParseUint(nameOrID, 10, 32); err == nil {
 		return uint32(id), nil
 	}
@@ -264,7 +264,7 @@ func CompletePluginRegistryID(cmd *cobra.Command, args []string, toComplete stri
 		return cobra.AppendActiveHelp(nil, "missing org: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}
 
-	m := middleware.NewMiddleware(common.NewAPI())
+	m := apiclient.NewAPIClient(common.NewAPI())
 	registries, _, err := m.ListPluginRegistries(org)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to list plugin registries: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
@@ -297,7 +297,7 @@ func CompletePluginRegistryID(cmd *cobra.Command, args []string, toComplete stri
 
 // ResolvePluginRegistryID resolves a numeric ID, name, or URL to a plugin registry ID.
 // URL matching is tried when the value starts with "http".
-func ResolvePluginRegistryID(org, nameOrID string, m middleware.Middleware) (uint32, error) {
+func ResolvePluginRegistryID(org, nameOrID string, m apiclient.APIClient) (uint32, error) {
 	if id, err := strconv.ParseUint(nameOrID, 10, 32); err == nil {
 		return uint32(id), nil
 	}
@@ -335,7 +335,7 @@ func CompletePluginIDFromRegistryFlag(cmd *cobra.Command, args []string, toCompl
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "missing org: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}
-	m := middleware.NewMiddleware(common.NewAPI())
+	m := apiclient.NewAPIClient(common.NewAPI())
 	registryID, err := ResolvePluginRegistryID(org, registryStr, m)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to resolve registry: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
@@ -369,7 +369,7 @@ func CompletePluginVersionID(cmd *cobra.Command, args []string, toComplete strin
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "missing org: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}
-	m := middleware.NewMiddleware(common.NewAPI())
+	m := apiclient.NewAPIClient(common.NewAPI())
 	registryID, err := ResolvePluginRegistryID(org, registryStr, m)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to resolve registry: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
@@ -408,7 +408,7 @@ func CompleteRegistryPluginID(cmd *cobra.Command, args []string, toComplete stri
 		return cobra.AppendActiveHelp(nil, "missing org: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
 	}
 
-	m := middleware.NewMiddleware(common.NewAPI())
+	m := apiclient.NewAPIClient(common.NewAPI())
 	registryID, err := ResolvePluginRegistryID(org, args[0], m)
 	if err != nil {
 		return cobra.AppendActiveHelp(nil, "failed to resolve registry: "+err.Error()), cobra.ShellCompDirectiveNoFileComp
@@ -435,7 +435,7 @@ func CompleteRegistryPluginID(cmd *cobra.Command, args []string, toComplete stri
 }
 
 // ResolveRegistryPluginID resolves a numeric ID or name to a plugin ID within a registry.
-func ResolveRegistryPluginID(org string, registryID uint32, nameOrID string, m middleware.Middleware) (uint32, error) {
+func ResolveRegistryPluginID(org string, registryID uint32, nameOrID string, m apiclient.APIClient) (uint32, error) {
 	if id, err := strconv.ParseUint(nameOrID, 10, 32); err == nil {
 		return uint32(id), nil
 	}

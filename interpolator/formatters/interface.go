@@ -12,12 +12,10 @@ const (
 	YAMLFormat AvailableFormat = "yaml"
 )
 
-var (
-	AvailableFormats = [...]AvailableFormat{
-		YAMLFormat,
-		JSONFormat,
-	}
-)
+var AvailableFormats = [...]AvailableFormat{
+	YAMLFormat,
+	JSONFormat,
+}
 
 type Formatter interface {
 	Format(data []any) (string, error)

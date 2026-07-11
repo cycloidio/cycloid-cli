@@ -1,0 +1,36 @@
+package registry
+
+import (
+	"github.com/spf13/cobra"
+
+	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
+	"github.com/cycloidio/cycloid-cli/cmd/common"
+	"github.com/cycloidio/cycloid-cli/internal/cyargs"
+	"github.com/cycloidio/cycloid-cli/internal/cyout"
+	"github.com/cycloidio/cycloid-cli/printer"
+)
+
+func NewListCommand() *cobra.Command {
+	return &cobra.Command{
+		Use:   "list",
+		Args:  cobra.NoArgs,
+		Short: "List plugin registries",
+		Example: `
+  cy plugin registry list --org my-org
+`,
+		RunE: listPluginRegistries,
+	}
+}
+
+func listPluginRegistries(cmd *cobra.Command, args []string) error {
+	org, err := cyargs.GetOrg(cmd)
+	if err != nil {
+		return err
+	}
+
+	api := common.NewAPI()
+	m := apiclient.NewAPIClient(api)
+
+	result, _, err := m.ListPluginRegistries(org)
+	return cyout.PrintWithOptions(cmd, result, err, "unable to list plugin registries", printer.Options{})
+}

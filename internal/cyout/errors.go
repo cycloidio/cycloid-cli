@@ -9,11 +9,11 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 
-	"github.com/cycloidio/cycloid-cli/client/models"
+	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
-// apiErrorInfo is satisfied by *middleware.APIResponseError.
-// Defined locally to avoid importing cmd/cycloid/middleware from internal/.
+// apiErrorInfo is satisfied by *apiclient.APIResponseError.
+// Defined locally to avoid importing cmd/apiclient from internal/.
 type apiErrorInfo interface {
 	error
 	HTTPStatusCode() int
