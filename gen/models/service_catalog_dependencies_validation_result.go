@@ -14,31 +14,23 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// ServiceCatalogDependenciesValidationResult ServiceCatalogValidationResult
+// ServiceCatalogDependenciesValidationResult ServiceCatalogDependenciesValidationResult
 //
-// The result of the Service Catalog dependencies validation. If errors and warnings are empty then it means that the dependencies are respected.
+// The result of the Service Catalog dependencies validation for a given project and environment. When unmet_dependencies is empty every dependency is instantiated and the stack can be instantiated.
 //
 // swagger:model ServiceCatalogDependenciesValidationResult
 type ServiceCatalogDependenciesValidationResult struct {
 
-	// errors
+	// Canonicals of the dependency stacks that are not instantiated yet in the target project and environment
 	// Required: true
-	Errors []string `json:"errors"`
-
-	// warnings
-	// Required: true
-	Warnings []string `json:"warnings"`
+	UnmetDependencies []string `json:"unmet_dependencies"`
 }
 
 // Validate validates this service catalog dependencies validation result
 func (m *ServiceCatalogDependenciesValidationResult) Validate(formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.validateErrors(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateWarnings(formats); err != nil {
+	if err := m.validateUnmetDependencies(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -48,18 +40,9 @@ func (m *ServiceCatalogDependenciesValidationResult) Validate(formats strfmt.Reg
 	return nil
 }
 
-func (m *ServiceCatalogDependenciesValidationResult) validateErrors(formats strfmt.Registry) error {
+func (m *ServiceCatalogDependenciesValidationResult) validateUnmetDependencies(formats strfmt.Registry) error {
 
-	if err := validate.Required("errors", "body", m.Errors); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (m *ServiceCatalogDependenciesValidationResult) validateWarnings(formats strfmt.Registry) error {
-
-	if err := validate.Required("warnings", "body", m.Warnings); err != nil {
+	if err := validate.Required("unmet_dependencies", "body", m.UnmetDependencies); err != nil {
 		return err
 	}
 

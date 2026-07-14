@@ -47,8 +47,13 @@ type ServiceCatalog struct {
 	// Default version of the stack, based on the Catalog Repository branch
 	DefaultVersionBranch string `json:"default_version_branch,omitempty"`
 
-	// dependencies
-	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
+	// Canonicals of the stacks that must be instantiated before this one.
+	// Read-only: dependencies can only be declared in the stack's
+	// .cycloid.yml source file and are refreshed from it; they cannot be
+	// set or changed through the API.
+	//
+	// Read Only: true
+	Dependencies []string `json:"dependencies"`
 
 	// description
 	Description string `json:"description,omitempty"`
@@ -148,10 +153,6 @@ func (m *ServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCreatedAt(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDependencies(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -296,36 +297,6 @@ func (m *ServiceCatalog) validateCreatedAt(formats strfmt.Registry) error {
 
 	if err := validate.MinimumUint("created_at", "body", *m.CreatedAt, 0, false); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (m *ServiceCatalog) validateDependencies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Dependencies) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Dependencies); i++ {
-		if swag.IsZero(m.Dependencies[i]) { // not required
-			continue
-		}
-
-		if m.Dependencies[i] != nil {
-			if err := m.Dependencies[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
 	}
 
 	return nil
@@ -581,10 +552,6 @@ func (m *ServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Reg
 		res = append(res, err)
 	}
 
-	if err := m.contextValidateDependencies(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateLabels(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -621,35 +588,6 @@ func (m *ServiceCatalog) contextValidateCloudProviders(ctx context.Context, form
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("cloud_providers" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
-	}
-
-	return nil
-}
-
-func (m *ServiceCatalog) contextValidateDependencies(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Dependencies); i++ {
-
-		if m.Dependencies[i] != nil {
-
-			if swag.IsZero(m.Dependencies[i]) { // not required
-				return nil
-			}
-
-			if err := m.Dependencies[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
 				}
 
 				return err

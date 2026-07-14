@@ -33,9 +33,6 @@ type NewServiceCatalog struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	Canonical string `json:"canonical,omitempty"`
 
-	// dependencies
-	Dependencies []*ServiceCatalogDependency `json:"dependencies"`
-
 	// description
 	Description string `json:"description,omitempty"`
 
@@ -81,10 +78,6 @@ func (m *NewServiceCatalog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCanonical(formats); err != nil {
-		res = append(res, err)
-	}
-
-	if err := m.validateDependencies(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -142,36 +135,6 @@ func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 
 	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
-	}
-
-	return nil
-}
-
-func (m *NewServiceCatalog) validateDependencies(formats strfmt.Registry) error {
-	if swag.IsZero(m.Dependencies) { // not required
-		return nil
-	}
-
-	for i := 0; i < len(m.Dependencies); i++ {
-		if swag.IsZero(m.Dependencies[i]) { // not required
-			continue
-		}
-
-		if m.Dependencies[i] != nil {
-			if err := m.Dependencies[i].Validate(formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
 	}
 
 	return nil
@@ -282,10 +245,6 @@ func (m *NewServiceCatalog) validateTechnologies(formats strfmt.Registry) error 
 func (m *NewServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
-	if err := m.contextValidateDependencies(ctx, formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.contextValidateTechnologies(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -293,35 +252,6 @@ func (m *NewServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
-	return nil
-}
-
-func (m *NewServiceCatalog) contextValidateDependencies(ctx context.Context, formats strfmt.Registry) error {
-
-	for i := 0; i < len(m.Dependencies); i++ {
-
-		if m.Dependencies[i] != nil {
-
-			if swag.IsZero(m.Dependencies[i]) { // not required
-				return nil
-			}
-
-			if err := m.Dependencies[i].ContextValidate(ctx, formats); err != nil {
-				ve := new(errors.Validation)
-				if stderrors.As(err, &ve) {
-					return ve.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-				ce := new(errors.CompositeError)
-				if stderrors.As(err, &ce) {
-					return ce.ValidateName("dependencies" + "." + strconv.Itoa(i))
-				}
-
-				return err
-			}
-		}
-
-	}
-
 	return nil
 }
 
