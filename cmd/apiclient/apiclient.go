@@ -11,6 +11,8 @@ import (
 	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
+//go:generate go tool mockgen -destination=mock/apiclient.go -package mock github.com/cycloidio/cycloid-cli/cmd/apiclient APIClient
+
 type APIClient interface {
 	UserLogin(org, email *string, password string) (*models.UserSession, *http.Response, error)
 	UserLoginToOrg(org, email, password string) (*models.UserSession, *http.Response, error)
