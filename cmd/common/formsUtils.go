@@ -19,7 +19,7 @@ func FormUseCaseToFormVars(stackConfig models.ServiceCatalogConfigs, useCaseName
 			output[*section.Name] = make(map[string]map[string]any)
 		}
 		for _, group := range section.Groups {
-			if _, ok := output[*group.Name]; !ok {
+			if _, ok := output[*section.Name][*group.Name]; !ok {
 				output[*section.Name][*group.Name] = make(map[string]any)
 			}
 
