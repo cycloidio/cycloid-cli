@@ -65,7 +65,7 @@ func (m *apiClient) CreateProject(org, projectName, project, description, config
 		Name:                      &projectName,
 		Description:               description,
 		Canonical:                 project,
-		ConfigRepositoryCanonical: &configRepository,
+		ConfigRepositoryCanonical: configRepository,
 		Owner:                     owner,
 		Icon:                      icon,
 		Color:                     color,

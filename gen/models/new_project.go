@@ -32,11 +32,10 @@ type NewProject struct {
 	Color string `json:"color,omitempty"`
 
 	// config repository canonical
-	// Required: true
 	// Max Length: 100
 	// Min Length: 3
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
-	ConfigRepositoryCanonical *string `json:"config_repository_canonical"`
+	ConfigRepositoryCanonical string `json:"config_repository_canonical,omitempty"`
 
 	// A description regarding the project to help identify/remember details,
 	// implementation, purpose, etc.
@@ -122,20 +121,19 @@ func (m *NewProject) validateColor(formats strfmt.Registry) error {
 }
 
 func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) error {
+	if swag.IsZero(m.ConfigRepositoryCanonical) { // not required
+		return nil
+	}
 
-	if err := validate.Required("config_repository_canonical", "body", m.ConfigRepositoryCanonical); err != nil {
+	if err := validate.MinLength("config_repository_canonical", "body", m.ConfigRepositoryCanonical, 3); err != nil {
 		return err
 	}
 
-	if err := validate.MinLength("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, 3); err != nil {
+	if err := validate.MaxLength("config_repository_canonical", "body", m.ConfigRepositoryCanonical, 100); err != nil {
 		return err
 	}
 
-	if err := validate.MaxLength("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, 100); err != nil {
-		return err
-	}
-
-	if err := validate.Pattern("config_repository_canonical", "body", *m.ConfigRepositoryCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("config_repository_canonical", "body", m.ConfigRepositoryCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
 		return err
 	}
 

@@ -35,6 +35,14 @@ type Component struct {
 	//
 	CloudProvider *CloudProvider `json:"cloud_provider,omitempty"`
 
+	// Status of the asynchronous projection of this component's saved
+	// StackForms configuration to its project's config git repository.
+	// The configuration is always persisted (DB source of truth); this
+	// reports whether the git mirror is up to date, catching up, or failing.
+	// Absent when there is nothing pending to mirror.
+	//
+	ConfigRepositorySyncStatus *ConfigRepositorySyncStatus `json:"config_repository_sync_status,omitempty"`
+
 	// created at
 	// Required: true
 	// Minimum: 0
@@ -97,6 +105,10 @@ func (m *Component) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateCloudProvider(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateConfigRepositorySyncStatus(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -181,6 +193,29 @@ func (m *Component) validateCloudProvider(formats strfmt.Registry) error {
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Component) validateConfigRepositorySyncStatus(formats strfmt.Registry) error {
+	if swag.IsZero(m.ConfigRepositorySyncStatus) { // not required
+		return nil
+	}
+
+	if m.ConfigRepositorySyncStatus != nil {
+		if err := m.ConfigRepositorySyncStatus.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("config_repository_sync_status")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("config_repository_sync_status")
 			}
 
 			return err
@@ -378,6 +413,10 @@ func (m *Component) ContextValidate(ctx context.Context, formats strfmt.Registry
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateConfigRepositorySyncStatus(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateEnvironment(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -416,6 +455,31 @@ func (m *Component) contextValidateCloudProvider(ctx context.Context, formats st
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("cloud_provider")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Component) contextValidateConfigRepositorySyncStatus(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ConfigRepositorySyncStatus != nil {
+
+		if swag.IsZero(m.ConfigRepositorySyncStatus) { // not required
+			return nil
+		}
+
+		if err := m.ConfigRepositorySyncStatus.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("config_repository_sync_status")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("config_repository_sync_status")
 			}
 
 			return err

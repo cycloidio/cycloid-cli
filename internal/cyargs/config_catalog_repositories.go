@@ -1,14 +1,10 @@
 package cyargs
 
 import (
-	"fmt"
-	"slices"
-
 	"github.com/spf13/cobra"
 
 	"github.com/cycloidio/cycloid-cli/cmd/apiclient"
 	"github.com/cycloidio/cycloid-cli/cmd/common"
-	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
 func AddCatalogRepositoryFlag(cmd *cobra.Command) string {
@@ -108,8 +104,7 @@ func CompleteConfigRepository(cmd *cobra.Command, args []string, toComplete stri
 	return configRepositories, cobra.ShellCompDirectiveNoFileComp
 }
 
-// GetConfigRepository return the config repository flag, if empty, will try to return
-// the current org default config repository
+// GetConfigRepository returns the config-repository flag value
 func GetConfigRepository(cmd *cobra.Command) (string, error) {
 	configRepository, err := cmd.Flags().GetString("config-repository")
 	if err != nil {
@@ -120,33 +115,6 @@ func GetConfigRepository(cmd *cobra.Command) (string, error) {
 }
 
 func GetDefaultConfigRepository(cmd *cobra.Command) (string, error) {
-	api := common.NewAPI()
-	m := apiclient.NewAPIClient(api)
-
-	org, err := GetOrg(cmd)
-	if err != nil {
-		return "", fmt.Errorf("failed to get default config repository, missing org argument: %w", err)
-	}
-
 	configRepository, _ := GetConfigRepository(cmd)
-	if configRepository != "" {
-		return configRepository, nil
-	}
-
-	// TODO: This behavior will be pushed to backend
-	// track issue: https://linear.app/cycloid/issue/BE-807/make-the-createproject-route-use-the-default-catalog-if
-	catalogRepos, _, err := m.ListConfigRepositories(org)
-	if err != nil {
-		return "", fmt.Errorf("failed to get the default config repository: %w", err)
-	}
-
-	index := slices.IndexFunc(catalogRepos, func(c *models.ConfigRepository) bool {
-		return *c.Default
-	})
-	if index == -1 {
-		docURL := "https://docs.cycloid.io/reference/config-and-catalog-repository/"
-		return "", fmt.Errorf("error: seems like your org %q does not have a default config repository, please add one using this doc: %q", org, docURL)
-	}
-
-	return *catalogRepos[index].Canonical, nil
+	return configRepository, nil
 }

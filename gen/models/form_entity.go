@@ -76,6 +76,9 @@ type FormEntity struct {
 	// The source is only used for the branch widget to reference the key of the SCS or CR that the branches have to be read from. Because a branch in itself cannot exist, the user has to indicate from which SCS or CR he wants to retrieve branches. The source has to reference the key of an entity of a widget: 'CyCRS' or 'CySCS'
 	Source string `json:"source,omitempty"`
 
+	// Ordered pipeline of steps applied to the resolved values (from static values, values_ref or dynamic options) before they are validated, mapped and rendered. Steps apply in the declared order.
+	Transform []*FormsTransformStep `json:"transform"`
+
 	// The type of data handled - used to manipulate/validate the input, and also validate default/values
 	// Required: true
 	// Enum: ["integer","float","string","array","boolean","map"]
@@ -169,6 +172,10 @@ func (m *FormEntity) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateTransform(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateType(formats); err != nil {
 		res = append(res, err)
 	}
@@ -226,6 +233,36 @@ func (m *FormEntity) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *FormEntity) validateTransform(formats strfmt.Registry) error {
+	if swag.IsZero(m.Transform) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Transform); i++ {
+		if swag.IsZero(m.Transform[i]) { // not required
+			continue
+		}
+
+		if m.Transform[i] != nil {
+			if err := m.Transform[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("transform" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("transform" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
 	}
 
 	return nil
@@ -385,6 +422,10 @@ func (m *FormEntity) ContextValidate(ctx context.Context, formats strfmt.Registr
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateTransform(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -409,6 +450,35 @@ func (m *FormEntity) contextValidateItems(ctx context.Context, formats strfmt.Re
 				ce := new(errors.CompositeError)
 				if stderrors.As(err, &ce) {
 					return ce.ValidateName("items" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
+	return nil
+}
+
+func (m *FormEntity) contextValidateTransform(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Transform); i++ {
+
+		if m.Transform[i] != nil {
+
+			if swag.IsZero(m.Transform[i]) { // not required
+				return nil
+			}
+
+			if err := m.Transform[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("transform" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("transform" + "." + strconv.Itoa(i))
 				}
 
 				return err

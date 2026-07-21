@@ -7,6 +7,8 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -21,6 +23,9 @@ import (
 // swagger:model FormsValuesRef
 type FormsValuesRef struct {
 
+	// Ordered pipeline of steps to apply to the fetched values
+	Transform []*FormsTransformStep `json:"transform"`
+
 	// The url to which fetch the results
 	// Required: true
 	URL *string `json:"url"`
@@ -30,6 +35,10 @@ type FormsValuesRef struct {
 func (m *FormsValuesRef) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateTransform(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateURL(formats); err != nil {
 		res = append(res, err)
 	}
@@ -37,6 +46,36 @@ func (m *FormsValuesRef) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *FormsValuesRef) validateTransform(formats strfmt.Registry) error {
+	if swag.IsZero(m.Transform) { // not required
+		return nil
+	}
+
+	for i := 0; i < len(m.Transform); i++ {
+		if swag.IsZero(m.Transform[i]) { // not required
+			continue
+		}
+
+		if m.Transform[i] != nil {
+			if err := m.Transform[i].Validate(formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("transform" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("transform" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
@@ -49,8 +88,46 @@ func (m *FormsValuesRef) validateURL(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this forms values ref based on context it is used
+// ContextValidate validate this forms values ref based on the context it is used
 func (m *FormsValuesRef) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateTransform(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *FormsValuesRef) contextValidateTransform(ctx context.Context, formats strfmt.Registry) error {
+
+	for i := 0; i < len(m.Transform); i++ {
+
+		if m.Transform[i] != nil {
+
+			if swag.IsZero(m.Transform[i]) { // not required
+				return nil
+			}
+
+			if err := m.Transform[i].ContextValidate(ctx, formats); err != nil {
+				ve := new(errors.Validation)
+				if stderrors.As(err, &ve) {
+					return ve.ValidateName("transform" + "." + strconv.Itoa(i))
+				}
+				ce := new(errors.CompositeError)
+				if stderrors.As(err, &ce) {
+					return ce.ValidateName("transform" + "." + strconv.Itoa(i))
+				}
+
+				return err
+			}
+		}
+
+	}
+
 	return nil
 }
 
