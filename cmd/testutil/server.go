@@ -72,6 +72,27 @@ func RunCLI(t *testing.T, serverURL string, args ...string) CLIResult {
 	return RunCLIWithSetup(t, serverURL, nil, args...)
 }
 
+// Execute runs the CLI root command with the given arguments and captures
+// its output. Unlike RunCLI, it does not stub api-url/api-key — it runs
+// against whatever backend and credentials the caller has already
+// configured (e.g. a live-backend e2e probe), rather than a canned server.
+func Execute(args ...string) CLIResult {
+	root := cmd.NewRootCommand()
+
+	var stdout, stderr bytes.Buffer
+	root.SetOut(&stdout)
+	root.SetErr(&stderr)
+	root.SetArgs(args)
+
+	err := root.Execute()
+
+	return CLIResult{
+		Stdout: stdout.String(),
+		Stderr: stderr.String(),
+		Err:    err,
+	}
+}
+
 // RunCLIWithSetup is like RunCLI but accepts a setup function that can
 // modify the root command before execution.
 func RunCLIWithSetup(t *testing.T, serverURL string, setup func(root *cobra.Command), args ...string) CLIResult {

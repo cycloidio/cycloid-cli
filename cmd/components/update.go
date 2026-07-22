@@ -96,21 +96,14 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 
 	// If no version flag was specified, preserve the current component's version
 	// instead of defaulting to the catalog's default (which may differ).
-	if tag == "" && branch == "" && hash == "" {
-		if currentVersion := ptr.Value(currentComponent.ServiceCatalog.Version); currentVersion != "" {
-			versions, _, listErr := m.ListStackVersions(org, stackRef)
-			if listErr == nil {
-				for _, v := range versions {
-					if ptr.Value(v.Name) == currentVersion {
-						if ptr.Value(v.Type) == "tag" {
-							tag = currentVersion
-						} else {
-							branch = currentVersion
-						}
-						break
-					}
-				}
-			}
+	if tag == "" && branch == "" && hash == "" && currentComponent.Version != nil {
+		switch ptr.Value(currentComponent.Version.Type) {
+		case "tag":
+			tag = ptr.Value(currentComponent.Version.Name)
+		case "branch":
+			branch = ptr.Value(currentComponent.Version.Name)
+		default:
+			hash = ptr.Value(currentComponent.Version.CommitHash)
 		}
 	}
 
