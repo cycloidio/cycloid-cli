@@ -37,26 +37,26 @@ type Organization struct {
 	// Required: true
 	CanChildrenCreateAppearance *bool `json:"can_children_create_appearance"`
 
-	// can children use dedicated authentication
-	// Required: true
-	CanChildrenUseDedicatedAuthentication *bool `json:"can_children_use_dedicated_authentication"`
-
 	// can children manage oidc mapping
 	// Required: true
 	CanChildrenManageOidcMapping *bool `json:"can_children_manage_oidc_mapping"`
+
+	// can children use dedicated authentication
+	// Required: true
+	CanChildrenUseDedicatedAuthentication *bool `json:"can_children_use_dedicated_authentication"`
 
 	// can create appearance
 	// Required: true
 	CanCreateAppearance *bool `json:"can_create_appearance"`
 
-	// can use dedicated authentication
-	// Required: true
-	CanUseDedicatedAuthentication *bool `json:"can_use_dedicated_authentication"`
-
 	// can manage oidc mapping
 	// Required: true
 	// Read Only: true
 	CanManageOidcMapping *bool `json:"can_manage_oidc_mapping"`
+
+	// can use dedicated authentication
+	// Required: true
+	CanUseDedicatedAuthentication *bool `json:"can_use_dedicated_authentication"`
 
 	// canonical
 	// Required: true
@@ -114,6 +114,9 @@ type Organization struct {
 	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
 	ParentCanonical *string `json:"parent_canonical,omitempty"`
 
+	// Display name of the immediate parent organization. Omitted when this organization is root.
+	ParentName *string `json:"parent_name,omitempty"`
+
 	// When true, SSO users can only join the organization if they have been explicitly invited
 	SsoInviteOnly *bool `json:"sso_invite_only,omitempty"`
 
@@ -154,11 +157,11 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCanChildrenUseDedicatedAuthentication(formats); err != nil {
+	if err := m.validateCanChildrenManageOidcMapping(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateCanChildrenManageOidcMapping(formats); err != nil {
+	if err := m.validateCanChildrenUseDedicatedAuthentication(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -166,11 +169,11 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateCanUseDedicatedAuthentication(formats); err != nil {
+	if err := m.validateCanManageOidcMapping(formats); err != nil {
 		res = append(res, err)
 	}
 
-	if err := m.validateCanManageOidcMapping(formats); err != nil {
+	if err := m.validateCanUseDedicatedAuthentication(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -315,18 +318,18 @@ func (m *Organization) validateCanChildrenCreateAppearance(formats strfmt.Regist
 	return nil
 }
 
-func (m *Organization) validateCanChildrenUseDedicatedAuthentication(formats strfmt.Registry) error {
+func (m *Organization) validateCanChildrenManageOidcMapping(formats strfmt.Registry) error {
 
-	if err := validate.Required("can_children_use_dedicated_authentication", "body", m.CanChildrenUseDedicatedAuthentication); err != nil {
+	if err := validate.Required("can_children_manage_oidc_mapping", "body", m.CanChildrenManageOidcMapping); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *Organization) validateCanChildrenManageOidcMapping(formats strfmt.Registry) error {
+func (m *Organization) validateCanChildrenUseDedicatedAuthentication(formats strfmt.Registry) error {
 
-	if err := validate.Required("can_children_manage_oidc_mapping", "body", m.CanChildrenManageOidcMapping); err != nil {
+	if err := validate.Required("can_children_use_dedicated_authentication", "body", m.CanChildrenUseDedicatedAuthentication); err != nil {
 		return err
 	}
 
@@ -342,18 +345,18 @@ func (m *Organization) validateCanCreateAppearance(formats strfmt.Registry) erro
 	return nil
 }
 
-func (m *Organization) validateCanUseDedicatedAuthentication(formats strfmt.Registry) error {
+func (m *Organization) validateCanManageOidcMapping(formats strfmt.Registry) error {
 
-	if err := validate.Required("can_use_dedicated_authentication", "body", m.CanUseDedicatedAuthentication); err != nil {
+	if err := validate.Required("can_manage_oidc_mapping", "body", m.CanManageOidcMapping); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (m *Organization) validateCanManageOidcMapping(formats strfmt.Registry) error {
+func (m *Organization) validateCanUseDedicatedAuthentication(formats strfmt.Registry) error {
 
-	if err := validate.Required("can_manage_oidc_mapping", "body", m.CanManageOidcMapping); err != nil {
+	if err := validate.Required("can_use_dedicated_authentication", "body", m.CanUseDedicatedAuthentication); err != nil {
 		return err
 	}
 
@@ -595,6 +598,10 @@ func (m *Organization) ContextValidate(ctx context.Context, formats strfmt.Regis
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateCanManageOidcMapping(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateSubscription(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -654,6 +661,15 @@ func (m *Organization) contextValidateAppearance(ctx context.Context, formats st
 
 			return err
 		}
+	}
+
+	return nil
+}
+
+func (m *Organization) contextValidateCanManageOidcMapping(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "can_manage_oidc_mapping", "body", m.CanManageOidcMapping); err != nil {
+		return err
 	}
 
 	return nil

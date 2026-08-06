@@ -37,9 +37,21 @@ type PluginInstall struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
+	// Whether the install is inherited from a parent organization
+	Inherited bool `json:"inherited,omitempty"`
+
+	// Canonical of the organization that owns the plugin install
+	OwnerOrganizationCanonical string `json:"owner_organization_canonical,omitempty"`
+
 	// Secret used by the frontend to generate webhooks for the Plugin
 	// Required: true
 	PmSecret *string `json:"pm_secret"`
+
+	// Whether the install is read-only (inherited from parent org)
+	ReadOnly bool `json:"read_only,omitempty"`
+
+	// setup
+	Setup *PluginInstallSetup `json:"setup,omitempty"`
 
 	// Status of the Plugin deployment process on Plugin Manager
 	// Required: true
@@ -51,6 +63,9 @@ type PluginInstall struct {
 	// Minimum: 0
 	UpdatedAt *uint64 `json:"updated_at"`
 
+	// URL-friendly slug for the plugin install, unique per organization
+	URLSlug string `json:"url_slug,omitempty"`
+
 	// Unique identifier of the Plugin Install
 	// Required: true
 	// Format: uuid
@@ -58,6 +73,10 @@ type PluginInstall struct {
 
 	// version
 	Version *PluginVersion `json:"version,omitempty"`
+
+	// Visibility scope of the plugin install
+	// Enum: ["local","shared"]
+	Visibility string `json:"visibility,omitempty"`
 }
 
 // Validate validates this plugin install
@@ -80,6 +99,10 @@ func (m *PluginInstall) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateSetup(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateStatus(formats); err != nil {
 		res = append(res, err)
 	}
@@ -93,6 +116,10 @@ func (m *PluginInstall) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateVersion(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateVisibility(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -141,6 +168,29 @@ func (m *PluginInstall) validatePmSecret(formats strfmt.Registry) error {
 
 	if err := validate.Required("pm_secret", "body", m.PmSecret); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *PluginInstall) validateSetup(formats strfmt.Registry) error {
+	if swag.IsZero(m.Setup) { // not required
+		return nil
+	}
+
+	if m.Setup != nil {
+		if err := m.Setup.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("setup")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("setup")
+			}
+
+			return err
+		}
 	}
 
 	return nil
@@ -241,9 +291,55 @@ func (m *PluginInstall) validateVersion(formats strfmt.Registry) error {
 	return nil
 }
 
+var pluginInstallTypeVisibilityPropEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["local","shared"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		pluginInstallTypeVisibilityPropEnum = append(pluginInstallTypeVisibilityPropEnum, v)
+	}
+}
+
+const (
+
+	// PluginInstallVisibilityLocal captures enum value "local"
+	PluginInstallVisibilityLocal string = "local"
+
+	// PluginInstallVisibilityShared captures enum value "shared"
+	PluginInstallVisibilityShared string = "shared"
+)
+
+// prop value enum
+func (m *PluginInstall) validateVisibilityEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, pluginInstallTypeVisibilityPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *PluginInstall) validateVisibility(formats strfmt.Registry) error {
+	if swag.IsZero(m.Visibility) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateVisibilityEnum("visibility", "body", m.Visibility); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // ContextValidate validate this plugin install based on the context it is used
 func (m *PluginInstall) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
+
+	if err := m.contextValidateSetup(ctx, formats); err != nil {
+		res = append(res, err)
+	}
 
 	if err := m.contextValidateVersion(ctx, formats); err != nil {
 		res = append(res, err)
@@ -252,6 +348,31 @@ func (m *PluginInstall) ContextValidate(ctx context.Context, formats strfmt.Regi
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *PluginInstall) contextValidateSetup(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Setup != nil {
+
+		if swag.IsZero(m.Setup) { // not required
+			return nil
+		}
+
+		if err := m.Setup.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("setup")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("setup")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -291,6 +412,61 @@ func (m *PluginInstall) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *PluginInstall) UnmarshalBinary(b []byte) error {
 	var res PluginInstall
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PluginInstallSetup Per-install runtime setup overrides
+//
+// swagger:model PluginInstallSetup
+type PluginInstallSetup struct {
+
+	// K8s resource limit for CPU
+	MaxCPU string `json:"max_cpu,omitempty"`
+
+	// K8s resource limit for memory
+	MaxMemory string `json:"max_memory,omitempty"`
+
+	// HPA maximum replicas (mutually exclusive with replicas)
+	MaxReplicas int32 `json:"max_replicas,omitempty"`
+
+	// K8s resource request for CPU
+	MinCPU string `json:"min_cpu,omitempty"`
+
+	// K8s resource request for memory
+	MinMemory string `json:"min_memory,omitempty"`
+
+	// HPA minimum replicas (mutually exclusive with replicas)
+	MinReplicas int32 `json:"min_replicas,omitempty"`
+
+	// Static replica count (mutually exclusive with min/max_replicas)
+	Replicas int32 `json:"replicas,omitempty"`
+}
+
+// Validate validates this plugin install setup
+func (m *PluginInstallSetup) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this plugin install setup based on context it is used
+func (m *PluginInstallSetup) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PluginInstallSetup) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PluginInstallSetup) UnmarshalBinary(b []byte) error {
+	var res PluginInstallSetup
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

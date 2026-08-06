@@ -53,9 +53,8 @@ type FormEntity struct {
 	// Sub-entity definitions for the repeatable widget. Each item defines a field that users can fill N times. Only valid when widget is 'repeatable'.
 	Items []*FormEntity `json:"items"`
 
-	// The key is the name of variables for the ansible/pipeline/terraform technologies. If this is a first level variable then: keyX. If you have multiple terraform modules then use: module.Y.keyX to help identify the unique variable.
-	// Required: true
-	Key *string `json:"key"`
+	// The key is the name of variables for the ansible/pipeline/terraform technologies. If this is a first level variable then: keyX. If you have multiple terraform modules then use: module.Y.keyX to help identify the unique variable. Required for every widget except 'info': an info block carries no value, so it needs no addressing key, and any key given is ignored.
+	Key string `json:"key,omitempty"`
 
 	// This is filled only when a shared variable does not have the same values anymore. e.g. a variable 'foo' was shared between 'ansible' and 'pipeline', was set to 'bar', but now the value found for 'ansible' is 'bus', while it's still 'bar' for the pipeline. In such situation, the Forms don't know anymore which is the correct data and will return both, while unsetting the 'Current' field.
 	MismatchValues []any `json:"mismatch_values"`
@@ -73,16 +72,18 @@ type FormEntity struct {
 	// Whether or not the field is required - that helps distinguish "optional" variables and allows to set default if necessary and present
 	Required bool `json:"required,omitempty"`
 
+	// Enables ${variable_name} interpolation inside the values and default fields. When true, ${key} tokens matching sibling entity keys in the same use_case are resolved at render time using the referenced field's current value. Supports concatenation and escape syntax ($${key} produces literal ${key}).
+	ResolveValues bool `json:"resolve_values,omitempty"`
+
 	// The source is only used for the branch widget to reference the key of the SCS or CR that the branches have to be read from. Because a branch in itself cannot exist, the user has to indicate from which SCS or CR he wants to retrieve branches. The source has to reference the key of an entity of a widget: 'CyCRS' or 'CySCS'
 	Source string `json:"source,omitempty"`
 
 	// Ordered pipeline of steps applied to the resolved values (from static values, values_ref or dynamic options) before they are validated, mapped and rendered. Steps apply in the declared order.
 	Transform []*FormsTransformStep `json:"transform"`
 
-	// The type of data handled - used to manipulate/validate the input, and also validate default/values
-	// Required: true
+	// The type of data handled - used to manipulate/validate the input, and also validate default/values. Required for every widget except 'info' - it carries no value, so its type is not applicable and ignored if set.
 	// Enum: ["integer","float","string","array","boolean","map"]
-	Type *string `json:"type"`
+	Type string `json:"type,omitempty"`
 
 	// The unit to be displayed for the variable, helping to know what's being manipulated: amount of servers, Go, users, etc.
 	Unit string `json:"unit,omitempty"`
@@ -110,9 +111,12 @@ type FormEntity struct {
 	// It's a URL in which the values have to be fetched from
 	ValuesRef string `json:"values_ref,omitempty"`
 
+	// values ref config
+	ValuesRefConfig *FormsValuesRefConfig `json:"values_ref_config,omitempty"`
+
 	// The widget used to display the data in the most suitable way
 	// Required: true
-	// Enum: ["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","date_time","hidden","repeatable"]
+	// Enum: ["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","date_time","hidden","repeatable","info"]
 	Widget *string `json:"widget"`
 
 	// Some specific configuration that could be applied to that widget. Currently only a few widgets can be configured:
@@ -164,10 +168,6 @@ func (m *FormEntity) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
-	if err := m.validateKey(formats); err != nil {
-		res = append(res, err)
-	}
-
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -177,6 +177,10 @@ func (m *FormEntity) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValuesRefConfig(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -215,15 +219,6 @@ func (m *FormEntity) validateItems(formats strfmt.Registry) error {
 			}
 		}
 
-	}
-
-	return nil
-}
-
-func (m *FormEntity) validateKey(formats strfmt.Registry) error {
-
-	if err := validate.Required("key", "body", m.Key); err != nil {
-		return err
 	}
 
 	return nil
@@ -310,14 +305,36 @@ func (m *FormEntity) validateTypeEnum(path, location string, value string) error
 }
 
 func (m *FormEntity) validateType(formats strfmt.Registry) error {
-
-	if err := validate.Required("type", "body", m.Type); err != nil {
-		return err
+	if swag.IsZero(m.Type) { // not required
+		return nil
 	}
 
 	// value enum
-	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *FormEntity) validateValuesRefConfig(formats strfmt.Registry) error {
+	if swag.IsZero(m.ValuesRefConfig) { // not required
+		return nil
+	}
+
+	if m.ValuesRefConfig != nil {
+		if err := m.ValuesRefConfig.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("values_ref_config")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("values_ref_config")
+			}
+
+			return err
+		}
 	}
 
 	return nil
@@ -327,7 +344,7 @@ var formEntityTypeWidgetPropEnum []any
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","date_time","hidden","repeatable"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["auto_complete","dropdown","radios","slider_list","slider_range","number","simple_text","switch","text_area","cy_cred","cy_scs","cy_crs","cy_branch","cy_inventory_resource","cy_inventory_output","date_time","hidden","repeatable","info"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -390,6 +407,9 @@ const (
 
 	// FormEntityWidgetRepeatable captures enum value "repeatable"
 	FormEntityWidgetRepeatable string = "repeatable"
+
+	// FormEntityWidgetInfo captures enum value "info"
+	FormEntityWidgetInfo string = "info"
 )
 
 // prop value enum
@@ -423,6 +443,10 @@ func (m *FormEntity) ContextValidate(ctx context.Context, formats strfmt.Registr
 	}
 
 	if err := m.contextValidateTransform(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.contextValidateValuesRefConfig(ctx, formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -485,6 +509,31 @@ func (m *FormEntity) contextValidateTransform(ctx context.Context, formats strfm
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *FormEntity) contextValidateValuesRefConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.ValuesRefConfig != nil {
+
+		if swag.IsZero(m.ValuesRefConfig) { // not required
+			return nil
+		}
+
+		if err := m.ValuesRefConfig.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("values_ref_config")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("values_ref_config")
+			}
+
+			return err
+		}
 	}
 
 	return nil

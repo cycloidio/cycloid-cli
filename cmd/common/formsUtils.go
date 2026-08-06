@@ -25,7 +25,7 @@ func FormUseCaseToFormVars(stackConfig models.ServiceCatalogConfigs, useCaseName
 
 			for _, widget := range group.Vars {
 				if widget.Default != nil {
-					output[*section.Name][*group.Name][*widget.Key] = widget.Default
+					output[*section.Name][*group.Name][widget.Key] = widget.Default
 				}
 			}
 		}

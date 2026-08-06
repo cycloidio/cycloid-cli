@@ -266,6 +266,14 @@ type APIClient interface {
 	ListComponentPluginWidgets(org, project, env, component string) ([]*models.PluginWidget, *http.Response, error)
 	QueryComponentPluginWidget(org, project, env, component string, widgetID uint32) (*models.PluginWidgetData, *http.Response, error)
 
+	// plugin install sharing
+	GetPluginInstallSharing(org string, pluginInstallID uint32) (*models.PluginInstallSharing, *http.Response, error)
+	SetPluginInstallSharing(org string, pluginInstallID uint32, visibility, mode string, organizations []string) (*http.Response, error)
+
+	// plugin widget views
+	ListPluginWidgetViews(org string, pluginInstallID uint32) ([]*models.PluginWidgetView, *http.Response, error)
+	UpdatePluginWidgetView(org string, widgetViewID uint32, enabled bool, urlSlug string) (*http.Response, error)
+
 	// CostEstimation will consume the backend API endpoint for cost estimation
 	CostEstimation(org string, plan []byte) (*models.CostEstimationResult, *http.Response, error)
 

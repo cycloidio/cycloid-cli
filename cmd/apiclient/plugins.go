@@ -490,3 +490,69 @@ func (m *apiClient) QueryComponentPluginWidget(org, project, env, component stri
 	}
 	return result, resp, nil
 }
+
+// --- Plugin Install Sharing ---
+
+func (m *apiClient) GetPluginInstallSharing(org string, pluginInstallID uint32) (*models.PluginInstallSharing, *http.Response, error) {
+	var result *models.PluginInstallSharing
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugins", fmt.Sprint(pluginInstallID), "sharing"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *apiClient) SetPluginInstallSharing(org string, pluginInstallID uint32, visibility, mode string, organizations []string) (*http.Response, error) {
+	body := struct {
+		Visibility    string   `json:"visibility"`
+		Mode          string   `json:"mode,omitempty"`
+		Organizations []string `json:"organizations"`
+	}{
+		Visibility:    visibility,
+		Mode:          mode,
+		Organizations: organizations,
+	}
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugins", fmt.Sprint(pluginInstallID), "sharing"},
+		Body:         body,
+	}, nil)
+	return resp, err
+}
+
+// --- Plugin Widget Views ---
+
+func (m *apiClient) ListPluginWidgetViews(org string, pluginInstallID uint32) ([]*models.PluginWidgetView, *http.Response, error) {
+	var result []*models.PluginWidgetView
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugins", fmt.Sprint(pluginInstallID), "widget-views"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *apiClient) UpdatePluginWidgetView(org string, widgetViewID uint32, enabled bool, urlSlug string) (*http.Response, error) {
+	body := struct {
+		Enabled bool   `json:"enabled"`
+		URLSlug string `json:"url_slug"`
+	}{
+		Enabled: enabled,
+		URLSlug: urlSlug,
+	}
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugins", "widget-views", fmt.Sprint(widgetViewID)},
+		Body:         body,
+	}, nil)
+	return resp, err
+}

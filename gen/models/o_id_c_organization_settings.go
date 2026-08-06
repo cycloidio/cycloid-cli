@@ -27,7 +27,7 @@ type OIDCOrganizationSettings struct {
 
 	// Whether an enabled OIDC integration exists anywhere in the organization's hierarchy (self or ancestors). Read-only.
 	// Read Only: true
-	OidcConfiguredInHierarchy bool `json:"oidc_configured_in_hierarchy"`
+	OidcConfiguredInHierarchy *bool `json:"oidc_configured_in_hierarchy,omitempty"`
 
 	// When true, local member/team/invite edits are disabled (strict mode).
 	// Required: true
@@ -109,8 +109,26 @@ func (m *OIDCOrganizationSettings) validateOidcNoMatchPolicy(formats strfmt.Regi
 	return nil
 }
 
-// ContextValidate validates this o ID c organization settings based on context it is used
+// ContextValidate validate this o ID c organization settings based on the context it is used
 func (m *OIDCOrganizationSettings) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateOidcConfiguredInHierarchy(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *OIDCOrganizationSettings) contextValidateOidcConfiguredInHierarchy(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "oidc_configured_in_hierarchy", "body", m.OidcConfiguredInHierarchy); err != nil {
+		return err
+	}
+
 	return nil
 }
 

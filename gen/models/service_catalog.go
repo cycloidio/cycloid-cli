@@ -47,11 +47,7 @@ type ServiceCatalog struct {
 	// Default version of the stack, based on the Catalog Repository branch
 	DefaultVersionBranch string `json:"default_version_branch,omitempty"`
 
-	// Canonicals of the stacks that must be instantiated before this one.
-	// Read-only: dependencies can only be declared in the stack's
-	// .cycloid.yml source file and are refreshed from it; they cannot be
-	// set or changed through the API.
-	//
+	// Canonicals of the stacks that must be instantiated before this one. Read-only: dependencies can only be declared in the stack's .cycloid.yml source file and are refreshed from it; they cannot be set or changed through the API.
 	// Read Only: true
 	Dependencies []string `json:"dependencies"`
 
@@ -552,6 +548,10 @@ func (m *ServiceCatalog) ContextValidate(ctx context.Context, formats strfmt.Reg
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateDependencies(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateLabels(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -594,6 +594,15 @@ func (m *ServiceCatalog) contextValidateCloudProviders(ctx context.Context, form
 			}
 		}
 
+	}
+
+	return nil
+}
+
+func (m *ServiceCatalog) contextValidateDependencies(ctx context.Context, formats strfmt.Registry) error {
+
+	if err := validate.ReadOnly(ctx, "dependencies", "body", m.Dependencies); err != nil {
+		return err
 	}
 
 	return nil

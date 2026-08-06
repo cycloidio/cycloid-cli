@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	stderrors "errors"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -29,6 +30,9 @@ type UpdatePluginInstall struct {
 	// Required: true
 	// Minimum: 1
 	PluginVersionID *uint32 `json:"plugin_version_id"`
+
+	// setup
+	Setup *UpdatePluginInstallSetup `json:"setup,omitempty"`
 }
 
 // Validate validates this update plugin install
@@ -40,6 +44,10 @@ func (m *UpdatePluginInstall) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validatePluginVersionID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSetup(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -71,8 +79,65 @@ func (m *UpdatePluginInstall) validatePluginVersionID(formats strfmt.Registry) e
 	return nil
 }
 
-// ContextValidate validates this update plugin install based on context it is used
+func (m *UpdatePluginInstall) validateSetup(formats strfmt.Registry) error {
+	if swag.IsZero(m.Setup) { // not required
+		return nil
+	}
+
+	if m.Setup != nil {
+		if err := m.Setup.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("setup")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("setup")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+// ContextValidate validate this update plugin install based on the context it is used
 func (m *UpdatePluginInstall) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSetup(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *UpdatePluginInstall) contextValidateSetup(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Setup != nil {
+
+		if swag.IsZero(m.Setup) { // not required
+			return nil
+		}
+
+		if err := m.Setup.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("setup")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("setup")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -87,6 +152,61 @@ func (m *UpdatePluginInstall) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *UpdatePluginInstall) UnmarshalBinary(b []byte) error {
 	var res UpdatePluginInstall
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// UpdatePluginInstallSetup Optional runtime setup overrides
+//
+// swagger:model UpdatePluginInstallSetup
+type UpdatePluginInstallSetup struct {
+
+	// max cpu
+	MaxCPU string `json:"max_cpu,omitempty"`
+
+	// max memory
+	MaxMemory string `json:"max_memory,omitempty"`
+
+	// max replicas
+	MaxReplicas int32 `json:"max_replicas,omitempty"`
+
+	// min cpu
+	MinCPU string `json:"min_cpu,omitempty"`
+
+	// min memory
+	MinMemory string `json:"min_memory,omitempty"`
+
+	// min replicas
+	MinReplicas int32 `json:"min_replicas,omitempty"`
+
+	// replicas
+	Replicas int32 `json:"replicas,omitempty"`
+}
+
+// Validate validates this update plugin install setup
+func (m *UpdatePluginInstallSetup) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this update plugin install setup based on context it is used
+func (m *UpdatePluginInstallSetup) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *UpdatePluginInstallSetup) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *UpdatePluginInstallSetup) UnmarshalBinary(b []byte) error {
+	var res UpdatePluginInstallSetup
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

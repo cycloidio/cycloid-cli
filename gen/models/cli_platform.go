@@ -15,7 +15,9 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// CliPlatform A single os/arch download target for the cy CLI.
+// CliPlatform CliPlatform
+//
+// A single os/arch download target for the cy CLI.
 //
 // swagger:model CliPlatform
 type CliPlatform struct {

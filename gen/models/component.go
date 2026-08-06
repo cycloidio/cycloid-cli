@@ -35,12 +35,7 @@ type Component struct {
 	//
 	CloudProvider *CloudProvider `json:"cloud_provider,omitempty"`
 
-	// Status of the asynchronous projection of this component's saved
-	// StackForms configuration to its project's config git repository.
-	// The configuration is always persisted (DB source of truth); this
-	// reports whether the git mirror is up to date, catching up, or failing.
-	// Absent when there is nothing pending to mirror.
-	//
+	// Status of the asynchronous projection of this component's saved StackForms configuration to its project's config git repository. The configuration is always persisted (DB source of truth); this reports whether the git mirror is up to date, catching up, or failing. Absent when there is nothing pending to mirror.
 	ConfigRepositorySyncStatus *ConfigRepositorySyncStatus `json:"config_repository_sync_status,omitempty"`
 
 	// created at

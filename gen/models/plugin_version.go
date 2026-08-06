@@ -8,6 +8,7 @@ package models
 import (
 	"context"
 	"encoding/json"
+	stderrors "errors"
 	"strconv"
 
 	"github.com/go-openapi/errors"
@@ -54,6 +55,9 @@ type PluginVersion struct {
 	// Policies in which the Plugin Version is scoped
 	Scope []string `json:"scope"`
 
+	// setup
+	Setup *PluginVersionSetup `json:"setup,omitempty"`
+
 	// Status of the current Plugin Version creation process
 	// Required: true
 	// Enum: ["pending","processing","failed","success"]
@@ -85,6 +89,10 @@ func (m *PluginVersion) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateName(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateSetup(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -152,6 +160,29 @@ func (m *PluginVersion) validateName(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *PluginVersion) validateSetup(formats strfmt.Registry) error {
+	if swag.IsZero(m.Setup) { // not required
+		return nil
+	}
+
+	if m.Setup != nil {
+		if err := m.Setup.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("setup")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("setup")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 var pluginVersionTypeStatusPropEnum []any
 
 func init() {
@@ -214,8 +245,42 @@ func (m *PluginVersion) validateURL(formats strfmt.Registry) error {
 	return nil
 }
 
-// ContextValidate validates this plugin version based on context it is used
+// ContextValidate validate this plugin version based on the context it is used
 func (m *PluginVersion) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	var res []error
+
+	if err := m.contextValidateSetup(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
+	if len(res) > 0 {
+		return errors.CompositeValidationError(res...)
+	}
+	return nil
+}
+
+func (m *PluginVersion) contextValidateSetup(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Setup != nil {
+
+		if swag.IsZero(m.Setup) { // not required
+			return nil
+		}
+
+		if err := m.Setup.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("setup")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("setup")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -230,6 +295,55 @@ func (m *PluginVersion) MarshalBinary() ([]byte, error) {
 // UnmarshalBinary interface implementation
 func (m *PluginVersion) UnmarshalBinary(b []byte) error {
 	var res PluginVersion
+	if err := swag.ReadJSON(b, &res); err != nil {
+		return err
+	}
+	*m = res
+	return nil
+}
+
+// PluginVersionSetup Runtime setup declared in the plugin manifest
+//
+// swagger:model PluginVersionSetup
+type PluginVersionSetup struct {
+
+	// K8s resource limit for CPU
+	MaxCPU string `json:"max_cpu,omitempty"`
+
+	// K8s resource limit for memory
+	MaxMemory string `json:"max_memory,omitempty"`
+
+	// K8s resource request for CPU
+	MinCPU string `json:"min_cpu,omitempty"`
+
+	// K8s resource request for memory
+	MinMemory string `json:"min_memory,omitempty"`
+
+	// HTTP path for K8s readiness probe
+	ReadinessPath string `json:"readiness_path,omitempty"`
+}
+
+// Validate validates this plugin version setup
+func (m *PluginVersionSetup) Validate(formats strfmt.Registry) error {
+	return nil
+}
+
+// ContextValidate validates this plugin version setup based on context it is used
+func (m *PluginVersionSetup) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
+	return nil
+}
+
+// MarshalBinary interface implementation
+func (m *PluginVersionSetup) MarshalBinary() ([]byte, error) {
+	if m == nil {
+		return nil, nil
+	}
+	return swag.WriteJSON(m)
+}
+
+// UnmarshalBinary interface implementation
+func (m *PluginVersionSetup) UnmarshalBinary(b []byte) error {
+	var res PluginVersionSetup
 	if err := swag.ReadJSON(b, &res); err != nil {
 		return err
 	}

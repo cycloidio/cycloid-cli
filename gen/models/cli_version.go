@@ -16,7 +16,9 @@ import (
 	"github.com/go-openapi/validate"
 )
 
-// CliVersion cy CLI release manifest served by the backend.
+// CliVersion CliVersion
+//
+// cy CLI release manifest served by the backend.
 //
 // swagger:model CliVersion
 type CliVersion struct {

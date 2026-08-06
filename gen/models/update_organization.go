@@ -25,11 +25,11 @@ type UpdateOrganization struct {
 	// can children create appearance
 	CanChildrenCreateAppearance bool `json:"can_children_create_appearance,omitempty"`
 
-	// can children use dedicated authentication
-	CanChildrenUseDedicatedAuthentication bool `json:"can_children_use_dedicated_authentication,omitempty"`
-
 	// can children manage oidc mapping
 	CanChildrenManageOidcMapping bool `json:"can_children_manage_oidc_mapping,omitempty"`
+
+	// can children use dedicated authentication
+	CanChildrenUseDedicatedAuthentication bool `json:"can_children_use_dedicated_authentication,omitempty"`
 
 	// Message displayed to users when organization creation is restricted
 	CreationRestrictedMessage *string `json:"creation_restricted_message,omitempty"`

@@ -6,6 +6,7 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/plugins/component"
 	"github.com/cycloidio/cycloid-cli/cmd/plugins/manager"
 	"github.com/cycloidio/cycloid-cli/cmd/plugins/registry"
+	"github.com/cycloidio/cycloid-cli/cmd/plugins/share"
 	"github.com/cycloidio/cycloid-cli/cmd/plugins/widget"
 )
 
@@ -72,6 +73,7 @@ and 'cy plugin uninstall' to remove.`,
 		component.NewCommands(),
 		manager.NewCommands(),
 		registry.NewCommands(),
+		share.NewCommands(),
 		widget.NewCommands(),
 	)
 	return cmd

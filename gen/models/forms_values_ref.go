@@ -23,6 +23,9 @@ import (
 // swagger:model FormsValuesRef
 type FormsValuesRef struct {
 
+	// config
+	Config *FormsValuesRefConfig `json:"config,omitempty"`
+
 	// Ordered pipeline of steps to apply to the fetched values
 	Transform []*FormsTransformStep `json:"transform"`
 
@@ -35,6 +38,10 @@ type FormsValuesRef struct {
 func (m *FormsValuesRef) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateConfig(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateTransform(formats); err != nil {
 		res = append(res, err)
 	}
@@ -46,6 +53,29 @@ func (m *FormsValuesRef) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *FormsValuesRef) validateConfig(formats strfmt.Registry) error {
+	if swag.IsZero(m.Config) { // not required
+		return nil
+	}
+
+	if m.Config != nil {
+		if err := m.Config.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("config")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("config")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
@@ -92,6 +122,10 @@ func (m *FormsValuesRef) validateURL(formats strfmt.Registry) error {
 func (m *FormsValuesRef) ContextValidate(ctx context.Context, formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.contextValidateConfig(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateTransform(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -99,6 +133,31 @@ func (m *FormsValuesRef) ContextValidate(ctx context.Context, formats strfmt.Reg
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *FormsValuesRef) contextValidateConfig(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Config != nil {
+
+		if swag.IsZero(m.Config) { // not required
+			return nil
+		}
+
+		if err := m.Config.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("config")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("config")
+			}
+
+			return err
+		}
+	}
+
 	return nil
 }
 
