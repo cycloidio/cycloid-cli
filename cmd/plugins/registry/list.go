@@ -7,7 +7,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/common"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/internal/cyout"
-	"github.com/cycloidio/cycloid-cli/printer"
 )
 
 func NewListCommand() *cobra.Command {
@@ -32,5 +31,5 @@ func listPluginRegistries(cmd *cobra.Command, args []string) error {
 	m := apiclient.NewAPIClient(api)
 
 	result, _, err := m.ListPluginRegistries(org)
-	return cyout.PrintWithOptions(cmd, result, err, "unable to list plugin registries", printer.Options{})
+	return cyout.PrintWithOptions(cmd, result, err, "unable to list plugin registries", registryTableOptions)
 }

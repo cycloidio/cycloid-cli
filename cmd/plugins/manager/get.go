@@ -7,7 +7,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/common"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/internal/cyout"
-	"github.com/cycloidio/cycloid-cli/printer"
 )
 
 func NewGetCommand() *cobra.Command {
@@ -39,5 +38,5 @@ func getPluginManager(cmd *cobra.Command, args []string) error {
 	}
 
 	result, _, err := m.GetPluginManager(org, id)
-	return cyout.PrintWithOptions(cmd, result, err, "unable to get plugin manager", printer.Options{})
+	return cyout.PrintWithOptions(cmd, result, err, "unable to get plugin manager", managerTableOptions)
 }

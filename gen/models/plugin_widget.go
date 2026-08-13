@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	stderrors "errors"
 
 	"github.com/go-openapi/errors"
@@ -30,7 +31,8 @@ type PluginWidget struct {
 	// Required: true
 	IsDefault *bool `json:"is_default"`
 
-	// Placement configuration of the widget
+	// Placement configuration of the widget. When type is "component", requires "tab_name" in config. When type is "sideMenuPage", requires "title" and "description" in config.
+	//
 	// Required: true
 	Placement any `json:"placement"`
 
@@ -39,6 +41,7 @@ type PluginWidget struct {
 
 	// Type of the widget
 	// Required: true
+	// Enum: ["table","iframe"]
 	Type *string `json:"type"`
 
 	// URL-friendly slug derived from the widget title
@@ -136,9 +139,43 @@ func (m *PluginWidget) validateRelation(formats strfmt.Registry) error {
 	return nil
 }
 
+var pluginWidgetTypeTypePropEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["table","iframe"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		pluginWidgetTypeTypePropEnum = append(pluginWidgetTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// PluginWidgetTypeTable captures enum value "table"
+	PluginWidgetTypeTable string = "table"
+
+	// PluginWidgetTypeIframe captures enum value "iframe"
+	PluginWidgetTypeIframe string = "iframe"
+)
+
+// prop value enum
+func (m *PluginWidget) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, pluginWidgetTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *PluginWidget) validateType(formats strfmt.Registry) error {
 
 	if err := validate.Required("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", *m.Type); err != nil {
 		return err
 	}
 

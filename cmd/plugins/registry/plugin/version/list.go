@@ -7,7 +7,6 @@ import (
 	"github.com/cycloidio/cycloid-cli/cmd/common"
 	"github.com/cycloidio/cycloid-cli/internal/cyargs"
 	"github.com/cycloidio/cycloid-cli/internal/cyout"
-	"github.com/cycloidio/cycloid-cli/printer"
 )
 
 func NewListCommand() *cobra.Command {
@@ -41,5 +40,5 @@ func listVersions(cmd *cobra.Command, args []string) error {
 	}
 
 	result, _, err := m.ListPluginVersions(org, registryID, pluginID)
-	return cyout.PrintWithOptions(cmd, result, err, "unable to list plugin versions", printer.Options{})
+	return cyout.PrintWithOptions(cmd, result, err, "unable to list plugin versions", versionTableOptions)
 }

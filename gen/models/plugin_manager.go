@@ -32,7 +32,8 @@ type PluginManager struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
-	// Status of the Plugin Manager invitation
+	// Status of the Plugin Manager invitation. Created as "pending", then transitions to "accepted" or "rejected" via the update endpoint. Cannot be set back to "pending".
+	//
 	// Required: true
 	// Enum: ["pending","accepted"]
 	InviteStatus *string `json:"invite_status"`

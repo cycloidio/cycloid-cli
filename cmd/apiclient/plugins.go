@@ -103,8 +103,8 @@ func (m *apiClient) ListPlugins(org string) ([]*models.Plugin, *http.Response, e
 	return result, resp, nil
 }
 
-func (m *apiClient) GetPlugin(org string, id uint32) (*models.PluginInstall, *http.Response, error) {
-	var result *models.PluginInstall
+func (m *apiClient) GetPlugin(org string, id uint32) (*models.Plugin, *http.Response, error) {
+	var result *models.Plugin
 	resp, err := m.GenericRequest(Request{
 		Method:       "GET",
 		Organization: &org,
@@ -171,19 +171,17 @@ func (m *apiClient) ListPluginRegistries(org string) ([]*models.PluginRegistry, 
 	return result, resp, nil
 }
 
-// GetPluginRegistry retrieves a single plugin registry by ID.
-// The API has no GET-by-ID endpoint for registries, so this lists all and filters.
 func (m *apiClient) GetPluginRegistry(org string, id uint32) (*models.PluginRegistry, *http.Response, error) {
-	regs, resp, err := m.ListPluginRegistries(org)
+	var result *models.PluginRegistry
+	resp, err := m.GenericRequest(Request{
+		Method:       "GET",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugin_registries", fmt.Sprint(id)},
+	}, &result)
 	if err != nil {
 		return nil, resp, err
 	}
-	for _, r := range regs {
-		if r.ID != nil && *r.ID == id {
-			return r, resp, nil
-		}
-	}
-	return nil, resp, fmt.Errorf("plugin registry %d not found", id)
+	return result, resp, nil
 }
 
 func (m *apiClient) CreatePluginRegistry(org, name, url string) (*models.PluginRegistry, *http.Response, error) {
@@ -361,18 +359,35 @@ func (m *apiClient) DeletePluginVersion(org string, registryID, pluginID, versio
 	return resp, err
 }
 
-func (m *apiClient) InstallPluginVersion(org string, registryID, pluginID, versionID uint32, configuration map[string]string) (*http.Response, error) {
+func (m *apiClient) InstallPluginVersion(org string, registryID, pluginID, versionID uint32, configuration map[string]string) (*models.PluginInstall, *http.Response, error) {
 	if configuration == nil {
 		configuration = map[string]string{}
 	}
 	body := &models.NewPluginInstall{Configuration: configuration}
+	var result *models.PluginInstall
 	resp, err := m.GenericRequest(Request{
 		Method:       "POST",
 		Organization: &org,
 		Route:        versionsRoute(org, registryID, pluginID, fmt.Sprint(versionID), "install"),
 		Body:         body,
-	}, nil)
-	return resp, err
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *apiClient) RefreshPluginInstallStatus(org string, id uint32) (*models.PluginInstall, *http.Response, error) {
+	var result *models.PluginInstall
+	resp, err := m.GenericRequest(Request{
+		Method:       "POST",
+		Organization: &org,
+		Route:        []string{"organizations", org, "plugins", fmt.Sprint(id), "refresh-status"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
 }
 
 func (m *apiClient) RetryPluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error) {

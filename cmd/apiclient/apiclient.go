@@ -226,10 +226,11 @@ type APIClient interface {
 
 	// organization_plugins (installs)
 	ListPlugins(org string) ([]*models.Plugin, *http.Response, error)
-	GetPlugin(org string, id uint32) (*models.PluginInstall, *http.Response, error)
+	GetPlugin(org string, id uint32) (*models.Plugin, *http.Response, error)
 	UpdatePlugin(org string, id, versionID uint32, config map[string]string) (*models.PluginInstall, *http.Response, error)
 	DeletePlugin(org string, id uint32) (*http.Response, error)
 	ListPluginLogs(org string, id uint32) (*models.PluginLogs, *http.Response, error)
+	RefreshPluginInstallStatus(org string, id uint32) (*models.PluginInstall, *http.Response, error)
 
 	// organization_plugin_registries
 	ListPluginRegistries(org string) ([]*models.PluginRegistry, *http.Response, error)
@@ -250,7 +251,7 @@ type APIClient interface {
 	GetPluginVersion(org string, registryID, pluginID, versionID uint32) (*models.PluginVersion, *http.Response, error)
 	CreatePluginVersion(org string, registryID, pluginID uint32, url string) (*models.PluginVersion, *http.Response, error)
 	DeletePluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
-	InstallPluginVersion(org string, registryID, pluginID, versionID uint32, configuration map[string]string) (*http.Response, error)
+	InstallPluginVersion(org string, registryID, pluginID, versionID uint32, configuration map[string]string) (*models.PluginInstall, *http.Response, error)
 	RetryPluginVersion(org string, registryID, pluginID, versionID uint32) (*http.Response, error)
 	ListPluginVersionLogs(org string, registryID, pluginID, versionID uint32) ([]*models.PluginVersionLog, *http.Response, error)
 

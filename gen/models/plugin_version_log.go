@@ -29,6 +29,11 @@ type PluginVersionLog struct {
 	// Text of the log line
 	// Required: true
 	Message *string `json:"message"`
+
+	// timestamp
+	// Required: true
+	// Format: date-time
+	Timestamp *strfmt.DateTime `json:"timestamp"`
 }
 
 // Validate validates this plugin version log
@@ -40,6 +45,10 @@ func (m *PluginVersionLog) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateMessage(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateTimestamp(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -65,6 +74,19 @@ func (m *PluginVersionLog) validateID(formats strfmt.Registry) error {
 func (m *PluginVersionLog) validateMessage(formats strfmt.Registry) error {
 
 	if err := validate.Required("message", "body", m.Message); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PluginVersionLog) validateTimestamp(formats strfmt.Registry) error {
+
+	if err := validate.Required("timestamp", "body", m.Timestamp); err != nil {
+		return err
+	}
+
+	if err := validate.FormatOf("timestamp", "body", "date-time", m.Timestamp.String(), formats); err != nil {
 		return err
 	}
 

@@ -104,7 +104,7 @@ func installVersion(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	resp, installErr := m.InstallPluginVersion(org, registryID, pluginID, versionID, configuration)
+	_, resp, installErr := m.InstallPluginVersion(org, registryID, pluginID, versionID, configuration)
 	if installErr != nil && retry && resp != nil && resp.StatusCode == http.StatusConflict {
 		_, installErr = m.RetryPluginVersion(org, registryID, pluginID, versionID)
 	}
