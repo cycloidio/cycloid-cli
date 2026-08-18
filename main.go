@@ -1,0 +1,33 @@
+package main
+
+import (
+	"errors"
+	"fmt"
+	"os"
+
+	"github.com/spf13/viper"
+
+	"github.com/cycloidio/cycloid-cli/cmd"
+)
+
+type exitCoder interface {
+	ExitCode() int
+}
+
+func inRed(msg string) string {
+	return fmt.Sprintf("\033[1;31m%s\033[0m", msg)
+}
+
+func main() {
+	rootCmd := cmd.NewRootCommand()
+	viper.BindPFlag("api-url", rootCmd.PersistentFlags().Lookup("api-url"))
+
+	if err := rootCmd.Execute(); err != nil {
+		rootCmd.PrintErrln(inRed("Error:"), err.Error())
+		var codedErr exitCoder
+		if errors.As(err, &codedErr) {
+			os.Exit(codedErr.ExitCode())
+		}
+		os.Exit(1)
+	}
+}
