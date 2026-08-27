@@ -63,7 +63,7 @@ type APIClient interface {
 	ListEvents(org string, eventType, eventSeverity []string, begin, end uint64) ([]*models.Event, *http.Response, error)
 
 	// external_backends
-	DeleteExternalBackend(org string, externalBackend uint32) (*http.Response, error)
+	DeleteExternalBackend(org string, externalBackend uint32, opts DeleteExternalBackendOptions) (*http.Response, error)
 	CreateExternalBackends(org, project, env, purpose, credential string, isDefault bool, externalBackendConfig models.ExternalBackendConfiguration) (*models.ExternalBackend, *http.Response, error)
 	ListExternalBackends(org string) ([]*models.ExternalBackend, *http.Response, error)
 	GetExternalBackend(org string, externalBackend uint32) (*models.ExternalBackend, *http.Response, error)

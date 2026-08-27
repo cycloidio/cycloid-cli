@@ -46,12 +46,17 @@ func (m *apiClient) ListExternalBackends(org string) ([]*models.ExternalBackend,
 	return result, resp, nil
 }
 
-func (m *apiClient) DeleteExternalBackend(org string, externalBackend uint32) (*http.Response, error) {
-	resp, err := m.GenericRequest(Request{
+func (m *apiClient) DeleteExternalBackend(org string, externalBackend uint32, opts DeleteExternalBackendOptions) (*http.Response, error) {
+	req := Request{
 		Method:       "DELETE",
 		Organization: &org,
 		Route:        []string{"organizations", org, "external_backends", strconv.FormatUint(uint64(externalBackend), 10)},
-	}, nil)
+	}
+	// Only sent when set, so that existing callers keep issuing a bare DELETE
+	if opts.DeleteTFState {
+		req.Query = opts
+	}
+	resp, err := m.GenericRequest(req, nil)
 	return resp, err
 }
 

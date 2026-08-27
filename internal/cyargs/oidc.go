@@ -91,6 +91,8 @@ const (
 	OIDCIconFlagName                   = "icon"
 	OIDCDiscoveryURLFlagName           = "discovery-url"
 	OIDCGroupsClaimNameFlagName        = "groups-claim-name"
+	OIDCGroupsClaimSubkeyFlagName      = "groups-claim-subkey"
+	OIDCScopesFlagName                 = "scopes"
 	OIDCSessionTTLSecondsFlagName      = "session-ttl-seconds"
 	OIDCClientSecretJwtFlagName        = "client-secret-jwt"
 	OIDCUseCaCertFlagName              = "use-ca-cert"
@@ -176,6 +178,26 @@ func AddOIDCGroupsClaimNameFlag(cmd *cobra.Command) {
 // GetOIDCGroupsClaimName reads the --groups-claim-name flag.
 func GetOIDCGroupsClaimName(cmd *cobra.Command) (string, error) {
 	return cmd.Flags().GetString(OIDCGroupsClaimNameFlagName)
+}
+
+// AddOIDCGroupsClaimSubkeyFlag registers --groups-claim-subkey for OIDC integration commands.
+func AddOIDCGroupsClaimSubkeyFlag(cmd *cobra.Command) {
+	cmd.Flags().String(OIDCGroupsClaimSubkeyFlagName, "", "Key to read inside --groups-claim-name when the IdP nests the group list in an object (taken literally, dots included)")
+}
+
+// GetOIDCGroupsClaimSubkey reads the --groups-claim-subkey flag.
+func GetOIDCGroupsClaimSubkey(cmd *cobra.Command) (string, error) {
+	return cmd.Flags().GetString(OIDCGroupsClaimSubkeyFlagName)
+}
+
+// AddOIDCScopesFlag registers --scopes for OIDC integration commands.
+func AddOIDCScopesFlag(cmd *cobra.Command) {
+	cmd.Flags().StringSlice(OIDCScopesFlagName, nil, "Extra OAuth2 scopes to request on top of openid, profile and email (repeatable or comma-separated)")
+}
+
+// GetOIDCScopes reads the --scopes flag.
+func GetOIDCScopes(cmd *cobra.Command) ([]string, error) {
+	return cmd.Flags().GetStringSlice(OIDCScopesFlagName)
 }
 
 // AddOIDCSessionTTLSecondsFlag registers --session-ttl-seconds for OIDC integration commands.

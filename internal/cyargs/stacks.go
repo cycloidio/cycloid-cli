@@ -223,7 +223,8 @@ func ResolveStackVersionArg(cmd *cobra.Command, m apiclient.APIClient, org, stac
 		case "version":
 			return "", "", "", fmt.Errorf(
 				"--stack-version=version:<id> is only supported by 'cy component config get'; " +
-					"use tag:<name>, branch:<name>, or sha:<hash> for other commands")
+					"use tag:<name>, branch:<name>, or sha:<hash> for other commands",
+			)
 		}
 		// Unknown prefix: fall through and attempt bare resolution on the full value.
 	}
@@ -232,7 +233,8 @@ func ResolveStackVersionArg(cmd *cobra.Command, m apiclient.APIClient, org, stac
 	if stackRef == "" {
 		return "", "", "", fmt.Errorf(
 			"cannot auto-detect version type for %q without a stack reference; "+
-				"use --stack-version=tag:<value>, --stack-version=branch:<value>, or --stack-version=sha:<value>", v)
+				"use --stack-version=tag:<value>, --stack-version=branch:<value>, or --stack-version=sha:<value>", v,
+		)
 	}
 
 	versions, _, err := m.ListStackVersions(org, stackRef)
@@ -259,7 +261,8 @@ func ResolveStackVersionArg(cmd *cobra.Command, m apiclient.APIClient, org, stac
 	case matchTag != "" && matchBranch != "":
 		return "", "", "", fmt.Errorf(
 			"ambiguous version %q (matches both a tag and a branch); "+
-				"use --stack-version=tag:%s or --stack-version=branch:%s", v, v, v)
+				"use --stack-version=tag:%s or --stack-version=branch:%s", v, v, v,
+		)
 	case matchTag != "":
 		return matchTag, "", "", nil
 	case matchBranch != "":

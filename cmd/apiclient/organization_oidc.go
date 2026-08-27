@@ -148,20 +148,22 @@ func (m *apiClient) UpdateOIDCOrganizationSettings(org string, settings UpdateOI
 // oidc_allow_insecure_discovery, oidc_groups_claim_name, oidc_session_ttl_seconds)
 // are not in the published swagger / generated models.AuthenticationOIDC yet.
 type OIDCIntegration struct {
-	Type                       string  `json:"type,omitempty"`
-	Enabled                    bool    `json:"enabled"`
-	OidcDisplayName            string  `json:"oidc_display_name,omitempty"`
-	OidcClientID               string  `json:"oidc_client_id,omitempty"`
-	OidcIssuer                 string  `json:"oidc_issuer,omitempty"`
-	OidcIcon                   string  `json:"oidc_icon,omitempty"`
-	OidcClientSecretJwt        bool    `json:"oidc_client_secret_jwt,omitempty"`
-	OidcUseCaCert              bool    `json:"oidc_use_ca_cert,omitempty"`
-	OidcSkipTLSVerify          bool    `json:"oidc_skip_tls_verify,omitempty"`
-	OidcDiscoveryURL           *string `json:"oidc_discovery_url,omitempty"`
-	OidcAllowInsecureDiscovery *bool   `json:"oidc_allow_insecure_discovery,omitempty"`
-	OidcAdoptManualMembers     *bool   `json:"oidc_adopt_manual_members,omitempty"`
-	OidcGroupsClaimName        string  `json:"oidc_groups_claim_name,omitempty"`
-	OidcSessionTTLSeconds      *int64  `json:"oidc_session_ttl_seconds,omitempty"`
+	Type                       string   `json:"type,omitempty"`
+	Enabled                    bool     `json:"enabled"`
+	OidcDisplayName            string   `json:"oidc_display_name,omitempty"`
+	OidcClientID               string   `json:"oidc_client_id,omitempty"`
+	OidcIssuer                 string   `json:"oidc_issuer,omitempty"`
+	OidcIcon                   string   `json:"oidc_icon,omitempty"`
+	OidcClientSecretJwt        bool     `json:"oidc_client_secret_jwt,omitempty"`
+	OidcUseCaCert              bool     `json:"oidc_use_ca_cert,omitempty"`
+	OidcSkipTLSVerify          bool     `json:"oidc_skip_tls_verify,omitempty"`
+	OidcDiscoveryURL           *string  `json:"oidc_discovery_url,omitempty"`
+	OidcAllowInsecureDiscovery *bool    `json:"oidc_allow_insecure_discovery,omitempty"`
+	OidcAdoptManualMembers     *bool    `json:"oidc_adopt_manual_members,omitempty"`
+	OidcGroupsClaimName        string   `json:"oidc_groups_claim_name,omitempty"`
+	OidcGroupsClaimSubkey      string   `json:"oidc_groups_claim_subkey,omitempty"`
+	OidcScopes                 []string `json:"oidc_scopes,omitempty"`
+	OidcSessionTTLSeconds      *int64   `json:"oidc_session_ttl_seconds,omitempty"`
 	// Read-only presence flags — the API never returns the secret/cert values.
 	HasSecret        *bool `json:"has_secret,omitempty"`
 	HasCaCertificate *bool `json:"has_ca_certificate,omitempty"`

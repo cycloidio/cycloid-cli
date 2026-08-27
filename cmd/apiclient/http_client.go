@@ -65,6 +65,12 @@ func (o DeleteOptions) Resolve() deleteQuery {
 	}
 }
 
+// DeleteExternalBackendOptions carries the caller-facing flags for the External Backend
+// delete operation, and doubles as the wire representation sent as URL query params.
+type DeleteExternalBackendOptions struct {
+	DeleteTFState bool `url:"delete_tfstate"`
+}
+
 // Request represents an HTTP request to the Cycloid API.
 type Request struct {
 	Method       string

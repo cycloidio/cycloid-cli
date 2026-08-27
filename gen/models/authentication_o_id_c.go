@@ -9,6 +9,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"strconv"
 
 	"github.com/go-openapi/errors"
 	"github.com/go-openapi/strfmt"
@@ -61,16 +62,25 @@ type AuthenticationOIDC struct {
 	OidcDiscoveryURL *string `json:"oidc_discovery_url,omitempty"`
 
 	// The friendly name shown on the login button
-	OidcDisplayName string `json:"oidc_display_name,omitempty"`
+	OidcDisplayName *string `json:"oidc_display_name,omitempty"`
 
 	// Name of the OIDC token claim listing the user's group memberships, used for OIDC group mapping. Defaults to "groups" when omitted. The IdP must be configured to include this claim in the issued ID token — group mapping has no effect if the provider omits it. Enterprise IdPs such as Keycloak, Okta, Azure AD/Entra ID, and Auth0 support configurable group claims; consumer providers such as Google Workspace and GitHub do not include group claims in standard OIDC tokens.
-	OidcGroupsClaimName string `json:"oidc_groups_claim_name,omitempty"`
+	OidcGroupsClaimName *string `json:"oidc_groups_claim_name,omitempty"`
+
+	// Optional key to read inside oidc_groups_claim_name when the IdP nests the group list inside an object instead of returning a top-level array. Taken literally, dots included, so claim names and keys containing dots (or URL-style claim names) are unambiguous. EU Login, for instance, returns groups under a URL-style claim with the list at the key "user.ldapGroups". Leave unset when the claim is already an array or a comma-separated string.
+	// Max Length: 200
+	// Pattern: ^[^{}\[\]]*$
+	OidcGroupsClaimSubkey *string `json:"oidc_groups_claim_subkey,omitempty"`
 
 	// URL of the icon to display on the OIDC authentication login screen.
-	OidcIcon string `json:"oidc_icon,omitempty"`
+	OidcIcon *string `json:"oidc_icon,omitempty"`
 
 	// The base URL of the OIDC provider. Used for automatic endpoint discovery.
 	OidcIssuer string `json:"oidc_issuer,omitempty"`
+
+	// Additional OAuth2 scopes to request at login, on top of the always-requested "openid", "profile" and "email". Some IdPs only include custom claims (group memberships among them) when the matching scope is requested. Blank entries and duplicates are ignored. Requesting a scope the IdP does not recognise can make it reject the authorization request and break login for this integration, so add only scopes the provider documents.
+	// Max Items: 50
+	OidcScopes []string `json:"oidc_scopes"`
 
 	// Session lifetime in seconds for JWTs issued from a login through this OIDC integration (BE-1424). The backend clamps the effective value to the range 5 minutes .. 30 days. When omitted or null the global default session TTL applies.
 	OidcSessionTTLSeconds *int64 `json:"oidc_session_ttl_seconds,omitempty"`
@@ -158,16 +168,25 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 		OidcDiscoveryURL *string `json:"oidc_discovery_url,omitempty"`
 
 		// The friendly name shown on the login button
-		OidcDisplayName string `json:"oidc_display_name,omitempty"`
+		OidcDisplayName *string `json:"oidc_display_name,omitempty"`
 
 		// Name of the OIDC token claim listing the user's group memberships, used for OIDC group mapping. Defaults to "groups" when omitted. The IdP must be configured to include this claim in the issued ID token — group mapping has no effect if the provider omits it. Enterprise IdPs such as Keycloak, Okta, Azure AD/Entra ID, and Auth0 support configurable group claims; consumer providers such as Google Workspace and GitHub do not include group claims in standard OIDC tokens.
-		OidcGroupsClaimName string `json:"oidc_groups_claim_name,omitempty"`
+		OidcGroupsClaimName *string `json:"oidc_groups_claim_name,omitempty"`
+
+		// Optional key to read inside oidc_groups_claim_name when the IdP nests the group list inside an object instead of returning a top-level array. Taken literally, dots included, so claim names and keys containing dots (or URL-style claim names) are unambiguous. EU Login, for instance, returns groups under a URL-style claim with the list at the key "user.ldapGroups". Leave unset when the claim is already an array or a comma-separated string.
+		// Max Length: 200
+		// Pattern: ^[^{}\[\]]*$
+		OidcGroupsClaimSubkey *string `json:"oidc_groups_claim_subkey,omitempty"`
 
 		// URL of the icon to display on the OIDC authentication login screen.
-		OidcIcon string `json:"oidc_icon,omitempty"`
+		OidcIcon *string `json:"oidc_icon,omitempty"`
 
 		// The base URL of the OIDC provider. Used for automatic endpoint discovery.
 		OidcIssuer string `json:"oidc_issuer,omitempty"`
+
+		// Additional OAuth2 scopes to request at login, on top of the always-requested "openid", "profile" and "email". Some IdPs only include custom claims (group memberships among them) when the matching scope is requested. Blank entries and duplicates are ignored. Requesting a scope the IdP does not recognise can make it reject the authorization request and break login for this integration, so add only scopes the provider documents.
+		// Max Items: 50
+		OidcScopes []string `json:"oidc_scopes"`
 
 		// Session lifetime in seconds for JWTs issued from a login through this OIDC integration (BE-1424). The backend clamps the effective value to the range 5 minutes .. 30 days. When omitted or null the global default session TTL applies.
 		OidcSessionTTLSeconds *int64 `json:"oidc_session_ttl_seconds,omitempty"`
@@ -230,8 +249,10 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 	result.OidcDiscoveryURL = data.OidcDiscoveryURL
 	result.OidcDisplayName = data.OidcDisplayName
 	result.OidcGroupsClaimName = data.OidcGroupsClaimName
+	result.OidcGroupsClaimSubkey = data.OidcGroupsClaimSubkey
 	result.OidcIcon = data.OidcIcon
 	result.OidcIssuer = data.OidcIssuer
+	result.OidcScopes = data.OidcScopes
 	result.OidcSessionTTLSeconds = data.OidcSessionTTLSeconds
 	result.OidcSkipTLSVerify = data.OidcSkipTLSVerify
 	result.OidcUseCaCert = data.OidcUseCaCert
@@ -280,16 +301,25 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 		OidcDiscoveryURL *string `json:"oidc_discovery_url,omitempty"`
 
 		// The friendly name shown on the login button
-		OidcDisplayName string `json:"oidc_display_name,omitempty"`
+		OidcDisplayName *string `json:"oidc_display_name,omitempty"`
 
 		// Name of the OIDC token claim listing the user's group memberships, used for OIDC group mapping. Defaults to "groups" when omitted. The IdP must be configured to include this claim in the issued ID token — group mapping has no effect if the provider omits it. Enterprise IdPs such as Keycloak, Okta, Azure AD/Entra ID, and Auth0 support configurable group claims; consumer providers such as Google Workspace and GitHub do not include group claims in standard OIDC tokens.
-		OidcGroupsClaimName string `json:"oidc_groups_claim_name,omitempty"`
+		OidcGroupsClaimName *string `json:"oidc_groups_claim_name,omitempty"`
+
+		// Optional key to read inside oidc_groups_claim_name when the IdP nests the group list inside an object instead of returning a top-level array. Taken literally, dots included, so claim names and keys containing dots (or URL-style claim names) are unambiguous. EU Login, for instance, returns groups under a URL-style claim with the list at the key "user.ldapGroups". Leave unset when the claim is already an array or a comma-separated string.
+		// Max Length: 200
+		// Pattern: ^[^{}\[\]]*$
+		OidcGroupsClaimSubkey *string `json:"oidc_groups_claim_subkey,omitempty"`
 
 		// URL of the icon to display on the OIDC authentication login screen.
-		OidcIcon string `json:"oidc_icon,omitempty"`
+		OidcIcon *string `json:"oidc_icon,omitempty"`
 
 		// The base URL of the OIDC provider. Used for automatic endpoint discovery.
 		OidcIssuer string `json:"oidc_issuer,omitempty"`
+
+		// Additional OAuth2 scopes to request at login, on top of the always-requested "openid", "profile" and "email". Some IdPs only include custom claims (group memberships among them) when the matching scope is requested. Blank entries and duplicates are ignored. Requesting a scope the IdP does not recognise can make it reject the authorization request and break login for this integration, so add only scopes the provider documents.
+		// Max Items: 50
+		OidcScopes []string `json:"oidc_scopes"`
 
 		// Session lifetime in seconds for JWTs issued from a login through this OIDC integration (BE-1424). The backend clamps the effective value to the range 5 minutes .. 30 days. When omitted or null the global default session TTL applies.
 		OidcSessionTTLSeconds *int64 `json:"oidc_session_ttl_seconds,omitempty"`
@@ -325,9 +355,13 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 
 		OidcGroupsClaimName: m.OidcGroupsClaimName,
 
+		OidcGroupsClaimSubkey: m.OidcGroupsClaimSubkey,
+
 		OidcIcon: m.OidcIcon,
 
 		OidcIssuer: m.OidcIssuer,
+
+		OidcScopes: m.OidcScopes,
 
 		OidcSessionTTLSeconds: m.OidcSessionTTLSeconds,
 
@@ -371,6 +405,14 @@ func (m *AuthenticationOIDC) Validate(formats strfmt.Registry) error {
 		res = append(res, err)
 	}
 
+	if err := m.validateOidcGroupsClaimSubkey(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateOidcScopes(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
@@ -381,6 +423,50 @@ func (m *AuthenticationOIDC) validateEnabled(formats strfmt.Registry) error {
 
 	if err := validate.Required("enabled", "body", m.Enabled()); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *AuthenticationOIDC) validateOidcGroupsClaimSubkey(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.OidcGroupsClaimSubkey) { // not required
+		return nil
+	}
+
+	if err := validate.MaxLength("oidc_groups_claim_subkey", "body", *m.OidcGroupsClaimSubkey, 200); err != nil {
+		return err
+	}
+
+	if err := validate.Pattern("oidc_groups_claim_subkey", "body", *m.OidcGroupsClaimSubkey, `^[^{}\[\]]*$`); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *AuthenticationOIDC) validateOidcScopes(formats strfmt.Registry) error {
+
+	if swag.IsZero(m.OidcScopes) { // not required
+		return nil
+	}
+
+	iOidcScopesSize := int64(len(m.OidcScopes))
+
+	if err := validate.MaxItems("oidc_scopes", "body", iOidcScopesSize, 50); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.OidcScopes); i++ {
+
+		if err := validate.MaxLength("oidc_scopes"+"."+strconv.Itoa(i), "body", m.OidcScopes[i], 200); err != nil {
+			return err
+		}
+
+		if err := validate.Pattern("oidc_scopes"+"."+strconv.Itoa(i), "body", m.OidcScopes[i], `^[\x21\x23-\x5A\x5E-\x7A\x7C\x7E]+$`); err != nil {
+			return err
+		}
+
 	}
 
 	return nil

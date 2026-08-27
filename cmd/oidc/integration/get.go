@@ -18,6 +18,8 @@ var integrationTableOptions = printer.Options{
 		"OidcIssuer",
 		"OidcDiscoveryURL",
 		"OidcGroupsClaimName",
+		"OidcGroupsClaimSubkey",
+		"OidcScopes",
 		"OidcSessionTTLSeconds",
 		"HasSecret",
 		"HasCaCertificate",

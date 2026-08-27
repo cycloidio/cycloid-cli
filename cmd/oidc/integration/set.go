@@ -58,6 +58,8 @@ environment variable; the CA certificate via CY_OIDC_CA_CERT.`,
 	cyargs.AddOIDCIconFlag(cmd)
 	cyargs.AddOIDCDiscoveryURLFlag(cmd)
 	cyargs.AddOIDCGroupsClaimNameFlag(cmd)
+	cyargs.AddOIDCGroupsClaimSubkeyFlag(cmd)
+	cyargs.AddOIDCScopesFlag(cmd)
 	cyargs.AddOIDCSessionTTLSecondsFlag(cmd)
 	cyargs.AddOIDCClientSecretJwtFlag(cmd)
 	cyargs.AddOIDCUseCaCertFlag(cmd)
@@ -106,6 +108,14 @@ func setIntegration(cmd *cobra.Command, args []string) error {
 		return err
 	}
 	groupsClaimName, err := cyargs.GetOIDCGroupsClaimName(cmd)
+	if err != nil {
+		return err
+	}
+	groupsClaimSubkey, err := cyargs.GetOIDCGroupsClaimSubkey(cmd)
+	if err != nil {
+		return err
+	}
+	scopes, err := cyargs.GetOIDCScopes(cmd)
 	if err != nil {
 		return err
 	}
@@ -188,6 +198,12 @@ func setIntegration(cmd *cobra.Command, args []string) error {
 	}
 	if cmd.Flags().Changed(cyargs.OIDCGroupsClaimNameFlagName) {
 		config["oidc_groups_claim_name"] = groupsClaimName
+	}
+	if cmd.Flags().Changed(cyargs.OIDCGroupsClaimSubkeyFlagName) {
+		config["oidc_groups_claim_subkey"] = groupsClaimSubkey
+	}
+	if cmd.Flags().Changed(cyargs.OIDCScopesFlagName) {
+		config["oidc_scopes"] = scopes
 	}
 	if cmd.Flags().Changed(cyargs.OIDCSessionTTLSecondsFlagName) {
 		config["oidc_session_ttl_seconds"] = sessionTTL

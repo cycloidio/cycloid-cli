@@ -30,6 +30,9 @@ type FormEntity struct {
 	// The current value that was previously configured for this variable upon creation or update. In case of shared variables having different values, it will be empty, and 'mismatch_values' will be filled instead.
 	Current any `json:"current,omitempty"`
 
+	// True when 'current' is non-empty but could not be resolved to any of the widget's available options, e.g. the option was removed from the form. 'current' still holds the raw stored value in this case. Never true for an empty 'current' -- that's an unfilled optional field, not a removed option.
+	CurrentInvalid bool `json:"current_invalid,omitempty"`
+
 	// Default can take 2 kinds of definition.
 	// The first one is simply the variable to assign if nothing is given by the user and that the variable is required.
 	// The second one is dynamic default, meaning default that can vary based on conditions. The format is as follows:
@@ -49,6 +52,9 @@ type FormEntity struct {
 
 	// Whether or not the entity should be displayed to the user. This entity must be usable as such (not required, or with a default if required)
 	Folded bool `json:"folded,omitempty"`
+
+	// Whether or not the entity should be hidden from the user. When true the widget is not displayed regardless of its widget type. This is an independent attribute; set it on any widget type. The legacy widget: hidden form is still supported for backward compatibility.
+	Hidden bool `json:"hidden,omitempty"`
 
 	// Sub-entity definitions for the repeatable widget. Each item defines a field that users can fill N times. Only valid when widget is 'repeatable'.
 	Items []*FormEntity `json:"items"`

@@ -18,10 +18,15 @@ func NewDeleteCommand() *cobra.Command {
 		Example: `
 	# delete an existing external backend with ID 123
 	cy --org my-org eb delete --id 123
+
+	# delete it along with the Terraform states it stores, once the infrastructure is destroyed
+	cy --org my-org eb delete --id 123 --delete-tfstate
 `,
 		RunE: del,
 	}
 	common.RequiredFlag(common.WithFlagID, cmd)
+	cmd.Flags().
+		Bool("delete-tfstate", false, "Also delete the Terraform states stored on the external backend. Only for external backends with the 'remote_tfstate' purpose.")
 
 	return cmd
 }
@@ -38,7 +43,13 @@ func del(cmd *cobra.Command, args []string) error {
 	if err != nil {
 		return err
 	}
+	deleteTFState, err := cmd.Flags().GetBool("delete-tfstate")
+	if err != nil {
+		return err
+	}
 
-	_, err = m.DeleteExternalBackend(org, id)
+	opts := apiclient.DeleteExternalBackendOptions{DeleteTFState: deleteTFState}
+
+	_, err = m.DeleteExternalBackend(org, id, opts)
 	return cyout.PrintWithOptions(cmd, nil, err, "unable to delete external backend", printer.Options{})
 }
