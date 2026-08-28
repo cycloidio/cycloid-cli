@@ -17,11 +17,12 @@ import (
 
 func NewCreateCommand() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:     "create",
-		Short:   "Create an environment type",
-		Example: `cy --org my-org environment-type create --environment-type qa --environment-type-name QA --color staging`,
-		RunE:    create,
-		Args:    cobra.NoArgs,
+		Use:   "create",
+		Short: "Create an environment type",
+		Example: `cy --org my-org environment-type create --environment-type qa --environment-type-name QA --color staging
+cy --org my-org environment-type create --environment-type prod --color production --label-selector-enforcement hard --label-selector-requirement "env-type:in:production,staging"`,
+		RunE: create,
+		Args: cobra.NoArgs,
 	}
 
 	cmd.MarkFlagsOneRequired(
@@ -30,6 +31,7 @@ func NewCreateCommand() *cobra.Command {
 	)
 	_ = cmd.MarkFlagRequired(cyargs.AddColorFlag(cmd))
 	cyargs.AddUpdateFlag(cmd, "update the environment type if it already exists")
+	cyargs.AddLabelSelectorCreateFlags(cmd)
 	return cmd
 }
 
@@ -78,21 +80,41 @@ func create(cmd *cobra.Command, args []string) error {
 		Color:     ptr.Ptr(color),
 	}
 	result, _, err := m.CreateEnvironmentType(org, body)
-	return cyout.PrintWithOptions(cmd, result, err, "failed to create environment type", environmentTypeTableOptions)
+	if err != nil {
+		return cyout.PrintWithOptions(cmd, nil, err, "failed to create environment type", environmentTypeTableOptions)
+	}
+
+	// Set label selector if flags are provided
+	if cyargs.HasLabelSelectorFlags(cmd) {
+		labelSelector, err := cyargs.GetLabelSelector(cmd)
+		if err != nil {
+			return err
+		}
+		result, _, err = m.SetEnvironmentTypeLabelSelector(org, canonical, labelSelector)
+		if err != nil {
+			return cyout.PrintWithOptions(cmd, nil, err, "failed to set label selector", environmentTypeTableOptions)
+		}
+	}
+
+	return cyout.PrintWithOptions(cmd, result, nil, "", environmentTypeTableOptions)
 }
 
 func NewUpdateCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "update",
 		Short: "Update an environment type",
-		RunE:  updateEnvironmentType,
-		Args:  cobra.NoArgs,
+		Example: `cy --org my-org environment-type update --environment-type staging --color staging
+cy --org my-org environment-type update --environment-type prod --label-selector-enforcement hard --label-selector-requirement "env-type:in:production"
+cy --org my-org environment-type update --environment-type prod --delete-label-selector`,
+		RunE: updateEnvironmentType,
+		Args: cobra.NoArgs,
 	}
 
 	cyargs.AddEnvironmentTypeCanonicalFlag(cmd)
 	_ = cmd.MarkFlagRequired("environment-type")
 	cyargs.AddEnvironmentTypeNameFlag(cmd)
 	cyargs.AddColorFlag(cmd)
+	cyargs.AddLabelSelectorFlags(cmd)
 	return cmd
 }
 
@@ -140,5 +162,31 @@ func updateEnvironmentType(cmd *cobra.Command, args []string) error {
 		Color: ptr.Ptr(color),
 	}
 	result, _, err := m.UpdateEnvironmentType(org, canonical, body)
-	return cyout.PrintWithOptions(cmd, result, err, "failed to update environment type", environmentTypeTableOptions)
+	if err != nil {
+		return cyout.PrintWithOptions(cmd, nil, err, "failed to update environment type", environmentTypeTableOptions)
+	}
+
+	// Handle label selector: delete or set
+	if cyargs.GetDeleteLabelSelector(cmd) {
+		_, err = m.DeleteEnvironmentTypeLabelSelector(org, canonical)
+		if err != nil {
+			return cyout.PrintWithOptions(cmd, nil, err, "failed to delete label selector", environmentTypeTableOptions)
+		}
+		// Re-read to get updated state without label_selector
+		result, _, err = m.GetEnvironmentType(org, canonical)
+		if err != nil {
+			return cyout.PrintWithOptions(cmd, nil, err, "failed to read environment type after deleting label selector", environmentTypeTableOptions)
+		}
+	} else if cyargs.HasLabelSelectorFlags(cmd) {
+		labelSelector, err := cyargs.GetLabelSelector(cmd)
+		if err != nil {
+			return err
+		}
+		result, _, err = m.SetEnvironmentTypeLabelSelector(org, canonical, labelSelector)
+		if err != nil {
+			return cyout.PrintWithOptions(cmd, nil, err, "failed to set label selector", environmentTypeTableOptions)
+		}
+	}
+
+	return cyout.PrintWithOptions(cmd, result, nil, "", environmentTypeTableOptions)
 }

@@ -189,6 +189,8 @@ type APIClient interface {
 	CreateEnvironmentType(org string, body *models.NewEnvironmentType) (*models.EnvironmentType, *http.Response, error)
 	UpdateEnvironmentType(org, canonical string, body *models.UpdateEnvironmentType) (*models.EnvironmentType, *http.Response, error)
 	DeleteEnvironmentType(org, canonical string) (*http.Response, error)
+	SetEnvironmentTypeLabelSelector(org, canonical string, body *models.LabelSelector) (*models.EnvironmentType, *http.Response, error)
+	DeleteEnvironmentTypeLabelSelector(org, canonical string) (*http.Response, error)
 
 	// Component
 	CreateOrUpdateComponent(org, project, env, component, description, name, stackRef, versionTag, versionBranch, versionCommitHash, useCase, cloudProvider string, vars models.FormVariables) (*models.Component, *http.Response, error)

@@ -38,6 +38,10 @@ type Component struct {
 	// Status of the asynchronous projection of this component's saved StackForms configuration to its project's config git repository. The configuration is always persisted (DB source of truth); this reports whether the git mirror is up to date, catching up, or failing. Absent when there is nothing pending to mirror.
 	ConfigRepositorySyncStatus *ConfigRepositorySyncStatus `json:"config_repository_sync_status,omitempty"`
 
+	// The revision of this component's StackForms configuration currently mirrored to the config git repository, and therefore the one a build started now would plan against. Unlike config_repository_sync_status it is reported even when the mirror is up to date, so an automation that wrote a configuration can confirm the revision a build will read is its own, and match it against the config_revision reported when creating a build. Absent when the component has no saved configuration.
+	//
+	ConfigRevision uint64 `json:"config_revision,omitempty"`
+
 	// created at
 	// Required: true
 	// Minimum: 0

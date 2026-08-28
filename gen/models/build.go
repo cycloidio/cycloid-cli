@@ -25,6 +25,10 @@ type Build struct {
 	// Required: true
 	APIURL *string `json:"api_url"`
 
+	// The revision of the component configuration this build was gated on, set when the build is created. The component configuration is mirrored to the config repository asynchronously; creating a build waits for the acknowledged revision to be visible to the CI, and reports it here so a caller can tie the build back to the configuration write it made. Absent on builds read back later, and on components with no saved configuration.
+	//
+	ConfigRevision uint64 `json:"config_revision,omitempty"`
+
 	// end time
 	EndTime uint64 `json:"end_time,omitempty"`
 

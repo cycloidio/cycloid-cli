@@ -71,3 +71,25 @@ func (m *apiClient) DeleteEnvironmentType(org, canonical string) (*http.Response
 		Route:        []string{"organizations", org, "environment_types", canonical},
 	}, nil)
 }
+
+func (m *apiClient) SetEnvironmentTypeLabelSelector(org, canonical string, body *models.LabelSelector) (*models.EnvironmentType, *http.Response, error) {
+	var result *models.EnvironmentType
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "environment_types", canonical, "label_selector"},
+		Body:         body,
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+func (m *apiClient) DeleteEnvironmentTypeLabelSelector(org, canonical string) (*http.Response, error) {
+	return m.GenericRequest(Request{
+		Method:       "DELETE",
+		Organization: &org,
+		Route:        []string{"organizations", org, "environment_types", canonical, "label_selector"},
+	}, nil)
+}
