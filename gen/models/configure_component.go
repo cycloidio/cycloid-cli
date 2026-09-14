@@ -22,6 +22,9 @@ import (
 // swagger:model ConfigureComponent
 type ConfigureComponent struct {
 
+	// Credential canonicals this submit confirms it is replacing the secret of. A pinned `cy_cred` field whose credential already exists, and which this component's saved configuration did not previously reference, is refused unless its canonical is listed here: the write replaces the whole secret and Vault keeps no history. Naming a canonical that is not in that situation is ignored.
+	ConfirmCredentialOverwrite []string `json:"confirm_credential_overwrite"`
+
 	// Is the ID of the new SCS Version used
 	// Minimum: 1
 	ServiceCatalogSourceVersionID uint32 `json:"service_catalog_source_version_id,omitempty"`

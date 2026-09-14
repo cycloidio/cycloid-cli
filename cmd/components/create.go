@@ -100,11 +100,13 @@ func createComponent(cmd *cobra.Command, args []string) error {
 			// Fetch base forms value from current component
 			currentConfig := make(models.FormVariables)
 			if currentComponent.UseCase != "" {
-				currentConfig, _, err = m.GetComponentConfig(org, project, env, component, "", "", "", 0)
+				currentConfig, _, err = m.GetComponentConfig(org, project, env, component, tag, branch, hash, 0)
 				if err != nil {
 					return cyout.PrintWithOptions(cmd, nil, err, "failed to update component '"+component+"', cannot get current config.", printer.Options{})
 				}
 			}
+
+			tag, branch, hash = versionSelector(currentComponent, tag, branch, hash)
 
 			inputs, err := cyargs.GetStackformsVars(cmd, currentConfig)
 			if err != nil {

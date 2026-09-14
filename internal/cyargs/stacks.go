@@ -137,7 +137,8 @@ func GetStack(cmd *cobra.Command) (string, error) {
 // backward compatibility but are deprecated and will be removed in a future major release.
 func AddStackVersionFlags(cmd *cobra.Command) {
 	cmd.Flags().String("stack-version", "", "stack version (tag, branch, or commit hash). "+
-		"Use type prefixes to avoid ambiguity: tag:<name>, branch:<name>, sha:<hash>, version:<id>")
+		"Use type prefixes to avoid ambiguity: tag:<name>, branch:<name>, sha:<hash>, version:<id>. "+
+		"On an existing component it defaults to the component's current version")
 	cmd.RegisterFlagCompletionFunc("stack-version", CompleteStackVersionUnified)
 
 	// Legacy flags — kept for backward compatibility.

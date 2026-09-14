@@ -13,19 +13,9 @@ import (
 func (m *apiClient) GetComponentConfig(org, project, env, component, versionTag, versionBranch, versionCommitHash string, versionID uint32) (models.FormVariables, *http.Response, error) {
 	var result models.FormVariables
 
-	if versionID == 0 {
-		comp, _, err := m.GetComponent(org, project, env, component)
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to get component to resolve stack version: %w", err)
-		}
-		versionID, _, err = m.resolveStackVersion(org, *comp.ServiceCatalog.Ref, versionTag, versionBranch, versionCommitHash)
-		if err != nil {
-			return nil, nil, fmt.Errorf("failed to resolve stack version: %w", err)
-		}
-	}
-
-	query := url.Values{
-		"service_catalog_source_version_id": []string{strconv.FormatUint(uint64(versionID), 10)},
+	query, err := m.componentVersionQuery(org, project, env, component, versionTag, versionBranch, versionCommitHash, versionID)
+	if err != nil {
+		return nil, nil, err
 	}
 
 	resp, err := m.GenericRequest(Request{
@@ -38,6 +28,28 @@ func (m *apiClient) GetComponentConfig(org, project, env, component, versionTag,
 		return nil, resp, err
 	}
 	return result, resp, nil
+}
+
+// componentVersionQuery resolves a tag, branch or commit selector against the
+// component's stack. Without any selector the query stays empty: the API then
+// reads the component's own version, which is the version a component command
+// means by default (CLI-152)
+func (m *apiClient) componentVersionQuery(org, project, env, component, versionTag, versionBranch, versionCommitHash string, versionID uint32) (url.Values, error) {
+	query := url.Values{}
+	if versionID == 0 && (versionTag != "" || versionBranch != "" || versionCommitHash != "") {
+		comp, _, err := m.GetComponent(org, project, env, component)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get component to resolve stack version: %w", err)
+		}
+		versionID, _, err = m.resolveStackVersion(org, *comp.ServiceCatalog.Ref, versionTag, versionBranch, versionCommitHash)
+		if err != nil {
+			return nil, fmt.Errorf("failed to resolve stack version: %w", err)
+		}
+	}
+	if versionID != 0 {
+		query.Set("service_catalog_source_version_id", strconv.FormatUint(uint64(versionID), 10))
+	}
+	return query, nil
 }
 
 func (m *apiClient) GetComponent(org, project, env, component string) (*models.Component, *http.Response, error) {
@@ -157,23 +169,9 @@ func (m *apiClient) DeleteComponent(org, project, env, component string, opts De
 }
 
 func (m *apiClient) GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, *http.Response, error) {
-	// Need to get component to determine stack ref
-	comp, _, err := m.GetComponent(org, project, env, component)
+	query, err := m.componentVersionQuery(org, project, env, component, versionTag, versionBranch, versionCommitHash, 0)
 	if err != nil {
 		return nil, nil, err
-	}
-
-	stackRef := *comp.ServiceCatalog.Ref
-
-	// Resolve version parameters to ID and commit hash
-	versionID, commitHash, err := m.resolveStackVersion(org, stackRef, versionTag, versionBranch, versionCommitHash)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	query := url.Values{
-		"service_catalog_source_version_id":          []string{strconv.FormatUint(uint64(versionID), 10)},
-		"service_catalog_source_version_commit_hash": []string{commitHash},
 	}
 	if useCase != "" {
 		query.Set("use_case", useCase)

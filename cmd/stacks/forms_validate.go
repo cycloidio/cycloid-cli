@@ -71,11 +71,14 @@ func validateForm(cmd *cobra.Command, args []string) error {
 		if err != nil {
 			return cyout.PrintWithOptions(cmd, validation, err, fmt.Sprintf("form validation failed for %s", formsPath), printer.Options{})
 		}
+		if validation == nil {
+			return fmt.Errorf("form validation for %s returned no result", formsPath)
+		}
 
 		if len(validation.Errors) == 0 {
-			if err := cyout.PrintWithOptions(cmd, nil, nil, fmt.Sprintf("%s: ok", formsPath), printer.Options{}); err != nil {
-				return err
-			}
+			// Confirmation is a human hint, not data: keep it off stdout so `-o json`
+			// stays machine-parseable and consistent with the error branch below.
+			fmt.Fprintf(cmd.ErrOrStderr(), "%s: ok\n", formsPath)
 			continue
 		}
 

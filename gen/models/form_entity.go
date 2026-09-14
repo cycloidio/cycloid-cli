@@ -131,6 +131,9 @@ type FormEntity struct {
 	//     * 'display_keys' (bool): to specify if the path + key have to be written or only the path
 	//     * 'format' (enum): credential format, one of: 'path' | 'uri'. Defaults to path. Only credentials in URI format can be shared between technologies.
 	//     * 'uri_parameters' (map): optional query parameters that should be encoded and added to the resulting credential URI by the client. For example, they may be used to specify the output format (e.g., JSON). Applies only if format='uri'.
+	//     * 'cred_name' (string): pin the widget to a single credential canonical, so the end user only provides the secret value. The value is slugified by the API and must be consumed as returned. Mutually exclusive with 'cred_name_prefix'.
+	//     * 'cred_name_prefix' (string): pin the beginning of the credential canonical, the end user provides only the suffix. Slugified by the API, a trailing '-' or '_' separator is preserved. Mutually exclusive with 'cred_name'.
+	//     * 'cred_key' (string): the key inside the credential that holds the value, used when the credential is created inline.
 	//   * radio
 	//     * 'orientation' (string): whether you want to display it in an 'horizontal' or 'vertical' way
 	//   * cy_inventory_resource
@@ -150,6 +153,14 @@ type FormEntity struct {
 	//     * 'format' (string): the date/time format string for display and storage (e.g. 'YYYY-MM-DD', 'YYYY-MM-DD HH:mm', 'YYYY-MM-DDTHH:mm:ssZ'). Defaults to 'YYYY-MM-DDTHH:mm:ssZ' if not specified.
 	//     * 'block_weekends' (bool): prevents selection of Saturday and Sunday dates. Defaults to false.
 	//     * 'date_only' (bool): restricts picker to date selection only (no time inputs). When true, format defaults to 'YYYY-MM-DD'. Defaults to false.
+	//     * 'min_future_distance' (string): minimum selectable future offset from today (e.g. '1d').
+	//     * 'max_future_distance' (string): maximum selectable future offset from today (e.g. '30d').
+	//     * 'min_past_distance' (string): minimum selectable past offset from today (e.g. '0d').
+	//     * 'max_past_distance' (string): maximum selectable past offset from today (e.g. '90d').
+	//     * 'allowed_time_start' (string): earliest selectable time of day in HH:mm (e.g. '09:00').
+	//     * 'allowed_time_end' (string): latest selectable time of day in HH:mm (e.g. '18:00').
+	//     * 'block_past_dates' (bool): prevents selection of dates in the past.
+	//     * 'max_date' (string): latest selectable date as YYYY-MM-DD (e.g. '2030-01-01').
 	//   * cy_inventory_output
 	//     * 'attribute' (string): Path to the output's attribute, which value will be used
 	//     * 'filters': (object): The filters to apply, selected from the list below:
@@ -163,6 +174,8 @@ type FormEntity struct {
 	//     * 'min_items' (int): minimum number of repeatable instances (0 = no minimum)
 	//     * 'max_items' (int): maximum number of repeatable instances (0 = no maximum)
 	//     * 'item_label' (string): label template for each instance
+	//   * simple_text
+	//     * 'sensitive' (bool): render the input masked, with a show/hide toggle, instead of plain text. Display only -- the value is stored and submitted exactly as any other value. See the widget documentation for the "not a secrets store" warning.
 	WidgetConfig any `json:"widget_config,omitempty"`
 }
 

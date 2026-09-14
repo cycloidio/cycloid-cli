@@ -47,7 +47,7 @@ func login(cmd *cobra.Command, args []string) error {
 	// Get api key via env var or cli flag
 	apiKey := viper.GetString("api-key")
 	if apiKey == "" {
-		return cyout.PrintWithOptions(cmd, nil, nil, "CY_API_KEY is not set or invalid", printer.Options{})
+		return errors.New("CY_API_KEY is not set or invalid")
 	}
 
 	// Warn user about deprecation
