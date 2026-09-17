@@ -86,6 +86,9 @@ type Organization struct {
 	// Required: true
 	HasChildren *bool `json:"has_children"`
 
+	// When true, the component list and project list hide the indicator shown when a version's commit no longer matches its reference commit. Other version status indicators are unaffected.
+	HideStackVersionOutOfSync bool `json:"hide_stack_version_out_of_sync,omitempty"`
+
 	// id
 	// Required: true
 	// Minimum: 1

@@ -100,6 +100,9 @@ func RunCLIWithSetup(t *testing.T, serverURL string, setup func(root *cobra.Comm
 
 	// Configure viper and env vars to point at the test server.
 	// Save and restore viper state so tests don't leak global config.
+	// CY_ORG from the developer's shell would otherwise reach viper through
+	// AutomaticEnv and replace test-org in every canned route.
+	t.Setenv("CY_ORG", "")
 	prevURL := viper.GetString("api-url")
 	prevOrg := viper.GetString("org")
 	viper.Set("api-url", serverURL)

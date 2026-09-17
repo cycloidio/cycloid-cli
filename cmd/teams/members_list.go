@@ -17,12 +17,12 @@ func NewTeamMemberListCommand() *cobra.Command {
 		Use:               "list [team_canonical]",
 		Short:             "List members of a team",
 		Example:           "cy team member list --team my-team",
-		Args:              cobra.MaximumNArgs(1),
 		ValidArgsFunction: cyargs.CompleteTeam,
 		RunE:              listTeamMember,
 	}
 
-	cyargs.AddTeamFlag(cmd)
+	teamFlag := cyargs.AddTeamFlag(cmd)
+	cmd.Args = cobra.MatchAll(cobra.MaximumNArgs(1), cyargs.RequireArgsOrFlag(teamFlag))
 	return cmd
 }
 
@@ -37,10 +37,12 @@ func listTeamMember(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	if team == "" && len(args) == 1 {
+	// Args guarantees at least one of the two is present.
+	if team != "" && len(args) == 1 {
+		return fmt.Errorf("team given twice: --team %q and argument %q", team, args[0])
+	}
+	if team == "" {
 		team = args[0]
-	} else {
-		return fmt.Errorf("missing team canonical parameter, give it by argument or flag")
 	}
 
 	api := common.NewAPI()

@@ -27,6 +27,7 @@ func (m *apiClient) CreateOrganization(name string) (*models.Organization, *http
 // UpdateOrganizationOpts holds optional fields for organization update.
 type UpdateOrganizationOpts struct {
 	CanChildrenManageOidcMapping *bool
+	HideStackVersionOutOfSync    *bool
 }
 
 func (m *apiClient) UpdateOrganization(can, name string, opts ...UpdateOrganizationOpts) (*models.Organization, *http.Response, error) {
@@ -35,7 +36,10 @@ func (m *apiClient) UpdateOrganization(can, name string, opts ...UpdateOrganizat
 	}
 
 	if len(opts) > 0 && opts[0].CanChildrenManageOidcMapping != nil {
-		body.CanChildrenManageOidcMapping = *opts[0].CanChildrenManageOidcMapping
+		body.CanChildrenManageOidcMapping = opts[0].CanChildrenManageOidcMapping
+	}
+	if len(opts) > 0 && opts[0].HideStackVersionOutOfSync != nil {
+		body.HideStackVersionOutOfSync = opts[0].HideStackVersionOutOfSync
 	}
 
 	var result *models.Organization

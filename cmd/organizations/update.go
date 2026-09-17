@@ -24,12 +24,16 @@ func NewUpdateCommand() *cobra.Command {
 
 	# allow child organizations to manage OIDC mappings
 	cy organization update --org org --name foo --can-children-manage-oidc-mapping=true
+
+	# hide the "out of sync" stack version indicator from the component and project lists
+	cy organization update --org org --name foo --hide-stack-version-out-of-sync=true
 `,
 		RunE: update,
 	}
 
 	cmd.MarkFlagRequired(cyargs.AddOrgNameFlag(cmd))
 	cmd.Flags().Bool("can-children-manage-oidc-mapping", true, "Whether child organizations are allowed to manage their own OIDC group mappings")
+	cmd.Flags().Bool("hide-stack-version-out-of-sync", false, "Whether the component and project lists hide the indicator shown when a version's commit no longer matches its reference commit")
 
 	return cmd
 }
@@ -52,6 +56,10 @@ func update(cmd *cobra.Command, args []string) error {
 	if cmd.Flags().Changed("can-children-manage-oidc-mapping") {
 		v, _ := cmd.Flags().GetBool("can-children-manage-oidc-mapping")
 		opts.CanChildrenManageOidcMapping = &v
+	}
+	if cmd.Flags().Changed("hide-stack-version-out-of-sync") {
+		v, _ := cmd.Flags().GetBool("hide-stack-version-out-of-sync")
+		opts.HideStackVersionOutOfSync = &v
 	}
 
 	o, _, err := m.UpdateOrganization(org, name, opts)

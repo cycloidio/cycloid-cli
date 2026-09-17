@@ -26,6 +26,7 @@ func NewTeamMemberGetCommand() *cobra.Command {
 		RunE:              getTeamMember,
 	}
 
+	cmd.MarkFlagRequired(cyargs.AddTeamFlag(cmd))
 	return cmd
 }
 
@@ -59,7 +60,7 @@ func getTeamMember(cmd *cobra.Command, args []string) error {
 				memberArg == m.Username ||
 				memberArg == emailStr
 		}); index != -1 {
-			outMembers[i] = currentMembers[i]
+			outMembers[i] = currentMembers[index]
 		}
 	}
 

@@ -25,14 +25,17 @@ type UpdateOrganization struct {
 	// can children create appearance
 	CanChildrenCreateAppearance bool `json:"can_children_create_appearance,omitempty"`
 
-	// can children manage oidc mapping
-	CanChildrenManageOidcMapping bool `json:"can_children_manage_oidc_mapping,omitempty"`
+	// Omitting this field or sending null preserves the current value.
+	CanChildrenManageOidcMapping *bool `json:"can_children_manage_oidc_mapping,omitempty"`
 
 	// can children use dedicated authentication
 	CanChildrenUseDedicatedAuthentication bool `json:"can_children_use_dedicated_authentication,omitempty"`
 
 	// Message displayed to users when organization creation is restricted
 	CreationRestrictedMessage *string `json:"creation_restricted_message,omitempty"`
+
+	// When true, the component list and project list hide the indicator shown when a version's commit no longer matches its reference commit. Other version status indicators are unaffected. Omitting this field or sending null preserves the current value.
+	HideStackVersionOutOfSync *bool `json:"hide_stack_version_out_of_sync,omitempty"`
 
 	// is using dedicated authentication
 	IsUsingDedicatedAuthentication bool `json:"is_using_dedicated_authentication,omitempty"`
