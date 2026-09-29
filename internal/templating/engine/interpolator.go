@@ -71,6 +71,7 @@ type Interpolator struct {
 	ConfigRoot string
 
 	CurrentUserUsername string
+	CurrentUserEmail    string
 
 	// EnvVars holds the per-environment variables exposed to templates as
 	// `.env_vars.<key>` (aliased `.environment_vars.<key>`). Keys map to
@@ -379,6 +380,7 @@ const (
 	configRoot   // config_root
 
 	currentUserUsername // current_user_username
+	currentUserEmail    // current_user_email
 )
 
 func (i Interpolator) dataMap() map[string]any {
@@ -543,6 +545,9 @@ func (i Interpolator) dataMap() map[string]any {
 	}
 	if i.CurrentUserUsername != "" {
 		mappings[currentUserUsername] = i.CurrentUserUsername
+	}
+	if i.CurrentUserEmail != "" {
+		mappings[currentUserEmail] = i.CurrentUserEmail
 	}
 
 	// Convert the map to a map[string]interface{}

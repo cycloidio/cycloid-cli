@@ -1,6 +1,8 @@
 package organizations
 
 import (
+	"strings"
+
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 
@@ -27,6 +29,12 @@ func NewUpdateCommand() *cobra.Command {
 
 	# hide the "out of sync" stack version indicator from the component and project lists
 	cy organization update --org org --name foo --hide-stack-version-out-of-sync=true
+
+	# allow two users to impersonate other users (root organization only)
+	cy organization update --org org --name foo --impersonation-emails alice@example.com,bob@example.com
+
+	# clear the impersonation allowlist
+	cy organization update --org org --name foo --impersonation-emails ""
 `,
 		RunE: update,
 	}
@@ -34,6 +42,7 @@ func NewUpdateCommand() *cobra.Command {
 	cmd.MarkFlagRequired(cyargs.AddOrgNameFlag(cmd))
 	cmd.Flags().Bool("can-children-manage-oidc-mapping", true, "Whether child organizations are allowed to manage their own OIDC group mappings")
 	cmd.Flags().Bool("hide-stack-version-out-of-sync", false, "Whether the component and project lists hide the indicator shown when a version's commit no longer matches its reference commit")
+	cmd.Flags().StringSlice("impersonation-emails", nil, "Comma-separated emails of the users allowed to impersonate other users (root organization only). Pass an empty string to clear the list")
 
 	return cmd
 }
@@ -60,6 +69,18 @@ func update(cmd *cobra.Command, args []string) error {
 	if cmd.Flags().Changed("hide-stack-version-out-of-sync") {
 		v, _ := cmd.Flags().GetBool("hide-stack-version-out-of-sync")
 		opts.HideStackVersionOutOfSync = &v
+	}
+	if cmd.Flags().Changed("impersonation-emails") {
+		v, _ := cmd.Flags().GetStringSlice("impersonation-emails")
+		// non-nil even when empty: an empty slice clears the list. pflag keeps the
+		// space after a comma ("a@b.io, c@d.io"), which the API pattern rejects
+		emails := make([]string, 0, len(v))
+		for _, e := range v {
+			if e = strings.TrimSpace(e); e != "" {
+				emails = append(emails, e)
+			}
+		}
+		opts.ImpersonationEmails = emails
 	}
 
 	o, _, err := m.UpdateOrganization(org, name, opts)

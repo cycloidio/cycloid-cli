@@ -22,26 +22,33 @@ import (
 // swagger:model UpdateOrganization
 type UpdateOrganization struct {
 
-	// can children create appearance
-	CanChildrenCreateAppearance bool `json:"can_children_create_appearance,omitempty"`
+	// Omitting this field or sending null preserves the current value.
+	CanChildrenCreateAppearance *bool `json:"can_children_create_appearance,omitempty"`
 
 	// Omitting this field or sending null preserves the current value.
 	CanChildrenManageOidcMapping *bool `json:"can_children_manage_oidc_mapping,omitempty"`
 
-	// can children use dedicated authentication
-	CanChildrenUseDedicatedAuthentication bool `json:"can_children_use_dedicated_authentication,omitempty"`
+	// Omitting this field or sending null preserves the current value.
+	CanChildrenUseDedicatedAuthentication *bool `json:"can_children_use_dedicated_authentication,omitempty"`
 
 	// Message displayed to users when organization creation is restricted
 	CreationRestrictedMessage *string `json:"creation_restricted_message,omitempty"`
 
+	// When true, adding a member sends no invitation email, platform-wide. Only the root organization can set it to true: sending true for a sub-organization is rejected with a 422 error, while false is accepted anywhere. Omitting this field or sending null preserves the current value.
+	DisableMemberInvitationEmail *bool `json:"disable_member_invitation_email,omitempty"`
+
 	// When true, the component list and project list hide the indicator shown when a version's commit no longer matches its reference commit. Other version status indicators are unaffected. Omitting this field or sending null preserves the current value.
 	HideStackVersionOutOfSync *bool `json:"hide_stack_version_out_of_sync,omitempty"`
 
-	// is using dedicated authentication
-	IsUsingDedicatedAuthentication bool `json:"is_using_dedicated_authentication,omitempty"`
+	// Emails of the users allowed to impersonate other users. A non-empty list is accepted on the root organization only, any other organization gets a 422. Emails are trimmed, lowercased and deduplicated before being stored. Omitting this field or sending null preserves the current value. Send an empty array [] to clear the list.
+	// Max Items: 100
+	ImpersonationEmails []string `json:"impersonation_emails"`
 
-	// mfa enabled
-	MfaEnabled bool `json:"mfa_enabled,omitempty"`
+	// Omitting this field or sending null preserves the current value.
+	IsUsingDedicatedAuthentication *bool `json:"is_using_dedicated_authentication,omitempty"`
+
+	// Omitting this field or sending null preserves the current value.
+	MfaEnabled *bool `json:"mfa_enabled,omitempty"`
 
 	// name
 	// Required: true
@@ -64,6 +71,10 @@ type UpdateOrganization struct {
 func (m *UpdateOrganization) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateImpersonationEmails(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateName(formats); err != nil {
 		res = append(res, err)
 	}
@@ -79,6 +90,32 @@ func (m *UpdateOrganization) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *UpdateOrganization) validateImpersonationEmails(formats strfmt.Registry) error {
+	if swag.IsZero(m.ImpersonationEmails) { // not required
+		return nil
+	}
+
+	iImpersonationEmailsSize := int64(len(m.ImpersonationEmails))
+
+	if err := validate.MaxItems("impersonation_emails", "body", iImpersonationEmailsSize, 100); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.ImpersonationEmails); i++ {
+
+		if err := validate.MaxLength("impersonation_emails"+"."+strconv.Itoa(i), "body", m.ImpersonationEmails[i], 255); err != nil {
+			return err
+		}
+
+		if err := validate.Pattern("impersonation_emails"+"."+strconv.Itoa(i), "body", m.ImpersonationEmails[i], `^\S+@\S+\.\S+$`); err != nil {
+			return err
+		}
+
+	}
+
 	return nil
 }
 

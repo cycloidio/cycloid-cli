@@ -82,6 +82,9 @@ type Organization struct {
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at"`
 
+	// When true, adding a member to an organization sends no invitation email. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
+	DisableMemberInvitationEmail *bool `json:"disable_member_invitation_email,omitempty"`
+
 	// has children
 	// Required: true
 	HasChildren *bool `json:"has_children"`
@@ -93,6 +96,10 @@ type Organization struct {
 	// Required: true
 	// Minimum: 1
 	ID *uint32 `json:"id"`
+
+	// Emails of the users allowed to impersonate other users. Set on the root organization only; empty means nobody can impersonate. Only returned to callers allowed to update the organization, omitted for everyone else.
+	// Max Items: 100
+	ImpersonationEmails []string `json:"impersonation_emails"`
 
 	// Defines if this organization is the root one on the platform or not
 	// Required: true
@@ -205,6 +212,10 @@ func (m *Organization) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateImpersonationEmails(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -444,6 +455,32 @@ func (m *Organization) validateID(formats strfmt.Registry) error {
 
 	if err := validate.MinimumUint("id", "body", uint64(*m.ID), 1, false); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (m *Organization) validateImpersonationEmails(formats strfmt.Registry) error {
+	if swag.IsZero(m.ImpersonationEmails) { // not required
+		return nil
+	}
+
+	iImpersonationEmailsSize := int64(len(m.ImpersonationEmails))
+
+	if err := validate.MaxItems("impersonation_emails", "body", iImpersonationEmailsSize, 100); err != nil {
+		return err
+	}
+
+	for i := 0; i < len(m.ImpersonationEmails); i++ {
+
+		if err := validate.MaxLength("impersonation_emails"+"."+strconv.Itoa(i), "body", m.ImpersonationEmails[i], 255); err != nil {
+			return err
+		}
+
+		if err := validate.Pattern("impersonation_emails"+"."+strconv.Itoa(i), "body", m.ImpersonationEmails[i], `^\S+@\S+\.\S+$`); err != nil {
+			return err
+		}
+
 	}
 
 	return nil

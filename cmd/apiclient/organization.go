@@ -28,6 +28,8 @@ func (m *apiClient) CreateOrganization(name string) (*models.Organization, *http
 type UpdateOrganizationOpts struct {
 	CanChildrenManageOidcMapping *bool
 	HideStackVersionOutOfSync    *bool
+	// ImpersonationEmails nil means "not provided"; an empty non-nil slice clears the list
+	ImpersonationEmails []string
 }
 
 func (m *apiClient) UpdateOrganization(can, name string, opts ...UpdateOrganizationOpts) (*models.Organization, *http.Response, error) {
@@ -40,6 +42,9 @@ func (m *apiClient) UpdateOrganization(can, name string, opts ...UpdateOrganizat
 	}
 	if len(opts) > 0 && opts[0].HideStackVersionOutOfSync != nil {
 		body.HideStackVersionOutOfSync = opts[0].HideStackVersionOutOfSync
+	}
+	if len(opts) > 0 && opts[0].ImpersonationEmails != nil {
+		body.ImpersonationEmails = opts[0].ImpersonationEmails
 	}
 
 	var result *models.Organization

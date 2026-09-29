@@ -50,7 +50,7 @@ func (m *TestExternalBackendConnectionInput) SetConfiguration(val ExternalBacken
 // UnmarshalJSON unmarshals this object with a polymorphic type from a JSON structure
 func (m *TestExternalBackendConnectionInput) UnmarshalJSON(raw []byte) error {
 	var data struct {
-		Configuration json.RawMessage `json:"configuration"`
+		Configuration json.RawMessage `json:"configuration,omitempty"`
 
 		Credential *TestConnectionCredential `json:"credential"`
 
@@ -64,9 +64,13 @@ func (m *TestExternalBackendConnectionInput) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	propConfiguration, err := UnmarshalExternalBackendConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
-	if err != nil && !stderrors.Is(err, io.EOF) {
-		return err
+	var propConfiguration ExternalBackendConfiguration
+	if string(data.Configuration) != "null" {
+		configuration, err := UnmarshalExternalBackendConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
+		if err != nil && !stderrors.Is(err, io.EOF) {
+			return err
+		}
+		propConfiguration = configuration
 	}
 
 	var result TestExternalBackendConnectionInput
@@ -103,7 +107,7 @@ func (m TestExternalBackendConnectionInput) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	b2, err = json.Marshal(struct {
-		Configuration ExternalBackendConfiguration `json:"configuration"`
+		Configuration ExternalBackendConfiguration `json:"configuration,omitempty"`
 	}{
 
 		Configuration: m.configurationField,
@@ -138,9 +142,8 @@ func (m *TestExternalBackendConnectionInput) Validate(formats strfmt.Registry) e
 }
 
 func (m *TestExternalBackendConnectionInput) validateConfiguration(formats strfmt.Registry) error {
-
-	if err := validate.Required("configuration", "body", m.Configuration()); err != nil {
-		return err
+	if swag.IsZero(m.Configuration()) { // not required
+		return nil
 	}
 
 	if err := m.Configuration().Validate(formats); err != nil {
@@ -248,6 +251,10 @@ func (m *TestExternalBackendConnectionInput) ContextValidate(ctx context.Context
 }
 
 func (m *TestExternalBackendConnectionInput) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Configuration()) { // not required
+		return nil
+	}
 
 	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
 		ve := new(errors.Validation)

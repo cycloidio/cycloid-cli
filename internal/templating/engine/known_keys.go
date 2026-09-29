@@ -13,9 +13,9 @@ func KnownKeys() map[string]struct{} {
 		"env_providers":         {},
 		"environment_providers": {},
 	}
-	// org is the first interpolatorEntity (iota 0) and currentUserUsername the
+	// org is the first interpolatorEntity (iota 0) and currentUserEmail the
 	// last; iterate the full enum and collect each snake-cased name.
-	for e := org; e <= currentUserUsername; e++ {
+	for e := org; e <= currentUserEmail; e++ {
 		keys[e.String()] = struct{}{}
 	}
 	return keys

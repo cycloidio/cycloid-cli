@@ -32,10 +32,10 @@ type PluginManager struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
-	// Status of the Plugin Manager invitation. Created as "pending", then transitions to "accepted" or "rejected" via the update endpoint. Cannot be set back to "pending".
+	// Status of the Plugin Manager invitation. Created as "invite_pending", then transitions to "invite_accepted" via the update endpoint, which takes "accepted" or "rejected". Cannot be set back to pending.
 	//
 	// Required: true
-	// Enum: ["pending","accepted"]
+	// Enum: ["invite_pending","invite_accepted"]
 	InviteStatus *string `json:"invite_status"`
 
 	// Name assigned to the Plugin Manager Instance
@@ -126,7 +126,7 @@ var pluginManagerTypeInviteStatusPropEnum []any
 
 func init() {
 	var res []string
-	if err := json.Unmarshal([]byte(`["pending","accepted"]`), &res); err != nil {
+	if err := json.Unmarshal([]byte(`["invite_pending","invite_accepted"]`), &res); err != nil {
 		panic(err)
 	}
 	for _, v := range res {
@@ -136,11 +136,11 @@ func init() {
 
 const (
 
-	// PluginManagerInviteStatusPending captures enum value "pending"
-	PluginManagerInviteStatusPending string = "pending"
+	// PluginManagerInviteStatusInvitePending captures enum value "invite_pending"
+	PluginManagerInviteStatusInvitePending string = "invite_pending"
 
-	// PluginManagerInviteStatusAccepted captures enum value "accepted"
-	PluginManagerInviteStatusAccepted string = "accepted"
+	// PluginManagerInviteStatusInviteAccepted captures enum value "invite_accepted"
+	PluginManagerInviteStatusInviteAccepted string = "invite_accepted"
 )
 
 // prop value enum

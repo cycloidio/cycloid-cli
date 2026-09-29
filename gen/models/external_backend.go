@@ -297,9 +297,8 @@ func (m *ExternalBackend) validateComponentCanonical(formats strfmt.Registry) er
 }
 
 func (m *ExternalBackend) validateConfiguration(formats strfmt.Registry) error {
-
-	if err := validate.Required("configuration", "body", m.Configuration()); err != nil {
-		return err
+	if swag.IsZero(m.Configuration()) { // not required
+		return nil
 	}
 
 	if err := m.Configuration().Validate(formats); err != nil {
@@ -447,6 +446,10 @@ func (m *ExternalBackend) ContextValidate(ctx context.Context, formats strfmt.Re
 }
 
 func (m *ExternalBackend) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Configuration()) { // not required
+		return nil
+	}
 
 	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
 		ve := new(errors.Validation)

@@ -77,7 +77,7 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 	var data struct {
 		ComponentCanonical string `json:"component_canonical,omitempty"`
 
-		Configuration json.RawMessage `json:"configuration"`
+		Configuration json.RawMessage `json:"configuration,omitempty"`
 
 		CredentialCanonical string `json:"credential_canonical,omitempty"`
 
@@ -97,9 +97,13 @@ func (m *NewExternalBackend) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	propConfiguration, err := UnmarshalExternalBackendConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
-	if err != nil && !stderrors.Is(err, io.EOF) {
-		return err
+	var propConfiguration ExternalBackendConfiguration
+	if string(data.Configuration) != "null" {
+		configuration, err := UnmarshalExternalBackendConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
+		if err != nil && !stderrors.Is(err, io.EOF) {
+			return err
+		}
+		propConfiguration = configuration
 	}
 
 	var result NewExternalBackend
@@ -164,7 +168,7 @@ func (m NewExternalBackend) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	b2, err = json.Marshal(struct {
-		Configuration ExternalBackendConfiguration `json:"configuration"`
+		Configuration ExternalBackendConfiguration `json:"configuration,omitempty"`
 	}{
 
 		Configuration: m.configurationField,
@@ -231,9 +235,8 @@ func (m *NewExternalBackend) validateComponentCanonical(formats strfmt.Registry)
 }
 
 func (m *NewExternalBackend) validateConfiguration(formats strfmt.Registry) error {
-
-	if err := validate.Required("configuration", "body", m.Configuration()); err != nil {
-		return err
+	if swag.IsZero(m.Configuration()) { // not required
+		return nil
 	}
 
 	if err := m.Configuration().Validate(formats); err != nil {
@@ -376,6 +379,10 @@ func (m *NewExternalBackend) ContextValidate(ctx context.Context, formats strfmt
 }
 
 func (m *NewExternalBackend) contextValidateConfiguration(ctx context.Context, formats strfmt.Registry) error {
+
+	if swag.IsZero(m.Configuration()) { // not required
+		return nil
+	}
 
 	if err := m.Configuration().ContextValidate(ctx, formats); err != nil {
 		ve := new(errors.Validation)

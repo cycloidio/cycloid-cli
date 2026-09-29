@@ -150,9 +150,9 @@ type FormEntity struct {
 	//       * 'environment' (string): Linked environment canonical
 	//       * 'component' (string): Linked component canonical
 	//   * date_time
-	//     * 'format' (string): the date/time format string for display and storage (e.g. 'YYYY-MM-DD', 'YYYY-MM-DD HH:mm', 'YYYY-MM-DDTHH:mm:ssZ'). Defaults to 'YYYY-MM-DDTHH:mm:ssZ' if not specified.
+	//     * 'format' (string): the date/time format string for display and storage, using date-fns tokens (e.g. "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd'T'HH:mm:ss'Z'"). Defaults to "yyyy-MM-dd'T'HH:mm:ss'Z'" (RFC 3339 UTC) if not specified.
 	//     * 'block_weekends' (bool): prevents selection of Saturday and Sunday dates. Defaults to false.
-	//     * 'date_only' (bool): restricts picker to date selection only (no time inputs). When true, format defaults to 'YYYY-MM-DD'. Defaults to false.
+	//     * 'date_only' (bool): restricts picker to date selection only (no time inputs). When true, format defaults to "yyyy-MM-dd". Defaults to false.
 	//     * 'min_future_distance' (string): minimum selectable future offset from today (e.g. '1d').
 	//     * 'max_future_distance' (string): maximum selectable future offset from today (e.g. '30d').
 	//     * 'min_past_distance' (string): minimum selectable past offset from today (e.g. '0d').
