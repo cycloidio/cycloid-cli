@@ -113,7 +113,7 @@ func GetPipeline(cmd *cobra.Command) (string, error) {
 	})
 
 	if index == -1 {
-		return "", fmt.Errorf("pipeline for component %q in project %q and environment %q is not found, please fill --pipeline argument: %w", component, project, environment, err)
+		return "", fmt.Errorf("pipeline for component %q in project %q and environment %q is not found, please fill --pipeline argument", component, project, environment)
 	}
 
 	return *pipelines[index].Name, nil
