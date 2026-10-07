@@ -35,6 +35,9 @@ func NewUpdateCommand() *cobra.Command {
 
 	# clear the impersonation allowlist
 	cy organization update --org org --name foo --impersonation-emails ""
+
+	# reject signup everywhere on the platform unless the email is already invited (root organization only)
+	cy organization update --org org --name foo --disable-signup=true
 `,
 		RunE: update,
 	}
@@ -43,6 +46,7 @@ func NewUpdateCommand() *cobra.Command {
 	cmd.Flags().Bool("can-children-manage-oidc-mapping", true, "Whether child organizations are allowed to manage their own OIDC group mappings")
 	cmd.Flags().Bool("hide-stack-version-out-of-sync", false, "Whether the component and project lists hide the indicator shown when a version's commit no longer matches its reference commit")
 	cmd.Flags().StringSlice("impersonation-emails", nil, "Comma-separated emails of the users allowed to impersonate other users (root organization only). Pass an empty string to clear the list")
+	cmd.Flags().Bool("disable-signup", false, "Reject signup everywhere on the platform (plain email/password, AWS Marketplace, and SSO/social auto-enrollment) unless the email is already invited (root organization only)")
 
 	return cmd
 }
@@ -81,6 +85,10 @@ func update(cmd *cobra.Command, args []string) error {
 			}
 		}
 		opts.ImpersonationEmails = emails
+	}
+	if cmd.Flags().Changed("disable-signup") {
+		v, _ := cmd.Flags().GetBool("disable-signup")
+		opts.DisableSignup = &v
 	}
 
 	o, _, err := m.UpdateOrganization(org, name, opts)

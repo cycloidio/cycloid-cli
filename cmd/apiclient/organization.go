@@ -30,6 +30,7 @@ type UpdateOrganizationOpts struct {
 	HideStackVersionOutOfSync    *bool
 	// ImpersonationEmails nil means "not provided"; an empty non-nil slice clears the list
 	ImpersonationEmails []string
+	DisableSignup       *bool
 }
 
 func (m *apiClient) UpdateOrganization(can, name string, opts ...UpdateOrganizationOpts) (*models.Organization, *http.Response, error) {
@@ -45,6 +46,9 @@ func (m *apiClient) UpdateOrganization(can, name string, opts ...UpdateOrganizat
 	}
 	if len(opts) > 0 && opts[0].ImpersonationEmails != nil {
 		body.ImpersonationEmails = opts[0].ImpersonationEmails
+	}
+	if len(opts) > 0 && opts[0].DisableSignup != nil {
+		body.DisableSignup = opts[0].DisableSignup
 	}
 
 	var result *models.Organization

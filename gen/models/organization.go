@@ -85,6 +85,9 @@ type Organization struct {
 	// When true, adding a member to an organization sends no invitation email. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
 	DisableMemberInvitationEmail *bool `json:"disable_member_invitation_email,omitempty"`
 
+	// When true, signups are rejected everywhere on the platform (plain email/password, AWS Marketplace, and SSO/social auto-enrollment) unless the email is already invited — same gate as sso_invite_only. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
+	DisableSignup *bool `json:"disable_signup,omitempty"`
+
 	// has children
 	// Required: true
 	HasChildren *bool `json:"has_children"`
