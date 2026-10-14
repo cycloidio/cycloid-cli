@@ -118,7 +118,7 @@ func (m *NewEnvironment) validateCloudAccountCanonicals(formats strfmt.Registry)
 
 	for i := 0; i < len(m.CloudAccountCanonicals); i++ {
 
-		if err := validate.MinLength("cloud_account_canonicals"+"."+strconv.Itoa(i), "body", m.CloudAccountCanonicals[i], 3); err != nil {
+		if err := validate.MinLength("cloud_account_canonicals"+"."+strconv.Itoa(i), "body", m.CloudAccountCanonicals[i], 2); err != nil {
 			return err
 		}
 

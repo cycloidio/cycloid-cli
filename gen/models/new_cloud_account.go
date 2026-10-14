@@ -23,21 +23,21 @@ type NewCloudAccount struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical string `json:"canonical,omitempty"`
 
 	// The canonical of the associated cloud provider. Can be a built-in provider canonical (aws, google, azurerm) or any free-form canonical representing a custom cloud provider for the organization.
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	CloudProvider *string `json:"cloud_provider"`
 
 	// Canonical of the credential to use
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
+	// Min Length: 2
 	CredentialCanonical *string `json:"credential_canonical"`
 
 	// An optional description for the cloud account
@@ -86,7 +86,7 @@ func (m *NewCloudAccount) validateCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -94,7 +94,7 @@ func (m *NewCloudAccount) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -107,7 +107,7 @@ func (m *NewCloudAccount) validateCloudProvider(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("cloud_provider", "body", *m.CloudProvider, 3); err != nil {
+	if err := validate.MinLength("cloud_provider", "body", *m.CloudProvider, 2); err != nil {
 		return err
 	}
 
@@ -115,7 +115,7 @@ func (m *NewCloudAccount) validateCloudProvider(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("cloud_provider", "body", *m.CloudProvider, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("cloud_provider", "body", *m.CloudProvider, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -128,7 +128,7 @@ func (m *NewCloudAccount) validateCredentialCanonical(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", *m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", *m.CredentialCanonical, 2); err != nil {
 		return err
 	}
 

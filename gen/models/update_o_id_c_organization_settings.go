@@ -24,8 +24,8 @@ type UpdateOIDCOrganizationSettings struct {
 
 	// The canonical of the org-level role granted on OIDC provisioning. Empty clears it.
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	DefaultRoleCanonical string `json:"default_role_canonical,omitempty"`
 
 	// When true, local member/team/invite edits are disabled (strict mode).
@@ -65,7 +65,7 @@ func (m *UpdateOIDCOrganizationSettings) validateDefaultRoleCanonical(formats st
 		return nil
 	}
 
-	if err := validate.MinLength("default_role_canonical", "body", m.DefaultRoleCanonical, 3); err != nil {
+	if err := validate.MinLength("default_role_canonical", "body", m.DefaultRoleCanonical, 2); err != nil {
 		return err
 	}
 
@@ -73,7 +73,7 @@ func (m *UpdateOIDCOrganizationSettings) validateDefaultRoleCanonical(formats st
 		return err
 	}
 
-	if err := validate.Pattern("default_role_canonical", "body", m.DefaultRoleCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("default_role_canonical", "body", m.DefaultRoleCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

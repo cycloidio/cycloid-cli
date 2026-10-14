@@ -58,6 +58,10 @@ type APIClient interface {
 	GetCredential(org, credential string) (*models.Credential, *http.Response, error)
 	ListCredentials(org, credentialType string, filters ...LHSFilter) ([]*models.CredentialSimple, *http.Response, error)
 
+	// admin
+	AdminDeleteUser(org, email string) (*http.Response, error)
+	AdminListUsers(org string, filters ...LHSFilter) ([]*models.AdminUser, *http.Response, error)
+
 	// events
 	SendEvent(org, eventType, title, message, severity string, tags map[string]string, color string) (*http.Response, error)
 	ListEvents(org string, eventType, eventSeverity []string, begin, end uint64) ([]*models.Event, *http.Response, error)

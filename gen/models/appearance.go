@@ -26,7 +26,7 @@ type Appearance struct {
 	// Required: true
 	// Max Length: 100
 	// Min Length: 1
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical *string `json:"canonical"`
 
 	// color
@@ -143,7 +143,7 @@ func (m *Appearance) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

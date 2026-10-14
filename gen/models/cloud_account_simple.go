@@ -24,8 +24,8 @@ type CloudAccountSimple struct {
 	// canonical
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical *string `json:"canonical"`
 
 	// The canonical of the associated cloud provider. Can be a built-in provider canonical (aws, google, azurerm; aliases like gcp/microsoft azure are accepted and normalized) or an org-scoped custom cloud provider canonical.
@@ -76,7 +76,7 @@ func (m *CloudAccountSimple) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -84,7 +84,7 @@ func (m *CloudAccountSimple) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

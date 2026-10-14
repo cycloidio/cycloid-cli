@@ -34,6 +34,9 @@ type UpdateOrganization struct {
 	// Message displayed to users when organization creation is restricted
 	CreationRestrictedMessage *string `json:"creation_restricted_message,omitempty"`
 
+	// When true, the StackForms cost estimation panel is hidden on every organization of the platform. Only the root organization can set it to true: sending true for a sub-organization is rejected with a 422 error, while false is accepted anywhere. Omitting this field or sending null preserves the current value.
+	DisableCostEstimation *bool `json:"disable_cost_estimation,omitempty"`
+
 	// When true, adding a member sends no invitation email, platform-wide. Only the root organization can set it to true: sending true for a sub-organization is rejected with a 422 error, while false is accepted anywhere. Omitting this field or sending null preserves the current value.
 	DisableMemberInvitationEmail *bool `json:"disable_member_invitation_email,omitempty"`
 
@@ -55,7 +58,7 @@ type UpdateOrganization struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 2
 	Name *string `json:"name"`
 
 	// When true, SSO users can only join the organization if they have been explicitly invited
@@ -128,7 +131,7 @@ func (m *UpdateOrganization) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 2); err != nil {
 		return err
 	}
 

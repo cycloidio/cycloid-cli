@@ -24,8 +24,8 @@ type UpdateServiceCatalogSource struct {
 
 	// credential canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 	// name
@@ -71,7 +71,7 @@ func (m *UpdateServiceCatalogSource) validateCredentialCanonical(formats strfmt.
 		return nil
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 2); err != nil {
 		return err
 	}
 
@@ -79,7 +79,7 @@ func (m *UpdateServiceCatalogSource) validateCredentialCanonical(formats strfmt.
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

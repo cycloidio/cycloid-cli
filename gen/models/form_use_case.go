@@ -21,6 +21,9 @@ import (
 // swagger:model FormUseCase
 type FormUseCase struct {
 
+	// False hides the cost estimation panel of the form. Set by `cost_estimation: false` on the use case in the .forms.yml; the component stack configuration endpoint also returns false when the root organization has disable_cost_estimation enabled. Omitted means enabled.
+	CostEstimation *bool `json:"cost_estimation,omitempty"`
+
 	// name
 	// Required: true
 	Name *string `json:"name"`

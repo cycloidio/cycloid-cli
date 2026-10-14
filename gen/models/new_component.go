@@ -29,8 +29,8 @@ type NewComponent struct {
 
 	// cloud provider canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	CloudProviderCanonical string `json:"cloud_provider_canonical,omitempty"`
 
 	// description
@@ -105,7 +105,7 @@ func (m *NewComponent) validateCloudProviderCanonical(formats strfmt.Registry) e
 		return nil
 	}
 
-	if err := validate.MinLength("cloud_provider_canonical", "body", m.CloudProviderCanonical, 3); err != nil {
+	if err := validate.MinLength("cloud_provider_canonical", "body", m.CloudProviderCanonical, 2); err != nil {
 		return err
 	}
 
@@ -113,7 +113,7 @@ func (m *NewComponent) validateCloudProviderCanonical(formats strfmt.Registry) e
 		return err
 	}
 
-	if err := validate.Pattern("cloud_provider_canonical", "body", m.CloudProviderCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("cloud_provider_canonical", "body", m.CloudProviderCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

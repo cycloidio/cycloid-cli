@@ -30,8 +30,8 @@ type NewAndConfiguredComponent struct {
 
 	// cloud provider canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	CloudProviderCanonical string `json:"cloud_provider_canonical,omitempty"`
 
 	// Credential canonicals this submit confirms it is replacing the secret of. A pinned `cy_cred` field whose credential already exists, and which this component's saved configuration did not previously reference, is refused unless its canonical is listed here: the write replaces the whole secret and Vault keeps no history. Naming a canonical that is not in that situation is ignored.
@@ -121,7 +121,7 @@ func (m *NewAndConfiguredComponent) validateCloudProviderCanonical(formats strfm
 		return nil
 	}
 
-	if err := validate.MinLength("cloud_provider_canonical", "body", m.CloudProviderCanonical, 3); err != nil {
+	if err := validate.MinLength("cloud_provider_canonical", "body", m.CloudProviderCanonical, 2); err != nil {
 		return err
 	}
 
@@ -129,7 +129,7 @@ func (m *NewAndConfiguredComponent) validateCloudProviderCanonical(formats strfm
 		return err
 	}
 
-	if err := validate.Pattern("cloud_provider_canonical", "body", m.CloudProviderCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("cloud_provider_canonical", "body", m.CloudProviderCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

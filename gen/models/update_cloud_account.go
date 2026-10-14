@@ -24,7 +24,7 @@ type UpdateCloudAccount struct {
 	// Canonical of the credential to use. If omitted, the credential remains unchanged.
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
+	// Min Length: 2
 	CredentialCanonical *string `json:"credential_canonical"`
 
 	// An optional description for the cloud account
@@ -66,7 +66,7 @@ func (m *UpdateCloudAccount) validateCredentialCanonical(formats strfmt.Registry
 		return err
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", *m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", *m.CredentialCanonical, 2); err != nil {
 		return err
 	}
 

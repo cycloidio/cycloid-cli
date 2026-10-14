@@ -25,14 +25,14 @@ type NewServiceCatalogSource struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical string `json:"canonical,omitempty"`
 
 	// credential canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	CredentialCanonical string `json:"credential_canonical,omitempty"`
 
 	// name
@@ -48,8 +48,8 @@ type NewServiceCatalogSource struct {
 	// Team responsible for the maintenance of the underlying service catalogs
 	//
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	TeamCanonical string `json:"team_canonical,omitempty"`
 
 	// url
@@ -111,7 +111,7 @@ func (m *NewServiceCatalogSource) validateCanonical(formats strfmt.Registry) err
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -119,7 +119,7 @@ func (m *NewServiceCatalogSource) validateCanonical(formats strfmt.Registry) err
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -131,7 +131,7 @@ func (m *NewServiceCatalogSource) validateCredentialCanonical(formats strfmt.Reg
 		return nil
 	}
 
-	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 3); err != nil {
+	if err := validate.MinLength("credential_canonical", "body", m.CredentialCanonical, 2); err != nil {
 		return err
 	}
 
@@ -139,7 +139,7 @@ func (m *NewServiceCatalogSource) validateCredentialCanonical(formats strfmt.Reg
 		return err
 	}
 
-	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("credential_canonical", "body", m.CredentialCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -160,7 +160,7 @@ func (m *NewServiceCatalogSource) validateTeamCanonical(formats strfmt.Registry)
 		return nil
 	}
 
-	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 3); err != nil {
+	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 2); err != nil {
 		return err
 	}
 
@@ -168,7 +168,7 @@ func (m *NewServiceCatalogSource) validateTeamCanonical(formats strfmt.Registry)
 		return err
 	}
 
-	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

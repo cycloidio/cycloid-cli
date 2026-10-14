@@ -33,8 +33,8 @@ type NewProject struct {
 
 	// config repository canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	ConfigRepositoryCanonical string `json:"config_repository_canonical,omitempty"`
 
 	// A description regarding the project to help identify/remember details,
@@ -125,7 +125,7 @@ func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) 
 		return nil
 	}
 
-	if err := validate.MinLength("config_repository_canonical", "body", m.ConfigRepositoryCanonical, 3); err != nil {
+	if err := validate.MinLength("config_repository_canonical", "body", m.ConfigRepositoryCanonical, 2); err != nil {
 		return err
 	}
 
@@ -133,7 +133,7 @@ func (m *NewProject) validateConfigRepositoryCanonical(formats strfmt.Registry) 
 		return err
 	}
 
-	if err := validate.Pattern("config_repository_canonical", "body", m.ConfigRepositoryCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("config_repository_canonical", "body", m.ConfigRepositoryCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

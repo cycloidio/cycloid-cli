@@ -150,15 +150,15 @@ type FormEntity struct {
 	//       * 'environment' (string): Linked environment canonical
 	//       * 'component' (string): Linked component canonical
 	//   * date_time
-	//     * 'format' (string): the date/time format string for display and storage, using date-fns tokens (e.g. "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd'T'HH:mm:ss'Z'"). Defaults to "yyyy-MM-dd'T'HH:mm:ss'Z'" (RFC 3339 UTC) if not specified.
-	//     * 'block_weekends' (bool): prevents selection of Saturday and Sunday dates. Defaults to false.
+	//     * 'format' (string): the date/time format string for storage, display and typing, using date-fns tokens (e.g. "yyyy-MM-dd", "yyyy-MM-dd HH:mm", "yyyy-MM-dd'T'HH:mm:ss'Z'"). Defaults to "yyyy-MM-dd'T'HH:mm:ss'Z'" (RFC 3339 UTC) if not specified. A value with a time of day is stored in UTC whatever the format; the user picks, types and sees local time. Formats without an hour token and date_only values are stored as picked; formats with an offset token (X, x, O, z) store the local time with its offset.
+	//     * 'block_weekends' (bool): prevents selection of Saturday and Sunday dates (local calendar day). Defaults to false.
 	//     * 'date_only' (bool): restricts picker to date selection only (no time inputs). When true, format defaults to "yyyy-MM-dd". Defaults to false.
-	//     * 'min_future_distance' (string): minimum selectable future offset from today (e.g. '1d').
-	//     * 'max_future_distance' (string): maximum selectable future offset from today (e.g. '30d').
-	//     * 'min_past_distance' (string): minimum selectable past offset from today (e.g. '0d').
-	//     * 'max_past_distance' (string): maximum selectable past offset from today (e.g. '90d').
-	//     * 'allowed_time_start' (string): earliest selectable time of day in HH:mm (e.g. '09:00').
-	//     * 'allowed_time_end' (string): latest selectable time of day in HH:mm (e.g. '18:00').
+	//     * 'min_future_distance' (string): minimum selectable future offset from today (e.g. '1d'). A future window also rules out every past day.
+	//     * 'max_future_distance' (string): maximum selectable future offset from today (e.g. '30d'). A future window also rules out every past day.
+	//     * 'min_past_distance' (string): minimum selectable past offset from today (e.g. '0d'). A past window also rules out every future day.
+	//     * 'max_past_distance' (string): maximum selectable past offset from today (e.g. '90d'). A past window also rules out every future day.
+	//     * 'allowed_time_start' (string): earliest selectable time of day in UTC (local time for formats with an offset token), as HH:mm (e.g. '09:00'); shown to the user in local time. Also the default time of a freshly picked day.
+	//     * 'allowed_time_end' (string): latest selectable time of day in UTC (local time for formats with an offset token), as HH:mm (e.g. '18:00'); shown to the user in local time. A start later than the end is a window that wraps past midnight.
 	//     * 'block_past_dates' (bool): prevents selection of dates in the past.
 	//     * 'max_date' (string): latest selectable date as YYYY-MM-DD (e.g. '2030-01-01').
 	//   * cy_inventory_output

@@ -61,8 +61,8 @@ type Organization struct {
 	// canonical
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical *string `json:"canonical"`
 
 	// ci port
@@ -81,6 +81,9 @@ type Organization struct {
 	// Required: true
 	// Minimum: 0
 	CreatedAt *uint64 `json:"created_at"`
+
+	// When true, the StackForms cost estimation panel is hidden on every organization of the platform. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
+	DisableCostEstimation *bool `json:"disable_cost_estimation,omitempty"`
 
 	// When true, adding a member to an organization sends no invitation email. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
 	DisableMemberInvitationEmail *bool `json:"disable_member_invitation_email,omitempty"`
@@ -118,13 +121,13 @@ type Organization struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 2
 	Name *string `json:"name"`
 
 	// Canonical of the immediate parent organization. Omitted when this organization is root.
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	ParentCanonical *string `json:"parent_canonical,omitempty"`
 
 	// Display name of the immediate parent organization. Omitted when this organization is root.
@@ -386,7 +389,7 @@ func (m *Organization) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -394,7 +397,7 @@ func (m *Organization) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -522,7 +525,7 @@ func (m *Organization) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 2); err != nil {
 		return err
 	}
 
@@ -534,7 +537,7 @@ func (m *Organization) validateParentCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("parent_canonical", "body", *m.ParentCanonical, 3); err != nil {
+	if err := validate.MinLength("parent_canonical", "body", *m.ParentCanonical, 2); err != nil {
 		return err
 	}
 
@@ -542,7 +545,7 @@ func (m *Organization) validateParentCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("parent_canonical", "body", *m.ParentCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("parent_canonical", "body", *m.ParentCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

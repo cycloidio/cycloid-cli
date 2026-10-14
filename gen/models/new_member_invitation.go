@@ -29,8 +29,8 @@ type NewMemberInvitation struct {
 	// The role of the member.
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	RoleCanonical *string `json:"role_canonical"`
 }
 
@@ -71,7 +71,7 @@ func (m *NewMemberInvitation) validateRoleCanonical(formats strfmt.Registry) err
 		return err
 	}
 
-	if err := validate.MinLength("role_canonical", "body", *m.RoleCanonical, 3); err != nil {
+	if err := validate.MinLength("role_canonical", "body", *m.RoleCanonical, 2); err != nil {
 		return err
 	}
 
@@ -79,7 +79,7 @@ func (m *NewMemberInvitation) validateRoleCanonical(formats strfmt.Registry) err
 		return err
 	}
 
-	if err := validate.Pattern("role_canonical", "body", *m.RoleCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("role_canonical", "body", *m.RoleCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

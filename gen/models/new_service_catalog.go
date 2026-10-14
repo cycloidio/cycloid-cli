@@ -29,8 +29,8 @@ type NewServiceCatalog struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical string `json:"canonical,omitempty"`
 
 	// description
@@ -51,15 +51,15 @@ type NewServiceCatalog struct {
 	// service catalog source canonical
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	ServiceCatalogSourceCanonical *string `json:"service_catalog_source_canonical"`
 
 	// Team responsible for the maintenance of the underlying service catalogs
 	//
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	TeamCanonical string `json:"team_canonical,omitempty"`
 
 	// technologies
@@ -125,7 +125,7 @@ func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -133,7 +133,7 @@ func (m *NewServiceCatalog) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -176,7 +176,7 @@ func (m *NewServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt
 		return err
 	}
 
-	if err := validate.MinLength("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, 3); err != nil {
+	if err := validate.MinLength("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, 2); err != nil {
 		return err
 	}
 
@@ -184,7 +184,7 @@ func (m *NewServiceCatalog) validateServiceCatalogSourceCanonical(formats strfmt
 		return err
 	}
 
-	if err := validate.Pattern("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("service_catalog_source_canonical", "body", *m.ServiceCatalogSourceCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -196,7 +196,7 @@ func (m *NewServiceCatalog) validateTeamCanonical(formats strfmt.Registry) error
 		return nil
 	}
 
-	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 3); err != nil {
+	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 2); err != nil {
 		return err
 	}
 
@@ -204,7 +204,7 @@ func (m *NewServiceCatalog) validateTeamCanonical(formats strfmt.Registry) error
 		return err
 	}
 
-	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

@@ -36,7 +36,7 @@ type UpdateInfraPolicy struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 2
 	Name *string `json:"name"`
 
 	// User canonical that owns this InfraPolicy. When a user is the
@@ -121,7 +121,7 @@ func (m *UpdateInfraPolicy) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 2); err != nil {
 		return err
 	}
 

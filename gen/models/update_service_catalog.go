@@ -24,8 +24,8 @@ type UpdateServiceCatalog struct {
 	// Team responsible for the maintenance of the underlying service catalogs
 	//
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	TeamCanonical string `json:"team_canonical,omitempty"`
 
 	// visibility
@@ -56,7 +56,7 @@ func (m *UpdateServiceCatalog) validateTeamCanonical(formats strfmt.Registry) er
 		return nil
 	}
 
-	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 3); err != nil {
+	if err := validate.MinLength("team_canonical", "body", m.TeamCanonical, 2); err != nil {
 		return err
 	}
 
@@ -64,7 +64,7 @@ func (m *UpdateServiceCatalog) validateTeamCanonical(formats strfmt.Registry) er
 		return err
 	}
 
-	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("team_canonical", "body", m.TeamCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

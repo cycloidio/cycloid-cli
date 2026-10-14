@@ -25,8 +25,8 @@ type NewCredential struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical string `json:"canonical,omitempty"`
 
 	// description
@@ -92,7 +92,7 @@ func (m *NewCredential) validateCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -100,7 +100,7 @@ func (m *NewCredential) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

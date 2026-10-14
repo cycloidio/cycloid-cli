@@ -50,6 +50,10 @@ type PluginWidget struct {
 	// Widget configuration
 	// Required: true
 	Widget any `json:"widget"`
+
+	// Stable key declared for the widget in the plugin's widgets.yaml, used to match it across plugin version upgrades. Empty when the widget declares none.
+	//
+	WidgetKey string `json:"widget_key,omitempty"`
 }
 
 // Validate validates this plugin widget

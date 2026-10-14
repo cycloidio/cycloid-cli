@@ -28,15 +28,15 @@ type NewCloudAccountWithCredentials struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical string `json:"canonical,omitempty"`
 
 	// The canonical of the associated cloud provider. Can be a built-in provider canonical (aws, google, azurerm) or any free-form canonical representing a custom cloud provider for the organization.
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	CloudProvider *string `json:"cloud_provider"`
 
 	// An optional description for the cloud account
@@ -126,7 +126,7 @@ func (m *NewCloudAccountWithCredentials) validateCanonical(formats strfmt.Regist
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -134,7 +134,7 @@ func (m *NewCloudAccountWithCredentials) validateCanonical(formats strfmt.Regist
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -147,7 +147,7 @@ func (m *NewCloudAccountWithCredentials) validateCloudProvider(formats strfmt.Re
 		return err
 	}
 
-	if err := validate.MinLength("cloud_provider", "body", *m.CloudProvider, 3); err != nil {
+	if err := validate.MinLength("cloud_provider", "body", *m.CloudProvider, 2); err != nil {
 		return err
 	}
 
@@ -155,7 +155,7 @@ func (m *NewCloudAccountWithCredentials) validateCloudProvider(formats strfmt.Re
 		return err
 	}
 
-	if err := validate.Pattern("cloud_provider", "body", *m.CloudProvider, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("cloud_provider", "body", *m.CloudProvider, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

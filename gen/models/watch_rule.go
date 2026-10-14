@@ -26,8 +26,8 @@ type WatchRule struct {
 	// canonical
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical *string `json:"canonical"`
 
 	// created at
@@ -49,20 +49,20 @@ type WatchRule struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 2
 	Name *string `json:"name"`
 
 	// organization canonical
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	OrganizationCanonical *string `json:"organization_canonical"`
 
 	// project canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	ProjectCanonical string `json:"project_canonical,omitempty"`
 
 	// updated at
@@ -122,7 +122,7 @@ func (m *WatchRule) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("canonical", "body", *m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", *m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -130,7 +130,7 @@ func (m *WatchRule) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", *m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -205,7 +205,7 @@ func (m *WatchRule) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 2); err != nil {
 		return err
 	}
 
@@ -218,7 +218,7 @@ func (m *WatchRule) validateOrganizationCanonical(formats strfmt.Registry) error
 		return err
 	}
 
-	if err := validate.MinLength("organization_canonical", "body", *m.OrganizationCanonical, 3); err != nil {
+	if err := validate.MinLength("organization_canonical", "body", *m.OrganizationCanonical, 2); err != nil {
 		return err
 	}
 
@@ -226,7 +226,7 @@ func (m *WatchRule) validateOrganizationCanonical(formats strfmt.Registry) error
 		return err
 	}
 
-	if err := validate.Pattern("organization_canonical", "body", *m.OrganizationCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("organization_canonical", "body", *m.OrganizationCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -238,7 +238,7 @@ func (m *WatchRule) validateProjectCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("project_canonical", "body", m.ProjectCanonical, 3); err != nil {
+	if err := validate.MinLength("project_canonical", "body", m.ProjectCanonical, 2); err != nil {
 		return err
 	}
 
@@ -246,7 +246,7 @@ func (m *WatchRule) validateProjectCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("project_canonical", "body", m.ProjectCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

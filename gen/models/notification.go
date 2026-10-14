@@ -44,8 +44,8 @@ type Notification struct {
 
 	// watch rule canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	WatchRuleCanonical string `json:"watch_rule_canonical,omitempty"`
 }
 
@@ -139,7 +139,7 @@ func (m *Notification) validateWatchRuleCanonical(formats strfmt.Registry) error
 		return nil
 	}
 
-	if err := validate.MinLength("watch_rule_canonical", "body", m.WatchRuleCanonical, 3); err != nil {
+	if err := validate.MinLength("watch_rule_canonical", "body", m.WatchRuleCanonical, 2); err != nil {
 		return err
 	}
 
@@ -147,7 +147,7 @@ func (m *Notification) validateWatchRuleCanonical(formats strfmt.Registry) error
 		return err
 	}
 
-	if err := validate.Pattern("watch_rule_canonical", "body", m.WatchRuleCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("watch_rule_canonical", "body", m.WatchRuleCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

@@ -27,14 +27,15 @@ func buildLHSFilterQuery(filters []LHSFilter) string {
 }
 
 // lhsEscapeValue percent-encodes only characters that are structurally
-// significant in query strings (&, =, #, space, control chars), preserving
-// regex metacharacters such as ?, *, +, [, ], (, ), {, }, |, ^, $, \.
+// significant in query strings (&, =, #, +, space, control chars), preserving
+// regex metacharacters such as ?, *, [, ], (, ), {, }, |, ^, $, \.
+// '+' is encoded too: the API decodes a raw one as a space.
 func lhsEscapeValue(s string) string {
 	var buf strings.Builder
 	for i := 0; i < len(s); i++ {
 		c := s[i]
 		switch {
-		case c == '&' || c == '=' || c == '#' || c == ' ':
+		case c == '&' || c == '=' || c == '#' || c == '+' || c == ' ':
 			fmt.Fprintf(&buf, "%%%02X", c)
 		case c < 0x20 || c >= 0x7F:
 			fmt.Fprintf(&buf, "%%%02X", c)

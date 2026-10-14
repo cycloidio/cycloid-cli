@@ -54,8 +54,8 @@ type NewAWSMarketplaceUserAccount struct {
 
 	// username
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Username string `json:"username,omitempty"`
 }
 
@@ -219,7 +219,7 @@ func (m *NewAWSMarketplaceUserAccount) validateUsername(formats strfmt.Registry)
 		return nil
 	}
 
-	if err := validate.MinLength("username", "body", m.Username, 3); err != nil {
+	if err := validate.MinLength("username", "body", m.Username, 2); err != nil {
 		return err
 	}
 
@@ -227,7 +227,7 @@ func (m *NewAWSMarketplaceUserAccount) validateUsername(formats strfmt.Registry)
 		return err
 	}
 
-	if err := validate.Pattern("username", "body", m.Username, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("username", "body", m.Username, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

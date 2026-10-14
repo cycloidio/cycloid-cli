@@ -28,8 +28,8 @@ type UserLogin struct {
 
 	// organization canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	OrganizationCanonical string `json:"organization_canonical,omitempty"`
 
 	// password
@@ -79,7 +79,7 @@ func (m *UserLogin) validateOrganizationCanonical(formats strfmt.Registry) error
 		return nil
 	}
 
-	if err := validate.MinLength("organization_canonical", "body", m.OrganizationCanonical, 3); err != nil {
+	if err := validate.MinLength("organization_canonical", "body", m.OrganizationCanonical, 2); err != nil {
 		return err
 	}
 
@@ -87,7 +87,7 @@ func (m *UserLogin) validateOrganizationCanonical(formats strfmt.Registry) error
 		return err
 	}
 
-	if err := validate.Pattern("organization_canonical", "body", m.OrganizationCanonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("organization_canonical", "body", m.OrganizationCanonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 

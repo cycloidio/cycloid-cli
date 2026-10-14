@@ -24,13 +24,13 @@ type NewTeam struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical string `json:"canonical,omitempty"`
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 2
 	Name *string `json:"name"`
 
 	// User canonical that owns this team. If omitted then the person
@@ -71,7 +71,7 @@ func (m *NewTeam) validateCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -79,7 +79,7 @@ func (m *NewTeam) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -92,7 +92,7 @@ func (m *NewTeam) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 2); err != nil {
 		return err
 	}
 
@@ -107,7 +107,7 @@ func (m *NewTeam) validateRolesCanonical(formats strfmt.Registry) error {
 
 	for i := 0; i < len(m.RolesCanonical); i++ {
 
-		if err := validate.MinLength("roles_canonical"+"."+strconv.Itoa(i), "body", m.RolesCanonical[i], 3); err != nil {
+		if err := validate.MinLength("roles_canonical"+"."+strconv.Itoa(i), "body", m.RolesCanonical[i], 2); err != nil {
 			return err
 		}
 
@@ -115,7 +115,7 @@ func (m *NewTeam) validateRolesCanonical(formats strfmt.Registry) error {
 			return err
 		}
 
-		if err := validate.Pattern("roles_canonical"+"."+strconv.Itoa(i), "body", m.RolesCanonical[i], `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+		if err := validate.Pattern("roles_canonical"+"."+strconv.Itoa(i), "body", m.RolesCanonical[i], `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 			return err
 		}
 

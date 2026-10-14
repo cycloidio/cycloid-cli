@@ -28,8 +28,8 @@ type NewInfraPolicy struct {
 
 	// canonical
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical string `json:"canonical,omitempty"`
 
 	// description
@@ -40,7 +40,7 @@ type NewInfraPolicy struct {
 
 	// name
 	// Required: true
-	// Min Length: 3
+	// Min Length: 2
 	Name *string `json:"name"`
 
 	// User canonical that owns this InfraPolicy. When a user is the
@@ -48,8 +48,8 @@ type NewInfraPolicy struct {
 	//
 	// Required: true
 	// Max Length: 100
-	// Min Length: 3
-	// Pattern: ^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$
+	// Min Length: 2
+	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Owner *string `json:"owner"`
 
 	// severity
@@ -102,7 +102,7 @@ func (m *NewInfraPolicy) validateCanonical(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.MinLength("canonical", "body", m.Canonical, 3); err != nil {
+	if err := validate.MinLength("canonical", "body", m.Canonical, 2); err != nil {
 		return err
 	}
 
@@ -110,7 +110,7 @@ func (m *NewInfraPolicy) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("canonical", "body", m.Canonical, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
@@ -123,7 +123,7 @@ func (m *NewInfraPolicy) validateName(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("name", "body", *m.Name, 3); err != nil {
+	if err := validate.MinLength("name", "body", *m.Name, 2); err != nil {
 		return err
 	}
 
@@ -136,7 +136,7 @@ func (m *NewInfraPolicy) validateOwner(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MinLength("owner", "body", *m.Owner, 3); err != nil {
+	if err := validate.MinLength("owner", "body", *m.Owner, 2); err != nil {
 		return err
 	}
 
@@ -144,7 +144,7 @@ func (m *NewInfraPolicy) validateOwner(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("owner", "body", *m.Owner, `^[a-z0-9]+[a-z0-9\-_]+[a-z0-9]+$`); err != nil {
+	if err := validate.Pattern("owner", "body", *m.Owner, `^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$`); err != nil {
 		return err
 	}
 
