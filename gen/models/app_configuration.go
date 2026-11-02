@@ -21,6 +21,14 @@ import (
 // swagger:model AppConfiguration
 type AppConfiguration struct {
 
+	// Whether a user that belongs to no organization can create one. It reflects the root
+	// organization's allow_org_creation setting, and is true while there is no root organization
+	// yet so the first one can be created. Members of the root organization with the right to
+	// create children can create organizations regardless.
+	//
+	// Required: true
+	AllowOrgCreation *bool `json:"allow_org_creation"`
+
 	// Base URL of the Cyclobot API the frontend should use.
 	CyclobotAPIURL string `json:"cyclobot_api_url,omitempty"`
 
@@ -39,6 +47,10 @@ type AppConfiguration struct {
 func (m *AppConfiguration) Validate(formats strfmt.Registry) error {
 	var res []error
 
+	if err := m.validateAllowOrgCreation(formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.validateSentryEnabled(formats); err != nil {
 		res = append(res, err)
 	}
@@ -46,6 +58,15 @@ func (m *AppConfiguration) Validate(formats strfmt.Registry) error {
 	if len(res) > 0 {
 		return errors.CompositeValidationError(res...)
 	}
+	return nil
+}
+
+func (m *AppConfiguration) validateAllowOrgCreation(formats strfmt.Registry) error {
+
+	if err := validate.Required("allow_org_creation", "body", m.AllowOrgCreation); err != nil {
+		return err
+	}
+
 	return nil
 }
 

@@ -34,6 +34,18 @@ func (m *apiClient) InitFirstOrg(org, userName, fullName, email, password, licen
 	m.api.Config.Token = *login.Token
 
 	_, _, err = m.CreateOrganization(org)
+	if isStaleTokenErr(err) {
+		// Organization creation is closed by default (ENG-439): until the root organization
+		// exists, the login above issued a token scoped to no organization, so the root-only
+		// gate asks for a refresh rather than letting a stale claim through. One
+		// refresh-and-retry clears it; the same claims-not-signature reasoning as below applies
+		login, _, err = m.RefreshToken(&org, nil, *login.Token)
+		if err != nil {
+			return nil, nil, fmt.Errorf("failed to refresh token: %w", err)
+		}
+		m.api.Config.Token = *login.Token
+		_, _, err = m.CreateOrganization(org)
+	}
 	var orgErr *APIResponseError
 	if errors.As(err, &orgErr) {
 		if orgErr.StatusCode != 409 && err != nil {

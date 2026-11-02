@@ -38,6 +38,17 @@ type APIKey struct {
 	// Minimum: 1
 	ID *uint32 `json:"id"`
 
+	// When true, the API key enters the descendant organizations of its
+	// organization (at any depth) with its own rules instead of the default
+	// child organization role. A resource of a rule names an organization in
+	// its second segment: a glob matching the descendant such as
+	// `organization:*:pipeline:cde-*`, or one naming the key's own
+	// organization, both target the descendant; resources naming any other
+	// organization are dropped there. The descendant organizations it reads
+	// omit their admins. Set on creation only, like the rules.
+	//
+	InheritRules bool `json:"inherit_rules,omitempty"`
+
 	// The last seven characters of API key. Allows user to differentiate between keys.
 	// Required: true
 	LastSeven *string `json:"last_seven"`

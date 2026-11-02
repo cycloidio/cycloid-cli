@@ -26,6 +26,9 @@ type Organization struct {
 	// admins
 	Admins []*MemberOrg `json:"admins"`
 
+	// Whether any user can create an organization. When false (the default), only users allowed to create children on the root organization can. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
+	AllowOrgCreation *bool `json:"allow_org_creation,omitempty"`
+
 	// appearance
 	Appearance *Appearance `json:"appearance,omitempty"`
 
@@ -88,7 +91,7 @@ type Organization struct {
 	// When true, adding a member to an organization sends no invitation email. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
 	DisableMemberInvitationEmail *bool `json:"disable_member_invitation_email,omitempty"`
 
-	// When true, signups are rejected everywhere on the platform (plain email/password, AWS Marketplace, and SSO/social auto-enrollment) unless the email is already invited — same gate as sso_invite_only. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
+	// When true, signups are rejected everywhere on the platform (plain email/password, AWS Marketplace, and SSO sign-up) unless the email is already invited to the organization the account is created in — same gate as sso_invite_only. Accounts an OIDC integration with oidc_auto_create creates on a first login are not affected. Set on the root organization and applied platform-wide, so it is only returned for the root organization.
 	DisableSignup *bool `json:"disable_signup,omitempty"`
 
 	// has children
@@ -133,7 +136,7 @@ type Organization struct {
 	// Display name of the immediate parent organization. Omitted when this organization is root.
 	ParentName *string `json:"parent_name,omitempty"`
 
-	// When true, SSO users can only join the organization if they have been explicitly invited
+	// When true, an account can only be created in the organization for an email explicitly invited to it, including through SSO. On the root organization it also applies to every child organization, except to accounts an OIDC integration with oidc_auto_create creates on a first login.
 	SsoInviteOnly *bool `json:"sso_invite_only,omitempty"`
 
 	// Glob patterns (filepath.Match syntax). Versions matching any of these are hidden from non-team-member users.

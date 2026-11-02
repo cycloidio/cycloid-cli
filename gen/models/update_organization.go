@@ -22,6 +22,9 @@ import (
 // swagger:model UpdateOrganization
 type UpdateOrganization struct {
 
+	// Whether any user can create an organization. When false (the default), only users allowed to create children on the root organization can. Only the root organization can set it to true: sending true for a sub-organization is rejected with a 422 error, while false is accepted anywhere. Omitting this field or sending null preserves the current value.
+	AllowOrgCreation *bool `json:"allow_org_creation,omitempty"`
+
 	// Omitting this field or sending null preserves the current value.
 	CanChildrenCreateAppearance *bool `json:"can_children_create_appearance,omitempty"`
 
@@ -40,7 +43,7 @@ type UpdateOrganization struct {
 	// When true, adding a member sends no invitation email, platform-wide. Only the root organization can set it to true: sending true for a sub-organization is rejected with a 422 error, while false is accepted anywhere. Omitting this field or sending null preserves the current value.
 	DisableMemberInvitationEmail *bool `json:"disable_member_invitation_email,omitempty"`
 
-	// When true, signups are rejected everywhere on the platform (plain email/password, AWS Marketplace, and SSO/social auto-enrollment) unless the email is already invited — same gate as sso_invite_only. Only the root organization can set it to true: sending true for a sub-organization is rejected with a 422 error, while false is accepted anywhere. Omitting this field or sending null preserves the current value.
+	// When true, signups are rejected everywhere on the platform (plain email/password, AWS Marketplace, and SSO sign-up) unless the email is already invited to the organization the account is created in — same gate as sso_invite_only. Accounts an OIDC integration with oidc_auto_create creates on a first login are not affected. Only the root organization can set it to true: sending true for a sub-organization is rejected with a 422 error, while false is accepted anywhere. Omitting this field or sending null preserves the current value.
 	DisableSignup *bool `json:"disable_signup,omitempty"`
 
 	// When true, the component list and project list hide the indicator shown when a version's commit no longer matches its reference commit. Other version status indicators are unaffected. Omitting this field or sending null preserves the current value.
@@ -61,7 +64,7 @@ type UpdateOrganization struct {
 	// Min Length: 2
 	Name *string `json:"name"`
 
-	// When true, SSO users can only join the organization if they have been explicitly invited
+	// When true, an account can only be created in the organization for an email explicitly invited to it, including through SSO. On the root organization it also applies to every child organization, except to accounts an OIDC integration with oidc_auto_create creates on a first login.
 	SsoInviteOnly *bool `json:"sso_invite_only,omitempty"`
 
 	// Glob patterns (filepath.Match syntax). Versions matching any of these are hidden from non-team-member users. Omitting this field or sending null preserves the current value. Send an empty array [] to clear all patterns.

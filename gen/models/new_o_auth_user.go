@@ -26,7 +26,7 @@ type NewOAuthUser struct {
 	// Pattern: ^[A-Z]{2}$
 	CountryCode string `json:"country_code,omitempty"`
 
-	// email
+	// Ignored on sign-up, where the email is read from 'signup_token'.
 	// Required: true
 	// Format: email
 	Email *strfmt.Email `json:"email"`
@@ -45,14 +45,17 @@ type NewOAuthUser struct {
 	// Enum: ["en","fr","es"]
 	Locale string `json:"locale,omitempty"`
 
-	// organization canonical
+	// Ignored on sign-up, where the organization is read from 'signup_token'.
 	OrganizationCanonical string `json:"organization_canonical,omitempty"`
 
 	// picture url
 	// Format: uri
 	PictureURL strfmt.URI `json:"picture_url,omitempty"`
 
-	// social id
+	// Short-lived token returned with the 'user' of a login that found no account. The sign-up must send it back: the email, social id and organization of the new user are read from it, not from the other fields.
+	SignupToken string `json:"signup_token,omitempty"`
+
+	// Ignored on sign-up, where the identity is read from 'signup_token'.
 	// Required: true
 	SocialID *string `json:"social_id"`
 

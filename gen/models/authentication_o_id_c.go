@@ -43,7 +43,7 @@ type AuthenticationOIDC struct {
 	// Allow oidc_discovery_url to use plain HTTP when oidc_issuer is HTTPS. Set to true only when the network path between the Cycloid backend and the discovery URL is privately trusted (VPC, internal LAN, service mesh). Equivalent security trade-off to oidc_skip_tls_verify, scoped to the discovery URL.
 	OidcAllowInsecureDiscovery *bool `json:"oidc_allow_insecure_discovery,omitempty"`
 
-	// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438). Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
+	// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438), when the user's groups match a group mapping. The root organization's sso_invite_only and disable_signup do not apply to these accounts; the sso_invite_only of the organization the user logs in through still does. Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
 	OidcAutoCreate bool `json:"oidc_auto_create,omitempty"`
 
 	// PEM-encoded CA certificate to verify the OIDC provider's TLS certificate.
@@ -149,7 +149,7 @@ func (m *AuthenticationOIDC) UnmarshalJSON(raw []byte) error {
 		// Allow oidc_discovery_url to use plain HTTP when oidc_issuer is HTTPS. Set to true only when the network path between the Cycloid backend and the discovery URL is privately trusted (VPC, internal LAN, service mesh). Equivalent security trade-off to oidc_skip_tls_verify, scoped to the discovery URL.
 		OidcAllowInsecureDiscovery *bool `json:"oidc_allow_insecure_discovery,omitempty"`
 
-		// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438). Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
+		// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438), when the user's groups match a group mapping. The root organization's sso_invite_only and disable_signup do not apply to these accounts; the sso_invite_only of the organization the user logs in through still does. Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
 		OidcAutoCreate bool `json:"oidc_auto_create,omitempty"`
 
 		// PEM-encoded CA certificate to verify the OIDC provider's TLS certificate.
@@ -282,7 +282,7 @@ func (m AuthenticationOIDC) MarshalJSON() ([]byte, error) {
 		// Allow oidc_discovery_url to use plain HTTP when oidc_issuer is HTTPS. Set to true only when the network path between the Cycloid backend and the discovery URL is privately trusted (VPC, internal LAN, service mesh). Equivalent security trade-off to oidc_skip_tls_verify, scoped to the discovery URL.
 		OidcAllowInsecureDiscovery *bool `json:"oidc_allow_insecure_discovery,omitempty"`
 
-		// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438). Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
+		// When true, automatically provision a user record on the first OIDC login for this integration (BE-1438), when the user's groups match a group mapping. The root organization's sso_invite_only and disable_signup do not apply to these accounts; the sso_invite_only of the organization the user logs in through still does. Opt-in; defaults to false. No behaviour change for existing integrations unless explicitly enabled.
 		OidcAutoCreate bool `json:"oidc_auto_create,omitempty"`
 
 		// PEM-encoded CA certificate to verify the OIDC provider's TLS certificate.

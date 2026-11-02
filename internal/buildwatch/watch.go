@@ -284,10 +284,14 @@ func streamEventsWithReconnect(
 		default:
 		}
 
-		stream, _, err := m.OpenBuildEventsStream(ctx, org, project, env, component, pipeline, buildID, lastEventID)
+		stream, resp, err := m.OpenBuildEventsStream(ctx, org, project, env, component, pipeline, buildID, lastEventID)
 		if err != nil {
 			if errors.Is(ctx.Err(), context.Canceled) {
 				return nil
+			}
+			// Reconnecting cannot fix a missing login or a missing access
+			if resp != nil && (resp.StatusCode == http.StatusUnauthorized || resp.StatusCode == http.StatusForbidden) {
+				return err
 			}
 			if err := sleepWithContext(ctx, reconnectDelay); err != nil {
 				return nil

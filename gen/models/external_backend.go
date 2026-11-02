@@ -91,7 +91,7 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 	var data struct {
 		ComponentCanonical string `json:"component_canonical,omitempty"`
 
-		Configuration json.RawMessage `json:"configuration"`
+		Configuration json.RawMessage `json:"configuration,omitempty"`
 
 		CreatedAt *uint64 `json:"created_at,omitempty"`
 
@@ -119,9 +119,13 @@ func (m *ExternalBackend) UnmarshalJSON(raw []byte) error {
 		return err
 	}
 
-	propConfiguration, err := UnmarshalExternalBackendConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
-	if err != nil && !stderrors.Is(err, io.EOF) {
-		return err
+	var propConfiguration ExternalBackendConfiguration
+	if string(data.Configuration) != "null" {
+		configuration, err := UnmarshalExternalBackendConfiguration(bytes.NewBuffer(data.Configuration), runtime.JSONConsumer())
+		if err != nil && !stderrors.Is(err, io.EOF) {
+			return err
+		}
+		propConfiguration = configuration
 	}
 
 	var result ExternalBackend
@@ -214,7 +218,7 @@ func (m ExternalBackend) MarshalJSON() ([]byte, error) {
 		return nil, err
 	}
 	b2, err = json.Marshal(struct {
-		Configuration ExternalBackendConfiguration `json:"configuration"`
+		Configuration ExternalBackendConfiguration `json:"configuration,omitempty"`
 	}{
 
 		Configuration: m.configurationField,
