@@ -1,0 +1,48 @@
+name: PR Lint
+
+# Commit convention gate feeding Linear releases (changie retirement).
+# Validates PR commits AND the PR title (the PR title becomes the commit once we
+# squash-merge). Conventional Commits + a Linear issue key on release-note types
+# (see commitlint.config.js). No secrets, no self-hosted runner needed — runs on
+# GitHub-hosted ubuntu-latest (free for this trust-safe lint).
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: pr-lint-${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  commitlint:
+    name: Commit convention
+    runs-on: ubuntu-latest
+    # Same-repo PRs only; skip dependency bots (they carry no Linear key and are
+    # exempt "Maintenance" changes). Fork PRs are skipped here (contributors have no
+    # Linear access); a maintainer re-runs from an internal branch if needed.
+    if: >-
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.actor != 'dependabot[bot]' &&
+      github.actor != 'renovate[bot]'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Lint PR commits
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          configFile: commitlint.config.mjs
+
+      - name: Lint PR title (becomes the squash commit)
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          printf '%s\n' "$PR_TITLE" | npx --yes \
+            -p @commitlint/cli -p @commitlint/config-conventional \
+            commitlint --config commitlint.config.mjs
