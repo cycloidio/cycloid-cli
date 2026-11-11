@@ -134,6 +134,7 @@ type FormEntity struct {
 	//     * 'cred_name' (string): pin the widget to a single credential canonical, so the end user only provides the secret value. The value is slugified by the API and must be consumed as returned. Mutually exclusive with 'cred_name_prefix'.
 	//     * 'cred_name_prefix' (string): pin the beginning of the credential canonical, the end user provides only the suffix. Slugified by the API, a trailing '-' or '_' separator is preserved. Mutually exclusive with 'cred_name'.
 	//     * 'cred_key' (string): the key inside the credential that holds the value, used when the credential is created inline.
+	//     * 'confirm_fields' (list): keys of the credential the end user must type twice, the save is refused while the two differ. Applicable only when the credential is created inline (requires 'cred_name' or 'cred_name_prefix'). The confirmation is never stored. Empty means no confirmation.
 	//   * radio
 	//     * 'orientation' (string): whether you want to display it in an 'horizontal' or 'vertical' way
 	//   * cy_inventory_resource

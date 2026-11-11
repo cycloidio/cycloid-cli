@@ -239,10 +239,10 @@ func defaultCredentialPath(path, canonical, name string) string {
 		return path
 	}
 	if canonical != "" {
-		return pathFromCanonical(canonical)
+		return apiclient.CredentialPathFromName(canonical)
 	}
 	if name != "" {
-		return pathFromCanonical(name)
+		return apiclient.CredentialPathFromName(name)
 	}
 	return ""
 }

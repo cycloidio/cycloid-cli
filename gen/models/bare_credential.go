@@ -36,7 +36,7 @@ type BareCredential struct {
 	Name string `json:"name,omitempty"`
 
 	// Optional path for the credential
-	// Pattern: [a-zA-z0-9_\-./]
+	// Pattern: ^[a-zA-Z0-9_\-./]+$
 	Path string `json:"path,omitempty"`
 
 	// raw
@@ -100,7 +100,7 @@ func (m *BareCredential) validatePath(formats strfmt.Registry) error {
 		return nil
 	}
 
-	if err := validate.Pattern("path", "body", m.Path, `[a-zA-z0-9_\-./]`); err != nil {
+	if err := validate.Pattern("path", "body", m.Path, `^[a-zA-Z0-9_\-./]+$`); err != nil {
 		return err
 	}
 

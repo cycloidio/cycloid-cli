@@ -225,7 +225,7 @@ func update(cmd *cobra.Command, args []string) error {
 
 	credentialPath, _ := cyargs.GetCredentialPath(cmd)
 	if credentialPath == "" {
-		credentialPath = pathFromCanonical(credential)
+		credentialPath = apiclient.CredentialPathFromName(credential)
 	}
 
 	description, err := cyargs.GetCredentialDescription(cmd)

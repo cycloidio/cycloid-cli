@@ -4,14 +4,39 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 
 	"github.com/cycloidio/cycloid-cli/gen/models"
 )
 
+// pathUnsafeChars is everything the API refuses in a credential path
+var pathUnsafeChars = regexp.MustCompile(`[^a-zA-Z0-9_\-./]`)
+
+// CredentialPathFromName derives a credential path the API accepts from a name or
+// canonical: unsafe characters become "-", empty, "." and ".." segments are
+// dropped, and a path the API reserves for authentication configs is prefixed
+func CredentialPathFromName(name string) string {
+	safe := pathUnsafeChars.ReplaceAllString(name, "-")
+	segs := make([]string, 0, strings.Count(safe, "/")+1)
+	for _, seg := range strings.Split(safe, "/") {
+		if seg == "" || seg == "." || seg == ".." {
+			continue
+		}
+		segs = append(segs, seg)
+	}
+	if len(segs) == 0 {
+		return strings.NewReplacer("/", "-", ".", "-").Replace(safe)
+	}
+	// The API reserves its authentication config keys, "authentication-Authentication<Type>"
+	if len(segs) == 1 && strings.HasPrefix(segs[0], "authentication-Authentication") {
+		segs[0] = "credential-" + segs[0]
+	}
+	return strings.Join(segs, "/")
+}
+
 func (m *apiClient) CreateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, *http.Response, error) {
 	if path == "" {
-		re := regexp.MustCompile(`[^a-zA-z0-9_\-./]`)
-		path = re.ReplaceAllString(name, "-")
+		path = CredentialPathFromName(name)
 	}
 
 	body := &models.NewCredential{
@@ -38,8 +63,7 @@ func (m *apiClient) CreateCredential(org, name, credentialType string, rawCred *
 
 func (m *apiClient) UpdateCredential(org, name, credentialType string, rawCred *models.CredentialRaw, path, canonical, description string) (*models.Credential, *http.Response, error) {
 	if path == "" {
-		re := regexp.MustCompile(`[^a-zA-z0-9_\-./]`)
-		path = re.ReplaceAllString(name, "-")
+		path = CredentialPathFromName(name)
 	}
 
 	body := &models.UpdateCredential{

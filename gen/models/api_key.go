@@ -7,6 +7,7 @@ package models
 
 import (
 	"context"
+	"encoding/json"
 	stderrors "errors"
 	"strconv"
 
@@ -23,6 +24,16 @@ import (
 // swagger:model APIKey
 type APIKey struct {
 
+	// Whether the caller may regenerate the key, set on the personal keys listed
+	// from the profile.
+	//
+	CanRegenerate bool `json:"can_regenerate,omitempty"`
+
+	// Whether the caller may revoke the key, set on the personal keys listed from
+	// the profile.
+	//
+	CanRevoke bool `json:"can_revoke,omitempty"`
+
 	// canonical
 	// Required: true
 	// Max Length: 100
@@ -32,6 +43,11 @@ type APIKey struct {
 
 	// description
 	Description string `json:"description,omitempty"`
+
+	// When the key stops being accepted, as a Unix timestamp in milliseconds.
+	// Absent for a key that never expires.
+	//
+	ExpiresAt uint64 `json:"expires_at,omitempty"`
 
 	// id
 	// Required: true
@@ -61,6 +77,12 @@ type APIKey struct {
 	// Min Length: 2
 	Name *string `json:"name"`
 
+	// The canonical of the organization the key belongs to.
+	OrganizationCanonical string `json:"organization_canonical,omitempty"`
+
+	// The name of the organization the key belongs to.
+	OrganizationName string `json:"organization_name,omitempty"`
+
 	// Organization member that owns this API key. When a user is the owner of an
 	// API key he has all the permissions on it.
 	// In the event where the user has been deleted that field might be empty.
@@ -73,6 +95,19 @@ type APIKey struct {
 
 	// The actual API key in the format of JWT token, returned only upon creation.
 	Token string `json:"token,omitempty"`
+
+	// Where the API key takes its permissions from. A "fixed" key holds its own
+	// rules. A "user" (personal) key holds none: every request is authorized with
+	// the permissions, roles and teams its owner has at that moment.
+	//
+	// Enum: ["fixed","user"]
+	Type string `json:"type,omitempty"`
+
+	// How long the key stays valid after its token is generated or regenerated.
+	// Fixed keys are unlimited; a personal key lives 3 months at most.
+	//
+	// Enum: ["week","month","quarter","year","unlimited"]
+	Validity string `json:"validity,omitempty"`
 }
 
 // Validate validates this API key
@@ -100,6 +135,14 @@ func (m *APIKey) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateRules(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateType(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateValidity(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -214,6 +257,99 @@ func (m *APIKey) validateRules(formats strfmt.Registry) error {
 			}
 		}
 
+	}
+
+	return nil
+}
+
+var apiKeyTypeTypePropEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["fixed","user"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		apiKeyTypeTypePropEnum = append(apiKeyTypeTypePropEnum, v)
+	}
+}
+
+const (
+
+	// APIKeyTypeFixed captures enum value "fixed"
+	APIKeyTypeFixed string = "fixed"
+
+	// APIKeyTypeUser captures enum value "user"
+	APIKeyTypeUser string = "user"
+)
+
+// prop value enum
+func (m *APIKey) validateTypeEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, apiKeyTypeTypePropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *APIKey) validateType(formats strfmt.Registry) error {
+	if swag.IsZero(m.Type) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateTypeEnum("type", "body", m.Type); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+var apiKeyTypeValidityPropEnum []any
+
+func init() {
+	var res []string
+	if err := json.Unmarshal([]byte(`["week","month","quarter","year","unlimited"]`), &res); err != nil {
+		panic(err)
+	}
+	for _, v := range res {
+		apiKeyTypeValidityPropEnum = append(apiKeyTypeValidityPropEnum, v)
+	}
+}
+
+const (
+
+	// APIKeyValidityWeek captures enum value "week"
+	APIKeyValidityWeek string = "week"
+
+	// APIKeyValidityMonth captures enum value "month"
+	APIKeyValidityMonth string = "month"
+
+	// APIKeyValidityQuarter captures enum value "quarter"
+	APIKeyValidityQuarter string = "quarter"
+
+	// APIKeyValidityYear captures enum value "year"
+	APIKeyValidityYear string = "year"
+
+	// APIKeyValidityUnlimited captures enum value "unlimited"
+	APIKeyValidityUnlimited string = "unlimited"
+)
+
+// prop value enum
+func (m *APIKey) validateValidityEnum(path, location string, value string) error {
+	if err := validate.EnumCase(path, location, value, apiKeyTypeValidityPropEnum, true); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *APIKey) validateValidity(formats strfmt.Registry) error {
+	if swag.IsZero(m.Validity) { // not required
+		return nil
+	}
+
+	// value enum
+	if err := m.validateValidityEnum("validity", "body", m.Validity); err != nil {
+		return err
 	}
 
 	return nil

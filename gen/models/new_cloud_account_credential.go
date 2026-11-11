@@ -37,7 +37,7 @@ type NewCloudAccountCredential struct {
 	Name *string `json:"name"`
 
 	// path
-	// Pattern: [a-zA-z0-9_\-./]
+	// Pattern: ^[a-zA-Z0-9_\-./]+$
 	Path string `json:"path,omitempty"`
 
 	// raw
@@ -114,7 +114,7 @@ func (m *NewCloudAccountCredential) validatePath(formats strfmt.Registry) error 
 		return nil
 	}
 
-	if err := validate.Pattern("path", "body", m.Path, `[a-zA-z0-9_\-./]`); err != nil {
+	if err := validate.Pattern("path", "body", m.Path, `^[a-zA-Z0-9_\-./]+$`); err != nil {
 		return err
 	}
 

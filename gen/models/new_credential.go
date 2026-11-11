@@ -44,7 +44,7 @@ type NewCredential struct {
 
 	// path
 	// Required: true
-	// Pattern: [a-zA-z0-9_\-./]
+	// Pattern: ^[a-zA-Z0-9_\-./]+$
 	Path *string `json:"path"`
 
 	// raw
@@ -122,7 +122,7 @@ func (m *NewCredential) validatePath(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.Pattern("path", "body", *m.Path, `[a-zA-z0-9_\-./]`); err != nil {
+	if err := validate.Pattern("path", "body", *m.Path, `^[a-zA-Z0-9_\-./]+$`); err != nil {
 		return err
 	}
 
