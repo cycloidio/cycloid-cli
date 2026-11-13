@@ -189,3 +189,48 @@ func (m *apiClient) GetComponentStackConfig(org, project, env, component, useCas
 	}
 	return result, resp, nil
 }
+
+// UpdateComponent updates the name and description of the component, leaving its configuration
+// alone, so it works on a component whose configuration is locked
+func (m *apiClient) UpdateComponent(org, project, env, component, name, description string) (*models.Component, *http.Response, error) {
+	var result *models.Component
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component},
+		Body:         &models.UpdateComponent{Name: &name, Description: description},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+// LockComponent locks the StackForms configuration of the component, with an optional reason
+func (m *apiClient) LockComponent(org, project, env, component, reason string) (*models.Component, *http.Response, error) {
+	var result *models.Component
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "lock"},
+		Body:         &models.LockComponent{Reason: reason},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}
+
+// UnlockComponent unlocks the StackForms configuration of the component
+func (m *apiClient) UnlockComponent(org, project, env, component string) (*models.Component, *http.Response, error) {
+	var result *models.Component
+	resp, err := m.GenericRequest(Request{
+		Method:       "PUT",
+		Organization: &org,
+		Route:        []string{"organizations", org, "projects", project, "environments", env, "components", component, "unlock"},
+	}, &result)
+	if err != nil {
+		return nil, resp, err
+	}
+	return result, resp, nil
+}

@@ -78,6 +78,19 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 		return cyout.PrintWithOptions(cmd, nil, err, "failed to update component '"+component+"', cannot get current component", printer.Options{})
 	}
 
+	// PROD-907: a locked component refuses the upsert below, which reconfigures it, but it can
+	// still be renamed or re-described. With no configuration flag, only those are sent
+	if currentComponent.Lock != nil && !configurationFlagChanged(cmd) {
+		if !cmd.Flags().Changed("name") {
+			name = ptr.Value(currentComponent.Name)
+		}
+		if !cmd.Flags().Changed("description") {
+			description = &currentComponent.Description
+		}
+		updatedComponent, _, err := m.UpdateComponent(org, project, env, component, name, *description)
+		return cyout.PrintWithOptions(cmd, updatedComponent, err, "failed to update component '"+component+"'", printer.Options{})
+	}
+
 	if stackRef == "" {
 		stackRef = *currentComponent.ServiceCatalog.Ref
 	}
@@ -114,6 +127,23 @@ func updateComponent(cmd *cobra.Command, args []string) error {
 	// CreateComponent will reconfigure the component if it already exists
 	updatedComponent, _, err := m.CreateOrUpdateComponent(org, project, env, component, *description, name, stackRef, tag, branch, hash, useCase, *cloudProvider, inputs)
 	return cyout.PrintWithOptions(cmd, updatedComponent, err, "failed to configure component '"+component+"'", printer.Options{})
+}
+
+// configurationFlags are the update flags that change the configuration of the component, as
+// opposed to its name and description
+var configurationFlags = []string{
+	"use-case", "stack-ref", "cloud-provider",
+	"stack-version", "stack-tag", "stack-branch", "stack-commit-hash",
+	"json-file", "json-vars", "var",
+}
+
+func configurationFlagChanged(cmd *cobra.Command) bool {
+	for _, name := range configurationFlags {
+		if cmd.Flags().Changed(name) {
+			return true
+		}
+	}
+	return false
 }
 
 // versionSelector returns the version flags as given or, when none is set, the

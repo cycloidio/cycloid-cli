@@ -62,6 +62,9 @@ type Component struct {
 	// The status of the component.
 	IsConfigured bool `json:"is_configured,omitempty"`
 
+	// The lock of the StackForms configuration of the component, present only while it is locked. A locked component refuses any change to its configuration or stack version until it is unlocked.
+	Lock *ComponentLock `json:"lock,omitempty"`
+
 	// name
 	// Required: true
 	// Min Length: 1
@@ -120,6 +123,10 @@ func (m *Component) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateID(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateLock(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -274,6 +281,29 @@ func (m *Component) validateID(formats strfmt.Registry) error {
 	return nil
 }
 
+func (m *Component) validateLock(formats strfmt.Registry) error {
+	if swag.IsZero(m.Lock) { // not required
+		return nil
+	}
+
+	if m.Lock != nil {
+		if err := m.Lock.Validate(formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("lock")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("lock")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (m *Component) validateName(formats strfmt.Registry) error {
 
 	if err := validate.Required("name", "body", m.Name); err != nil {
@@ -420,6 +450,10 @@ func (m *Component) ContextValidate(ctx context.Context, formats strfmt.Registry
 		res = append(res, err)
 	}
 
+	if err := m.contextValidateLock(ctx, formats); err != nil {
+		res = append(res, err)
+	}
+
 	if err := m.contextValidateProject(ctx, formats); err != nil {
 		res = append(res, err)
 	}
@@ -500,6 +534,31 @@ func (m *Component) contextValidateEnvironment(ctx context.Context, formats strf
 			ce := new(errors.CompositeError)
 			if stderrors.As(err, &ce) {
 				return ce.ValidateName("environment")
+			}
+
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m *Component) contextValidateLock(ctx context.Context, formats strfmt.Registry) error {
+
+	if m.Lock != nil {
+
+		if swag.IsZero(m.Lock) { // not required
+			return nil
+		}
+
+		if err := m.Lock.ContextValidate(ctx, formats); err != nil {
+			ve := new(errors.Validation)
+			if stderrors.As(err, &ve) {
+				return ve.ValidateName("lock")
+			}
+			ce := new(errors.CompositeError)
+			if stderrors.As(err, &ce) {
+				return ce.ValidateName("lock")
 			}
 
 			return err

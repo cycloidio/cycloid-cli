@@ -202,6 +202,9 @@ type APIClient interface {
 	GetComponent(org, project, env, component string) (*models.Component, *http.Response, error)
 	MigrateComponent(org, project, env, component, targetProject, targetEnv, newCanonical, newName string) (*models.Component, *http.Response, error)
 	DeleteComponent(org, project, env, component string, opts DeleteOptions) (*http.Response, error)
+	UpdateComponent(org, project, env, component, name, description string) (*models.Component, *http.Response, error)
+	LockComponent(org, project, env, component, reason string) (*models.Component, *http.Response, error)
+	UnlockComponent(org, project, env, component string) (*models.Component, *http.Response, error)
 	GetComponentConfig(org, project, env, component, versionTag, versionBranch, versionCommitHash string, versionID uint32) (models.FormVariables, *http.Response, error)
 	GetComponentStackConfig(org, project, env, component, useCase, versionTag, versionBranch, versionCommitHash string) (models.ServiceCatalogConfigs, *http.Response, error)
 
