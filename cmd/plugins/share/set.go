@@ -22,7 +22,11 @@ func NewSetCommand() *cobra.Command {
 
 Visibility can be 'local' (only this org) or 'shared' (visible to child orgs).
 Mode can be 'include' (only listed orgs) or 'exclude' (all except listed orgs).
-Organizations is a comma-separated list of child org canonicals.`,
+Organizations is a comma-separated list of child org canonicals.
+
+--widgets-enabled sets whether the plugin's widgets are enabled by default in
+every organization it is shared with. An organization that turned a widget on
+or off keeps its choice. When the flag is omitted the current value is kept.`,
 		Example: `
   # Share with all child organizations
   cy plugin share set my-plugin --visibility shared
@@ -33,6 +37,12 @@ Organizations is a comma-separated list of child org canonicals.`,
   # Share with all except specific organizations
   cy plugin share set my-plugin --visibility shared --mode exclude --orgs excluded-org
 
+  # Share with all child organizations and enable the widgets there
+  cy plugin share set my-plugin --visibility shared --widgets-enabled
+
+  # Keep sharing but turn the widgets off again in the shared organizations
+  cy plugin share set my-plugin --visibility shared --widgets-enabled=false
+
   # Make plugin local (not shared)
   cy plugin share set my-plugin --visibility local
 `,
@@ -42,6 +52,7 @@ Organizations is a comma-separated list of child org canonicals.`,
 	cmd.Flags().String("visibility", "", "Visibility scope: 'local' or 'shared' (required)")
 	cmd.Flags().String("mode", "include", "Sharing mode: 'include' or 'exclude'")
 	cmd.Flags().String("orgs", "", "Comma-separated list of child organization canonicals")
+	cmd.Flags().Bool("widgets-enabled", false, "Enable the plugin's widgets by default in every shared organization (omit to keep the current value)")
 	_ = cmd.MarkFlagRequired("visibility")
 	return cmd
 }
@@ -80,6 +91,15 @@ func setSharing(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	_, err = m.SetPluginInstallSharing(org, id, visibility, mode, organizations)
+	var widgetsEnabled *bool
+	if cmd.Flags().Changed("widgets-enabled") {
+		v, err := cmd.Flags().GetBool("widgets-enabled")
+		if err != nil {
+			return err
+		}
+		widgetsEnabled = &v
+	}
+
+	_, err = m.SetPluginInstallSharing(org, id, visibility, mode, organizations, widgetsEnabled)
 	return cyout.PrintWithOptions(cmd, nil, err, "unable to set plugin sharing", printer.Options{})
 }

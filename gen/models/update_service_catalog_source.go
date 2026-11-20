@@ -23,7 +23,7 @@ type UpdateServiceCatalogSource struct {
 	Branch string `json:"branch,omitempty"`
 
 	// credential canonical
-	// Max Length: 100
+	// Max Length: 250
 	// Min Length: 2
 	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	CredentialCanonical string `json:"credential_canonical,omitempty"`
@@ -75,7 +75,7 @@ func (m *UpdateServiceCatalogSource) validateCredentialCanonical(formats strfmt.
 		return err
 	}
 
-	if err := validate.MaxLength("credential_canonical", "body", m.CredentialCanonical, 100); err != nil {
+	if err := validate.MaxLength("credential_canonical", "body", m.CredentialCanonical, 250); err != nil {
 		return err
 	}
 

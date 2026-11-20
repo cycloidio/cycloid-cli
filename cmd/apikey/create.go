@@ -24,6 +24,9 @@ func NewCreateCommand() *cobra.Command {
 		Example: `# Create an admin API key
 cy --org myOrg api-key create --canonical "admin-api-key" --owner "Admin" --rules '[{"action": "organization:**", "effect": "allow", "resources": []}]'
 
+# Create a key with the rules of the Component Creator role
+cy --org myOrg api-key create --name "ci-deployer" --from-role default-component-creator
+
 # Recreate an existing API key with new rules
 cy --org myOrg api-key create --canonical "admin-api-key" --rules '[...]' --recreate`,
 		RunE: create,
@@ -32,7 +35,8 @@ cy --org myOrg api-key create --canonical "admin-api-key" --rules '[...]' --recr
 	cyargs.AddAPIKeyNameFlag(cmd)
 	cyargs.AddAPIKeyCanonicalFlag(cmd)
 	cyargs.AddOwnerFlag(cmd)
-	cyargs.AddAPIKeyRulesFlag(cmd)
+	fromRole, fromTeam := cyargs.AddStartFromFlags(cmd)
+	cmd.MarkFlagsOneRequired(cyargs.AddAPIKeyRulesFlag(cmd), fromRole, fromTeam)
 	cyargs.AddDescriptionFlag(cmd)
 	cmd.Flags().Bool("recreate", false, "delete the API key if it already exists and create a new one with the provided settings")
 
@@ -83,10 +87,17 @@ func create(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	var rulesModel []*models.NewRule
-	err = json.Unmarshal([]byte(rules), &rulesModel)
+	rulesModel, err := cyargs.GetStartFromRules(cmd, m, org)
 	if err != nil {
-		return fmt.Errorf("failed to read rules argument as JSON: %w", err)
+		return err
+	}
+	if rules != "" {
+		var given []*models.NewRule
+		err = json.Unmarshal([]byte(rules), &given)
+		if err != nil {
+			return fmt.Errorf("failed to read rules argument as JSON: %w", err)
+		}
+		rulesModel = append(rulesModel, given...)
 	}
 
 	_, _, getErr := m.GetAPIKey(org, apiKey)

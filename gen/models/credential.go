@@ -25,7 +25,7 @@ type Credential struct {
 
 	// canonical
 	// Required: true
-	// Max Length: 100
+	// Max Length: 250
 	// Min Length: 2
 	// Pattern: ^[a-z0-9]([a-z0-9\-_]*[a-z0-9])?$
 	Canonical *string `json:"canonical"`
@@ -141,7 +141,7 @@ func (m *Credential) validateCanonical(formats strfmt.Registry) error {
 		return err
 	}
 
-	if err := validate.MaxLength("canonical", "body", *m.Canonical, 100); err != nil {
+	if err := validate.MaxLength("canonical", "body", *m.Canonical, 250); err != nil {
 		return err
 	}
 

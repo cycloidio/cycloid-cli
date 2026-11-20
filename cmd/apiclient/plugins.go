@@ -521,15 +521,19 @@ func (m *apiClient) GetPluginInstallSharing(org string, pluginInstallID uint32) 
 	return result, resp, nil
 }
 
-func (m *apiClient) SetPluginInstallSharing(org string, pluginInstallID uint32, visibility, mode string, organizations []string) (*http.Response, error) {
+// SetPluginInstallSharing replaces the sharing configuration of a plugin
+// install. A nil widgetsEnabled keeps the value stored on the install.
+func (m *apiClient) SetPluginInstallSharing(org string, pluginInstallID uint32, visibility, mode string, organizations []string, widgetsEnabled *bool) (*http.Response, error) {
 	body := struct {
-		Visibility    string   `json:"visibility"`
-		Mode          string   `json:"mode,omitempty"`
-		Organizations []string `json:"organizations"`
+		Visibility     string   `json:"visibility"`
+		Mode           string   `json:"mode,omitempty"`
+		Organizations  []string `json:"organizations"`
+		WidgetsEnabled *bool    `json:"widgets_enabled,omitempty"`
 	}{
-		Visibility:    visibility,
-		Mode:          mode,
-		Organizations: organizations,
+		Visibility:     visibility,
+		Mode:           mode,
+		Organizations:  organizations,
+		WidgetsEnabled: widgetsEnabled,
 	}
 	resp, err := m.GenericRequest(Request{
 		Method:       "PUT",

@@ -31,6 +31,10 @@ type PluginInstallSharing struct {
 	// Visibility scope
 	// Required: true
 	Visibility *string `json:"visibility"`
+
+	// Whether the plugin's widgets are enabled by default in the organizations it is shared with
+	// Required: true
+	WidgetsEnabled *bool `json:"widgets_enabled"`
 }
 
 // Validate validates this plugin install sharing
@@ -42,6 +46,10 @@ func (m *PluginInstallSharing) Validate(formats strfmt.Registry) error {
 	}
 
 	if err := m.validateVisibility(formats); err != nil {
+		res = append(res, err)
+	}
+
+	if err := m.validateWidgetsEnabled(formats); err != nil {
 		res = append(res, err)
 	}
 
@@ -63,6 +71,15 @@ func (m *PluginInstallSharing) validateMode(formats strfmt.Registry) error {
 func (m *PluginInstallSharing) validateVisibility(formats strfmt.Registry) error {
 
 	if err := validate.Required("visibility", "body", m.Visibility); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *PluginInstallSharing) validateWidgetsEnabled(formats strfmt.Registry) error {
+
+	if err := validate.Required("widgets_enabled", "body", m.WidgetsEnabled); err != nil {
 		return err
 	}
 

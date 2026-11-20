@@ -13,6 +13,10 @@ func NewCreateCommand() *cobra.Command {
 		Example: `  cy --org my-org roles create --name "New role" --description "My cool role." \
     --rule-json '{"action": "organization:delete", "effect": "allow", "resources": []}' --rule-file my_rule_file.json
 
+  # Start from the rules of an existing role or team, then add one
+  cy --org my-org roles create --name "Deployer" --from-role default-component-creator \
+    --rule-json '{"action": "organization:project:environment:component:delete", "effect": "allow", "resources": []}'
+
   cy --org my-org roles create --update --role my-role --name "My role" \
     --rule-json '{"action": "organization:list", "effect": "allow", "resources": []}'`,
 		Short: "Create a new role.",
@@ -25,9 +29,12 @@ func NewCreateCommand() *cobra.Command {
 		cyargs.AddRoleCanonicalFlag(cmd),
 	)
 
+	fromRole, fromTeam := cyargs.AddStartFromFlags(cmd)
 	cmd.MarkFlagsOneRequired(
 		cyargs.AddRoleRulesJSONFlag(cmd),
 		cyargs.AddRoleRulesFilesFlag(cmd),
+		fromRole,
+		fromTeam,
 	)
 	cyargs.AddDescriptionFlag(cmd)
 	cmd.Flags().Bool("update", false, "If set, update the role when it already exists.")

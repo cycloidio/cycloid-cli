@@ -55,8 +55,6 @@ func runRoleWrite(cmd *cobra.Command, upsert bool) error {
 		return err
 	}
 
-	rules := append(rulesJSON, rulesFiles...)
-
 	description, err := cyargs.GetDescription(cmd)
 	if err != nil {
 		return err
@@ -64,6 +62,13 @@ func runRoleWrite(cmd *cobra.Command, upsert bool) error {
 
 	api := common.NewAPI()
 	m := apiclient.NewAPIClient(api)
+
+	rules, err := cyargs.GetStartFromRules(cmd, m, org)
+	if err != nil {
+		return err
+	}
+	rules = append(rules, rulesJSON...)
+	rules = append(rules, rulesFiles...)
 
 	_, _, err = m.GetRole(org, role)
 	exists := err == nil

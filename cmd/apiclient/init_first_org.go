@@ -158,7 +158,9 @@ func (m *apiClient) provisionAdminAPIKey(org, fullName string, apiKeyCanonical *
 	APIKey, _, err := m.CreateAPIKey(
 		org, *apiKeyCanonical, "Initial api key admin", fullName, apiKeyCanonical,
 		[]*models.NewRule{
+			// The Organization Admin rules: a key can only grant what its creator holds (ENG-540)
 			{Action: ptr.Ptr("organization:**"), Effect: ptr.Ptr("allow"), Resources: []string{}},
+			{Action: ptr.Ptr("menu:**"), Effect: ptr.Ptr("allow"), Resources: []string{}},
 		},
 	)
 	if err != nil {

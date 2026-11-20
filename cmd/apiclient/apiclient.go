@@ -278,7 +278,7 @@ type APIClient interface {
 
 	// plugin install sharing
 	GetPluginInstallSharing(org string, pluginInstallID uint32) (*models.PluginInstallSharing, *http.Response, error)
-	SetPluginInstallSharing(org string, pluginInstallID uint32, visibility, mode string, organizations []string) (*http.Response, error)
+	SetPluginInstallSharing(org string, pluginInstallID uint32, visibility, mode string, organizations []string, widgetsEnabled *bool) (*http.Response, error)
 
 	// plugin widget views
 	ListPluginWidgetViews(org string, pluginInstallID uint32) ([]*models.PluginWidgetView, *http.Response, error)
